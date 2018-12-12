@@ -7,34 +7,51 @@ namespace Teronis.NetStandard.Tools
 {
     public static class PointTools
     {
-        /// <summary>
-        /// Creates a rectangle based on two points.
-        /// </summary>
-        /// <param name="p1">Point 1</param>
-        /// <param name="p2">Point 2</param>
-        /// <returns>Rectangle</returns>
-        public static RectangleF GetRectangle(Point p1, Point p2)
+        public static IEnumerable<Point> GetCirclePoints(float width, float height, float middleCenterX, float middleCenterY, float radius, bool border = false)
         {
-            int top = Math.Min(p1.Y, p2.Y);
-            int right = Math.Max(p1.X, p2.X);
-            int bottom = Math.Max(p1.Y, p2.Y);
-            int left = Math.Min(p1.X, p2.X);
-            return Rectangle.FromLTRB(left, top, right, bottom);
+            middleCenterX -= 0.5f;
+            middleCenterY -= 0.5f;
+
+            var outerRadiusSquared = radius * radius;
+            var innerRadiusSquared = Math.Pow(radius - 1, 2);
+
+            float yEnd = middleCenterY + radius;
+            if (yEnd > height)
+                yEnd = height - 1;
+
+            float xEnd = middleCenterX + radius;
+            if (xEnd > width)
+                xEnd = width - 1;
+
+            for (int y = 0; y <= yEnd; y++) {
+                for (int x = 0; x <= xEnd; x++) {
+                    var dx = x - middleCenterX;
+                    var dy = y - middleCenterY;
+                    var distanceSquared = dx * dx + dy * dy;
+
+                    if (distanceSquared <= outerRadiusSquared && (border ? distanceSquared > innerRadiusSquared : true))
+                        yield return new Point(x, y);
+                }
+            }
         }
 
-        /// <summary>
-        /// Creates a rectangle based on two points.
-        /// </summary>
-        /// <param name="p1">Point 1</param>
-        /// <param name="p2">Point 2</param>
-        /// <returns>Rectangle</returns>
-        public static RectangleF GetRectangle(PointF p1, PointF p2)
+        public static bool IsPointInCircle(float middleCenterX, float middleCenterY, float radius, float x, float y)
         {
-            float top = Math.Min(p1.Y, p2.Y);
-            float right = Math.Max(p1.X, p2.X);
-            float bottom = Math.Max(p1.Y, p2.Y);
-            float left = Math.Min(p1.X, p2.X);
-            return RectangleF.FromLTRB(left, top, right, bottom);
+            middleCenterX = ((middleCenterX * 2) - 1) / 2;
+            middleCenterY = ((middleCenterY * 2) - 1) / 2;
+            var outerRadiusSquared = radius * radius;
+            var dx = x - middleCenterX;
+            var dy = y - middleCenterY;
+            var distanceSquared = dx * dx + dy * dy;
+            return distanceSquared <= outerRadiusSquared;
+        }
+
+        public static bool IsPointInEllipse(float middleCenterX, float middleCenterY, float radiusWidth, float radiusHeight, int x, int y)
+        {
+            middleCenterX -= 0.5f;
+            middleCenterY -= 0.5f;
+            //
+            return Math.Pow(x - middleCenterX, 2) / Math.Pow(radiusWidth, 2) + Math.Pow(y - middleCenterY, 2) / Math.Pow(radiusHeight, 2) <= 1;
         }
     }
 }

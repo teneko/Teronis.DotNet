@@ -47,8 +47,12 @@ namespace Teronis.NetStandard.Extensions
             return new string(a);
         }
 
-        public static string TrimEnd(this string source, string value) => (source?.EndsWith(value) ?? false) ? source.Remove(source.LastIndexOf(value, StringComparison.Ordinal)) : source;
+        public static string TrimEnd(this string source, string value)
+            => (source?.EndsWith(value) ?? false) ? source.Remove(source.LastIndexOf(value, StringComparison.Ordinal)) : source;
 
-        public static string TrimStart(this string source, string value) => (source?.StartsWith(value) ?? false) ? source.Remove(source.IndexOf(value, StringComparison.Ordinal), value.Length) : source;
+        public static string TrimStart(this string source, string value) 
+            => (source?.StartsWith(value) ?? false) ? source.Remove(source.IndexOf(value, StringComparison.Ordinal), value.Length) : source;
+
+        public static string DecodeHtml(this string htmlText) => htmlText.Replace("&nbsp;", " ").Replace("\n", "").Replace("\t", "").Trim();
     }
 }

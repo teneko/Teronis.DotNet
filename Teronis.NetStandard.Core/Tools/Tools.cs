@@ -72,11 +72,11 @@ namespace Teronis.NetStandard.Tools
         public static O ReturnReturnValue<I, O>(I inValue, Func<I, O> getReturnValue) => getReturnValue(inValue);
 
         // Useful for unsubscribing inline event handlers.
-        public static T ReturnDefaultReplacement<T>(Func<Wrapper<T>, T> getDefaultValueReplacement)
+        public static T ReturnDefaultReplacement<T>(Func<WrappedValue<T>, T> getDefaultValueReplacement)
         {
-            var defaultValueWrapper = new Wrapper<T>(default);
-            defaultValueWrapper.Item = getDefaultValueReplacement(defaultValueWrapper);
-            return defaultValueWrapper.Item;
+            var defaultValueWrapper = new WrappedValue<T>(default);
+            defaultValueWrapper.Value = getDefaultValueReplacement(defaultValueWrapper);
+            return defaultValueWrapper.Value;
         }
 
         public static int ShiftAndWrap(int value, int positions)

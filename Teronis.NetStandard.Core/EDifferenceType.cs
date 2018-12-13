@@ -4,10 +4,10 @@ using System.Text;
 
 namespace Teronis.NetStandard
 {
-    public class Wrapper<T>
+    public enum ECompareOperator
     {
-        public T Item { get; set; }
-
-        public Wrapper(T item) => Item = item;
+        Add,
+        Update,
+        Remove
     }
 }

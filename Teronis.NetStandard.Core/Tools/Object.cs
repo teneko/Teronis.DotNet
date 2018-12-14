@@ -32,5 +32,22 @@ namespace Teronis.NetStandard.Tools
             var pi = instance.GetType().GetField(fieldName, 0);
             return (ValueType)pi.GetValue(instance);
         }
+
+        public static object GetNestedObject(object obj, string path, int startIndex = 0)
+        {
+            if (startIndex < 0)
+                throw new IndexOutOfRangeException("The start index cannot be negative.");
+
+            object getNestedValue(object value, string pathPart) => value.GetType().GetProperty(pathPart).GetValue(value);
+
+            foreach (var partedPath in path.Split('.')) {
+                if (startIndex > 0)
+                    startIndex--;
+                else
+                    obj = getNestedValue(obj, partedPath);
+            }
+
+            return obj;
+        }
     }
 }

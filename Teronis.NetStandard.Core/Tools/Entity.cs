@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -22,12 +23,12 @@ namespace Teronis.NetStandard.Tools
                 varInfo.SetValue(leftEntity, varInfo.GetValue(rightEntity));
         }
 
-        //public static void UpdateModelEntity<T, A>(T leftEntity, T rightEntity, A filterByAttr)
-        //    where A : Attribute
-        //{
-        //    var variableInfos = typeof(T).GetVar<A>(settings).Select(x => x.VarInfo);
-        //    updateModelEntity(leftEntity, rightEntity, variableInfos);
-        //}
+        public static void UpdateModelEntity<T, A>(T leftEntity, T rightEntity, Type interruptAtBaseType = null)
+            where A : Attribute
+        {
+            var variableInfos = typeof(T).GetAttributeVariableInfos<A>(getSettings()).Select(x => x.VarInfo);
+            UpdateModelEntity(leftEntity, rightEntity, variableInfos);
+        }
 
         public static void UpdateModelEntity<T>(T leftEntity, T rightEntity, Type interruptAtBaseType = null)
         {

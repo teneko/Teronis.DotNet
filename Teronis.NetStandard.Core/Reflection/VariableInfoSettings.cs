@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
-namespace Teronis.NetStandard
+namespace Teronis.NetStandard.Reflection
 {
     public sealed class VariableInfoSettings
     {

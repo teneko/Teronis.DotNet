@@ -33,25 +33,21 @@ namespace Teronis.NetStandard.Tools
 
         public static bool ReturnIsFunctional<T>(Func<T> getInValue, out T outInValue) where T : class => ReturnBoolValue(getInValue?.Invoke(), out outInValue, getInValue != null);
 
-        //public static bool ReturnBoolValue<T>(T mindlessInValue, bool returnValue) => returnValue;
-
-        //public static bool ReturnBoolValue<T>(T mindlessInValue, Func<bool> getReturnValue) => getReturnValue();
-
-        //public static bool ReturnBoolValue<T>(T mindlessInValue, Func<T, bool> getReturnValue) => getReturnValue(mindlessInValue);
-
         public static I ReturnInValue<I>(I inValue, out I outInValue)
         {
             outInValue = inValue;
             return inValue;
         }
 
-        public static T ReturnInValue<T>(T inValue, Action<T> modifyInValue) where T : class
+        public static T ReturnInValue<T>(T inValue, Action<T> modifyInValue)
         {
             modifyInValue(inValue);
             return inValue;
         }
 
-        public static I ReturnInValue<I>(I retInput, Action doSomething) where I : class
+        public static T ReturnInValue<T>(T inValue, Func<T, T> modifyInValue) => modifyInValue(inValue);
+
+        public static I ReturnInValue<I>(I retInput, Action doSomething)
         {
             doSomething();
             return retInput;
@@ -71,7 +67,9 @@ namespace Teronis.NetStandard.Tools
 
         public static O ReturnReturnValue<I, O>(I inValue, Func<I, O> getReturnValue) => getReturnValue(inValue);
 
-        // Useful for unsubscribing inline event handlers.
+        /// <summary>
+        /// Useful for unsubscribing inline event handlers.
+        /// </summary>
         public static T ReturnDefaultReplacement<T>(Func<WrappedValue<T>, T> getDefaultValueReplacement)
         {
             var defaultValueWrapper = new WrappedValue<T>(default);

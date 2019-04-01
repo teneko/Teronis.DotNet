@@ -55,5 +55,7 @@ namespace Teronis.NetStandard.Extensions
 
         public static bool HasInterface<T>(this object obj, out T typedObj)
              => obj.HasInterface<T>() ? ReturnBoolValue((T)obj, out typedObj, true) : ReturnBoolValue(default, out typedObj, false);
+
+        public static R RefSelf<I, R>(this I obj, Func<I, R> callbackFn) => callbackFn(obj);
     }
 }

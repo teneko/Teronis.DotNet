@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
 using Teronis.NetStandard.Tools;
+using Teronis.NetStandard.Reflection;
 
 namespace Teronis.NetStandard.Extensions
 {
@@ -31,7 +32,7 @@ namespace Teronis.NetStandard.Extensions
                     yield return varInfo;
         }
 
-        public static IEnumerable<VariableInfo> GetPropertyVariableInfos(this Type beginType, VariableInfoSettings settings = null, Type interruptAtType = null)
+        public static IEnumerable<VariableInfo> GetPropertyVariableInfos(this Type beginType, Type interruptAtType, VariableInfoSettings settings = null)
             => TypeTools.GetVariableInfos((_type, _flags) => GetPropertyVariableInfos(_type, _flags), beginType, settings, interruptAtType);
 
         public static AttributeVariableInfo<T> TryGetPropertyVariableInfoByAttribute<T>(this Type type, string propertyName, VariableInfoSettings settings = null, bool inherit = Constants.Inherit) where T : Attribute
@@ -42,7 +43,7 @@ namespace Teronis.NetStandard.Extensions
             return varInfo;
         }
 
-        public static IEnumerable<AttributeVariableInfo<T>> GetAttributePropertyVariableInfos<T>(this Type targetType, VariableInfoSettings settings = null, bool inherit = Constants.Inherit, Type interruptAtType = null) where T : Attribute
+        public static IEnumerable<AttributeVariableInfo<T>> GetPropertyAttributeVariableInfos<T>(this Type targetType, VariableInfoSettings settings = null, bool inherit = Constants.Inherit, Type interruptAtType = null) where T : Attribute
         {
             settings = settings ?? VariableInfoSettings.Default;
 
@@ -76,7 +77,7 @@ namespace Teronis.NetStandard.Extensions
                     yield return varInfo;
         }
 
-        public static IEnumerable<VariableInfo> GetFieldVariableInfos(this Type beginType, VariableInfoSettings settings = null, Type interruptAtType = null)
+        public static IEnumerable<VariableInfo> GetFieldVariableInfos(this Type beginType, Type interruptAtType, VariableInfoSettings settings = null)
             => TypeTools.GetVariableInfos((type, flags) => GetFieldVariableInfos(type, flags), beginType, settings, interruptAtType);
 
         public static AttributeVariableInfo<T> TryGetFieldAttributeVariableInfo<T>(this Type type, string fieldName, VariableInfoSettings settings = null, bool inherit = Constants.Inherit) where T : Attribute
@@ -113,12 +114,12 @@ namespace Teronis.NetStandard.Extensions
                 yield return field;
         }
 
-        public static IEnumerable<VariableInfo> GetVariableInfos(this Type type, VariableInfoSettings settings = null, Type interruptAtType = null)
+        public static IEnumerable<VariableInfo> GetVariableInfos(this Type type, Type interruptAtType, VariableInfoSettings settings = null)
         {
-            foreach (var property in type.GetPropertyVariableInfos(settings, interruptAtType))
+            foreach (var property in type.GetPropertyVariableInfos(interruptAtType, settings))
                 yield return property;
 
-            foreach (var field in type.GetFieldVariableInfos(settings, interruptAtType))
+            foreach (var field in type.GetFieldVariableInfos(interruptAtType, settings))
                 yield return field;
         }
 
@@ -127,13 +128,13 @@ namespace Teronis.NetStandard.Extensions
 
         public static IEnumerable<AttributeVariableInfo<T>> GetAttributeVariableInfos<T>(this Type type, VariableInfoSettings settings = null, bool inherit = Constants.Inherit, Type interruptAtType = null) where T : Attribute
         {
-            foreach (var property in GetAttributePropertyVariableInfos<T>(type, settings, inherit, interruptAtType))
+            foreach (var property in GetPropertyAttributeVariableInfos<T>(type, settings, inherit, interruptAtType))
                 yield return property;
 
             foreach (var field in GetFieldAttributeVariableInfos<T>(type, settings, inherit, interruptAtType))
                 yield return field;
         }
-        
+
         /// <returns>Returns null if passed attribute allows multiple declarations.</returns>
         public static AttributeVariableInfo<T>[] TryGetOrderedAttributeVariableInfos<T>(this Type type, VariableInfoSettings settings = null, bool inherit = Constants.Inherit) where T : Attribute, IZeroBasedIndex
         {

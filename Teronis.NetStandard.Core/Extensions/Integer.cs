@@ -17,6 +17,6 @@ namespace Teronis.NetStandard.Extensions
         /// returns 1 if x > y
         /// returns -1 if x < y
         /// </returns>
-        public static int CompareFasterTo(int x, int y) => ((x - y) >> 0x1F) | (int)((uint)-(x - y) >> 0x1F);
+        public static int CompareFasterTo(this int x, int y) => ((x - y) >> 0x1F) | (int)((uint)-(x - y) >> 0x1F);
     }
 }

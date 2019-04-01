@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using Teronis.NetStandard.Extensions;
+using Teronis.NetStandard.Reflection;
 
 namespace Teronis.NetStandard.Tools
 {
@@ -26,13 +27,13 @@ namespace Teronis.NetStandard.Tools
         public static void UpdateModelEntity<T, A>(T leftEntity, T rightEntity, Type interruptAtBaseType = null)
             where A : Attribute
         {
-            var variableInfos = typeof(T).GetAttributeVariableInfos<A>(getSettings()).Select(x => x.VarInfo);
+            var variableInfos = typeof(T).GetAttributeVariableInfos<A>(getSettings()).Select(x => x.VariableInfo);
             UpdateModelEntity(leftEntity, rightEntity, variableInfos);
         }
 
         public static void UpdateModelEntity<T>(T leftEntity, T rightEntity, Type interruptAtBaseType = null)
         {
-            var variableInfos = typeof(T).GetVariableInfos(getSettings(), interruptAtBaseType);
+            var variableInfos = typeof(T).GetVariableInfos(interruptAtBaseType, getSettings());
             UpdateModelEntity(leftEntity, rightEntity, variableInfos);
         }
     }

@@ -29,6 +29,13 @@ namespace Teronis.Tools.NetStandard
             UpdateModelEntity(leftEntity, rightEntity, variableInfos);
         }
 
+        /// <summary>
+        /// Call this, when you cannot define T as Type, but need to define A as Type.
+        /// </summary>
+        public static void UpdateModelEntity<T, A>(T leftEntity, T rightEntity, A attribute, Type interruptAtBaseType = null)
+            where A : Attribute
+            => UpdateModelEntity<T, A>(leftEntity, rightEntity, interruptAtBaseType);
+
         public static void UpdateModelEntity<T>(T leftEntity, T rightEntity, Type interruptAtBaseType = null)
         {
             var variableInfos = typeof(T).GetVariableInfos(interruptAtBaseType, getSettings());

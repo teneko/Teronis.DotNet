@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Teronis.Collections.Generic;
 using System.Collections.Specialized;
 using Teronis.Collections;
+using System.Collections;
 
 namespace Teronis.Extensions.NetStandard
 {
@@ -69,7 +70,7 @@ namespace Teronis.Extensions.NetStandard
             var rightValueIndex = 0;
             var leftValueIndexPairs = new List<ValueIndexPair<T>>();
             var rightValueIndexPairs = new List<ValueIndexPair<T>>();
-            var areEarlyInterationValuesEqual = true;
+            var areEarlyIterationValuesEqual = true;
 
             do {
                 if (hasLeftValue)
@@ -79,7 +80,7 @@ namespace Teronis.Extensions.NetStandard
                     hasRightValue = rightValuesEnumerator.MoveNext();
 
                 // Cancel if not a left or right value is available
-                if (!(hasLeftValue | hasRightValue))
+                if (!hasLeftValue || !hasRightValue)
                     break;
 
                 var leftValue = leftValuesEnumerator.Current;
@@ -92,20 +93,20 @@ namespace Teronis.Extensions.NetStandard
                     else {
                         leftValueIndexPairs.Add(new ValueIndexPair<T>(leftValue, leftValueIndex));
                         rightValueIndexPairs.Add(new ValueIndexPair<T>(rightValue, rightValueIndex));
-                        areEarlyInterationValuesEqual = false;
+                        areEarlyIterationValuesEqual = false;
                     }
 
                     leftValueIndex++;
                     rightValueIndex++;
                 } else if (hasLeftValue) {
-                    if (areEarlyInterationValuesEqual)
+                    if (areEarlyIterationValuesEqual)
                         yield return CollectionChange<T>.CreateLeft(NotifyCollectionChangedAction.Remove, leftValue, leftValueIndex);
                     else
                         leftValueIndexPairs.Add(new ValueIndexPair<T>(leftValue, leftValueIndex));
 
                     leftValueIndex++;
                 } else {
-                    if (areEarlyInterationValuesEqual)
+                    if (areEarlyIterationValuesEqual)
                         yield return CollectionChange<T>.CreateRight(NotifyCollectionChangedAction.Add, rightValue, rightValueIndex);
                     else
                         rightValueIndexPairs.Add(new ValueIndexPair<T>(rightValue, rightValueIndex));
@@ -115,7 +116,7 @@ namespace Teronis.Extensions.NetStandard
             } while (true);
 
             // Exit only if both lists were synced from early on
-            if (areEarlyInterationValuesEqual)
+            if (areEarlyIterationValuesEqual)
                 yield break;
 
             if (rightValueIndexPairs.Count != 0) {
@@ -127,7 +128,7 @@ namespace Teronis.Extensions.NetStandard
             } else {
                 var ttbRemovedValues = new List<CollectionChange<T>>();
                 var ttbMovedValues = new List<CollectionChange<T>>();
-                var ttbAddedValues = new List<ValueIndexPair<T>>();
+                //var ttbAddedValues = new List<ValueIndexPair<T>>();
 
                 for (leftValueIndex = leftValueIndexPairs.Count - 1; leftValueIndex >= 0; leftValueIndex--) {
                     var leftValueIndexPair = leftValueIndexPairs[leftValueIndex];

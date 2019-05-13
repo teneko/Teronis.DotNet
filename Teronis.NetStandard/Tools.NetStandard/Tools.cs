@@ -21,16 +21,16 @@ namespace Teronis.Tools.NetStandard
         /// <summary>
         /// Only relevant, when you cannot access <paramref name="inValue"/> in one liners, or when <paramref name="inValue"/> is not well initialized.
         /// </summary>
-        public static bool ReturnBoolValue<T>(T inValue, out T outInValue, Func<bool> getBoolValue) 
+        public static bool ReturnBoolValue<T>(T inValue, out T outInValue, Func<bool> getBoolValue)
             => ReturnBoolValue(inValue, out outInValue, getBoolValue());
 
         /// <summary>
         /// Only relevant, when you cannot access <paramref name="inValue"/> in one liners, or when <paramref name="inValue"/> is not well initialized.
         /// </summary>
-        public static bool ReturnBoolValue<T>(T inValue, out T outInValue, Func<T, bool> getBoolValue) 
+        public static bool ReturnBoolValue<T>(T inValue, out T outInValue, Func<T, bool> getBoolValue)
             => ReturnBoolValue(inValue, out outInValue, getBoolValue(inValue));
 
-        public static bool ReturnIsFunctional<T>(Func<T> getInValue, out T outInValue) 
+        public static bool ReturnIsFunctional<T>(Func<T> getInValue, out T outInValue)
             => ReturnBoolValue(getInValue == null ? default : getInValue(), out outInValue, getInValue != default);
 
         public static I ReturnInValue<I>(I inValue, out I outInValue)
@@ -45,7 +45,7 @@ namespace Teronis.Tools.NetStandard
             return inValue;
         }
 
-        public static T ReturnInValue<T>(T inValue, Func<T, T> modifyInValue) 
+        public static T ReturnInValue<T>(T inValue, Func<T, T> modifyInValue)
             => modifyInValue(inValue);
 
         public static I ReturnInValue<I>(I inValue, Action doSomething)
@@ -71,11 +71,11 @@ namespace Teronis.Tools.NetStandard
         /// <summary>
         /// Useful for unsubscribing inline event handlers.
         /// </summary>
-        public static T ReturnDefaultReplacement<T>(Func<ValueWrap<T>, T> getDefaultValueReplacement)
+        public static ValueWrap<T> ReturnDefaultReplacement<T>(Func<ValueWrap<T>, T> getDefaultValueReplacement)
         {
             var defaultValueWrapper = new ValueWrap<T>(default);
             defaultValueWrapper.Value = getDefaultValueReplacement(defaultValueWrapper);
-            return defaultValueWrapper.Value;
+            return defaultValueWrapper;
         }
 
         public static int ShiftAndWrap(int value, int positions)

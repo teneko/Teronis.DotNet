@@ -26,10 +26,12 @@ namespace Teronis.Extensions.NetStandard
             settings = settings ?? VariableInfoSettings.Default;
 
             foreach (var property in type.GetProperties(settings.Flags))
-                if (!(settings.ExcludeIfReadable && property.CanRead)
+                if ((!settings.IncludeIfReadable || property.CanRead)
+                    && (!settings.IncludeIfWritable || property.CanWrite)
+                    && (settings.IncludeByAttributeTypes == null || settings.IncludeByAttributeTypes.All(attrType => property.IsDefined(attrType, settings.IncludeByAttributeTypesInherit)))
+                    && !(settings.ExcludeIfReadable && property.CanRead)
                     && !(settings.ExcludeIfWritable && property.CanWrite)
-                    && (!settings.RequireReadability || property.CanRead)
-                    && (!settings.RequireWritablity || property.CanWrite)
+                    && (!(settings.ExcludeByAttributeTypes != null && settings.ExcludeByAttributeTypes.Any(attrType => property.IsDefined(attrType, settings.ExcludeByAttributeTypesInherit))))
                     && property.TryToVariableInfo(out var varInfo))
                     yield return varInfo;
         }
@@ -37,26 +39,29 @@ namespace Teronis.Extensions.NetStandard
         public static IEnumerable<VariableInfo> GetPropertyVariableInfos(this Type beginType, Type interruptAtType, VariableInfoSettings settings = null)
             => TypeTools.GetVariableInfos((_type, _flags) => GetPropertyVariableInfos(_type, _flags), beginType, settings, interruptAtType);
 
-        public static AttributeVariableInfo<T> TryGetPropertyVariableInfoByAttribute<T>(this Type type, string propertyName, VariableInfoSettings settings = null, bool inherit = Library.Inherit) where T : Attribute
+        public static AttributeVariableInfo<T> TryGetPropertyVariableInfoByAttribute<T>(this Type type, string propertyName, VariableInfoSettings settings = null, bool? getCustomAttributesInherit = null)
+            where T : Attribute
         {
             settings = settings ?? VariableInfoSettings.Default;
             var property = type.GetProperty(propertyName, settings.Flags);
-            property.TryToAttributePropertyVariableInfo(out AttributeVariableInfo<T> varInfo, inherit);
+            property.TryToAttributePropertyVariableInfo(out AttributeVariableInfo<T> varInfo, getCustomAttributesInherit);
             return varInfo;
         }
 
-        public static IEnumerable<AttributeVariableInfo<T>> GetPropertyAttributeVariableInfos<T>(this Type targetType, VariableInfoSettings settings = null, bool inherit = Library.Inherit, Type interruptAtType = null) where T : Attribute
+        public static IEnumerable<AttributeVariableInfo<T>> GetPropertyAttributeVariableInfos<T>(this Type targetType, VariableInfoSettings settings = null, Type interruptAtType = null, bool? getCustomAttributesInherit = null)
+            where T : Attribute
         {
             settings = settings ?? VariableInfoSettings.Default;
 
             foreach (var type in targetType.GetBaseTypes(interruptAtType))
                 foreach (var propertyInfo in type.GetProperties(settings.Flags))
-                    if (propertyInfo.TryToAttributePropertyVariableInfo(out AttributeVariableInfo<T> varInfo, inherit))
+                    if (propertyInfo.TryToAttributePropertyVariableInfo(out AttributeVariableInfo<T> varInfo, getCustomAttributesInherit))
                         yield return varInfo;
         }
 
-        static bool TryToAttributePropertyVariableInfo<T>(this PropertyInfo property, out AttributeVariableInfo<T> varInfo, bool inherit = Library.Inherit) where T : Attribute
-            => TypeTools.TryToAttributeVariableInfo(property, out varInfo, inherit);
+        static bool TryToAttributePropertyVariableInfo<T>(this PropertyInfo property, out AttributeVariableInfo<T> varInfo, bool? getCustomAttributesInherit = null)
+            where T : Attribute
+            => TypeTools.TryToAttributeVariableInfo(property, out varInfo, getCustomAttributesInherit);
 
         #endregion
 
@@ -75,28 +80,32 @@ namespace Teronis.Extensions.NetStandard
             settings = settings ?? VariableInfoSettings.Default;
 
             foreach (var field in type.GetFields(settings.Flags))
-                if (/* TODO: Take settings into account. */ field.TryToVariableInfo(out var varInfo))
+                if ((settings.IncludeByAttributeTypes == null || settings.IncludeByAttributeTypes.All(attrType => field.IsDefined(attrType, settings.IncludeByAttributeTypesInherit)))
+                    && (!(settings.ExcludeByAttributeTypes != null && settings.ExcludeByAttributeTypes.Any(attrType => field.IsDefined(attrType, settings.ExcludeByAttributeTypesInherit))))
+                    && field.TryToVariableInfo(out var varInfo))
                     yield return varInfo;
         }
 
         public static IEnumerable<VariableInfo> GetFieldVariableInfos(this Type beginType, Type interruptAtType, VariableInfoSettings settings = null)
             => TypeTools.GetVariableInfos((type, flags) => GetFieldVariableInfos(type, flags), beginType, settings, interruptAtType);
 
-        public static AttributeVariableInfo<T> TryGetFieldAttributeVariableInfo<T>(this Type type, string fieldName, VariableInfoSettings settings = null, bool inherit = Library.Inherit) where T : Attribute
+        public static AttributeVariableInfo<T> TryGetFieldAttributeVariableInfo<T>(this Type type, string fieldName, VariableInfoSettings settings = null, bool? getCustomAttributesInherit = null)
+            where T : Attribute
         {
             settings = settings ?? VariableInfoSettings.Default;
             var field = type.GetField(fieldName, settings.Flags);
-            field.TryToAttrVarInfo(out AttributeVariableInfo<T> varInfo, inherit);
+            field.TryToAttrVarInfo(out AttributeVariableInfo<T> varInfo, getCustomAttributesInherit);
             return varInfo;
         }
 
-        public static IEnumerable<AttributeVariableInfo<T>> GetFieldAttributeVariableInfos<T>(this Type targetType, VariableInfoSettings settings = null, bool inherit = Library.Inherit, Type interruptAtType = null) where T : Attribute
+        public static IEnumerable<AttributeVariableInfo<T>> GetFieldAttributeVariableInfos<T>(this Type targetType, VariableInfoSettings settings = null, Type interruptAtType = null, bool? getCustomAttributesInherit = null)
+            where T : Attribute
         {
             settings = settings ?? VariableInfoSettings.Default;
 
             foreach (var type in targetType.GetBaseTypes(interruptAtType))
                 foreach (var fieldInfo in type.GetFields(settings.Flags))
-                    if (fieldInfo.TryToAttrVarInfo(out AttributeVariableInfo<T> varInfo, inherit))
+                    if (fieldInfo.TryToAttrVarInfo(out AttributeVariableInfo<T> varInfo, getCustomAttributesInherit))
                         yield return varInfo;
         }
 
@@ -125,25 +134,28 @@ namespace Teronis.Extensions.NetStandard
                 yield return field;
         }
 
-        public static AttributeVariableInfo<T> TryGetAttributeVariableInfo<T>(this Type type, string varName, VariableInfoSettings settings = null, bool inherit = Library.Inherit) where T : Attribute
-            => type.TryGetPropertyVariableInfoByAttribute<T>(varName, settings, inherit) ?? type.TryGetFieldAttributeVariableInfo<T>(varName, settings, inherit);
+        public static AttributeVariableInfo<T> TryGetAttributeVariableInfo<T>(this Type type, string varName, VariableInfoSettings settings = null, bool? getCustomAttributesInherit = null)
+            where T : Attribute
+            => type.TryGetPropertyVariableInfoByAttribute<T>(varName, settings, getCustomAttributesInherit) ?? type.TryGetFieldAttributeVariableInfo<T>(varName, settings, getCustomAttributesInherit);
 
-        public static IEnumerable<AttributeVariableInfo<T>> GetAttributeVariableInfos<T>(this Type type, VariableInfoSettings settings = null, bool inherit = Library.Inherit, Type interruptAtType = null) where T : Attribute
+        public static IEnumerable<AttributeVariableInfo<T>> GetAttributeVariableInfos<T>(this Type type, VariableInfoSettings settings = null, Type interruptAtType = null, bool? getCustomAttributesInherit = null)
+            where T : Attribute
         {
-            foreach (var property in GetPropertyAttributeVariableInfos<T>(type, settings, inherit, interruptAtType))
+            foreach (var property in GetPropertyAttributeVariableInfos<T>(type, settings, interruptAtType, getCustomAttributesInherit))
                 yield return property;
 
-            foreach (var field in GetFieldAttributeVariableInfos<T>(type, settings, inherit, interruptAtType))
+            foreach (var field in GetFieldAttributeVariableInfos<T>(type, settings, interruptAtType, getCustomAttributesInherit))
                 yield return field;
         }
 
         /// <returns>Returns null if passed attribute allows multiple declarations.</returns>
-        public static AttributeVariableInfo<T>[] TryGetOrderedAttributeVariableInfos<T>(this Type type, VariableInfoSettings settings = null, bool inherit = Library.Inherit) where T : Attribute, IZeroBasedIndex
+        public static AttributeVariableInfo<T>[] TryGetOrderedAttributeVariableInfos<T>(this Type type, VariableInfoSettings settings = null, Type interruptAtType = null, bool? getCustomAttributesInherit = null)
+            where T : Attribute, IZeroBasedIndex
         {
             if (typeof(T).GetCustomAttribute<AttributeUsageAttribute>().AllowMultiple)
                 return null;
 
-            var vars = GetAttributeVariableInfos<T>(type, settings, inherit).ToList();
+            var vars = GetAttributeVariableInfos<T>(type, settings, interruptAtType, getCustomAttributesInherit).ToList();
             var array = new AttributeVariableInfo<T>[vars.Count];
 
             foreach (var variable in vars)

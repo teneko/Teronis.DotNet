@@ -9,7 +9,6 @@ namespace Teronis.Tools.NetStandard
 {
     public static class TypeTools
     {
-        private const bool inherit = Library.Inherit;
         #region variable info
 
         /// <param name="originalVarInfo">Pass either <see cref="PropertyInfo"/> or <see cref="FieldInfo"/>.</param>
@@ -41,23 +40,24 @@ namespace Teronis.Tools.NetStandard
             }
 
             foreach (var type in beginAt.GetBaseTypes(interruptAt))
-                foreach (var varInfo in getVariableInfos(type, (VariableInfoSettings)settings))
+                foreach (var varInfo in getVariableInfos(type, settings))
                     yield return varInfo;
         }
 
         /// <param name="originalVarInfo">Pass <see cref="PropertyInfo"/> or <see cref="FieldInfo"/>.</param>
-        public static bool TryToAttributeVariableInfo<T>(dynamic originalVarInfo, out AttributeVariableInfo<T> attrVarInfo, bool inherit = Library.Inherit) where T : Attribute
+        public static bool TryToAttributeVariableInfo<T>(dynamic originalVarInfo, out AttributeVariableInfo<T> attrVarInfo, bool? getCustomAttributesInherit = null) where T : Attribute
         {
             if (originalVarInfo != null) {
                 if (originalVarInfo.IsDefined(typeof(T), false)) {
                     VariableInfo varInfo;
 
-                    var hasFound = originalVarInfo is FieldInfo ?
-                        FieldInfoExtensions.TryToVariableInfo(originalVarInfo, out varInfo) : originalVarInfo is PropertyInfo ?
-                        PropertyInfoExtensions.TryToVariableInfo(originalVarInfo, out varInfo) :
-                        throw new ArgumentException($"The original variable info could not be converted neither to a field nor to a property.");
+                    var hasFound = originalVarInfo is FieldInfo
+                        ? FieldInfoExtensions.TryToVariableInfo(originalVarInfo, out varInfo)
+                        : (originalVarInfo is PropertyInfo
+                            ? PropertyInfoExtensions.TryToVariableInfo(originalVarInfo, out varInfo)
+                            : throw new ArgumentException($"The original variable info could not be converted neither to a field nor to a property."));
 
-                    attrVarInfo = new AttributeVariableInfo<T>(varInfo, inherit);
+                    attrVarInfo = new AttributeVariableInfo<T>(varInfo, getCustomAttributesInherit);
                     return true;
                 }
             }
@@ -67,9 +67,9 @@ namespace Teronis.Tools.NetStandard
         }
 
         /// <param name="originalVarInfo">Pass <see cref="PropertyInfo"/> or <see cref="FieldInfo"/>.</param>
-        public static AttributeVariableInfo<T> TryToAttributeVariableInfo<T>(object originalVarInfo, bool inherit = TypeTools.inherit) where T : Attribute
+        public static AttributeVariableInfo<T> TryToAttributeVariableInfo<T>(object originalVarInfo, bool? getCustomAttributesInherit = null) where T : Attribute
         {
-            TryToAttributeVariableInfo(originalVarInfo, out AttributeVariableInfo<T> attrVarInfo, inherit);
+            TryToAttributeVariableInfo(originalVarInfo, out AttributeVariableInfo<T> attrVarInfo, getCustomAttributesInherit);
             return attrVarInfo;
         }
 

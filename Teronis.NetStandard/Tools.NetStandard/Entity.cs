@@ -9,37 +9,48 @@ namespace Teronis.Tools.NetStandard
 {
     public static class EntityTools
     {
-        private static VariableInfoSettings getSettings() => new VariableInfoSettings()
-        {
+        public static VariableInfoSettings GetDefaultVariableInfosSettings() => new VariableInfoSettings() {
             Flags = BindingFlags.Public | BindingFlags.Instance,
-            RequireReadability = true,
-            RequireWritablity = true,
+            IncludeIfReadable = true,
+            IncludeIfWritable = true,
         };
 
-        public static void UpdateModelEntity<T>(T leftEntity, T rightEntity, IEnumerable<VariableInfo> variableInfos)
+        public static void UpdateEntityVariables<T>(T leftEntity, T rightEntity, IEnumerable<VariableInfo> variableInfos)
         {
             foreach (var varInfo in variableInfos)
                 varInfo.SetValue(leftEntity, varInfo.GetValue(rightEntity));
         }
 
-        public static void UpdateModelEntity<T, A>(T leftEntity, T rightEntity, Type interruptAtBaseType = null)
+        public static void UpdateEntityVariables<T>(T leftEntity, T rightEntity, VariableInfoSettings variableInfoSettings = null, Type interruptAtBaseType = null)
+        {
+            var entityType = leftEntity?.GetType();
+
+            if (entityType == null)
+                return;
+
+            variableInfoSettings = variableInfoSettings ?? GetDefaultVariableInfosSettings();
+            var variableInfos = entityType.GetVariableInfos(interruptAtBaseType, variableInfoSettings);
+            UpdateEntityVariables(leftEntity, rightEntity, variableInfos);
+        }
+
+        public static void UpdateEntityVariablesByAttribute<T, A>(T leftEntity, T rightEntity, VariableInfoSettings variableInfoSettings = null, Type interruptAtBaseType = null)
             where A : Attribute
         {
-            var variableInfos = typeof(T).GetAttributeVariableInfos<A>(getSettings()).Select(x => x.VariableInfo);
-            UpdateModelEntity(leftEntity, rightEntity, variableInfos);
+            var entityType = leftEntity?.GetType();
+
+            if (entityType == null)
+                return;
+
+            variableInfoSettings = variableInfoSettings ?? GetDefaultVariableInfosSettings();
+            var variableInfos = entityType.GetAttributeVariableInfos<A>(variableInfoSettings).Select(x => x.VariableInfo);
+            UpdateEntityVariables(leftEntity, rightEntity, variableInfos);
         }
 
         /// <summary>
         /// Call this, when you cannot define T as Type, but need to define A as Type.
         /// </summary>
-        public static void UpdateModelEntity<T, A>(T leftEntity, T rightEntity, A attribute, Type interruptAtBaseType = null)
+        public static void UpdateEntityVariablesByAttribute<T, A>(T leftEntity, T rightEntity, A attribute, VariableInfoSettings variableInfoSettings = null, Type interruptAtBaseType = null)
             where A : Attribute
-            => UpdateModelEntity<T, A>(leftEntity, rightEntity, interruptAtBaseType);
-
-        public static void UpdateModelEntity<T>(T leftEntity, T rightEntity, Type interruptAtBaseType = null)
-        {
-            var variableInfos = typeof(T).GetVariableInfos(interruptAtBaseType, getSettings());
-            UpdateModelEntity(leftEntity, rightEntity, variableInfos);
-        }
+            => UpdateEntityVariablesByAttribute<T, A>(leftEntity, rightEntity, variableInfoSettings, interruptAtBaseType);
     }
 }

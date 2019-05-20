@@ -11,7 +11,7 @@ namespace Teronis.Extensions.NetStandard
         {
             Func<int, object> getAt = (index) => source[index];
             Action<int> removeAt = (index) => source.RemoveAt(index);
-            return SwapTools.Swap(fromIndex, toIndex, insertAt, getAt, removeAt);
+            return ListTools.SwapItem(fromIndex, toIndex, insertAt, getAt, removeAt);
         }
 
         // for IList

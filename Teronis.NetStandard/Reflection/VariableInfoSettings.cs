@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using Teronis.Libraries.NetStandard;
 
 namespace Teronis.Reflection
 {
@@ -9,18 +10,21 @@ namespace Teronis.Reflection
     {
         public static readonly VariableInfoSettings Default = new VariableInfoSettings();
 
-        public VariableInfoSettings() {
-            Flags = BindingFlags.Instance | BindingFlags.Public;
-            ExcludeIfReadable = false;
-            ExcludeIfWritable = false;
-            RequireReadability = false;
-            RequireWritablity = false;
-        }
-
         public BindingFlags Flags;
         public bool ExcludeIfReadable;
         public bool ExcludeIfWritable;
-        public bool RequireReadability;
-        public bool RequireWritablity;
+        public bool IncludeIfReadable;
+        public bool IncludeIfWritable;
+        public IEnumerable<Type> ExcludeByAttributeTypes;
+        public bool ExcludeByAttributeTypesInherit;
+        public IEnumerable<Type> IncludeByAttributeTypes;
+        public bool IncludeByAttributeTypesInherit;
+
+        public VariableInfoSettings()
+        {
+            Flags = BindingFlags.Instance | BindingFlags.Public;
+            ExcludeByAttributeTypesInherit = Library.GetCustomAttributesInherit;
+            IncludeByAttributeTypesInherit = Library.GetCustomAttributesInherit;
+        }
     }
 }

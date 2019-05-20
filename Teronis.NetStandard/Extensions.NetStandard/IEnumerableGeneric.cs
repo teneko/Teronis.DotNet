@@ -60,7 +60,7 @@ namespace Teronis.Extensions.NetStandard
         /// <param name="rightValues"></param>
         /// <param name="equalityComparer"></param>
         /// <returns></returns>
-        public static IEnumerable<CollectionChange<T>> GetCollectionDifferences<T>(this IEnumerable<T> leftValues, IEnumerable<T> rightValues, IEqualityComparer<T> equalityComparer)
+        public static IEnumerable<CollectionChange<T>> GetCollectionChanges<T>(this IEnumerable<T> leftValues, IEnumerable<T> rightValues, IEqualityComparer<T> equalityComparer)
         {
             var leftValuesEnumerator = leftValues.GetEnumerator();
             var rightValuesEnumerator = rightValues.GetEnumerator();
@@ -73,18 +73,30 @@ namespace Teronis.Extensions.NetStandard
             var areEarlyIterationValuesEqual = true;
 
             do {
-                if (hasLeftValue)
+                T leftValue;
+                T rightValue;
+
+                if (hasLeftValue) {
                     hasLeftValue = leftValuesEnumerator.MoveNext();
+                }
 
                 if (hasRightValue)
                     hasRightValue = rightValuesEnumerator.MoveNext();
 
                 // Cancel if not a left or right value is available
-                if (!hasLeftValue || !hasRightValue)
+                //if (!hasLeftValue || !hasRightValue)
+                if (!(hasLeftValue | hasRightValue))
                     break;
 
-                var leftValue = leftValuesEnumerator.Current;
-                var rightValue = rightValuesEnumerator.Current;
+                if (hasLeftValue)
+                    leftValue = leftValuesEnumerator.Current;
+                else
+                    leftValue = default;
+
+                if (hasRightValue)
+                    rightValue = rightValuesEnumerator.Current;
+                else
+                    rightValue = default;
 
                 if (hasLeftValue && hasRightValue) {
                     if (equalityComparer.Equals(leftValue, rightValue))
@@ -119,17 +131,20 @@ namespace Teronis.Extensions.NetStandard
             if (areEarlyIterationValuesEqual)
                 yield break;
 
-            if (rightValueIndexPairs.Count != 0) {
+            if (leftValueIndexPairs.Count == 0 && rightValueIndexPairs.Count != 0) {
                 foreach (var rightValueIndexPair in rightValueIndexPairs)
                     yield return CollectionChange<T>.CreateRight(NotifyCollectionChangedAction.Add, rightValueIndexPair.Value, rightValueIndexPair.Index);
-            } else if (leftValueIndexPairs.Count != 0) {
+            } else if (rightValueIndexPairs.Count == 0 && leftValueIndexPairs.Count != 0) {
                 foreach (var leftValueIndexPair in leftValueIndexPairs)
                     yield return CollectionChange<T>.CreateLeft(NotifyCollectionChangedAction.Remove, leftValueIndexPair.Value, leftValueIndexPair.Index);
             } else {
-                var ttbRemovedValues = new List<CollectionChange<T>>();
-                var ttbMovedValues = new List<CollectionChange<T>>();
+                var removableValues = new List<CollectionChange<T>>();
+                var movableValues = new List<CollectionChange<T>>();
                 //var ttbAddedValues = new List<ValueIndexPair<T>>();
 
+                /* We want to check, if each left value does exist on right side. 
+                 * If so, we move it, otherwise we remove it.
+                 */
                 for (leftValueIndex = leftValueIndexPairs.Count - 1; leftValueIndex >= 0; leftValueIndex--) {
                     var leftValueIndexPair = leftValueIndexPairs[leftValueIndex];
                     ValueIndexPair<ValueIndexPair<T>>? foundRightValueIndexPair = null;
@@ -137,26 +152,34 @@ namespace Teronis.Extensions.NetStandard
                     for (rightValueIndex = rightValueIndexPairs.Count - 1; rightValueIndex >= 0; rightValueIndex--) {
                         var rightValueIndexPair = rightValueIndexPairs[rightValueIndex];
 
-                        if (equalityComparer.Equals(leftValueIndexPair))
+                        if (equalityComparer.Equals(leftValueIndexPair.Value, rightValueIndexPair.Value))
                             foundRightValueIndexPair = new ValueIndexPair<ValueIndexPair<T>>(rightValueIndexPair, rightValueIndex);
                     }
 
                     if (foundRightValueIndexPair == null) {
-                        ttbRemovedValues.Add(CollectionChange<T>.CreateLeft(NotifyCollectionChangedAction.Remove, leftValueIndexPair.Value, leftValueIndexPair.Index));
+                        removableValues.Add(CollectionChange<T>.CreateLeft(NotifyCollectionChangedAction.Remove, leftValueIndexPair.Value, leftValueIndexPair.Index));
                     } else {
-                        ttbMovedValues.Add(new CollectionChange<T>(NotifyCollectionChangedAction.Move, leftValueIndexPair.Value, leftValueIndexPair.Index, foundRightValueIndexPair.Value.Value.Value, foundRightValueIndexPair.Value.Value.Index));
+                        movableValues.Add(new CollectionChange<T>(NotifyCollectionChangedAction.Move, leftValueIndexPair.Value, leftValueIndexPair.Index, foundRightValueIndexPair.Value.Value.Value, foundRightValueIndexPair.Value.Value.Index));
                         rightValueIndexPairs.RemoveAt(foundRightValueIndexPair.Value.Index);
                     }
 
                     leftValueIndexPairs.RemoveAt(leftValueIndex);
                 }
 
+                foreach (var removableValue in removableValues)
+                    yield return removableValue;
+
                 foreach (var rightValueIndexPair in rightValueIndexPairs)
                     yield return CollectionChange<T>.CreateRight(NotifyCollectionChangedAction.Add, rightValueIndexPair.Value, rightValueIndexPair.Index);
+
+                foreach (var movableValue in movableValues) {
+                    yield return movableValue;
+                    yield return CollectionChange<T>.CreateLeft(NotifyCollectionChangedAction.Replace, movableValue.RightValue, movableValue.RightIndex);
+                }
             }
         }
 
-        public static IEnumerable<CollectionChange<T>> GetCollectionDifferences<T>(this IEnumerable<T> leftValues, IEnumerable<T> rightValues)
-            => GetCollectionDifferences(leftValues, rightValues, EqualityComparer<T>.Default);
+        public static IEnumerable<CollectionChange<T>> GetCollectionChanges<T>(this IEnumerable<T> leftValues, IEnumerable<T> rightValues)
+            => GetCollectionChanges(leftValues, rightValues, EqualityComparer<T>.Default);
     }
 }

@@ -32,10 +32,10 @@ namespace Teronis.Reflection
             GetCustomAttributes = getCustomAttributes;
         }
 
-        public bool TryGetAttrVarInfo<A>(out AttributeVariableInfo<A> attrVarInfo, bool inherit = Library.Inherit) where A : Attribute 
+        public bool TryGetAttrVarInfo<A>(out AttributeVariableInfo<A> attrVarInfo, bool inherit = Library.GetCustomAttributesInherit) where A : Attribute 
             => TypeTools.TryToAttributeVariableInfo(OriginalVariableInfo, out attrVarInfo, inherit);
 
-        public AttributeVariableInfo<A> TryGetAttrVarInfo<A>(bool inherit = Library.Inherit) where A : Attribute 
+        public AttributeVariableInfo<A> TryGetAttrVarInfo<A>(bool inherit = Library.GetCustomAttributesInherit) where A : Attribute 
             => TypeTools.TryToAttributeVariableInfo<A>(OriginalVariableInfo, inherit);
     }
 }

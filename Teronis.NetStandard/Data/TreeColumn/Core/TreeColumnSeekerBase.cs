@@ -10,20 +10,20 @@ namespace Teronis.Data.TreeColumn.Core
         where TreeColumnValueType : ITreeColumnValue<TreeColumnKeyType>
     {
         public IDictionary<TreeColumnKey, ITreeColumnValue<TreeColumnKeyType>> TreeColumnDefinitionByKey { get; private set; }
-        public Type MightOwnTreeColumnsType { get; private set; }
+        public Type TreeColumnsHolderType { get; private set; }
 
-        public TreeColumnSeekerBase(Type mightOwnTreeColumnsType)
+        public TreeColumnSeekerBase(Type treeColumnsHolderType)
         {
             TreeColumnDefinitionByKey = new Dictionary<TreeColumnKey, ITreeColumnValue<TreeColumnKeyType>>();
-            MightOwnTreeColumnsType = mightOwnTreeColumnsType;
+            TreeColumnsHolderType = treeColumnsHolderType;
         }
 
         protected abstract TreeColumnValueType instantiateTreeColumnValue(TreeColumnKeyType key, string path, int index);
 
         public IDictionary<TreeColumnKeyType, TreeColumnValueType> SearchTreeColumnDefinitions(IList<TreeColumnKeyType> treeColumnOrdering)
         {
-            /// Cache for declaration paths of children that are decorated with <see cref="MightOwnTreeColumnsAttribute"/>
-            var columnDefinitionsByParent = new List<(Type DeclaringType, string Path)>(new[] { (MightOwnTreeColumnsType, default(string)) });
+            /// Cache for declaration paths of children that are decorated with <see cref="HasTreeColumnsAttribute"/>
+            var columnDefinitionsByParent = new List<(Type DeclaringType, string Path)>(new[] { (TreeColumnsHolderType, default(string)) });
             var treeColumnDefinitions = new OrderedDictionary<TreeColumnKeyType, TreeColumnValueType>();
 
             while (columnDefinitionsByParent.Count > 0) {
@@ -44,7 +44,7 @@ namespace Teronis.Data.TreeColumn.Core
                 var parentPath = parent.Path;
 
                 // We cache declaration path children that are existing in the current declaration path
-                foreach (var varInfo in declaringType.GetPropertyAttributeVariableInfos<MightOwnTreeColumnsAttribute>()) {
+                foreach (var varInfo in declaringType.GetPropertyAttributeVariableInfos<HasTreeColumnsAttribute>()) {
                     var propertyName = varInfo.VariableInfo.Name;
                     string combinedPath = combinePath(parentPath, varInfo.VariableInfo.Name);
                     columnDefinitionsByParent.Add((varInfo.VariableInfo.ValueType, combinedPath));

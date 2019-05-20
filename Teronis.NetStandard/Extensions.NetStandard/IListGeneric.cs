@@ -17,14 +17,14 @@ namespace Teronis.Extensions.NetStandard
             }
         }
 
-        public static void Shift<T>(this IList<T> list, T from, T to)
+        public static void Move<T>(this IList<T> list, T from, T to)
         {
             var fromIndex = list.IndexOf(from);
             var toIndex = list.IndexOf(to);
-            Shift(list, fromIndex, toIndex);
+            Move(list, fromIndex, toIndex);
         }
 
-        public static void Shift<T>(this IList<T> list, int fromIndex, int toIndex)
-            => ShiftTools.Shift<IList<T>, T>(fromIndex, toIndex, (index) => list[index], (index, item) => list.Insert(index, item), (index) => list.RemoveAt(index));
+        public static void Move<T>(this IList<T> list, int fromIndex, int toIndex)
+            => ListTools.MoveItem<IList<T>, T>(fromIndex, toIndex, (index) => list[index], (index, item) => list.Insert(index, item), (index) => list.RemoveAt(index));
     }
 }

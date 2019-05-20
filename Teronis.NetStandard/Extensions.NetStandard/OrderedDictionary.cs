@@ -12,7 +12,7 @@ namespace Teronis.Extensions.NetStandard
             Action<int, object> insertAt = (index, item) => source.Insert(index, (KeyValuePair<K, V>)item);
             Func<int, object> getAt = (index) => source[index];
             Action<int> removeAt = (index) => source.RemoveAt(index);
-            return SwapTools.Swap(fromIndex, toIndex, insertAt, getAt, removeAt);
+            return ListTools.SwapItem(fromIndex, toIndex, insertAt, getAt, removeAt);
         }
     }
 }

@@ -4,7 +4,7 @@ namespace Teronis.Data.TreeColumn.Core
 {
     public class TreeColumnKeyEqualityComparer : EqualityComparer<TreeColumnKey>
     {
-        public static readonly TreeColumnKeyEqualityComparer Instance = new TreeColumnKeyEqualityComparer();
+        public new static readonly TreeColumnKeyEqualityComparer Default = new TreeColumnKeyEqualityComparer();
 
         public override bool Equals(TreeColumnKey x, TreeColumnKey y)
         {

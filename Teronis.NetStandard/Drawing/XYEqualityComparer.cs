@@ -6,7 +6,7 @@ namespace Teronis.Drawing
 {
     public class XYEqualityComparer : EqualityComparer<IXY>
     {
-        public static XYEqualityComparer Instance { get; } = new XYEqualityComparer();
+        public new static XYEqualityComparer Default { get; } = new XYEqualityComparer();
 
         public override bool Equals(IXY x, IXY y)
         {

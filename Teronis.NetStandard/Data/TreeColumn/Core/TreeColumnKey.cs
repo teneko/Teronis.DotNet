@@ -13,9 +13,9 @@ namespace Teronis.Data.TreeColumn.Core
             VariableName = variableName;
         }
 
-        public bool Equals(TreeColumnKey other) => TreeColumnKeyEqualityComparer.Instance.Equals(this, other);
+        public bool Equals(TreeColumnKey other) => TreeColumnKeyEqualityComparer.Default.Equals(this, other);
 
         public override bool Equals(object obj) => Equals(obj as TreeColumnKey);
-        public override int GetHashCode() => TreeColumnKeyEqualityComparer.Instance.GetHashCode(this);
+        public override int GetHashCode() => TreeColumnKeyEqualityComparer.Default.GetHashCode(this);
     }
 }

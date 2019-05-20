@@ -11,7 +11,7 @@ namespace Teronis.Extensions.NetStandard
         public static bool TryToVariableInfo(this FieldInfo field, out VariableInfo varInfo)
             => TypeTools.TryToVariableInfo(field, () => field.Name, () => field.FieldType, out varInfo);
 
-        public static bool TryToAttrVarInfo<T>(this FieldInfo field, out AttributeVariableInfo<T> varInfo, bool inherit = Library.Inherit) where T : Attribute
-            => TypeTools.TryToAttributeVariableInfo(field, out varInfo, inherit);
+        public static bool TryToAttrVarInfo<T>(this FieldInfo field, out AttributeVariableInfo<T> varInfo, bool? getCustomAttributesInherit = null) where T : Attribute
+            => TypeTools.TryToAttributeVariableInfo(field, out varInfo, getCustomAttributesInherit);
     }
 }

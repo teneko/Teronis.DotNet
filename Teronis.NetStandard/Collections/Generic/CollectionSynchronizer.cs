@@ -24,17 +24,17 @@ namespace Teronis.Collections.Generic
         public CollectionSynchronizer(TList collection) : this(collection, EqualityComparer<TItem>.Default) { }
 
         protected virtual void onValueRemoved(CollectionChange<TItem> change)
-            => Collection.Remove(change.LeftValue);
+            => Collection.Remove(change.OldValue);
 
         protected virtual void onValueAdded(CollectionChange<TItem> change)
-            => Collection.Insert(change.RightIndex, change.RightValue);
+            => Collection.Insert(change.NewIndex, change.NewValue);
 
         protected virtual void onValueMove(CollectionChange<TItem> change)
         {
             if (Collection is ObservableCollection<TItem> observableCollection)
-                observableCollection.Move(change.LeftIndex, change.RightIndex);
+                observableCollection.Move(change.OldIndex, change.NewIndex);
             else
-                Collection.Move(change.LeftIndex, change.RightIndex);
+                Collection.Move(change.OldIndex, change.NewIndex);
         }
 
         /// <summary>
@@ -61,8 +61,6 @@ namespace Teronis.Collections.Generic
                     case NotifyCollectionChangedAction.Replace:
                         onValueReplace(change);
                         break;
-                    default:
-                        throw new NotImplementedException();
                 }
 
                 CollectionChanged?.Invoke(this, change);

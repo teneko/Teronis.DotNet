@@ -18,9 +18,9 @@ namespace Teronis.Data
         }
 
         /// <summary>
-        /// The argument <paramref name="parent"/> will be added to the <see cref="Parents"/>, 
-        /// if <paramref name="parent"/> the same type of <see cref="WantedType"/> or if none 
-        /// <see cref="WantedType"/> is provided.
+        /// The <paramref name="parent"/> will be added to the <see cref="Parents"/>, 
+        /// if the type of <paramref name="parent"/> the same type of 
+        /// <see cref="WantedType"/> or if none <see cref="WantedType"/> is provided.
         /// </summary>
         public void AddParent(object parent)
         {

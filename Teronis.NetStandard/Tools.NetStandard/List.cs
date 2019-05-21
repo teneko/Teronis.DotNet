@@ -24,7 +24,7 @@ namespace Teronis.Tools.NetStandard
             if (fromIndex == toIndex)
                 return false;
             else {
-                var sortedList = new List<int> { fromIndex, toIndex }.SortAndReturn();
+                var sortedList = new List<int> { fromIndex, toIndex }.ReturnedSort();
                 swap(sortedList[0], sortedList[1]);
                 return true;
             }

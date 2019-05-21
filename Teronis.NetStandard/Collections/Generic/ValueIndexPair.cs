@@ -1,5 +1,7 @@
 ﻿
 
+using System;
+
 namespace Teronis.Collections.Generic
 {
     public struct ValueIndexPair<T>

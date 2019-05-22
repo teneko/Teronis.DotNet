@@ -177,8 +177,11 @@ namespace Teronis.Extensions.NetStandard
 
         public static bool HasDefaultConstructor(this Type type) => type.IsValueType || type.GetConstructor(Type.EmptyTypes) != null;
 
-        public static object InstantiateUninitializedObject(this Type type) => typeof(Instantiator<>).MakeGenericType(type).GetMethod(nameof(Instantiator<object>.Instantiate), BindingFlags.Public | BindingFlags.Static).Invoke(null, null);
+        public static object InstantiateUninitializedObject(this Type type)
+            => TypeTools.InstantiateUninitializedObject(type);
 
         public static bool HasInterface<T>(this Type type) => type != null && typeof(T).IsAssignableFrom(type);
+
+        public static bool IsNullable(Type type) => TypeTools.IsNullable(type);
     }
 }

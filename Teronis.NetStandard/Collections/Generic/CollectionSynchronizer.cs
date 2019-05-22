@@ -24,7 +24,7 @@ namespace Teronis.Collections.Generic
         public CollectionSynchronizer(TList collection) : this(collection, EqualityComparer<TItem>.Default) { }
 
         protected virtual void onValueRemoved(CollectionChange<TItem> change)
-            => Collection.Remove(change.OldValue);
+            => Collection.RemoveAt(change.OldIndex);
 
         protected virtual void onValueAdded(CollectionChange<TItem> change)
             => Collection.Insert(change.NewIndex, change.NewValue);

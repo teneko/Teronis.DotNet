@@ -1,5 +1,5 @@
 ﻿using System;
-using static Teronis.Tools.NetStandard.Tools;
+using Teronis.Tools.NetStandard;
 
 namespace Teronis.Extensions.NetStandard
 {
@@ -50,7 +50,7 @@ namespace Teronis.Extensions.NetStandard
         public static bool HasInterface<T>(this object obj) => obj != null && HasInterface<T>(obj.GetType());
 
         public static bool HasInterface<T>(this object obj, out T typedObj)
-             => obj.HasInterface<T>() ? ReturnBoolValue((T)obj, out typedObj, true) : ReturnBoolValue(default, out typedObj, false);
+             => obj.HasInterface<T>() ? GenericTools.ReturnValue((T)obj, out typedObj, true) : GenericTools.ReturnValue(default, out typedObj, false);
 
         public static R RefSelf<I, R>(this I obj, Func<I, R> callbackFn) => callbackFn(obj);
     }

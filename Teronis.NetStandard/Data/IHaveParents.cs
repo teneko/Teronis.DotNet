@@ -6,7 +6,7 @@ namespace Teronis.Data
 {
     public interface IHaveParents
     {
-        event EventHandler<ParentsEventArgs> WantParent;
+        event EventHandler<ParentsEventArgs> WantParents;
 
         ParentsContainer.ParentCollection GetParents(Type wantedParentType);
     }

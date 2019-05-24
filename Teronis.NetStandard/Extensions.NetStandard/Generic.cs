@@ -37,5 +37,11 @@ namespace Teronis.Extensions.NetStandard
 
         public static V ReturnValue<I, V>(this I inValue, Func<I, V> getValue)
             => GenericTools.ReturnValue(inValue, getValue);
+
+        public static TCloningObjectType ShallowCopy<TCloningObjectType, TCopyingObject>(this TCloningObjectType cloningObject, TCopyingObject copyingObject)
+            => GenericTools.ShallowCopy(cloningObject, copyingObject);
+
+        public static TCloningObjectType ShallowCopy<TCloningObjectType>(this TCloningObjectType cloningObject)
+            => GenericTools.ShallowCopy(cloningObject);
     }
 }

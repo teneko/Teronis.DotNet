@@ -75,14 +75,18 @@ namespace Teronis.Tools.NetStandard
 
         #endregion
 
-        public static bool IsNullable(Type type) {
+        public static bool IsNullable(Type type)
+        {
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
 
-        public static object InstantiateUninitializedObject(this Type type)
+        public static object InstantiateUninitializedObject(Type type)
             => typeof(Instantiator<>).MakeGenericType(type).GetMethod(nameof(Instantiator<object>.Instantiate), BindingFlags.Public | BindingFlags.Static).Invoke(null, null);
 
-        public static object GetDefault(Type type) {
+        public static object GetDefault(Type type)
+        {
+            type = type ?? throw new ArgumentNullException(nameof(type));
+
             if (type.IsValueType)
                 return InstantiateUninitializedObject(type);
             else

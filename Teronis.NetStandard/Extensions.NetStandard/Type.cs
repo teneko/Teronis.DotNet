@@ -4,13 +4,25 @@ using System.Collections.Generic;
 using System.Reflection;
 using Teronis.Tools.NetStandard;
 using Teronis.Reflection;
-using Teronis.NetStandard;
-using Teronis.Libraries.NetStandard;
 
 namespace Teronis.Extensions.NetStandard
 {
     public static class TypeExtensions
     {
+        public static bool IsNullable(this Type type)
+            => TypeTools.IsNullable(type);
+
+        public static object InstantiateUninitializedObject(this Type type)
+            => TypeTools.InstantiateUninitializedObject(type);
+
+        public static object GetDefault(this Type type)
+            => TypeTools.GetDefault(type);
+
+        public static bool HasInterface<T>(this Type type) => type != null && typeof(T).IsAssignableFrom(type);
+
+        public static bool HasDefaultConstructor(this Type type)
+            => type.IsValueType || type.GetConstructor(Type.EmptyTypes) != null;
+
         #region property
 
         public static VariableInfo TryGetPropertyVariableInfo(this Type type, string propertyName, VariableInfoSettings settings = null)
@@ -174,14 +186,5 @@ namespace Teronis.Extensions.NetStandard
                 yield return nextType;
             } while ((nextType = nextType.BaseType) != (interruptAtBaseType ?? type.BaseType));
         }
-
-        public static bool HasDefaultConstructor(this Type type) => type.IsValueType || type.GetConstructor(Type.EmptyTypes) != null;
-
-        public static object InstantiateUninitializedObject(this Type type)
-            => TypeTools.InstantiateUninitializedObject(type);
-
-        public static bool HasInterface<T>(this Type type) => type != null && typeof(T).IsAssignableFrom(type);
-
-        public static bool IsNullable(Type type) => TypeTools.IsNullable(type);
     }
 }

@@ -9,13 +9,13 @@ namespace Teronis.Tools.NetStandard
 {
     public static class EntityTools
     {
-        public static VariableInfoSettings GetDefaultVariableInfosSettings() => new VariableInfoSettings() {
+        public static VariableInfoSettings GetDefaultVariableInfoSettings() => new VariableInfoSettings() {
             Flags = BindingFlags.Public | BindingFlags.Instance,
             IncludeIfReadable = true,
             IncludeIfWritable = true,
         };
 
-        public static void UpdateEntityVariables<T>(T leftEntity, T rightEntity, IEnumerable<VariableInfo> variableInfos)
+        public static void UpdateEntityVariables<T>(T leftEntity, T rightEntity, IEnumerable<MemberInfo> variableInfos)
         {
             foreach (var varInfo in variableInfos)
                 varInfo.SetValue(leftEntity, varInfo.GetValue(rightEntity));
@@ -28,9 +28,9 @@ namespace Teronis.Tools.NetStandard
             if (entityType == null)
                 return;
 
-            variableInfoSettings = variableInfoSettings ?? GetDefaultVariableInfosSettings();
-            var variableInfos = entityType.GetVariableInfos(interruptAtBaseType, variableInfoSettings);
-            UpdateEntityVariables(leftEntity, rightEntity, variableInfos);
+            variableInfoSettings = variableInfoSettings ?? GetDefaultVariableInfoSettings();
+            var variables = entityType.GetVariableMembers(interruptAtBaseType, variableInfoSettings);
+            UpdateEntityVariables(leftEntity, rightEntity, variables);
         }
 
         public static void UpdateEntityVariablesByAttribute<T, A>(T leftEntity, T rightEntity, VariableInfoSettings variableInfoSettings = null, Type interruptAtBaseType = null)
@@ -41,9 +41,9 @@ namespace Teronis.Tools.NetStandard
             if (entityType == null)
                 return;
 
-            variableInfoSettings = variableInfoSettings ?? GetDefaultVariableInfosSettings();
-            var variableInfos = entityType.GetAttributeVariableInfos<A>(variableInfoSettings).Select(x => x.VariableInfo);
-            UpdateEntityVariables(leftEntity, rightEntity, variableInfos);
+            variableInfoSettings = variableInfoSettings ?? GetDefaultVariableInfoSettings();
+            var variables = entityType.GetAttributeVariableMembers<A>(variableInfoSettings).Select(x => x.MemberInfo);
+            UpdateEntityVariables(leftEntity, rightEntity, variables);
         }
 
         /// <summary>

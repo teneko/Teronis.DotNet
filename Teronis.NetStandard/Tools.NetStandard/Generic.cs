@@ -59,44 +59,44 @@ namespace Teronis.Tools.NetStandard
         public static V ReturnValue<I, V>(I inValue, Func<I, V> getValue)
             => getValue(inValue);
         
-        public static TCloningObjectType ShallowCopy<TCloningObjectType, TCopyingObject>(TCloningObjectType cloningObject, TCopyingObject copyingObject)
+        public static TCloningObject ShallowCopy<TCloningObject, TCopyingObject>(TCopyingObject copyingObject)
         {
-            var cloningObjectVariableInfoSettings = new VariableInfoSettings() {
+            var cloningObjectMembersSettings = new VariableInfoSettings() {
                 IncludeIfWritable = true,
             };
 
-            var clonedType = typeof(TCloningObjectType);
+            var declaredType = typeof(TCloningObject);
 
-            var cloningObjectVariableInfoByNameList = clonedType
-                .GetVariableInfos(cloningObjectVariableInfoSettings)
+            var cloningObjectMembersByNameList = declaredType
+                .GetVariableMembers(cloningObjectMembersSettings)
                 .ToDictionary(x => x.Name);
 
-            var copyingObjectVariableInfoSettings = new VariableInfoSettings() {
+            var copyingObjectMembersSettings = new VariableInfoSettings() {
                 IncludeIfReadable = true,
             };
 
-            var copyingObjectVariableInfoByNameList = typeof(TCopyingObject)
-                .GetVariableInfos(copyingObjectVariableInfoSettings)
+            var copyingObjectMembersByNameList = typeof(TCopyingObject)
+                .GetVariableMembers(copyingObjectMembersSettings)
                 .ToDictionary(x => x.Name);
 
-            var serializerSettings = (TCloningObjectType)clonedType.InstantiateUninitializedObject();
+            var clonedObejct = (TCloningObject)declaredType.InstantiateUninitializedObject();
 
-            foreach (var nameAndCloningObjectVariableInfoPair in cloningObjectVariableInfoByNameList) {
-                var cloningObjectVariableInfoKey = nameAndCloningObjectVariableInfoPair.Key;
+            foreach (var nameAndCloningObjectMembersPair in cloningObjectMembersByNameList) {
+                var cloningObjectMembersKey = nameAndCloningObjectMembersPair.Key;
 
-                if (copyingObjectVariableInfoByNameList.ContainsKey(cloningObjectVariableInfoKey)) {
-                    var cloningObjectVariableInfo = nameAndCloningObjectVariableInfoPair.Value;
-                    var copyingObjectVariableInfo = copyingObjectVariableInfoByNameList[cloningObjectVariableInfoKey];
-                    var copyingObjectVariableValue = copyingObjectVariableInfo.GetValue(copyingObject);
+                if (copyingObjectMembersByNameList.ContainsKey(cloningObjectMembersKey)) {
+                    var cloningObjectMembers = nameAndCloningObjectMembersPair.Value;
+                    var copyingObjectMembers = copyingObjectMembersByNameList[cloningObjectMembersKey];
+                    var copyingObjectVariableValue = copyingObjectMembers.GetValue(copyingObject);
 
-                    cloningObjectVariableInfo.SetValue(serializerSettings, copyingObjectVariableValue);
+                    cloningObjectMembers.SetValue(clonedObejct, copyingObjectVariableValue);
                 }
             }
 
-            return serializerSettings;
+            return clonedObejct;
         }
 
-        public static TCloningObjectType ShallowCopy<TCloningObjectType>(TCloningObjectType cloningObject)
-            => ShallowCopy(cloningObject, cloningObject);
+        public static TCloningAndCopyingObject ShallowCopy<TCloningAndCopyingObject>(TCloningAndCopyingObject copyingObject)
+            => ShallowCopy<TCloningAndCopyingObject, TCloningAndCopyingObject> (copyingObject);
     }
 }

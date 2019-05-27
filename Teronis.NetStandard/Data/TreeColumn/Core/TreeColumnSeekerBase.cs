@@ -44,10 +44,10 @@ namespace Teronis.Data.TreeColumn.Core
                 var parentPath = parent.Path;
 
                 // We cache declaration path children that are existing in the current declaration path
-                foreach (var varInfo in declaringType.GetPropertyAttributeVariableInfos<HasTreeColumnsAttribute>()) {
-                    var propertyName = varInfo.VariableInfo.Name;
-                    string combinedPath = combinePath(parentPath, varInfo.VariableInfo.Name);
-                    columnDefinitionsByParent.Add((varInfo.VariableInfo.ValueType, combinedPath));
+                foreach (var varInfo in declaringType.GetAttributePropertyMembers<HasTreeColumnsAttribute>()) {
+                    var propertyName = varInfo.MemberInfo.Name;
+                    string combinedPath = combinePath(parentPath, varInfo.MemberInfo.Name);
+                    columnDefinitionsByParent.Add((varInfo.MemberInfo.VariableType(), combinedPath));
                 }
 
                 for (int index = 0; index < treeColumnOrdering.Count; index++) {

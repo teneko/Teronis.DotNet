@@ -4,7 +4,7 @@ namespace Teronis.Extensions.NetStandard.tmp
 {
     public static class IEnumerableIExternalObjectInitializationExtensions
     {
-        public static void LetAttributesReceiveAttributeVariableInfo(this IEnumerable<IExternalObjectInitialization> ttbInitializedObjects)
+        public static void LetAttributesReceiveAttributeMemberInfo(this IEnumerable<IExternalObjectInitialization> ttbInitializedObjects)
         {
             var enumerator = ttbInitializedObjects.GetEnumerator();
 

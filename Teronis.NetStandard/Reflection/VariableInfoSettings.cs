@@ -23,8 +23,8 @@ namespace Teronis.Reflection
         public VariableInfoSettings()
         {
             Flags = BindingFlags.Instance | BindingFlags.Public;
-            ExcludeByAttributeTypesInherit = Library.GetCustomAttributesInherit;
-            IncludeByAttributeTypesInherit = Library.GetCustomAttributesInherit;
+            ExcludeByAttributeTypesInherit = Library.DefaultCustomAttributesInherit;
+            IncludeByAttributeTypesInherit = Library.DefaultCustomAttributesInherit;
         }
     }
 }

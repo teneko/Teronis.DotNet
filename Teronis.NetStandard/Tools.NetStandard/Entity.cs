@@ -21,7 +21,11 @@ namespace Teronis.Tools.NetStandard
                 varInfo.SetValue(leftEntity, varInfo.GetValue(rightEntity));
         }
 
-        public static void UpdateEntityVariables<T>(T leftEntity, T rightEntity, VariableInfoSettings variableInfoSettings = null, Type interruptAtBaseType = null)
+        // // BASE-TYPE-LOOP
+
+        // NON-ATTRIBUTE
+
+        public static void UpdateEntityVariables<T>(T leftEntity, T rightEntity, Type interruptingBaseType, VariableInfoSettings variableInfoSettings)
         {
             var entityType = leftEntity?.GetType();
 
@@ -29,12 +33,22 @@ namespace Teronis.Tools.NetStandard
                 return;
 
             variableInfoSettings = variableInfoSettings ?? GetDefaultVariableInfoSettings();
-            var variables = entityType.GetVariableMembers(interruptAtBaseType, variableInfoSettings);
+            var variables = entityType.GetVariableMembers(interruptingBaseType, variableInfoSettings);
             UpdateEntityVariables(leftEntity, rightEntity, variables);
         }
 
-        public static void UpdateEntityVariablesByAttribute<T, A>(T leftEntity, T rightEntity, VariableInfoSettings variableInfoSettings = null, Type interruptAtBaseType = null)
-            where A : Attribute
+        public static void UpdateEntityVariables<T>(T leftEntity, T rightEntity, Type interruptingBaseType)
+            => UpdateEntityVariables(leftEntity, rightEntity, interruptingBaseType, default);
+
+        public static void UpdateEntityVariables<T>(T leftEntity, T rightEntity, VariableInfoSettings settings)
+            => UpdateEntityVariables(leftEntity, rightEntity, default, settings);
+
+        public static void UpdateEntityVariables<T>(T leftEntity, T rightEntity)
+            => UpdateEntityVariables(leftEntity, rightEntity, default, default);
+
+        // ATTRIBUTE
+
+        public static void UpdateEntityVariablesByAttribute<T>(T leftEntity, T rightEntity, Type attributeType, Type interruptingBaseType, VariableInfoSettings variableInfoSettings)
         {
             var entityType = leftEntity?.GetType();
 
@@ -42,15 +56,17 @@ namespace Teronis.Tools.NetStandard
                 return;
 
             variableInfoSettings = variableInfoSettings ?? GetDefaultVariableInfoSettings();
-            var variables = entityType.GetAttributeVariableMembers<A>(variableInfoSettings).Select(x => x.MemberInfo);
+            var variables = entityType.GetAttributeVariableMembers(attributeType, variableInfoSettings).Select(x => x.MemberInfo);
             UpdateEntityVariables(leftEntity, rightEntity, variables);
         }
 
-        /// <summary>
-        /// Call this, when you cannot define T as Type, but need to define A as Type.
-        /// </summary>
-        public static void UpdateEntityVariablesByAttribute<T, A>(T leftEntity, T rightEntity, A attribute, VariableInfoSettings variableInfoSettings = null, Type interruptAtBaseType = null)
-            where A : Attribute
-            => UpdateEntityVariablesByAttribute<T, A>(leftEntity, rightEntity, variableInfoSettings, interruptAtBaseType);
+        public static void UpdateEntityVariablesByAttribute<T>(T leftEntity, T rightEntity, Type attributeType, Type interruptingBaseType)
+            => UpdateEntityVariablesByAttribute(leftEntity, rightEntity, attributeType, interruptingBaseType, default);
+
+        public static void UpdateEntityVariablesByAttribute<T>(T leftEntity, T rightEntity, Type attributeType, VariableInfoSettings settings)
+            => UpdateEntityVariablesByAttribute(leftEntity, rightEntity, attributeType, default, settings);
+
+        public static void UpdateEntityVariablesByAttribute<T>(T leftEntity, T rightEntity, Type attributeType)
+            => UpdateEntityVariablesByAttribute(leftEntity, rightEntity, attributeType, default, default);
     }
 }

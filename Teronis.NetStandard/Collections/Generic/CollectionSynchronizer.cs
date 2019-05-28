@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -21,7 +20,8 @@ namespace Teronis.Collections.Generic
             Collection = collection;
         }
 
-        public CollectionSynchronizer(TList collection) : this(collection, EqualityComparer<TItem>.Default) { }
+        public CollectionSynchronizer(TList collection) 
+            : this(collection, default) { }
 
         protected virtual void onValueRemoved(CollectionChange<TItem> change)
             => Collection.RemoveAt(change.OldIndex);
@@ -38,7 +38,7 @@ namespace Teronis.Collections.Generic
         }
 
         /// <summary>
-        /// This method has no code inside and is ready for overriding.
+        /// This method has no code inside and is ready for override.
         /// </summary>
         protected virtual void onValueReplace(CollectionChange<TItem> change) { }
 

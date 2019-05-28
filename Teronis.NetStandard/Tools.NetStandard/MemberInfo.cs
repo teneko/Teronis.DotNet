@@ -38,16 +38,22 @@ namespace Teronis.Tools.NetStandard
         /// <summary>
         /// Checks that <paramref name="memberInfo"/> is not null and is either field or property, otherwise an exception is been thrown.
         /// </summary>
-        /// <param name="memberInfo"></param>
-        /// <returns></returns>
-        public static MemberInfo GetCheckedVariable(MemberInfo memberInfo)
+        public static void CheckedVariable(MemberInfo memberInfo)
         {
             memberInfo = memberInfo ?? throw new ArgumentNullException(nameof(memberInfo));
 
             if (!memberInfo.IsFieldOrProperty())
                 throw new ArgumentException("The member info is not a field or a property");
+        }
 
-            return memberInfo;
+        /// <summary>
+        /// Checks that <paramref name="memberInfo"/> is a valid variable and has an attribute of type <paramref name="attributeType"/> defined, otherwise an exception is been thrown.
+        /// </summary>
+        public static void CheckedAttributeVariable(MemberInfo memberInfo, Type attributeType) {
+            CheckedVariable(memberInfo);
+
+            if (!memberInfo.IsDefined(attributeType, false))
+                throw new ArgumentException($"The member has not defined an attribute of type {attributeType}");
         }
 
         #endregion

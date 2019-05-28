@@ -45,9 +45,8 @@ namespace Teronis
         /// </summary>
         private void CheckDispose()
         {
-            if (IsDisposed) {
+            if (IsDisposed) 
                 throw new ObjectDisposedException(null, "Object has been already disposed");
-            }
         }
 
         public TaskCompletionSource RegisterDependency(KeyType key)

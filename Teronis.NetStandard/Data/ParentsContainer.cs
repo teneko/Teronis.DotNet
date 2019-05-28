@@ -11,6 +11,10 @@ namespace Teronis.Data
         public ParentCollection Parents { get; private set; }
         public Type WantedType { get; private set; }
 
+        /// <summary>
+        /// If <paramref name="wantedType"/> is null, then all parents may attach themselves.
+        /// </summary>
+        /// <param name="wantedType"></param>
         public ParentsContainer(Type wantedType)
         {
             Parents = new ParentCollection();

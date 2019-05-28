@@ -59,28 +59,56 @@ namespace Teronis.Extensions.NetStandard
             return false;
         }
 
+        private static bool isVariable(this MemberInfo memberInfo, Type attributeType, bool getCustomAttributesInherit)
+            => memberInfo.IsDefined(attributeType, getCustomAttributesInherit);
+
+        public static bool IsVariable(this MemberInfo memberInfo, Type attributeType, bool getCustomAttributesInherit)
+            => IsVariable(memberInfo) && isVariable(memberInfo, attributeType, getCustomAttributesInherit);
+
+        public static bool IsVariable(this MemberInfo memberInfo, VariableInfoSettings settings, Type attributeType, bool getCustomAttributesInherit)
+            => IsVariable(memberInfo, settings) && isVariable(memberInfo, attributeType, getCustomAttributesInherit);
+
         /// <param name="memberInfo">Pass <see cref="PropertyInfo"/> or <see cref="FieldInfo"/>.</param>
-        public static AttributeMemberInfo<T> GetAttributeMember<T>(this MemberInfo memberInfo, bool? getCustomAttributesInherit = null) where T : Attribute
+        public static AttributeMemberInfo<T> GetAttributeVariableMember<T>(this MemberInfo memberInfo, bool? getCustomAttributesInherit = null)
+            where T : Attribute
         {
-            memberInfo = MemberInfoTools.GetCheckedVariable(memberInfo);
-
-            if (!memberInfo.IsDefined(typeof(T), false))
-                throw new ArgumentException($"The member has not defined an attribute of type {typeof(T)}");
-
+            MemberInfoTools.CheckedAttributeVariable(memberInfo, typeof(T));
             return new AttributeMemberInfo<T>(memberInfo, getCustomAttributesInherit);
         }
 
         /// <param name="memberInfo">Pass <see cref="PropertyInfo"/> or <see cref="FieldInfo"/>.</param>
-        public static bool TryGetAttributeMember<T>(this MemberInfo memberInfo, out AttributeMemberInfo<T> attrVarInfo, bool? getCustomAttributesInherit = null) where T : Attribute
+        public static AttributeMemberInfo GetAttributeVariableMember(this MemberInfo memberInfo, Type attributeType, bool? getCustomAttributesInherit = null)
+        {
+            MemberInfoTools.CheckedAttributeVariable(memberInfo, attributeType);
+            return new AttributeMemberInfo(memberInfo, attributeType, getCustomAttributesInherit);
+        }
+
+        /// <param name="memberInfo">Pass <see cref="PropertyInfo"/> or <see cref="FieldInfo"/>.</param>
+        public static bool TryGetAttributeVariableMember<T>(this MemberInfo memberInfo, out AttributeMemberInfo<T> attrVarInfo, bool? getCustomAttributesInherit = null)
+            where T : Attribute
         {
             bool _getCustomAttributesInherit = getCustomAttributesInherit ?? Library.DefaultCustomAttributesInherit;
 
-            if (!memberInfo.IsVariable() || !memberInfo.IsDefined(typeof(T), _getCustomAttributesInherit)) {
+            if (!IsVariable(memberInfo, typeof(T), _getCustomAttributesInherit)) {
                 attrVarInfo = null;
                 return false;
             }
 
-            attrVarInfo = GetAttributeMember<T>(memberInfo, getCustomAttributesInherit);
+            attrVarInfo = GetAttributeVariableMember<T>(memberInfo, getCustomAttributesInherit);
+            return true;
+        }
+
+        /// <param name="memberInfo">Pass <see cref="PropertyInfo"/> or <see cref="FieldInfo"/>.</param>
+        public static bool TryGetAttributeVariableMember(this MemberInfo memberInfo, Type attributeType, out AttributeMemberInfo attrVarInfo, bool? getCustomAttributesInherit = null)
+        {
+            bool _getCustomAttributesInherit = getCustomAttributesInherit ?? Library.DefaultCustomAttributesInherit;
+
+            if (!IsVariable(memberInfo, attributeType, _getCustomAttributesInherit)) {
+                attrVarInfo = null;
+                return false;
+            }
+
+            attrVarInfo = GetAttributeVariableMember(memberInfo, attributeType, getCustomAttributesInherit);
             return true;
         }
     }

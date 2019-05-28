@@ -2,7 +2,7 @@
 
 namespace Teronis.Data
 {
-    public interface IAsyncUpdate<T> : IUpdatable<T>
+    public interface IAsyncUpdate<T>
     {
         Task UpdateByAsync(T content);
     }

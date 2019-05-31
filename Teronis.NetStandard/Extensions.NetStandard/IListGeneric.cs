@@ -7,11 +7,6 @@ namespace Teronis.Extensions.NetStandard
     {
         public static void Shuffle<T>(this IList<T> list) => IListTools.Shuffle(list);
 
-        public static IList<T> ReturnedShuffle<T>(this IList<T> list) {
-            list.Shuffle();
-            return list;
-        }
-
         public static void Move<T>(this IList<T> list, T from, T to)
         {
             var fromIndex = list.IndexOf(from);

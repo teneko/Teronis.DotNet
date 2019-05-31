@@ -15,7 +15,14 @@ namespace Teronis.Tools.NetStandard
         }
 
         public static object InstantiateUninitializedObject(Type type)
-            => typeof(Instantiator<>).MakeGenericType(type).GetMethod(nameof(Instantiator<object>.Instantiate), BindingFlags.Public | BindingFlags.Static).Invoke(null, null);
+        {
+            var instantiatorType = typeof(Instantiator<>);
+            var genericInstantiatorType = instantiatorType.MakeGenericType(type);
+            var instantiateMethodName = nameof(Instantiator<object>.Instantiate);
+            var instanteMethodBindingFlags = BindingFlags.Public | BindingFlags.Static;
+            var instantiateMethod = genericInstantiatorType.GetMethod(instantiateMethodName, instanteMethodBindingFlags);
+            return instantiateMethod.Invoke(null, null);
+        }
 
         public static object GetDefault(Type type)
         {

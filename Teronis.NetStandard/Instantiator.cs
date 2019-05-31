@@ -11,8 +11,6 @@ namespace Teronis
 
         private static InstantiateDelegate instantiateDelegateReference;
 
-        public static T Instantiate() => (instantiateDelegateReference ?? (instantiateDelegateReference = instantiate))()();
-
         private static Func<T> instantiate()
         {
             var type = typeof(T);
@@ -24,6 +22,13 @@ namespace Teronis
                 return Expression.Lambda<Func<T>>(Expression.New(type)).Compile(); // ~50 ms for classes and ~100 ms for structs
 
             return () => (T)FormatterServices.GetUninitializedObject(type); // ~2000 ms
+        }
+
+        public static T Instantiate() {
+            if (instantiateDelegateReference == null)
+                instantiateDelegateReference = instantiate;
+
+            return instantiateDelegateReference()();
         }
     }
 }

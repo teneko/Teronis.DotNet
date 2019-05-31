@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Diagnostics;
+using Teronis.Diagnostics;
 using Teronis.Tools.NetStandard;
 
 namespace Teronis.Extensions.NetStandard
 {
     public static class ObjectExtensions
     {
+        public const string TO_DEBUG_STRING_METHOD_FULL_PATH = "{" + nameof(Teronis) + "." + nameof(Extensions) + "." + nameof(NetStandard) + "." + nameof(ObjectExtensions) + "." + nameof(ObjectExtensions.ToDebugString) + "(this)}";
+
         public static bool IsNullable(this object obj)
         {
             if (obj == null)
@@ -52,6 +56,20 @@ namespace Teronis.Extensions.NetStandard
         public static bool HasInterface<T>(this object obj, out T typedObj)
              => obj.HasInterface<T>() ? GenericTools.ReturnValue((T)obj, out typedObj, true) : GenericTools.ReturnValue(default, out typedObj, false);
 
-        public static R RefSelf<I, R>(this I obj, Func<I, R> callbackFn) => callbackFn(obj);
+        /// <summary>
+        /// Looks for <see cref="IDebuggerDisplay"/> interface implementation. 
+        /// If implemented, <see cref="IDebuggerDisplay.DebuggerDisplay"/> is returned,
+        /// otherwise <see cref="object.ToString"/>.
+        /// </summary>
+        public static string ToDebugString(this object obj)
+        {
+            if (obj == null)
+                new ArgumentNullException(nameof(obj));
+
+            if (obj is IDebuggerDisplay debuggerDisplay)
+                return debuggerDisplay.DebuggerDisplay;
+
+            return obj.ToString();
+        }
     }
 }

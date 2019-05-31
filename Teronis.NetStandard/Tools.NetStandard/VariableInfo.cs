@@ -12,12 +12,14 @@ namespace Teronis.Tools.NetStandard
 
         public static IEnumerable<MemberInfo> GetMembers(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType, VariableInfoSettings settings)
         {
-            settings = settings ?? new VariableInfoSettings();
+            settings = settings.DefaultIfNull(true);
 
             if (settings.Flags.HasFlag(BindingFlags.DeclaredOnly))
                 interruptingBaseType = beginningType.BaseType;
             else {
+                settings = settings.ShallowCopy();
                 settings.Flags |= BindingFlags.DeclaredOnly;
+                settings.Seal();
                 interruptingBaseType = interruptingBaseType ?? typeof(object);
             }
 
@@ -48,7 +50,7 @@ namespace Teronis.Tools.NetStandard
         }
 
         public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeVariableMembers<TAttribute>(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType, VariableInfoSettings settings)
-            where TAttribute: Attribute
+            where TAttribute : Attribute
             => GetAttributeVariableMembers<TAttribute>(getMembers, beginningType, interruptingBaseType, settings, default);
 
         public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeVariableMembers<TAttribute>(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType, bool? getCustomAttributesInherit)

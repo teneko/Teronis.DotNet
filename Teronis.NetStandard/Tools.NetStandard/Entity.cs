@@ -10,15 +10,27 @@ namespace Teronis.Tools.NetStandard
     public static class EntityTools
     {
         public static VariableInfoSettings GetDefaultVariableInfoSettings() => new VariableInfoSettings() {
-            Flags = BindingFlags.Public | BindingFlags.Instance,
             IncludeIfReadable = true,
             IncludeIfWritable = true,
         };
 
         public static void UpdateEntityVariables<T>(T leftEntity, T rightEntity, IEnumerable<MemberInfo> variableInfos)
         {
-            foreach (var varInfo in variableInfos)
-                varInfo.SetValue(leftEntity, varInfo.GetValue(rightEntity));
+            foreach (var variable in variableInfos) {
+                object value = null;
+
+                try {
+                    value = variable.GetValue(rightEntity);
+                } catch (Exception error) {
+                    throw new Exception($"A value cannot be retrieved from variable '{variable.Name}'", error);
+                }
+
+                try {
+                    variable.SetValue(leftEntity, value);
+                } catch (Exception error) {
+                    throw new Exception($"The value '{value}' cannot be assigned to variable '{variable.Name}'", error);
+                }
+            }
         }
 
         // // BASE-TYPE-LOOP
@@ -33,7 +45,7 @@ namespace Teronis.Tools.NetStandard
                 return;
 
             variableInfoSettings = variableInfoSettings ?? GetDefaultVariableInfoSettings();
-            var variables = entityType.GetVariableMembers(interruptingBaseType, variableInfoSettings);
+            var variables = entityType.GetVariableMembers(interruptingBaseType, variableInfoSettings).ToList();
             UpdateEntityVariables(leftEntity, rightEntity, variables);
         }
 

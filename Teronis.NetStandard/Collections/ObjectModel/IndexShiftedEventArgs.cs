@@ -5,11 +5,11 @@ using System.Text;
 
 namespace Teronis.Collections.ObjectModel
 {
-    public class IndexShiftedEventArgs : EventArgs
+    public class IndexShiftConditionEvaluatingEventArgs<TShiftCondition> : EventArgs
     {
-        public ICollectionChange<object> CollectionChange { get; private set; }
+        public TShiftCondition ShiftCondition { get; private set; }
 
-        public IndexShiftedEventArgs(ICollectionChange<object> collectionChange)
-            => CollectionChange = collectionChange;
+        public IndexShiftConditionEvaluatingEventArgs(TShiftCondition shiftCondition)
+            => ShiftCondition = shiftCondition;
     }
 }

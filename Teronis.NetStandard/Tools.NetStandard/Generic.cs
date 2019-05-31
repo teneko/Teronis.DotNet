@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Teronis.Reflection;
 using Teronis.Extensions.NetStandard;
+using System.Reflection;
 
 namespace Teronis.Tools.NetStandard
 {
@@ -58,10 +59,13 @@ namespace Teronis.Tools.NetStandard
 
         public static V ReturnValue<I, V>(I inValue, Func<I, V> getValue)
             => getValue(inValue);
-        
+
         public static TCloningObject ShallowCopy<TCloningObject, TCopyingObject>(TCopyingObject copyingObject)
         {
+            var flags = VariableInfoSettings.DefaultFlags | BindingFlags.NonPublic;
+
             var cloningObjectMembersSettings = new VariableInfoSettings() {
+                Flags = flags,
                 IncludeIfWritable = true,
             };
 
@@ -72,6 +76,7 @@ namespace Teronis.Tools.NetStandard
                 .ToDictionary(x => x.Name);
 
             var copyingObjectMembersSettings = new VariableInfoSettings() {
+                Flags = flags,
                 IncludeIfReadable = true,
             };
 
@@ -85,11 +90,14 @@ namespace Teronis.Tools.NetStandard
                 var cloningObjectMembersKey = nameAndCloningObjectMembersPair.Key;
 
                 if (copyingObjectMembersByNameList.ContainsKey(cloningObjectMembersKey)) {
-                    var cloningObjectMembers = nameAndCloningObjectMembersPair.Value;
-                    var copyingObjectMembers = copyingObjectMembersByNameList[cloningObjectMembersKey];
-                    var copyingObjectVariableValue = copyingObjectMembers.GetValue(copyingObject);
+                    var cloningObjectMember = nameAndCloningObjectMembersPair.Value;
+                    var copyingObjectMember = copyingObjectMembersByNameList[cloningObjectMembersKey];
 
-                    cloningObjectMembers.SetValue(clonedObejct, copyingObjectVariableValue);
+                    if (!cloningObjectMember.VariableType().IsAssignableFrom(copyingObjectMember.VariableType()))
+                        continue;
+
+                    var copyingObjectVariableValue = copyingObjectMember.GetValue(copyingObject);
+                    cloningObjectMember.SetValue(clonedObejct, copyingObjectVariableValue);
                 }
             }
 
@@ -97,6 +105,6 @@ namespace Teronis.Tools.NetStandard
         }
 
         public static TCloningAndCopyingObject ShallowCopy<TCloningAndCopyingObject>(TCloningAndCopyingObject copyingObject)
-            => ShallowCopy<TCloningAndCopyingObject, TCloningAndCopyingObject> (copyingObject);
+            => ShallowCopy<TCloningAndCopyingObject, TCloningAndCopyingObject>(copyingObject);
     }
 }

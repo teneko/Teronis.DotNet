@@ -5,16 +5,16 @@ using System.Text;
 
 namespace Teronis.Collections.ObjectModel
 {
-    public class IndexShiftedNotifier : IDisposable
+    public class IndexShifter<TShiftCondition> : IDisposable
     {
-        public event EventHandler<IndexShiftedEventArgs> IndexShifted;
+        public event EventHandler<IndexShiftConditionEvaluatingEventArgs<TShiftCondition>> IndexShiftConditionEvaluating;
 
         private bool isDisposed;
 
-        public void ShiftIndex(ICollectionChange<object> collectionChange)
+        public void Shift(TShiftCondition condition)
         {
-            var args = new IndexShiftedEventArgs(collectionChange);
-            IndexShifted?.Invoke(this, args);
+            var args = new IndexShiftConditionEvaluatingEventArgs<TShiftCondition>(condition);
+            IndexShiftConditionEvaluating?.Invoke(this, args);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -22,11 +22,11 @@ namespace Teronis.Collections.ObjectModel
             if (isDisposed)
                 return;
 
-            IndexShifted = null;
+            IndexShiftConditionEvaluating = null;
             isDisposed = true;
         }
 
-        ~IndexShiftedNotifier() => Dispose(false);
+        ~IndexShifter() => Dispose(false);
 
         public void Dispose()
         {

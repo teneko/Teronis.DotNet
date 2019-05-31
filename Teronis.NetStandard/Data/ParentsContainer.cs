@@ -30,10 +30,13 @@ namespace Teronis.Data
         {
             parent = parent ?? throw new ArgumentNullException(nameof(parent));
 
-            if (WantedType == null || WantedType.IsAssignableFrom(parent.GetType()))
+            if (WantedType == null || WantedType == parent.GetType())
                 Parents.Add(parent);
-            else
-                throw new InvalidOperationException("Parent is not of type " + WantedType.ToString());
+        }
+
+        public void AddParents(IEnumerable<object> parents) {
+            foreach (var parent in parents)
+                AddParent(parent);
         }
 
         public class ParentCollection : Collection<object> { }

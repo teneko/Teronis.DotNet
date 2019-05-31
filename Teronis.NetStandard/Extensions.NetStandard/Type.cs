@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
 using Teronis.Tools.NetStandard;
+using Teronis.Extensions.NetStandard;
 using Teronis.Reflection;
 
 namespace Teronis.Extensions.NetStandard
@@ -42,7 +43,7 @@ namespace Teronis.Extensions.NetStandard
 
         public static MemberInfo GetPropertyMember(this Type type, string propertyName, VariableInfoSettings settings)
         {
-            settings = settings ?? VariableInfoSettings.Default;
+            settings = settings.DefaultIfNull(true);
             var member = type.GetMember(propertyName, MemberTypes.Property, settings.Flags).First();
 
             if (member == null || !member.IsVariable(settings))
@@ -56,7 +57,7 @@ namespace Teronis.Extensions.NetStandard
 
         public static IEnumerable<MemberInfo> GetPropertyMembers(this Type type, VariableInfoSettings settings)
         {
-            settings = settings ?? VariableInfoSettings.Default;
+            settings = settings.DefaultIfNull(true);
 
             foreach (MemberInfo property in type.GetProperties(settings.Flags))
                 if (property.IsVariable(settings))
@@ -79,7 +80,7 @@ namespace Teronis.Extensions.NetStandard
         public static AttributeMemberInfo<TAttribute> GetAttributePropertyMember<TAttribute>(this Type type, string propertyName, VariableInfoSettings settings, bool? getCustomAttributesInherit)
             where TAttribute : Attribute
         {
-            settings = settings ?? VariableInfoSettings.Default;
+            settings = settings.DefaultIfNull(true);
             var property = GetPropertyMember(type, propertyName, settings);
 
             if (property == null)
@@ -128,7 +129,7 @@ namespace Teronis.Extensions.NetStandard
 
         public static AttributeMemberInfo GetAttributePropertyMember(this Type type, Type attributeType, string propertyName, VariableInfoSettings settings, bool? getCustomAttributesInherit)
         {
-            settings = settings ?? VariableInfoSettings.Default;
+            settings = settings.DefaultIfNull(true);
             var property = GetPropertyMember(type, propertyName, settings);
 
             if (property == null)
@@ -170,7 +171,7 @@ namespace Teronis.Extensions.NetStandard
 
         public static MemberInfo GetFieldMember(this Type type, string fieldName, VariableInfoSettings settings)
         {
-            settings = settings ?? VariableInfoSettings.Default;
+            settings = settings.DefaultIfNull(true);
             var member = type.GetMember(fieldName, MemberTypes.Field, settings.Flags).First();
 
             if (member == null || !member.IsVariable(settings))
@@ -184,7 +185,7 @@ namespace Teronis.Extensions.NetStandard
 
         public static IEnumerable<MemberInfo> GetFieldMembers(this Type type, VariableInfoSettings settings)
         {
-            settings = settings ?? VariableInfoSettings.Default;
+            settings = settings.DefaultIfNull(true);
 
             foreach (MemberInfo field in type.GetFields(settings.Flags))
                 if (field.IsVariable(settings))
@@ -207,7 +208,7 @@ namespace Teronis.Extensions.NetStandard
         public static AttributeMemberInfo<TAttribute> GetAttributeFieldMember<TAttribute>(this Type type, string fieldName, VariableInfoSettings settings, bool? getCustomAttributesInherit)
             where TAttribute : Attribute
         {
-            settings = settings ?? VariableInfoSettings.Default;
+            settings = settings.DefaultIfNull(true);
             var field = GetFieldMember(type, fieldName, settings);
 
             if (field == null)
@@ -258,7 +259,7 @@ namespace Teronis.Extensions.NetStandard
 
         public static AttributeMemberInfo GetAttributeFieldMember(this Type type, Type attributeType, string fieldName, VariableInfoSettings settings, bool? getCustomAttributesInherit)
         {
-            settings = settings ?? VariableInfoSettings.Default;
+            settings = settings.DefaultIfNull(true);
             var field = GetFieldMember(type, fieldName, settings);
 
             if (field == null)
@@ -300,7 +301,7 @@ namespace Teronis.Extensions.NetStandard
 
         public static MemberInfo GetVariableMember(this Type type, string variableName, VariableInfoSettings settings)
         {
-            settings = settings ?? VariableInfoSettings.Default;
+            settings = settings.DefaultIfNull(true);
             return GetPropertyMember(type, variableName, settings);
         }
 
@@ -309,7 +310,7 @@ namespace Teronis.Extensions.NetStandard
 
         public static IEnumerable<MemberInfo> GetVariableMembers(this Type type, VariableInfoSettings settings)
         {
-            settings = settings ?? VariableInfoSettings.Default;
+            settings = settings.DefaultIfNull(true);
 
             foreach (var variable in GetFieldMembers(type, settings))
                 yield return variable;
@@ -323,7 +324,7 @@ namespace Teronis.Extensions.NetStandard
 
         public static IEnumerable<MemberInfo> GetVariableMembers(this Type beginningType, Type interruptingBaseType, VariableInfoSettings settings)
         {
-            settings = settings ?? VariableInfoSettings.Default;
+            settings = settings.DefaultIfNull(true);
 
             foreach (var variable in GetFieldMembers(beginningType, interruptingBaseType, settings))
                 yield return variable;
@@ -373,7 +374,7 @@ namespace Teronis.Extensions.NetStandard
         public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeVariableMembers<TAttribute>(this Type beginningType, Type interruptingBaseType, VariableInfoSettings settings, bool? getCustomAttributesInherit)
             where TAttribute : Attribute
         {
-            settings = settings ?? VariableInfoSettings.Default;
+            settings = settings.DefaultIfNull(true);
 
             foreach (var variable in GetAttributeFieldMembers<TAttribute>(beginningType, interruptingBaseType, settings, getCustomAttributesInherit))
                 yield return variable;
@@ -410,7 +411,7 @@ namespace Teronis.Extensions.NetStandard
 
         public static IEnumerable<AttributeMemberInfo> GetAttributeVariableMembers(this Type beginningType, Type attributeType, Type interruptingBaseType, VariableInfoSettings settings, bool? getCustomAttributesInherit)
         {
-            settings = settings ?? VariableInfoSettings.Default;
+            settings = settings.DefaultIfNull(true);
 
             foreach (var variable in GetAttributeFieldMembers(beginningType, attributeType, interruptingBaseType, settings, getCustomAttributesInherit))
                 yield return variable;

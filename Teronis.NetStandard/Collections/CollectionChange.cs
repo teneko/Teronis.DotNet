@@ -68,7 +68,6 @@ namespace Teronis.Collections
             public NotifyCollectionChangedAction ChangeAction => Parent.Action;
             public IList<T> Values { get; private set; }
             public int Index { get; private set; }
-            public IndexShifter IndexShiftedNotifier { get; private set; }
 
             public PartialCollectionChange(CollectionChange<T> parent, PartialCollectionChangeItemState itemState, IList<T> values, int index)
             {

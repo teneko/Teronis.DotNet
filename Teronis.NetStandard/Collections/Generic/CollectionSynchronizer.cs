@@ -212,7 +212,7 @@ namespace Teronis.Collections.Generic
             }
 
             //Debug.Assert(Collection.SequenceEqual(items, EqualityComparer), "The collection is not synchron with the new items");
-
+            var isSequenciallyEqual = Collection.SequenceEqual(items, EqualityComparer);
             var changes2 = collection2.GetCollectionChanges(items, EqualityComparer).ToList();
             ;
         }

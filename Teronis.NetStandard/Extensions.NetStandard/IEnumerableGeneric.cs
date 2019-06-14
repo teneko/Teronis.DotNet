@@ -15,7 +15,8 @@ namespace Teronis.Extensions.NetStandard
 
         public static R FirstNonDefaultOrDefault<T, R>(this IEnumerable<T> collection, Func<T, R> getObj)
         {
-            foreach (var item in collection) {
+            foreach (var item in collection)
+            {
                 var obj = getObj(item);
 
                 if (obj != default)
@@ -47,7 +48,8 @@ namespace Teronis.Extensions.NetStandard
         {
             int i = 0;
 
-            foreach (var value in sequence) {
+            foreach (var value in sequence)
+            {
                 yield return new ValueIndexPair<T>(value, i);
                 i++;
             }
@@ -108,7 +110,8 @@ namespace Teronis.Extensions.NetStandard
             var lateRightValueIndexPairs = new List<Item<T>>();
             var areEarlyIterationValuesEqual = true;
 
-            do {
+            do
+            {
                 if (hasLeftValue)
                     hasLeftValue = leftValuesEnumerator.MoveNext();
 
@@ -134,12 +137,14 @@ namespace Teronis.Extensions.NetStandard
 
                 CollectionChange<T> change = default;
 
-                if (hasLeftValue && hasRightValue) {
+                if (hasLeftValue && hasRightValue)
+                {
                     var areBothItemsEqual = equalityComparer.Equals(leftValue, rightValue);
 
                     if (areBothItemsEqual)
                         change = new CollectionChange<T>(NotifyCollectionChangedAction.Replace, leftValue, earlyLeftValueIndex, rightValue, earlyRightValueIndex);
-                    else {
+                    else
+                    {
                         lateLeftValueIndexPairs.Add(new LeftItem<T>(leftValue, earlyLeftValueIndex, leftValueIndexShifter));
                         lateRightValueIndexPairs.Add(new Item<T>(rightValue, earlyRightValueIndex));
                         areEarlyIterationValuesEqual = false;
@@ -148,15 +153,23 @@ namespace Teronis.Extensions.NetStandard
                     earlyEqualIterationCount++;
                     earlyLeftValueIndex = earlyEqualIterationCount;
                     earlyRightValueIndex = earlyEqualIterationCount;
-                } else if (hasLeftValue) {
-                    if (areEarlyIterationValuesEqual) {
+                }
+                else if (hasLeftValue)
+                {
+                    if (areEarlyIterationValuesEqual)
+                    {
+                        // When early iterations are synchronized, then we always need 
+                        // to delete the left value at index of greatest right value index plus one
                         var newLeftValueIndex = earlyLeftValueIndex - (earlyLeftValueIndex - earlyRightValueIndex);
                         change = CollectionChange<T>.CreateOld(NotifyCollectionChangedAction.Remove, leftValue, newLeftValueIndex);
-                    } else
+                    }
+                    else
                         lateLeftValueIndexPairs.Add(new LeftItem<T>(leftValue, earlyLeftValueIndex, leftValueIndexShifter));
 
                     earlyLeftValueIndex++;
-                } else {
+                }
+                else
+                {
                     if (areEarlyIterationValuesEqual)
                         change = CollectionChange<T>.CreateNew(NotifyCollectionChangedAction.Add, rightValue, earlyRightValueIndex);
                     else
@@ -176,16 +189,19 @@ namespace Teronis.Extensions.NetStandard
             if (areEarlyIterationValuesEqual)
                 yield break;
 
-            for (var rightValueIndexPairIndex = 0; rightValueIndexPairIndex < lateRightValueIndexPairs.Count; rightValueIndexPairIndex++) {
+            for (var rightValueIndexPairIndex = 0; rightValueIndexPairIndex < lateRightValueIndexPairs.Count; rightValueIndexPairIndex++)
+            {
                 var rightValueIndexPair = lateRightValueIndexPairs[rightValueIndexPairIndex];
                 // This index represents the current index of the right value collection.
                 var rightValueIndex = rightValueIndexPair.ShiftedIndex;
                 Item<T> foundLeftValueIndexPair = null;
 
-                for (var leftValueIndexPairIndex = 0; leftValueIndexPairIndex < lateLeftValueIndexPairs.Count; leftValueIndexPairIndex++) {
+                for (var leftValueIndexPairIndex = 0; leftValueIndexPairIndex < lateLeftValueIndexPairs.Count; leftValueIndexPairIndex++)
+                {
                     var leftValueIndexPair = lateLeftValueIndexPairs[leftValueIndexPairIndex];
 
-                    if (equalityComparer.Equals(leftValueIndexPair.Value, rightValueIndexPair.Value)) {
+                    if (equalityComparer.Equals(leftValueIndexPair.Value, rightValueIndexPair.Value))
+                    {
                         foundLeftValueIndexPair = leftValueIndexPair;
                         // We remove the found left item, because we are sure that we don't need that reference anymore
                         lateLeftValueIndexPairs.RemoveAt(leftValueIndexPairIndex);
@@ -196,31 +212,39 @@ namespace Teronis.Extensions.NetStandard
 
                 var rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount = rightValueIndex;
 
-                // We assume that late-left-value-index-pairs it's indexes in collection are sorted ascending
-                foreach (var leftValueIndexPair in lateLeftValueIndexPairs) {
-                    if (leftValueIndexPair.ShiftedIndex < rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount)
-                        rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount++;
-                }
+                //// We assume that late-left-value-index-pairs it's indexes in collection are sorted ascending
+                //foreach (var leftValueIndexPair in lateLeftValueIndexPairs)
+                //{
+                //    if (leftValueIndexPair.ShiftedIndex < rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount)
+                //        rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount++;
+                //}
 
-                if (foundLeftValueIndexPair == null) {
+                if (foundLeftValueIndexPair == null)
+                {
                     var change = CollectionChange<T>.CreateNew(NotifyCollectionChangedAction.Add, rightValueIndexPair.Value, rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount);
                     yield return change;
                     leftValueIndexShifter.Shift(change);
-                } else {
-                    // Indexes can be equal, when not processed items are before the moved item
-                    if (foundLeftValueIndexPair.ShiftedIndex != rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount) {
-                        var foundLeftValueIndex = foundLeftValueIndexPair.ShiftedIndex;
+                }
+                else
+                {
+                    var foundLeftIndex = foundLeftValueIndexPair.ShiftedIndex;
 
+                    // Indexes can be equal, when not processed items are before the moved item
+                    if (foundLeftIndex != rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount)
+                    {
+                        var change = new CollectionChange<T>(NotifyCollectionChangedAction.Move, foundLeftValueIndexPair.Value, foundLeftIndex, rightValueIndexPair.Value, rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount);
                         // We move the old existing item
-                        yield return new CollectionChange<T>(NotifyCollectionChangedAction.Move, foundLeftValueIndexPair.Value, foundLeftValueIndex, rightValueIndexPair.Value, rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount);
+                        yield return change;
 
                         // Now we have to increase the index by one from those items that are between the old index and new index + 1 of the moved item,
-                        foreach (var leftValueIndexPair in lateLeftValueIndexPairs) {
-                            var leftValueIndexPairIndex = leftValueIndexPair.ShiftedIndex;
+                        //foreach (var leftValueIndexPair in lateLeftValueIndexPairs)
+                        //{
+                        //    var leftValueIndexPairIndex = leftValueIndexPair.ShiftedIndex;
 
-                            if (leftValueIndexPairIndex >= rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount && leftValueIndexPairIndex < foundLeftValueIndex)
-                                leftValueIndexPair.Shifts++;
-                        }
+                        //    if (leftValueIndexPairIndex >= rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount && leftValueIndexPairIndex < foundLeftValueIndex)
+                        //        leftValueIndexPair.Shifts++;
+                        //}
+                        leftValueIndexShifter.Shift(change);
                     }
 
                     // Then we replace the left item by moved item at the destination index of the moved item
@@ -229,7 +253,8 @@ namespace Teronis.Extensions.NetStandard
             }
 
             // We remove all left left-value-index-pairs, because they did not match any condition above and have to be removed in REVERSED order
-            for (var leftValueIndexPairIndex = lateLeftValueIndexPairs.Count - 1; leftValueIndexPairIndex >= 0; leftValueIndexPairIndex--) {
+            for (var leftValueIndexPairIndex = lateLeftValueIndexPairs.Count - 1; leftValueIndexPairIndex >= 0; leftValueIndexPairIndex--)
+            {
                 var leftValueIndexPair = lateLeftValueIndexPairs[leftValueIndexPairIndex];
                 yield return CollectionChange<T>.CreateOld(NotifyCollectionChangedAction.Remove, leftValueIndexPair.Value, leftValueIndexPair.ShiftedIndex);
             }
@@ -241,13 +266,18 @@ namespace Teronis.Extensions.NetStandard
         private class LeftItem<TValue> : Item<TValue>
         {
             public LeftItem(TValue value, int index, IndexShifter<CollectionChange<TValue>> shifter)
-                : base(value, index, shifter) { }
+                : base(value, index, shifter)
+            {
+                shifter = shifter ?? throw new ArgumentNullException(nameof(shifter));
+                shifter.IndexShiftConditionEvaluating += Shifter_IndexShiftConditionEvaluating;
+            }
 
-            protected override void Shifter_IndexShiftConditionEvaluating(object sender, IndexShiftConditionEvaluatingEventArgs<CollectionChange<TValue>> args)
+            protected void Shifter_IndexShiftConditionEvaluating(object sender, IndexShiftConditionEvaluatingEventArgs<CollectionChange<TValue>> args)
             {
                 var change = args.ShiftCondition;
 
-                switch (args.ShiftCondition.Action) {
+                switch (args.ShiftCondition.Action)
+                {
                     case NotifyCollectionChangedAction.Add:
                         if (ShiftedIndex >= change.NewIndex)
                             Shifts++;
@@ -273,16 +303,10 @@ namespace Teronis.Extensions.NetStandard
             {
                 Value = value;
                 InitialIndex = index;
-
-                if (shifter != null)
-                    shifter.IndexShiftConditionEvaluating += Shifter_IndexShiftConditionEvaluating;
             }
 
             public Item(TValue value, int index)
                 : this(value, index, default) { }
-
-            protected virtual void Shifter_IndexShiftConditionEvaluating(object sender, IndexShiftConditionEvaluatingEventArgs<CollectionChange<TValue>> args)
-            { }
 
             public override string ToString() => $"[{Value}, {ShiftedIndex}]";
         }

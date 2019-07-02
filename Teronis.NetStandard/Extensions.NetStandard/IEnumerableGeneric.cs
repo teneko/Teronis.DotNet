@@ -6,6 +6,9 @@ using Teronis.Collections;
 using Teronis.Collections.Generic;
 using Teronis.Extensions.NetStandard;
 using Teronis.Collections.ObjectModel;
+using Teronis.Diagnostics;
+using System.Diagnostics;
+using Teronis.Libraries.NetStandard;
 
 namespace Teronis.Extensions.NetStandard
 {
@@ -85,7 +88,8 @@ namespace Teronis.Extensions.NetStandard
         }
 
         /// <summary>
-        /// Add / Replace / Remove
+        /// Get step by step changes to reorder the original left value collection, without to need to clear it.
+        /// The changes can contain adding, replacing and removing statements, but nothing else.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="leftValues"></param>
@@ -102,51 +106,49 @@ namespace Teronis.Extensions.NetStandard
             var earlyLeftValueIndex = 0;
             var earlyRightValueIndex = 0;
             // Early changes that are synchronized or are synchronized but having
-            // removing or adding changes at the end can be returned immediately.
-            // This list represents the cache for that.
+            // removing or adding changes at the end can be returned all at once.
+            // This list represents the cache for it.
             var earlyIterationChanges = new List<CollectionChange<T>>();
             var leftValueIndexShifter = new IndexShifter<CollectionChange<T>>();
-            var lateLeftValueIndexPairs = new List<LeftItem<T>>();
-            var lateRightValueIndexPairs = new List<Item<T>>();
+            var lateLeftValueIndexPairs = new OrderedHashSet<Item<T>, LeftItem<T>>();
+            var lateRightValueIndexPairs = new OrderedHashSet<RightItem<T>>();
             var areEarlyIterationValuesEqual = true;
 
-            do
+            bool getHasValue(ref bool hasValue, IEnumerator<T> valueEnumerator)
+                => hasValue && (hasValue = valueEnumerator.MoveNext());
+
+            while (getHasValue(ref hasLeftValue, leftValuesEnumerator) | getHasValue(ref hasRightValue, rightValuesEnumerator))
             {
-                if (hasLeftValue)
-                    hasLeftValue = leftValuesEnumerator.MoveNext();
-
-                if (hasRightValue)
-                    hasRightValue = rightValuesEnumerator.MoveNext();
-
-                // Cancel if not a left or right value is available
+                // Cancel if not a left and right value is available
                 if (!(hasLeftValue || hasRightValue))
                     break;
 
-                T leftValue;
-                T rightValue;
+                var leftValue = hasLeftValue ? leftValuesEnumerator.Current : default;
+                var rightValue = hasRightValue ? rightValuesEnumerator.Current : default;
+                CollectionChange<T> earlyIterationChange = default;
 
-                if (hasLeftValue)
-                    leftValue = leftValuesEnumerator.Current;
-                else
-                    leftValue = default; // Only for compiler
-
-                if (hasRightValue)
-                    rightValue = rightValuesEnumerator.Current;
-                else
-                    rightValue = default; // Only for compiler
-
-                CollectionChange<T> change = default;
+                LeftItem<T> createLeftItem() => new LeftItem<T>(leftValue, earlyLeftValueIndex, leftValueIndexShifter);
+                RightItem<T> createRightItem() => new RightItem<T>(rightValue, earlyRightValueIndex);
 
                 if (hasLeftValue && hasRightValue)
                 {
                     var areBothItemsEqual = equalityComparer.Equals(leftValue, rightValue);
 
                     if (areBothItemsEqual)
-                        change = new CollectionChange<T>(NotifyCollectionChangedAction.Replace, leftValue, earlyLeftValueIndex, rightValue, earlyRightValueIndex);
+                    {
+                        earlyIterationChange = new CollectionChange<T>(NotifyCollectionChangedAction.Replace, leftValue, earlyLeftValueIndex, rightValue, earlyRightValueIndex);
+
+                        // We only move back to forward, but never back to forward, so this item, even when it's now well positioned,
+                        // needs to be checked, if it is still well positioned
+                        var rightItem = createRightItem();
+                        // We take us of a cache, so that we don't have to search for left item and don't replace it twice
+                        rightItem.CachedLeftItem = createLeftItem();
+                        lateRightValueIndexPairs.Add(rightItem);
+                    }
                     else
                     {
-                        lateLeftValueIndexPairs.Add(new LeftItem<T>(leftValue, earlyLeftValueIndex, leftValueIndexShifter));
-                        lateRightValueIndexPairs.Add(new Item<T>(rightValue, earlyRightValueIndex));
+                        lateLeftValueIndexPairs.Add(createLeftItem());
+                        lateRightValueIndexPairs.Add(createRightItem());
                         areEarlyIterationValuesEqual = false;
                     }
 
@@ -161,26 +163,26 @@ namespace Teronis.Extensions.NetStandard
                         // When early iterations are synchronized, then we always need 
                         // to delete the left value at index of greatest right value index plus one
                         var newLeftValueIndex = earlyLeftValueIndex - (earlyLeftValueIndex - earlyRightValueIndex);
-                        change = CollectionChange<T>.CreateOld(NotifyCollectionChangedAction.Remove, leftValue, newLeftValueIndex);
+                        earlyIterationChange = CollectionChange<T>.CreateOld(NotifyCollectionChangedAction.Remove, leftValue, newLeftValueIndex);
                     }
                     else
-                        lateLeftValueIndexPairs.Add(new LeftItem<T>(leftValue, earlyLeftValueIndex, leftValueIndexShifter));
+                        lateLeftValueIndexPairs.Add(createLeftItem());
 
                     earlyLeftValueIndex++;
                 }
                 else
                 {
                     if (areEarlyIterationValuesEqual)
-                        change = CollectionChange<T>.CreateNew(NotifyCollectionChangedAction.Add, rightValue, earlyRightValueIndex);
+                        earlyIterationChange = CollectionChange<T>.CreateNew(NotifyCollectionChangedAction.Add, rightValue, earlyRightValueIndex);
                     else
-                        lateRightValueIndexPairs.Add(new Item<T>(rightValue, earlyRightValueIndex));
+                        lateRightValueIndexPairs.Add(createRightItem());
 
                     earlyRightValueIndex++;
                 }
 
-                if (change != null)
-                    earlyIterationChanges.Add(change);
-            } while (true);
+                if (earlyIterationChange != null)
+                    earlyIterationChanges.Add(earlyIterationChange);
+            }
 
             foreach (var change in earlyIterationChanges)
                 yield return change;
@@ -189,35 +191,23 @@ namespace Teronis.Extensions.NetStandard
             if (areEarlyIterationValuesEqual)
                 yield break;
 
-            for (var rightValueIndexPairIndex = 0; rightValueIndexPairIndex < lateRightValueIndexPairs.Count; rightValueIndexPairIndex++)
+            foreach (var rightValueIndexPair in lateRightValueIndexPairs)
             {
-                var rightValueIndexPair = lateRightValueIndexPairs[rightValueIndexPairIndex];
                 // This index represents the current index of the right value collection.
                 var rightValueIndex = rightValueIndexPair.ShiftedIndex;
-                Item<T> foundLeftValueIndexPair = null;
+                var rightValue = rightValueIndexPair.Value;
+                var hasCachedLeftItem = rightValueIndexPair.CachedLeftItem != null;
+                LeftItem<T> foundLeftValueIndexPair = null;
 
-                for (var leftValueIndexPairIndex = 0; leftValueIndexPairIndex < lateLeftValueIndexPairs.Count; leftValueIndexPairIndex++)
+                if (hasCachedLeftItem)
+                    foundLeftValueIndexPair = rightValueIndexPair.CachedLeftItem;
+                else
                 {
-                    var leftValueIndexPair = lateLeftValueIndexPairs[leftValueIndexPairIndex];
-
-                    if (equalityComparer.Equals(leftValueIndexPair.Value, rightValueIndexPair.Value))
-                    {
-                        foundLeftValueIndexPair = leftValueIndexPair;
-                        // We remove the found left item, because we are sure that we don't need that reference anymore
-                        lateLeftValueIndexPairs.RemoveAt(leftValueIndexPairIndex);
-                        // We found a left value that is equal to the right value and due that fact, we cancel the search
-                        break;
-                    }
+                    if (lateLeftValueIndexPairs.TryGetValue(Item<T>.CreateEqualComparableItem(rightValue), out foundLeftValueIndexPair))
+                        lateLeftValueIndexPairs.Remove(foundLeftValueIndexPair);
                 }
 
                 var rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount = rightValueIndex;
-
-                //// We assume that late-left-value-index-pairs it's indexes in collection are sorted ascending
-                //foreach (var leftValueIndexPair in lateLeftValueIndexPairs)
-                //{
-                //    if (leftValueIndexPair.ShiftedIndex < rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount)
-                //        rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount++;
-                //}
 
                 if (foundLeftValueIndexPair == null)
                 {
@@ -232,32 +222,27 @@ namespace Teronis.Extensions.NetStandard
                     // Indexes can be equal, when not processed items are before the moved item
                     if (foundLeftIndex != rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount)
                     {
+                        // Here we deny the forward to backward move, so we have to process already replaced items, 
+                        // and move them forward, because they could be now behind those skipped items, but need to
+                        // be moved before them
+                        if (foundLeftIndex < rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount)
+                            continue;
+
                         var change = new CollectionChange<T>(NotifyCollectionChangedAction.Move, foundLeftValueIndexPair.Value, foundLeftIndex, rightValueIndexPair.Value, rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount);
                         // We move the old existing item
                         yield return change;
-
-                        // Now we have to increase the index by one from those items that are between the old index and new index + 1 of the moved item,
-                        //foreach (var leftValueIndexPair in lateLeftValueIndexPairs)
-                        //{
-                        //    var leftValueIndexPairIndex = leftValueIndexPair.ShiftedIndex;
-
-                        //    if (leftValueIndexPairIndex >= rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount && leftValueIndexPairIndex < foundLeftValueIndex)
-                        //        leftValueIndexPair.Shifts++;
-                        //}
                         leftValueIndexShifter.Shift(change);
                     }
 
-                    // Then we replace the left item by moved item at the destination index of the moved item
-                    yield return new CollectionChange<T>(NotifyCollectionChangedAction.Replace, foundLeftValueIndexPair.Value, rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount, rightValueIndexPair.Value, rightValueIndex);
+                    if (!hasCachedLeftItem)
+                        // Then we replace the left item by moved item at the destination index of the moved item
+                        yield return new CollectionChange<T>(NotifyCollectionChangedAction.Replace, foundLeftValueIndexPair.Value, rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount, rightValueIndexPair.Value, rightValueIndex);
                 }
             }
 
             // We remove all left left-value-index-pairs, because they did not match any condition above and have to be removed in REVERSED order
-            for (var leftValueIndexPairIndex = lateLeftValueIndexPairs.Count - 1; leftValueIndexPairIndex >= 0; leftValueIndexPairIndex--)
-            {
-                var leftValueIndexPair = lateLeftValueIndexPairs[leftValueIndexPairIndex];
+            foreach (var leftValueIndexPair in lateLeftValueIndexPairs.YieldReversedItems())
                 yield return CollectionChange<T>.CreateOld(NotifyCollectionChangedAction.Remove, leftValueIndexPair.Value, leftValueIndexPair.ShiftedIndex);
-            }
         }
 
         public static IEnumerable<CollectionChange<T>> GetCollectionChanges<T>(this IEnumerable<T> leftValues, IEnumerable<T> rightValues)
@@ -266,7 +251,7 @@ namespace Teronis.Extensions.NetStandard
         private class LeftItem<TValue> : Item<TValue>
         {
             public LeftItem(TValue value, int index, IndexShifter<CollectionChange<TValue>> shifter)
-                : base(value, index, shifter)
+                : base(value, index)
             {
                 shifter = shifter ?? throw new ArgumentNullException(nameof(shifter));
                 shifter.IndexShiftConditionEvaluating += Shifter_IndexShiftConditionEvaluating;
@@ -279,6 +264,7 @@ namespace Teronis.Extensions.NetStandard
                 switch (args.ShiftCondition.Action)
                 {
                     case NotifyCollectionChangedAction.Add:
+                        // When adding a 
                         if (ShiftedIndex >= change.NewIndex)
                             Shifts++;
 
@@ -292,23 +278,45 @@ namespace Teronis.Extensions.NetStandard
             }
         }
 
-        private class Item<TValue>
+        private class RightItem<TValue> : Item<TValue>
         {
+            public LeftItem<TValue> CachedLeftItem { get; set; }
+
+            public RightItem(TValue value, int index)
+                : base(value, index) { }
+        }
+
+        [DebuggerDisplay(ObjectLibrary.FullToDebugStringMethodPathWithParameterizedThis)]
+        private class Item<TValue> : IDebuggerDisplay
+        {
+            public static Item<TValue> CreateEqualComparableItem(TValue value) => new Item<TValue>(value, -1);
+
             public TValue Value { get; set; }
             public int InitialIndex { get; set; }
             public int Shifts { get; protected set; }
             public int ShiftedIndex => InitialIndex + Shifts;
 
-            protected Item(TValue value, int index, IndexShifter<CollectionChange<TValue>> shifter)
+            string IDebuggerDisplay.DebuggerDisplay => $"[{Value}, {ShiftedIndex}]";
+
+            protected Item(TValue value, int index)
             {
                 Value = value;
                 InitialIndex = index;
             }
+        }
 
-            public Item(TValue value, int index)
-                : this(value, index, default) { }
+        private class ItemEqualityComparer<TValue> : IEqualityComparer<Item<TValue>>
+        {
+            public IEqualityComparer<TValue> ValueEqualityComparer { get; private set; }
 
-            public override string ToString() => $"[{Value}, {ShiftedIndex}]";
+            public ItemEqualityComparer(IEqualityComparer<TValue> valueEqualityComparer)
+                => ValueEqualityComparer = ValueEqualityComparer ?? throw new ArgumentNullException(nameof(valueEqualityComparer));
+
+            public bool Equals(Item<TValue> x, Item<TValue> y)
+                => ValueEqualityComparer.Equals(x.Value, y.Value);
+
+            public int GetHashCode(Item<TValue> obj)
+                => ValueEqualityComparer.GetHashCode(obj.Value);
         }
     }
 }

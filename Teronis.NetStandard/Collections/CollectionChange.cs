@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Specialized;
-using Teronis.Collections.ObjectModel;
 using System.Diagnostics;
 using Teronis.Diagnostics;
+using Teronis.Libraries.NetStandard;
 
 namespace Teronis.Collections
 {
-    [DebuggerDisplay("{debuggerDisplay}")]
+    [DebuggerDisplay(ObjectLibrary.FullToDebugStringMethodPathWithParameterizedThis)]
     public class CollectionChange<T> : IDebuggerDisplay
     {
         public static CollectionChange<T> CreateOld(NotifyCollectionChangedAction changeAction, IList<T> oldItems, int oldIndex)
@@ -32,8 +32,6 @@ namespace Teronis.Collections
         public int OldIndex => oldPartialCollectionChange.Index;
         public IList<T> NewItems => newPartialCollectionChange.Values;
         public int NewIndex => newPartialCollectionChange.Index;
-
-        private string debuggerDisplay => ((IDebuggerDisplay)this).DebuggerDisplay;
 
         string IDebuggerDisplay.DebuggerDisplay => $"{Action}, {nameof(OldIndex)} = {OldIndex}, {nameof(NewIndex)} = {NewIndex}";
 

@@ -7,8 +7,6 @@ namespace Teronis.Extensions.NetStandard
 {
     public static class ObjectExtensions
     {
-        public const string TO_DEBUG_STRING_METHOD_FULL_PATH = "{" + nameof(Teronis) + "." + nameof(Extensions) + "." + nameof(NetStandard) + "." + nameof(ObjectExtensions) + "." + nameof(ObjectExtensions.ToDebugString) + "(this)}";
-
         public static bool IsNullable(this object obj)
         {
             if (obj == null)

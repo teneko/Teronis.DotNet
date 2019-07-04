@@ -4,7 +4,7 @@ namespace Teronis.Data.TreeColumn.Core
 {
     public interface ITreeColumnKey 
     {
-        Type DeclarationType { get; }
+        Type DeclaringType { get; }
         string VariableName { get; }
     }   
 }

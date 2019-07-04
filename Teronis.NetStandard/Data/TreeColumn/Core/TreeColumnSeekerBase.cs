@@ -53,7 +53,7 @@ namespace Teronis.Data.TreeColumn.Core
                 for (int index = 0; index < treeColumnOrdering.Count; index++) {
                     var orderedTreeColumnKey = treeColumnOrdering[index];
 
-                    if (orderedTreeColumnKey.DeclarationType == declaringType) {
+                    if (orderedTreeColumnKey.DeclaringType == declaringType) {
                         string combinedPath = combinePath(parentPath, orderedTreeColumnKey.VariableName);
                         var treeColumnValue = instantiateTreeColumnValue(orderedTreeColumnKey, combinedPath, index);
 

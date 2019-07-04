@@ -1,17 +1,17 @@
 ﻿using System;
+using System.Reflection;
+using Teronis.Extensions.NetStandard;
 
 namespace Teronis.Data.TreeColumn.Core
 {
     public class TreeColumnKey : ITreeColumnKey
     {
-        public Type DeclarationType { get; private set; }
-        public string VariableName { get; private set; }
+        public PropertyInfo PropertyInfo { get; private set; }
+        public Type DeclaringType => PropertyInfo.DeclaringType;
+        public string VariableName => PropertyInfo.Name;
 
         public TreeColumnKey(Type declarationType, string variableName)
-        {
-            DeclarationType = declarationType;
-            VariableName = variableName;
-        }
+            => PropertyInfo = declarationType.GetProperty(variableName);
 
         public bool Equals(TreeColumnKey other) => TreeColumnKeyEqualityComparer.Default.Equals(this, other);
 

@@ -13,14 +13,14 @@ namespace Teronis.Data.TreeColumn.Core
             else if (x == null || y == null)
                 return false;
             else
-                return x.DeclarationType == y.DeclarationType && x.VariableName == y.VariableName;
+                return x.DeclaringType == y.DeclaringType && x.VariableName == y.VariableName;
         }
 
         public override int GetHashCode(TreeColumnKey obj)
         {
             unchecked {
                 var hash = 17;
-                hash = hash * 23 + obj.DeclarationType.GetHashCode();
+                hash = hash * 23 + obj.DeclaringType.GetHashCode();
                 hash = hash * 23 + obj.VariableName.GetHashCode();
                 return hash;
             }

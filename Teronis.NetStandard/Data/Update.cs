@@ -11,8 +11,8 @@ namespace Teronis.Data
 
         public Update(T content, object originalSource)
         {
-            OriginalSource = originalSource;
             Content = content;
+            OriginalSource = originalSource;
         }
     }
 }

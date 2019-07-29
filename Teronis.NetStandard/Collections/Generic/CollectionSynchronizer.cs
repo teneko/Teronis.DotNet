@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using Teronis.Collections.ObjectModel;
 using Teronis.Extensions.NetStandard;
 
 namespace Teronis.Collections.Generic
@@ -99,8 +97,6 @@ namespace Teronis.Collections.Generic
 #endif
                 Collection.RemoveAt(index);
             }
-
-
         }
 
         protected virtual void onCollectionItemAdd(CollectionChange<TItem> change)

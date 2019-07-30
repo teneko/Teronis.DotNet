@@ -24,7 +24,8 @@ namespace Teronis
             return () => (T)FormatterServices.GetUninitializedObject(type); // ~2000 ms
         }
 
-        public static T Instantiate() {
+        public static T Instantiate()
+        {
             if (instantiateDelegateReference == null)
                 instantiateDelegateReference = instantiate;
 

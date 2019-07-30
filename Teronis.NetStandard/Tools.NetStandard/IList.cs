@@ -9,8 +9,7 @@ namespace Teronis.Tools.NetStandard
         {
             int n = list.Count;
 
-            while (n > 1)
-            {
+            while (n > 1) {
                 n--;
                 int k = ThreadSafeRandom.Next(n + 1);
                 var value = list[k];
@@ -33,16 +32,13 @@ namespace Teronis.Tools.NetStandard
             // -1 for beginning at the second last index
             var currentIndex = collection.Count - 2;
 
-            while (currentIndex >= 0)
-            {
-                for (var index = 0; index <= currentIndex; index++)
-                {
+            while (currentIndex >= 0) {
+                for (var index = 0; index <= currentIndex; index++) {
                     var foreNumber = collection[index];
                     var backIndex = index + 1;
                     var backNumber = collection[backIndex];
 
-                    if (comparer.Compare(foreNumber, backNumber) > 0)
-                    {
+                    if (comparer.Compare(foreNumber, backNumber) > 0) {
                         collection[backIndex] = foreNumber;
                         collection[index] = backNumber;
                     }

@@ -18,8 +18,7 @@ namespace Teronis.Extensions.NetStandard
 
         public static R FirstNonDefaultOrDefault<T, R>(this IEnumerable<T> collection, Func<T, R> getObj)
         {
-            foreach (var item in collection)
-            {
+            foreach (var item in collection) {
                 var obj = getObj(item);
 
                 if (obj != default)
@@ -51,8 +50,7 @@ namespace Teronis.Extensions.NetStandard
         {
             int i = 0;
 
-            foreach (var value in sequence)
-            {
+            foreach (var value in sequence) {
                 yield return new ValueIndexPair<T>(value, i);
                 i++;
             }
@@ -117,8 +115,7 @@ namespace Teronis.Extensions.NetStandard
             bool getHasValue(ref bool hasValue, IEnumerator<T> valueEnumerator)
                 => hasValue && (hasValue = valueEnumerator.MoveNext());
 
-            while (getHasValue(ref hasLeftValue, leftValuesEnumerator) | getHasValue(ref hasRightValue, rightValuesEnumerator))
-            {
+            while (getHasValue(ref hasLeftValue, leftValuesEnumerator) | getHasValue(ref hasRightValue, rightValuesEnumerator)) {
                 // Cancel if not a left and right value is available
                 if (!(hasLeftValue || hasRightValue))
                     break;
@@ -130,12 +127,10 @@ namespace Teronis.Extensions.NetStandard
                 LeftItem<T> createLeftItem() => new LeftItem<T>(leftValue, earlyLeftValueIndex, leftValueIndexShifter);
                 RightItem<T> createRightItem() => new RightItem<T>(rightValue, earlyRightValueIndex);
 
-                if (hasLeftValue && hasRightValue)
-                {
+                if (hasLeftValue && hasRightValue) {
                     var areBothItemsEqual = equalityComparer.Equals(leftValue, rightValue);
 
-                    if (areBothItemsEqual)
-                    {
+                    if (areBothItemsEqual) {
                         earlyIterationChange = new CollectionChange<T>(NotifyCollectionChangedAction.Replace, leftValue, earlyLeftValueIndex, rightValue, earlyRightValueIndex);
 
                         // We only move back to forward, but never back to forward, so this item, even when it's now well positioned,
@@ -144,9 +139,7 @@ namespace Teronis.Extensions.NetStandard
                         // We take us of a cache, so that we don't have to search for left item and don't replace it twice
                         rightItem.CachedLeftItem = createLeftItem();
                         lateRightValueIndexPairs.Add(rightItem);
-                    }
-                    else
-                    {
+                    } else {
                         lateLeftValueIndexPairs.Add(createLeftItem());
                         lateRightValueIndexPairs.Add(createRightItem());
                         areEarlyIterationValuesEqual = false;
@@ -155,23 +148,17 @@ namespace Teronis.Extensions.NetStandard
                     earlyEqualIterationCount++;
                     earlyLeftValueIndex = earlyEqualIterationCount;
                     earlyRightValueIndex = earlyEqualIterationCount;
-                }
-                else if (hasLeftValue)
-                {
-                    if (areEarlyIterationValuesEqual)
-                    {
+                } else if (hasLeftValue) {
+                    if (areEarlyIterationValuesEqual) {
                         // When early iterations are synchronized, then we always need 
                         // to delete the left value at index of greatest right value index plus one
                         var newLeftValueIndex = earlyLeftValueIndex - (earlyLeftValueIndex - earlyRightValueIndex);
                         earlyIterationChange = CollectionChange<T>.CreateOld(NotifyCollectionChangedAction.Remove, leftValue, newLeftValueIndex);
-                    }
-                    else
+                    } else
                         lateLeftValueIndexPairs.Add(createLeftItem());
 
                     earlyLeftValueIndex++;
-                }
-                else
-                {
+                } else {
                     if (areEarlyIterationValuesEqual)
                         earlyIterationChange = CollectionChange<T>.CreateNew(NotifyCollectionChangedAction.Add, rightValue, earlyRightValueIndex);
                     else
@@ -191,8 +178,7 @@ namespace Teronis.Extensions.NetStandard
             if (areEarlyIterationValuesEqual)
                 yield break;
 
-            foreach (var rightValueIndexPair in lateRightValueIndexPairs)
-            {
+            foreach (var rightValueIndexPair in lateRightValueIndexPairs) {
                 // This index represents the current index of the right value collection.
                 var rightValueIndex = rightValueIndexPair.ShiftedIndex;
                 var rightValue = rightValueIndexPair.Value;
@@ -201,27 +187,22 @@ namespace Teronis.Extensions.NetStandard
 
                 if (hasCachedLeftItem)
                     foundLeftValueIndexPair = rightValueIndexPair.CachedLeftItem;
-                else
-                {
+                else {
                     if (lateLeftValueIndexPairs.TryGetValue(Item<T>.CreateEqualComparableItem(rightValue), out foundLeftValueIndexPair))
                         lateLeftValueIndexPairs.Remove(foundLeftValueIndexPair);
                 }
 
                 var rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount = rightValueIndex;
 
-                if (foundLeftValueIndexPair == null)
-                {
+                if (foundLeftValueIndexPair == null) {
                     var change = CollectionChange<T>.CreateNew(NotifyCollectionChangedAction.Add, rightValueIndexPair.Value, rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount);
                     yield return change;
                     leftValueIndexShifter.Shift(change);
-                }
-                else
-                {
+                } else {
                     var foundLeftIndex = foundLeftValueIndexPair.ShiftedIndex;
 
                     // Indexes can be equal, when not processed items are before the moved item
-                    if (foundLeftIndex != rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount)
-                    {
+                    if (foundLeftIndex != rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount) {
                         // Here we deny the forward to backward move, so we have to process already replaced items, 
                         // and move them forward, because they could be now behind those skipped items, but need to
                         // be moved before them
@@ -261,8 +242,7 @@ namespace Teronis.Extensions.NetStandard
             {
                 var change = args.ShiftCondition;
 
-                switch (args.ShiftCondition.Action)
-                {
+                switch (args.ShiftCondition.Action) {
                     case NotifyCollectionChangedAction.Add:
                         // When adding a 
                         if (ShiftedIndex >= change.NewIndex)

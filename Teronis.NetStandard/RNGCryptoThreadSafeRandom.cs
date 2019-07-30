@@ -13,8 +13,7 @@ namespace Teronis
         {
             global = new RNGCryptoServiceProvider();
 
-            local = new ThreadLocal<Random>(() =>
-            {
+            local = new ThreadLocal<Random>(() => {
                 byte[] buffer = new byte[4];
                 global.GetBytes(buffer);
                 return new Random(BitConverter.ToInt32(buffer, 0));

@@ -216,7 +216,8 @@ namespace Teronis.Collections.Generic
             if (index < 0 || index >= _keyedCollection.Count)
                 throw new ArgumentException("The index is outside the bounds of the dictionary: {0}".Format(index));
 
-            _keyedCollection[index] = new KeyValuePair<K, V>(_keyedCollection[index].Key, value); ;
+            _keyedCollection[index] = new KeyValuePair<K, V>(_keyedCollection[index].Key, value);
+            ;
         }
 
         /// <summary>

@@ -36,8 +36,7 @@ namespace Teronis.Collections.Generic
 
             void displayItem(ICollection<TItem> items, string itemCollectionName, int beginningIndex)
             {
-                try
-                {
+                try {
                     Debug.WriteLine($"{itemCollectionName}, BeginningIndex = {beginningIndex}");
                     Debug.Indent();
 
@@ -45,8 +44,7 @@ namespace Teronis.Collections.Generic
                         Debug.WriteLine($"{beginningIndex++}: {item.ToDebugString()}");
 
                     Debug.Unindent();
-                }
-                catch { }
+                } catch { }
             }
 
             Debug.Indent();
@@ -82,11 +80,9 @@ namespace Teronis.Collections.Generic
         {
             var oldIndex = change.OldIndex;
 
-            for (var index = oldIndex + change.OldItems.Count - 1; index >= oldIndex; index--)
-            {
+            for (var index = oldIndex + change.OldItems.Count - 1; index >= oldIndex; index--) {
 #if DEBUG
-                if (EqualityComparer != EqualityComparer<TItem>.Default)
-                {
+                if (EqualityComparer != EqualityComparer<TItem>.Default) {
                     var removingItem = Collection[index];
                     var oldItemIndex = change.OldItems.Count - (oldIndex + change.OldItems.Count - index - 1) - 1;
                     var oldItem = change.OldItems[oldItemIndex];
@@ -157,8 +153,7 @@ namespace Teronis.Collections.Generic
         {
             AspectedCollectionChange<TItem> aspectedChange = null;
 
-            switch (change.Action)
-            {
+            switch (change.Action) {
                 case NotifyCollectionChangedAction.Remove:
                     onCollectionItemRemove(change);
                     break;
@@ -168,15 +163,13 @@ namespace Teronis.Collections.Generic
                 case NotifyCollectionChangedAction.Move:
                     onCollectionItemMove(change);
                     break;
-                case NotifyCollectionChangedAction.Replace:
-                    {
+                case NotifyCollectionChangedAction.Replace: {
                         var aspect = new CollectionChangeReplaceAspect<TItem>();
                         onCollectionItemReplace(change, aspect);
                         aspectedChange = new AspectedCollectionChange<TItem>(change, aspect);
                         break;
                     }
-                case NotifyCollectionChangedAction.Reset:
-                    {
+                case NotifyCollectionChangedAction.Reset: {
                         var aspect = new CollectionChangeResetAspect<TItem>();
                         onCollectionReset(change, aspect);
                         aspectedChange = new AspectedCollectionChange<TItem>(change, aspect);

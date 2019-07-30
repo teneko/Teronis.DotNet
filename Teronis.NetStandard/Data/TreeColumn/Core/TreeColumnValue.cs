@@ -15,7 +15,7 @@ namespace Teronis.Data.TreeColumn.Core
             Path = path;
             Index = index;
         }
-        
+
         protected TreeColumnValue() { }
     }
 }

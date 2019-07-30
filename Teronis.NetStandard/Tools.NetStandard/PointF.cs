@@ -69,14 +69,14 @@ namespace Teronis.Tools.NetStandard
         public static PointF GetAveragePoint(IEnumerable<PointF> points)
         {
             var result = default(PointF);
-            
+
             if (points != null) {
                 var enumerator = points.GetEnumerator();
 
                 // At least one point.
                 if (enumerator.MoveNext()) {
                     var counter = 0;
-                    
+
                     do {
                         result.X += enumerator.Current.X;
                         result.Y += enumerator.Current.Y;
@@ -91,8 +91,10 @@ namespace Teronis.Tools.NetStandard
             return result;
         }
 
-        public static PointF GetAveragePoint<T>(IEnumerable<T> points, Func<T, PointF> getPoint) {
-            IEnumerable<PointF> getPoints() {
+        public static PointF GetAveragePoint<T>(IEnumerable<T> points, Func<T, PointF> getPoint)
+        {
+            IEnumerable<PointF> getPoints()
+            {
                 foreach (var point in points)
                     yield return getPoint(point);
             }

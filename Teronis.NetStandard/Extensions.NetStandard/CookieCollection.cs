@@ -12,7 +12,7 @@ namespace Teronis.Extensions.NetStandard
         public static CookieContainer CopyTo(this CookieCollection cookieCollection, CookieContainer cookieContainer)
         {
             // they will be cloned/copied by implementation
-            cookieContainer.Add(cookieCollection); 
+            cookieContainer.Add(cookieCollection);
             return cookieContainer;
         }
 

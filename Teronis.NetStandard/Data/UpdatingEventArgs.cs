@@ -9,7 +9,8 @@ namespace Teronis.Data
         public Update<T> Update { get; private set; }
         public bool Handled { get; set; }
 
-        public UpdatingEventArgs(Update<T> update) {
+        public UpdatingEventArgs(Update<T> update)
+        {
             Update = update;
         }
     }

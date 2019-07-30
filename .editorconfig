@@ -75,17 +75,17 @@ dotnet_naming_symbols.constant_fields.required_modifiers = const
 
 [*.cs]
 # Indentations options
-csharp_indent_case_contents=true
-csharp_indent_switch_labels=true
-csharp_indent_labels=no_change
-csharp_indent_block_contents=true
-csharp_indent_braces=false
-csharp_indent_case_contents_when_block=true
+csharp_indent_case_contents = true
+csharp_indent_switch_labels = true
+csharp_indent_labels = no_change
+csharp_indent_block_contents = true
+csharp_indent_braces = false
+csharp_indent_case_contents_when_block = true
 
 # Space options
-csharp_space_after_cast = true
+csharp_space_after_cast = false
 csharp_space_after_keywords_in_control_flow_statements = true
-csharp_space_between_parentheses = control_flow_statements, type_casts
+csharp_space_between_parentheses = false
 csharp_space_before_colon_in_inheritance_clause = true
 csharp_space_after_colon_in_inheritance_clause = true
 csharp_space_around_binary_operators = before_and_after

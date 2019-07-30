@@ -10,8 +10,7 @@ namespace Teronis.Tools.NetStandard
         {
             var node = list.Last;
 
-            while (node != null)
-            {
+            while (node != null) {
                 yield return node.Value;
                 node = node.Previous;
             }

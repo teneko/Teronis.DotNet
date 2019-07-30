@@ -12,7 +12,7 @@ namespace Teronis
             StringSeparator = stringSeparator;
             LastSeperationIndex = initialLastSeparationIndex;
         }
-        
+
         public StringSeparationUsage(string stringSeparator) : this(stringSeparator, -1) { }
 
         public void SetStringSeparator(ref string inputText)

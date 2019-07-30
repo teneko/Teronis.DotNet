@@ -6,7 +6,8 @@ namespace Teronis.Security.Cryptography
 {
     public static class Pbkdf2Factory
     {
-        public static Pbkdf2HashEntity GenerateHash(string password) {
+        public static Pbkdf2HashEntity GenerateHash(string password)
+        {
             var container = new Pbkdf2HashEntity();
             GenerateHash(container, password);
             return container;
@@ -29,6 +30,6 @@ namespace Teronis.Security.Cryptography
             container.Hash = Convert.ToBase64String(hash);
             container.Salt = Convert.ToBase64String(salt);
             container.Interations = iterations;
+        }
     }
-}
 }

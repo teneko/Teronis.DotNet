@@ -2,7 +2,7 @@
 
 namespace Teronis.Data.TreeColumn.Core
 {
-    public interface ITreeColumnValue<out TreeColumnDefinitionKeyType> 
+    public interface ITreeColumnValue<out TreeColumnDefinitionKeyType>
         where TreeColumnDefinitionKeyType : ITreeColumnKey
     {
         TreeColumnDefinitionKeyType Key { get; }

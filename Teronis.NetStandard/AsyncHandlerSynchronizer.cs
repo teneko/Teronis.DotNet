@@ -54,8 +54,7 @@ namespace Teronis
             if (Status != AsyncHandlerSynchronizerStatus.Created)
                 throw new InvalidOperationException("Depenendecies are already awaited or are being awaited");
 
-            if (!tcsDependencies.TryGetValue(key, out var tcsList))
-            {
+            if (!tcsDependencies.TryGetValue(key, out var tcsList)) {
                 tcsList = new List<TaskCompletionSource>();
                 tcsDependencies.Add(key, tcsList);
             }
@@ -82,14 +81,12 @@ namespace Teronis
                 return true;
             else if (Status == AsyncHandlerSynchronizerStatus.Canceled)
                 return false;
-            else
-            {
+            else {
                 CheckDispose();
                 await tcsRegistrationPhaseEnd.Task;
                 IEnumerable<Task> awaitableDependencies;
 
-                if (!(keys == null || keys.Length == 0))
-                {
+                if (!(keys == null || keys.Length == 0)) {
                     // These are all dependencies that are referenced to passed keys
                     awaitableDependencies = from tcs in (from key in keys
                                                          where tcsDependencies.ContainsKey(key)
@@ -98,17 +95,13 @@ namespace Teronis
 
                     // Finally we want to add them to the awaitable tasks
                     //awaitableTasks.AddRange(awaitableDependencies);
-                }
-                else
+                } else
                     awaitableDependencies = Enumerable.Empty<Task>();
 
-                try
-                {
+                try {
                     await Task.WhenAll(awaitableDependencies).ConfigureAwait(false);
                     return true;
-                }
-                catch
-                {
+                } catch {
                     return false;
                 }
             }
@@ -124,36 +117,28 @@ namespace Teronis
         {
             await finishDependenciesAsyncLocker.WaitAsync();
 
-            if (Status == AsyncHandlerSynchronizerStatus.Created)
-            {
+            if (Status == AsyncHandlerSynchronizerStatus.Created) {
                 // We want to finish the registration phase, after all invoked event handler may have registered their dependencies
                 tcsRegistrationPhaseEnd.SetResult();
                 finishDependenciesTask = Task.WhenAll(getAllTaskCompletionSources().Select(x => x.Task));
                 Status = AsyncHandlerSynchronizerStatus.Running;
                 finishDependenciesAsyncLocker.Release();
 
-                try
-                {
+                try {
                     // Then we await all dependencies
                     await finishDependenciesTask;
                     Status = AsyncHandlerSynchronizerStatus.Finished;
-                }
-                catch
-                {
+                } catch {
                     // Try to cancel all dependencies
                     foreach (var tcs in getAllTaskCompletionSources())
                         tcs.TrySetCanceled();
 
                     Status = AsyncHandlerSynchronizerStatus.Canceled;
                     throw;
-                }
-                finally
-                {
+                } finally {
                     Dispose();
                 }
-            }
-            else
-            {
+            } else {
                 finishDependenciesAsyncLocker.Release();
                 await finishDependenciesTask;
             }
@@ -161,10 +146,8 @@ namespace Teronis
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!IsDisposed)
-            {
-                if (disposing)
-                {
+            if (!IsDisposed) {
+                if (disposing) {
                     finishDependenciesAsyncLocker.Dispose();
                     finishDependenciesAsyncLocker = null;
                 }

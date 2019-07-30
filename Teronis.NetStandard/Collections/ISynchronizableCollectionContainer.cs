@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Teronis.Collections
 {
-   public interface ISynchronizableCollectionContainer<TItem>
+    public interface ISynchronizableCollectionContainer<TItem>
     {
         IList<TItem> Collection { get; }
 

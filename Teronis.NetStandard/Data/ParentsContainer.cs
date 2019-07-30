@@ -34,7 +34,8 @@ namespace Teronis.Data
                 Parents.Add(parent);
         }
 
-        public void AddParents(IEnumerable<object> parents) {
+        public void AddParents(IEnumerable<object> parents)
+        {
             foreach (var parent in parents)
                 AddParent(parent);
         }

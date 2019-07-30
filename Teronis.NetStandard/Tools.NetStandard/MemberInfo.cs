@@ -49,7 +49,8 @@ namespace Teronis.Tools.NetStandard
         /// <summary>
         /// Checks that <paramref name="memberInfo"/> is a valid variable and has an attribute of type <paramref name="attributeType"/> defined, otherwise an exception is been thrown.
         /// </summary>
-        public static void CheckedAttributeVariable(MemberInfo memberInfo, Type attributeType) {
+        public static void CheckedAttributeVariable(MemberInfo memberInfo, Type attributeType)
+        {
             CheckedVariable(memberInfo);
 
             if (!memberInfo.IsDefined(attributeType, false))

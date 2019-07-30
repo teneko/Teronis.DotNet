@@ -70,7 +70,8 @@ namespace Teronis.Tools.NetStandard
             };
         }
 
-        public static object GetNestedValue(NestedProperty nestedProperty) {
+        public static object GetNestedValue(NestedProperty nestedProperty)
+        {
             if (nestedProperty.OriginObject != null && nestedProperty.PropertyInfo != null)
                 return nestedProperty.PropertyInfo.GetValue(nestedProperty.OriginObject);
             else

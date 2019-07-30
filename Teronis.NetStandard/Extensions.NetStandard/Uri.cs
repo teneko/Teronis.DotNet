@@ -9,7 +9,7 @@ namespace Teronis.Extensions.NetStandard
     public static class UriExtensions
     {
         public static NameValueCollection ParseQueryString(this Uri uri) => HttpUtility.ParseQueryString(uri.Query);
-        
+
         /// <param name="uri"></param>
         /// <param name="items"></param>
         /// <returns>The return value is a new instance.</returns>

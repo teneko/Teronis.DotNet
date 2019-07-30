@@ -22,7 +22,7 @@ namespace Teronis.Tools.NetStandard
                         supportedCultures.Add(culture);
                 } catch { }
             }
-            
+
             return supportedCultures;
         }
     }

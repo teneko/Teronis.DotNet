@@ -60,7 +60,8 @@ namespace Teronis.Collections.Generic
             if (!list.Contains(item))
                 list.Insert(index, item);
 
-            else throw new Exception(EXCEPTION_ITEM_EXISTING);
+            else
+                throw new Exception(EXCEPTION_ITEM_EXISTING);
         }
 
         public bool TryInsert(int index, T item)

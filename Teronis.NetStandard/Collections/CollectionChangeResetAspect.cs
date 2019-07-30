@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Teronis.Collections
 {
-   public class CollectionChangeReplaceAspect<TItem>
+    public class CollectionChangeReplaceAspect<TItem>
     {
         /// <summary>
         /// Each value represents the referenced value before it got replaced.
@@ -14,7 +14,8 @@ namespace Teronis.Collections
 
         private Dictionary<int, TItem> referencedReplacedOldItemByIndexDictionary;
 
-        public CollectionChangeReplaceAspect() {
+        public CollectionChangeReplaceAspect()
+        {
             referencedReplacedOldItemByIndexDictionary = new Dictionary<int, TItem>();
             ReferencedReplacedOldItemByIndexDictionary = new ReadOnlyDictionary<int, TItem>(referencedReplacedOldItemByIndexDictionary);
         }

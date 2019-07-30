@@ -6,7 +6,7 @@ using Teronis.Libraries.NetStandard;
 namespace Teronis.Extensions.NetStandard
 {
     public static class EnumExtensions
-	{
+    {
         public static IEnumerable<ENUM_TYPE> CrushContainingBitsToEnumerable<ENUM_TYPE>(this ENUM_TYPE enumValue, bool ignoreZero = Library.IgnoreZeroWhenCrushingContainingBits) where ENUM_TYPE : struct, IComparable, IFormattable, IConvertible
         {
             var enumValue2 = enumValue.CastTo<Enum>();

@@ -16,9 +16,9 @@ namespace Teronis
     /// [<see cref="FinishDependenciesAsync"/>].
     /// </summary>
     /// <typeparam name="KeyType"></typeparam>
-    public class AsyncHandlerSynchronizer<KeyType> : IDisposable
+    public class AsyncEventHandlerSynchronization<KeyType> : IDisposable
     {
-        public AsyncHandlerSynchronizerStatus Status { get; private set; }
+        public AsyncEventHandlerSynchronizerStatus Status { get; private set; }
         public IEqualityComparer<KeyType> EqualityComparer { get; protected set; }
         public bool IsDisposed { get; private set; }
 
@@ -27,16 +27,16 @@ namespace Teronis
         private SemaphoreSlim finishDependenciesAsyncLocker;
         private Task finishDependenciesTask;
 
-        public AsyncHandlerSynchronizer(IEqualityComparer<KeyType> equalityComparer)
+        public AsyncEventHandlerSynchronization(IEqualityComparer<KeyType> equalityComparer)
         {
-            Status = AsyncHandlerSynchronizerStatus.Created;
+            Status = AsyncEventHandlerSynchronizerStatus.Created;
             EqualityComparer = equalityComparer ?? throw new ArgumentException(nameof(equalityComparer));
             tcsDependencies = new Dictionary<KeyType, List<TaskCompletionSource>>(EqualityComparer);
             tcsRegistrationPhaseEnd = new TaskCompletionSource();
             finishDependenciesAsyncLocker = new SemaphoreSlim(1, 1);
         }
 
-        public AsyncHandlerSynchronizer()
+        public AsyncEventHandlerSynchronization()
             : this(EqualityComparer<KeyType>.Default) { }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Teronis
 
         public TaskCompletionSource RegisterDependency(KeyType key)
         {
-            if (Status != AsyncHandlerSynchronizerStatus.Created)
+            if (Status != AsyncEventHandlerSynchronizerStatus.Created)
                 throw new InvalidOperationException("Depenendecies are already awaited or are being awaited");
 
             if (!tcsDependencies.TryGetValue(key, out var tcsList)) {
@@ -77,9 +77,9 @@ namespace Teronis
         /// </summary>
         public async Task<bool> TryAwaitDependency(params KeyType[] keys)
         {
-            if (Status == AsyncHandlerSynchronizerStatus.Finished)
+            if (Status == AsyncEventHandlerSynchronizerStatus.Finished)
                 return true;
-            else if (Status == AsyncHandlerSynchronizerStatus.Canceled)
+            else if (Status == AsyncEventHandlerSynchronizerStatus.Canceled)
                 return false;
             else {
                 CheckDispose();
@@ -117,23 +117,23 @@ namespace Teronis
         {
             await finishDependenciesAsyncLocker.WaitAsync();
 
-            if (Status == AsyncHandlerSynchronizerStatus.Created) {
+            if (Status == AsyncEventHandlerSynchronizerStatus.Created) {
                 // We want to finish the registration phase, after all invoked event handler may have registered their dependencies
                 tcsRegistrationPhaseEnd.SetResult();
                 finishDependenciesTask = Task.WhenAll(getAllTaskCompletionSources().Select(x => x.Task));
-                Status = AsyncHandlerSynchronizerStatus.Running;
+                Status = AsyncEventHandlerSynchronizerStatus.Running;
                 finishDependenciesAsyncLocker.Release();
 
                 try {
                     // Then we await all dependencies
                     await finishDependenciesTask;
-                    Status = AsyncHandlerSynchronizerStatus.Finished;
+                    Status = AsyncEventHandlerSynchronizerStatus.Finished;
                 } catch {
                     // Try to cancel all dependencies
                     foreach (var tcs in getAllTaskCompletionSources())
                         tcs.TrySetCanceled();
 
-                    Status = AsyncHandlerSynchronizerStatus.Canceled;
+                    Status = AsyncEventHandlerSynchronizerStatus.Canceled;
                     throw;
                 } finally {
                     Dispose();
@@ -159,7 +159,7 @@ namespace Teronis
             }
         }
 
-        ~AsyncHandlerSynchronizer() => Dispose(false);
+        ~AsyncEventHandlerSynchronization() => Dispose(false);
 
         public void Dispose()
         {

@@ -10,8 +10,6 @@ namespace Teronis.Data
         public bool Handled { get; set; }
 
         public UpdatingEventArgs(Update<T> update)
-        {
-            Update = update;
-        }
+            => Update = update;
     }
 }

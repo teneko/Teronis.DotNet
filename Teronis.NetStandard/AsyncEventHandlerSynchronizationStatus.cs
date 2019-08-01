@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Teronis
 {
-    public enum AsyncHandlerSynchronizerStatus
+    public enum AsyncEventHandlerSynchronizerStatus
     {
         Created,
         Running,

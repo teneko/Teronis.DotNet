@@ -30,7 +30,7 @@ namespace Teronis.Extensions.NetStandard
             AttachParent(args, parent);
 
             if (parent is IHaveParents havingParents) {
-                var parents = havingParents.GetParents(args.Container.WantedType);
+                var parents = havingParents.GetParentsPicker().GetParents(args.Container.WantedType);
                 args.Container.AddParents(parents);
             }
         }

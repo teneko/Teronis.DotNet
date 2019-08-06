@@ -9,6 +9,7 @@ using Teronis.Collections.ObjectModel;
 using Teronis.Diagnostics;
 using System.Diagnostics;
 using Teronis.Libraries.NetStandard;
+using System.Threading.Tasks;
 
 namespace Teronis.Extensions.NetStandard
 {
@@ -96,6 +97,7 @@ namespace Teronis.Extensions.NetStandard
         /// <returns></returns>
         public static IEnumerable<CollectionChange<T>> GetCollectionChanges<T>(this IEnumerable<T> leftValues, IEnumerable<T> rightValues, IEqualityComparer<T> equalityComparer)
         {
+            equalityComparer = equalityComparer ?? EqualityComparer<T>.Default;
             var leftValuesEnumerator = leftValues.GetEnumerator();
             var rightValuesEnumerator = rightValues.GetEnumerator();
             var hasLeftValue = true;
@@ -227,7 +229,13 @@ namespace Teronis.Extensions.NetStandard
         }
 
         public static IEnumerable<CollectionChange<T>> GetCollectionChanges<T>(this IEnumerable<T> leftValues, IEnumerable<T> rightValues)
-            => GetCollectionChanges(leftValues, rightValues, EqualityComparer<T>.Default);
+            => GetCollectionChanges(leftValues, rightValues, default);
+
+        public static Task<List<CollectionChange<T>>> GetCollectionChangesAsync<T>(this IEnumerable<T> leftValues, IEnumerable<T> rightValues, IEqualityComparer<T> equalityComparer)
+            => Task.Run(() => GetCollectionChanges(leftValues, rightValues, equalityComparer).ToList());
+
+        public static Task<List<CollectionChange<T>>> GetCollectionChangesAsync<T>(this IEnumerable<T> leftValues, IEnumerable<T> rightValues)
+            => GetCollectionChangesAsync(leftValues, rightValues, default);
 
         private class LeftItem<TValue> : Item<TValue>
         {

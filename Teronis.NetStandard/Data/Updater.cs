@@ -11,29 +11,35 @@ namespace Teronis.Data
 {
     public class Updater<T> : INotifyPropertyChanged, IUpdatable<T>
     {
+#pragma warning disable 0067
         public event PropertyChangedEventHandler PropertyChanged;
+#pragma warning restore 0067
         public event UpdatingEventHandler<T> Updating;
         public event UpdatedEventHandler<T> Updated;
 
-        public bool IsUpdating {
-            get => isUpdating;
+        public bool IsUpdating => updateSequenceStatus.IsUpdating;
 
-            private set {
-                isUpdating = value;
-                OnPropertyChanged();
-            }
+        private UpdateSequenceStatus updateSequenceStatus;
+        private PropertyChangedRelay propertyChangedRelay;
+
+        public Updater()
+        {
+            updateSequenceStatus = new UpdateSequenceStatus();
+            propertyChangedRelay = new PropertyChangedRelay(GetType(), updateSequenceStatus);
+            propertyChangedRelay.PropertyChanged += PropertyChangedRelay_PropertyChanged;
         }
 
-        private bool isUpdating;
+        private void PropertyChangedRelay_PropertyChanged(object sender, PropertyChangedEventArgs e)
+           => PropertyChanged?.Invoke(this, e);
 
         public bool IsUpdatable(Update<T> update)
            => new UpdatingEventArgs<T>(update).IsUpdateAppliable(this, Updating);
 
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
+        /// <summary>
+        /// When using this function, you have to call <see cref="EndUpdate"/> by yourself explicit.
+        /// </summary>
         public void BeginUpdate()
-            => IsUpdating = true;
+            => updateSequenceStatus.BeginUpdate();
 
         /// <summary>
         /// Buisness logic have to be implemented here
@@ -42,20 +48,16 @@ namespace Teronis.Data
         protected virtual void InnerUpdatBy(Update<T> update) { }
 
         public void EndUpdate()
-            => IsUpdating = false;
+            => updateSequenceStatus.EndUpdate();
 
         public void UpdateBy(Update<T> update)
         {
-            EndUpdate();
-
-            if (!IsUpdatable(update)) {
-                EndUpdate();
-                return;
+            if (IsUpdatable(update)) {
+                updateSequenceStatus.BeginUpdate(true);
+                InnerUpdatBy(update);
+                Updated?.Invoke(this, update);
+                updateSequenceStatus.EndUpdate(true);
             }
-
-            InnerUpdatBy(update);
-            EndUpdate();
-            Updated?.Invoke(this, update);
         }
     }
 }

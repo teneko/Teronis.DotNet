@@ -8,6 +8,6 @@ namespace Teronis.Data
     {
         event WantParentsEventHandler WantParents;
 
-        ParentsContainer.ParentCollection GetParents(Type wantedParentType);
+        ParentsPicker GetParentsPicker();
     }
 }

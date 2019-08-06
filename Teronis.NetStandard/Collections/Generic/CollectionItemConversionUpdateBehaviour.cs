@@ -6,6 +6,7 @@ using Teronis.Data;
 using Teronis.Extensions.NetStandard;
 using System.Linq;
 using Teronis.Libraries.NetStandard;
+using System.Threading.Tasks;
 
 namespace Teronis.Collections.Generic
 {
@@ -21,10 +22,9 @@ namespace Teronis.Collections.Generic
             CollectionChangeConversionNotifer.CollectionChangeConversionApplied += ConvertedCollectionChangeNotifer_CollectionChangeConversionApplied;
         }
 
-        private void ConvertedCollectionChangeNotifer_CollectionChangeConversionApplied(object sender, CollectionChangeConversion<TOriginalItem, TConvertedItem> args)
+        private async Task forwardCollectionChangeUpdate(AspectedCollectionChange<TOriginalItem> aspectedOriginalChange, CollectionChange<TConvertedItem> convertedChange)
         {
-            var originalChange = args.AppliedOriginalChange.Change;
-            var convertedChange = args.ConvertedChange;
+            var originalChange = aspectedOriginalChange.Change;
 
             if (originalChange.Action != convertedChange.Action)
                 CollectionChangeConversionLibrary.ThrowActionMismatchException();
@@ -62,17 +62,29 @@ namespace Teronis.Collections.Generic
                             var oldConvertedItem = oldConvertedItemsEnumerator.Current;
                             TOriginalItem originalItemReplacement;
 
-                            if (args.AppliedOriginalChange.ReplaceAspect.ReferencedReplacedOldItemByIndexDictionary.ContainsKey(oldOriginalIndex))
+                            if (aspectedOriginalChange.ReplaceAspect.ReferencedReplacedOldItemByIndexDictionary.ContainsKey(oldOriginalIndex))
                                 originalItemReplacement = newOriginalItemsEnumerator.Current;
                             else
                                 originalItemReplacement = oldOriginalItemsEnumerator.Current;
 
                             var oldConvertedItemUpdate = new Update<TOriginalItem>(originalItemReplacement, this);
-                            oldConvertedItem.UpdateBy(oldConvertedItemUpdate);
+                            await oldConvertedItem.UpdateByAsync(oldConvertedItemUpdate);
                         }
 
                         break;
                     }
+            }
+        }
+
+        private async void ConvertedCollectionChangeNotifer_CollectionChangeConversionApplied(object sender, CollectionChangeConversion<TOriginalItem, TConvertedItem> args)
+        {
+            var aspectedOriginalChange = args.AppliedOriginalChange;
+            var convertedChange = args.ConvertedChange;
+
+            try {
+                await forwardCollectionChangeUpdate(aspectedOriginalChange, convertedChange);
+            } catch (Exception error) {
+                args.ConversionTaskCompletionSource.SetException(error);
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Specialized;
+using System.Threading.Tasks;
 using Teronis.Data;
 using Teronis.Extensions.NetStandard;
 
@@ -15,10 +16,8 @@ namespace Teronis.Collections.Generic
             NotifiableCollectionContainer.CollectionChangeApplied += NotifiableCollectionContainer_CollectionChangeApplied;
         }
 
-        private void NotifiableCollectionContainer_CollectionChangeApplied(object sender, AspectedCollectionChange<TItem> args)
+        private async Task updateBy(CollectionChange<TItem> change)
         {
-            var change = args.Change;
-
             if (change.Action == NotifyCollectionChangedAction.Replace) {
                 var oldItemsEnumerator = change.OldItems.GetEnumerator();
                 var newItemsEnumerator = change.NewItems.GetEnumerator();
@@ -27,9 +26,15 @@ namespace Teronis.Collections.Generic
                     var oldItem = oldItemsEnumerator.Current;
                     var newItem = newItemsEnumerator.Current;
                     var oldItemUpdate = new Update<TItem>(newItem, this);
-                    oldItem.UpdateBy(oldItemUpdate);
+                    await oldItem.UpdateByAsync(oldItemUpdate);
                 }
             }
+        }
+
+        private async void NotifiableCollectionContainer_CollectionChangeApplied(object sender, AspectedCollectionChange<TItem> args)
+        {
+            var change = args.Change;
+            await 
         }
     }
 }

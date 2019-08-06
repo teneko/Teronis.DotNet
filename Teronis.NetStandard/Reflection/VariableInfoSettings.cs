@@ -59,7 +59,7 @@ namespace Teronis.Reflection
             return settings;
         }
 
-        private void checkSeal()
+        private void throwExceptionIfSealed()
         {
             if (IsSealed)
                 throw new Exception("This instance is already sealed");
@@ -67,7 +67,7 @@ namespace Teronis.Reflection
 
         private void OnPropertyChanging(string propertyName)
         {
-            checkSeal();
+            throwExceptionIfSealed();
             PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(propertyName));
         }
 

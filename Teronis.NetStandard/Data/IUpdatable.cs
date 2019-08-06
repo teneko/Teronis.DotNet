@@ -1,17 +1,16 @@
 ﻿
 
+using System.Threading.Tasks;
+
 namespace Teronis.Data
 {
-    public interface IUpdatable<T>
+    public interface IUpdatable<T> : IUpdateSequenceStatus
     {
         event UpdatingEventHandler<T> Updating;
         event UpdatedEventHandler<T> Updated;
-
-        bool IsUpdating { get; }
-
+        
         bool IsUpdatable(Update<T> update);
-        void BeginUpdate();
         void UpdateBy(Update<T> update);
-        void EndUpdate();
+        Task UpdateByAsync(Update<T> update);
     }
 }

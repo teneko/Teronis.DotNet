@@ -6,16 +6,16 @@ using System.Linq;
 
 namespace Teronis.Data
 {
-    public class DynamicParents : DynamicObject
+    public class DynamicParentResolver : DynamicObject
     {
         private IHaveParents havingParents;
 
-        public DynamicParents(IHaveParents havingParents)
+        public DynamicParentResolver(IHaveParents havingParents)
             => this.havingParents = havingParents;
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            var parents = havingParents.GetParents(null);
+            var parents = havingParents.GetParentsPicker().GetParents(null);
             result = parents.Single(x => x.GetType().Name == binder.Name);
             return true;
         }

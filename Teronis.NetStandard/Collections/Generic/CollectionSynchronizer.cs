@@ -2,31 +2,45 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using Teronis.Data;
 using Teronis.Extensions.NetStandard;
 
 namespace Teronis.Collections.Generic
 {
-    public class CollectionSynchronizer<TList, TItem> : INotifyCollectionChangeApplied<TItem>, ISynchronizableCollectionContainer<TItem>, INotifiableCollectionContainer<TItem>
+    public class CollectionSynchronizer<TList, TItem> : ISynchronizableCollectionContainer<TItem>, INotifiableCollectionContainer<TItem>, INotifyPropertyChanged, IUpdateSequenceStatus
         where TList : IList<TItem>
     {
         public event CollectionChangeAppliedEventHandler<TItem> CollectionChangeApplied;
+        public event PropertyChangedEventHandler PropertyChanged;
 
+        public bool IsUpdating => updateSequenceStatus.IsUpdating;
         public TList Collection { get; private set; }
         public IEqualityComparer<TItem> EqualityComparer { get; private set; }
+        
+        private UpdateSequenceStatus updateSequenceStatus;
+        private PropertyChangedRelay propertyChangedRelay;
 
         IList<TItem> ISynchronizableCollectionContainer<TItem>.Collection => Collection;
         IList<TItem> INotifiableCollectionContainer<TItem>.Collection => Collection;
 
         public CollectionSynchronizer(TList initialCollection, IEqualityComparer<TItem> equalityComparer)
         {
+            updateSequenceStatus = new UpdateSequenceStatus();
+            propertyChangedRelay = new PropertyChangedRelay(GetType(), updateSequenceStatus);
+            propertyChangedRelay.PropertyChanged += PropertyChangedRelay_PropertyChanged;
             EqualityComparer = equalityComparer ?? EqualityComparer<TItem>.Default;
             Collection = initialCollection;
         }
 
         public CollectionSynchronizer(TList initialCollection)
             : this(initialCollection, default) { }
+
+        private void PropertyChangedRelay_PropertyChanged(object sender, PropertyChangedEventArgs e)
+           => PropertyChanged?.Invoke(this, e);
 
         [Conditional("DEBUG")]
         private void debugChange(CollectionChange<TItem> change, string oldItemNameFromCollection, bool tryDisplayOldItems, string newItemNameFromCollection, bool tryDisplayNewItems)
@@ -183,9 +197,15 @@ namespace Teronis.Collections.Generic
             CollectionChangeApplied?.Invoke(this, aspectedChange);
         }
 
+        public void BeginUpdate()
+            => updateSequenceStatus.BeginUpdate();
+
+        public void EndUpdate()
+            => updateSequenceStatus.EndUpdate();
+
         public virtual void Synchronize(IEnumerable<TItem> items)
         {
-            Debug.WriteLine($"{GetType().Name}, {nameof(Synchronize)}, {items}");
+            updateSequenceStatus.BeginUpdate(true);
             items = items ?? Enumerable.Empty<TItem>();
 
             //var cachedCollection = new List<TItem>(Collection);
@@ -204,6 +224,8 @@ namespace Teronis.Collections.Generic
             //} catch {
             //    ;
             //}
+
+            updateSequenceStatus.EndUpdate(true);
 
             //Debug.Assert(Collection.SequenceEqual(items, EqualityComparer), "The collection is not synchron with the new items");
             //var isSequenciallyEqual = Collection.SequenceEqual(items, EqualityComparer);

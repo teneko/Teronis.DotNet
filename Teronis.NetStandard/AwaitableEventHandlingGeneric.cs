@@ -16,7 +16,7 @@ namespace Teronis
     /// [<see cref="FinishDependenciesAsync"/>].
     /// </summary>
     /// <typeparam name="KeyType"></typeparam>
-    public class AsyncEventHandlerSynchronization<KeyType> : IDisposable
+    public class AwaitableEventHandling<KeyType> : IDisposable
     {
         public AsyncEventHandlerSynchronizerStatus Status { get; private set; }
         public IEqualityComparer<KeyType> EqualityComparer { get; protected set; }
@@ -27,7 +27,7 @@ namespace Teronis
         private SemaphoreSlim finishDependenciesAsyncLocker;
         private Task finishDependenciesTask;
 
-        public AsyncEventHandlerSynchronization(IEqualityComparer<KeyType> equalityComparer)
+        public AwaitableEventHandling(IEqualityComparer<KeyType> equalityComparer)
         {
             Status = AsyncEventHandlerSynchronizerStatus.Created;
             EqualityComparer = equalityComparer ?? throw new ArgumentException(nameof(equalityComparer));
@@ -36,7 +36,7 @@ namespace Teronis
             finishDependenciesAsyncLocker = new SemaphoreSlim(1, 1);
         }
 
-        public AsyncEventHandlerSynchronization()
+        public AwaitableEventHandling()
             : this(EqualityComparer<KeyType>.Default) { }
 
         /// <summary>
@@ -159,7 +159,8 @@ namespace Teronis
             }
         }
 
-        ~AsyncEventHandlerSynchronization() => Dispose(false);
+        ~AwaitableEventHandling() 
+            => Dispose(false);
 
         public void Dispose()
         {

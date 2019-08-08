@@ -16,9 +16,9 @@ namespace Teronis
     /// [<see cref="FinishDependenciesAsync"/>].
     /// </summary>
     /// <typeparam name="KeyType"></typeparam>
-    public class AwaitableEventHandling<KeyType> : IDisposable
+    public class AsyncableEventSequence<KeyType> : IDisposable
     {
-        public AsyncEventHandlerSynchronizerStatus Status { get; private set; }
+        public AsyncableEventSequenceStatus Status { get; private set; }
         public IEqualityComparer<KeyType> EqualityComparer { get; protected set; }
         public bool IsDisposed { get; private set; }
 
@@ -27,23 +27,23 @@ namespace Teronis
         private SemaphoreSlim finishDependenciesAsyncLocker;
         private Task finishDependenciesTask;
 
-        public AwaitableEventHandling(IEqualityComparer<KeyType> equalityComparer)
+        public AsyncableEventSequence(IEqualityComparer<KeyType> equalityComparer)
         {
-            Status = AsyncEventHandlerSynchronizerStatus.Created;
+            Status = AsyncableEventSequenceStatus.Created;
             EqualityComparer = equalityComparer ?? throw new ArgumentException(nameof(equalityComparer));
             tcsDependencies = new Dictionary<KeyType, List<TaskCompletionSource>>(EqualityComparer);
             tcsRegistrationPhaseEnd = new TaskCompletionSource();
             finishDependenciesAsyncLocker = new SemaphoreSlim(1, 1);
         }
 
-        public AwaitableEventHandling()
+        public AsyncableEventSequence()
             : this(EqualityComparer<KeyType>.Default) { }
 
         /// <summary>
         /// Checks the dispose status by checking the <see cref="IsDisposed"/> object, if it is true means that object
         /// has been disposed and throw ObjectDisposedException
         /// </summary>
-        private void CheckDispose()
+        private void checkDispose()
         {
             if (IsDisposed)
                 throw new ObjectDisposedException(null, "Object has been already disposed");
@@ -51,7 +51,7 @@ namespace Teronis
 
         public TaskCompletionSource RegisterDependency(KeyType key)
         {
-            if (Status != AsyncEventHandlerSynchronizerStatus.Created)
+            if (Status != AsyncableEventSequenceStatus.Created)
                 throw new InvalidOperationException("Depenendecies are already awaited or are being awaited");
 
             if (!tcsDependencies.TryGetValue(key, out var tcsList)) {
@@ -77,12 +77,12 @@ namespace Teronis
         /// </summary>
         public async Task<bool> TryAwaitDependency(params KeyType[] keys)
         {
-            if (Status == AsyncEventHandlerSynchronizerStatus.Finished)
+            if (Status == AsyncableEventSequenceStatus.Finished)
                 return true;
-            else if (Status == AsyncEventHandlerSynchronizerStatus.Canceled)
+            else if (Status == AsyncableEventSequenceStatus.Canceled)
                 return false;
             else {
-                CheckDispose();
+                checkDispose();
                 await tcsRegistrationPhaseEnd.Task;
                 IEnumerable<Task> awaitableDependencies;
 
@@ -108,8 +108,8 @@ namespace Teronis
         }
 
         /// <summary>
-        /// You may call this after the event handler invocation. This method awaits 
-        /// all registered dependencies and can throw the first occuring exception.
+        /// This method awaits all registered dependencies and throws the first occuring exception.
+        /// You may call this after the event handler invocation.
         /// </summary>
         /// <exception cref="TaskCanceledException">Thrown when one of the dependency get canceled</exception>
         /// /// <exception cref="InvalidOperationException">Thrown when this function was already called</exception>
@@ -117,23 +117,27 @@ namespace Teronis
         {
             await finishDependenciesAsyncLocker.WaitAsync();
 
-            if (Status == AsyncEventHandlerSynchronizerStatus.Created) {
+            if (Status == AsyncableEventSequenceStatus.Created) {
                 // We want to finish the registration phase, after all invoked event handler may have registered their dependencies
                 tcsRegistrationPhaseEnd.SetResult();
-                finishDependenciesTask = Task.WhenAll(getAllTaskCompletionSources().Select(x => x.Task));
-                Status = AsyncEventHandlerSynchronizerStatus.Running;
+
+                var tasks = getAllTaskCompletionSources()
+                    .Select(x => x.Task);
+
+                finishDependenciesTask = Task.WhenAll(tasks);
+                Status = AsyncableEventSequenceStatus.Running;
                 finishDependenciesAsyncLocker.Release();
 
                 try {
                     // Then we await all dependencies
                     await finishDependenciesTask;
-                    Status = AsyncEventHandlerSynchronizerStatus.Finished;
+                    Status = AsyncableEventSequenceStatus.Finished;
                 } catch {
                     // Try to cancel all dependencies
                     foreach (var tcs in getAllTaskCompletionSources())
                         tcs.TrySetCanceled();
 
-                    Status = AsyncEventHandlerSynchronizerStatus.Canceled;
+                    Status = AsyncableEventSequenceStatus.Canceled;
                     throw;
                 } finally {
                     Dispose();
@@ -159,7 +163,7 @@ namespace Teronis
             }
         }
 
-        ~AwaitableEventHandling() 
+        ~AsyncableEventSequence() 
             => Dispose(false);
 
         public void Dispose()

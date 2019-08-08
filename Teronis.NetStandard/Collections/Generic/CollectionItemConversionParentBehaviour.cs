@@ -20,9 +20,11 @@ namespace Teronis.Collections.Generic
             CollectionChangeConversionNotifer.CollectionChangeConversionApplied += ConvertedCollectionChangeNotifer_CollectionChangeConversionApplied;
         }
 
-        private void forwardAttachParentsParents(AspectedCollectionChange<TOriginalItem> aspectedOriginalChange, CollectionChange<TConvertedItem> convertedChange)
+        private void ConvertedCollectionChangeNotifer_CollectionChangeConversionApplied(object sender, CollectionChangeConversion<TOriginalItem, TConvertedItem> args)
         {
+            var aspectedOriginalChange = args.AppliedOriginalChange;
             var originalChange = aspectedOriginalChange.Change;
+            var convertedChange = args.ConvertedChange;
 
             if (originalChange.Action != convertedChange.Action)
                 CollectionChangeConversionLibrary.ThrowActionMismatchException();
@@ -55,14 +57,6 @@ namespace Teronis.Collections.Generic
 
                     break;
             }
-        }
-
-        private void ConvertedCollectionChangeNotifer_CollectionChangeConversionApplied(object sender, CollectionChangeConversion<TOriginalItem, TConvertedItem> args)
-        {
-            var aspectedOriginalChange = args.AppliedOriginalChange;
-            var convertedChange = args.ConvertedChange;
-
-            forwardAttachParentsParents(aspectedOriginalChange, convertedChange);
         }
     }
 }

@@ -6,13 +6,13 @@ namespace Teronis.Data
 {
     public class Update<T>
     {
-        public object OriginalSource { get; private set; }
+        public object UpdateCreationSource { get; private set; }
         public T Content { get; private set; }
 
-        public Update(T content, object originalSource)
+        public Update(T content, object updateCreationSource)
         {
             Content = content;
-            OriginalSource = originalSource;
+            UpdateCreationSource = updateCreationSource;
         }
     }
 }

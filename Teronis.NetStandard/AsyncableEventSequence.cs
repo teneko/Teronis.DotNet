@@ -16,7 +16,9 @@ namespace Teronis
     /// [<see cref="FinishDependenciesAsync"/>].
     /// </summary>
     /// <typeparam name="KeyType"></typeparam>
-    public class AwaitableEventHandling : AwaitableEventHandling<Singleton>
+    public class AsyncableEventSequence : AsyncableEventSequence<Singleton>
     {
+        public TaskCompletionSource RegisterDependency()
+            => RegisterDependency(Singleton.Default);
     }
 }

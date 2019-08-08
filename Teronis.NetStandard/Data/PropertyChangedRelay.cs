@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 using Teronis.Reflection;
+using Teronis.Extensions.NetStandard;
 
 namespace Teronis.Data
 {
@@ -11,32 +12,30 @@ namespace Teronis.Data
         public event PropertyChangedEventHandler PropertyChanged;
 
         public IList<INotifyPropertyChanged> PropertyChangedNotifiers { get; private set; }
+        public INotifyPropertyChanged CommonPropertiesContainerNotifier { get; private set; }
         public Type CommonPropertiesContainerType { get; private set; }
-        public object AlternativePropertyChangedSender { get; private set; }
+
+        private Dictionary<string, INotifyPropertyChanged> cachedPropertyChangedNotifiers;
 
         public PropertyChangedRelay(Type commonPropertiesContainerType, params INotifyPropertyChanged[] propertyChangedNotifiers)
         {
             PropertyChangedNotifiers = propertyChangedNotifiers ?? throw new ArgumentNullException(nameof(propertyChangedNotifiers));
 
             foreach (var propertyChangedNotifier in PropertyChangedNotifiers)
-                propertyChangedNotifier.PropertyChanged += PropertyChangedNotifier_PropertyChanged;
+                SubscribeNotifier(propertyChangedNotifier);
 
             CommonPropertiesContainerType = commonPropertiesContainerType;
-            //AlternativePropertyChangedSender = alternativePropertyChangedSender;
         }
 
-        //public PropertyChangedRelay(Type commonPropertiesContainerType, params INotifyPropertyChanged[] propertyChangedNotifiers)
-        //    : this(commonPropertiesContainerType, default(object), propertyChangedNotifiers) { }
+        public PropertyChangedRelay(INotifyPropertyChanged commonPropertiesContainerNotifier)
+            : this(commonPropertiesContainerNotifier?.GetType())
+            => CommonPropertiesContainerNotifier = commonPropertiesContainerNotifier;
 
-        //public PropertyChangedRelay(object alternativePropertyChangedSender, params INotifyPropertyChanged[] propertyChangedNotifiers)
-        //    : this(default, alternativePropertyChangedSender, propertyChangedNotifiers) { }
+        protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+            => PropertyChanged?.Invoke(sender, e);
 
-        //public PropertyChangedRelay(object alternativePropertyChangedSender, bool alternativePropertyChangedSenderTypeIsCommonPropertyContainerType, params INotifyPropertyChanged[] propertyChangedNotifiers)
-        //    : this(alternativePropertyChangedSender, propertyChangedNotifiers)
-        //{
-        //    if (alternativePropertyChangedSender != null && alternativePropertyChangedSenderTypeIsCommonPropertyContainerType)
-        //        CommonPropertiesContainerType = alternativePropertyChangedSender.GetType();
-        //}
+        private void UncachedNotifier_PropertyChanged(object sender, PropertyChangedEventArgs e)
+            => OnPropertyChanged(sender, e);
 
         private void PropertyChangedNotifier_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -46,10 +45,44 @@ namespace Teronis.Data
             if (shouldNotNotifyUncommonProperty)
                 return;
 
-            if (AlternativePropertyChangedSender != null)
-                sender = AlternativePropertyChangedSender;
+            if (CommonPropertiesContainerNotifier != null) {
+                var propertyName = e.PropertyName;
+                var notifier = CommonPropertiesContainerType.GetVariableMember(e.PropertyName).GetValue(this) as INotifyPropertyChanged;
 
-            PropertyChanged?.Invoke(sender, e);
+                void cacheNotifier(INotifyPropertyChanged uncachedNotifier)
+                {
+                    uncachedNotifier.PropertyChanged += UncachedNotifier_PropertyChanged;
+                    cachedPropertyChangedNotifiers.Add(propertyName, uncachedNotifier);
+                }
+
+                void uncacheNotifier(INotifyPropertyChanged cachedNotifier)
+                {
+                    cachedNotifier.PropertyChanged -= UncachedNotifier_PropertyChanged;
+                    cachedPropertyChangedNotifiers.Remove(propertyName);
+                }
+
+                if (notifier != null && !cachedPropertyChangedNotifiers.ContainsKey(propertyName)) {
+                    // Add new subscription
+                    cacheNotifier(notifier);
+                } else if (cachedPropertyChangedNotifiers.ContainsKey(propertyName)) {
+                    var cachedNotifier = cachedPropertyChangedNotifiers[propertyName];
+
+                    if (notifier == null)
+                        uncacheNotifier(cachedNotifier);
+                    else if (notifier != cachedNotifier) {
+                        uncacheNotifier(cachedNotifier);
+                        cacheNotifier(notifier);
+                    }
+                }
+            }
+
+            OnPropertyChanged(sender, e);
         }
+
+        public void SubscribeNotifier(INotifyPropertyChanged propertyChangedNotifier)
+            => propertyChangedNotifier.PropertyChanged += PropertyChangedNotifier_PropertyChanged;
+
+        public void UnsubscribeNotifier(INotifyPropertyChanged propertyChangedNotifier)
+            => propertyChangedNotifier.PropertyChanged -= PropertyChangedNotifier_PropertyChanged;
     }
 }

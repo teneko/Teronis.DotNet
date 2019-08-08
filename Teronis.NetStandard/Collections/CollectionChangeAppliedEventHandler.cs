@@ -4,5 +4,5 @@ using System.Text;
 
 namespace Teronis.Collections
 {
-    public delegate void CollectionChangeAppliedEventHandler<T>(object sender, AspectedCollectionChange<T> aspectedChange);
+    public delegate void CollectionChangeAppliedEventHandler<T>(object sender, CollectionChangeAppliedEventArgs<T> aspectedChange);
 }

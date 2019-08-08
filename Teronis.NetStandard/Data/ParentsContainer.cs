@@ -29,8 +29,18 @@ namespace Teronis.Data
         public void AddParent(object parent)
         {
             parent = parent ?? throw new ArgumentNullException(nameof(parent));
+            bool canAddParent = false;
 
-            if (WantedType == null || WantedType == parent.GetType())
+            if (WantedType == null)
+                canAddParent = true;
+            else {
+                var parentType = parent.GetType();
+
+                if (WantedType == parentType || (WantedType.IsInterface && WantedType.IsAssignableFrom(parentType)))
+                    canAddParent = true;
+            }
+
+            if (canAddParent)
                 Parents.Add(parent);
         }
 

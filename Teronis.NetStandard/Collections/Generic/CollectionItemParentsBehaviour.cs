@@ -29,9 +29,9 @@ namespace Teronis.Collections.Generic
         private void detachWantParentsHandler(TItem item)
             => item.WantParents -= Item_WantParent;
 
-        private void NotifiableCollectionContainer_CollectionChanged(object sender, AspectedCollectionChange<TItem> args)
+        private void NotifiableCollectionContainer_CollectionChanged(object sender, CollectionChangeAppliedEventArgs<TItem> args)
         {
-            var change = args.Change;
+            var change = args.AspectedCollectionChange.Change;
 
             switch (change.Action) {
                 case NotifyCollectionChangedAction.Remove:

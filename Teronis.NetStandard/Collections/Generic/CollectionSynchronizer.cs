@@ -6,22 +6,23 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Teronis.Data;
 using Teronis.Extensions.NetStandard;
 
 namespace Teronis.Collections.Generic
 {
-    public class CollectionSynchronizer<TList, TItem> : ISynchronizableCollectionContainer<TItem>, INotifiableCollectionContainer<TItem>, INotifyPropertyChanged, IUpdateSequenceStatus
+    public class CollectionSynchronizer<TList, TItem> : ISynchronizableCollectionContainer<TItem>, INotifiableCollectionContainer<TItem>, INotifyPropertyChanged, IContainerUpdateSequenceStatus
         where TList : IList<TItem>
     {
         public event CollectionChangeAppliedEventHandler<TItem> CollectionChangeApplied;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public bool IsUpdating => updateSequenceStatus.IsUpdating;
+        public virtual bool IsContainerUpdating => updateSequenceStatus.IsContainerUpdating;
         public TList Collection { get; private set; }
         public IEqualityComparer<TItem> EqualityComparer { get; private set; }
-        
-        private UpdateSequenceStatus updateSequenceStatus;
+
+        private ContainerUpdateSequenceStatus updateSequenceStatus;
         private PropertyChangedRelay propertyChangedRelay;
 
         IList<TItem> ISynchronizableCollectionContainer<TItem>.Collection => Collection;
@@ -29,7 +30,7 @@ namespace Teronis.Collections.Generic
 
         public CollectionSynchronizer(TList initialCollection, IEqualityComparer<TItem> equalityComparer)
         {
-            updateSequenceStatus = new UpdateSequenceStatus();
+            updateSequenceStatus = new ContainerUpdateSequenceStatus();
             propertyChangedRelay = new PropertyChangedRelay(GetType(), updateSequenceStatus);
             propertyChangedRelay.PropertyChanged += PropertyChangedRelay_PropertyChanged;
             EqualityComparer = equalityComparer ?? EqualityComparer<TItem>.Default;
@@ -39,8 +40,11 @@ namespace Teronis.Collections.Generic
         public CollectionSynchronizer(TList initialCollection)
             : this(initialCollection, default) { }
 
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+            => PropertyChanged?.Invoke(this, e);
+
         private void PropertyChangedRelay_PropertyChanged(object sender, PropertyChangedEventArgs e)
-           => PropertyChanged?.Invoke(this, e);
+           => OnPropertyChanged(e);
 
         [Conditional("DEBUG")]
         private void debugChange(CollectionChange<TItem> change, string oldItemNameFromCollection, bool tryDisplayOldItems, string newItemNameFromCollection, bool tryDisplayNewItems)
@@ -163,7 +167,7 @@ namespace Teronis.Collections.Generic
             aspect.SetNewItems(newItems);
         }
 
-        public virtual void ApplyChange(CollectionChange<TItem> change)
+        protected virtual AspectedCollectionChange<TItem> createAspectedCollectionChange(CollectionChange<TItem> change)
         {
             AspectedCollectionChange<TItem> aspectedChange = null;
 
@@ -194,18 +198,36 @@ namespace Teronis.Collections.Generic
             if (aspectedChange == null)
                 aspectedChange = new AspectedCollectionChange<TItem>(change);
 
-            CollectionChangeApplied?.Invoke(this, aspectedChange);
+            return aspectedChange;
         }
 
-        public void BeginUpdate()
-            => updateSequenceStatus.BeginUpdate();
+        public void BeginContainerUpdate()
+            => updateSequenceStatus.BeginContainerUpdate();
 
-        public void EndUpdate()
-            => updateSequenceStatus.EndUpdate();
+        public void EndContainerUpdate()
+            => updateSequenceStatus.EndContainerUpdate();
 
-        public virtual void Synchronize(IEnumerable<TItem> items)
+        public virtual void ApplyChange(CollectionChange<TItem> change)
         {
-            updateSequenceStatus.BeginUpdate(true);
+            var aspectedChange = createAspectedCollectionChange(change);
+            var args = new CollectionChangeAppliedEventArgs<TItem>(aspectedChange);
+            CollectionChangeApplied?.Invoke(this, args);
+        }
+
+        public virtual async Task ApplyChangeAsync(CollectionChange<TItem> change)
+        {
+            var aspectedChange = createAspectedCollectionChange(change);
+            var eventSequence = new AsyncableEventSequence();
+            var args = new CollectionChangeAppliedEventArgs<TItem>(aspectedChange, eventSequence);
+            CollectionChangeApplied?.Invoke(this, args);
+
+            BeginContainerUpdate();
+            await eventSequence.FinishDependenciesAsync();
+            EndContainerUpdate();
+        }
+
+        private IEnumerable<CollectionChange<TItem>> getCollectionChanges(IEnumerable<TItem> items)
+        {
             items = items ?? Enumerable.Empty<TItem>();
 
             //var cachedCollection = new List<TItem>(Collection);
@@ -218,19 +240,38 @@ namespace Teronis.Collections.Generic
 #endif
             ;
 
-            //try {
+            return changes;
+        }
+
+        public virtual void Synchronize(IEnumerable<TItem> items)
+        {
+            var changes = getCollectionChanges(items);
+
             foreach (var change in changes)
                 ApplyChange(change);
+        }
+
+        public virtual async Task SynchronizeAsync(IEnumerable<TItem> items)
+        {
+            BeginContainerUpdate();
+            var changes = getCollectionChanges(items);
+
+            //try {
+            foreach (var change in changes)
+                await ApplyChangeAsync(change);
             //} catch {
             //    ;
             //}
 
-            updateSequenceStatus.EndUpdate(true);
+            EndContainerUpdate();
+        }
 
-            //Debug.Assert(Collection.SequenceEqual(items, EqualityComparer), "The collection is not synchron with the new items");
-            //var isSequenciallyEqual = Collection.SequenceEqual(items, EqualityComparer);
-            //var cachedCollectionChanges = cachedCollection.GetCollectionChanges(items, EqualityComparer).ToList();
-            //;
+        public virtual async Task SynchronizeAsync(Task<IEnumerable<TItem>> itemsTask)
+        {
+            BeginContainerUpdate();
+            var items = await itemsTask;
+            await SynchronizeAsync(items);
+            EndContainerUpdate();
         }
     }
 }

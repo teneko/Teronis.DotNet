@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using Teronis.Extensions.NetStandard;
+using System.Threading.Tasks;
 
 namespace Teronis.Collections.Generic
 {
@@ -22,6 +23,7 @@ namespace Teronis.Collections.Generic
         {
             OriginalCollectionChangeAppliedNotifier = originalCollectionChangeAppliedNotifier ?? throw new ArgumentNullException(nameof(originalCollectionChangeAppliedNotifier));
             OriginalCollectionChangeAppliedNotifier.CollectionChangeApplied += OriginalCollectionContainer_CollectionChangeApplied;
+            OriginalCollectionChangeAppliedNotifier.CollectionChangeApplied += OriginalCollectionContainer_CollectionChangeAppliedAsync;
             ConvertedCollectionContainer = convertedCollectionContainer ?? throw new ArgumentNullException(nameof(convertedCollectionContainer));
         }
 
@@ -109,9 +111,11 @@ namespace Teronis.Collections.Generic
         public void ApplyChange(CollectionChange<TConvertedItem> convertedChange)
             => ConvertedCollectionContainer.ApplyChange(convertedChange);
 
+        public Task ApplyChangeAsync(CollectionChange<TConvertedItem> convertedChange)
+            => ConvertedCollectionContainer.ApplyChangeAsync(convertedChange);
+
         public void ApplyChange(AspectedCollectionChange<TOriginalItem> aspectedChange)
         {
-            var originalChange = aspectedChange.Change;
             var convertedChange = ConvertOriginalItemCollectionChange(aspectedChange);
             ApplyChange(convertedChange);
 
@@ -119,7 +123,40 @@ namespace Teronis.Collections.Generic
             CollectionChangeConversionApplied?.Invoke(this, changeConversion);
         }
 
-        private void OriginalCollectionContainer_CollectionChangeApplied(object sender, AspectedCollectionChange<TOriginalItem> args)
-            => ApplyChange(args);
+        public async Task ApplyChangeAsync(AspectedCollectionChange<TOriginalItem> aspectedChange)
+        {
+            var convertedChange = ConvertOriginalItemCollectionChange(aspectedChange);
+            await ApplyChangeAsync(convertedChange);
+
+            var eventSequence = new AsyncableEventSequence();
+            var changeConversion = new CollectionChangeConversion<TOriginalItem, TConvertedItem>(aspectedChange, convertedChange, eventSequence);
+            CollectionChangeConversionApplied?.Invoke(this, changeConversion);
+            await eventSequence.FinishDependenciesAsync();
+        }
+
+        private void OriginalCollectionContainer_CollectionChangeApplied(object sender, CollectionChangeAppliedEventArgs<TOriginalItem> args)
+        {
+            if (args.EventSequence != null)
+                return;
+
+            ApplyChange(args.AspectedCollectionChange);
+        }
+
+        private async void OriginalCollectionContainer_CollectionChangeAppliedAsync(object sender, CollectionChangeAppliedEventArgs<TOriginalItem> args)
+        {
+            var eventSequence = args.EventSequence;
+
+            if (eventSequence == null)
+                return;
+
+            var tcs = eventSequence.RegisterDependency();
+
+            try {
+                await ApplyChangeAsync(args.AspectedCollectionChange);
+                tcs.SetResult();
+            } catch (Exception error) {
+                tcs.SetException(error);
+            }
+        }
     }
 }

@@ -11,8 +11,8 @@ using System.Threading.Tasks;
 namespace Teronis.Collections.Generic
 {
     public class CollectionItemConversionUpdateBehaviour<TOriginalItem, TConvertedItem>
-        where TOriginalItem : IUpdatable<TOriginalItem>
-        where TConvertedItem : IUpdatable<TOriginalItem>
+        where TOriginalItem : IUpdatableContainer<TOriginalItem>
+        where TConvertedItem : IUpdatableContainer<TOriginalItem>
     {
         public INotifyCollectionChangeConversionApplied<TOriginalItem, TConvertedItem> CollectionChangeConversionNotifer { get; private set; }
 
@@ -20,9 +20,10 @@ namespace Teronis.Collections.Generic
         {
             CollectionChangeConversionNotifer = collectionChangeConversionNotifer;
             CollectionChangeConversionNotifer.CollectionChangeConversionApplied += ConvertedCollectionChangeNotifer_CollectionChangeConversionApplied;
+            CollectionChangeConversionNotifer.CollectionChangeConversionApplied += ConvertedCollectionChangeNotifer_CollectionChangeConversionAppliedAsync;
         }
 
-        private async Task forwardCollectionChangeUpdate(AspectedCollectionChange<TOriginalItem> aspectedOriginalChange, CollectionChange<TConvertedItem> convertedChange)
+        private IEnumerable<UpdateWithTargetContainer<TOriginalItem, TConvertedItem>> getOldConvertedItemUpdateContainerIterator(AspectedCollectionChange<TOriginalItem> aspectedOriginalChange, CollectionChange<TConvertedItem> convertedChange)
         {
             var originalChange = aspectedOriginalChange.Change;
 
@@ -37,7 +38,7 @@ namespace Teronis.Collections.Generic
 
                         while (oldConvertedItemsEnumerator.MoveNext()) {
                             var oldConvertedItem = oldConvertedItemsEnumerator.Current;
-                            oldConvertedItem.Updating -= OriginalItem_Updating;
+                            oldConvertedItem.ContainerUpdating -= OriginalItem_Updating;
                         }
 
                         break;
@@ -47,7 +48,7 @@ namespace Teronis.Collections.Generic
 
                         while (newConvertedItemsEnumerator.MoveNext()) {
                             var newConvertedItem = newConvertedItemsEnumerator.Current;
-                            newConvertedItem.Updating += OriginalItem_Updating;
+                            newConvertedItem.ContainerUpdating += OriginalItem_Updating;
                         }
 
                         break;
@@ -68,7 +69,13 @@ namespace Teronis.Collections.Generic
                                 originalItemReplacement = oldOriginalItemsEnumerator.Current;
 
                             var oldConvertedItemUpdate = new Update<TOriginalItem>(originalItemReplacement, this);
-                            await oldConvertedItem.UpdateByAsync(oldConvertedItemUpdate);
+
+                            var oldConvertedItemUpdateContainer = new UpdateWithTargetContainer<TOriginalItem, TConvertedItem>() {
+                                Update = oldConvertedItemUpdate,
+                                Target = oldConvertedItem
+                            };
+
+                            yield return oldConvertedItemUpdateContainer;
                         }
 
                         break;
@@ -76,20 +83,47 @@ namespace Teronis.Collections.Generic
             }
         }
 
-        private async void ConvertedCollectionChangeNotifer_CollectionChangeConversionApplied(object sender, CollectionChangeConversion<TOriginalItem, TConvertedItem> args)
+        private void ConvertedCollectionChangeNotifer_CollectionChangeConversionApplied(object sender, CollectionChangeConversion<TOriginalItem, TConvertedItem> args)
         {
+            if (args.EventSequence != null)
+                return;
+
             var aspectedOriginalChange = args.AppliedOriginalChange;
             var convertedChange = args.ConvertedChange;
 
+            foreach (var oldConvertedItemUpdateContainer in getOldConvertedItemUpdateContainerIterator(aspectedOriginalChange, convertedChange)) {
+                var target = oldConvertedItemUpdateContainer.Target;
+                var update = oldConvertedItemUpdateContainer.Update;
+
+                target.UpdateContainerBy(update);
+            }
+        }
+
+        private async void ConvertedCollectionChangeNotifer_CollectionChangeConversionAppliedAsync(object sender, CollectionChangeConversion<TOriginalItem, TConvertedItem> args)
+        {
+            if (args.EventSequence == null)
+                return;
+
+            var aspectedOriginalChange = args.AppliedOriginalChange;
+            var convertedChange = args.ConvertedChange;
+            var tcs = args.EventSequence.RegisterDependency();
+
             try {
-                await forwardCollectionChangeUpdate(aspectedOriginalChange, convertedChange);
+                foreach (var oldConvertedItemUpdateContainer in getOldConvertedItemUpdateContainerIterator(aspectedOriginalChange, convertedChange)) {
+                    var target = oldConvertedItemUpdateContainer.Target;
+                    var update = oldConvertedItemUpdateContainer.Update;
+
+                    await target.UpdateContainerByAsync(update);
+                }
+
+                tcs.SetResult();
             } catch (Exception error) {
-                args.ConversionTaskCompletionSource.SetException(error);
+                tcs.SetException(error);
             }
         }
 
         private void OriginalItem_Updating(object sender, UpdatingEventArgs<TOriginalItem> args)
-            // Is handled if already handled or the original source is not reference equals this
-            => args.Handled = args.Handled || !ReferenceEquals(args.Update.OriginalSource, this);
+            /// Is handled if already handled or <see cref="Update{T}.UpdateCreationSource"/> is not reference equals this
+            => args.Handled = args.Handled || !ReferenceEquals(args.Update.UpdateCreationSource, this);
     }
 }

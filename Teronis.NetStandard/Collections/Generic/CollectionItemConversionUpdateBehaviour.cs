@@ -11,8 +11,8 @@ using System.Threading.Tasks;
 namespace Teronis.Collections.Generic
 {
     public class CollectionItemConversionUpdateBehaviour<TOriginalItem, TConvertedItem>
-        where TOriginalItem : IUpdatableContainer<TOriginalItem>
-        where TConvertedItem : IUpdatableContainer<TOriginalItem>
+        where TOriginalItem : IUpdatableContent<TOriginalItem>
+        where TConvertedItem : IUpdatableContent<TOriginalItem>
     {
         public INotifyCollectionChangeConversionApplied<TOriginalItem, TConvertedItem> CollectionChangeConversionNotifer { get; private set; }
 

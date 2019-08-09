@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Teronis.Data
 {
-    public interface IUpdatableContainer<ContentType> : IContainerUpdateSequenceStatus
+    public interface IUpdatableContent<ContentType> : IContainerUpdateSequenceStatus
     {
         event UpdatingEventHandler<ContentType> ContainerUpdating;
         event UpdatedEventHandler<ContentType> ContainerUpdated;

@@ -4,12 +4,12 @@ using System.Text;
 
 namespace Teronis.Data
 {
-    public class UpdatingEventArgs<T> : EventArgs
+    public class UpdatingEventArgs<ContentType> : EventArgs, IUpdatingEventArgs<ContentType>
     {
-        public Update<T> Update { get; private set; }
+        public IUpdate<ContentType> Update { get; private set; }
         public bool Handled { get; set; }
 
-        public UpdatingEventArgs(Update<T> update)
+        public UpdatingEventArgs(IUpdate<ContentType> update)
             => Update = update;
     }
 }

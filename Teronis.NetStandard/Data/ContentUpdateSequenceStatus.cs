@@ -6,14 +6,14 @@ using System.Text;
 
 namespace Teronis.Data
 {
-    public class ContainerUpdateSequenceStatus : INotifyPropertyChanged, IContainerUpdateSequenceStatus
+    public class ContainerUpdateSequenceStatus : INotifyPropertyChanged, IContentUpdateSequenceStatus
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
         private bool isUpdating;
         private int deepUpdateCounter;
 
-        public bool IsContainerUpdating {
+        public bool IsContentUpdating {
             get => isUpdating;
 
             private set {
@@ -27,20 +27,20 @@ namespace Teronis.Data
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        public void BeginContainerUpdate()
+        public void BeginContentUpdate()
         {
             if (deepUpdateCounter++ == 0) 
-                IsContainerUpdating = true;
+                IsContentUpdating = true;
 
         }
 
-        public void EndContainerUpdate()
+        public void EndContentUpdate()
         {
             if (deepUpdateCounter == 0)
                 throw new Exception("You cannot end the update before it has not begun");
 
             if (--deepUpdateCounter == 0)
-                IsContainerUpdating = false;
+                IsContentUpdating = false;
         }
     }
 }

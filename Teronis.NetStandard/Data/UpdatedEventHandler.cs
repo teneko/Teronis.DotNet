@@ -4,5 +4,5 @@ using System.Text;
 
 namespace Teronis.Data
 {
-    public delegate void UpdatedEventHandler<T>(object sender, Update<T> update);
+    public delegate void UpdatedEventHandler<in ContentType>(object sender, IUpdate<ContentType> update);
 }

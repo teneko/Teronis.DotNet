@@ -4,12 +4,12 @@ using System.Text;
 
 namespace Teronis.Data
 {
-    public class PropertyCacheEventArgs 
+    public class PropertyCacheEventArgs<T>
     {
         public string PropertyName { get; private set; }
-        public object Property { get; private set; }
+        public T Property { get; private set; }
 
-        public PropertyCacheAddedEventArgs(string propertyName, object property)
+        public PropertyCacheEventArgs(string propertyName, T property)
         {
             PropertyName = propertyName;
             Property = property;

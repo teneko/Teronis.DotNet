@@ -9,9 +9,16 @@ namespace Teronis.Tools.NetStandard
 {
     public static class EntityTools
     {
+        /// <summary>
+        /// <see cref="VariableInfoSettings.IncludeIfReadable"/> = true,
+        /// <see cref="VariableInfoSettings.IncludeIfWritable"/> = true,
+        /// <see cref="VariableInfoSettings.ExcludeByAttributeTypes"/> contains
+        /// </summary>
+        /// <returns></returns>
         public static VariableInfoSettings GetDefaultVariableInfoSettings() => new VariableInfoSettings() {
             IncludeIfReadable = true,
             IncludeIfWritable = true,
+            ExcludeByAttributeTypes = new[] { typeof(IgnoreEntityVariableAttribute) }
         };
 
         public static void UpdateEntityVariables<T>(T leftEntity, T rightEntity, IEnumerable<MemberInfo> variableInfos)

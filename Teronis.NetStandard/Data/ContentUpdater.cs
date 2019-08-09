@@ -1,24 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Text;
+﻿using System.ComponentModel;
 using System.Threading.Tasks;
-using PropertyChanging;
-using Teronis.Extensions.NetStandard;
-using Teronis.Tools.NetStandard;
+using MorseCode.ITask;
 
 namespace Teronis.Data
 {
-    public class ContentUpdater<T> : INotifyPropertyChanged, IUpdatableContent<T>
+    public class ContentUpdater<ContentType> : INotifyPropertyChanged, IUpdatableContent<ContentType>
     {
 #pragma warning disable 0067
         public event PropertyChangedEventHandler PropertyChanged;
 #pragma warning restore 0067
-        public event UpdatingEventHandler<T> ContainerUpdating;
-        public event UpdatedEventHandler<T> ContainerUpdated;
+        public event UpdatingEventHandler<ContentType> ContainerUpdating;
+        public event UpdatedEventHandler<ContentType> ContainerUpdated;
 
-        public bool IsContainerUpdating => updateSequenceStatus.IsContainerUpdating;
+        public bool IsContentUpdating => updateSequenceStatus.IsContentUpdating;
 
         private ContainerUpdateSequenceStatus updateSequenceStatus;
         private PropertyChangedRelay propertyChangedRelay;
@@ -30,67 +24,80 @@ namespace Teronis.Data
             propertyChangedRelay.PropertyChanged += PropertyChangedRelay_PropertyChanged;
         }
 
-        private void PropertyChangedRelay_PropertyChanged(object sender, PropertyChangedEventArgs e)
-           => PropertyChanged?.Invoke(this, e);
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs args)
+            => PropertyChanged?.Invoke(this, args);
 
-        public bool IsContainerUpdatable(Update<T> update)
-           => new UpdatingEventArgs<T>(update).IsUpdateAppliable(this, ContainerUpdating);
+        protected virtual void OnContainerUpdating(IUpdatingEventArgs<ContentType> args)
+            => ContainerUpdating?.Invoke(this, args);
 
-        /// <summary>
-        /// When using this function, you have to call <see cref="EndContainerUpdate"/> by yourself explicit.
-        /// </summary>
-        public void BeginContainerUpdate()
-            => updateSequenceStatus.BeginContainerUpdate();
+        protected virtual void OnContainerUpdated(IUpdate<ContentType> update)
+            => ContainerUpdated?.Invoke(this, update);
+
+        private void PropertyChangedRelay_PropertyChanged(object sender, PropertyChangedEventArgs args)
+           => OnPropertyChanged(args);
+
+        public virtual bool IsContentUpdatable(IUpdate<ContentType> update)
+        {
+            var args = new UpdatingEventArgs<ContentType>(update);
+            OnContainerUpdating(args);
+            return !args.Handled;
+        }
+
+        public void BeginContentUpdate()
+            => updateSequenceStatus.BeginContentUpdate();
+
+        public void EndContentUpdate()
+            => updateSequenceStatus.EndContentUpdate();
 
         /// <summary>
         /// Buisness logic have to be implemented here
         /// </summary>
         /// <param name="update"></param>
-        protected virtual void InnerUpdatBy(Update<T> update)
+        protected virtual void InnerUpdatBy(IUpdate<ContentType> update)
         { }
 
         /// <summary>
         /// Buisness logic have to be implemented here
         /// </summary>
         /// <param name="update"></param>
-        protected virtual Task InnerUpdatByAsync(Update<T> update)
-            => Task.CompletedTask;
-
-        public void EndContainerUpdate()
-            => updateSequenceStatus.EndContainerUpdate();
-
-        public void UpdateContainerBy(Update<T> update)
+        protected virtual Task InnerUpdatByAsync(IUpdate<ContentType> update)
         {
-            if (IsContainerUpdatable(update)) {
+            InnerUpdatBy(update);
+            return Task.CompletedTask;
+        }
+
+        public virtual void UpdateContentBy(IUpdate<ContentType> update)
+        {
+            if (IsContentUpdatable(update)) {
                 InnerUpdatBy(update);
-                ContainerUpdated?.Invoke(this, update);
+                OnContainerUpdated(update);
             }
         }
 
-        private async Task updateByAsync(Update<T> update)
+        private async Task updateByAsync(IUpdate<ContentType> update)
         {
             await InnerUpdatByAsync(update);
-            ContainerUpdated?.Invoke(this, update);
+            OnContainerUpdated(update);
         }
 
-        public async Task UpdateContainerByAsync(Update<T> update)
+        public virtual async Task UpdateContentByAsync(IUpdate<ContentType> update)
         {
-            if (IsContainerUpdatable(update)) {
-                BeginContainerUpdate();
+            if (IsContentUpdatable(update)) {
+                BeginContentUpdate();
                 await updateByAsync(update);
-                EndContainerUpdate();
+                EndContentUpdate();
             }
         }
 
-        public async Task UpdateContainerByAsync(Task<Update<T>> updateTask)
+        public virtual async Task UpdateContentByAsync(ITask<IUpdate<ContentType>> updateTask)
         {
-            BeginContainerUpdate();
+            BeginContentUpdate();
             var update = await updateTask;
 
-            if (IsContainerUpdatable(update))
+            if (IsContentUpdatable(update))
                 await updateByAsync(update);
 
-            EndContainerUpdate();
+            EndContentUpdate();
         }
     }
 }

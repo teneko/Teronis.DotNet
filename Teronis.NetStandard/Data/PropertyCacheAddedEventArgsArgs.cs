@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Teronis.Data
 {
-    public class PropertyCacheAddedEventArgs : PropertyCacheEventArgs
+    public class PropertyCacheAddedEventArgs<TProperty> : PropertyCacheEventArgs<TProperty>
     {
-        public PropertyCacheAddedEventArgs(string propertyName, object property)
+        public PropertyCacheAddedEventArgs(string propertyName, TProperty property)
             : base(propertyName, property) { }
     }
 }

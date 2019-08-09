@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Teronis.Data
 {
-    internal class UpdateWithTargetContainer<TUpdateItem, TItem>
+    internal class UpdateWithTargetContainer<UpdateContentType, TargetType>
     {
-            public Update<TUpdateItem> Update { get; set; }
-            public TItem Target { get; set; }
+            public Update<UpdateContentType> Update { get; set; }
+            public TargetType Target { get; set; }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Teronis
 {
-    public class ValueCache<T> : ValueWrap<T>
+    public class CachedValue<T> : WrappedValue<T>
     {
         public bool IsValueCached { get; private set; }
 
@@ -21,6 +21,6 @@ namespace Teronis
 
         private Func<T> getValue;
 
-        public ValueCache(Func<T> getValue) : base(default) => this.getValue = getValue;
+        public CachedValue(Func<T> getValue) : base(default) => this.getValue = getValue;
     }
 }

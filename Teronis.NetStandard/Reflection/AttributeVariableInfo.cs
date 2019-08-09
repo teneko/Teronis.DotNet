@@ -6,27 +6,27 @@ using System.Reflection;
 
 namespace Teronis.Reflection
 {
-    public class AttributeMemberInfo<T> where T : Attribute
+    public class AttributeMemberInfo<TAttribute> where TAttribute : Attribute
     {
         public Type AttributeType { get; private set; }
         public MemberInfo MemberInfo { get; private set; }
-        public List<T> Attributes { get; private set; }
+        public List<TAttribute> Attributes { get; private set; }
 
         protected AttributeMemberInfo(MemberInfo memberInfo, Type attributeType, bool? getCustomAttributesInherit)
         {
             AttributeType = attributeType;
             MemberInfo = memberInfo;
             bool _getCustomAttributesInherit = getCustomAttributesInherit ?? Library.DefaultCustomAttributesInherit;
-            Attributes = new List<T>();
+            Attributes = new List<TAttribute>();
             var attributes = getAttributes(_getCustomAttributesInherit);
             Attributes.AddRange(attributes);
         }
 
         public AttributeMemberInfo(MemberInfo memberInfo, bool? getCustomAttributesInherit)
-            : this(memberInfo, typeof(T), getCustomAttributesInherit) { }
+            : this(memberInfo, typeof(TAttribute), getCustomAttributesInherit) { }
 
-        protected virtual IEnumerable<T> getAttributes(bool getCustomAttributesInherit)
-            => MemberInfo.GetCustomAttributes(typeof(T), getCustomAttributesInherit).Select(x => (T)x);
+        protected virtual IEnumerable<TAttribute> getAttributes(bool getCustomAttributesInherit)
+            => MemberInfo.GetCustomAttributes(typeof(TAttribute), getCustomAttributesInherit).Select(x => (TAttribute)x);
     }
 
     public class AttributeMemberInfo : AttributeMemberInfo<Attribute>

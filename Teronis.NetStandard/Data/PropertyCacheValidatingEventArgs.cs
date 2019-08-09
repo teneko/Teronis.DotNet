@@ -4,11 +4,12 @@ using System.Text;
 
 namespace Teronis.Data
 {
-    public class PropertyCacheValidatingEventArgs : PropertyCacheEventArgs
+    public class PropertyCacheAddingEventArgs<TProperty> : PropertyCacheEventArgs<TProperty>
     {
         public bool IsPropertyCacheable { get; set; }
 
-        public PropertyCacheValidatingEventArgs(string propertyName, object property)
-            : base(propertyName, property) { }
+        public PropertyCacheAddingEventArgs(string propertyName, TProperty property)
+            : base(propertyName, property)
+            => IsPropertyCacheable = true;
     }
 }

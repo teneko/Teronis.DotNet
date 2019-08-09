@@ -9,12 +9,12 @@ using Teronis.Libraries.NetStandard;
 
 namespace Teronis.Collections.Generic
 {
-    public class CollectionItemConversionParentBehaviour<TOriginalItem, TConvertedItem>
-        where TOriginalItem : IHaveKnownParents
+    public class CollectionItemConversionChildBehaviour<TOriginalItem, TConvertedItem>
+        where TConvertedItem : IHaveKnownParents
     {
         public INotifyCollectionChangeConversionApplied<TOriginalItem, TConvertedItem> CollectionChangeConversionNotifer { get; private set; }
 
-        public CollectionItemConversionParentBehaviour(INotifyCollectionChangeConversionApplied<TOriginalItem, TConvertedItem> collectionChangeConversionNotifer)
+        public CollectionItemConversionChildBehaviour(INotifyCollectionChangeConversionApplied<TOriginalItem, TConvertedItem> collectionChangeConversionNotifer)
         {
             CollectionChangeConversionNotifer = collectionChangeConversionNotifer;
             CollectionChangeConversionNotifer.CollectionChangeConversionApplied += ConvertedCollectionChangeNotifer_CollectionChangeConversionApplied;
@@ -38,19 +38,19 @@ namespace Teronis.Collections.Generic
                     var convertedItemsEnumerator = convertedChange.NewItems.GetEnumerator();
 
                     while (originalItemsEnumerator.MoveNext() && convertedItemsEnumerator.MoveNext()) {
-                        var originalItem = originalItemsEnumerator.Current;
+                        var convertedItem = convertedItemsEnumerator.Current;
 
                         switch (action) {
                             case NotifyCollectionChangedAction.Remove:
-                                originalItem.DetachKnownWantParentsHandler(this);
+                                convertedItem.DetachKnownWantParentsHandler(this);
                                 break;
                             case NotifyCollectionChangedAction.Add:
-                                var convertedItem = convertedItemsEnumerator.Current;
+                                var originalItem = originalItemsEnumerator.Current;
 
                                 void OriginalItem_WantParents(object s, HavingParentsEventArgs e)
-                                    => e.AttachParentParents(convertedItem);
+                                    => e.AttachParents(originalItem);
 
-                                originalItem.AttachKnownWantParentsHandler(this, OriginalItem_WantParents);
+                                convertedItem.AttachKnownWantParentsHandler(this, OriginalItem_WantParents);
                                 break;
                         }
                     }

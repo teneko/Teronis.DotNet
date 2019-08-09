@@ -6,9 +6,9 @@ namespace Teronis.Data
 {
     public interface IHaveKnownParents : IHaveParents
     {
-        void AttachWantParentsHandler(object caller, WantParentsEventHandler handler);
+        void AttachKnownWantParentsHandler(object caller, WantParentsEventHandler handler);
         void AttachWantParentsHandler(WantParentsEventHandler handler);
-        void DetachWantParentsHandler(object caller);
+        void DetachKnownWantParentsHandler(object caller);
         void DetachWantParentsHandler(WantParentsEventHandler handler);
     }
 }

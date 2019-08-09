@@ -12,9 +12,9 @@ namespace Teronis.Tools.NetStandard
         /// <summary>
         /// Useful for unsubscribing inline event handlers.
         /// </summary>
-        public static ValueWrap<T> ReturnDefaultReplacement<T>(Func<ValueWrap<T>, T> getDefaultValueReplacement)
+        public static WrappedValue<T> ReturnDefaultReplacement<T>(Func<WrappedValue<T>, T> getDefaultValueReplacement)
         {
-            var defaultValueWrapper = new ValueWrap<T>(default);
+            var defaultValueWrapper = new WrappedValue<T>(default);
             defaultValueWrapper.Value = getDefaultValueReplacement(defaultValueWrapper);
             return defaultValueWrapper;
         }

@@ -12,77 +12,71 @@ namespace Teronis.Data
         public event PropertyChangedEventHandler PropertyChanged;
 
         public IList<INotifyPropertyChanged> PropertyChangedNotifiers { get; private set; }
-        public INotifyPropertyChanged CommonPropertiesContainerNotifier { get; private set; }
         public Type CommonPropertiesContainerType { get; private set; }
 
-        private Dictionary<string, INotifyPropertyChanged> cachedPropertyChangedNotifiers;
+        private List<INotifyPropertyChanged> cachedNotifiers;
+        private PropertyChangedCache<INotifyPropertyChanged> propertyChangedNotifiersCache;
 
+        /// <summary>
+        /// Relay upcoming property changes that are in common with members of an instance of <see cref="commonPropertiesContainerType"/>.
+        /// </summary>
+        /// <param name="commonPropertiesContainerType">Only the members of an instance of <see cref="CommonPropertiesContainerType"/> are going to relay</param>
+        /// <param name="propertyChangedNotifiers">In most scenarios, the property changed notifiers (instances of <see cref="INotifyPropertyChanged"/>) are children of an instance of <see cref="CommonPropertiesContainerType"/>.</param>
         public PropertyChangedRelay(Type commonPropertiesContainerType, params INotifyPropertyChanged[] propertyChangedNotifiers)
         {
-            PropertyChangedNotifiers = propertyChangedNotifiers ?? throw new ArgumentNullException(nameof(propertyChangedNotifiers));
+            cachedNotifiers = new List<INotifyPropertyChanged>();
+            PropertyChangedNotifiers = propertyChangedNotifiers;
+            CommonPropertiesContainerType = commonPropertiesContainerType ?? throw new ArgumentNullException(nameof(commonPropertiesContainerType));
 
-            foreach (var propertyChangedNotifier in PropertyChangedNotifiers)
-                SubscribeNotifier(propertyChangedNotifier);
-
-            CommonPropertiesContainerType = commonPropertiesContainerType;
+            if (propertyChangedNotifiers != null)
+                foreach (var propertyChangedNotifier in propertyChangedNotifiers)
+                    SubscribePropertyChangedNotifier(propertyChangedNotifier);
         }
 
+        /// <summary>
+        /// Relay upcoming property changes, whose containers are un-/subscribing automatically, that are in common with members of an instance of <see cref="commonPropertiesContainerType"/>.
+        /// </summary>
         public PropertyChangedRelay(INotifyPropertyChanged commonPropertiesContainerNotifier)
             : this(commonPropertiesContainerNotifier?.GetType())
-            => CommonPropertiesContainerNotifier = commonPropertiesContainerNotifier;
+        {
+            propertyChangedNotifiersCache = new PropertyChangedCache<INotifyPropertyChanged>(commonPropertiesContainerNotifier);
+            propertyChangedNotifiersCache.PropertyCacheAdded += PropertyChangedNotifiersCache_PropertyCacheAdded;
+            propertyChangedNotifiersCache.PropertyCacheRemoved += PropertyChangedNotifiersCache_PropertyCacheRemoved;
+        }
 
         protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
             => PropertyChanged?.Invoke(sender, e);
 
-        private void UncachedNotifier_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Property_PropertyChanged(object sender, PropertyChangedEventArgs e)
             => OnPropertyChanged(sender, e);
+
+        public void SubscribePropertyChangedNotifier(INotifyPropertyChanged propertyChangedNotifier)
+        {
+            propertyChangedNotifier.PropertyChanged += PropertyChangedNotifier_PropertyChanged;
+            cachedNotifiers.Add(propertyChangedNotifier);
+        }
+
+        public void UnsubscribePropertyChangedNotifier(INotifyPropertyChanged propertyChangedNotifier)
+        {
+            propertyChangedNotifier.PropertyChanged -= PropertyChangedNotifier_PropertyChanged;
+            cachedNotifiers.Remove(propertyChangedNotifier);
+        }
+
+        private void PropertyChangedNotifiersCache_PropertyCacheAdded(object sender, PropertyCacheAddedEventArgs<INotifyPropertyChanged> args)
+            => SubscribePropertyChangedNotifier(args.Property);
+
+        private void PropertyChangedNotifiersCache_PropertyCacheRemoved(object sender, PropertyCacheRemovedEventArgs<INotifyPropertyChanged> args)
+            => UnsubscribePropertyChangedNotifier(args.Property);
 
         private void PropertyChangedNotifier_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            var readonlyPropertyBindingAttributes = VariableInfoSettings.DefaultFlags | System.Reflection.BindingFlags.GetProperty;
-            var shouldNotNotifyUncommonProperty = CommonPropertiesContainerType != null && CommonPropertiesContainerType.GetProperty(e.PropertyName, readonlyPropertyBindingAttributes) == null;
+            var propertySettings = VariableInfoSettings.DefaultFlags | System.Reflection.BindingFlags.GetProperty;
+            var shouldNotNotifyUncommonProperty = CommonPropertiesContainerType != null && CommonPropertiesContainerType.GetProperty(e.PropertyName, propertySettings) == null;
 
             if (shouldNotNotifyUncommonProperty)
                 return;
 
-            if (CommonPropertiesContainerNotifier != null) {
-                var propertyName = e.PropertyName;
-                var notifier = CommonPropertiesContainerType.GetVariableMember(e.PropertyName).GetValue(this) as INotifyPropertyChanged;
-
-                void cacheNotifier(INotifyPropertyChanged uncachedNotifier)
-                {
-                    uncachedNotifier.PropertyChanged += UncachedNotifier_PropertyChanged;
-                    cachedPropertyChangedNotifiers.Add(propertyName, uncachedNotifier);
-                }
-
-                void uncacheNotifier(INotifyPropertyChanged cachedNotifier)
-                {
-                    cachedNotifier.PropertyChanged -= UncachedNotifier_PropertyChanged;
-                    cachedPropertyChangedNotifiers.Remove(propertyName);
-                }
-
-                if (notifier != null && !cachedPropertyChangedNotifiers.ContainsKey(propertyName)) {
-                    // Add new subscription
-                    cacheNotifier(notifier);
-                } else if (cachedPropertyChangedNotifiers.ContainsKey(propertyName)) {
-                    var cachedNotifier = cachedPropertyChangedNotifiers[propertyName];
-
-                    if (notifier == null)
-                        uncacheNotifier(cachedNotifier);
-                    else if (notifier != cachedNotifier) {
-                        uncacheNotifier(cachedNotifier);
-                        cacheNotifier(notifier);
-                    }
-                }
-            }
-
             OnPropertyChanged(sender, e);
         }
-
-        public void SubscribeNotifier(INotifyPropertyChanged propertyChangedNotifier)
-            => propertyChangedNotifier.PropertyChanged += PropertyChangedNotifier_PropertyChanged;
-
-        public void UnsubscribeNotifier(INotifyPropertyChanged propertyChangedNotifier)
-            => propertyChangedNotifier.PropertyChanged -= PropertyChangedNotifier_PropertyChanged;
     }
 }

@@ -44,7 +44,7 @@ namespace Teronis.Extensions.NetStandard
         public static MemberInfo GetPropertyMember(this Type type, string propertyName, VariableInfoSettings settings)
         {
             settings = settings.DefaultIfNull(true);
-            var member = type.GetMember(propertyName, MemberTypes.Property, settings.Flags).First();
+            var member = type.GetMember(propertyName, MemberTypes.Property, settings.Flags).SingleOrDefault();
 
             if (member == null || !member.IsVariable(settings))
                 return null;
@@ -99,7 +99,7 @@ namespace Teronis.Extensions.NetStandard
 
         public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributePropertyMembers<TAttribute>(this Type beginningType, Type interruptingBaseType, VariableInfoSettings settings, bool? getCustomAttributesInherit)
             where TAttribute : Attribute
-            => VariableInfoTools.GetAttributeVariableMembers<TAttribute>(GetPropertyMembers, beginningType, interruptingBaseType, settings, getCustomAttributesInherit);
+            => VariableInfoTools.GetAttributeMembers<TAttribute>(GetPropertyMembers, beginningType, interruptingBaseType, settings, getCustomAttributesInherit);
 
         public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributePropertyMembers<TAttribute>(this Type beginningType, Type interruptingBaseType, VariableInfoSettings settings)
             where TAttribute : Attribute
@@ -145,7 +145,7 @@ namespace Teronis.Extensions.NetStandard
             => GetAttributePropertyMember(type, attributeType, propertyName, default, getCustomAttributesInherit);
 
         public static IEnumerable<AttributeMemberInfo> GetAttributePropertyMembers(this Type beginningType, Type attributeType, Type interruptingBaseType, VariableInfoSettings settings, bool? getCustomAttributesInherit)
-            => VariableInfoTools.GetAttributeVariableMembers(attributeType, GetPropertyMembers, beginningType, interruptingBaseType, settings, getCustomAttributesInherit);
+            => VariableInfoTools.GetAttributeMembers(attributeType, GetPropertyMembers, beginningType, interruptingBaseType, settings, getCustomAttributesInherit);
 
         public static IEnumerable<AttributeMemberInfo> GetAttributePropertyMembers(this Type beginningType, Type attributeType, Type interruptingBaseType, VariableInfoSettings settings)
             => GetAttributePropertyMembers(beginningType, attributeType, interruptingBaseType, settings, default);
@@ -172,7 +172,7 @@ namespace Teronis.Extensions.NetStandard
         public static MemberInfo GetFieldMember(this Type type, string fieldName, VariableInfoSettings settings)
         {
             settings = settings.DefaultIfNull(true);
-            var member = type.GetMember(fieldName, MemberTypes.Field, settings.Flags).First();
+            var member = type.GetMember(fieldName, MemberTypes.Field, settings.Flags).SingleOrDefault();
 
             if (member == null || !member.IsVariable(settings))
                 return null;
@@ -227,7 +227,7 @@ namespace Teronis.Extensions.NetStandard
 
         public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeFieldMembers<TAttribute>(this Type beginningType, Type interruptingBaseType, VariableInfoSettings settings, bool? getCustomAttributesInherit)
             where TAttribute : Attribute
-            => VariableInfoTools.GetAttributeVariableMembers<TAttribute>(GetFieldMembers, beginningType, interruptingBaseType, settings, getCustomAttributesInherit);
+            => VariableInfoTools.GetAttributeMembers<TAttribute>(GetFieldMembers, beginningType, interruptingBaseType, settings, getCustomAttributesInherit);
 
         public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeFieldMembers<TAttribute>(this Type beginningType, Type interruptingBaseType, VariableInfoSettings settings)
             where TAttribute : Attribute
@@ -275,7 +275,7 @@ namespace Teronis.Extensions.NetStandard
             => GetAttributeFieldMember(type, attributeType, fieldName, default, getCustomAttributesInherit);
 
         public static IEnumerable<AttributeMemberInfo> GetAttributeFieldMembers(this Type beginningType, Type attributeType, Type interruptingBaseType, VariableInfoSettings settings, bool? getCustomAttributesInherit)
-            => VariableInfoTools.GetAttributeVariableMembers(attributeType, GetFieldMembers, beginningType, interruptingBaseType, settings, getCustomAttributesInherit);
+            => VariableInfoTools.GetAttributeMembers(attributeType, GetFieldMembers, beginningType, interruptingBaseType, settings, getCustomAttributesInherit);
 
         public static IEnumerable<AttributeMemberInfo> GetAttributeFieldMembers(this Type beginningType, Type attributeType, Type interruptingBaseType, VariableInfoSettings settings)
             => GetAttributeFieldMembers(beginningType, attributeType, interruptingBaseType, settings, default);
@@ -300,10 +300,7 @@ namespace Teronis.Extensions.NetStandard
         #region variable
 
         public static MemberInfo GetVariableMember(this Type type, string variableName, VariableInfoSettings settings)
-        {
-            settings = settings.DefaultIfNull(true);
-            return GetPropertyMember(type, variableName, settings);
-        }
+            => GetPropertyMember(type, variableName, settings) ?? GetFieldMember(type, variableName, settings);
 
         public static MemberInfo GetVariableMember(this Type type, string variableName)
             => GetVariableMember(type, variableName, default);

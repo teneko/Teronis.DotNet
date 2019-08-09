@@ -40,7 +40,7 @@ namespace Teronis.Tools.NetStandard
 
         // TYPED
 
-        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeVariableMembers<TAttribute>(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType, VariableInfoSettings settings, bool? getCustomAttributesInherit)
+        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeMembers<TAttribute>(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType, VariableInfoSettings settings, bool? getCustomAttributesInherit)
             where TAttribute : Attribute
         {
             foreach (var type in beginningType.GetBaseTypes(interruptingBaseType))
@@ -49,33 +49,33 @@ namespace Teronis.Tools.NetStandard
                         yield return varAttrInfo;
         }
 
-        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeVariableMembers<TAttribute>(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType, VariableInfoSettings settings)
+        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeMembers<TAttribute>(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType, VariableInfoSettings settings)
             where TAttribute : Attribute
-            => GetAttributeVariableMembers<TAttribute>(getMembers, beginningType, interruptingBaseType, settings, default);
+            => GetAttributeMembers<TAttribute>(getMembers, beginningType, interruptingBaseType, settings, default);
 
-        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeVariableMembers<TAttribute>(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType, bool? getCustomAttributesInherit)
+        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeMembers<TAttribute>(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType, bool? getCustomAttributesInherit)
             where TAttribute : Attribute
-            => GetAttributeVariableMembers<TAttribute>(getMembers, beginningType, interruptingBaseType, default, getCustomAttributesInherit);
+            => GetAttributeMembers<TAttribute>(getMembers, beginningType, interruptingBaseType, default, getCustomAttributesInherit);
 
-        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeVariableMembers<TAttribute>(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType)
+        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeMembers<TAttribute>(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType)
              where TAttribute : Attribute
-             => GetAttributeVariableMembers<TAttribute>(getMembers, beginningType, interruptingBaseType, default, default);
+             => GetAttributeMembers<TAttribute>(getMembers, beginningType, interruptingBaseType, default, default);
 
-        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeVariableMembers<TAttribute>(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType)
+        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeMembers<TAttribute>(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType)
              where TAttribute : Attribute
-             => GetAttributeVariableMembers<TAttribute>(getMembers, beginningType, default, default, default);
+             => GetAttributeMembers<TAttribute>(getMembers, beginningType, default, default, default);
 
-        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeVariableMembers<TAttribute>(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, VariableInfoSettings settings)
+        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeMembers<TAttribute>(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, VariableInfoSettings settings)
              where TAttribute : Attribute
-             => GetAttributeVariableMembers<TAttribute>(getMembers, beginningType, default, settings, default);
+             => GetAttributeMembers<TAttribute>(getMembers, beginningType, default, settings, default);
 
-        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeVariableMembers<TAttribute>(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, bool? getCustomAttributesInherit)
+        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeMembers<TAttribute>(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, bool? getCustomAttributesInherit)
              where TAttribute : Attribute
-             => GetAttributeVariableMembers<TAttribute>(getMembers, beginningType, default, default, getCustomAttributesInherit);
+             => GetAttributeMembers<TAttribute>(getMembers, beginningType, default, default, getCustomAttributesInherit);
 
         // NON-TYPED
 
-        public static IEnumerable<AttributeMemberInfo> GetAttributeVariableMembers(Type attributeType, Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType, VariableInfoSettings settings, bool? getCustomAttributesInherit)
+        public static IEnumerable<AttributeMemberInfo> GetAttributeMembers(Type attributeType, Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType, VariableInfoSettings settings, bool? getCustomAttributesInherit)
         {
             foreach (var type in beginningType.GetBaseTypes(interruptingBaseType))
                 foreach (var propertyInfo in GetMembers(getMembers, beginningType, interruptingBaseType, settings))
@@ -83,23 +83,23 @@ namespace Teronis.Tools.NetStandard
                         yield return varAttrInfo;
         }
 
-        public static IEnumerable<AttributeMemberInfo> GetAttributeVariableMembers(Type attributeType, Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType, VariableInfoSettings settings)
-            => GetAttributeVariableMembers(attributeType, getMembers, beginningType, interruptingBaseType, settings, default);
+        public static IEnumerable<AttributeMemberInfo> GetAttributeMembers(Type attributeType, Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType, VariableInfoSettings settings)
+            => GetAttributeMembers(attributeType, getMembers, beginningType, interruptingBaseType, settings, default);
 
-        public static IEnumerable<AttributeMemberInfo> GetAttributeVariableMembers(Type attributeType, Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType, bool? getCustomAttributesInherit)
-            => GetAttributeVariableMembers(attributeType, getMembers, beginningType, interruptingBaseType, default, getCustomAttributesInherit);
+        public static IEnumerable<AttributeMemberInfo> GetAttributeMembers(Type attributeType, Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType, bool? getCustomAttributesInherit)
+            => GetAttributeMembers(attributeType, getMembers, beginningType, interruptingBaseType, default, getCustomAttributesInherit);
 
-        public static IEnumerable<AttributeMemberInfo> GetAttributeVariableMembers(Type attributeType, Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType)
-             => GetAttributeVariableMembers(attributeType, getMembers, beginningType, interruptingBaseType, default, default);
+        public static IEnumerable<AttributeMemberInfo> GetAttributeMembers(Type attributeType, Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType)
+             => GetAttributeMembers(attributeType, getMembers, beginningType, interruptingBaseType, default, default);
 
-        public static IEnumerable<AttributeMemberInfo> GetAttributeVariableMembers(Type attributeType, Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType)
-             => GetAttributeVariableMembers(attributeType, getMembers, beginningType, default, default, default);
+        public static IEnumerable<AttributeMemberInfo> GetAttributeMembers(Type attributeType, Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType)
+             => GetAttributeMembers(attributeType, getMembers, beginningType, default, default, default);
 
-        public static IEnumerable<AttributeMemberInfo> GetAttributeVariableMembers(Type attributeType, Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, VariableInfoSettings settings)
-             => GetAttributeVariableMembers(attributeType, getMembers, beginningType, default, settings, default);
+        public static IEnumerable<AttributeMemberInfo> GetAttributeMembers(Type attributeType, Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, VariableInfoSettings settings)
+             => GetAttributeMembers(attributeType, getMembers, beginningType, default, settings, default);
 
-        public static IEnumerable<AttributeMemberInfo> GetAttributeVariableMembers(Type attributeType, Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, bool? getCustomAttributesInherit)
-             => GetAttributeVariableMembers(attributeType, getMembers, beginningType, default, default, getCustomAttributesInherit);
+        public static IEnumerable<AttributeMemberInfo> GetAttributeMembers(Type attributeType, Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, bool? getCustomAttributesInherit)
+             => GetAttributeMembers(attributeType, getMembers, beginningType, default, default, getCustomAttributesInherit);
 
         #endregion
     }

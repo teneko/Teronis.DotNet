@@ -5,39 +5,40 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
+using MorseCode.ITask;
 using Teronis.Data;
 using Teronis.Extensions.NetStandard;
 
 namespace Teronis.Collections.Generic
 {
-    public class CollectionSynchronizer<TList, TItem> : ISynchronizableCollectionContainer<TItem>, INotifiableCollectionContainer<TItem>, INotifyPropertyChanged, IContainerUpdateSequenceStatus
-        where TList : IList<TItem>
+    public class CollectionSynchronizer<ListType, ItemType> : ISynchronizableCollectionContainer<ItemType>, INotifiableCollectionContainer<ItemType>, INotifyPropertyChanged, IContentUpdateSequenceStatus
+        where ListType : IList<ItemType>
     {
-        public event CollectionChangeAppliedEventHandler<TItem> CollectionChangeApplied;
+        public event CollectionChangeAppliedEventHandler<ItemType> CollectionChangeApplied;
         public event PropertyChangedEventHandler PropertyChanged;
+        public event WantParentsEventHandler WantParents;
 
-        public virtual bool IsContainerUpdating => updateSequenceStatus.IsContainerUpdating;
-        public TList Collection { get; private set; }
-        public IEqualityComparer<TItem> EqualityComparer { get; private set; }
+        public virtual bool IsContentUpdating => updateSequenceStatus.IsContentUpdating;
+        public ListType Collection { get; private set; }
+        public IEqualityComparer<ItemType> EqualityComparer { get; private set; }
 
         private ContainerUpdateSequenceStatus updateSequenceStatus;
         private PropertyChangedRelay propertyChangedRelay;
 
-        IList<TItem> ISynchronizableCollectionContainer<TItem>.Collection => Collection;
-        IList<TItem> INotifiableCollectionContainer<TItem>.Collection => Collection;
+        IList<ItemType> ISynchronizableCollectionContainer<ItemType>.Collection => Collection;
+        IList<ItemType> INotifiableCollectionContainer<ItemType>.Collection => Collection;
 
-        public CollectionSynchronizer(TList initialCollection, IEqualityComparer<TItem> equalityComparer)
+        public CollectionSynchronizer(ListType initialCollection, IEqualityComparer<ItemType> equalityComparer)
         {
             updateSequenceStatus = new ContainerUpdateSequenceStatus();
             propertyChangedRelay = new PropertyChangedRelay(GetType(), updateSequenceStatus);
             propertyChangedRelay.PropertyChanged += PropertyChangedRelay_PropertyChanged;
-            EqualityComparer = equalityComparer ?? EqualityComparer<TItem>.Default;
+            EqualityComparer = equalityComparer ?? EqualityComparer<ItemType>.Default;
             Collection = initialCollection;
         }
 
-        public CollectionSynchronizer(TList initialCollection)
+        public CollectionSynchronizer(ListType initialCollection)
             : this(initialCollection, default) { }
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
@@ -46,74 +47,24 @@ namespace Teronis.Collections.Generic
         private void PropertyChangedRelay_PropertyChanged(object sender, PropertyChangedEventArgs e)
            => OnPropertyChanged(e);
 
-        [Conditional("DEBUG")]
-        private void debugChange(CollectionChange<TItem> change, string oldItemNameFromCollection, bool tryDisplayOldItems, string newItemNameFromCollection, bool tryDisplayNewItems)
-        {
-            Debug.WriteLine($"{GetType().Name}, {change.ToDebugString()}");
-            Debug.Indent();
-
-            void displayItem(ICollection<TItem> items, string itemCollectionName, int beginningIndex)
-            {
-                try {
-                    Debug.WriteLine($"{itemCollectionName}, BeginningIndex = {beginningIndex}");
-                    Debug.Indent();
-
-                    foreach (var item in items)
-                        Debug.WriteLine($"{beginningIndex++}: {item.ToDebugString()}");
-
-                    Debug.Unindent();
-                } catch { }
-            }
-
-            Debug.Indent();
-            Debug.WriteLine("OldItem(s)-Related");
-            Debug.Indent();
-
-            if (oldItemNameFromCollection != null)
-                displayItem(change.GetOldItems(Collection), oldItemNameFromCollection, change.OldIndex);
-
-            if (tryDisplayOldItems)
-                displayItem(change.OldItems, nameof(change.OldItems), change.OldIndex);
-
-            Debug.Unindent();
-            Debug.Unindent();
-
-            Debug.Indent();
-            Debug.WriteLine("NewItem(s)-Related");
-            Debug.Indent();
-
-            if (newItemNameFromCollection != null)
-                displayItem(change.GetNewItems(Collection), newItemNameFromCollection, change.NewIndex);
-
-            if (tryDisplayNewItems)
-                displayItem(change.OldItems, nameof(change.NewItems), change.NewIndex);
-
-            Debug.Unindent();
-            Debug.Unindent();
-
-            Debug.Unindent();
-        }
-
-        protected virtual void onCollectionItemRemove(CollectionChange<TItem> change)
+        protected virtual void onCollectionItemRemove(CollectionChange<ItemType> change)
         {
             var oldIndex = change.OldIndex;
 
             for (var index = oldIndex + change.OldItems.Count - 1; index >= oldIndex; index--) {
 #if DEBUG
-                if (EqualityComparer != EqualityComparer<TItem>.Default) {
-                    var removingItem = Collection[index];
-                    var oldItemIndex = change.OldItems.Count - (oldIndex + change.OldItems.Count - index - 1) - 1;
-                    var oldItem = change.OldItems[oldItemIndex];
+                var removingItem = Collection[index];
+                var oldItemIndex = change.OldItems.Count - (oldIndex + change.OldItems.Count - index - 1) - 1;
+                var oldItem = change.OldItems[oldItemIndex];
 
-                    if (!EqualityComparer.Equals(removingItem, oldItem))
-                        throw new Exception("Removing item is not equals old item that should be removed instead");
-                }
+                if (!EqualityComparer.Equals(removingItem, oldItem))
+                    throw new Exception("Removing item is not equals old item that should be removed instead");
 #endif
                 Collection.RemoveAt(index);
             }
         }
 
-        protected virtual void onCollectionItemAdd(CollectionChange<TItem> change)
+        protected virtual void onCollectionItemAdd(CollectionChange<ItemType> change)
         {
             var newIndex = change.NewIndex;
 
@@ -121,44 +72,32 @@ namespace Teronis.Collections.Generic
                 Collection.Insert(newIndex++, newItem);
         }
 
-        [Conditional("DEBUG")]
-        private void debugAfterCollectionMove(CollectionChange<TItem> change)
-        {
-            Debug.Indent();
-            debugChange(change, null, false, "MovedItems", false);
-            Debug.Unindent();
-        }
-
         /// <summary>
         /// Does regards <see cref="ObservableCollection{T}.Move(int, int)"/>, otherwise 
         /// it fallbacks to <see cref="IListGenericExtensions.Move{T}(IList{T}, int, int)"/>
         /// </summary>
         /// <param name="change"></param>
-        protected virtual void onCollectionItemMove(CollectionChange<TItem> change)
+        protected virtual void onCollectionItemMove(CollectionChange<ItemType> change)
         {
-            debugChange(change, "MovingItems", false, null, false);
-
-            if (Collection is ObservableCollection<TItem> observableCollection)
+            if (Collection is ObservableCollection<ItemType> observableCollection)
                 observableCollection.Move(change.OldIndex, change.NewIndex);
             else
                 Collection.Move(change.OldIndex, change.NewIndex);
-
-            debugAfterCollectionMove(change);
         }
 
         /// <summary>
         /// This method has no code inside and is ready for override.
         /// </summary>
-        protected virtual void onCollectionItemReplace(CollectionChange<TItem> change, CollectionChangeReplaceAspect<TItem> aspect)
+        protected virtual void onCollectionItemReplace(CollectionChange<ItemType> change, CollectionChangeReplaceAspect<ItemType> aspect)
         { }
 
-        protected virtual void onCollectionReset(CollectionChange<TItem> change, CollectionChangeResetAspect<TItem> aspect)
+        protected virtual void onCollectionReset(CollectionChange<ItemType> change, CollectionChangeResetAspect<ItemType> aspect)
         {
             var newItems = change.NewItems ?? throw new ArgumentNullException(nameof(change.NewItems));
 
             Collection.Clear();
 
-            if (Collection is List<TItem> list)
+            if (Collection is List<ItemType> list)
                 list.AddRange(newItems);
             else
                 foreach (var item in newItems)
@@ -167,9 +106,9 @@ namespace Teronis.Collections.Generic
             aspect.SetNewItems(newItems);
         }
 
-        protected virtual AspectedCollectionChange<TItem> createAspectedCollectionChange(CollectionChange<TItem> change)
+        protected virtual AspectedCollectionChange<ItemType> createAspectedCollectionChange(CollectionChange<ItemType> change)
         {
-            AspectedCollectionChange<TItem> aspectedChange = null;
+            AspectedCollectionChange<ItemType> aspectedChange = null;
 
             switch (change.Action) {
                 case NotifyCollectionChangedAction.Remove:
@@ -182,53 +121,53 @@ namespace Teronis.Collections.Generic
                     onCollectionItemMove(change);
                     break;
                 case NotifyCollectionChangedAction.Replace: {
-                        var aspect = new CollectionChangeReplaceAspect<TItem>();
+                        var aspect = new CollectionChangeReplaceAspect<ItemType>();
                         onCollectionItemReplace(change, aspect);
-                        aspectedChange = new AspectedCollectionChange<TItem>(change, aspect);
+                        aspectedChange = new AspectedCollectionChange<ItemType>(change, aspect);
                         break;
                     }
                 case NotifyCollectionChangedAction.Reset: {
-                        var aspect = new CollectionChangeResetAspect<TItem>();
+                        var aspect = new CollectionChangeResetAspect<ItemType>();
                         onCollectionReset(change, aspect);
-                        aspectedChange = new AspectedCollectionChange<TItem>(change, aspect);
+                        aspectedChange = new AspectedCollectionChange<ItemType>(change, aspect);
                         break;
                     }
             }
 
             if (aspectedChange == null)
-                aspectedChange = new AspectedCollectionChange<TItem>(change);
+                aspectedChange = new AspectedCollectionChange<ItemType>(change);
 
             return aspectedChange;
         }
 
-        public void BeginContainerUpdate()
-            => updateSequenceStatus.BeginContainerUpdate();
+        public void BeginContentUpdate()
+            => updateSequenceStatus.BeginContentUpdate();
 
-        public void EndContainerUpdate()
-            => updateSequenceStatus.EndContainerUpdate();
+        public void EndContentUpdate()
+            => updateSequenceStatus.EndContentUpdate();
 
-        public virtual void ApplyChange(CollectionChange<TItem> change)
+        public virtual void ApplyChange(CollectionChange<ItemType> change)
         {
             var aspectedChange = createAspectedCollectionChange(change);
-            var args = new CollectionChangeAppliedEventArgs<TItem>(aspectedChange);
+            var args = new CollectionChangeAppliedEventArgs<ItemType>(aspectedChange);
             CollectionChangeApplied?.Invoke(this, args);
         }
 
-        public virtual async Task ApplyChangeAsync(CollectionChange<TItem> change)
+        public virtual async Task ApplyChangeAsync(CollectionChange<ItemType> change)
         {
             var aspectedChange = createAspectedCollectionChange(change);
             var eventSequence = new AsyncableEventSequence();
-            var args = new CollectionChangeAppliedEventArgs<TItem>(aspectedChange, eventSequence);
+            var args = new CollectionChangeAppliedEventArgs<ItemType>(aspectedChange, eventSequence);
             CollectionChangeApplied?.Invoke(this, args);
 
-            BeginContainerUpdate();
+            BeginContentUpdate();
             await eventSequence.FinishDependenciesAsync();
-            EndContainerUpdate();
+            EndContentUpdate();
         }
 
-        private IEnumerable<CollectionChange<TItem>> getCollectionChanges(IEnumerable<TItem> items)
+        private IEnumerable<CollectionChange<ItemType>> getCollectionChanges(IEnumerable<ItemType> items)
         {
-            items = items ?? Enumerable.Empty<TItem>();
+            items = items ?? Enumerable.Empty<ItemType>();
 
             //var cachedCollection = new List<TItem>(Collection);
             //var list = items.Take(5).ToList();
@@ -243,7 +182,7 @@ namespace Teronis.Collections.Generic
             return changes;
         }
 
-        public virtual void Synchronize(IEnumerable<TItem> items)
+        public virtual void Synchronize(IEnumerable<ItemType> items)
         {
             var changes = getCollectionChanges(items);
 
@@ -251,9 +190,9 @@ namespace Teronis.Collections.Generic
                 ApplyChange(change);
         }
 
-        public virtual async Task SynchronizeAsync(IEnumerable<TItem> items)
+        public virtual async Task SynchronizeAsync(IEnumerable<ItemType> items)
         {
-            BeginContainerUpdate();
+            BeginContentUpdate();
             var changes = getCollectionChanges(items);
 
             //try {
@@ -263,15 +202,18 @@ namespace Teronis.Collections.Generic
             //    ;
             //}
 
-            EndContainerUpdate();
+            EndContentUpdate();
         }
 
-        public virtual async Task SynchronizeAsync(Task<IEnumerable<TItem>> itemsTask)
+        public virtual async Task SynchronizeAsync(ITask<IEnumerable<ItemType>> itemsTask)
         {
-            BeginContainerUpdate();
+            BeginContentUpdate();
             var items = await itemsTask;
             await SynchronizeAsync(items);
-            EndContainerUpdate();
+            EndContentUpdate();
         }
+
+        public ParentsPicker GetParentsPicker()
+            => new ParentsPicker(this, WantParents);
     }
 }

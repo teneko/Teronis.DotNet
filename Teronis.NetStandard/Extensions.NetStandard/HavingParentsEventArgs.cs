@@ -23,6 +23,12 @@ namespace Teronis.Extensions.NetStandard
         }
 
         /// <summary>
+        /// Does only attach the parents to the parent container and does not look for <see cref="IHaveParents"/> implementation.
+        /// </summary>
+        public static void AttachParents(this HavingParentsEventArgs args, params object[] parents)
+            => AttachParents(args, (IEnumerable<object>) parents);
+
+        /// <summary>
         /// Does attach the parent to the parent container and does look for <see cref="IHaveParents"/> implementation.
         /// </summary>
         public static void AttachParentParents(this HavingParentsEventArgs args, object parent)

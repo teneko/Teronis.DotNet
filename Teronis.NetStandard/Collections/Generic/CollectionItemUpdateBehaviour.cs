@@ -8,7 +8,7 @@ using Teronis.Extensions.NetStandard;
 namespace Teronis.Collections.Generic
 {
     public class CollectionItemUpdateBehaviour<TItem>
-        where TItem : IUpdatableContainer<TItem>
+        where TItem : IUpdatableContent<TItem>
     {
         public INotifyCollectionChangeApplied<TItem> NotifiableCollectionContainer { get; private set; }
 

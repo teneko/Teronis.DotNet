@@ -10,7 +10,7 @@ using Teronis.Tools.NetStandard;
 
 namespace Teronis.Data
 {
-    public class ContainerUpdater<T> : INotifyPropertyChanged, IUpdatableContainer<T>
+    public class ContentUpdater<T> : INotifyPropertyChanged, IUpdatableContent<T>
     {
 #pragma warning disable 0067
         public event PropertyChangedEventHandler PropertyChanged;
@@ -23,7 +23,7 @@ namespace Teronis.Data
         private ContainerUpdateSequenceStatus updateSequenceStatus;
         private PropertyChangedRelay propertyChangedRelay;
 
-        public ContainerUpdater()
+        public ContentUpdater()
         {
             updateSequenceStatus = new ContainerUpdateSequenceStatus();
             propertyChangedRelay = new PropertyChangedRelay(GetType(), updateSequenceStatus);

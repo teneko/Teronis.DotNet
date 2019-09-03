@@ -63,7 +63,7 @@ namespace Teronis.Data
         }
 
         private void PropertyChangedNotifiersCache_PropertyCacheAdded(object sender, PropertyCacheAddedEventArgs<INotifyPropertyChanged> args)
-            => SubscribePropertyChangedNotifier(args.Property);
+            => SubscribePropertyChangedNotifier(args.AddedProperty);
 
         private void PropertyChangedNotifiersCache_PropertyCacheRemoved(object sender, PropertyCacheRemovedEventArgs<INotifyPropertyChanged> args)
             => UnsubscribePropertyChangedNotifier(args.Property);

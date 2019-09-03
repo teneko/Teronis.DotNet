@@ -15,37 +15,53 @@ namespace Teronis.Data
         public event PropertyCacheRemovedEvent<TProperty> PropertyCacheRemoved;
 
         public Type PropertyType { get; set; }
+        public TProperty DefaultPropertyValue { get; set; }
         public INotifyPropertyChanged PropertyChangedNotifier { get; private set; }
         public object PropertyChangedRelayTarget { get; private set; }
         public Type PropertyChangedRelayTargetType { get; private set; }
-        public EqualityComparer<TProperty> PropertyValueEqualityComparer { get; private set; }
-        public IReadOnlyCollection<TProperty> CachedProperties => cachedProperties.Values;
+        public IEqualityComparer<TProperty> PropertyValueEqualityComparer { get; private set; }
+        public ReadOnlyDictionary<string, TProperty> CachedProperties { get; private set; }
+        public bool CanSkipRemovedEventInvocationWhenRecaching { get; set; }
 
         private Dictionary<string, TProperty> cachedProperties;
+        private PropertyComparisonType propertyComparisonType;
 
-        public PropertyChangedCache(INotifyPropertyChanged propertyChangedNotifier, object propertyChangedRelayTarget, EqualityComparer<TProperty> propertyValueEqualityComparer)
+        public PropertyChangedCache(INotifyPropertyChanged propertyChangedNotifier, object propertyChangedRelayTarget, IEqualityComparer<TProperty> propertyValueEqualityComparer)
         {
-            propertyChangedNotifier = propertyChangedNotifier ?? throw new ArgumentNullException(nameof(propertyChangedNotifier));
-            propertyChangedNotifier.PropertyChanged += PropertyChangedRelay_PropertyChanged;
+            propertyChangedNotifier = propertyChangedNotifier
+                ?? throw new ArgumentNullException(nameof(propertyChangedNotifier));
 
             propertyChangedRelayTarget = propertyChangedRelayTarget
                 ?? throw new ArgumentNullException(nameof(propertyChangedRelayTarget));
 
-            cachedProperties = new Dictionary<string, TProperty>();
+            propertyValueEqualityComparer = propertyValueEqualityComparer
+                ?? EqualityComparer<TProperty>.Default;
+
             PropertyType = typeof(TProperty);
+            var propertyTypeInfo = PropertyType.GetTypeInfo();
+
+            if (propertyTypeInfo.IsValueType)
+                propertyComparisonType = PropertyComparisonType.ValueType;
+            else
+                propertyComparisonType = PropertyComparisonType.ReferenceType;
+
+            cachedProperties = new Dictionary<string, TProperty>();
+            CachedProperties = new ReadOnlyDictionary<string, TProperty>(cachedProperties);
+            DefaultPropertyValue = default;
             PropertyChangedNotifier = propertyChangedNotifier;
+            PropertyChangedNotifier.PropertyChanged += PropertyChangedNotifier_PropertyChanged;
             PropertyChangedRelayTarget = propertyChangedRelayTarget;
             PropertyChangedRelayTargetType = propertyChangedRelayTarget.GetType();
-            PropertyValueEqualityComparer = propertyValueEqualityComparer ?? EqualityComparer<TProperty>.Default;
+            PropertyValueEqualityComparer = propertyValueEqualityComparer;
         }
 
-        public PropertyChangedCache(INotifyPropertyChanged propertyChangedNotifier, EqualityComparer<TProperty> propertyValueEqualityComparer)
+        public PropertyChangedCache(INotifyPropertyChanged propertyChangedNotifier, IEqualityComparer<TProperty> propertyValueEqualityComparer)
             : this(propertyChangedNotifier, propertyChangedNotifier, propertyValueEqualityComparer) { }
 
         public PropertyChangedCache(INotifyPropertyChanged propertyChangedNotifier)
             : this(propertyChangedNotifier, default) { }
 
-        protected void OnPriorPropertyCacheValidating(PropertyCacheAddingEventArgs<TProperty> args)
+        protected void OnPropertyCacheAdding(PropertyCacheAddingEventArgs<TProperty> args)
             => PropertyCacheAdding?.Invoke(this, args);
 
         protected void OnPropertyCacheAdded(PropertyCacheAddedEventArgs<TProperty> args)
@@ -54,55 +70,82 @@ namespace Teronis.Data
         protected void OnPropertyCacheRemoved(PropertyCacheRemovedEventArgs<TProperty> args)
             => PropertyCacheRemoved?.Invoke(this, args);
 
-        private void PropertyChangedRelay_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        public void OnPropertyChangedNotifierPropertyChanged(string propertyName)
         {
-            var propertyName = e.PropertyName;
-
             var propertySettings = new VariableInfoSettings();
-            propertySettings.Flags |= BindingFlags.NonPublic | BindingFlags.GetProperty;
+            propertySettings.Flags |= BindingFlags.NonPublic | BindingFlags.GetProperty | BindingFlags.GetField;
 
-            var propertyValue = PropertyChangedRelayTargetType
-                .GetPropertyMember(propertyName, propertySettings)?
+            var propertyMember = PropertyChangedRelayTargetType
+                .GetVariableMember(propertyName, propertySettings);
+
+            // There is no member that can be handled, so we return
+            if (propertyMember == null)
+                return;
+
+            var propertyValue = propertyMember
                 .GetValue(PropertyChangedRelayTarget);
 
-            var typedPropertyValue = default(TProperty);
+            TProperty typedPropertyValue;
 
-            if (propertyValue != null && PropertyType.IsAssignableFrom(propertyValue.GetType()))
+            var propertyVariableType = propertyMember.GetVariableType();
+
+            if ((propertyComparisonType == PropertyComparisonType.ValueType && PropertyType == propertyVariableType)
+                || (propertyComparisonType == PropertyComparisonType.ReferenceType && PropertyType.IsAssignableFrom(propertyVariableType)))
                 typedPropertyValue = (TProperty)propertyValue;
+            else
+                typedPropertyValue = DefaultPropertyValue;
+
+            void cachePropertyViaArgs(PropertyCacheAddedEventArgs<TProperty> args)
+            {
+                cachedProperties.Add(propertyName, args.AddedProperty);
+                OnPropertyCacheAdded(args);
+            }
 
             void cacheProperty(TProperty uncachedProperty)
             {
                 var args = new PropertyCacheAddedEventArgs<TProperty>(propertyName, uncachedProperty);
-                OnPropertyCacheAdded(args);
-                cachedProperties.Add(propertyName, uncachedProperty);
+                cachePropertyViaArgs(args);
             }
 
-            void uncacheProperty(TProperty cachedProperty)
+            void uncacheProperty(TProperty cachedProperty, bool isRecache)
             {
                 var args = new PropertyCacheRemovedEventArgs<TProperty>(propertyName, cachedProperty);
-                OnPropertyCacheRemoved(args);
                 cachedProperties.Remove(propertyName);
+
+                if (isRecache && CanSkipRemovedEventInvocationWhenRecaching)
+                    OnPropertyCacheRemoved(args);
             }
 
-            if (typedPropertyValue != null && !cachedProperties.ContainsKey(propertyName)) {
+            void recacheProperty(TProperty cachedProperty, TProperty uncachedProperty)
+            {
+                uncacheProperty(cachedProperty, true);
+                var args = new PropertyCacheAddedEventArgs<TProperty>(propertyName, uncachedProperty, cachedProperty);
+                cachePropertyViaArgs(args);
+            }
+
+            if (!PropertyValueEqualityComparer.Equals(typedPropertyValue, DefaultPropertyValue) && !cachedProperties.ContainsKey(propertyName))
+            {
                 var args = new PropertyCacheAddingEventArgs<TProperty>(propertyName, typedPropertyValue);
-                OnPriorPropertyCacheValidating(args);
+                OnPropertyCacheAdding(args);
 
                 if (!args.IsPropertyCacheable)
                     return;
 
                 // Add new subscription
                 cacheProperty(typedPropertyValue);
-            } else if (cachedProperties.ContainsKey(propertyName)) {
-                var cachedNotifier = cachedProperties[propertyName];
+            }
+            else if (cachedProperties.ContainsKey(propertyName))
+            {
+                var cachedProperty = cachedProperties[propertyName];
 
-                if (typedPropertyValue == null)
-                    uncacheProperty(cachedNotifier);
-                else if (!PropertyValueEqualityComparer.Equals(typedPropertyValue, cachedNotifier)) {
-                    uncacheProperty(cachedNotifier);
-                    cacheProperty(typedPropertyValue);
-                }
+                if (PropertyValueEqualityComparer.Equals(typedPropertyValue, DefaultPropertyValue))
+                    uncacheProperty(cachedProperty, false);
+                else if (!PropertyValueEqualityComparer.Equals(typedPropertyValue, cachedProperty))
+                    recacheProperty(cachedProperty, typedPropertyValue);
             }
         }
+
+        private void PropertyChangedNotifier_PropertyChanged(object sender, PropertyChangedEventArgs e)
+            => OnPropertyChangedNotifierPropertyChanged(e.PropertyName);
     }
 }

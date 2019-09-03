@@ -47,7 +47,7 @@ namespace Teronis.Data.TreeColumn.Core
                 foreach (var varInfo in declaringType.GetAttributePropertyMembers<HasTreeColumnsAttribute>()) {
                     var propertyName = varInfo.MemberInfo.Name;
                     string combinedPath = combinePath(parentPath, varInfo.MemberInfo.Name);
-                    columnDefinitionsByParent.Add((varInfo.MemberInfo.VariableType(), combinedPath));
+                    columnDefinitionsByParent.Add((varInfo.MemberInfo.GetVariableType(), combinedPath));
                 }
 
                 for (int index = 0; index < treeColumnOrdering.Count; index++) {

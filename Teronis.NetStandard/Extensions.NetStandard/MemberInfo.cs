@@ -18,7 +18,7 @@ namespace Teronis.Extensions.NetStandard
         public static bool IsFieldOrProperty(this MemberInfo memberInfo)
             => memberInfo.MemberType == MemberTypes.Field || memberInfo.MemberType == MemberTypes.Property;
 
-        public static Type VariableType(this MemberInfo memberInfo)
+        public static Type GetVariableType(this MemberInfo memberInfo)
         {
             switch (memberInfo.MemberType) {
                 case MemberTypes.Field:

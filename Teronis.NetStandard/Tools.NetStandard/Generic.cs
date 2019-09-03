@@ -93,7 +93,7 @@ namespace Teronis.Tools.NetStandard
                     var cloningObjectMember = nameAndCloningObjectMembersPair.Value;
                     var copyingObjectMember = copyingObjectMembersByNameList[cloningObjectMembersKey];
 
-                    if (!cloningObjectMember.VariableType().IsAssignableFrom(copyingObjectMember.VariableType()))
+                    if (!cloningObjectMember.GetVariableType().IsAssignableFrom(copyingObjectMember.GetVariableType()))
                         continue;
 
                     var copyingObjectVariableValue = copyingObjectMember.GetValue(copyingObject);

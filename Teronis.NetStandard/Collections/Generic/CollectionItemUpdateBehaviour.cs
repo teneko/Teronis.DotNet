@@ -7,8 +7,8 @@ using Teronis.Extensions.NetStandard;
 
 namespace Teronis.Collections.Generic
 {
-    public class CollectionItemUpdateBehaviour<ItemType>
-        where ItemType : IUpdatableContentBy<ItemType>
+    public class CollectionItemUpdateBehaviour<ItemType, ContentType>
+        where ItemType : IUpdatableContentBy<ContentType>
     {
         public INotifyCollectionChangeApplied<ItemType> NotifiableCollectionContainer { get; private set; }
 
@@ -19,7 +19,7 @@ namespace Teronis.Collections.Generic
             NotifiableCollectionContainer.CollectionChangeApplied += NotifiableCollectionContainer_CollectionChangeAppliedAsync;
         }
 
-        private IEnumerable<UpdateWithTargetContainer<ItemType, ItemType>> getOldItemUpdateContainerIterator(CollectionChange<ItemType> change)
+        private IEnumerable<UpdateWithTargetContainer<ContentType, ItemType>> getOldItemUpdateContainerIterator(CollectionChange<ItemType> change)
         {
             if (change.Action == NotifyCollectionChangedAction.Replace) {
                 var oldItemsEnumerator = change.OldItems.GetEnumerator();
@@ -28,9 +28,9 @@ namespace Teronis.Collections.Generic
                 while (oldItemsEnumerator.MoveNext() && newItemsEnumerator.MoveNext()) {
                     var oldItem = oldItemsEnumerator.Current;
                     var newItem = newItemsEnumerator.Current;
-                    var oldItemUpdate = new Update<ItemType>(newItem, this);
+                    var oldItemUpdate = new Update<ContentType>(newItem, this);
 
-                    var oldItemUpdateContainer = new UpdateWithTargetContainer<ItemType, ItemType>() {
+                    var oldItemUpdateContainer = new UpdateWithTargetContainer<ContentType, ItemType>() {
                         Update = oldItemUpdate,
                         Target = oldItem
                     };

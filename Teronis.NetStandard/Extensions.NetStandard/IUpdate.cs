@@ -14,5 +14,8 @@ namespace Teronis.Extensions.NetStandard
             else
                 return null;
         }
+
+        public static Update<InnerContentType> CreateUpdateFromContent<ContentType, InnerContentType>(this IUpdate<ContentType> update, Func<ContentType, InnerContentType> getInnerContent)
+            => new Update<InnerContentType>(getInnerContent(update.Content), update.UpdateCreationSource);
     }
 }

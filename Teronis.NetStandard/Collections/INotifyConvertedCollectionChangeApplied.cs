@@ -2,8 +2,8 @@
 
 namespace Teronis.Collections
 {
-    public interface INotifyCollectionChangeConversionApplied<TOriginalChange, TConvertedChange>
+    public interface INotifyCollectionChangeConversionApplied<ConvertedItemType, CommonValueType, OriginContentType>
     {
-        event EventHandler<object, CollectionChangeConversion<TOriginalChange, TConvertedChange>> CollectionChangeConversionApplied;
+        event EventHandler<object, CollectionChangeConversionAppliedEventArgs<ConvertedItemType, CommonValueType, OriginContentType>> CollectionChangeConversionApplied;
     }
 }

@@ -8,5 +8,6 @@ namespace Teronis.Models
     {
         string Message { get; }
         string Caption { get; }
+        EDialogButtons Buttons { get; }
     }
 }

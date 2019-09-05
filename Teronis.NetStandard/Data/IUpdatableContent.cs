@@ -3,15 +3,11 @@
 namespace Teronis.Data
 {
 
-    public interface IUpdatableContent<in ContravariantContentType, out CovariantContentType> : IContentUpdateSequenceStatus, IUpdatableContentBy<ContravariantContentType>
-        //where ContravariantContentType : CovariantContentType
+    public interface IUpdatableContent<ContentType> : IContentUpdateSequenceStatus, IUpdatableContentBy<ContentType>
     {
-        event UpdatingEventHandler<CovariantContentType> ContainerUpdating;
-        event UpdatedEventHandler<CovariantContentType> ContainerUpdated;
+        event UpdatingEventHandler<ContentType> ContainerUpdating;
+        event UpdatedEventHandler<ContentType> ContainerUpdated;
 
-        bool IsContentUpdatable(IUpdate<ContravariantContentType> update);
+        bool IsContentUpdatable(IUpdate<ContentType> update);
     }
-
-    public interface IUpdatableContent<ContentType> : IUpdatableContent<ContentType, ContentType>
-    { }
 }

@@ -2,8 +2,8 @@
 
 namespace Teronis.Collections
 {
-    public interface INotifyCollectionChangeApplied<TItem>
+    public interface INotifyCollectionChangeApplied<ItemType, ContentType>
     {
-        event CollectionChangeAppliedEventHandler<TItem> CollectionChangeApplied;
+        event CollectionChangeAppliedEventHandler<ItemType, ContentType> CollectionChangeApplied;
     }
 }

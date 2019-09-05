@@ -5,15 +5,12 @@ using System.Text;
 
 namespace Teronis.Collections
 {
-    //public interface CollectionChange<out T>
-    //{
-    //    NotifyCollectionChangedAction Action { get; }
-    //    IEnumerable<T> OldItems { get; }
-    //    int OldItems.Count { get; }
-    //    int OldIndex { get; }
-    //    IEnumerable<T> NewItems { get; }
-    //    int NewItemsCount { get; }
-    //    int NewIndex { get; }
-    //    bool HasEachOldItemNewItemReference { get; set; }
-    //}
+    public interface ICollectionChange<OldItemType, NewItemType>
+    {
+        NotifyCollectionChangedAction Action { get; }
+        IReadOnlyList<OldItemType> OldItems { get; }
+        int OldIndex { get; }
+        IReadOnlyList<NewItemType> NewItems { get; }
+        int NewIndex { get; }
+    }
 }

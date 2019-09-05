@@ -7,9 +7,9 @@ using Teronis.Libraries.NetStandard;
 namespace Teronis.Collections
 {
     [DebuggerDisplay(ObjectLibrary.FullToDebugStringMethodPathWithParameterizedThis)]
-    public class CollectionChange<OldItemType, NewItemType> : IDebuggerDisplay
+    public class CollectionChange<OldItemType, NewItemType> : ICollectionChange<OldItemType, NewItemType>, IDebuggerDisplay
     {
-        public static CollectionChange<OldItemType, NewItemType> CreateOld(NotifyCollectionChangedAction changeAction, IList<OldItemType> oldItems, int oldIndex)
+        public static CollectionChange<OldItemType, NewItemType> CreateOld(NotifyCollectionChangedAction changeAction, IReadOnlyList<OldItemType> oldItems, int oldIndex)
             => new CollectionChange<OldItemType, NewItemType>(changeAction, oldItems, oldIndex, null, -1);
 
         public static CollectionChange<OldItemType, NewItemType> CreateOld(NotifyCollectionChangedAction changeAction, OldItemType oldItem, int oldIndex)
@@ -18,7 +18,7 @@ namespace Teronis.Collections
             return CreateOld(changeAction, oldItems, oldIndex);
         }
 
-        public static CollectionChange<OldItemType, NewItemType> CreateNew(NotifyCollectionChangedAction changeAction, IList<NewItemType> newValues, int newIndex)
+        public static CollectionChange<OldItemType, NewItemType> CreateNew(NotifyCollectionChangedAction changeAction, IReadOnlyList<NewItemType> newValues, int newIndex)
             => new CollectionChange<OldItemType, NewItemType>(changeAction, null, -1, newValues, newIndex);
 
         public static CollectionChange<OldItemType, NewItemType> CreateNew(NotifyCollectionChangedAction changeAction, NewItemType newItem, int newIndex)
@@ -27,10 +27,13 @@ namespace Teronis.Collections
             return CreateNew(changeAction, newItems, newIndex);
         }
 
+        //public static CollectionChange<OldItemType, NewItemType> CreateOf<SourceOldItemType, SourceNewItemType>(ICollectionChange<SourceOldItemType, SourceNewItemType> change, IReadOnlyList<OldItemType> oldItems, IReadOnlyList<NewItemType> newItems)
+        //    => new CollectionChange<OldItemType, NewItemType>(change.Action, oldItems, change.OldIndex, newItems, change.NewIndex);
+
         public NotifyCollectionChangedAction Action { get; private set; }
-        public IList<OldItemType> OldItems => oldPartialCollectionChange.Values;
+        public IReadOnlyList<OldItemType> OldItems => oldPartialCollectionChange.Values;
         public int OldIndex => oldPartialCollectionChange.Index;
-        public IList<NewItemType> NewItems => newPartialCollectionChange.Values;
+        public IReadOnlyList<NewItemType> NewItems => newPartialCollectionChange.Values;
         public int NewIndex => newPartialCollectionChange.Index;
 
         string IDebuggerDisplay.DebuggerDisplay => $"{Action}, {nameof(OldIndex)} = {OldIndex}, {nameof(NewIndex)} = {NewIndex}";
@@ -38,20 +41,20 @@ namespace Teronis.Collections
         private PartialCollectionChange<OldItemType> oldPartialCollectionChange;
         private PartialCollectionChange<NewItemType> newPartialCollectionChange;
 
-        public CollectionChange(NotifyCollectionChangedAction changeAction, IList<OldItemType> oldItems, int oldIndex, IList<NewItemType> newItems, int newIndex)
+        public CollectionChange(NotifyCollectionChangedAction changeAction, IReadOnlyList<OldItemType> oldItems, int oldIndex, IReadOnlyList<NewItemType> newItems, int newIndex)
         {
             Action = changeAction;
             oldPartialCollectionChange = new PartialCollectionChange<OldItemType>(PartialCollectionChangeItemState.OldItem, oldItems, oldIndex);
             newPartialCollectionChange = new PartialCollectionChange<NewItemType>(PartialCollectionChangeItemState.NewItem, newItems, newIndex);
         }
 
-        public CollectionChange(NotifyCollectionChangedAction changeAction, IList<OldItemType> oldValues, int oldIndex, NewItemType newItem, int newIndex)
+        public CollectionChange(NotifyCollectionChangedAction changeAction, IReadOnlyList<OldItemType> oldValues, int oldIndex, NewItemType newItem, int newIndex)
             : this(changeAction, oldValues, oldIndex, new NewItemType[] { newItem }, newIndex) { }
 
         public CollectionChange(NotifyCollectionChangedAction changeAction, OldItemType oldItem, int oldIndex, NewItemType newItem, int newIndex)
             : this(changeAction, new OldItemType[] { oldItem }, oldIndex, new NewItemType[] { newItem }, newIndex) { }
 
-        public CollectionChange(NotifyCollectionChangedAction changeAction, OldItemType oldItem, int oldIndex, IList<NewItemType> newItems, int newIndex)
+        public CollectionChange(NotifyCollectionChangedAction changeAction, OldItemType oldItem, int oldIndex, IReadOnlyList<NewItemType> newItems, int newIndex)
             : this(changeAction, new OldItemType[] { oldItem }, oldIndex, newItems, newIndex) { }
 
         private enum PartialCollectionChangeItemState
@@ -63,10 +66,10 @@ namespace Teronis.Collections
         private class PartialCollectionChange<ItemType>
         {
             public PartialCollectionChangeItemState ItemState { get; private set; }
-            public IList<ItemType> Values { get; private set; }
+            public IReadOnlyList<ItemType> Values { get; private set; }
             public int Index { get; private set; }
 
-            public PartialCollectionChange(PartialCollectionChangeItemState itemState, IList<ItemType> values, int index)
+            public PartialCollectionChange(PartialCollectionChangeItemState itemState, IReadOnlyList<ItemType> values, int index)
             {
                 ItemState = itemState;
                 Values = values;

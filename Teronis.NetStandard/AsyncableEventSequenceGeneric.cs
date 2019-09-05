@@ -74,6 +74,7 @@ namespace Teronis
         /// This method guarantees, that all dependencies are finished before true gets returned. 
         /// If one of the awaiting dependencies are failing false gets returned. Even when none
         /// keys are provided, this function awaits the task, that gets finished when 
+        /// <see cref="FinishDependenciesAsync"/> is called.
         /// </summary>
         public async Task<bool> TryAwaitDependency(params KeyType[] keys)
         {

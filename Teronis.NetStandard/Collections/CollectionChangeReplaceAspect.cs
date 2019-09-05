@@ -5,19 +5,19 @@ using System.Text;
 
 namespace Teronis.Collections
 {
-    public class CollectionChangeResetAspect<TItem>
+    public class CollectionChangeResetAspect<ItemType>
     {
-        public ReadOnlyCollection<TItem> NewItems { get; private set; }
+        public ReadOnlyCollection<ItemType> NewItems { get; private set; }
 
-        private List<TItem> newItems;
+        private List<ItemType> newItems;
 
         public CollectionChangeResetAspect()
         {
-            newItems = new List<TItem>();
-            NewItems = new ReadOnlyCollection<TItem>(NewItems);
+            newItems = new List<ItemType>();
+            NewItems = new ReadOnlyCollection<ItemType>(NewItems);
         }
 
-        public void SetNewItems(IEnumerable<TItem> collection)
+        public void SetNewItems(IEnumerable<ItemType> collection)
         {
             newItems.Clear();
             newItems.AddRange(collection);

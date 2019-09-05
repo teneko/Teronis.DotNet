@@ -6,9 +6,7 @@ namespace Teronis.Data
 {
     public class ContentUpdater<ContentType> : INotifyPropertyChanged, IUpdatableContent<ContentType>
     {
-#pragma warning disable 0067
         public event PropertyChangedEventHandler PropertyChanged;
-#pragma warning restore 0067
         public event UpdatingEventHandler<ContentType> ContainerUpdating;
         public event UpdatedEventHandler<ContentType> ContainerUpdated;
 
@@ -21,7 +19,7 @@ namespace Teronis.Data
         {
             updateSequenceStatus = new ContainerUpdateSequenceStatus();
             propertyChangedRelay = new PropertyChangedRelay(GetType(), updateSequenceStatus);
-            propertyChangedRelay.PropertyChanged += PropertyChangedRelay_PropertyChanged;
+            propertyChangedRelay.NotifiersPropertyChanged += PropertyChangedRelay_NotifiersPropertyChanged;
         }
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs args)
@@ -33,7 +31,7 @@ namespace Teronis.Data
         protected virtual void OnContainerUpdated(IUpdate<ContentType> update)
             => ContainerUpdated?.Invoke(this, update);
 
-        private void PropertyChangedRelay_PropertyChanged(object sender, PropertyChangedEventArgs args)
+        private void PropertyChangedRelay_NotifiersPropertyChanged(object sender, PropertyChangedEventArgs args)
            => OnPropertyChanged(args);
 
         public virtual bool IsContentUpdatable(IUpdate<ContentType> update)

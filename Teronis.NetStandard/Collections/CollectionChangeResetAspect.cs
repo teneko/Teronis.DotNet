@@ -1,26 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 
 namespace Teronis.Collections
 {
-    public class CollectionChangeReplaceAspect<TItem>
+    public class CollectionChangeReplaceAspect<ItemType>
     {
         /// <summary>
         /// Each value represents the referenced value before it got replaced.
         /// </summary>
-        public IReadOnlyDictionary<int, TItem> ReferencedReplacedOldItemByIndexDictionary { get; private set; }
+        //public IReadOnlyDictionary<int, ItemType> ReferencedReplacedOldItemByIndexDictionary { get; private set; }
 
-        private Dictionary<int, TItem> referencedReplacedOldItemByIndexDictionary;
+        //private Dictionary<int, ItemType> referencedReplacedOldItemByIndexDictionary;
 
         public CollectionChangeReplaceAspect()
         {
-            referencedReplacedOldItemByIndexDictionary = new Dictionary<int, TItem>();
-            ReferencedReplacedOldItemByIndexDictionary = new ReadOnlyDictionary<int, TItem>(referencedReplacedOldItemByIndexDictionary);
+            //referencedReplacedOldItemByIndexDictionary = new Dictionary<int, ItemType>();
+            //ReferencedReplacedOldItemByIndexDictionary = new ReadOnlyDictionary<int, ItemType>(referencedReplacedOldItemByIndexDictionary);
         }
 
-        public void RegisterReferenceReplacedOldItem(int oldItemIndex, TItem replacedOldItem)
-            => referencedReplacedOldItemByIndexDictionary.Add(oldItemIndex, replacedOldItem);
+        //public void RegisterReferenceReplacedOldItem(int oldItemIndex, ItemType replacedOldItem)
+        //    => referencedReplacedOldItemByIndexDictionary.Add(oldItemIndex, replacedOldItem);
     }
 }

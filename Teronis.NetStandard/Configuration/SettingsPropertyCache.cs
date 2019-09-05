@@ -13,13 +13,49 @@ using Teronis.Data;
 
 namespace Teronis.Configuration
 {
-    public class SettingsPropertyCache<PropertyType> : INotifyPropertyChanged
+    public class SettingsPropertyCache<PropertyType> : ISettingsPropertyCache, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Name { get; private set; }
+        public string PropertyName
+            => property.Name;
 
-        public bool IsCopySynchronous {
+        private object propertyValue {
+            get => settings[PropertyName];
+            set => settings[PropertyName] = value;
+        }
+
+        /// <summary>
+        /// If <see cref="settings"/> does not implement
+        /// <see cref="INotifyPropertyChanged"/> then you
+        /// should NOT bind to this, as this instance
+        /// won't know about changes made to this property
+        /// in <see cref="settings"/>.
+        /// </summary>
+        public PropertyType PropertyValue {
+            get => (PropertyType)propertyValue;
+            set => propertyValue = value;
+        }
+
+        object ISettingsPropertyCache.PropertyValue {
+            get => propertyValue;
+            set => propertyValue = value;
+        }
+
+        public PropertyType CachedPropertyValue {
+            get => cachedProperty;
+
+            private set {
+                cachedProperty = value;
+                OnPropertyChanged();
+                recalculateIsCopySynchronous();
+            }
+        }
+
+        object ISettingsPropertyCache.CachedPropertyValue
+            => CachedPropertyValue;
+
+        public bool IsCacheSynchronous {
             get => isCopySynchronous;
 
             set {
@@ -28,107 +64,89 @@ namespace Teronis.Configuration
             }
         }
 
-        public PropertyType Copy {
-            get => copy;
-
-            private set {
-                copy = value;
-                OnPropertyChanged();
-                recalculateIsCopySynchronous();
-            }
-        }
-
         /// <summary>
-        /// You can partial extend auto generated settings class and provide a method that calls 
-        /// <see cref="ApplicationSettingsBase.OnPropertyChanged(object, PropertyChangedEventArgs)"/>.
-        /// You may then refer to this method.
+        /// You may refer to an method that notifies about changes of a 
+        /// property of <see cref="settings"/> if it does not implement 
+        /// <see cref="INotifyPropertyChanged"/> already.
         /// </summary>
         public Action<string> NotifySettingsAboutPropertyChange { get; set; }
 
-        public IEqualityComparer<PropertyType> PropertyEqualityComparer { get; set; }
+        public IEqualityComparer<PropertyType> PropertyValueEqualityComparer { get; private set; }
 
-        private PropertyType copy;
+        private PropertyType cachedProperty;
         private SettingsBase settings;
         private SettingsProperty property;
-        private PropertyChangedCache<PropertyType> propertyChangedCache;
         private bool isCopySynchronous;
+        private PropertyChangedCache<PropertyType> propertyChangedCache;
 
-        protected SettingsPropertyCache(SettingsBase settings, string name, bool refreshCopy)
+        public SettingsPropertyCache(SettingsBase settings, string name, IEqualityComparer<PropertyType> propertyValueEqualityComparer)
         {
             this.settings = settings
                 ?? throw new ArgumentNullException(nameof(settings));
 
-            Name = name;
-
-            property = settings.Properties[Name]
-                ?? throw new ArgumentException($"Property '{Name}' is not member of {nameof(settings)}");
+            property = settings.Properties[name]
+                ?? throw new ArgumentException($"Property '{name}' is not member of {nameof(settings)}");
 
             var genericPropertyType = typeof(PropertyType);
 
             if (genericPropertyType != property.PropertyType && !typeof(PropertyType).IsAssignableFrom(property.PropertyType))
                 throw new ArgumentException($"The types aren't the same");
 
-            if (refreshCopy)
-                RefreshCopy();
+            PropertyValueEqualityComparer = propertyValueEqualityComparer
+                ?? EqualityComparer<PropertyType>.Default;
+
+            RefreshCache(false); // Now we have the equality comparer
+
+            if (settings is INotifyPropertyChanged settingsPropertyChangedNotifier)
+            {
+                propertyChangedCache = new PropertyChangedCache<PropertyType>(settingsPropertyChangedNotifier)
+                {
+                    CanSkipRemovedEventInvocationWhenRecaching = true, // We benefit from not calculating twice during recache (remove/add)
+                    CanHandleDefaultValue = false
+                };
+
+                propertyChangedCache.PropertyCacheAdding += PropertyChangedCache_PropertyCacheAdding;
+                propertyChangedCache.PropertyCacheAdded += PropertyChangedCache_PropertyCacheAdded;
+                propertyChangedCache.PropertyCacheRemoved += PropertyChangedCache_PropertyCacheRemoved;
+                propertyChangedCache.OnPropertyChangedNotifierPropertyChanged(PropertyName);
+
+                if (propertyChangedCache.CachedProperties.Count == 0)
+                    throw new Exception($"The property {PropertyName} has not been found");
+            }
         }
 
         public SettingsPropertyCache(SettingsBase settings, string name)
-            : this(settings, name, true) { }
-
-        public SettingsPropertyCache(ApplicationSettingsBase settings, string name, IEqualityComparer<PropertyType> propertyEqualityComparer)
-            : this(settings, name, false)
-        {
-            PropertyEqualityComparer = propertyEqualityComparer
-                ?? throw new ArgumentNullException(nameof(propertyEqualityComparer));
-
-            // Now we have the equality comparer
-            RefreshCopy();
-
-            if (property.PropertyType.IsValueType)
-                throw new NotSupportedException("The property type is a value type and therefore not supported to be observed");
-
-            propertyChangedCache = new PropertyChangedCache<PropertyType>(settings)
-            {
-                CanSkipRemovedEventInvocationWhenRecaching = true
-            };
-
-            propertyChangedCache.PropertyCacheAdding += PropertyChangedCache_PropertyCacheAdding;
-            propertyChangedCache.PropertyCacheAdded += PropertyChangedCache_PropertyCacheAdded;
-            propertyChangedCache.PropertyCacheRemoved += PropertyChangedCache_PropertyCacheRemoved;
-            propertyChangedCache.OnPropertyChangedNotifierPropertyChanged(Name);
-        }
+            : this(settings, name, default) { }
 
         private void PropertyChangedCache_PropertyCacheAdding(object sender, PropertyCacheAddingEventArgs<PropertyType> args)
-            => args.IsPropertyCacheable = args.PropertyName == Name;
-
-        static int test = 0;
+            => args.IsPropertyCacheable = args.PropertyName == PropertyName;
 
         private void recalculateIsCopySynchronous()
         {
-            if (PropertyEqualityComparer == null)
+            if (PropertyValueEqualityComparer == null)
                 return;
 
-            Debug.WriteLine(test++);
-
             var isPropertyChangedCacheNotNull = propertyChangedCache != null;
-            var doesCachedPropertyExist = isPropertyChangedCacheNotNull && propertyChangedCache.CachedProperties.ContainsKey(Name);
+
+            var doesCachedPropertyExist = isPropertyChangedCacheNotNull
+                && propertyChangedCache.CachedProperties.ContainsKey(PropertyName);
 
             if (isPropertyChangedCacheNotNull && !doesCachedPropertyExist)
-                IsCopySynchronous = false;
+                IsCacheSynchronous = false;
             else
             {
                 PropertyType cachedProperty;
 
                 if (doesCachedPropertyExist)
-                    cachedProperty = propertyChangedCache.CachedProperties[Name];
+                    cachedProperty = propertyChangedCache.CachedProperties[PropertyName];
                 else
-                    cachedProperty = (PropertyType)settings[Name];
+                    cachedProperty = PropertyValue;
 
-                IsCopySynchronous = PropertyEqualityComparer.Equals(Copy, cachedProperty);
+                IsCacheSynchronous = PropertyValueEqualityComparer.Equals(CachedPropertyValue, cachedProperty);
             }
         }
 
-        private void SettingsPropertyNotifier_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void SettingsPropertyNotifier_Changed(object sender, PropertyChangedEventArgs e)
             => recalculateIsCopySynchronous();
 
         private void SettingsPropertyCollectionNotifier_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -137,28 +155,33 @@ namespace Teronis.Configuration
         private void propertyChangedCache_PropertyCacheRemoved(PropertyType settingsProperty)
         {
             if (settingsProperty is INotifyPropertyChanged settingsPropertyNotifier)
-                settingsPropertyNotifier.PropertyChanged -= SettingsPropertyNotifier_PropertyChanged;
+                settingsPropertyNotifier.PropertyChanged -= SettingsPropertyNotifier_Changed;
 
             if (settingsProperty is INotifyCollectionChanged settingsPropertyCollectionNotifier)
                 settingsPropertyCollectionNotifier.CollectionChanged -= SettingsPropertyCollectionNotifier_CollectionChanged;
         }
 
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
         private void PropertyChangedCache_PropertyCacheAdded(object sender, PropertyCacheAddedEventArgs<PropertyType> args)
         {
+            // When it is a recache, then first we have to remove the attached handlers we added before
             if (args.IsRecache)
                 propertyChangedCache_PropertyCacheRemoved(args.RemovedProperty);
 
-            Debug.WriteLine($"Property '{Name}' has been added to the cached");
+            Debug.WriteLine($"Property '{PropertyName}' has been added to the cache");
 
             var settingsProperty = args.AddedProperty;
 
             if (settingsProperty is INotifyPropertyChanged settingsPropertyNotifier)
-                settingsPropertyNotifier.PropertyChanged += SettingsPropertyNotifier_PropertyChanged;
+                settingsPropertyNotifier.PropertyChanged += SettingsPropertyNotifier_Changed;
 
             if (settingsProperty is INotifyCollectionChanged settingsPropertyCollectionNotifier)
                 settingsPropertyCollectionNotifier.CollectionChanged += SettingsPropertyCollectionNotifier_CollectionChanged;
 
             recalculateIsCopySynchronous();
+            OnPropertyChanged(nameof(PropertyValue));
         }
 
         private void PropertyChangedCache_PropertyCacheRemoved(object sender, PropertyCacheRemovedEventArgs<PropertyType> args)
@@ -166,9 +189,6 @@ namespace Teronis.Configuration
             propertyChangedCache_PropertyCacheRemoved(args.Property);
             recalculateIsCopySynchronous();
         }
-
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         private PropertyType copyValue(object propertyValue)
         {
@@ -189,10 +209,20 @@ namespace Teronis.Configuration
         private PropertyType copySettingsPropertyDefaultValue()
         {
             var serializer = new XmlSerializer(property.PropertyType);
-            bool isDefaultValueCopied = false;
             object defaultPropertyValue = property.DefaultValue;
+            bool isDefaultValueCopied = false;
 
-            if (defaultPropertyValue is string propertyString)
+            if (property.PropertyType.IsValueType && !property.PropertyType.IsEnum)
+            {
+                defaultPropertyValue = Convert.ChangeType(property.DefaultValue, property.PropertyType);
+                isDefaultValueCopied = true;
+            }
+            else if (property.PropertyType == typeof(string))
+            {
+                defaultPropertyValue = property.DefaultValue.ToString();
+                isDefaultValueCopied = true;
+            }
+            else if (defaultPropertyValue is string propertyString)
             {
                 var bytes = Encoding.UTF8.GetBytes(propertyString);
 
@@ -219,12 +249,12 @@ namespace Teronis.Configuration
 
         private PropertyType copySettingsPropertyValue()
         {
-            var value = settings[Name];
+            var value = propertyValue;
             value = copyValue(value);
             return (PropertyType)value;
         }
 
-        public virtual void RefreshCopy(bool useDefaultValue = false)
+        public virtual void RefreshCache(bool useDefaultValue)
         {
             PropertyType propertyValue;
 
@@ -233,38 +263,38 @@ namespace Teronis.Configuration
             else
                 propertyValue = copySettingsPropertyValue();
 
-            Copy = propertyValue;
+            CachedPropertyValue = propertyValue;
         }
 
         /// <summary>
-        /// Notifies <see cref="settings"/> about changes from settings property "<see cref="Name"/>".
+        /// Notifies <see cref="settings"/> about changes from settings property "<see cref="PropertyName"/>".
         /// </summary>
         public void TriggerSettingsPropertyChanged()
         {
             if (NotifySettingsAboutPropertyChange != null)
-                NotifySettingsAboutPropertyChange?.Invoke(Name);
+                NotifySettingsAboutPropertyChange?.Invoke(PropertyName);
             else
-                settings[Name] = settings[Name];
+                propertyValue = propertyValue;
         }
 
         /// <summary>
-        /// It removes property value from cache and notifies <see cref="settings"/> about changes from settings property "<see cref="Name"/>".
+        /// It removes property value from cache and notifies <see cref="settings"/> about changes from settings property "<see cref="PropertyName"/>".
         /// </summary>
         public void SetOriginalFromDisk()
         {
-            settings.PropertyValues.Remove(Name);
+            settings.PropertyValues.Remove(PropertyName);
             TriggerSettingsPropertyChanged();
         }
 
         private void setOriginalFromSource(object source)
         {
-            settings[Name] = source;
+            propertyValue = source;
             TriggerSettingsPropertyChanged();
         }
 
-        public void SetOriginalFromCopy()
+        public void SetOriginalFromCache()
         {
-            var copiedCopy = copyValue(Copy);
+            var copiedCopy = copyValue(CachedPropertyValue);
             setOriginalFromSource(copiedCopy);
         }
 
@@ -274,11 +304,14 @@ namespace Teronis.Configuration
             setOriginalFromSource(defaultValue);
         }
 
+        /// <summary>
+        /// Reminder: <see cref="CachedPropertyValue"/> gets renewed by calling <see cref="SaveToDisk"/>.
+        /// </summary>
         public void SaveToDisk()
         {
             settings.Save();
-            RefreshCopy();
-            SetOriginalFromDisk();
+            RefreshCache(false);
+            TriggerSettingsPropertyChanged();
         }
     }
 }

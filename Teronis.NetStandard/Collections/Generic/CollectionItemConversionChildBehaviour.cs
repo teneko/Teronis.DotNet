@@ -9,33 +9,32 @@ using Teronis.Libraries.NetStandard;
 
 namespace Teronis.Collections.Generic
 {
-    public class CollectionItemConversionChildBehaviour<TOriginalItem, TConvertedItem>
-        where TConvertedItem : IHaveKnownParents
+    public class CollectionItemConversionChildBehaviour<OriginalItemType, OriginalContentType, ConvertedItemType>
+        where ConvertedItemType : IHaveKnownParents
     {
-        public INotifyCollectionChangeConversionApplied<TOriginalItem, TConvertedItem> CollectionChangeConversionNotifer { get; private set; }
+        public INotifyCollectionChangeConversionApplied<ConvertedItemType, OriginalItemType, OriginalContentType> CollectionChangeConversionNotifer { get; private set; }
 
-        public CollectionItemConversionChildBehaviour(INotifyCollectionChangeConversionApplied<TOriginalItem, TConvertedItem> collectionChangeConversionNotifer)
+        public CollectionItemConversionChildBehaviour(INotifyCollectionChangeConversionApplied<ConvertedItemType, OriginalItemType, OriginalContentType> collectionChangeConversionNotifer)
         {
             CollectionChangeConversionNotifer = collectionChangeConversionNotifer;
             CollectionChangeConversionNotifer.CollectionChangeConversionApplied += ConvertedCollectionChangeNotifer_CollectionChangeConversionApplied;
         }
 
-        private void ConvertedCollectionChangeNotifer_CollectionChangeConversionApplied(object sender, CollectionChangeConversion<TOriginalItem, TConvertedItem> args)
+        private void ConvertedCollectionChangeNotifer_CollectionChangeConversionApplied(object sender, CollectionChangeConversionAppliedEventArgs<ConvertedItemType, OriginalItemType, OriginalContentType> args)
         {
-            var aspectedOriginalChange = args.AppliedOriginalChange;
-            var originalChange = aspectedOriginalChange.Change;
-            var convertedChange = args.ConvertedChange;
+            var convertedContentContentChange = args.ConvertedCollectionChangeBundle.ContentContentChange;
+            var convertedItemItemChange = args.ConvertedCollectionChangeBundle.ItemItemChange;
 
-            if (originalChange.Action != convertedChange.Action)
+            if (convertedContentContentChange.Action != convertedItemItemChange.Action)
                 CollectionChangeConversionLibrary.ThrowActionMismatchException();
 
-            var action = originalChange.Action;
+            var action = convertedContentContentChange.Action;
 
             switch (action) {
                 case NotifyCollectionChangedAction.Remove:
                 case NotifyCollectionChangedAction.Add:
-                    var originalItemsEnumerator = originalChange.NewItems.GetEnumerator();
-                    var convertedItemsEnumerator = convertedChange.NewItems.GetEnumerator();
+                    var originalItemsEnumerator = convertedContentContentChange.NewItems.GetEnumerator();
+                    var convertedItemsEnumerator = convertedItemItemChange.NewItems.GetEnumerator();
 
                     while (originalItemsEnumerator.MoveNext() && convertedItemsEnumerator.MoveNext()) {
                         var convertedItem = convertedItemsEnumerator.Current;

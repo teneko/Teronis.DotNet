@@ -6,7 +6,7 @@ namespace Teronis.Data
 {
     public interface IUpdate<out ContentType>
     {
-        object UpdateCreationSource { get; }
+        object OriginalUpdateCreationSource { get; }
         ContentType Content { get; }
     }
 }

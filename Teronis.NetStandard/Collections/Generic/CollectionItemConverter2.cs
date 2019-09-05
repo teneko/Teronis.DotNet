@@ -7,7 +7,7 @@
 
 //namespace Teronis.Collections.Generic
 //{
-//    public abstract class CollectionItemConverter<OriginalItemType, OriginalContentType, ConvertedItemType, ConvertedContentType> : INotifyCollectionChangeConversionApplied<OriginalItemType, OriginalContentType, ConvertedItemType>
+//    public abstract class CollectionItemConverter2<OriginalItemType, OriginalContentType, ConvertedItemType, ConvertedContentType> : INotifyCollectionChangeConversionApplied<OriginalItemType, OriginalContentType, ConvertedItemType>
 //    {
 //        public event EventHandler<object, CollectionChangeConversion<OriginalItemType, OriginalContentType, ConvertedItemType>> CollectionChangeConversionApplied;
 
@@ -20,7 +20,7 @@
 //        /// </summary>
 //        /// <param name="originalCollectionChangeAppliedNotifier"></param>
 //        /// <param name="convertedCollectionChangeApplier">The to be synchronized collection container which contains the boxed items.</param>
-//        public CollectionItemConverter(INotifyCollectionChangeApplied<OriginalItemType, OriginalContentType> originalCollectionChangeAppliedNotifier,
+//        public CollectionItemConverter2(INotifyCollectionChangeApplied<OriginalItemType, OriginalContentType> originalCollectionChangeAppliedNotifier,
 //            IApplyCollectionChange<ConvertedItemType, ConvertedContentType> convertedCollectionChangeApplier,
 //            IReadOnlyList<ConvertedItemType> convertedItemCollection)
 //        {

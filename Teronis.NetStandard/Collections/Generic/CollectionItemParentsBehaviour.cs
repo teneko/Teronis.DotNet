@@ -6,13 +6,13 @@ using Teronis.Extensions.NetStandard;
 
 namespace Teronis.Collections.Generic
 {
-    public class CollectionItemParentsBehaviour<TItem>
-        where TItem : IHaveParents
+    public class CollectionItemParentsBehaviour<ItemType, ContentType>
+        where ItemType : IHaveParents
     {
-        public INotifyCollectionChangeApplied<TItem> CollectionChangeAppliedNotifier { get; private set; }
+        public INotifyCollectionChangeApplied<ItemType, ContentType> CollectionChangeAppliedNotifier { get; private set; }
         public ReadOnlyCollection<object> Parents { get; private set; }
 
-        public CollectionItemParentsBehaviour(INotifyCollectionChangeApplied<TItem> collectionChangeAppliedNotifier, params object[] parents)
+        public CollectionItemParentsBehaviour(INotifyCollectionChangeApplied<ItemType, ContentType> collectionChangeAppliedNotifier, params object[] parents)
         {
             CollectionChangeAppliedNotifier = collectionChangeAppliedNotifier;
             CollectionChangeAppliedNotifier.CollectionChangeApplied += NotifiableCollectionContainer_CollectionChanged;
@@ -23,15 +23,15 @@ namespace Teronis.Collections.Generic
         private void Item_WantParent(object sender, HavingParentsEventArgs e)
             => e.AttachParentsParents(Parents);
 
-        private void attachWantParentsHandler(TItem item)
+        private void attachWantParentsHandler(ItemType item)
             => item.WantParents += Item_WantParent;
 
-        private void detachWantParentsHandler(TItem item)
+        private void detachWantParentsHandler(ItemType item)
             => item.WantParents -= Item_WantParent;
 
-        private void NotifiableCollectionContainer_CollectionChanged(object sender, CollectionChangeAppliedEventArgs<TItem> args)
+        private void NotifiableCollectionContainer_CollectionChanged(object sender, CollectionChangeAppliedEventArgs<ItemType, ContentType> args)
         {
-            var change = args.AspectedCollectionChange.Change;
+            var change = args.ItemItemChange;
 
             switch (change.Action) {
                 case NotifyCollectionChangedAction.Remove:

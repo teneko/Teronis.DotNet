@@ -6,8 +6,18 @@ namespace Teronis.Extensions.NetStandard
 {
     public static class CollectionChangeGenericExtensions
     {
-        private static IList<T> getItems<T>(IEnumerable<T> collection, int collectionCount, int skipCount, int takeCount)
+        private static List<ItemType> getItems<ItemType>(IEnumerable<ItemType> collection, int? nullableCollectionCount, int skipCount, int? nullableTakeCount)
         {
+            int collectionCount, takeCount;
+
+            if (nullableCollectionCount == null || nullableTakeCount == null)
+                return null;
+            else
+            {
+                collectionCount = nullableCollectionCount.Value;
+                takeCount = nullableTakeCount.Value;
+            }
+
             collection = collection
                 .Skip(skipCount)
                 .Take(takeCount);
@@ -17,31 +27,34 @@ namespace Teronis.Extensions.NetStandard
             if (oversteps <= 0)
                 return collection.ToList();
             else
-                return collection.ContinueWith(Enumerable.Repeat<T>(default, oversteps)).ToList();
+                return collection.ContinueWith(Enumerable.Repeat<ItemType>(default, oversteps)).ToList();
         }
 
         /// <summary>
         /// Get the items before the change got applied on <paramref name="collection"/>.
         /// </summary>
-        public static IList<TChangedItem> GetOldItems<T, TChangedItem>(this CollectionChange<T> change, ICollection<TChangedItem> collection)
-            => getItems(collection, collection.Count, change.OldIndex, change.OldItems.Count);
+        public static List<TargetItemType> GetOldItems<OldItemType, NewItemType, TargetItemType>(this ICollectionChange<OldItemType, NewItemType> change, ICollection<TargetItemType> collection)
+            => getItems(collection, collection?.Count, change.OldIndex, change.OldItems?.Count);
 
         /// <summary>
         /// Get the items before the change got applied on <paramref name="collection"/>.
         /// </summary>
-        public static IList<TChangedItem> GetOldItems<T, TChangedItem>(this CollectionChange<T> change, IEnumerable<TChangedItem> collection, int collectionCount)
-            => getItems(collection, collectionCount, change.OldIndex, change.OldItems.Count);
+        public static List<TargetItemType> GetOldItems<OldItemType, NewItemType, TargetItemType>(this ICollectionChange<OldItemType, NewItemType> change, IEnumerable<TargetItemType> collection, int collectionCount)
+            => getItems(collection, collectionCount, change.OldIndex, change.OldItems?.Count);
 
         /// <summary>
         /// Get the items before the change got applied on <paramref name="collection"/>.
         /// </summary>
-        public static IList<T> GetNewItems<T>(this CollectionChange<T> change, ICollection<T> collection)
-            => getItems(collection, collection.Count, change.NewIndex, change.OldItems.Count);
+        public static List<TargetItemType> GetNewItems<OldItemType, NewItemType, TargetItemType>(this ICollectionChange<OldItemType, NewItemType> change, ICollection<TargetItemType> collection)
+            => getItems(collection, collection?.Count, change.NewIndex, change.NewItems?.Count);
 
         /// <summary>
         /// Get the items before the change got applied on <paramref name="collection"/>.
         /// </summary>
-        public static IList<T> GetNewItems<T>(this CollectionChange<T> change, IEnumerable<T> collection, int collectionCount)
-            => getItems(collection, collectionCount, change.NewIndex, change.OldItems.Count);
+        public static List<TargetItemType> GetNewItems<OldItemType, NewItemType, TargetItemType>(this ICollectionChange<OldItemType, NewItemType> change, IEnumerable<TargetItemType> collection, int collectionCount)
+            => getItems(collection, collectionCount, change.NewIndex, change.NewItems?.Count);
+
+        public static CollectionChange<TargetOldItemType, TargetNewItemType> CreateOf<SourceOldItemType, SourceNewItemType, TargetOldItemType, TargetNewItemType>(this ICollectionChange<SourceOldItemType, SourceNewItemType> change, IReadOnlyList<TargetOldItemType> oldItems, IReadOnlyList<TargetNewItemType> newItems)
+            => new CollectionChange<TargetOldItemType, TargetNewItemType>(change.Action, oldItems, change.OldIndex, newItems, change.NewIndex);
     }
 }

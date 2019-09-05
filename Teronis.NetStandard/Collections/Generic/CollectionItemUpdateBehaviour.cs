@@ -10,16 +10,16 @@ namespace Teronis.Collections.Generic
     public class CollectionItemUpdateBehaviour<ItemType, ContentType>
         where ItemType : IUpdatableContentBy<ContentType>
     {
-        public INotifyCollectionChangeApplied<ItemType> NotifiableCollectionContainer { get; private set; }
+        public INotifyCollectionChangeApplied<ItemType, ContentType> CollectionChangeAppliedNotifier { get; private set; }
 
-        public CollectionItemUpdateBehaviour(INotifyCollectionChangeApplied<ItemType> collectionChangeNotifier)
+        public CollectionItemUpdateBehaviour(INotifyCollectionChangeApplied<ItemType, ContentType> collectionChangeNotifier)
         {
-            NotifiableCollectionContainer = collectionChangeNotifier;
-            NotifiableCollectionContainer.CollectionChangeApplied += NotifiableCollectionContainer_CollectionChangeApplied;
-            NotifiableCollectionContainer.CollectionChangeApplied += NotifiableCollectionContainer_CollectionChangeAppliedAsync;
+            CollectionChangeAppliedNotifier = collectionChangeNotifier;
+            CollectionChangeAppliedNotifier.CollectionChangeApplied += NotifiableCollectionContainer_CollectionChangeApplied;
+            CollectionChangeAppliedNotifier.CollectionChangeApplied += NotifiableCollectionContainer_CollectionChangeAppliedAsync;
         }
 
-        private IEnumerable<UpdateWithTargetContainer<ContentType, ItemType>> getOldItemUpdateContainerIterator(CollectionChange<ItemType> change)
+        private IEnumerable<UpdateWithTargetContainer<ContentType, ItemType>> getOldItemUpdateContainerIterator(ICollectionChange<ItemType, ContentType> change)
         {
             if (change.Action == NotifyCollectionChangedAction.Replace) {
                 var oldItemsEnumerator = change.OldItems.GetEnumerator();
@@ -40,33 +40,33 @@ namespace Teronis.Collections.Generic
             }
         }
 
-        private void updateOldItems(CollectionChange<ItemType> change)
+        private void updateOldItems(ICollectionChange<ItemType, ContentType> change)
         {
             foreach (var oldItemUpdateContainer in getOldItemUpdateContainerIterator(change))
                 oldItemUpdateContainer.Target.UpdateContentBy(oldItemUpdateContainer.Update);
         }
 
-        private async Task updateOldItemsAsync(CollectionChange<ItemType> change)
+        private async Task updateOldItemsAsync(ICollectionChange<ItemType, ContentType> change)
         {
             foreach (var oldItemUpdateContainer in getOldItemUpdateContainerIterator(change))
                 await oldItemUpdateContainer.Target.UpdateContentByAsync(oldItemUpdateContainer.Update);
         }
 
-        private void NotifiableCollectionContainer_CollectionChangeApplied(object sender, CollectionChangeAppliedEventArgs<ItemType> args)
+        private void NotifiableCollectionContainer_CollectionChangeApplied(object sender, CollectionChangeAppliedEventArgs<ItemType, ContentType> args)
         {
-            if (args.EventSequence != null)
+            if (args.IsAsyncEvent())
                 return;
 
-            var change = args.AspectedCollectionChange.Change;
+            var change = args.ItemContentChange;
             updateOldItems(change);
         }
 
-        private async void NotifiableCollectionContainer_CollectionChangeAppliedAsync(object sender, CollectionChangeAppliedEventArgs<ItemType> args)
+        private async void NotifiableCollectionContainer_CollectionChangeAppliedAsync(object sender, CollectionChangeAppliedEventArgs<ItemType, ContentType> args)
         {
-            if (args.EventSequence == null)
+            if (!args.IsAsyncEvent())
                 return;
 
-            var change = args.AspectedCollectionChange.Change;
+            var change = args.ItemContentChange;
             var tcs = args.EventSequence.RegisterDependency();
 
             try {

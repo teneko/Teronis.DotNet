@@ -1,128 +1,119 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using Teronis.Data;
-using Teronis.Libraries.NetStandard;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Collections.Specialized;
+//using Teronis.Data;
+//using Teronis.Libraries.NetStandard;
 
-namespace Teronis.Collections.Generic
-{
-    public abstract class CollectionItemConversionUpdateBehaviourBase<OriginalItemType, ConvertedItemType, CommonItemType>
-        where OriginalItemType : IUpdatableContent<CommonItemType, CommonItemType>
-        where ConvertedItemType : IUpdatableContent<CommonItemType, CommonItemType>
-    {
-        public INotifyCollectionChangeConversionApplied<OriginalItemType, ConvertedItemType> CollectionChangeConversionNotifer { get; private set; }
+//namespace Teronis.Collections.Generic
+//{
+//    public class CollectionItemConversionUpdateBehaviour<ConvertedItemType,OriginItemType, OriginContentType>
+//        where ConvertedItemType : IUpdatableContent<OriginContentType>
+//    {
+//        public INotifyCollectionChangeConversionApplied<ConvertedItemType, OriginItemType, OriginContentType> CollectionChangeConversionNotifer { get; private set; }
 
-        public CollectionItemConversionUpdateBehaviourBase(INotifyCollectionChangeConversionApplied<OriginalItemType, ConvertedItemType> collectionChangeConversionNotifer)
-        {
-            CollectionChangeConversionNotifer = collectionChangeConversionNotifer;
-            CollectionChangeConversionNotifer.CollectionChangeConversionApplied += ConvertedCollectionChangeNotifer_CollectionChangeConversionApplied;
-            CollectionChangeConversionNotifer.CollectionChangeConversionApplied += ConvertedCollectionChangeNotifer_CollectionChangeConversionAppliedAsync;
-        }
+//        public CollectionItemConversionUpdateBehaviour(INotifyCollectionChangeConversionApplied<ConvertedItemType, OriginItemType, OriginContentType> collectionChangeConversionNotifer)
+//        {
+//            CollectionChangeConversionNotifer = collectionChangeConversionNotifer;
+//            CollectionChangeConversionNotifer.CollectionChangeConversionApplied += ConvertedCollectionChangeNotifer_CollectionChangeConversionApplied;
+//            CollectionChangeConversionNotifer.CollectionChangeConversionApplied += ConvertedCollectionChangeNotifer_CollectionChangeConversionAppliedAsync;
+//        }
 
-        protected abstract CommonItemType ConvertOriginalItem(OriginalItemType originalItem);
+//        private void OriginalItem_Updating(object sender, IUpdatingEventArgs<OriginContentType> args)
+//            /// Is handled if already handled or <see cref="Update{T}.UpdateCreationSource"/> is not reference equals this
+//            => args.Handled = args.Handled || !ReferenceEquals(args.Update.UpdateCreationSource, this);
 
-        private IEnumerable<UpdateWithTargetContainer<CommonItemType, ConvertedItemType>> getOldConvertedItemUpdateContainerIterator(AspectedCollectionChange<OriginalItemType> aspectedOriginalChange, CollectionChange<ConvertedItemType> convertedChange)
-        {
-            var originalChange = aspectedOriginalChange.Change;
+//        private IEnumerable<UpdateWithTargetContainer<OriginItemType, ConvertedItemType>> getOldConvertedItemUpdateContainerIterator(ICollectionChangeBundle<ConvertedItemType, OriginItemType> convertedBundle)
+//        {
+//            var convertedItemItemChange = convertedBundle.ItemItemChange;
 
-            if (originalChange.Action != convertedChange.Action)
-                CollectionChangeConversionLibrary.ThrowActionMismatchException();
+//            switch (convertedItemItemChange.Action) {
+//                case NotifyCollectionChangedAction.Remove: {
+//                        var oldConvertedItemsEnumerator = convertedItemItemChange.OldItems.GetEnumerator();
 
-            var action = originalChange.Action;
+//                        while (oldConvertedItemsEnumerator.MoveNext()) {
+//                            var oldConvertedItem = oldConvertedItemsEnumerator.Current;
+//                            oldConvertedItem.ContainerUpdating -= OriginalItem_Updating;
+//                        }
 
-            switch (action) {
-                case NotifyCollectionChangedAction.Remove: {
-                        var oldConvertedItemsEnumerator = convertedChange.OldItems.GetEnumerator();
+//                        break;
+//                    }
+//                case NotifyCollectionChangedAction.Add: {
+//                        var newConvertedItemsEnumerator = convertedItemItemChange.NewItems.GetEnumerator();
 
-                        while (oldConvertedItemsEnumerator.MoveNext()) {
-                            var oldConvertedItem = oldConvertedItemsEnumerator.Current;
-                            oldConvertedItem.ContainerUpdating -= OriginalItem_Updating;
-                        }
+//                        while (newConvertedItemsEnumerator.MoveNext()) {
+//                            var newConvertedItem = newConvertedItemsEnumerator.Current;
+//                            newConvertedItem.ContainerUpdating += OriginalItem_Updating;
+//                        }
 
-                        break;
-                    }
-                case NotifyCollectionChangedAction.Add: {
-                        var newConvertedItemsEnumerator = convertedChange.NewItems.GetEnumerator();
+//                        break;
+//                    }
+//                case NotifyCollectionChangedAction.Replace: {
+//                        var convertedContentContentChange = convertedBundle.ContentContentChange;
+//                        var oldConvertedItemEnumerator = convertedItemItemChange.OldItems.GetEnumerator();
+//                        var newOriginItemEnumerator = convertedContentContentChange.NewItems.GetEnumerator();
+//                        //var oldOriginalItemsEnumerator = originalItemChange.OldItems.GetEnumerator();
+//                        //var oldOriginalIndex = originalItemChange.OldIndex;
 
-                        while (newConvertedItemsEnumerator.MoveNext()) {
-                            var newConvertedItem = newConvertedItemsEnumerator.Current;
-                            newConvertedItem.ContainerUpdating += OriginalItem_Updating;
-                        }
+//                        while (oldConvertedItemEnumerator.MoveNext() /*&& oldOriginalItemsEnumerator.MoveNext()*/ && newOriginItemEnumerator.MoveNext()) {
+//                            var oldConvertedItem = oldConvertedItemEnumerator.Current;
+//                            var commonValueReplacement = newOriginItemEnumerator.Current;
 
-                        break;
-                    }
-                case NotifyCollectionChangedAction.Replace: {
-                        var oldConvertedItemsEnumerator = convertedChange.OldItems.GetEnumerator();
-                        var oldOriginalItemsEnumerator = originalChange.OldItems.GetEnumerator();
-                        var newOriginalItemsEnumerator = originalChange.NewItems.GetEnumerator();
-                        var oldOriginalIndex = originalChange.OldIndex;
+//                            var oldConvertedItemUpdate = new Update<OriginItemType>(commonValueReplacement, this);
 
-                        while (oldConvertedItemsEnumerator.MoveNext() && oldOriginalItemsEnumerator.MoveNext() && newOriginalItemsEnumerator.MoveNext()) {
-                            var oldConvertedItem = oldConvertedItemsEnumerator.Current;
-                            OriginalItemType originalItemReplacement;
+//                            var oldConvertedItemUpdateContainer = new UpdateWithTargetContainer<OriginItemType, ConvertedItemType>() {
+//                                Update = oldConvertedItemUpdate,
+//                                Target = oldConvertedItem
+//                            };
 
-                            if (aspectedOriginalChange.ReplaceAspect.ReferencedReplacedOldItemByIndexDictionary.ContainsKey(oldOriginalIndex))
-                                originalItemReplacement = newOriginalItemsEnumerator.Current;
-                            else
-                                originalItemReplacement = oldOriginalItemsEnumerator.Current;
+//                            yield return oldConvertedItemUpdateContainer;
+//                        }
 
-                            var commonItemReplacement = ConvertOriginalItem(originalItemReplacement);
-                            var oldConvertedItemUpdate = new Update<CommonItemType>(commonItemReplacement, this);
+//                        break;
+//                    }
+//            }
+//        }
 
-                            var oldConvertedItemUpdateContainer = new UpdateWithTargetContainer<CommonItemType, ConvertedItemType>() {
-                                Update = oldConvertedItemUpdate,
-                                Target = oldConvertedItem
-                            };
+//        private void ConvertedCollectionChangeNotifer_CollectionChangeConversionApplied(object sender, CollectionChangeConversion<ConvertedItemType, OriginItemType, OriginContentType> args)
+//        {
+//            if (args.EventSequence != null)
+//                return;
 
-                            yield return oldConvertedItemUpdateContainer;
-                        }
+//            //var aspectedOriginalItemChange = args.ConvertedCollectionChangeBundle;
+//            //var aspectedOriginalContentChange = args.OriginCollectionChangeBundle;
+//            //var convertedItemChange = args.ConvertedItemChange;
 
-                        break;
-                    }
-            }
-        }
+//            var convertedItemChange = args.ConvertedCollectionChangeBundle;
 
-        private void ConvertedCollectionChangeNotifer_CollectionChangeConversionApplied(object sender, CollectionChangeConversion<OriginalItemType, ConvertedItemType> args)
-        {
-            if (args.EventSequence != null)
-                return;
+//            foreach (var oldConvertedItemUpdateContainer in getOldConvertedItemUpdateContainerIterator(convertedItemChange)) {
+//                var target = oldConvertedItemUpdateContainer.Target;
+//                var update = oldConvertedItemUpdateContainer.Update;
 
-            var aspectedOriginalChange = args.AppliedOriginalChange;
-            var convertedChange = args.ConvertedChange;
+//                target.UpdateContentBy(update);
+//            }
+//        }
 
-            foreach (var oldConvertedItemUpdateContainer in getOldConvertedItemUpdateContainerIterator(aspectedOriginalChange, convertedChange)) {
-                var target = oldConvertedItemUpdateContainer.Target;
-                var update = oldConvertedItemUpdateContainer.Update;
+//        private async void ConvertedCollectionChangeNotifer_CollectionChangeConversionAppliedAsync(object sender, CollectionChangeConversion<ConvertedItemType, OriginItemType, OriginContentType> args)
+//        {
+//            if (args.EventSequence == null)
+//                return;
 
-                target.UpdateContentBy(update);
-            }
-        }
+//            var aspectedOriginalItemChange = args.ConvertedCollectionChangeBundle;
+//            var aspectedOriginalContentChange = args.OriginCollectionChangeBundle;
+//            var convertedItemChange = args.ConvertedItemChange;
+//            var tcs = args.EventSequence.RegisterDependency();
 
-        private async void ConvertedCollectionChangeNotifer_CollectionChangeConversionAppliedAsync(object sender, CollectionChangeConversion<OriginalItemType, ConvertedItemType> args)
-        {
-            if (args.EventSequence == null)
-                return;
+//            try {
+//                foreach (var oldConvertedItemUpdateContainer in getOldConvertedItemUpdateContainerIterator(aspectedOriginalItemChange, aspectedOriginalContentChange, convertedItemChange)) {
+//                    var target = oldConvertedItemUpdateContainer.Target;
+//                    var update = oldConvertedItemUpdateContainer.Update;
 
-            var aspectedOriginalChange = args.AppliedOriginalChange;
-            var convertedChange = args.ConvertedChange;
-            var tcs = args.EventSequence.RegisterDependency();
+//                    await target.UpdateContentByAsync(update);
+//                }
 
-            try {
-                foreach (var oldConvertedItemUpdateContainer in getOldConvertedItemUpdateContainerIterator(aspectedOriginalChange, convertedChange)) {
-                    var target = oldConvertedItemUpdateContainer.Target;
-                    var update = oldConvertedItemUpdateContainer.Update;
-
-                    await target.UpdateContentByAsync(update);
-                }
-
-                tcs.SetResult();
-            } catch (Exception error) {
-                tcs.SetException(error);
-            }
-        }
-
-        private void OriginalItem_Updating(object sender, IUpdatingEventArgs<CommonItemType> args)
-            /// Is handled if already handled or <see cref="Update{T}.UpdateCreationSource"/> is not reference equals this
-            => args.Handled = args.Handled || !ReferenceEquals(args.Update.UpdateCreationSource, this);
-    }
-}
+//                tcs.SetResult();
+//            } catch (Exception error) {
+//                tcs.SetException(error);
+//            }
+//        }
+//    }
+//}

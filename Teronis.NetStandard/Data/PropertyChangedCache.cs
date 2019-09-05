@@ -15,7 +15,16 @@ namespace Teronis.Data
         public event PropertyCacheRemovedEvent<TProperty> PropertyCacheRemoved;
 
         public Type PropertyType { get; set; }
-        public TProperty DefaultPropertyValue { get; set; }
+
+        /// <summary>
+        /// If true, then only properties are added to the cache whose property 
+        /// values are not equals <see cref="PropertyDefaultValue"/>, and cached 
+        /// properties are removed and not recached whose property values 
+        /// are equals <see cref="PropertyDefaultValue"/>.
+        /// </summary>
+        public bool CanHandleDefaultValue { get; set; }
+
+        public TProperty PropertyDefaultValue { get; set; }
         public INotifyPropertyChanged PropertyChangedNotifier { get; private set; }
         public object PropertyChangedRelayTarget { get; private set; }
         public Type PropertyChangedRelayTargetType { get; private set; }
@@ -47,7 +56,8 @@ namespace Teronis.Data
 
             cachedProperties = new Dictionary<string, TProperty>();
             CachedProperties = new ReadOnlyDictionary<string, TProperty>(cachedProperties);
-            DefaultPropertyValue = default;
+            PropertyDefaultValue = default;
+            CanHandleDefaultValue = true;
             PropertyChangedNotifier = propertyChangedNotifier;
             PropertyChangedNotifier.PropertyChanged += PropertyChangedNotifier_PropertyChanged;
             PropertyChangedRelayTarget = propertyChangedRelayTarget;
@@ -87,13 +97,19 @@ namespace Teronis.Data
 
             TProperty typedPropertyValue;
 
-            var propertyVariableType = propertyMember.GetVariableType();
+            var propertyType = propertyMember.GetVariableType();
 
-            if ((propertyComparisonType == PropertyComparisonType.ValueType && PropertyType == propertyVariableType)
-                || (propertyComparisonType == PropertyComparisonType.ReferenceType && PropertyType.IsAssignableFrom(propertyVariableType)))
+            if ((propertyComparisonType == PropertyComparisonType.ValueType && PropertyType == propertyType)
+                || (propertyComparisonType == PropertyComparisonType.ReferenceType && PropertyType.IsAssignableFrom(propertyType)))
                 typedPropertyValue = (TProperty)propertyValue;
             else
-                typedPropertyValue = DefaultPropertyValue;
+                return; // The type of the property does meet the requirements, so we skip the property
+
+            var doesCachedPropertiesContainPropertyName = cachedProperties.ContainsKey(propertyName);
+
+            if (!doesCachedPropertiesContainPropertyName
+                && (CanHandleDefaultValue || false) && PropertyValueEqualityComparer.Equals(typedPropertyValue, PropertyDefaultValue))
+                return;
 
             void cachePropertyViaArgs(PropertyCacheAddedEventArgs<TProperty> args)
             {
@@ -109,11 +125,13 @@ namespace Teronis.Data
 
             void uncacheProperty(TProperty cachedProperty, bool isRecache)
             {
-                var args = new PropertyCacheRemovedEventArgs<TProperty>(propertyName, cachedProperty);
                 cachedProperties.Remove(propertyName);
 
                 if (isRecache && CanSkipRemovedEventInvocationWhenRecaching)
-                    OnPropertyCacheRemoved(args);
+                    return;
+
+                var args = new PropertyCacheRemovedEventArgs<TProperty>(propertyName, cachedProperty);
+                OnPropertyCacheRemoved(args);
             }
 
             void recacheProperty(TProperty cachedProperty, TProperty uncachedProperty)
@@ -123,7 +141,7 @@ namespace Teronis.Data
                 cachePropertyViaArgs(args);
             }
 
-            if (!PropertyValueEqualityComparer.Equals(typedPropertyValue, DefaultPropertyValue) && !cachedProperties.ContainsKey(propertyName))
+            if (!doesCachedPropertiesContainPropertyName)
             {
                 var args = new PropertyCacheAddingEventArgs<TProperty>(propertyName, typedPropertyValue);
                 OnPropertyCacheAdding(args);
@@ -134,14 +152,17 @@ namespace Teronis.Data
                 // Add new subscription
                 cacheProperty(typedPropertyValue);
             }
-            else if (cachedProperties.ContainsKey(propertyName))
+            else
             {
                 var cachedProperty = cachedProperties[propertyName];
 
-                if (PropertyValueEqualityComparer.Equals(typedPropertyValue, DefaultPropertyValue))
+                if (CanHandleDefaultValue && PropertyValueEqualityComparer.Equals(typedPropertyValue, PropertyDefaultValue))
                     uncacheProperty(cachedProperty, false);
-                else if (!PropertyValueEqualityComparer.Equals(typedPropertyValue, cachedProperty))
+                if (!PropertyValueEqualityComparer.Equals(typedPropertyValue, cachedProperty))
                     recacheProperty(cachedProperty, typedPropertyValue);
+                else
+                    // Both values are equal, so we don't need to uncache
+                    return;
             }
         }
 

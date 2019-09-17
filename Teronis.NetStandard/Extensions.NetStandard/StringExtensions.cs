@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security;
 using System.Text;
 
 namespace Teronis.Extensions.NetStandard
@@ -54,5 +55,14 @@ namespace Teronis.Extensions.NetStandard
             => (source?.StartsWith(value) ?? false) ? source.Remove(source.IndexOf(value, StringComparison.Ordinal), value.Length) : source;
 
         public static string DecodeHtml(this string htmlText) => htmlText.Replace("&nbsp;", " ").Replace("\n", "").Replace("\t", "").Trim();
+
+        public static SecureString ToSecureString(this string password) {
+            var securedString = new SecureString();
+
+            foreach (var passwordChar in password)
+                securedString.AppendChar(passwordChar);
+
+            return securedString;
+        }
     }
 }

@@ -3,7 +3,7 @@ using System.Windows.Input;
 
 namespace Teronis.Windows.Input
 {
-    public abstract class RelayCommand<T> : ICommand
+    public class RelayCommand<T> : ICommand
     {
         private readonly Action<T> executeAction = null;
         private readonly Predicate<T> canExecutePredicate = null;
@@ -38,9 +38,9 @@ namespace Teronis.Windows.Input
             => canExecutePredicate == null ? true : canExecutePredicate((T)parameter);
 
         ///<summary>
-        /// Occurs never. It should be implemented, perhaps pointing to event RequerySuggested  of class CommandManager?
+        /// Occurs never and can be ignored if <see cref="canExecutePredicate"/> is null. It could for example reexposes RequerySuggested of the class of CommandManager.
         ///</summary>
-        public abstract event EventHandler CanExecuteChanged;
+        public virtual event EventHandler CanExecuteChanged;
 
         ///<summary>
         ///Defines the method to be called when the command is invoked.

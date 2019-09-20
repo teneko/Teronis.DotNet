@@ -17,9 +17,11 @@ namespace Teronis.Configuration
             Settings.SettingsSaving += SettingsBase_SettingsSaving;
         }
 
-        private void SettingsBase_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) => AreSettingsUnsaved = true;
+        private void SettingsBase_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) 
+            => AreSettingsUnsaved = true;
 
-        private void SettingsBase_SettingsSaving(object sender, System.ComponentModel.CancelEventArgs e) => AreSettingsUnsaved = false;
+        private void SettingsBase_SettingsSaving(object sender, System.ComponentModel.CancelEventArgs e) 
+            => AreSettingsUnsaved = false;
 
         /// <summary>
         /// Saves only to disk if at least one property has been changed.

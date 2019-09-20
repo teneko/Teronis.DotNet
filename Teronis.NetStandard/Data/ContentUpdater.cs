@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using MorseCode.ITask;
 
@@ -10,17 +11,21 @@ namespace Teronis.Data
         public event UpdatingEventHandler<ContentType> ContainerUpdating;
         public event UpdatedEventHandler<ContentType> ContainerUpdated;
 
-        public bool IsContentUpdating => updateSequenceStatus.IsContentUpdating;
+        public bool IsWorking => workStatus.IsWorking;
 
-        private ContainerUpdateSequenceStatus updateSequenceStatus;
+        private WorkStatus workStatus;
         private PropertyChangedRelay propertyChangedRelay;
 
-        public ContentUpdater()
+        public ContentUpdater(WorkStatus workStatus)
         {
-            updateSequenceStatus = new ContainerUpdateSequenceStatus();
-            propertyChangedRelay = new PropertyChangedRelay(GetType(), updateSequenceStatus);
+            this.workStatus = workStatus ?? throw new ArgumentNullException(nameof(workStatus));
+            propertyChangedRelay = new PropertyChangedRelay(GetType(), workStatus);
             propertyChangedRelay.NotifiersPropertyChanged += PropertyChangedRelay_NotifiersPropertyChanged;
         }
+
+        public ContentUpdater()
+        : this(new WorkStatus())
+        { }
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs args)
             => PropertyChanged?.Invoke(this, args);
@@ -41,11 +46,11 @@ namespace Teronis.Data
             return !args.Handled;
         }
 
-        public void BeginContentUpdate()
-            => updateSequenceStatus.BeginContentUpdate();
+        public void BeginWork()
+            => workStatus.BeginWork();
 
-        public void EndContentUpdate()
-            => updateSequenceStatus.EndContentUpdate();
+        public void EndWork()
+            => workStatus.EndWork();
 
         /// <summary>
         /// Buisness logic have to be implemented here
@@ -66,7 +71,8 @@ namespace Teronis.Data
 
         public virtual void UpdateContentBy(IUpdate<ContentType> update)
         {
-            if (IsContentUpdatable(update)) {
+            if (IsContentUpdatable(update))
+            {
                 InnerUpdatBy(update);
                 OnContainerUpdated(update);
             }
@@ -80,22 +86,23 @@ namespace Teronis.Data
 
         public virtual async Task UpdateContentByAsync(IUpdate<ContentType> update)
         {
-            if (IsContentUpdatable(update)) {
-                BeginContentUpdate();
+            if (IsContentUpdatable(update))
+            {
+                BeginWork();
                 await updateByAsync(update);
-                EndContentUpdate();
+                EndWork();
             }
         }
 
         public virtual async Task UpdateContentByAsync(ITask<IUpdate<ContentType>> updateTask)
         {
-            BeginContentUpdate();
+            BeginWork();
             var update = await updateTask;
 
             if (IsContentUpdatable(update))
                 await updateByAsync(update);
 
-            EndContentUpdate();
+            EndWork();
         }
     }
 }

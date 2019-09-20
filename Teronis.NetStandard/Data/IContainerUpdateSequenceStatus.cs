@@ -4,11 +4,11 @@ using System.Text;
 
 namespace Teronis.Data
 {
-    public interface IContentUpdateSequenceStatus
+    public interface IWorking
     {
-        bool IsContentUpdating { get; }
+        bool IsWorking { get; }
         
-        void BeginContentUpdate();
-        void EndContentUpdate();
+        void BeginWork();
+        void EndWork();
     }
 }

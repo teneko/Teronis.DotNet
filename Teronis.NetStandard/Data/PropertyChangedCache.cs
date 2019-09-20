@@ -158,7 +158,7 @@ namespace Teronis.Data
 
                 if (CanHandleDefaultValue && PropertyValueEqualityComparer.Equals(typedPropertyValue, PropertyDefaultValue))
                     uncacheProperty(cachedProperty, false);
-                if (!PropertyValueEqualityComparer.Equals(typedPropertyValue, cachedProperty))
+                else if (!PropertyValueEqualityComparer.Equals(typedPropertyValue, cachedProperty))
                     recacheProperty(cachedProperty, typedPropertyValue);
                 else
                     // Both values are equal, so we don't need to uncache

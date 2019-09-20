@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Configuration;
@@ -10,6 +11,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using Teronis.Data;
+using Teronis.Extensions.NetStandard;
 
 namespace Teronis.Configuration
 {
@@ -18,7 +20,7 @@ namespace Teronis.Configuration
         public event PropertyChangedEventHandler PropertyChanged;
 
         public string PropertyName
-            => property.Name;
+            => settingsProperty.Name;
 
         private object propertyValue {
             get => settings[PropertyName];
@@ -73,9 +75,12 @@ namespace Teronis.Configuration
 
         public IEqualityComparer<PropertyType> PropertyValueEqualityComparer { get; private set; }
 
+        private SettingsProperty settingsProperty
+            => settingsPropertyValue.Property;
+
         private PropertyType cachedProperty;
         private SettingsBase settings;
-        private SettingsProperty property;
+        private SettingsPropertyValue settingsPropertyValue;
         private bool isCopySynchronous;
         private PropertyChangedCache<PropertyType> propertyChangedCache;
 
@@ -84,12 +89,12 @@ namespace Teronis.Configuration
             this.settings = settings
                 ?? throw new ArgumentNullException(nameof(settings));
 
-            property = settings.Properties[name]
+            settingsPropertyValue = settings.PropertyValues[name]
                 ?? throw new ArgumentException($"Property '{name}' is not member of {nameof(settings)}");
 
             var genericPropertyType = typeof(PropertyType);
 
-            if (genericPropertyType != property.PropertyType && !typeof(PropertyType).IsAssignableFrom(property.PropertyType))
+            if (genericPropertyType != settingsProperty.PropertyType && !typeof(PropertyType).IsAssignableFrom(settingsProperty.PropertyType))
                 throw new ArgumentException($"The types aren't the same");
 
             PropertyValueEqualityComparer = propertyValueEqualityComparer
@@ -190,69 +195,11 @@ namespace Teronis.Configuration
             recalculateIsCopySynchronous();
         }
 
-        private PropertyType copyValue(object propertyValue)
-        {
-            var serializer = new XmlSerializer(property.PropertyType);
-
-            using (var stream = new MemoryStream())
-            {
-                using (var writer = new XmlTextWriter(stream, Encoding.UTF8))
-                {
-                    serializer.Serialize(writer, propertyValue);
-                    stream.Position = 0;
-                    var copiedValue = (PropertyType)serializer.Deserialize(stream);
-                    return copiedValue;
-                }
-            }
-        }
-
         private PropertyType copySettingsPropertyDefaultValue()
-        {
-            var serializer = new XmlSerializer(property.PropertyType);
-            object defaultPropertyValue = property.DefaultValue;
-            bool isDefaultValueCopied = false;
-
-            if (property.PropertyType.IsValueType && !property.PropertyType.IsEnum)
-            {
-                defaultPropertyValue = Convert.ChangeType(property.DefaultValue, property.PropertyType);
-                isDefaultValueCopied = true;
-            }
-            else if (property.PropertyType == typeof(string))
-            {
-                defaultPropertyValue = property.DefaultValue.ToString();
-                isDefaultValueCopied = true;
-            }
-            else if (defaultPropertyValue is string propertyString)
-            {
-                var bytes = Encoding.UTF8.GetBytes(propertyString);
-
-                using (var stream = new MemoryStream(bytes))
-                using (var reader = XmlReader.Create(stream))
-                {
-                    if (serializer.CanDeserialize(reader))
-                    {
-                        defaultPropertyValue = serializer.Deserialize(reader);
-                        isDefaultValueCopied = true;
-                    }
-                }
-            }
-
-            PropertyType typedDefaultPropertyValue;
-
-            if (isDefaultValueCopied)
-                typedDefaultPropertyValue = (PropertyType)defaultPropertyValue;
-            else
-                typedDefaultPropertyValue = copyValue(defaultPropertyValue);
-
-            return typedDefaultPropertyValue;
-        }
+            => settingsPropertyValue.CopyDefaultValue<PropertyType>();
 
         private PropertyType copySettingsPropertyValue()
-        {
-            var value = propertyValue;
-            value = copyValue(value);
-            return (PropertyType)value;
-        }
+            => settingsPropertyValue.CopyPropertyValue<PropertyType>();
 
         public virtual void RefreshCache(bool useDefaultValue)
         {
@@ -294,8 +241,8 @@ namespace Teronis.Configuration
 
         public void SetOriginalFromCache()
         {
-            var copiedCopy = copyValue(CachedPropertyValue);
-            setOriginalFromSource(copiedCopy);
+            var copiedCache = settingsPropertyValue.CopyValue(CachedPropertyValue, true);
+            setOriginalFromSource(copiedCache);
         }
 
         public void SetOriginalFromDefault()

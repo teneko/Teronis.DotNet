@@ -34,4 +34,12 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\teronis-netstandard-localization\Teronis.NetStandard.Localization\Teronis.NetStandard.Localization.csproj" />
+  </ItemGroup>
+
 </Project>

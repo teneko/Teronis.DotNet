@@ -12,25 +12,25 @@ using Teronis.Extensions.NetStandard;
 
 namespace Teronis.Collections.Generic
 {
-    public abstract class CollectionSynchronisation<ItemType, ContentType> : IApplyCollectionChange<ItemType, ContentType>, ICanSynchronizeCollection<ContentType>, INotifyCollectionChangeApplied<ItemType, ContentType>, INotifyPropertyChanged, IContentUpdateSequenceStatus
+    public abstract class CollectionSynchronisation<ItemType, ContentType> : IApplyCollectionChange<ItemType, ContentType>, ICanSynchronizeCollection<ContentType>, INotifyCollectionChangeApplied<ItemType, ContentType>, INotifyPropertyChanged, IWorking
     {
         public event CollectionChangeAppliedEventHandler<ItemType, ContentType> CollectionChangeApplied;
 
         public event PropertyChangedEventHandler PropertyChanged;
         public event WantParentsEventHandler WantParents;
 
-        public virtual bool IsContentUpdating => updateSequenceStatus.IsContentUpdating;
+        public virtual bool IsWorking => workStatus.IsWorking;
         public IList<ItemType> ItemList { get; private set; }
         public IList<ContentType> ContentList { get; private set; }
         public IEqualityComparer<ContentType> EqualityComparer { get; private set; }
 
-        private ContainerUpdateSequenceStatus updateSequenceStatus;
+        private WorkStatus workStatus;
         private PropertyChangedRelay propertyChangedRelay;
 
         public CollectionSynchronisation(IList<ItemType> initialItemCollection, IList<ContentType> initialContentCollection, IEqualityComparer<ContentType> equalityComparer)
         {
-            updateSequenceStatus = new ContainerUpdateSequenceStatus();
-            propertyChangedRelay = new PropertyChangedRelay(GetType(), updateSequenceStatus);
+            workStatus = new WorkStatus();
+            propertyChangedRelay = new PropertyChangedRelay(GetType(), workStatus);
             propertyChangedRelay.NotifiersPropertyChanged += PropertyChangedRelay_NotifiersPropertyChanged;
             EqualityComparer = equalityComparer ?? EqualityComparer<ContentType>.Default;
 
@@ -41,11 +41,11 @@ namespace Teronis.Collections.Generic
             CollectionChangeApplied += CollectionSynchronizer_CollectionChangeApplied;
         }
 
-        public void BeginContentUpdate()
-            => updateSequenceStatus.BeginContentUpdate();
+        public void BeginWork()
+            => workStatus.BeginWork();
 
-        public void EndContentUpdate()
-            => updateSequenceStatus.EndContentUpdate();
+        public void EndWork()
+            => workStatus.EndWork();
 
         private async void CollectionSynchronizer_CollectionChangeApplied(object sender, CollectionChangeAppliedEventArgs<ItemType, ContentType> args)
         {
@@ -53,9 +53,9 @@ namespace Teronis.Collections.Generic
                 return;
 
             var eventSequence = args.EventSequence;
-            BeginContentUpdate();
+            BeginWork();
             await eventSequence.TryAwaitDependency();
-            EndContentUpdate();
+            EndWork();
         }
 
         public CollectionSynchronisation(IList<ItemType> initialItemCollection, IList<ContentType> initialContentCollection)
@@ -293,21 +293,21 @@ namespace Teronis.Collections.Generic
 
         public virtual async Task SynchronizeAsync(IEnumerable<ContentType> items)
         {
-            BeginContentUpdate();
+            BeginWork();
             var changes = getCollectionChanges(items);
 
             foreach (var change in changes)
                 await ApplyCollectionChangeAsync(change);
 
-            EndContentUpdate();
+            EndWork();
         }
 
         public virtual async Task SynchronizeAsync(ITask<IEnumerable<ContentType>> itemsTask)
         {
-            BeginContentUpdate();
+            BeginWork();
             var items = await itemsTask;
             await SynchronizeAsync(items);
-            EndContentUpdate();
+            EndWork();
         }
 
         public ParentsPicker GetParentsPicker()

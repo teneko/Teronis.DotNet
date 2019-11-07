@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
 
@@ -10,7 +9,7 @@ namespace Teronis.Extensions.NetStandard
         public static string AsPostData(this NameValueCollection collection)
         {
             var builder = new StringBuilder();
-            var separator = new StringSeparationUsage("&");
+            var separator = new StringSeparationHelper("&");
 
             foreach (string key in collection.Keys) {
                 builder.AppendFormat("{0}={1}", Uri.EscapeDataString(key), Uri.EscapeDataString(collection[key]));

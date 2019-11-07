@@ -27,9 +27,6 @@ namespace Teronis.Collections
             return CreateNew(changeAction, newItems, newIndex);
         }
 
-        //public static CollectionChange<OldItemType, NewItemType> CreateOf<SourceOldItemType, SourceNewItemType>(ICollectionChange<SourceOldItemType, SourceNewItemType> change, IReadOnlyList<OldItemType> oldItems, IReadOnlyList<NewItemType> newItems)
-        //    => new CollectionChange<OldItemType, NewItemType>(change.Action, oldItems, change.OldIndex, newItems, change.NewIndex);
-
         public NotifyCollectionChangedAction Action { get; private set; }
         public IReadOnlyList<OldItemType> OldItems => oldPartialCollectionChange.Values;
         public int OldIndex => oldPartialCollectionChange.Index;

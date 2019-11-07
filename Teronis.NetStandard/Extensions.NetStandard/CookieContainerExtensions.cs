@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
-using System.Text;
 using Teronis.Tools.NetStandard;
 
 namespace Teronis.Extensions.NetStandard

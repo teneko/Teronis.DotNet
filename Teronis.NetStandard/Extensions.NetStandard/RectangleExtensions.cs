@@ -6,7 +6,7 @@ namespace Teronis.Extensions.NetStandard
 {
     public static class RectangleExtensions
     {
-        public static RECT GetRect(this Rectangle rectangle)
+        public static RECT GetRectangle(this Rectangle rectangle)
             => new RECT() { left = rectangle.X, top = rectangle.Y, right = rectangle.X + rectangle.Width, bottom = rectangle.Y + rectangle.Height };
 
         public static bool IsInEllipse(this Rectangle rectangle, int x, int y) => RectangleTools.IsRectangleInEllipse(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height, x, y);

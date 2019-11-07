@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Reflection;
 using Teronis.Libraries.NetStandard;
-using Teronis.Extensions.NetStandard;
 using System.ComponentModel;
 
 namespace Teronis.Reflection

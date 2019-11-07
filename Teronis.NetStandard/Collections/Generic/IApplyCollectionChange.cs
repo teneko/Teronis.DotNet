@@ -13,8 +13,5 @@ namespace Teronis.Collections.Generic
 
         void ApplyCollectionChange(ICollectionChange<ItemType, ContentType> change);
         Task ApplyCollectionChangeAsync(ICollectionChange<ItemType, ContentType> change);
-
-        //void ApplyCollectionChange(ICollectionChange<ItemType, ItemType> change);
-        //Task ApplyCollectionChangeAsync(ICollectionChange<ItemType, ItemType> change);
     }
 }

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Resources;
-using System.Text;
 using Teronis.Tools.NetStandard;
 
 namespace Teronis.Extensions.NetStandard

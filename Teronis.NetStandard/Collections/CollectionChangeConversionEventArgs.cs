@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Teronis.Threading.Tasks;
 
 namespace Teronis.Collections
 {
     public class CollectionChangeConversionAppliedEventArgs<ConvertedItemType, CommonValueType, OriginContentType> : EventArgs
     {
-        public static CollectionChangeConversionAppliedEventArgs<ConvertedItemType, CommonValueType, OriginContentType> CreateAsynchronous(IConversionCollectionChangeBundles<ConvertedItemType, CommonValueType, OriginContentType> bundles, AsyncableEventSequence eventSequence)
+        public static CollectionChangeConversionAppliedEventArgs<ConvertedItemType, CommonValueType, OriginContentType> CreateAsynchronous(IConversionCollectionChangeBundles<ConvertedItemType, CommonValueType, OriginContentType> bundles, AsyncEventSequence eventSequence)
         {
             eventSequence = eventSequence ?? throw new ArgumentNullException(nameof(eventSequence));
             return new CollectionChangeConversionAppliedEventArgs<ConvertedItemType, CommonValueType, OriginContentType>(bundles, eventSequence);
@@ -20,10 +19,10 @@ namespace Teronis.Collections
         /// </summary>
         public ICollectionChangeBundle<ConvertedItemType, CommonValueType> ConvertedCollectionChangeBundle { get; private set; }
         public ICollectionChangeBundle<CommonValueType, OriginContentType> OriginCollectionChangeBundle { get; private set; }
-        public AsyncableEventSequence EventSequence { get; private set; }
+        public AsyncEventSequence EventSequence { get; private set; }
 
         private CollectionChangeConversionAppliedEventArgs(IConversionCollectionChangeBundles<ConvertedItemType, CommonValueType, OriginContentType> bundles,
-            AsyncableEventSequence eventSequence)
+            AsyncEventSequence eventSequence)
         {
             bundles = bundles ?? throw new ArgumentNullException(nameof(bundles));
             EventSequence = eventSequence;

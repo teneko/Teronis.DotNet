@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using Teronis.Collections;
 using Teronis.Collections.Specialized;
-using Teronis.Data;
 
 namespace Teronis.Extensions.NetStandard
 {

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Text;
+﻿using System.Collections.Specialized;
 using Teronis.Data;
 using Teronis.Extensions.NetStandard;
-using System.Linq;
 using Teronis.Libraries.NetStandard;
 
 namespace Teronis.Collections.Generic
@@ -26,7 +22,7 @@ namespace Teronis.Collections.Generic
             var convertedItemItemChange = args.ConvertedCollectionChangeBundle.ItemItemChange;
 
             if (convertedContentContentChange.Action != convertedItemItemChange.Action)
-                CollectionChangeConversionLibrary.ThrowActionMismatchException();
+                CollectionChangeConversionLibrary.ThrowChangeActionMismatchException();
 
             var action = convertedContentContentChange.Action;
 

@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Teronis.Threading.Tasks;
 
 namespace Teronis.Collections
 {
-    public class CollectionChangeAppliedEventArgs<ItemType, ContentType> : EventArgs, ICollectionChangeBundle<ItemType, ContentType>
+    public class CollectionChangeAppliedEventArgs<ItemType, ContentType> : EventArgs, ICollectionChangeBundle<ItemType, ContentType>, IHasAsyncEventSequence
     {
-        public static CollectionChangeAppliedEventArgs<ItemType, ContentType> CreateAsynchronous(ICollectionChangeBundle<ItemType, ContentType> bundle, AsyncableEventSequence eventSequence)
+        public static CollectionChangeAppliedEventArgs<ItemType, ContentType> CreateAsynchronous(ICollectionChangeBundle<ItemType, ContentType> bundle, AsyncEventSequence eventSequence)
         {
             eventSequence = eventSequence ?? throw new ArgumentNullException(nameof(eventSequence));
             return new CollectionChangeAppliedEventArgs<ItemType, ContentType>(bundle, eventSequence);
@@ -18,7 +17,10 @@ namespace Teronis.Collections
         /// <summary>
         /// A value of not null means, that this instance is coming from an async event invocation.
         /// </summary>
-        public AsyncableEventSequence EventSequence { get; private set; }
+        public AsyncEventSequence AsyncEventSequence { get; private set; }
+
+        AsyncEventSequence<Singleton> IHasAsyncableEventSequence<Singleton>.AsyncEventSequence 
+            => AsyncEventSequence;
 
         public ICollectionChange<ItemType, ItemType> ItemItemChange 
             => bundle.ItemItemChange;
@@ -31,10 +33,10 @@ namespace Teronis.Collections
 
         private ICollectionChangeBundle<ItemType, ContentType> bundle;
 
-        private CollectionChangeAppliedEventArgs(ICollectionChangeBundle<ItemType, ContentType> bundle, AsyncableEventSequence eventSequence)
+        private CollectionChangeAppliedEventArgs(ICollectionChangeBundle<ItemType, ContentType> bundle, AsyncEventSequence eventSequence)
         {
             this.bundle = bundle;
-            EventSequence = eventSequence;
+            AsyncEventSequence = eventSequence;
         }
     }
 }

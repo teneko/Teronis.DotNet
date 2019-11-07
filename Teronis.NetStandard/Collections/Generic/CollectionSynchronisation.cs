@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using MorseCode.ITask;
 using Teronis.Data;
 using Teronis.Extensions.NetStandard;
+using Teronis.Threading.Tasks;
 
 namespace Teronis.Collections.Generic
 {
@@ -52,7 +53,7 @@ namespace Teronis.Collections.Generic
             if (!args.IsAsyncEvent())
                 return;
 
-            var eventSequence = args.EventSequence;
+            var eventSequence = args.AsyncEventSequence;
             BeginWork();
             await eventSequence.TryAwaitDependency();
             EndWork();
@@ -81,7 +82,6 @@ namespace Teronis.Collections.Generic
             for (var oldItemIndex = oldItemsCount - 1; oldItemIndex >= 0; oldItemIndex--)
             {
                 var removeIndex = oldItemIndex + oldIndex;
-
 #if DEBUG
                 var removingContent = ContentList[removeIndex];
                 var oldContent = change.OldItems[oldItemIndex];
@@ -223,7 +223,7 @@ namespace Teronis.Collections.Generic
         public virtual async Task ApplyCollectionChangeAsync(ICollectionChange<ItemType, ContentType> itemContentChange)
         {
             applyCollectionChange(itemContentChange, out var appliedBundle);
-            var eventSequence = new AsyncableEventSequence();
+            var eventSequence = new AsyncEventSequence();
             var args = CollectionChangeAppliedEventArgs<ItemType, ContentType>.CreateAsynchronous(appliedBundle, eventSequence);
             OnCollectionChangeApplied(args);
             await eventSequence.FinishDependenciesAsync();
@@ -258,7 +258,7 @@ namespace Teronis.Collections.Generic
         public virtual async Task ApplyCollectionChangeAsync(ICollectionChange<ContentType, ContentType> contentContentChange)
         {
             applyCollectionChange(contentContentChange, out var appliedBundle);
-            var eventSequence = new AsyncableEventSequence();
+            var eventSequence = new AsyncEventSequence();
             var args = CollectionChangeAppliedEventArgs<ItemType, ContentType>.CreateAsynchronous(appliedBundle, eventSequence);
             OnCollectionChangeApplied(args);
             await eventSequence.FinishDependenciesAsync();
@@ -328,12 +328,12 @@ namespace Teronis.Collections.Generic
 
         protected class AppliedCollectionChangeBundle : CollectionChangeBundle<ItemType, ContentType>
         {
-            public AsyncableEventSequence EventSequence { get; private set; }
+            public AsyncEventSequence EventSequence { get; private set; }
 
             public AppliedCollectionChangeBundle(ICollectionChange<ItemType, ItemType> itemItemChange,
             ICollectionChange<ItemType, ContentType> itemContentChange,
             ICollectionChange<ContentType, ContentType> contentContentChange,
-            AsyncableEventSequence eventSequence)
+            AsyncEventSequence eventSequence)
                 : base(itemItemChange, itemContentChange, contentContentChange)
                 => EventSequence = eventSequence;
 
@@ -382,13 +382,13 @@ namespace Teronis.Collections.Generic
                 var convertedApplyingBundle = createApplyingCollectionChangeConversionBundle(originBundle);
                 synchronizer.ApplyCollectionChangeBundle(convertedApplyingBundle);
                 var convertedAppliedBundle = synchronizer.GetAppliedCollectionChangeBundle(convertedApplyingBundle);
-                var convertedChangeAppliedEventSequence = new AsyncableEventSequence();
+                var convertedChangeAppliedEventSequence = new AsyncEventSequence();
                 var convertedChangeAppliedArgs = CollectionChangeAppliedEventArgs<ItemType, ContentType>.CreateAsynchronous(convertedAppliedBundle, convertedChangeAppliedEventSequence);
                 synchronizer.OnCollectionChangeApplied(convertedChangeAppliedArgs);
                 await convertedChangeAppliedEventSequence.FinishDependenciesAsync();
 
                 var conversionBundles = new ConversionCollectionChangeBundles(convertedAppliedBundle, originBundle);
-                var changeConversionAppliedEventSequence = new AsyncableEventSequence();
+                var changeConversionAppliedEventSequence = new AsyncEventSequence();
                 var changeConversionAppliedArgs = CollectionChangeConversionAppliedEventArgs<ItemType, ContentType, OriginContentType>.CreateAsynchronous(conversionBundles, changeConversionAppliedEventSequence);
                 OnCollectionChangeConversionApplied(changeConversionAppliedArgs);
                 await convertedChangeAppliedEventSequence.FinishDependenciesAsync();

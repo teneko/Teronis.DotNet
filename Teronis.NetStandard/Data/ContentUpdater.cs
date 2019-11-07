@@ -1,21 +1,23 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using MorseCode.ITask;
 
 namespace Teronis.Data
 {
     public class ContentUpdater<ContentType> : INotifyPropertyChanged, IUpdatableContent<ContentType>
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        public event UpdatingEventHandler<ContentType> ContainerUpdating;
-        public event UpdatedEventHandler<ContentType> ContainerUpdated;
+        public event ContentUpdatingEventHandler<ContentType> ContainerUpdating;
+        public event ContentUpdatedEventHandler<ContentType> ContainerUpdated;
 
         public bool IsWorking => workStatus.IsWorking;
 
         private WorkStatus workStatus;
         private PropertyChangedRelay propertyChangedRelay;
 
+        /// <summary>
+        /// We want to assure, that when a work status is passed, that it is not null by accident.
+        /// </summary>
         public ContentUpdater(WorkStatus workStatus)
         {
             this.workStatus = workStatus ?? throw new ArgumentNullException(nameof(workStatus));
@@ -23,25 +25,21 @@ namespace Teronis.Data
             propertyChangedRelay.NotifiersPropertyChanged += PropertyChangedRelay_NotifiersPropertyChanged;
         }
 
-        public ContentUpdater()
-        : this(new WorkStatus())
-        { }
-
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs args)
             => PropertyChanged?.Invoke(this, args);
 
-        protected virtual void OnContainerUpdating(IUpdatingEventArgs<ContentType> args)
+        protected virtual void OnContainerUpdating(IContentUpdatingEventArgs<ContentType> args)
             => ContainerUpdating?.Invoke(this, args);
 
-        protected virtual void OnContainerUpdated(IUpdate<ContentType> update)
+        protected virtual void OnContainerUpdated(IContentUpdatedEventArgs<ContentType> update)
             => ContainerUpdated?.Invoke(this, update);
 
         private void PropertyChangedRelay_NotifiersPropertyChanged(object sender, PropertyChangedEventArgs args)
            => OnPropertyChanged(args);
 
-        public virtual bool IsContentUpdatable(IUpdate<ContentType> update)
+        public virtual bool IsContentUpdatable(IContentUpdate<ContentType> update)
         {
-            var args = new UpdatingEventArgs<ContentType>(update);
+            var args = new ContentUpdatingEventArgs<ContentType>(update);
             OnContainerUpdating(args);
             return !args.Handled;
         }
@@ -52,57 +50,47 @@ namespace Teronis.Data
         public void EndWork()
             => workStatus.EndWork();
 
-        /// <summary>
-        /// Buisness logic have to be implemented here
-        /// </summary>
-        /// <param name="update"></param>
-        protected virtual void InnerUpdatBy(IUpdate<ContentType> update)
+        protected virtual void InnerUpdateContentBy(IContentUpdate<ContentType> update)
         { }
 
         /// <summary>
-        /// Buisness logic have to be implemented here
+        /// When not overriden, the method calls <see cref="InnerUpdateContentBy(IContentUpdate{ContentType})"/>.
         /// </summary>
         /// <param name="update"></param>
-        protected virtual Task InnerUpdatByAsync(IUpdate<ContentType> update)
+        /// <returns></returns>
+        protected virtual Task InnerUpdateContentByAsync(IContentUpdate<ContentType> update)
         {
-            InnerUpdatBy(update);
+            InnerUpdateContentBy(update);
             return Task.CompletedTask;
         }
 
-        public virtual void UpdateContentBy(IUpdate<ContentType> update)
+        public virtual void UpdateContentBy(IContentUpdate<ContentType> update)
         {
             if (IsContentUpdatable(update))
             {
-                InnerUpdatBy(update);
-                OnContainerUpdated(update);
+                InnerUpdateContentBy(update);
+                var args = new ContentUpdatedEventArgs<ContentType>(update);
+                OnContainerUpdated(args);
             }
         }
 
-        private async Task updateByAsync(IUpdate<ContentType> update)
+        private async Task updateContentByAsync(IContentUpdate<ContentType> update)
         {
-            await InnerUpdatByAsync(update);
-            OnContainerUpdated(update);
-        }
-
-        public virtual async Task UpdateContentByAsync(IUpdate<ContentType> update)
-        {
-            if (IsContentUpdatable(update))
-            {
-                BeginWork();
-                await updateByAsync(update);
-                EndWork();
-            }
-        }
-
-        public virtual async Task UpdateContentByAsync(ITask<IUpdate<ContentType>> updateTask)
-        {
+            await Task.Yield();
             BeginWork();
-            var update = await updateTask;
+            await update.ContentTask;
 
             if (IsContentUpdatable(update))
-                await updateByAsync(update);
+            {
+                await InnerUpdateContentByAsync(update);
+                var args = new ContentUpdatedEventArgs<ContentType>(update);
+                OnContainerUpdated(args);
+            }
 
             EndWork();
         }
+
+        public virtual Task UpdateContentByAsync(IContentUpdate<ContentType> update)
+            => updateContentByAsync(update);
     }
 }

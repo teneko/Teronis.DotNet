@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Teronis.Data;
 
 namespace Teronis.Extensions.NetStandard
 {
     public static class UpdateExtensions
     {
-        public static Update<InnerContentType> CreateUpdateFromContent<ContentType, InnerContentType>(this IUpdate<ContentType> update, Func<ContentType, InnerContentType> getInnerContent, object updateCreationSource)
-            => new Update<InnerContentType>(getInnerContent(update.Content), update.OriginalUpdateCreationSource, updateCreationSource);
+        public static ContentUpdate<InnerContentType> CreateUpdateFromContent<ContentType, InnerContentType>(this IContentUpdate<ContentType> update, Func<ContentType, InnerContentType> getInnerContent, object updateCreationSource)
+            => new ContentUpdate<InnerContentType>(getInnerContent(update.Content), update.OriginalUpdateCreationSource, updateCreationSource);
     }
 }

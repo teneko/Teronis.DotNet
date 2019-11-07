@@ -28,7 +28,7 @@ namespace Teronis.Collections.Generic
                 while (oldItemsEnumerator.MoveNext() && newItemsEnumerator.MoveNext()) {
                     var oldItem = oldItemsEnumerator.Current;
                     var newItem = newItemsEnumerator.Current;
-                    var oldItemUpdate = new Update<ContentType>(newItem, this);
+                    var oldItemUpdate = new ContentUpdate<ContentType>(newItem, this);
 
                     var oldItemUpdateContainer = new UpdateWithTargetContainer<ContentType, ItemType>() {
                         Update = oldItemUpdate,
@@ -67,7 +67,7 @@ namespace Teronis.Collections.Generic
                 return;
 
             var change = args.ItemContentChange;
-            var tcs = args.EventSequence.RegisterDependency();
+            var tcs = args.AsyncEventSequence.RegisterDependency();
 
             try {
                 await updateOldItemsAsync(change);

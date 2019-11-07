@@ -6,9 +6,9 @@ namespace Teronis.Extensions.NetStandard
     public static class UpdatingEventArgsExtensions
     {
         /// <summary>
-        /// This function invokes <see cref="UpdatingEventHandler{T}"/> and returns <see cref="UpdatingEventArgs{T}.Handled"/>.
+        /// This function invokes <see cref="ContentUpdatingEventHandler{T}"/> and returns <see cref="ContentUpdatingEventArgs{T}.Handled"/>.
         /// </summary>
-        public static bool IsUpdateAppliable<T>(this UpdatingEventArgs<T> args, object sender, UpdatingEventHandler<T> handler)
+        public static bool IsUpdateAppliable<T>(this ContentUpdatingEventArgs<T> args, object sender, ContentUpdatingEventHandler<T> handler)
         {
             handler?.Invoke(sender, args);
             return !args.Handled;

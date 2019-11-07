@@ -5,9 +5,9 @@ namespace Teronis.Data
 
     public interface IUpdatableContent<ContentType> : IWorking, IUpdatableContentBy<ContentType>
     {
-        event UpdatingEventHandler<ContentType> ContainerUpdating;
-        event UpdatedEventHandler<ContentType> ContainerUpdated;
+        event ContentUpdatingEventHandler<ContentType> ContainerUpdating;
+        event ContentUpdatedEventHandler<ContentType> ContainerUpdated;
 
-        bool IsContentUpdatable(IUpdate<ContentType> update);
+        bool IsContentUpdatable(IContentUpdate<ContentType> update);
     }
 }

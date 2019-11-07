@@ -1,7 +1,4 @@
 ﻿using Force.Crc32;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Teronis.Extensions.NetStandard
 {

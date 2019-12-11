@@ -12,15 +12,17 @@ namespace Teronis.Extensions.NetStandard
 
         public static R FirstNonDefaultOrDefault<T, R>(this IEnumerable<T> collection, Func<T, R> getObj)
         {
+            var defaultObj = default(R);
+
             foreach (var item in collection)
             {
                 var obj = getObj(item);
 
-                if (obj != default)
+                if (!Equals(obj, defaultObj))
                     return obj;
             }
 
-            return default;
+            return defaultObj;
         }
 
         public static R FirstNonDefault<T, R>(this IEnumerable<T> collection, Func<T, R> getObj) where R : class

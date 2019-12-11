@@ -5,14 +5,14 @@ using System.Threading.Tasks.Dataflow;
 
 namespace Teronis.Collections.Generic
 {
-    public class AsyncQueueStream<T> : IAsyncEnumerable<T>, IDisposable
+    public class AsyncQueueSocket<T> : IAsyncEnumerable<T>, IDisposable
     {
         public bool IsDisposed { get; private set; }
 
         private readonly SemaphoreSlim enumerationSemaphore;
         private readonly BufferBlock<T> bufferBlock;
 
-        public AsyncQueueStream()
+        public AsyncQueueSocket()
         {
             enumerationSemaphore = new SemaphoreSlim(1);
             bufferBlock = new BufferBlock<T>();

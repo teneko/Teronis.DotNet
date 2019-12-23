@@ -5,6 +5,17 @@
     <LangVersion>8.0</LangVersion>
     <RootNamespace>Teronis</RootNamespace>
     <Platforms>AnyCPU;x64;x86</Platforms>
+    <Authors>Teroneko</Authors>
+    <Company />
+    <Description>This project contains utility, extension and tool functions, but also classes that extends known structures.</Description>
+    <Copyright>Teroneko</Copyright>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <RepositoryUrl>https://github.com/teroneko/teronis-netstandard</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>collections; configuration; data;</PackageTags>
+    <NeutralLanguage>en</NeutralLanguage>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
@@ -30,6 +41,10 @@
     <Compile Remove="Views\**" />
     <EmbeddedResource Remove="Views\**" />
     <None Remove="Views\**" />
+    <None Include="..\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

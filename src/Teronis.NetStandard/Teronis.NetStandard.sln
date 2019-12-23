@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29409.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard", "Teronis.NetStandard\Teronis.NetStandard.csproj", "{AC4A220B-A7B9-43C7-95F6-9F2B13A0EF42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard", "Teronis.NetStandard\src\Teronis.NetStandard.csproj", "{AC4A220B-A7B9-43C7-95F6-9F2B13A0EF42}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Localization", "..\teronis-netstandard-localization\Teronis.NetStandard.Localization\Teronis.NetStandard.Localization.csproj", "{20620B54-0E93-46F7-A413-93A1B782789D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Localization", "Teronis.NetStandard.Localization\src\Teronis.NetStandard.Localization.csproj", "{20620B54-0E93-46F7-A413-93A1B782789D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

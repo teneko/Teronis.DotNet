@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Teronis.NetStandard
+namespace Teronis.Text
 {
     public class NestedProperty
     {

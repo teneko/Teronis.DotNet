@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using Teronis.NetStandard;
+using Teronis.Text;
 
 namespace Teronis.Tools.NetStandard
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Teronis
+namespace Teronis.Data
 {
     public class MutableValue<T> : IEquatable<T> where T : IEquatable<T>
     {

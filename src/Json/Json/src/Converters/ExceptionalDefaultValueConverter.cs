@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using Teronis.Json.Extensions;
-using Teronis.Extensions.NetStandard;
+using Teronis.Extensions;
 
 namespace Teronis.Json.Converters
 {

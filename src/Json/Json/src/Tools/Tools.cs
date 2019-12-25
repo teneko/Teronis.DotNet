@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using Teronis.Extensions.NetStandard;
+using Teronis.Extensions;
 using Teronis.Json.Serialization;
 using Teronis.Json.Extensions;
 

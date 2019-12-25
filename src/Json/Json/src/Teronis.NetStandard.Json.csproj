@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1</TargetFrameworks>
@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Teronis.NetStandard\Teronis.NetStandard\src\Teronis.NetStandard.csproj" />
+    <ProjectReference Include="..\..\..\Core\Core\src\Teronis.NetStandard.Core.csproj" />
   </ItemGroup>
 
 </Project>

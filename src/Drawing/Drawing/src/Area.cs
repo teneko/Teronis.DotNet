@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using Teronis.Extensions.NetStandard;
+using Teronis.Extensions;
 
 namespace Teronis.NetStandard.Drawing
 {

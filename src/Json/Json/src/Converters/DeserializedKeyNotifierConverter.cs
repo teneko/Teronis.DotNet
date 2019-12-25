@@ -3,9 +3,9 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Teronis.Extensions.NetStandard;
+using Teronis.Extensions;
 using Teronis.Json.PropertyEntifiers;
-using Teronis.Tools.NetStandard;
+using Teronis.Tools;
 
 namespace Teronis.Json.Converters
 {
@@ -44,7 +44,7 @@ namespace Teronis.Json.Converters
         /// Returns true if not an exception is thrown before.
         /// </summary>
         public override bool CanConvert(Type objectType)
-            => GenericTools.ReturnInValue(true, () => getCollectionType(objectType));
+            => TeronisTools.ReturnInValue(true, () => getCollectionType(objectType));
 
         /// <returns>Return a <see cref="Dictionary{TKey, TValue}"/>.</returns>
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)

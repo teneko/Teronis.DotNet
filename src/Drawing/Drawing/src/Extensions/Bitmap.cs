@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Teronis.NetStandard.Extensions
+namespace Teronis.Extensions
 {
     public static class BitmapExtensions
     {

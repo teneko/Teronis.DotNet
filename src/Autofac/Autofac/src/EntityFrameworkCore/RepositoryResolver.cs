@@ -1,4 +1,6 @@
 ﻿using Autofac;
+using Teronis.Data;
+using Teronis.DependencyInjection;
 
 namespace Teronis.EntityFrameworkCore
 {

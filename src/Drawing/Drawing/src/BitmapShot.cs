@@ -5,8 +5,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Teronis.Extensions.NetStandard;
-using Teronis.Tools.NetStandard;
+using Teronis.Extensions;
+using Teronis.Tools;
 
 namespace Teronis.NetStandard.Drawing
 {

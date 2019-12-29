@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using Teronis.Json.Converters;
 
-namespace Teronis.NetStandard.Drawing
+namespace Teronis.Drawing
 {
     public struct RGBColor
     {

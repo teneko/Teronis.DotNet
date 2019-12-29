@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using Teronis.Extensions;
 using Teronis.Tools;
 
-namespace Teronis.NetStandard.Drawing
+namespace Teronis.Drawing
 {
     public unsafe class BitmapShot : ISnapshot
     {

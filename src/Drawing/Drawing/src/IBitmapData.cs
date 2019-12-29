@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace Teronis.NetStandard.Drawing
+namespace Teronis.Drawing
 {
     public interface IBitmapData : IDisposable
     {

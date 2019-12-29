@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Teronis.Windows.NetStandard;
+using Teronis.Windows;
 
 namespace Teronis.Extensions
 {

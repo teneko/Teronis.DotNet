@@ -1,11 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1</TargetFrameworks>
-    <AssemblyName>Teronis.NetStandard.Core.Localization</AssemblyName>
     <RootNamespace>Teronis.Localization</RootNamespace>
-    <Platforms>AnyCPU;x64;x86</Platforms>
-    <LangVersion>8.0</LangVersion>
+    <Description>Contains localization resources for Teronis.NetStandard.Core.</Description>
+    <Version>0.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

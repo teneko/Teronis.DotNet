@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace Teronis.NetStandard.Drawing
+namespace Teronis.Drawing
 {
     public unsafe class BitmapData : IBitmapData
     {

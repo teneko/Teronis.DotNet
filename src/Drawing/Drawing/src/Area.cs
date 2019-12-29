@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using Teronis.Extensions;
 
-namespace Teronis.NetStandard.Drawing
+namespace Teronis.Drawing
 {
     public class Area
     {

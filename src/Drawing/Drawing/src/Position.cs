@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Drawing;
-using Teronis.Windows.NetStandard;
+using Teronis.Windows;
 
-namespace Teronis.NetStandard.Drawing
+namespace Teronis.Drawing
 {
     public unsafe struct Position : ITwoDimensionalPattern
     {

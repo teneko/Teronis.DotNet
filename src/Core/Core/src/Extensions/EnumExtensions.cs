@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Teronis.Libraries.NetStandard;
 
 namespace Teronis.Extensions
 {
     public static class EnumExtensions
     {
-        public static IEnumerable<ENUM_TYPE> CrushContainingBitsToEnumerable<ENUM_TYPE>(this ENUM_TYPE enumValue, bool ignoreZero = Library.IgnoreZeroWhenCrushingContainingBits) where ENUM_TYPE : struct, IComparable, IFormattable, IConvertible
+        public static IEnumerable<ENUM_TYPE> CrushContainingBitsToEnumerable<ENUM_TYPE>(this ENUM_TYPE enumValue, bool ignoreZero = TeronisCoreDefaults.IgnoreZeroWhenCrushingContainingBits) where ENUM_TYPE : struct, IComparable, IFormattable, IConvertible
         {
             var enumValue2 = enumValue.CastTo<Enum>();
             var enumerator = Enum.GetValues(typeof(ENUM_TYPE)).GetEnumerator();
@@ -21,7 +20,7 @@ namespace Teronis.Extensions
                 yield return enumValue4;
         }
 
-        public static ENUM_TYPE[] CrushContainingBitsToArray<ENUM_TYPE>(this ENUM_TYPE enumValue, bool ignoreZero = Library.IgnoreZeroWhenCrushingContainingBits) where ENUM_TYPE : struct, IComparable, IFormattable, IConvertible
+        public static ENUM_TYPE[] CrushContainingBitsToArray<ENUM_TYPE>(this ENUM_TYPE enumValue, bool ignoreZero = TeronisCoreDefaults.IgnoreZeroWhenCrushingContainingBits) where ENUM_TYPE : struct, IComparable, IFormattable, IConvertible
             => CrushContainingBitsToEnumerable(enumValue, ignoreZero).ToArray();
 
         public static ENUM_TYPE CombineEachEnumValue<ENUM_TYPE>() where ENUM_TYPE : struct, IComparable, IFormattable, IConvertible

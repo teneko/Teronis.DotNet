@@ -1,2 +1,9 @@
-mode: ContinuousDeployment
-branches: {}
+branches:
+  master:
+    mode: ContinuousDeployment
+  develop:
+    mode: ContinuousDelivery
+    tag: preview
+ignore:
+  sha: []
+merge-message-formats: {}

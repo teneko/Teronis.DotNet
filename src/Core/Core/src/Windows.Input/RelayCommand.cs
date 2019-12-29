@@ -40,7 +40,9 @@ namespace Teronis.Windows.Input
         ///<summary>
         /// Occurs never and can be ignored if <see cref="canExecutePredicate"/> is null. It could for example reexposes RequerySuggested of the class of CommandManager.
         ///</summary>
+#pragma warning disable 0067
         public virtual event EventHandler CanExecuteChanged;
+#pragma warning restore
 
         ///<summary>
         ///Defines the method to be called when the command is invoked.

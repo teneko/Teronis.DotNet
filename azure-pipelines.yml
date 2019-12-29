@@ -1,0 +1,52 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- master
+- develop
+
+variables:
+  buildConfiguration: 'Release'
+  buildPlatform: 'Any CPU'
+  solution: 'src/**/*.sln'
+  vmImage: 'ubuntu-latest'
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
+  DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    pool:
+      vmImage: $(vmImage)
+    steps:
+    - task: DotNetCoreCli@2
+      displayName: 'Build Packages'
+      inputs:
+        command: 'build'
+        arguments: '--configuration $(buildConfiguration)'
+        projects: '$(solution)'
+    # - task: CopyFiles@2
+    #   displayName: Stage Packages
+    #   inputs:
+    #     Contents: |
+    #       **/*.nupkg
+    #       **/*.snupkg
+    #     TargetFolder: $(Build.ArtifactStagingDirectory)
+    # The last task is a nuget command, nuget push
+    # This will push any .nupkg files to the 'TestFeed' artifact feed
+    # allowPackageConflicts allows us to build the same version and not throw an error when trying to push
+    # instead it just ingores the latest package unless the version changes
+    - task: NuGetCommand@2
+      displayName: 'Publish'
+      inputs:
+        command: 'push'
+        # feedsToUse: 'config'
+        # feedsToUse: 'select'
+        # vstsFeed: 'TestFeed2'
+        packagesToPush: '**/*.nupkg'
+        nuGetFeedType: 'internal'
+        publishVstsFeed: 'Teronis.NetStandard/TestFeed2'
+        # nugetConfigPath: '$(Build.SourcesDirectory)/nuget.config'

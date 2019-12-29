@@ -3,7 +3,6 @@
   <PropertyGroup>
     <RootNamespace>Teronis.Drawing</RootNamespace>
     <Description>Contains tool functions, extensions functions and classes for drawing purposes.</Description>
-    <Version>0.1.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -3,7 +3,6 @@
   <PropertyGroup>
     <RootNamespace>Teronis.Json</RootNamespace>
     <Description>This project contains classes for Json purposes.</Description>
-    <Version>0.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

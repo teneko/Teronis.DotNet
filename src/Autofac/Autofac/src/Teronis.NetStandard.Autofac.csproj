@@ -3,7 +3,6 @@
   <PropertyGroup>
     <RootNamespace>Teronis</RootNamespace>
     <Description>This project contains Autofac relevant code.</Description>
-    <Version>0.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

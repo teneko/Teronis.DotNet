@@ -3,7 +3,6 @@
   <PropertyGroup>
     <RootNamespace>Teronis.EntityFrameworkCore</RootNamespace>
     <Description>This project contains classes for EntityFrameworkCore.</Description>
-    <Version>0.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

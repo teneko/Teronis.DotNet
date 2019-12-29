@@ -16,5 +16,5 @@ variables:
   solution: 'src\Core\Core.sln'
 
 steps:
-- script: dotnet build --configuration $(buildConfiguration)
+- script: dotnet build $(solution) --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'

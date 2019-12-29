@@ -11,7 +11,7 @@ namespace Teronis.Collections.Generic
     public class ParallelDataSources<DataType> : AsyncDataSource<DataType>
     {
         private IEnumerable<IAsyncDataSource<DataType>> asyncDataSources;
-        private CancellationTokenSource asyncDataSourcesCancellationTokenSource;
+        //private CancellationTokenSource asyncDataSourcesCancellationTokenSource;
 
         public ParallelDataSources(IEnumerable<IAsyncDataSource<DataType>> asyncDataSources, ILogger logger = null)
             : base(logger)
@@ -36,8 +36,8 @@ namespace Teronis.Collections.Generic
 
             try
             {
-            entry:
-                cancellationToken.ThrowIfCancellationRequested();
+            //entry:
+            //    cancellationToken.ThrowIfCancellationRequested();
 
 
             }

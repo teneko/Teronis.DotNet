@@ -13,7 +13,7 @@ variables:
   buildConfiguration: 'Release'
   buildPlatform: 'Any CPU'
   # solution: '**/*.sln'
-  solution: 'src\Core\Core.sln'
+  solution: 'src/Core/Core.sln'
 
 steps:
 - script: dotnet build $(solution) --configuration $(buildConfiguration)

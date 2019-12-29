@@ -1,6 +1,6 @@
 ﻿
 
-namespace Teronis.Windows.NetStandard
+namespace Teronis.Windows
 {
     public static class Constants
     {

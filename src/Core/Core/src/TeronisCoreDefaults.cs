@@ -1,8 +1,8 @@
 ﻿
 
-namespace Teronis.Libraries.NetStandard
+namespace Teronis
 {
-    public static class Library
+    public static class TeronisCoreDefaults
     {
         //public const bool DefaultCustomAttributesInherit = true;
         public const bool IgnoreZeroWhenCrushingContainingBits = false;

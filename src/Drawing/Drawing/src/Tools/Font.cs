@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace Teronis.NetStandard.Drawing.Tools
+namespace Teronis.Drawing.Tools
 {
     public static class FontTools
     {

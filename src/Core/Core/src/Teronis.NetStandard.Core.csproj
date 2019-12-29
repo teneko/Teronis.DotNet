@@ -1,16 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>Teronis</RootNamespace>
-    <AssemblyName>Teronis.NetStandard.Core</AssemblyName>
+    <Description>This project contains core utility, core extension and core tool functions, but also core classes that extends known structures.</Description>
+    <Version>0.1.0</Version>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Extensions\Text\**" />
-    <EmbeddedResource Remove="Extensions\Text\**" />
-    <None Remove="Extensions\Text\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core.Localization\src\Teronis.NetStandard.Core.Localization.csproj" />
@@ -30,6 +24,10 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
     <PackageReference Include="System.Interactive.Async" Version="4.0.0" />
     <PackageReference Include="System.Threading.Tasks.Dataflow" Version="4.11.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Libraries\" />
   </ItemGroup>
 
 </Project>

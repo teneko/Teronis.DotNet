@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Teronis.NetStandard.Drawing
+namespace Teronis.Drawing
 {
     [Flags]
     public enum ECancelScanIteration

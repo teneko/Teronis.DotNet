@@ -1,6 +1,6 @@
 ﻿
 
-namespace Teronis.NetStandard.Drawing
+namespace Teronis.Drawing
 {
     public interface ISnapshot
     {

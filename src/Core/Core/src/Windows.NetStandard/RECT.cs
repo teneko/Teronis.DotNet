@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Runtime.InteropServices;
 
-namespace Teronis.Windows.NetStandard
+namespace Teronis.Windows
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct RECT

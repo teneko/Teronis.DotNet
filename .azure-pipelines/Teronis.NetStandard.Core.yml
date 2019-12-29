@@ -17,5 +17,25 @@ variables:
   solution: 'src/Core/Core.sln'
 
 steps:
-- script: dotnet build $(solution) --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
+- task: DotNetCoreCli@2
+  displayName: 'dotnet build'
+  inputs:
+    command: 'build'
+    arguments: '--configuration $(buildConfiguration)'
+    projects: '$(solution)'
+# The last task is a nuget command, nuget push
+# This will push any .nupkg files to the 'TestFeed' artifact feed
+# allowPackageConflicts allows us to build the same version and not throw an error when trying to push
+# instead it just ingores the latest package unless the version changes
+- task: NuGetCommand@2
+  displayName: 'nuget push'
+  inputs:
+    command: 'push'
+    # feedsToUse: 'config'
+    # feedsToUse: 'select'
+    # vstsFeed: 'TestFeed2'
+    packagesToPush: '**/*.nupkg;!**/*.snupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: 'Teronis.NetStandard/TestFeed2'
+    versioningScheme: 'off'
+    # nugetConfigPath: '$(Build.SourcesDirectory)/nuget.config'

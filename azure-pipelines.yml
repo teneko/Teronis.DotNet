@@ -40,6 +40,8 @@ stages:
     # This will push any .nupkg files to the 'TestFeed' artifact feed
     # allowPackageConflicts allows us to build the same version and not throw an error when trying to push
     # instead it just ingores the latest package unless the version changes
+    # - task: NuGetAuthenticate@0
+
     - task: NuGetCommand@2
       displayName: 'Publish'
       inputs:
@@ -47,7 +49,9 @@ stages:
         # feedsToUse: 'config'
         # feedsToUse: 'select'
         # vstsFeed: 'TestFeed2'
+        
         packagesToPush: '**/*.nupkg'
         nuGetFeedType: 'internal'
         publishVstsFeed: 'Teronis.NetStandard/TestFeed2'
+        includeNuGetOrg: true
         # nugetConfigPath: '$(Build.SourcesDirectory)/nuget.config'

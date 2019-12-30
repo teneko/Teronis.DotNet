@@ -2,9 +2,6 @@ mode: ContinuousDeployment
 legacy-semver-padding: 0
 build-metadata-padding: 0
 commits-since-version-source-padding: 0
-branches:
-  develop:
-    tag: dev
 ignore:
   sha: []
 merge-message-formats: {}

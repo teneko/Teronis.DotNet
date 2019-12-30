@@ -1,8 +1,12 @@
 <Project>
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1</TargetFrameworks>
-    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
     <Platforms>AnyCPU;x64;x86</Platforms>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
     <LangVersion>8.0</LangVersion>
     <Authors>Teroneko</Authors>
 	<Company>$(MSBuildProjectName)</Company>
@@ -13,12 +17,16 @@
     <Copyright>Teroneko</Copyright>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <NeutralLanguage>en</NeutralLanguage>
 	<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <!-- GitVersionTask: NuGet does support SemVer 2.0 -->
+    <UseFullSemVerForNuGet>true</UseFullSemVerForNuGet>
   </PropertyGroup>
   
   <ItemGroup>

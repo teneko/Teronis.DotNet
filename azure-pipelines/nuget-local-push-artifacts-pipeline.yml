@@ -1,0 +1,64 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+  branches:
+    include:
+      - master
+      - develop
+      - releases/*
+      - features/*
+      - pull-requests/*
+      - hotfixes/*
+      - support/*
+  tags:
+    exclude:
+      - '*'
+
+variables:
+  - template: shared-variables.yml
+
+jobs:
+  - template: publish-build-artifacts-job.yml
+    parameters:
+      jobName: ${{ variables.publishBuildArtifactsJobName }}
+      vmImage: ${{ variables.vmImage }}
+      publishBuildArtifactsArtifactName: ${{ variables.publishBuildArtifactsArtifactName }}
+
+  - job: PushNugetArtifacts
+    dependsOn: ${{ variables.publishBuildArtifactsJobName }}
+    variables:
+      - name: nugetArguments
+        value: '-ConfigFile $(Build.SourcesDirectory)\nuget.config -Source "nuget.local" -ApiKey optional -SkipDuplicate -Verbosity detailed'
+    displayName: Push NuGet Artifacts (nuget.local)
+    pool:
+      vmImage: ${{ variables.vmImage }}
+    steps:
+      - task: DownloadBuildArtifacts@0
+        displayName: Download NuGet Packages
+        inputs:
+          buildType: current
+          artifactName: '${{ variables.publishBuildArtifactsArtifactName }}'
+          downloadPath: '$(Build.StagingDirectory)'
+      
+      - task: NuGetToolInstaller@1
+
+      - script: nuget push $(Build.StagingDirectory)\${{ variables.publishBuildArtifactsArtifactName }}\**\*.nupkg $(nugetArguments) -NoSymbols
+        env:
+          NUGET_CREDENTIALPROVIDER_SESSIONTOKENCACHE_ENABLED: true
+          VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: '$(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)'
+        displayName: Push NuGet Packages
+
+      - task: PowerShell@2
+        inputs:
+          filePath: '$(Build.SourcesDirectory)\build\push-nuget-packages.ps1'
+          arguments:
+            $(Build.StagingDirectory)\${{ variables.publishBuildArtifactsArtifactName }}\**\*.snupkg
+            -Arguments '$(nugetArguments)'
+            -ContinueOnError 1
+        env:
+          NUGET_CREDENTIALPROVIDER_SESSIONTOKENCACHE_ENABLED: true
+          VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: '$(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)'
+        displayName: Push NuGet Symbol Packages

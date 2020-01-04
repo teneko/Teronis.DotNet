@@ -1,8 +1,10 @@
 parameters:
+  jobName: ''
   vmImage: ''
+  publishBuildArtifactsArtifactName: ''
 
 jobs:
-- job: PublishBuildArtifacts
+- job: ${{ parameters.jobName }}
   displayName: Publish Build Artifacts
   pool:
     vmImage: ${{ parameters.vmImage }}
@@ -30,5 +32,5 @@ jobs:
     displayName: 'Publish Build Artifacts'
     inputs:
       TargetPath: $(Build.ArtifactStagingDirectory)
-      ArtifactName: BuildArtifacts
+      ArtifactName: ${{ parameters.publishBuildArtifactsArtifactName }}
       publishLocation: Container

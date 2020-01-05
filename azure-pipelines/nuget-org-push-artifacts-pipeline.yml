@@ -19,20 +19,24 @@ trigger:
 
 variables:
   - template: shared-variables.yml
-
-# condition: and(succeeded(), contains(variables['Build.SourceVersionMessage'], '+pushNugetOrg'))
+  
 jobs:
   - job: PreventPipelineAbort
     displayName: Prevent Pipeline Abort
+    pool:
+      vmImage: ${{ variables.vmImage }}
     steps:
       - task: PowerShell@2
-        # condition: and(succeeded(), not(contains(variables['Build.SourceVersionMessage'], '+pushNugetOrg')))
-        condition: succeeded()
+        condition: and(succeeded(), not(contains(variables['Build.SourceVersionMessage'], '[push nuget.org]')))
         inputs:
           filePath: '$(Build.SourcesDirectory)\build\vstsabort\abort.ps1'
         env:
           LEXTUDIO_VSTSABORT: true
           SYSTEM_PAT: $(PIPELINE_ABORT_PAT)
+          
+      - powershell: Start-Sleep -Seconds 5
+      - powershell: Write-Host "It does not work"
+          
 
   # - template: publish-build-artifacts-job.yml
   #   parameters:

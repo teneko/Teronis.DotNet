@@ -27,9 +27,38 @@ jobs:
       vmImage: ${{ variables.vmImage }}
       publishBuildArtifactsArtifactName: ${{ variables.publishBuildArtifactsArtifactName }}
 
-  - job: NuGetLocalPushArtifacts
+  #######################
+  - job: PrepareNuGetPush
     dependsOn: ${{ variables.publishBuildArtifactsJobName }}
-    condition: and(succeeded(), not(contains(variables['Build.SourceVersionMessage'], '[skip nuget.local]')))
+    pool:
+      vmImage: ${{ variables.vmImage }}
+    displayName: Prepare Nuget Push
+
+    steps:
+        # [string]$... -> string array to single string
+      - powershell: '[string]$(git log -n 1 --format=%B) | % { Write-Host $_; echo "##vso[task.setvariable variable=commitMessage;isOutput=true]$_" }'
+        displayName: Store Commit Message 
+        name: git
+
+      - powershell: Write-Host $(git.commitMessage)
+        displayName: Display Commit Message
+
+      - powershell: |
+          -not ("$(git.commitMessage)" -match [System.Text.RegularExpressions.Regex]::Escape("[skip nuget.local]")) | 
+            % { Write-Host $_; echo "##vso[task.setvariable variable=doJobNuGetLocalPushArtifacts;isOutput=true]$_" }
+        displayName: Set DoJobNuGetLocalPushArtifacts Variable
+        name: setDoJobNuGetLocalPushArtifacts
+
+      - powershell: |
+          ("$(git.commitMessage)" -match [System.Text.RegularExpressions.Regex]::Escape("[push nuget.org]")) -and (-not ("$(git.commitMessage)" -match [System.Text.RegularExpressions.Regex]::Escape("[skip nuget.org]"))) |
+            % { Write-Host $_; echo "##vso[task.setvariable variable=doJobNuGetOrgPushArtifacts;isOutput=true]$_" }
+        displayName: Set SetDoJobNuGetOrgPushArtifacts Variable
+        name: setDoJobNuGetOrgPushArtifacts
+
+  ##############################
+  - job: NuGetLocalPushArtifacts
+    dependsOn: PrepareNuGetPush
+    condition: and(succeeded(), eq(dependencies.PrepareNuGetPush.outputs['setDoJobNuGetLocalPushArtifacts.doJobNuGetLocalPushArtifacts'], 'TRUE'))
     variables:
       - name: nugetArguments
         value: '-ConfigFile $(Build.SourcesDirectory)\nuget.config -Source "nuget.local" -ApiKey optional -SkipDuplicate -Verbosity detailed'
@@ -64,9 +93,10 @@ jobs:
           VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: '$(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)'
         displayName: Push NuGet Symbol Packages
 
+  ############################
   - job: NuGetOrgPushArtifacts
-    dependsOn: ${{ variables.publishBuildArtifactsJobName }}
-    condition: and(succeeded(), and(contains(variables['Build.SourceVersionMessage'], '[push nuget.org]'), not(contains(variables['Build.SourceVersionMessage'], '[skip nuget.org]'))))
+    dependsOn: PrepareNuGetPush
+    condition: and(succeeded(), eq(dependencies.PrepareNuGetPush.outputs['setDoJobNuGetOrgPushArtifacts.doJobNuGetOrgPushArtifacts'], 'TRUE'))
     variables:
       - name: nugetArguments
         value: '-ConfigFile $(Build.SourcesDirectory)\nuget.config -Source "nuget.org" -SkipDuplicate -Verbosity detailed'

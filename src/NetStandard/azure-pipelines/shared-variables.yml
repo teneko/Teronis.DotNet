@@ -1,0 +1,4 @@
+variables:
+  vmImage: 'windows-latest'
+  publishBuildArtifactsArtifactName: publishBuildArtifacts
+  publishBuildArtifactsJobName: PublishBuildArtifacts

@@ -1,0 +1,36 @@
+parameters:
+  jobName: ''
+  vmImage: ''
+  publishBuildArtifactsArtifactName: ''
+
+jobs:
+- job: ${{ parameters.jobName }}
+  displayName: Publish Build Artifacts
+  pool:
+    vmImage: ${{ parameters.vmImage }}
+  variables:
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
+    DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+    buildConfiguration: 'Release'
+    buildPlatform: 'Any CPU'
+    solution: 'src/**/*.sln'
+  steps:
+  - task: DotNetCoreCli@2
+    displayName: 'Build Artifacts'
+    inputs:
+      command: 'build'
+      arguments: '--configuration $(buildConfiguration)'
+      projects: '$(solution)'
+      
+  - task: CopyFiles@2
+    displayName: 'Copy Build Artifacts'
+    inputs:
+      Contents: $(Build.SourcesDirectory)/src/**/bin/$(buildConfiguration)/*.?(s)nupkg
+      TargetFolder: $(Build.ArtifactStagingDirectory)
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Build Artifacts'
+    inputs:
+      TargetPath: $(Build.ArtifactStagingDirectory)
+      ArtifactName: ${{ parameters.publishBuildArtifactsArtifactName }}
+      publishLocation: Container

@@ -1,7 +1,7 @@
 <Project>
+  <Import Project="$(MSBuildThisFileDirectory)\..\..\Directory.Build.props"/>
+
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1</TargetFrameworks>
   </PropertyGroup>
-
-  <Import Project="$(MSBuildThisFileDirectory)\..\..\Directory.Build.props"/>
 </Project>

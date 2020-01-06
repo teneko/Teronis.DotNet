@@ -1,6 +1,5 @@
 <Project>
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1</TargetFrameworks>
     <Platforms>AnyCPU;x64;x86</Platforms>
     <DebugSymbols>true</DebugSymbols>
 	  <DebugType>portable</DebugType>

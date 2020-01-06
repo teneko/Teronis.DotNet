@@ -50,3 +50,11 @@
     </PackageReference>
   </ItemGroup>
 </Project>
+
+<!-- <Project>
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.1</TargetFrameworks>
+  </PropertyGroup>
+
+  <Import Project="\..\..\Directory.Build.props">
+</Project> -->

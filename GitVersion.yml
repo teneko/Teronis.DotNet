@@ -1,6 +1,9 @@
 mode: ContinuousDeployment
 continuous-delivery-fallback-tag: ''
 next-version: 0.1.0
+branches:
+  develop:
+    increment: Patch
 ignore:
   sha: []
 merge-message-formats: {}

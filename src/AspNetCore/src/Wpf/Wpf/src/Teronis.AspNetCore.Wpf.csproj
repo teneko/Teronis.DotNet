@@ -3,6 +3,7 @@
   <PropertyGroup>
     <UseWPF>true</UseWPF>
     <RootNamespace>Teronis</RootNamespace>
+    <Description>This project contains WPF sources.</Description>
   </PropertyGroup>
 
   <ItemGroup>

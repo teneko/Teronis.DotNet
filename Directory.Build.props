@@ -14,7 +14,7 @@
 	<Company>$(MSBuildProjectName)</Company>
     <Product>$(MSBuildProjectName)</Product>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-    <RepositoryUrl>https://github.com/teroneko/Teronis.NetStandard</RepositoryUrl>
+    <RepositoryUrl>https://github.com/teroneko/Teronis.DotNet</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <Copyright>Teroneko</Copyright>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>

@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\NetStandard\src\Core\Core\src\Teronis.NetStandard.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\..\NetStandard\src\Core\Core\src\Teronis.NetStandard.Core.csproj" />
     <ProjectReference Include="..\..\Wpf.Localization\src\Teronis.AspNetCore.Wpf.Localization.csproj" />
   </ItemGroup>
 

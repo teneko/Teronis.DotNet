@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\teronis-netstandard\Teronis.NetStandard\Teronis.NetStandard.csproj" />
+    <ProjectReference Include="..\..\..\..\..\NetStandard\src\Core\Core\src\Teronis.NetStandard.Core.csproj" />
   </ItemGroup>
 
 </Project>

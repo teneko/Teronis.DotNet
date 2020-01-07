@@ -3,12 +3,13 @@
     <Platforms>AnyCPU;x64;x86</Platforms>
     <DebugSymbols>true</DebugSymbols>
 	  <DebugType>portable</DebugType>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
   
   <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Localization'))">
     <Description>Contains localization resources for assembly $(MSBuildProjectName).</Description>
-	<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <!-- https://docs.microsoft.com/de-de/dotnet/core/tools/csproj#ispackable -->
+	  <IsPackable>False</IsPackable>
   </PropertyGroup>
 
   <PropertyGroup>

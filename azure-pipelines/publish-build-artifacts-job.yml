@@ -18,7 +18,7 @@ jobs:
   - task: DotNetCoreCli@2
     displayName: 'Build Artifacts'
     inputs:
-      command: 'build'
+      command: 'pack'
       arguments: '--configuration $(buildConfiguration)'
       # Reminder: More than one wild card path are supported, see:
       # https://github.com/microsoft/azure-pipelines-tasks/issues/4712#issuecomment-482350127

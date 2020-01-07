@@ -1,5 +1,6 @@
 mode: ContinuousDeployment
 continuous-delivery-fallback-tag: ''
+next-version: 0.1.0
 ignore:
   sha: []
 merge-message-formats: {}

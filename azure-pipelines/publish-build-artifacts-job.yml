@@ -15,6 +15,8 @@ jobs:
     buildPlatform: 'Any CPU'
     solution: 'src/**/*.csproj'
   steps:
+    # When packing the output will be automatically be in 
+    # the artifact staging directory, see packDirectory.
   - task: DotNetCoreCli@2
     displayName: 'Build Artifacts'
     inputs:
@@ -23,12 +25,13 @@ jobs:
       # Reminder: More than one wild card path are supported, see:
       # https://github.com/microsoft/azure-pipelines-tasks/issues/4712#issuecomment-482350127
       projects: '$(solution)'
+      verbosityPack: Normal
       
-  - task: CopyFiles@2
-    displayName: 'Copy Build Artifacts'
-    inputs:
-      Contents: $(Build.SourcesDirectory)/src/**/bin/$(buildConfiguration)/*.?(s)nupkg
-      TargetFolder: $(Build.ArtifactStagingDirectory)
+  # - task: CopyFiles@2
+  #   displayName: 'Copy Build Artifacts'
+  #   inputs:
+  #     Contents: $(Build.SourcesDirectory)/src/**/bin/$(buildConfiguration)/*.?(s)nupkg
+  #     TargetFolder: $(Build.ArtifactStagingDirectory)
 
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Build Artifacts'

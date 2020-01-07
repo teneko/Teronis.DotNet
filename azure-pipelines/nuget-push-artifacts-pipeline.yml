@@ -44,21 +44,24 @@ jobs:
         displayName: Display Commit Message
 
       - powershell: |
-          ("$(git.commitMessage)" -match [System.Text.RegularExpressions.Regex]::Escape("[push nuget.local]")) -and (-not ("$(git.commitMessage)" -match [System.Text.RegularExpressions.Regex]::Escape("[skip nuget.local]"))) | 
-            % { Write-Host $_; echo "##vso[task.setvariable variable=doJobNuGetLocalPushArtifacts;isOutput=true]$_" }
-        displayName: Set DoJobNuGetLocalPushArtifacts Variable
-        name: setDoJobNuGetLocalPushArtifacts
+          ("$(git.commitMessage)" -match [System.Text.RegularExpressions.Regex]::Escape("[push nuget.org]")) -and `
+          (-not ("$(git.commitMessage)" -match [System.Text.RegularExpressions.Regex]::Escape("[skip nuget.org]"))) |
+            % { Write-Host $_; echo "##vso[task.setvariable variable=canPush;isOutput=true]$_" }
+        displayName: Set "nugetOrg.canPush" Variable
+        name: nugetOrg
 
       - powershell: |
-          ("$(git.commitMessage)" -match [System.Text.RegularExpressions.Regex]::Escape("[push nuget.org]")) -and (-not ("$(git.commitMessage)" -match [System.Text.RegularExpressions.Regex]::Escape("[skip nuget.org]"))) |
-            % { Write-Host $_; echo "##vso[task.setvariable variable=doJobNuGetOrgPushArtifacts;isOutput=true]$_" }
-        displayName: Set SetDoJobNuGetOrgPushArtifacts Variable
-        name: setDoJobNuGetOrgPushArtifacts
+          ("$(nugetOrg.canPush)" -eq "TRUE") -or `
+          (("$(git.commitMessage)" -match [System.Text.RegularExpressions.Regex]::Escape("[push nuget.local]")) -and `
+            (-not ("$(git.commitMessage)" -match [System.Text.RegularExpressions.Regex]::Escape("[skip nuget.local]")))) | 
+            % { Write-Host $_; echo "##vso[task.setvariable variable=canPush;isOutput=true]$_" }
+        displayName: Set "nugetLocal.canPush" Variable
+        name: nugetLocal
 
   ##############################
   - job: NuGetLocalPushArtifacts
     dependsOn: PrepareNuGetPush
-    condition: and(succeeded(), eq(dependencies.PrepareNuGetPush.outputs['setDoJobNuGetLocalPushArtifacts.doJobNuGetLocalPushArtifacts'], 'TRUE'))
+    condition: and(succeeded(), eq(dependencies.PrepareNuGetPush.outputs['nugetLocal.canPush'], 'TRUE'))
     variables:
       - name: nugetArguments
         value: '-ConfigFile $(Build.SourcesDirectory)\nuget.config -Source "nuget.local" -ApiKey optional -SkipDuplicate -Verbosity detailed'
@@ -96,7 +99,7 @@ jobs:
   ############################
   - job: NuGetOrgPushArtifacts
     dependsOn: PrepareNuGetPush
-    condition: and(succeeded(), eq(dependencies.PrepareNuGetPush.outputs['setDoJobNuGetOrgPushArtifacts.doJobNuGetOrgPushArtifacts'], 'TRUE'))
+    condition: and(succeeded(), eq(dependencies.PrepareNuGetPush.outputs['nugetOrg.canPush'], 'TRUE'))
     variables:
       - name: nugetArguments
         value: '-ConfigFile $(Build.SourcesDirectory)\nuget.config -Source "nuget.org" -SkipDuplicate -Verbosity detailed'

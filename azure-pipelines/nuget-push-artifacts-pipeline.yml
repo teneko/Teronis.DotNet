@@ -44,7 +44,7 @@ jobs:
         displayName: Display Commit Message
 
       - powershell: |
-          -not ("$(git.commitMessage)" -match [System.Text.RegularExpressions.Regex]::Escape("[skip nuget.local]")) | 
+          ("$(git.commitMessage)" -match [System.Text.RegularExpressions.Regex]::Escape("[push nuget.local]")) -and (-not ("$(git.commitMessage)" -match [System.Text.RegularExpressions.Regex]::Escape("[skip nuget.local]"))) | 
             % { Write-Host $_; echo "##vso[task.setvariable variable=doJobNuGetLocalPushArtifacts;isOutput=true]$_" }
         displayName: Set DoJobNuGetLocalPushArtifacts Variable
         name: setDoJobNuGetLocalPushArtifacts

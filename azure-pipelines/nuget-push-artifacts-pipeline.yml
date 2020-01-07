@@ -19,7 +19,7 @@ trigger:
 
 variables:
   vmImage: 'windows-latest'
-  publishBuildArtifactsArtifactName: publishBuildArtifacts
+  publishBuildArtifactsArtifactName: NuGetPushArtifacts
   publishBuildArtifactsJobName: PublishBuildArtifacts
 
 jobs:

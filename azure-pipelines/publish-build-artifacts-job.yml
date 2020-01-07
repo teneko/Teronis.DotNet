@@ -20,6 +20,8 @@ jobs:
     inputs:
       command: 'build'
       arguments: '--configuration $(buildConfiguration)'
+      # Reminder: More than one wild card path are supported, see:
+      # https://github.com/microsoft/azure-pipelines-tasks/issues/4712#issuecomment-482350127
       projects: '$(solution)'
       
   - task: CopyFiles@2

@@ -18,7 +18,9 @@ trigger:
       - '*'
 
 variables:
-  - template: shared-variables.yml
+  vmImage: 'windows-latest'
+  publishBuildArtifactsArtifactName: publishBuildArtifacts
+  publishBuildArtifactsJobName: PublishBuildArtifacts
 
 jobs:
   - template: publish-build-artifacts-job.yml

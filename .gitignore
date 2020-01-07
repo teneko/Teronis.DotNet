@@ -259,3 +259,11 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+
+# The solution only has the purpose to consolidate packages
+# or build them all triggered by user.
+#
+# Create a blank solution and all projects to it with help
+# of the extension "Add Multiple Projects To Solution"
+# (https://marketplace.visualstudio.com/items?itemName=MaciejGudanowicz.AddMultipleProjectsToSolution)
+Teronis.DotNet.sln

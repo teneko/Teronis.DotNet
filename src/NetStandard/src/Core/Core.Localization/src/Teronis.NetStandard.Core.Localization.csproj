@@ -2,8 +2,6 @@
 
   <PropertyGroup>
     <RootNamespace>Teronis.Localization</RootNamespace>
-    <Description>Contains localization resources for package Teronis.NetStandard.Core.</Description>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

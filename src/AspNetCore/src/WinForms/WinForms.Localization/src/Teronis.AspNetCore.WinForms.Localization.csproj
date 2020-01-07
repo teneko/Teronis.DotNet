@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RootNamespace>Teronis.Wpf.Localization</RootNamespace>
+    <RootNamespace>Teronis.WinForms.Localization</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

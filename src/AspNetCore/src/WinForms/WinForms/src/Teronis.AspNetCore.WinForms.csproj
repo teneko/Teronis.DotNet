@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>Teronis</RootNamespace>
+    <Description>This project contains WPF sources.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Core\Core\src\Teronis.AspNetCore.Core.csproj" />
+    <ProjectReference Include="..\..\WinForms.Localization\src\Teronis.AspNetCore.WinForms.Localization.csproj" PrivateAssets="All" />
+  </ItemGroup>
+</Project>

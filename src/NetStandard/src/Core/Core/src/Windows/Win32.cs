@@ -14,7 +14,7 @@ namespace Teronis.Windows
         public static Point ClientToScreen(IntPtr hWnd, Point point)
         {
             if (!clientToScreen(hWnd, ref point))
-                throw new Exception(Constants.ErrorMessageWhileImportingDll);
+                throw new Exception(WindowsDefaults.ErrorMessageWhileImportingDll);
 
             return point;
         }
@@ -29,7 +29,7 @@ namespace Teronis.Windows
         public static Point ScreenToClient(IntPtr hWnd, Point point)
         {
             if (!screenToClient(hWnd, ref point))
-                throw new Exception(Constants.ErrorMessageWhileImportingDll);
+                throw new Exception(WindowsDefaults.ErrorMessageWhileImportingDll);
 
             return point;
         }

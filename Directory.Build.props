@@ -5,6 +5,11 @@
 	  <DebugType>portable</DebugType>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
+  
+  <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Localization'))">
+    <Description>Contains localization resources for assembly $(MSBuildProjectName).</Description>
+	<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
 
   <PropertyGroup>
     <AssemblyName>$(MSBuildProjectName)</AssemblyName>

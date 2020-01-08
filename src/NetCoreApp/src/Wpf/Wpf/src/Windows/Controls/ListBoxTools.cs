@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Linq;
+using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 
@@ -33,6 +34,23 @@ namespace Teronis.Windows.Controls
             }
 
             return index;
+        }
+
+        /// <summary>
+        /// The list will never be null but empty.
+        /// </summary>
+        public static List<T> GetSelectedItemsAtPosition<T>(ListBox listBox, GetPositionFromInputElementDelegate getPosition)
+        {
+            var selectedItems = new List<T>();
+
+            var itemIndexAtPosition = GetSelectedItemIndexAtPosition(listBox, getPosition);
+
+            // When mouse is over one item that is selected then we can return all selected items.
+            if (itemIndexAtPosition >= 0) {
+                selectedItems.AddRange(listBox.SelectedItems.OfType<T>());
+            }
+
+            return selectedItems;
         }
     }
 }

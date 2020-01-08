@@ -24,7 +24,7 @@ namespace Teronis.Data
 
         public ContentUpdate(ContentType content, object originalUpdateCreationSource, object updateCreationSource)
         {
-            var contentTask = Task.FromResult(Content);
+            var contentTask = Task.FromResult(content);
             setContentTask(contentTask);
             onConstruction(originalUpdateCreationSource, updateCreationSource);
         }
@@ -59,9 +59,9 @@ namespace Teronis.Data
 
         private void setContentTask(Task<ContentType> contentTask)
         {
-            this.contentTask = Task.FromResult(Content);
-            ContentTask = this.contentTask.AsITask();
-            IsContentTaskCompletedInitially = this.contentTask.IsCompleted;
+            ContentTask = contentTask.AsITask();
+            IsContentTaskCompletedInitially = contentTask.IsCompleted;
+            this.contentTask = contentTask;
         }
 
 #region IContentUpdate

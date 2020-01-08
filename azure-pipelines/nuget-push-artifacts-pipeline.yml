@@ -42,21 +42,27 @@ jobs:
         displayName: Store Commit Message 
         name: git
 
-      - powershell: Write-Host $(git.commitMessage)
+      - powershell: Write-Host "$Env:GIT_COMMIT_MESSAGE"
+        env:
+          GIT_COMMIT_MESSAGE: '$(git.commitMessage)'
         displayName: Display Commit Message
 
       - powershell: |
-          ("$(git.commitMessage)" -match [System.Text.RegularExpressions.Regex]::Escape("[push nuget.org]")) -and `
-          (-not ("$(git.commitMessage)" -match [System.Text.RegularExpressions.Regex]::Escape("[skip nuget.org]"))) |
+          ("$Env:GIT_COMMIT_MESSAGE" -match [System.Text.RegularExpressions.Regex]::Escape("[push nuget.org]")) -and `
+          (-not ("$Env:GIT_COMMIT_MESSAGE" -match [System.Text.RegularExpressions.Regex]::Escape("[skip nuget.org]"))) |
             % { Write-Host $_; echo "##vso[task.setvariable variable=canPush;isOutput=true]$_" }
+        env:
+          GIT_COMMIT_MESSAGE: '$(git.commitMessage)'
         displayName: Set "nugetOrg.canPush" Variable
         name: nugetOrg
 
       - powershell: |
           ("$(nugetOrg.canPush)" -eq "TRUE") -or `
-          (("$(git.commitMessage)" -match [System.Text.RegularExpressions.Regex]::Escape("[push nuget.local]")) -and `
-            (-not ("$(git.commitMessage)" -match [System.Text.RegularExpressions.Regex]::Escape("[skip nuget.local]")))) | 
+          (("$Env:GIT_COMMIT_MESSAGE" -match [System.Text.RegularExpressions.Regex]::Escape("[push nuget.local]")) -and `
+            (-not ("$Env:GIT_COMMIT_MESSAGE" -match [System.Text.RegularExpressions.Regex]::Escape("[skip nuget.local]")))) | 
             % { Write-Host $_; echo "##vso[task.setvariable variable=canPush;isOutput=true]$_" }
+        env:
+          GIT_COMMIT_MESSAGE: '$(git.commitMessage)'
         displayName: Set "nugetLocal.canPush" Variable
         name: nugetLocal
 

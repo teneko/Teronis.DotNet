@@ -2,6 +2,6 @@
   <Import Project="$(MSBuildThisFileDirectory)\..\..\Directory.Build.props"/>
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 </Project>

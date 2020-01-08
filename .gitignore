@@ -267,3 +267,5 @@ __pycache__/
 # of the extension "Add Multiple Projects To Solution"
 # (https://marketplace.visualstudio.com/items?itemName=MaciejGudanowicz.AddMultipleProjectsToSolution)
 Teronis.DotNet.sln
+Teronis.NetCoreApp.sln
+Teronis.NetStandard.sln

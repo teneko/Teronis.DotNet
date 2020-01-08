@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Threading.Tasks;
 
-namespace Teronis.EntityFrameworkCore
+namespace Teronis.EntityFrameworkCore.Data
 {
     public class DbUnitOfWork : IDbUnitOfWork
     {
@@ -47,8 +47,7 @@ namespace Teronis.EntityFrameworkCore
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!IsDisposed)
-            {
+            if (!IsDisposed) {
                 if (disposing)
                     DbContext.Dispose();
 

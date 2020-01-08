@@ -11,7 +11,7 @@ namespace Teronis.Data
 
         public ContentType Content
             => IsContentTaskCompleted
-                ? (contentTask.IsCompletedSuccessfully
+                ? (contentTask.Status == TaskStatus.RanToCompletion
                     ? contentTask.Result
                     : throw contentTask.Exception)
                 : throw new InvalidOperationException("You cannot get the result before it has not been computed");

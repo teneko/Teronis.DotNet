@@ -3,7 +3,7 @@ using System;
 using Teronis.Data;
 using Teronis.DependencyInjection;
 
-namespace Teronis.EntityFrameworkCore
+namespace Teronis.EntityFrameworkCore.Data
 {
     public class DbRepositoryUnitOfWork : DbUnitOfWork, IDbRepositoryUnitOfWork
     {

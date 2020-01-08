@@ -5,7 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Teronis.Data;
 
-namespace Teronis.EntityFrameworkCore
+namespace Teronis.EntityFrameworkCore.Data
 {
     public class DbRepository<EntityType> : IRepository<EntityType>
         where EntityType : class
@@ -24,7 +24,8 @@ namespace Teronis.EntityFrameworkCore
         private IQueryable<EntityType> queryAsNoTracking()
             => DbSet.AsNoTracking();
 
-        public virtual EntityType Find(params object[] keyValues) {
+        public virtual EntityType Find(params object[] keyValues)
+        {
             var entity = DbSet.Find(keyValues);
             //var entry = DbContext.Entry(entity);
 
@@ -58,7 +59,8 @@ namespace Teronis.EntityFrameworkCore
         public virtual void AddRange(params EntityType[] entities)
             => DbSet.AddRange(entities);
 
-        private void attachEntity(EntityType entity) {
+        private void attachEntity(EntityType entity)
+        {
             if (DbContext.Entry(entity).State == EntityState.Detached)
                 DbSet.Attach(entity);
         }
@@ -70,7 +72,7 @@ namespace Teronis.EntityFrameworkCore
         }
 
         public virtual void RemoveRange(params EntityType[] entities)
-        { 
+        {
             foreach (var entity in entities)
                 attachEntity(entity);
 

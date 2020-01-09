@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\DialogWindow.xaml.cs">
+    <Compile Update="Windows\Controls\DialogWindow.xaml.cs">
       <DependentUpon>DialogWindow.xaml</DependentUpon>
     </Compile>
     <Compile Update="Windows\Controls\BusyAnimationUserControl.xaml.cs">

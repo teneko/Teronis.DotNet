@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using Teronis.Windows.Media;
 
 namespace Teronis.Windows.Controls
 {
@@ -26,7 +27,7 @@ namespace Teronis.Windows.Controls
 
                     var listViewItem = getListViewItem(listBox, i);
 
-                    if (VisualTools.IsMouseOverTarget(listViewItem, getPosition)) {
+                    if (VisualTreeHelperTools.IsMouseOverTarget(listViewItem, getPosition)) {
                         index = i;
                         break;
                     }

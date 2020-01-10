@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <DisableGitVersionTaskAutoInstall>true</DisableGitVersionTaskAutoInstall>
+    <DisableProjectBuildInPackageProjectsImports>true</DisableProjectBuildInPackageProjectsImports>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TeronisPackagingProjectBuildInPackageOutDir>$(MSBuildProjectDirectory)\bin</TeronisPackagingProjectBuildInPackageOutDir>
+    <RestoreSources>$(RestoreSources);$(TeronisPackagingProjectBuildInPackageOutDir)</RestoreSources>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Test.Localization\Test.Localization.csproj" PrivateAssets="All" />
+  </ItemGroup>
+
+  <Target Name="PrepareNupkg" BeforeTargets="CollectPackageReferences;Restore;CoreBuild">
+    <ItemGroup>
+      <_DependencyFile Include="$(TeronisPackagingProjectBuildInPackageOutDir)\*"></_DependencyFile>
+    </ItemGroup>
+
+    <Delete Files="@(_DependencyFile)" />
+    <MSBuild Projects="..\..\src\Teronis.Packaging.ProjectBuildInPackage.csproj" Targets="pack" Properties="OutputPath=$(TeronisPackagingProjectBuildInPackageOutDir)\" />
+
+    <ItemGroup>
+      <_NupkgFile Remove="**\*" Condition="'@(_NupkgFile)' != ''" />
+      <_NupkgFile Include="$(TeronisPackagingProjectBuildInPackageOutDir)\*.*.*-*.nupkg" />
+    </ItemGroup>
+
+    <Message Text="@(_NupkgFile->Count())" Importance="High" />
+
+    <ItemGroup>
+      <PackageReference Remove="Teronis.Packaging.ProjectBuildInPackage" />
+      <PackageReference Include="Teronis.Packaging.ProjectBuildInPackage" Condition="@(_NupkgFile->Count()) == 1" Version="-*" />
+      <PackageReference Include="Teronis.Packaging.ProjectBuildInPackage" Condition="@(_NupkgFile->Count()) != 1" Version="*" />
+      <!--<PackageReference Include="Teronis.Packaging.ProjectBuildInPackage">
+        <Version>-*</Version>
+        <Version Condition="@(_NupkgFile->Count()) == 1">-*</Version>
+        <Version Condition="@(_NupkgFile->Count()) != 1">*</Version>
+      </PackageReference>-->
+    </ItemGroup>
+  </Target>
+
+  <!--<ItemGroup>
+    <PackageReference Include="Teronis.Packaging.ProjectBuildInPackage">
+      <Version Condition="@(_NupkgFile->Count()) == 1">-*</Version>
+      <Version Condition="@(_NupkgFile->Count()) != 1">*</Version>
+    </PackageReference>
+  </ItemGroup>-->
+
+</Project>

@@ -1,11 +1,29 @@
 <Project>
-  <Import Project="$(MSBuildThisFileDirectory)\src\Packaging\ProjectReferenceBuildOutputInPackage\ProjectReferenceBuildOutputInPackage\src\build\Teronis.Packaging.ProjectReferenceBuildOutputInPackage.props" />
+  <Import Project="$(MSBuildThisFileDirectory)\src\Packaging\ProjectBuildInPackage\src\build\Teronis.Packaging.ProjectBuildInPackage.props" />
 
   <PropertyGroup>
     <Platforms>AnyCPU;x64;x86</Platforms>
     <DebugSymbols>true</DebugSymbols>
 	  <DebugType>portable</DebugType>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+    <LangVersion>8.0</LangVersion>
+    <Authors>Teroneko</Authors>
+	  <Company>$(MSBuildProjectName)</Company>
+    <Product>$(MSBuildProjectName)</Product>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <RepositoryUrl>https://github.com/teroneko/Teronis.DotNet</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Copyright>Teroneko</Copyright>
+    <PackageIcon>icon.png</PackageIcon>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <NeutralLanguage>en</NeutralLanguage>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
   
   <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Localization'))">
@@ -21,27 +39,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
-    <LangVersion>8.0</LangVersion>
-    <Authors>Teroneko</Authors>
-	  <Company>$(MSBuildProjectName)</Company>
-    <Product>$(MSBuildProjectName)</Product>
-    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-    <RepositoryUrl>https://github.com/teroneko/Teronis.DotNet</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <Copyright>Teroneko</Copyright>
-    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-    <PackageIcon>icon.png</PackageIcon>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <NeutralLanguage>en</NeutralLanguage>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <DisableBuildOutputInPackageProjectsImports>false</DisableBuildOutputInPackageProjectsImports>
     <DisableGitVersionTaskAutoInstall>false</DisableGitVersionTaskAutoInstall>
+    <DisableProjectBuildInPackageProjectsImports>false</DisableProjectBuildInPackageProjectsImports>
   </PropertyGroup>
   
   <PropertyGroup>

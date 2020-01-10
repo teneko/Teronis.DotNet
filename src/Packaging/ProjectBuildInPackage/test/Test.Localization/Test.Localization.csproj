@@ -6,7 +6,7 @@
 
   <PropertyGroup>
     <DisableGitVersionTaskAutoInstall>true</DisableGitVersionTaskAutoInstall>
-    <DisableBuildOutputInPackageProjectsImports>true</DisableBuildOutputInPackageProjectsImports>
+    <DisableProjectBuildInPackageProjectsImports>true</DisableProjectBuildInPackageProjectsImports>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,5 +1,10 @@
 <Project>
-    <Import Project="$(MSBuildThisFileDirectory)\src\Packaging\ProjectReferenceBuildOutputInPackage\ProjectReferenceBuildOutputInPackage\src\build\Teronis.Packaging.ProjectReferenceBuildOutputInPackage.targets" />
+    <PropertyGroup>
+        <ImportPath Condition="'$(DisableProjectBuildInPackageProjectsImports)' != 'true'">$(MSBuildThisFileDirectory)\src\Packaging\ProjectBuildInPackage\src\build\Teronis.Packaging.ProjectBuildInPackage.targets</ImportPath>
+    </PropertyGroup>
+
+    <Target Name="CopyProjectReferencesToPackage" Condition="'$(ImportPath)' == ''"/>
+    <Import Project="$(ImportPath)" Condition="'$(ImportPath)' != ''"/>
 
     <ItemGroup Condition="'$(DisableGitVersionTaskAutoInstall)' != 'true'">
         <PackageReference Include="GitVersionTask" Version="5.1.3">

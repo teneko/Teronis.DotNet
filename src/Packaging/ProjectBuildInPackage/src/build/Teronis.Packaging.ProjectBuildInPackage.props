@@ -2,6 +2,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
-    <DisableReferenceBuildOutputInPackage>False</DisableReferenceBuildOutputInPackage>
+    <DisableReferenceBuildOutputInPackage>false</DisableReferenceBuildOutputInPackage>
   </PropertyGroup>
 </Project>

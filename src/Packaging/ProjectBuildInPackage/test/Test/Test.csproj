@@ -1,51 +1,55 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <DisableGitVersionTaskAutoInstall>true</DisableGitVersionTaskAutoInstall>
-    <DisableProjectBuildInPackageProjectsImports>true</DisableProjectBuildInPackageProjectsImports>
-  </PropertyGroup>
+  <UsingTask TaskName="GetFirstItem" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v12.0.dll">
+    <ParameterGroup>
+      <Items ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+      <FirstItem ParameterType="System.String" Output="true" Required="false" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.Linq" />
+      <Code Type="Fragment" Language="cs">FirstItem = Items.First().ItemSpec;</Code>
+    </Task>
+  </UsingTask>
 
   <PropertyGroup>
-    <TeronisPackagingProjectBuildInPackageOutDir>$(MSBuildProjectDirectory)\bin</TeronisPackagingProjectBuildInPackageOutDir>
-    <RestoreSources>$(RestoreSources);$(TeronisPackagingProjectBuildInPackageOutDir)</RestoreSources>
+    <ProjectBuildInPackageProjectId>Teronis.Packaging.ProjectBuildInPackage</ProjectBuildInPackageProjectId>
+    
+    <ProjectBuildInPackageProjectPath>$(MSBuildThisFileDirectory)..\..\src\bin\$(Configuration)</ProjectBuildInPackageProjectPath>
+    <ProjectBuildInPackageProjectPath>$([System.IO.Path]::GetFullPath('$(ProjectBuildInPackageProjectPath)'))</ProjectBuildInPackageProjectPath>
+    
+    <RestoreSources>$(ProjectBuildInPackageProjectPath)</RestoreSources>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Test.Localization\Test.Localization.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\Test.Localization\Test.Localization.csproj" PrivateAssets="all" />
   </ItemGroup>
 
-  <Target Name="PrepareNupkg" BeforeTargets="CollectPackageReferences;Restore;CoreBuild">
-    <ItemGroup>
-      <_DependencyFile Include="$(TeronisPackagingProjectBuildInPackageOutDir)\*"></_DependencyFile>
-    </ItemGroup>
+  <Target Name="dfdhgfhewr" BeforeTargets="CollectPackageReferences">
 
-    <Delete Files="@(_DependencyFile)" />
-    <MSBuild Projects="..\..\src\Teronis.Packaging.ProjectBuildInPackage.csproj" Targets="pack" Properties="OutputPath=$(TeronisPackagingProjectBuildInPackageOutDir)\" />
+    <Message Text="[$(MSBuildThisFileName)] Try to find package $(ProjectBuildInPackageProjectId) in $(ProjectBuildInPackageProjectPath)" Importance="high" />
 
     <ItemGroup>
-      <_NupkgFile Remove="**\*" Condition="'@(_NupkgFile)' != ''" />
-      <_NupkgFile Include="$(TeronisPackagingProjectBuildInPackageOutDir)\*.*.*-*.nupkg" />
+      <_ReleaseFiles Include="$(ProjectBuildInPackageProjectPath)\*.nupkg" />
     </ItemGroup>
 
-    <Message Text="@(_NupkgFile->Count())" Importance="High" />
+    <Message Text="[$(MSBuildThisFileName)]  - found .nupkg: %(_ReleaseFiles.Identity)" Importance="high" />
+
+    <GetFirstItem Items="%(_ReleaseFiles.Filename)">
+      <Output TaskParameter="FirstItem" PropertyName="_ReleaseFile" />
+    </GetFirstItem>
+
+    <PropertyGroup>
+      <ProjectBuildInPackageProjectVersion>$(_ReleaseFile.Replace($(ProjectBuildInPackageProjectId).,''))</ProjectBuildInPackageProjectVersion>
+    </PropertyGroup>
+
+    <Message Text="[$(MSBuildThisFileName)]  - evaluated version: $(ProjectBuildInPackageProjectVersion)" Importance="high" />
 
     <ItemGroup>
-      <PackageReference Remove="Teronis.Packaging.ProjectBuildInPackage" />
-      <PackageReference Include="Teronis.Packaging.ProjectBuildInPackage" Condition="@(_NupkgFile->Count()) == 1" Version="-*" />
-      <PackageReference Include="Teronis.Packaging.ProjectBuildInPackage" Condition="@(_NupkgFile->Count()) != 1" Version="*" />
-      <!--<PackageReference Include="Teronis.Packaging.ProjectBuildInPackage">
-        <Version>-*</Version>
-        <Version Condition="@(_NupkgFile->Count()) == 1">-*</Version>
-        <Version Condition="@(_NupkgFile->Count()) != 1">*</Version>
-      </PackageReference>-->
+      <PackageReference Include="$(ProjectBuildInPackageProjectId)" Version="$(ProjectBuildInPackageProjectVersion)" />
     </ItemGroup>
+
+    <Message Text="[$(MSBuildThisFileName)]  - added package reference $(ProjectBuildInPackageProjectId) ($(ProjectBuildInPackageProjectVersion))" Importance="high" />
+
   </Target>
-
-  <!--<ItemGroup>
-    <PackageReference Include="Teronis.Packaging.ProjectBuildInPackage">
-      <Version Condition="@(_NupkgFile->Count()) == 1">-*</Version>
-      <Version Condition="@(_NupkgFile->Count()) != 1">*</Version>
-    </PackageReference>
-  </ItemGroup>-->
 
 </Project>

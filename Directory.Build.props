@@ -1,16 +1,24 @@
-<Project>
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- TODO: Conditional imports (here) or explicit import in other projects -->
+  <Import Project="$(MSBuildThisFileDirectory)\.msbuild-projects\Directory.Core.props" />
   <Import Project="$(MSBuildThisFileDirectory)\src\Packaging\ProjectBuildInPackage\src\build\Teronis.Packaging.ProjectBuildInPackage.props" />
 
   <PropertyGroup>
-    <Platforms>AnyCPU;x64;x86</Platforms>
-    <DebugSymbols>true</DebugSymbols>
-	  <DebugType>portable</DebugType>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <DisableGitVersionTaskAutoInstall>false</DisableGitVersionTaskAutoInstall>
+    <ProjectBuildInPackageVerbosity>detailed</ProjectBuildInPackageVerbosity>
   </PropertyGroup>
 
   <PropertyGroup>
     <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+    <Platforms>AnyCPU;x64;x86</Platforms>
+    <DebugSymbols>true</DebugSymbols>
+	  <DebugType>portable</DebugType>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <Authors>Teroneko</Authors>
 	  <Company>$(MSBuildProjectName)</Company>
     <Product>$(MSBuildProjectName)</Product>
@@ -22,7 +30,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <NeutralLanguage>en</NeutralLanguage>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb;.props;.targets</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
   
@@ -36,11 +44,6 @@
     <Description>Contains test cases for assembly $(MSBuildProjectName.Replace('.Test','').</Description>
     <!-- https://docs.microsoft.com/de-de/dotnet/core/tools/csproj#ispackable -->
 	  <IsPackable>False</IsPackable>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <DisableGitVersionTaskAutoInstall>false</DisableGitVersionTaskAutoInstall>
-    <DisableProjectBuildInPackageProjectsImports>false</DisableProjectBuildInPackageProjectsImports>
   </PropertyGroup>
   
   <PropertyGroup>
@@ -59,4 +62,5 @@
       <PackagePath></PackagePath>
     </None>
   </ItemGroup>
+  
 </Project>

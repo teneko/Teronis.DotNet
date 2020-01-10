@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\NetStandard\src\Core\Core\src\Teronis.NetStandard.Core.csproj" />
-    <ProjectReference Include="..\..\Wpf.Localization\src\Teronis.NetCoreApp.Wpf.Localization.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\..\Wpf.Localization\src\Teronis.NetCoreApp.Wpf.Localization.csproj" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

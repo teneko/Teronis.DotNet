@@ -1,15 +1,31 @@
-<Project>
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- <PropertyGroup>
+    <ImportPath Condition="'$(DisableProjectBuildInPackageProjectsImports)' != 'true'">$(MSBuildThisFileDirectory)\src\Packaging\ProjectBuildInPackage\src\build\Teronis.Packaging.ProjectBuildInPackage.targets</ImportPath>
+  </PropertyGroup> -->
+
+  <!-- <Import Condition="'$(DisableProjectBuildInPackageProjectsImports)' != 'true'" Project="$(MSBuildThisFileDirectory)\src\Packaging\ProjectBuildInPackage\src\build\Teronis.Packaging.ProjectBuildInPackage.targets" /> -->
+  <Import Project="$(MSBuildThisFileDirectory)\src\Packaging\ProjectBuildInPackage\src\build\Teronis.Packaging.ProjectBuildInPackage.targets" />
+
+  <!-- <Target Name="CopyProjectReferencesToPackage" Condition="'$(ImportPath)' == ''" /> -->
+  <!-- <Import Project="$(ImportPath)" Condition="'$(ImportPath)' != ''" /> -->
+
+  <ItemGroup Condition="'$(DisableGitVersionTaskAutoInstall)' != 'true'">
+    <PackageReference Include="GitVersionTask" Version="$(GitVersionTaskVersion)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!-- <Target Name="SetNuspecProperties" BeforeTargets="GenerateNuspec">
     <PropertyGroup>
-        <ImportPath Condition="'$(DisableProjectBuildInPackageProjectsImports)' != 'true'">$(MSBuildThisFileDirectory)\src\Packaging\ProjectBuildInPackage\src\build\Teronis.Packaging.ProjectBuildInPackage.targets</ImportPath>
+      <NuspecProperties>$(NuspecProperties);id=$(AssemblyName)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);config=$(Configuration)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);version=$(PackageVersion)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);description=$(Description)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);authors=$(Authors)</NuspecProperties>
     </PropertyGroup>
 
-    <Target Name="CopyProjectReferencesToPackage" Condition="'$(ImportPath)' == ''"/>
-    <Import Project="$(ImportPath)" Condition="'$(ImportPath)' != ''"/>
-
-    <ItemGroup Condition="'$(DisableGitVersionTaskAutoInstall)' != 'true'">
-        <PackageReference Include="GitVersionTask" Version="5.1.3">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
+    <Message Importance="high" Text="NuspecProperties: $(NuspecProperties)" />
+  </Target> -->
 </Project>

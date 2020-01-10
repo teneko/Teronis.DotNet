@@ -1,15 +1,46 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="BuildOnlySettings;ResolveReferences">
-        <ItemGroup>
-            <!-- Filter out unnecessary files -->
-            <_ReferenceCopyLocalPaths Include="@(ReferenceCopyLocalPaths->WithMetadataValue('ReferenceSourceTarget', 'ProjectReference')->WithMetadataValue('PrivateAssets', 'All'))"/>
-        </ItemGroup>
-        <!-- Print batches for debug purposes -->
-        <Message Text="Batch for .nupkg: ReferenceCopyLocalPaths = @(_ReferenceCopyLocalPaths), ReferenceCopyLocalPaths.DestinationSubDirectory = %(_ReferenceCopyLocalPaths.DestinationSubDirectory) Filename = %(_ReferenceCopyLocalPaths.Filename) Extension = %(_ReferenceCopyLocalPaths.Extension)" Importance="High" Condition="'@(_ReferenceCopyLocalPaths)' != ''" />
-        <ItemGroup>
-            <!-- Add file to package with consideration of sub folder. If empty, the root folder is chosen. -->
-            <BuildOutputInPackage Include="@(_ReferenceCopyLocalPaths)" TargetPath="%(_ReferenceCopyLocalPaths.DestinationSubDirectory)"/>
-        </ItemGroup>
-    </Target>
+<?xml version="1.0" encoding="utf-8" ?>
+<Project InitialTargets="ApplyProjectBuildInPackageTargetsForTfmSpecificBuildOutput" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="ApplyProjectBuildInPackageTargetsForTfmSpecificBuildOutput">
+
+    <ItemGroup>
+      <_ProjectBuildInPackageTargetsForTfmSpecificBuildOutput Include="$(ProjectBuildInPackageTargetsForTfmSpecificBuildOutput.Split(';'))" />
+    </ItemGroup>
+
+     <PropertyGroup>
+      <TargetsForTfmSpecificBuildOutput Condition="'%(_ProjectBuildInPackageTargetsForTfmSpecificBuildOutput.Identity)' != '' And !$(TargetsForTfmSpecificBuildOutput.Contains('%(_ProjectBuildInPackageTargetsForTfmSpecificBuildOutput.Identity)'))">$(TargetsForTfmSpecificBuildOutput);%(_ProjectBuildInPackageTargetsForTfmSpecificBuildOutput.Identity)</TargetsForTfmSpecificBuildOutput>
+    </PropertyGroup>
+
+  </Target>
+
+  <Target Name="CopyProjectBuildInPackage" DependsOnTargets="BuildOnlySettings;ResolveReferences">
+
+    <PropertyGroup>
+      <IsVerbosityDetailed>false</IsVerbosityDetailed>
+      <IsVerbosityDetailed Condition="'$(ProjectBuildInPackageVerbosity)' == 'detailed' Or '$(ProjectBuildInPackageVerbosity)' == 'd'">true</IsVerbosityDetailed>
+
+      <IsVerbosityNormal>false</IsVerbosityNormal>
+      <IsVerbosityNormal Condition="'$(IsVerbosityDetailed)' == 'true' Or '$(ProjectBuildInPackageVerbosity)' == 'normal' Or '$(ProjectBuildInPackageVerbosity)' == 'n'">true</IsVerbosityNormal>
+    </PropertyGroup>
+
+    <Message Condition="'$(NoProjectBuildInPackageWelcome)' != 'true'" Text="[$(MSBuildThisFileName)] Thanks for using my package &lt;3" Importance="high" />
+
+    <ItemGroup>
+      <!-- Filter out unnecessary files -->
+      <_ReferenceCopyLocalPaths Include="@(ReferenceCopyLocalPaths->WithMetadataValue('ReferenceSourceTarget', 'ProjectReference')->WithMetadataValue('PrivateAssets', 'all'))" />
+    </ItemGroup>
+
+    <!-- Print batches for debug purposes -->
+    <Message Condition="'$(IsVerbosityDetailed)' == 'true' And '@(_ReferenceCopyLocalPaths)' != ''" Text="[$(MSBuildThisFileName)] Copy $([MSBuild]::MakeRelative('$(MSBuildProjectDirectory)','%(_ReferenceCopyLocalPaths.FullPath)')) (local) to .\%(_ReferenceCopyLocalPaths.DestinationSubDirectory) (package)" Importance="high" />
+    <Message Condition="'$(IsVerbosityNormal)' == 'true' And '@(_ReferenceCopyLocalPaths)' != ''" Text="[$(MSBuildThisFileName)] @(_ReferenceCopyLocalPaths->Count()) local files have been copied to package" Importance="high" />
+
+    <Message Condition="'$(IsVerbosityDetailed)' == 'true' And '@(_ReferenceCopyLocalPaths)' == ''" Text="[$(MSBuildThisFileName)] There are no copy operations. You need to specify PrivateAssets=&quot;all&quot; to to those projects which build output you want to to have copied to the package." Importance="high" />
+
+    <ItemGroup>
+      <!-- Add file to package with consideration of sub folder. If empty, the root folder is chosen. -->
+      <BuildOutputInPackage Include="@(_ReferenceCopyLocalPaths)" TargetPath="%(_ReferenceCopyLocalPaths.DestinationSubDirectory)" />
+    </ItemGroup>
+
+  </Target>
+
 </Project>

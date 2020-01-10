@@ -8,6 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Core\Core\src\Teronis.NetCoreApp.Core.csproj" />
-    <ProjectReference Include="..\..\WinForms.Localization\src\Teronis.NetCoreApp.WinForms.Localization.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\..\WinForms.Localization\src\Teronis.NetCoreApp.WinForms.Localization.csproj" PrivateAssets="all" />
   </ItemGroup>
 </Project>

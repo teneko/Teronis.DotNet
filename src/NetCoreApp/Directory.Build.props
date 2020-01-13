@@ -1,7 +1,11 @@
-<Project>
-  <Import Project="$(MSBuildThisFileDirectory)\..\..\Directory.Build.props"/>
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="$([MSBuild]::GetPathOfFileAbove(.msbuild))" />
+  <Import Project="$(RootBuildPropsPath)" />
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
+  
 </Project>

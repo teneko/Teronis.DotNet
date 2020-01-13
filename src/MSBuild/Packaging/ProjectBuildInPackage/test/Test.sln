@@ -1,9 +1,9 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Packaging.ProjectBuildInPackage", "..\src\Teronis.Packaging.ProjectBuildInPackage.csproj", "{1CC70895-D9CE-4C2D-8299-22FB8BAB83FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.MSBuild.Packaging.ProjectBuildInPackage", "..\src\Teronis.MSBuild.Packaging.ProjectBuildInPackage.csproj", "{1CC70895-D9CE-4C2D-8299-22FB8BAB83FC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Localization", "Test.Localization\Test.Localization.csproj", "{E4EF3BE6-5ED4-492E-8EBB-6E0EB70581AA}"
 EndProject

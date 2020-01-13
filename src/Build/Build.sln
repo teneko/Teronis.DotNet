@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
+MinimumVisualStudioVersion = 15.0.26124.0
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.DotNet.Build", "src\Build\Teronis.DotNet.Build.csproj", "{C70BAF7C-09CE-4915-9973-3215161F176B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Core", "..\NetStandard\src\Core\Core\src\Teronis.NetStandard.Core.csproj", "{C7D4259F-876D-4E9A-9E05-39F7E960095E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C70BAF7C-09CE-4915-9973-3215161F176B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C70BAF7C-09CE-4915-9973-3215161F176B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C70BAF7C-09CE-4915-9973-3215161F176B}.Debug|x64.ActiveCfg = Debug|x64
+		{C70BAF7C-09CE-4915-9973-3215161F176B}.Debug|x64.Build.0 = Debug|x64
+		{C70BAF7C-09CE-4915-9973-3215161F176B}.Debug|x86.ActiveCfg = Debug|x86
+		{C70BAF7C-09CE-4915-9973-3215161F176B}.Debug|x86.Build.0 = Debug|x86
+		{C70BAF7C-09CE-4915-9973-3215161F176B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C70BAF7C-09CE-4915-9973-3215161F176B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C70BAF7C-09CE-4915-9973-3215161F176B}.Release|x64.ActiveCfg = Release|x64
+		{C70BAF7C-09CE-4915-9973-3215161F176B}.Release|x64.Build.0 = Release|x64
+		{C70BAF7C-09CE-4915-9973-3215161F176B}.Release|x86.ActiveCfg = Release|x86
+		{C70BAF7C-09CE-4915-9973-3215161F176B}.Release|x86.Build.0 = Release|x86
+		{C7D4259F-876D-4E9A-9E05-39F7E960095E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7D4259F-876D-4E9A-9E05-39F7E960095E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7D4259F-876D-4E9A-9E05-39F7E960095E}.Debug|x64.ActiveCfg = Debug|x64
+		{C7D4259F-876D-4E9A-9E05-39F7E960095E}.Debug|x64.Build.0 = Debug|x64
+		{C7D4259F-876D-4E9A-9E05-39F7E960095E}.Debug|x86.ActiveCfg = Debug|x86
+		{C7D4259F-876D-4E9A-9E05-39F7E960095E}.Debug|x86.Build.0 = Debug|x86
+		{C7D4259F-876D-4E9A-9E05-39F7E960095E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7D4259F-876D-4E9A-9E05-39F7E960095E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7D4259F-876D-4E9A-9E05-39F7E960095E}.Release|x64.ActiveCfg = Release|x64
+		{C7D4259F-876D-4E9A-9E05-39F7E960095E}.Release|x64.Build.0 = Release|x64
+		{C7D4259F-876D-4E9A-9E05-39F7E960095E}.Release|x86.ActiveCfg = Release|x86
+		{C7D4259F-876D-4E9A-9E05-39F7E960095E}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AE9671AE-8F6B-4E3C-827E-747821DF6395}
+	EndGlobalSection
+EndGlobal

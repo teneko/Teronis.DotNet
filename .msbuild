@@ -1,1 +1,18 @@
-Just a marker file for MSBuild function [MSBuild]::GetPathOfFileAbove
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <IsRootMarkerFileImported>true</IsRootMarkerFileImported>
+    <!-- / (root) -->
+    <!-- <RootDirectory Condition="'$(RootDirectory)' == ''">$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory),.msbuild))</RootDirectory> -->
+    <RootDirectory Condition="'$(RootDirectory)' == ''">$(MSBuildThisFileDirectory)</RootDirectory>
+    <RootBuildPropsPath Condition="'$(RootBuildPropsPath)' == ''">$(RootDirectory)\Directory.Build.props</RootBuildPropsPath>
+    <RootBuildTargetsPath Condition="'$(RootBuildTargetsPath)' == ''">$(RootDirectory)\Directory.Build.targets</RootBuildTargetsPath>
+    <!-- /.msbuild-projects/ -->
+    <RootCorePropsPath Condition="'$(RootCorePropsPath)' == ''">$(RootDirectory)\.msbuild-projects\Directory.Core.props</RootCorePropsPath>
+    <!-- /** (others) -->
+    <TeronisMSBuildPackagingProjectBuildInPackagePropsPath Condition="'$(TeronisMSBuildPackagingProjectBuildInPackagePropsPath)' != 'true'">$(RootDirectory)\src\MSBuild\Packaging\ProjectBuildInPackage\src\build\Teronis.MSBuild.Packaging.ProjectBuildInPackage.props</TeronisMSBuildPackagingProjectBuildInPackagePropsPath>
+    <TeronisMSBuildPackagingProjectBuildInPackageTargetsPath Condition="'$(TeronisMSBuildPackagingProjectBuildInPackageTargetsPath)' != 'true'">$(RootDirectory)\src\MSBuild\Packaging\ProjectBuildInPackage\src\build\Teronis.MSBuild.Packaging.ProjectBuildInPackage.Targets</TeronisMSBuildPackagingProjectBuildInPackageTargetsPath>
+  </PropertyGroup>
+
+</Project>

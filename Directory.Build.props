@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!-- TODO: Conditional imports (here) or explicit import in other projects -->
-  <Import Project="$(MSBuildThisFileDirectory)\.msbuild-projects\Directory.Core.props" />
-  <Import Project="$(MSBuildThisFileDirectory)\src\Packaging\ProjectBuildInPackage\src\build\Teronis.Packaging.ProjectBuildInPackage.props" />
+
+  <Import Condition="'$(IsRootMarkerFileImported)' != 'true'" Project="$([MSBuild]::GetPathOfFileAbove(.msbuild))" />
+  <Import Condition="'$(IsTeronisDotNetCorePropsFileImported)' != 'true'" Project="$(RootCorePropsPath)" />
+  <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackagePropsPath)" />
 
   <PropertyGroup>
     <DisableGitVersionTaskAutoInstall>false</DisableGitVersionTaskAutoInstall>
@@ -13,14 +14,14 @@
     <AssemblyName>$(MSBuildProjectName)</AssemblyName>
     <Platforms>AnyCPU;x64;x86</Platforms>
     <DebugSymbols>true</DebugSymbols>
-	  <DebugType>portable</DebugType>
+    <DebugType>portable</DebugType>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup>
     <Authors>Teroneko</Authors>
-	  <Company>$(MSBuildProjectName)</Company>
+    <Company>$(MSBuildProjectName)</Company>
     <Product>$(MSBuildProjectName)</Product>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <RepositoryUrl>https://github.com/teroneko/Teronis.DotNet</RepositoryUrl>
@@ -30,37 +31,38 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <NeutralLanguage>en</NeutralLanguage>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb;.props;.targets</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <!-- <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb;.props;.targets</AllowedOutputExtensionsInPackageBuildOutputFolder> -->
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Localization'))">
     <Description>Contains localization resources for assembly $(MSBuildProjectName.Replace('.Localization','')).</Description>
     <!-- https://docs.microsoft.com/de-de/dotnet/core/tools/csproj#ispackable -->
-	  <IsPackable>False</IsPackable>
+    <IsPackable>False</IsPackable>
   </PropertyGroup>
 
   <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Test'))">
     <Description>Contains test cases for assembly $(MSBuildProjectName.Replace('.Test','').</Description>
     <!-- https://docs.microsoft.com/de-de/dotnet/core/tools/csproj#ispackable -->
-	  <IsPackable>False</IsPackable>
+    <IsPackable>False</IsPackable>
   </PropertyGroup>
-  
+
   <PropertyGroup>
     <!-- GitVersionTask: NuGet does support SemVer 2.0 -->
     <UseFullSemVerForNuGet>true</UseFullSemVerForNuGet>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)\LICENSE.md">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
-	
+
     <None Include="$(MSBuildThisFileDirectory)\icon.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
   </ItemGroup>
-  
+
 </Project>

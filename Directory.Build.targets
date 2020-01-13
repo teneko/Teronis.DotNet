@@ -1,14 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!-- <PropertyGroup>
-    <ImportPath Condition="'$(DisableProjectBuildInPackageProjectsImports)' != 'true'">$(MSBuildThisFileDirectory)\src\Packaging\ProjectBuildInPackage\src\build\Teronis.Packaging.ProjectBuildInPackage.targets</ImportPath>
-  </PropertyGroup> -->
 
-  <!-- <Import Condition="'$(DisableProjectBuildInPackageProjectsImports)' != 'true'" Project="$(MSBuildThisFileDirectory)\src\Packaging\ProjectBuildInPackage\src\build\Teronis.Packaging.ProjectBuildInPackage.targets" /> -->
-  <Import Project="$(MSBuildThisFileDirectory)\src\Packaging\ProjectBuildInPackage\src\build\Teronis.Packaging.ProjectBuildInPackage.targets" />
-
-  <!-- <Target Name="CopyProjectReferencesToPackage" Condition="'$(ImportPath)' == ''" /> -->
-  <!-- <Import Project="$(ImportPath)" Condition="'$(ImportPath)' != ''" /> -->
+  <Import Condition="'$(IsRootMarkerFileImported)' != 'true'" Project="$([MSBuild]::GetPathOfFileAbove(.msbuild))" />
+  <Import Condition="'$(IsTeronisDotNetCorePropsFileImported)' != 'true'" Project="$(RootCorePropsPath)" />
+  <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackageTargetsPath)" />
 
   <ItemGroup Condition="'$(DisableGitVersionTaskAutoInstall)' != 'true'">
     <PackageReference Include="GitVersionTask" Version="$(GitVersionTaskVersion)">
@@ -17,15 +12,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <!-- <Target Name="SetNuspecProperties" BeforeTargets="GenerateNuspec">
-    <PropertyGroup>
-      <NuspecProperties>$(NuspecProperties);id=$(AssemblyName)</NuspecProperties>
-      <NuspecProperties>$(NuspecProperties);config=$(Configuration)</NuspecProperties>
-      <NuspecProperties>$(NuspecProperties);version=$(PackageVersion)</NuspecProperties>
-      <NuspecProperties>$(NuspecProperties);description=$(Description)</NuspecProperties>
-      <NuspecProperties>$(NuspecProperties);authors=$(Authors)</NuspecProperties>
-    </PropertyGroup>
-
-    <Message Importance="high" Text="NuspecProperties: $(NuspecProperties)" />
-  </Target> -->
 </Project>

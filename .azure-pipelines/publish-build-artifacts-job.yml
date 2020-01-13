@@ -11,27 +11,22 @@ jobs:
   variables:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
     DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
-    buildConfiguration: 'Release'
-    buildPlatform: 'Any CPU'
-    solution: 'src/**/*.csproj'
+    configuration: 'Release'
+    # buildPlatform: 'Any CPU'
+    verbosity: 'normal'
   steps:
-    # When packing the output will be automatically be in 
-    # the artifact staging directory, see packDirectory.
-  - task: DotNetCoreCli@2
-    displayName: 'Build Artifacts'
+  - task: PowerShell@2
+    displayName: 'Build, Pack & Test'
     inputs:
-      command: 'pack'
-      arguments: '--configuration $(buildConfiguration)'
-      # Reminder: More than one wild card path are supported, see:
-      # https://github.com/microsoft/azure-pipelines-tasks/issues/4712#issuecomment-482350127
-      projects: '$(solution)'
-      verbosityPack: Normal
+      filePath: '$(Build.SourcesDirectory)\build.ps1'
+      # test depeneds on [ build, pack ]
+      arguments: 'test --configuration $(configuration) --verbosity $(verbosity)'
       
-  # - task: CopyFiles@2
-  #   displayName: 'Copy Build Artifacts'
-  #   inputs:
-  #     Contents: $(Build.SourcesDirectory)/src/**/bin/$(buildConfiguration)/*.?(s)nupkg
-  #     TargetFolder: $(Build.ArtifactStagingDirectory)
+  - task: CopyFiles@2
+    displayName: 'Copy Build Artifacts'
+    inputs:
+      Contents: $(Build.SourcesDirectory)/src/**/bin/$(configuration)/*.?(s)nupkg
+      TargetFolder: $(Build.ArtifactStagingDirectory)
 
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Build Artifacts'

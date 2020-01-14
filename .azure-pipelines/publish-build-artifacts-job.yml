@@ -27,6 +27,7 @@ jobs:
     inputs:
       Contents: $(Build.SourcesDirectory)/src/**/bin/$(configuration)/*.?(s)nupkg
       TargetFolder: $(Build.ArtifactStagingDirectory)
+      flattenFolders: true
 
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Build Artifacts'

@@ -4,61 +4,71 @@ using System.IO;
 using System.Text.RegularExpressions;
 using CommandLine;
 using System.Threading.Tasks;
-using CommandLine.Text;
+using Teronis.DotNet.Build.CommandOptions;
 
 using static Bullseye.Targets;
 using static SimpleExec.Command;
-using static Teronis.DotNet.Build.CommandLineOptions;
+using static Teronis.DotNet.Build.ICommandOptions;
 
 namespace Teronis.DotNet.Build
 {
     class Program
     {
-        static async Task Main(string[] args)
+        static async Task<int> Main(string[] args)
         {
-            await Parser.Default.ParseArguments<CommandLineOptions>(args).MapResult(async (options) => {
-                var rootDirectory = Utilities.GetRootDirectory() ?? throw new DirectoryNotFoundException("Root directory not found.");
-                var sourceDirectory = Path.Combine(rootDirectory.FullName, "src");
-                var projects = Directory.GetFiles(sourceDirectory, "*.csproj", SearchOption.AllDirectories)
-                       .Select(x => new FileInfo(x));
-                var matchTestProjects = @"(\.Test\.csproj|\\test\\)";
-                var matchBuildProjects = Regex.Escape(Path.Combine(sourceDirectory, @"Build\"));
-                var matchNonBuildProjects = string.Format(@"({0}|{1})", matchTestProjects, matchBuildProjects);
-
-                Task RunDotNet(string command, string project, string additionalArguments = null) => RunAsync($"dotnet.exe", $"{command} {project} {ConfigurationName} {options.Configuration} {VerbosityName} {options.Verbosity} {additionalArguments}");
-
-                Target("build", async () => {
-                    var buildProjects = projects.Where(x => !Regex.IsMatch(x.FullName, matchNonBuildProjects));
-
-                    foreach (var buildProject in buildProjects) {
-                        await RunDotNet("build", buildProject.FullName);
+            var options = Parser.Default.ParseArguments<BuildCommandOptions, PackCommandOptions, TestCommandOptions>(args)
+                .MapResult<ICommandOptions, ICommandOptions>((options) => options, (errors) => {
+#if DEBUG
+                    if (errors != null) {
+                        foreach (var error in errors) {
+                            Console.WriteLine(error.ToString());
+                        }
                     }
+#endif
+
+                    return null;
                 });
 
-                Target("pack", async () => {
-                    var buildProjects = projects.Where(x => !Regex.IsMatch(x.FullName, matchNonBuildProjects));
+            if (options == null) {
+                return 1;
+            }
 
-                    foreach (var buildProject in buildProjects) {
-                        await RunDotNet("pack", buildProject.FullName);
-                    }
-                });
+            var rootDirectory = Utilities.GetRootDirectory() ?? throw new DirectoryNotFoundException("Root directory not found.");
+            var sourceDirectory = Path.Combine(rootDirectory.FullName, "src");
+            var projects = Directory.GetFiles(sourceDirectory, "*.csproj", SearchOption.AllDirectories)
+                   .Select(x => new FileInfo(x));
+            var matchTestProjects = @"(\.Test\.csproj|\\test\\)";
+            var matchBuildProjects = Regex.Escape(Path.Combine(sourceDirectory, @"Build\"));
+            var matchNonBuildProjects = string.Format(@"({0}|{1})", matchTestProjects, matchBuildProjects);
 
-                Target("test", DependsOn("build", "pack"), async () => {
-                    var testProjects = projects.Where(x => Regex.IsMatch(x.FullName, matchTestProjects));
+            Task RunDotNet(string command, string project, string additionalArguments = null) => RunAsync($"dotnet.exe", $"{command} {project} --{ConfigurationLongName} {options.Configuration} --{VerbosityLongName} {options.Verbosity} {additionalArguments}");
 
-                    foreach (var buildProject in testProjects) {
-                        await RunDotNet("build", buildProject.FullName);
-                    }
-                });
+            Target(BuildCommandOptions.COMMAND, async () => {
+                var buildProjects = projects.Where(x => !Regex.IsMatch(x.FullName, matchNonBuildProjects));
 
-                await RunTargetsAndExitAsync(args);
-            }, (errors) => {
-                foreach (var error in errors) {
-                    Console.WriteLine(SentenceBuilder.Factory().FormatError(error));
+                foreach (var buildProject in buildProjects) {
+                    await RunDotNet("build", buildProject.FullName);
                 }
-
-                return Task.CompletedTask;
             });
+
+            Target(PackCommandOptions.COMMAND, async () => {
+                var packProjects = projects.Where(x => !Regex.IsMatch(x.FullName, matchNonBuildProjects));
+
+                foreach (var buildProject in packProjects) {
+                    await RunDotNet("pack", buildProject.FullName);
+                }
+            });
+
+            Target(TestCommandOptions.COMMAND, DependsOn("build", "pack"), async () => {
+                var testProjects = projects.Where(x => Regex.IsMatch(x.FullName, matchTestProjects));
+
+                foreach (var buildProject in testProjects) {
+                    await RunDotNet("build", buildProject.FullName);
+                }
+            });
+
+            await RunTargetsAndExitAsync(new string[] { options.Command });
+            return 0;
         }
     }
 }

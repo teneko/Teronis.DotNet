@@ -39,13 +39,13 @@ namespace Teronis.DotNet.Build
             var projects = Directory.GetFiles(sourceDirectory, "*.csproj", SearchOption.AllDirectories)
                    .Select(x => new FileInfo(x));
             var matchTestProjects = @"(\.Test\.csproj|\\test\\)";
-            var matchBuildProjects = Regex.Escape(Path.Combine(sourceDirectory, "DotNet", "Build",  @"Build\"));
+            var matchBuildProjects = Regex.Escape(Path.Combine(sourceDirectory, "DotNet", "Build", @"Build\"));
             var matchNonBuildProjects = string.Format(@"({0}|{1})", matchTestProjects, matchBuildProjects);
 
-            Task RunDotNet(string command, string project, string additionalArguments = null) => 
+            Task RunDotNet(string command, string project, string additionalArguments = null) =>
                 RunAsync($"dotnet.exe", $"{command} {project} --{ConfigurationLongName} {options.Configuration} --{VerbosityLongName} {options.Verbosity} {additionalArguments}");
 
-            Target(BuildCommandOptions.COMMAND, async () => {
+            Target(BuildCommandOptions.BuildCommand, async () => {
                 var buildProjects = projects.Where(x => !Regex.IsMatch(x.FullName, matchNonBuildProjects));
 
                 foreach (var buildProject in buildProjects) {
@@ -53,7 +53,7 @@ namespace Teronis.DotNet.Build
                 }
             });
 
-            Target(PackCommandOptions.COMMAND, async () => {
+            Target(PackCommandOptions.PackCommand, async () => {
                 var packProjects = projects.Where(x => !Regex.IsMatch(x.FullName, matchNonBuildProjects));
 
                 foreach (var buildProject in packProjects) {
@@ -61,7 +61,7 @@ namespace Teronis.DotNet.Build
                 }
             });
 
-            Target(TestCommandOptions.COMMAND, DependsOn("build", "pack"), async () => {
+            Target(TestCommandOptions.TestCommand, DependsOn("build", "pack"), async () => {
                 var testProjects = projects.Where(x => Regex.IsMatch(x.FullName, matchTestProjects));
 
                 foreach (var buildProject in testProjects) {

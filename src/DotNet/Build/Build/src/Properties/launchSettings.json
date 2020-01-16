@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Teronis.DotNet.Build": {
-      "commandName": "Project",
-      "commandLineArgs": "test --configuration=\"test ö\" --verbosity=1"
+      "commandName": "Project"
     }
   }
 }

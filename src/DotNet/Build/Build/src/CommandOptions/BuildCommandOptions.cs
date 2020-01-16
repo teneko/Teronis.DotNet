@@ -5,12 +5,12 @@ using CommandLine;
 
 namespace Teronis.DotNet.Build.CommandOptions
 {
-    [Verb(COMMAND)]
+    [Verb(BuildCommand)]
     public class BuildCommandOptions : ICommandOptions
     {
-        public const string COMMAND = "build";
+        public const string BuildCommand = "build";
 
-        public string Command => COMMAND;
+        public string Command => BuildCommand;
         public string Configuration { get; set; }
         public string Verbosity { get; set; }
     }

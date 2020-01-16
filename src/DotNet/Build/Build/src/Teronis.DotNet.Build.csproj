@@ -13,7 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>

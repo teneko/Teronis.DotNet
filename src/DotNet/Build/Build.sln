@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.DotNet.Build", "src\Build\Teronis.DotNet.Build.csproj", "{C70BAF7C-09CE-4915-9973-3215161F176B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Core", "..\NetStandard\src\Core\Core\src\Teronis.NetStandard.Core.csproj", "{C7D4259F-876D-4E9A-9E05-39F7E960095E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Core", "..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj", "{C7D4259F-876D-4E9A-9E05-39F7E960095E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

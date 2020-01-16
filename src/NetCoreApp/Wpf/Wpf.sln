@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Wpf", "Wpf\src\Teronis.AspNetCore.Wpf.csproj", "{39A765E2-8E67-4E4D-B776-CE86DA328222}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetCoreApp.Wpf", "Wpf\src\Teronis.NetCoreApp.Wpf.csproj", "{39A765E2-8E67-4E4D-B776-CE86DA328222}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Wpf.Localization", "Wpf.Localization\src\Teronis.AspNetCore.Wpf.Localization.csproj", "{4F1366FD-700D-4687-AE9D-ABB65697D03B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetCoreApp.Wpf.Localization", "Wpf.Localization\src\Teronis.NetCoreApp.Wpf.Localization.csproj", "{4F1366FD-700D-4687-AE9D-ABB65697D03B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Core", "..\..\..\NetStandard\src\Core\Core\src\Teronis.NetStandard.Core.csproj", "{EE7622CE-E9CD-4FBA-AA10-9E97E5EA8D1A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Core", "..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj", "{EE7622CE-E9CD-4FBA-AA10-9E97E5EA8D1A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Core.Localization", "..\..\..\NetStandard\src\Core\Core.Localization\src\Teronis.NetStandard.Core.Localization.csproj", "{497185C4-26EE-4031-B446-1BD9C3EA78F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Core.Localization", "..\..\NetStandard\Core\Core.Localization\src\Teronis.NetStandard.Core.Localization.csproj", "{497185C4-26EE-4031-B446-1BD9C3EA78F0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

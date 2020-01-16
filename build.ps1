@@ -1,2 +1,2 @@
 $ErrorActionPreference = "Stop";
-dotnet run --project src\Build\src\Build\Teronis.DotNet.Build.csproj -- $args
+dotnet run --project src\DotNet\Build\Build\src\Teronis.DotNet.Build.csproj -- $args

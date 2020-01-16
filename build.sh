@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 set -euo pipefail
-dotnet run --project "src\Build\src\Build\Teronis.DotNet.Build.csproj" -- "$@"
+dotnet run --project "src\DotNet\Build\Build\src\Teronis.DotNet.Build.csproj" -- "$@"

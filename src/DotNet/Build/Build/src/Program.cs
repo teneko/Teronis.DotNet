@@ -33,15 +33,17 @@ namespace Teronis.DotNet.Build
                 return 1;
             }
 
+            // Marker file represents root directory
             var rootDirectory = Utilities.GetRootDirectory() ?? throw new DirectoryNotFoundException("Root directory not found.");
             var sourceDirectory = Path.Combine(rootDirectory.FullName, "src");
             var projects = Directory.GetFiles(sourceDirectory, "*.csproj", SearchOption.AllDirectories)
                    .Select(x => new FileInfo(x));
             var matchTestProjects = @"(\.Test\.csproj|\\test\\)";
-            var matchBuildProjects = Regex.Escape(Path.Combine(sourceDirectory, @"Build\"));
+            var matchBuildProjects = Regex.Escape(Path.Combine(sourceDirectory, "DotNet", "Build",  @"Build\"));
             var matchNonBuildProjects = string.Format(@"({0}|{1})", matchTestProjects, matchBuildProjects);
 
-            Task RunDotNet(string command, string project, string additionalArguments = null) => RunAsync($"dotnet.exe", $"{command} {project} --{ConfigurationLongName} {options.Configuration} --{VerbosityLongName} {options.Verbosity} {additionalArguments}");
+            Task RunDotNet(string command, string project, string additionalArguments = null) => 
+                RunAsync($"dotnet.exe", $"{command} {project} --{ConfigurationLongName} {options.Configuration} --{VerbosityLongName} {options.Verbosity} {additionalArguments}");
 
             Target(BuildCommandOptions.COMMAND, async () => {
                 var buildProjects = projects.Where(x => !Regex.IsMatch(x.FullName, matchNonBuildProjects));

@@ -1,0 +1,118 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+
+    <TargetFramework>netstandard2.0</TargetFramework>
+
+    <!--<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>-->
+    
+    <!--<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>-->
+
+    <!--<DisabledGitVersionCacheCompilationOutputPath>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), GitVersion.yml))\.gv\bin</DisabledGitVersionCacheCompilationOutputPath>-->
+    <GitVersionCacheAssemblyFile>$(MSBuildThisFileDirectory)bin\Release\$(TargetFramework)\publish\$(MSBuildThisFilename).dll</GitVersionCacheAssemblyFile>
+    <!--<GitVersionCacheAssemblyFile>C:\Users\christoph\source\repos\Teronis.DotNet\src\DotNet\GitVersionCache\GitVersionCache\Teronis.DotNet.GitVersionCache\bin\DeleteMe.dll</GitVersionCacheAssemblyFile>-->
+
+    <DisableGitVersionCacheImports>false</DisableGitVersionCacheImports>
+    <DisableGitVersionCacheImports Condition="'$(DisableGitVersionCache)' == 'true'">true</DisableGitVersionCacheImports>
+
+    <!-- After DisableGitVersionCacheImports has been initialized we have to disable the target GitVersionCachePreBuild
+         if GitVersionCacheAssemblyFile does already exist because Visual Studio does cache the dll, but do not disable
+         the target when you are in the GitVersionCache soluion. -->
+    <AwaylsPreBuildGitVersionCache Condition="'$([MSBuild]::GetPathOfFileAbove(GitVersionCache.sln))' == '$(SolutionPath)'">true</AwaylsPreBuildGitVersionCache>
+    <DisableGitVersionCachePreBuildTarget Condition="'$(DisableGitVersionCache)' == 'true' Or 'DisableGitVersionCachePreBuildTarget' == 'true' Or ('$(AwaylsPreBuildGitVersionCache)' != 'true' And Exists('$(GitVersionCacheAssemblyFile)'))">true</DisableGitVersionCachePreBuildTarget>
+
+    <GitVersionCachePreBuildProperties>
+      Configuration=Release;
+      PublishProfile=GitVersionCachePreBuild.pubxml;
+      DisableGitVersionCache=true;
+      DisableGitVersionTask=true
+    </GitVersionCachePreBuildProperties>
+
+  </PropertyGroup>
+
+  <!-- This target is recursive, so to prevent firing more than once, we pass truthy DisableGitVersionCachePreBuildTarget.
+       This pre-build is finished before the actual build. When building pre-build GitVersion is disabled. The pre-built
+       is implemented so that is can also serve its actual build. -->
+  <Target Name="GitVersionCachePreBuild" Condition="'$(DisableGitVersionCachePreBuildTarget)' != 'true'" BeforeTargets="BeforeBuild">
+    <MSBuild Projects="$(MSBuildThisFile)" Targets="Build;Publish" Properties="$(GitVersionCachePreBuildProperties)" />
+    <!--<Exec Command="dotnet msbuild -t:Build;Publish -p:$(GitVersionCachePreBuildProperties)" />-->
+    <Error Condition="!Exists('$(GitVersionCacheAssemblyFile)')" Text="[$(MSBuildThisFilename)] GitVersionCache assembly file not found. It should has been created just before." />
+  </Target>
+
+  <PropertyGroup>
+    <DisableGitVersionCache Condition="'$(DisabledGitVersionCacheCompileDirectory)' != '' Or !Exists('$(GitVersionCacheAssemblyFile)')">true</DisableGitVersionCache>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)\build\Teronis.DotNet.GitVersionCache.props" Condition="'$(DisableGitVersionCacheImports)' != 'true'" />
+
+  <PropertyGroup>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fody" Version="6.0.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.4.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.1" />
+    <PackageReference Include="ModuleInit.Fody" Version="2.1.0" />
+    <PackageReference Include="PropertyChanged.Fody" Version="3.2.4" />
+    <PackageReference Include="System.Text.Json" Version="4.7.0" />
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="buildMultiTargeting\" />
+    <Folder Include="tools\" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <GitVersionToolFilesIncludes>
+      $(PkgGitVersionTask)\tools\**\GitVersion*.dll;
+      $(PkgGitVersionTask)\tools\**\GitVersion*.pdb;
+      $(PkgGitVersionTask)\tools\**\GitVersion*.deps.json
+    </GitVersionToolFilesIncludes>
+  </PropertyGroup>
+
+  <ItemGroup>
+
+    <None Include="$(GitVersionToolFilesIncludes)" Pack="true" PackagePath="tools\">
+      <Link>tools\%(RecursiveDir)\%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+
+    <Reference Include="GitVersionCore">
+      <HintPath>$(PkgGitVersionTask)\tools\netstandard2.0\GitVersionCore.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="GitVersionTask.MsBuild">
+      <HintPath>$(PkgGitVersionTask)\tools\netstandard2.0\GitVersionTask.MsBuild.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="GitVersionTask">
+      <HintPath>$(PkgGitVersionTask)\tools\netstandard2.0\GitVersionTask.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <None Include="$(PkgGitVersionTask)\build\**\*" Pack="true" PackagePath="build\">
+      <Link>build\%(RecursiveDir)\%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+
+    <None Include="$(PkgGitVersionTask)\buildMultiTargeting\**\*" Pack="true" PackagePath="buildMultiTargeting\">
+      <Link>buildMultiTargeting\%(RecursiveDir)\%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj" />
+  </ItemGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)\build\Teronis.DotNet.GitVersionCache.targets" Condition="'$(DisableGitVersionCacheImports)' != 'true'" />
+
+</Project>

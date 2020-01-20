@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "Teronis.DotNet.GitVersionCache": {
+      "commandName": "Project"
+    }
+  }
+}

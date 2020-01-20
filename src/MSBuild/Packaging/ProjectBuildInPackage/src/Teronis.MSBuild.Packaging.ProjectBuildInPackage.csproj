@@ -1,13 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RemoveProperty>TargetFramework</RemoveProperty>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>
-    <Description>Allows project reference content to be added to the packing parent nuget package.</Description>
+    <Description>Allows project reference content to be added to the packing nuget package.</Description>
     
     <!-- We don't build a executable package. 
          We build an only-build-time package. -->

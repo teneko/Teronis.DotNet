@@ -3,55 +3,47 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Teronis.Text.Json.Serialization;
 
 namespace Teronis.Json.Serialization
 {
     /// <summary>
     /// Special JsonConvert resolver that only resolves included properties.
     /// </summary>
-    public class OnlyIncludedVariablesContractResolver : DefaultContractResolver
+    public class OnlyIncludedVariablesContractResolver : DefaultContractResolver, IVariablesClusionHelper
     {
-        protected readonly Dictionary<Type, HashSet<string>> IncludedVariablesByTypeList;
+        protected Dictionary<Type, HashSet<string>> IncludedVariablesByTypeList =>
+            variablesInclusionHelper.VariablesByTypeList;
 
-        public OnlyIncludedVariablesContractResolver() => IncludedVariablesByTypeList = new Dictionary<Type, HashSet<string>>();
+        private VariablesClusionHelper variablesInclusionHelper;
+
+        public OnlyIncludedVariablesContractResolver() =>
+            variablesInclusionHelper = new VariablesClusionHelper();
+
+        public OnlyIncludedVariablesContractResolver(IEnumerable<KeyValuePair<Type, string>> includedVariables) =>
+            variablesInclusionHelper = new VariablesClusionHelper(includedVariables);
 
         /// <summary>
         /// Explicitly include the given property(s) for the given type
         /// </summary>
         /// <param name="declaringType">The type that declares the property</param>
         /// <param name="propertyName">One or more property to include. Leave it empty to include the entire type.</param>
-        public void IncludeVariable(Type declaringType, params string[] propertyName)
-        {
-            // Start bucket if does not exist
-            if (!IncludedVariablesByTypeList.ContainsKey(declaringType))
-                IncludedVariablesByTypeList[declaringType] = new HashSet<string>();
-
-            foreach (var prop in propertyName)
-                IncludedVariablesByTypeList[declaringType].Add(prop);
-        }
-
-        /// <summary>
-        /// Is the given property for the given type included?
-        /// </summary>
-        public bool IsVariableIncluded(Type type, string propertyName)
-        {
-            if (IncludedVariablesByTypeList.ContainsKey(type) && (IncludedVariablesByTypeList[type].Count == 0 || IncludedVariablesByTypeList[type].Contains(propertyName)))
-                return true;
-
-            return false;
-        }
+        public void IncludeVariable(Type declaringType, params string[] propertyName) =>
+            variablesInclusionHelper.ConsiderVariable(declaringType, propertyName);
 
         protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
         {
             var property = base.CreateProperty(member, memberSerialization);
 
-            /// Need to check basetype as well for EF -- <see cref="IgnorableVariablesContractResolver"/>
-            if (IsVariableIncluded(property.DeclaringType, property.PropertyName) || IsVariableIncluded(property.DeclaringType.BaseType, property.PropertyName))
+            if (variablesInclusionHelper.IsVariableConsidered(property.DeclaringType, property.PropertyName))
                 property.ShouldSerialize = instance => true;
             else
                 property.ShouldSerialize = instance => false;
 
             return property;
         }
+
+        void IVariablesClusionHelper.ConsiderVariable(Type declaringType, params string[] propertyName)
+            => IncludeVariable(declaringType, propertyName);
     }
 }

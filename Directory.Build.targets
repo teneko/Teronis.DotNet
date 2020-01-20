@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project InitialTargets="InstallGitVersionTask" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <Import Condition="'$(IsRootMarkerFileImported)' != 'true'" Project="$([MSBuild]::GetPathOfFileAbove(.msbuild))" />
   <Import Condition="'$(IsTeronisDotNetCorePropsFileImported)' != 'true'" Project="$(RootCorePropsPath)" />
   <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackageTargetsPath)" />
 
-  <ItemGroup Condition="'$(DisableGitVersionTaskAutoInstall)' != 'true'">
-    <PackageReference Include="GitVersionTask" Version="$(GitVersionTaskVersion)">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+  <Target Name="InstallGitVersionTask" >
+    <PropertyGroup>
+      <HasGitVersionTask Condition="'%(PackageReference.Identity)' == 'GitVersionTask'">true</HasGitVersionTask>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(DisableGitVersionTaskAutoInstall)' != 'true' And '$(HasGitVersionTask)' != 'true'">
+      <PackageReference Include="GitVersionTask" Version="$(GitVersionTaskVersion)">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+    </ItemGroup>
+  </Target>
 
 </Project>

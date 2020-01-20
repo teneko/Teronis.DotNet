@@ -269,3 +269,4 @@ __pycache__/
 Teronis.DotNet.sln
 Teronis.NetCoreApp.sln
 Teronis.NetStandard.sln
+.gvc

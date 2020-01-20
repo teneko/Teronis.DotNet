@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <!-- To generate a package is part of the test -->
@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Test.Localization\Test.Localization.csproj" PrivateAssets="all" />
+    <ProjectReference Include="..\Test.Localization\Teronis.MSBuild.Packaging.Pbip.Test.Localization.csproj" PrivateAssets="all" />
   </ItemGroup>
 
   <!-- Target searches for single package, but does return group of FoundPackage. -->
@@ -19,7 +19,7 @@
       <_FoundPackageFiles Include="$(PackageSearchDirectory)\*.nupkg" />
     </ItemGroup>
 
-    <Message Text="[$(MSBuildThisFileName)] - Found package file -> %(_FoundPackageFiles.Identity)" Importance="high" />
+    <Message Text="[$(MSBuildThisFileName)] - Found package file -&gt; %(_FoundPackageFiles.Identity)" Importance="high" />
 
     <Error Condition="@(_FoundPackageFiles-&gt;Count()) == 0" Text="[$(MSBuildThisFileName)] An error occured: In the folder $(PackageSearchDirectory) is no package. Please pack project." />
     <Error Condition="@(_FoundPackageFiles-&gt;Count()) &gt; 1" Text="[$(MSBuildThisFileName)] An error occured: In the folder $(PackageSearchDirectory) is more than one package. Please delete relicts." />
@@ -31,7 +31,7 @@
       </FoundPackage>
     </ItemGroup>
 
-    <Message Text="[$(MSBuildThisFileName)] - Evaluated package version -> %(FoundPackage.Version)" Importance="high" />
+    <Message Text="[$(MSBuildThisFileName)] - Evaluated package version -&gt; %(FoundPackage.Version)" Importance="high" />
 
   </Target>
 
@@ -92,7 +92,7 @@
 
     <PropertyGroup>
       <HasLocalizationResources>false</HasLocalizationResources>
-      <HasLocalizationResources Condition="'en-US\Test.Localization.resources.dll' == '%(UnzippedFiles.DirectoryWithoutSlash)'">true</HasLocalizationResources>
+      <HasLocalizationResources Condition="'en-US\$(MSBuildThisFilename).Localization.resources.dll' == '%(UnzippedFiles.DirectoryWithoutSlash)'">true</HasLocalizationResources>
     </PropertyGroup>
 
     <Error Condition="'$(HasLocalizationResources)' != 'true'" Text="[$(MSBuildThisFileName)] Test failed: The local package %(FoundLocalPackage.Identity) did not contain expected private assets." />

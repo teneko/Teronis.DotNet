@@ -7,6 +7,8 @@ using System.Runtime.CompilerServices;
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using Teronis.Reflection.Caching;
+using Teronis.ObjectModel;
 
 namespace Teronis.ViewModels
 {
@@ -21,27 +23,24 @@ namespace Teronis.ViewModels
         public DynamicParentResolver DynamicParentResolver { get; private set; }
 
         public bool IsWorking
-            => workStatusPropertyChangedCache.CachedProperties.Values.Any(x => x.IsWorking);
+            => workStatusPropertyChangedCache.CachedPropertyValues.Values.Any(x => x.IsWorking);
 
         protected WorkStatus WorkStatus { get; private set; }
 
-        private KnownParentsContainer knownParentsContainer;
-        private PropertyChangedRelay propertyChangedRelay;
-        private PropertyChangedCache<IHaveParents> havingParentsPropertyChangedCache;
-        private PropertyChangedCache<IWorking> workStatusPropertyChangedCache;
+        private readonly KnownParentsContainer knownParentsContainer;
+        private readonly SingleTypePropertyCache<IHaveParents> havingParentsPropertyChangedCache;
+        private readonly SingleTypePropertyCache<IWorking> workStatusPropertyChangedCache;
 
         public ViewModelBase()
         {
             DynamicParentResolver = new DynamicParentResolver(this);
             knownParentsContainer = new KnownParentsContainer(this);
-            propertyChangedRelay = new PropertyChangedRelay(this);
-            propertyChangedRelay.NotifiersPropertyChanged += PropertyChangedRelay_NotifiersPropertyChanged;
-            havingParentsPropertyChangedCache = new PropertyChangedCache<IHaveParents>(this);
-            havingParentsPropertyChangedCache.PropertyCacheAdded += HavingParentsPropertyChangedCache_PropertyCacheAdded;
-            havingParentsPropertyChangedCache.PropertyCacheRemoved -= HavingParentsPropertyChangedCache_PropertyCacheRemoved;
+            havingParentsPropertyChangedCache = new SingleTypePropertyCache<IHaveParents>(this);
+            havingParentsPropertyChangedCache.PropertyAdded += HavingParentsPropertyChangedCache_PropertyCacheAdded;
+            havingParentsPropertyChangedCache.PropertyRemoved -= HavingParentsPropertyChangedCache_PropertyCacheRemoved;
             /// We only subscribe to <see cref="IWorking"/>-container, so that we can on calculate
             /// <see cref="IsWorking"/> properly.
-            workStatusPropertyChangedCache = new PropertyChangedCache<IWorking>(this);
+            workStatusPropertyChangedCache = new SingleTypePropertyCache<IWorking>(this);
             WorkStatus = new WorkStatus();
             validationErrors = new Dictionary<string, ICollection<string>>();
             validationErrorPreviews = new Dictionary<string, ICollection<string>>();
@@ -50,11 +49,11 @@ namespace Teronis.ViewModels
         private void Property_WantParents(object sender, HavingParentsEventArgs havingParents)
             => havingParents.AttachParentParents(this);
 
-        private void HavingParentsPropertyChangedCache_PropertyCacheAdded(object sender, PropertyCacheAddedEventArgs<IHaveParents> args)
-            => args.AddedProperty.WantParents += Property_WantParents;
+        private void HavingParentsPropertyChangedCache_PropertyCacheAdded(object sender, PropertyCachedEventArgs<IHaveParents> args)
+            => args.PropertyValue.WantParents += Property_WantParents;
 
         private void HavingParentsPropertyChangedCache_PropertyCacheRemoved(object sender, PropertyCacheRemovedEventArgs<IHaveParents> args)
-            => args.Property.WantParents -= Property_WantParents;
+            => args.OldPropertyValue.WantParents -= Property_WantParents;
 
         protected void OnPropertyChanged(PropertyChangedEventArgs args)
             => PropertyChanged?.Invoke(this, args);
@@ -64,9 +63,6 @@ namespace Teronis.ViewModels
             var args = new PropertyChangedEventArgs(propertyName);
             OnPropertyChanged(args);
         }
-
-        private void PropertyChangedRelay_NotifiersPropertyChanged(object sender, PropertyChangedEventArgs args)
-            => OnPropertyChanged(args);
 
         public ParentsPicker GetParentsPicker()
             => new ParentsPicker(this, WantParents);

@@ -1,5 +1,7 @@
 ﻿
 
+using Teronis.ObjectModel.Updates;
+
 namespace Teronis.Data
 {
     internal class UpdateWithTargetContainer<UpdateContentType, TargetType>

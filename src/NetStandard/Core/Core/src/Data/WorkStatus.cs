@@ -27,18 +27,21 @@ namespace Teronis.Data
 
         public void BeginWork()
         {
-            if (deepWorkCounter++ == 0) 
+            if (deepWorkCounter++ == 0) {
                 IsWorking = true;
+            }
 
         }
 
         public void EndWork()
         {
-            if (deepWorkCounter == 0)
+            if (deepWorkCounter == 0) {
                 throw new Exception("You cannot end the update before it has not begun");
+            }
 
-            if (--deepWorkCounter == 0)
+            if (--deepWorkCounter == 0) {
                 IsWorking = false;
+            }
         }
     }
 }

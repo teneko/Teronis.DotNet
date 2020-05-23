@@ -10,12 +10,11 @@ namespace Teronis.Tools
     public static class ReflectionTools
     {
         /// <summary>
-        /// <see cref="VariableInfoSettings.IncludeIfReadable"/> = true,
-        /// <see cref="VariableInfoSettings.IncludeIfWritable"/> = true,
-        /// <see cref="VariableInfoSettings.ExcludeByAttributeTypes"/> contains
+        /// Property <see cref="VariableInfoSettings.IncludeIfReadable"/> is true.
+        /// Property <see cref="VariableInfoSettings.IncludeIfWritable"/> is true.
+        /// Property <see cref="VariableInfoSettings.ExcludeByAttributeTypes"/> contains <see cref="IgnoreEntityVariableAttribute"/>.
         /// </summary>
-        /// <returns></returns>
-        public static VariableInfoSettings GetDefaultVariableInfoSettings() => new VariableInfoSettings() {
+        public static VariableInfoSettings CreateDefaultVariableInfoSettings() => new VariableInfoSettings() {
             IncludeIfReadable = true,
             IncludeIfWritable = true,
             ExcludeByAttributeTypes = new[] { typeof(IgnoreEntityVariableAttribute) }
@@ -53,7 +52,7 @@ namespace Teronis.Tools
             if (entityType == null)
                 return;
 
-            variableInfoSettings = variableInfoSettings ?? GetDefaultVariableInfoSettings();
+            variableInfoSettings = variableInfoSettings ?? CreateDefaultVariableInfoSettings();
             var variables = entityType.GetVariableMembers(interruptingBaseType, variableInfoSettings).ToList();
             UpdateEntityVariables(leftEntity, rightEntity, variables);
         }
@@ -76,7 +75,7 @@ namespace Teronis.Tools
             if (entityType == null)
                 return;
 
-            variableInfoSettings = variableInfoSettings ?? GetDefaultVariableInfoSettings();
+            variableInfoSettings = variableInfoSettings ?? CreateDefaultVariableInfoSettings();
             var variables = entityType.GetAttributeVariableMembers(attributeType, variableInfoSettings).Select(x => x.MemberInfo);
             UpdateEntityVariables(leftEntity, rightEntity, variables);
         }

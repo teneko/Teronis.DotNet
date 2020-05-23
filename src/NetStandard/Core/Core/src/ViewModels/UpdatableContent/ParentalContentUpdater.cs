@@ -1,4 +1,5 @@
 ﻿using Teronis.Data;
+using Teronis.ObjectModel.Updates;
 
 namespace Teronis.ViewModels.UpdatableContent
 {

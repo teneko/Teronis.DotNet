@@ -16,24 +16,22 @@ namespace Teronis.Threading.Tasks
     /// [<see cref="FinishDependenciesAsync"/>].
     /// </summary>
     /// <typeparam name="KeyType"></typeparam>
-    public class AsyncEventSequence<KeyType> : IDisposable
+    public class AsyncEventSequence<KeyType>
     {
-        public AsynEventSequenceStatus Status { get; private set; }
+        public AsyncEventSequenceStatus Status { get; private set; }
         public IEqualityComparer<KeyType> EqualityComparer { get; protected set; }
         public bool IsDisposed { get; private set; }
 
         private Dictionary<KeyType, List<TaskCompletionSource>> tcsDependencies;
         private TaskCompletionSource tcsRegistrationPhaseEnd;
-        private SemaphoreSlim finishDependenciesAsyncLocker;
         private Task finishDependenciesTask;
 
         public AsyncEventSequence(IEqualityComparer<KeyType> equalityComparer)
         {
-            Status = AsynEventSequenceStatus.Created;
+            Status = AsyncEventSequenceStatus.Created;
             EqualityComparer = equalityComparer ?? throw new ArgumentException(nameof(equalityComparer));
             tcsDependencies = new Dictionary<KeyType, List<TaskCompletionSource>>(EqualityComparer);
             tcsRegistrationPhaseEnd = new TaskCompletionSource();
-            finishDependenciesAsyncLocker = new SemaphoreSlim(1, 1);
         }
 
         public AsyncEventSequence()
@@ -51,8 +49,9 @@ namespace Teronis.Threading.Tasks
 
         public TaskCompletionSource RegisterDependency(KeyType key)
         {
-            if (Status != AsynEventSequenceStatus.Created)
+            if (Status != AsyncEventSequenceStatus.Created) {
                 throw new InvalidOperationException("Depenendecies are already awaited or are being awaited");
+            }
 
             if (!tcsDependencies.TryGetValue(key, out var tcsList)) {
                 tcsList = new List<TaskCompletionSource>();
@@ -71,19 +70,21 @@ namespace Teronis.Threading.Tasks
             => tcsDependencies.Values.SelectMany(x => x);
 
         /// <summary>
-        /// This method guarantees, that all dependencies are finished before true gets returned. 
-        /// If one of the awaiting dependencies are failing false gets returned. Even when none
-        /// keys are provided, this function awaits the task, that gets finished when 
-        /// <see cref="FinishDependenciesAsync"/> is called.
+        /// This method awaits all dependencies selected by <paramref name="keys"/>. 
+        /// If one of the awaiting dependencies are failing false gets returned. Even 
+        /// when none keys are provided, this function awaits the task, that gets finished
+        /// when dependency registration has been ended.
         /// </summary>
         public async Task<bool> TryAwaitDependency(params KeyType[] keys)
         {
-            if (Status == AsynEventSequenceStatus.Finished)
+            if (Status == AsyncEventSequenceStatus.Finished)
                 return true;
-            else if (Status == AsynEventSequenceStatus.Canceled)
+            else if (Status == AsyncEventSequenceStatus.Canceled)
                 return false;
             else {
                 checkDispose();
+                // We want to wait for the end of the registration, so that we can assure
+                // that everyone could register their dependencies.
                 await tcsRegistrationPhaseEnd.Task;
                 IEnumerable<Task> awaitableDependencies;
 
@@ -109,68 +110,40 @@ namespace Teronis.Threading.Tasks
         }
 
         /// <summary>
-        /// This method awaits all registered dependencies and throws the first occuring exception.
-        /// You may call this after the event handler invocation.
+        /// This method awaits all registered dependencies and throws the first 
+        /// occuring exception. You may call this after the event handler invocation.
         /// </summary>
-        /// <exception cref="TaskCanceledException">Thrown when one of the dependency get canceled</exception>
-        /// /// <exception cref="InvalidOperationException">Thrown when this function was already called</exception>
+        /// <exception cref="TaskCanceledException">Throws the first occuring exception when awaiting the dependencies.</exception>
         public async Task FinishDependenciesAsync()
         {
-            await finishDependenciesAsyncLocker.WaitAsync();
+            lock (tcsRegistrationPhaseEnd) {
+                if (finishDependenciesTask == null) {
+                    // We want to finish the registration phase, after all invoked event handler may have registered their dependencies
+                    tcsRegistrationPhaseEnd.SetResult();
 
-            if (Status == AsynEventSequenceStatus.Created) {
-                // We want to finish the registration phase, after all invoked event handler may have registered their dependencies
-                tcsRegistrationPhaseEnd.SetResult();
+                    var tasks = getAllTaskCompletionSources()
+                        .Select(x => x.Task);
 
-                var tasks = getAllTaskCompletionSources()
-                    .Select(x => x.Task);
-
-                finishDependenciesTask = Task.WhenAll(tasks);
-                Status = AsynEventSequenceStatus.Running;
-                finishDependenciesAsyncLocker.Release();
-
-                try {
-                    // Then we await all dependencies
-                    await finishDependenciesTask;
-                    Status = AsynEventSequenceStatus.Finished;
-                } catch {
-                    // Try to cancel all dependencies
-                    foreach (var tcs in getAllTaskCompletionSources())
-                        tcs.TrySetCanceled();
-
-                    Status = AsynEventSequenceStatus.Canceled;
-                    throw;
-                } finally {
-                    Dispose();
+                    finishDependenciesTask = Task.WhenAll(tasks);
+                    Status = AsyncEventSequenceStatus.Running;
                 }
-            } else {
-                finishDependenciesAsyncLocker.Release();
+            }
+
+            try {
+                // Then we await all dependencies
                 await finishDependenciesTask;
-            }
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!IsDisposed) {
-                if (disposing) {
-                    finishDependenciesAsyncLocker.Dispose();
-                    finishDependenciesAsyncLocker = null;
+                Status = AsyncEventSequenceStatus.Finished;
+            } catch {
+                // Try to cancel all dependencies
+                foreach (var tcs in getAllTaskCompletionSources()) {
+                    tcs.TrySetCanceled();
                 }
 
-                EqualityComparer = null;
-                tcsDependencies = null;
-                tcsRegistrationPhaseEnd = null;
-                IsDisposed = true;
+                Status = AsyncEventSequenceStatus.Canceled;
+                throw;
             }
-        }
 
-        ~AsyncEventSequence() 
-            => Dispose(false);
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            await finishDependenciesTask;
         }
     }
 }

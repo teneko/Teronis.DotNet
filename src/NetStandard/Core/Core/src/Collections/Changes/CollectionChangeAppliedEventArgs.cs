@@ -5,24 +5,15 @@ namespace Teronis.Collections
 {
     public class CollectionChangeAppliedEventArgs<ItemType, ContentType> : EventArgs, ICollectionChangeBundle<ItemType, ContentType>, IHasAsyncEventSequence
     {
-        public static CollectionChangeAppliedEventArgs<ItemType, ContentType> CreateAsynchronous(ICollectionChangeBundle<ItemType, ContentType> bundle, AsyncEventSequence eventSequence)
-        {
-            eventSequence = eventSequence ?? throw new ArgumentNullException(nameof(eventSequence));
-            return new CollectionChangeAppliedEventArgs<ItemType, ContentType>(bundle, eventSequence);
-        }
-
-        public static CollectionChangeAppliedEventArgs<ItemType, ContentType> CreateSynchronous(ICollectionChangeBundle<ItemType, ContentType> bundle)
-            => new CollectionChangeAppliedEventArgs<ItemType, ContentType>(bundle, null);
-
         /// <summary>
         /// A value of not null means, that this instance is coming from an async event invocation.
         /// </summary>
-        public AsyncEventSequence AsyncEventSequence { get; private set; }
+        public AsyncEventSequence AsyncEventSequence { get; }
 
-        AsyncEventSequence<Singleton> IHasAsyncableEventSequence<Singleton>.AsyncEventSequence 
+        AsyncEventSequence<Singleton> IHasAsyncableEventSequence<Singleton>.AsyncEventSequence
             => AsyncEventSequence;
 
-        public ICollectionChange<ItemType, ItemType> ItemItemChange 
+        public ICollectionChange<ItemType, ItemType> ItemItemChange
             => bundle.ItemItemChange;
 
         public ICollectionChange<ItemType, ContentType> ItemContentChange
@@ -33,10 +24,10 @@ namespace Teronis.Collections
 
         private ICollectionChangeBundle<ItemType, ContentType> bundle;
 
-        private CollectionChangeAppliedEventArgs(ICollectionChangeBundle<ItemType, ContentType> bundle, AsyncEventSequence eventSequence)
+        public CollectionChangeAppliedEventArgs(ICollectionChangeBundle<ItemType, ContentType> bundle, AsyncEventSequence eventSequence)
         {
-            this.bundle = bundle;
-            AsyncEventSequence = eventSequence;
+            this.bundle = bundle ?? throw new ArgumentNullException(nameof(bundle));
+            AsyncEventSequence = eventSequence ?? throw new ArgumentNullException(nameof(eventSequence));
         }
     }
 }

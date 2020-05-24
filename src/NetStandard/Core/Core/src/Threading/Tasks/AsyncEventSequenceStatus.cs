@@ -2,7 +2,7 @@
 
 namespace Teronis.Threading.Tasks
 {
-    public enum AsynEventSequenceStatus
+    public enum AsyncEventSequenceStatus
     {
         Created,
         Running,

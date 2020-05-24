@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Example1\" />
+    <ProjectReference Include="..\..\src\Teronis.NetStandard.Core.csproj" />
   </ItemGroup>
 
 </Project>

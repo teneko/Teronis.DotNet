@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <IsTeronisDotNetCorePropsFileImported>true</IsTeronisDotNetCorePropsFileImported>
-    <GitVersionTaskVersion>5.1.3</GitVersionTaskVersion>
+    <GitVersionTaskVersion>5.3.4</GitVersionTaskVersion>
   </PropertyGroup>
   
 </Project>

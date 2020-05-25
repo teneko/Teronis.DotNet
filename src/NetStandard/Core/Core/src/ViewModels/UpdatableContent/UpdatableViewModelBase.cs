@@ -25,27 +25,19 @@ namespace Teronis.ViewModels.UpdatableContent
             remove => Updater.ContainerUpdated += value;
         }
 
-        public bool IsContentUpdateAppliable(ObjectModel.Updates.IContentUpdate<ContentType> update)
+        public bool IsContentUpdateAppliable(IContentUpdate<ContentType> update)
             => Updater.IsContentUpdateAppliable(update);
 
         public override void BeginWork()
             => Updater.BeginWork();
 
-        protected abstract void InnerUpdateContentBy(ObjectModel.Updates.IContentUpdate<ContentType> update);
+        protected virtual Task OnContentUpdateAsync(IContentUpdate<ContentType> update) =>
+            Task.CompletedTask;
 
-        protected virtual Task InnerUpdateContentByAsync(ObjectModel.Updates.IContentUpdate<ContentType> update)
-        {
-            // Update synchronously as not overridden
-            InnerUpdateContentBy(update);
-            // And we return a completed task
-            // as we do not have to await something
-            return Task.CompletedTask;
-        }
-
-        public Task ApplyContentUpdateByAsync(ObjectModel.Updates.IContentUpdate<ContentType> update)
+        public Task ApplyContentUpdateByAsync(IContentUpdate<ContentType> update)
             => Updater.ApplyContentUpdateByAsync(update);
 
-        public async Task UpdateContentByAsync(ITask<ObjectModel.Updates.IContentUpdate<ContentType>> update)
+        public async Task UpdateContentByAsync(ITask<IContentUpdate<ContentType>> update)
             // TODO: look here if you need to begin and end work.
             => await Updater.ApplyContentUpdateByAsync(await update);
 
@@ -57,8 +49,8 @@ namespace Teronis.ViewModels.UpdatableContent
             public ContentUpdater(WorkStatus workStatus, ViewModelType parent)
                 : base(workStatus, parent) { }
 
-            public override Task ApplyContentUpdateByAsync(ObjectModel.Updates.IContentUpdate<ContentType> update)
-                => parent.InnerUpdateContentByAsync(update);
+            public override Task ApplyContentUpdateByAsync(IContentUpdate<ContentType> update)
+                => parent.OnContentUpdateAsync(update);
         }
 
         #endregion

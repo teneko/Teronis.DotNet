@@ -17,52 +17,52 @@ namespace Teronis.Extensions
         {
             var httpValueCollection = ParseQueryString(uri);
 
-            foreach (var item in items)
+            foreach (var item in items) {
                 httpValueCollection.Add(item.name, item.value);
+            }
 
-            var ub = new UriBuilder(uri);
+            var uriBuilder = new UriBuilder(uri);
 
             // this code block is taken from httpValueCollection.ToString() method
             // and modified so it encodes strings with HttpUtility.UrlEncode
-            if (httpValueCollection.Count == 0)
-                ub.Query = string.Empty;
-            else {
-                var sb = new StringBuilder();
+            if (httpValueCollection.Count == 0) {
+                uriBuilder.Query = string.Empty;
+            } else {
+                var stringBuilder = new StringBuilder();
 
                 for (int i = 0; i < httpValueCollection.Count; i++) {
                     string text = httpValueCollection.GetKey(i);
-                    {
-                        text = HttpUtility.UrlEncode(text);
+                    text = HttpUtility.UrlEncode(text);
+                    string val = (text != null) ? (text + "=") : string.Empty;
+                    string[] vals = httpValueCollection.GetValues(i);
 
-                        string val = (text != null) ? (text + "=") : string.Empty;
-                        string[] vals = httpValueCollection.GetValues(i);
+                    if (stringBuilder.Length > 0) {
+                        stringBuilder.Append('&');
+                    }
 
-                        if (sb.Length > 0)
-                            sb.Append('&');
-
-                        if (vals == null || vals.Length == 0)
-                            sb.Append(val);
-                        else {
-                            if (vals.Length == 1) {
-                                sb.Append(val);
-                                sb.Append(HttpUtility.UrlEncode(vals[0]));
-                            } else {
-                                for (int j = 0; j < vals.Length; j++) {
-                                    if (j > 0)
-                                        sb.Append('&');
-
-                                    sb.Append(val);
-                                    sb.Append(HttpUtility.UrlEncode(vals[j]));
+                    if (vals == null || vals.Length == 0) {
+                        stringBuilder.Append(val);
+                    } else {
+                        if (vals.Length == 1) {
+                            stringBuilder.Append(val);
+                            stringBuilder.Append(HttpUtility.UrlEncode(vals[0]));
+                        } else {
+                            for (int j = 0; j < vals.Length; j++) {
+                                if (j > 0) {
+                                    stringBuilder.Append('&');
                                 }
+
+                                stringBuilder.Append(val);
+                                stringBuilder.Append(HttpUtility.UrlEncode(vals[j]));
                             }
                         }
                     }
                 }
 
-                ub.Query = sb.ToString();
+                uriBuilder.Query = stringBuilder.ToString();
             }
 
-            return ub.Uri;
+            return uriBuilder.Uri;
         }
     }
 }

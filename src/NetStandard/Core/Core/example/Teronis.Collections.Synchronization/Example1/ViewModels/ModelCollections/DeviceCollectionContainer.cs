@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using Teronis.ObjectModel;
 using Teronis.Collections.Synchronization.Example1.Models;
+using Teronis.Collections.CollectionChanging;
 
 namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollections
 {

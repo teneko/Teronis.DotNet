@@ -21,21 +21,5 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels
 
         protected override Task UpdateContentByAsync(IContentUpdate<DeviceHeaderViewModel> update)
             => throw new NotImplementedException();
-
-        public async Task LoadExternalBody()
-        {
-            // TODO: BodyContainer.ApplyContentUpdateByAsync(..)
-        }
-
-        /// <summary>
-        /// Load note and populate <see cref="NoteContainer"/>
-        /// </summary>
-        public async Task LoadExternalNote()
-        {
-            // TODO: NoteContainer.ApplyContentUpdateByAsync(..)
-        }
-
-        public Task LoadExternal()
-            => Task.WhenAll(LoadExternalBody(), LoadExternalNote());
     }
 }

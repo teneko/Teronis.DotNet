@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Teronis.Data;
 
 namespace Teronis.Tools
 {
@@ -58,5 +59,18 @@ namespace Teronis.Tools
 
         public static V ReturnValue<I, V>(I inValue, Func<I, V> getValue)
             => getValue(inValue);
+
+        /// <summary>
+        /// Useful for unsubscribing inline event handlers.
+        /// </summary>
+        public static WrappedValue<T> ReturnDefaultReplacement<T>(Func<WrappedValue<T>, T> getDefaultValueReplacement)
+        {
+            var defaultValueWrapper = new WrappedValue<T>(default);
+            defaultValueWrapper.Value = getDefaultValueReplacement(defaultValueWrapper);
+            return defaultValueWrapper;
+        }
+
+        public static T ReturnDefaultValueReplacement<T>(Func<WrappedValue<T>, T> getDefaultValueReplacement) =>
+            ReturnDefaultReplacement(getDefaultValueReplacement).Value;
     }
 }

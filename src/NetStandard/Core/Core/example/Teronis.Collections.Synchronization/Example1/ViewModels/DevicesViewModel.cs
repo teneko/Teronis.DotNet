@@ -22,8 +22,5 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels
 
         public Task UpdateDevicesAsync(IEnumerable<DeviceHeaderEntity> deviceHeaders)
             => DeviceHeaderCollectionSynchronisation.SynchronizeAsync(Task.FromResult(deviceHeaders).AsITask());
-
-        public Task LoadSelectedDeviceExternallyAsync()
-            => DeviceCollectionSynchronisation.SelectedItem?.LoadExternal() ?? Task.CompletedTask;
     }
 }

@@ -34,7 +34,7 @@ namespace Teronis.Identity.Entities
             return false;
         }
 
-        public void AttachRefreshToken(RefreshTokenEntity refreshTokenEntity, bool throwOnDuplication = true)
+        public void AddRefreshToken(RefreshTokenEntity refreshTokenEntity, bool throwOnDuplication = true)
         {
             if (throwOnDuplication && HasRefreshToken(refreshTokenEntity.RefreshTokenId, out _)) {
                 throw new ArgumentException("The refresh token does already exist");
@@ -43,10 +43,10 @@ namespace Teronis.Identity.Entities
             refreshTokens.Add(refreshTokenEntity);
         }
 
-        public bool TryDettachRefreshToken(RefreshTokenEntity refreshTokenEntity)
+        public bool TryRemoveRefreshToken(RefreshTokenEntity refreshTokenEntity)
             => refreshTokens.Remove(refreshTokenEntity);
 
-        public bool TryDettachRefreshToken(Guid refreshTokenId)
+        public bool TryRemoveRefreshToken(Guid refreshTokenId)
         {
             var refreshTokenEntity = refreshTokens.SingleOrDefault(x => x.RefreshTokenId == refreshTokenId);
 
@@ -57,5 +57,8 @@ namespace Teronis.Identity.Entities
 
             return false;
         }
+
+        public void RemoveExpiredRefreshTokens() =>
+            refreshTokens.RemoveAll(x => x.ExpiresAtUtc < DateTime.UtcNow);
     }
 }

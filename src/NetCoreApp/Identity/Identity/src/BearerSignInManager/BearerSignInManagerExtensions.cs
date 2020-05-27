@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.IdentityModel.Tokens;
-using Teronis.Identity.SignInServicing;
+using Teronis.Identity.BearerSignInManaging;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class SignInServiceExtensions
+    public static class BearerSignInManagerExtensions
     {
-        public static IServiceCollection AddSignInService(this IServiceCollection services, Action<SignInServiceOptions>? configureOptions)
+        public static IServiceCollection AddSignInService(this IServiceCollection services, Action<BearerSignInManagerOptions>? configureOptions)
         {
             // Both are used by underlying services.
             services.AddLogging();
@@ -17,7 +17,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 services.Configure(configureOptions);
             }
 
-            services.PostConfigure<SignInServiceOptions>(options => {
+            services.PostConfigure<BearerSignInManagerOptions>(options => {
                 options.CreateDefaultedTokenDescriptor ??= () => new SecurityTokenDescriptor();
                 var defaultTokenDescriptor = options.CreateDefaultedTokenDescriptor();
 
@@ -68,7 +68,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 };
             });
 
-            services.AddScoped<SignInService>();
+            services.AddScoped<BearerSignInManager>();
             return services;
         }
 

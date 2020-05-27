@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Teronis.Identity.SignInServicing
+namespace Teronis.Identity.BearerSignInManaging
 {
     [Serializable]
     public class SignInTokens

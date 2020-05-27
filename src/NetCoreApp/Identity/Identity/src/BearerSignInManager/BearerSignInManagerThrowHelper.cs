@@ -1,13 +1,13 @@
 ﻿using System;
 
-namespace Teronis.Identity.SignInServicing
+namespace Teronis.Identity.BearerSignInManaging
 {
-    public static class SignInServiceThrowHelper
+    public static class BearerSignInManagerThrowHelper
     {
         public static ArgumentNullException GetPrincipalNullException(string paramName)
             => new ArgumentNullException(paramName);
 
         public static ArgumentNullException GetContextArgumentException(string paramName)
-            => new ArgumentNullException($"{nameof(SignInServiceContext)}.{paramName}");
+            => new ArgumentNullException($"{nameof(BearerSignInManagerContext)}.{paramName}");
     }
 }

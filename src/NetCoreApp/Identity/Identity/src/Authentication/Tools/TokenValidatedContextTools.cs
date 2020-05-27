@@ -6,23 +6,23 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Teronis.Identity.Entities;
-using Teronis.Identity.SignInServicing;
+using Teronis.Identity.BearerSignInManaging;
 
 namespace Teronis.Identity.Authentication.Tools
 {
     public static class TokenValidatedContextTools
     {
         /// <summary>
-        /// Validates whether <see cref="SignInServiceDefaults.SignInServiceRefreshTokenIdClaimType"/> does exist
+        /// Validates whether <see cref="BearerSignInManagerDefaults.SignInServiceRefreshTokenIdClaimType"/> does exist
         /// and if so, it does add an user related identity to the claims principal of <paramref name="tokenValidatedContext"/>.
         /// </summary>
         public static async Task ValidateRefreshTokenIdClaim(TokenValidatedContext tokenValidatedContext)
         {
-            var signInService = tokenValidatedContext.HttpContext.RequestServices.GetService<SignInService>();
+            var refreshTokenStore = tokenValidatedContext.HttpContext.RequestServices.GetService<IRefreshTokenStore>();
             var identityOptions = tokenValidatedContext.HttpContext.RequestServices.GetService<IOptions<IdentityOptions>>();
 
             var principal = tokenValidatedContext.Principal;
-            var result = await signInService.FindRefreshTokenAsync(principal);
+            var result = await BearerSignInManagerTools.FindRefreshTokenAsync(refreshTokenStore, principal);
 
             if (result.Succeeded) {
                 // When succeeded, we can assure that refresh token entity is not null.

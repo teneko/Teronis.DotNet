@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Teronis.Identity.Authentication;
-using Teronis.Identity.SignInServicing;
+using Teronis.Identity.BearerSignInManaging;
 using ZNetCS.AspNetCore.Authentication.Basic;
 
 namespace Teronis.Identity.Controllers
@@ -12,9 +12,9 @@ namespace Teronis.Identity.Controllers
     [Route("api/user")]
     public class UserController : Controller
     {
-        private readonly SignInService signInService;
+        private readonly BearerSignInManager signInService;
 
-        public UserController(SignInService signInService) =>
+        public UserController(BearerSignInManager signInService) =>
             this.signInService = signInService;
 
         [HttpGet("authenticate")]

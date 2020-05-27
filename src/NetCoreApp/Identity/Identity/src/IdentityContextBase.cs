@@ -13,5 +13,18 @@ namespace Teronis.Identity
 
         public IdentityContextBase(DbContextOptions options)
             : base(options) { }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<RefreshTokenEntity>(options => {
+                options.HasKey(x => x.RefreshTokenId);
+
+                options.HasOne(x => x.User)
+                    .WithMany(x => x!.RefreshTokens)
+                    .HasForeignKey(x => x.UserId);
+            });
+
+            base.OnModelCreating(builder);
+        }
     }
 }

@@ -4,9 +4,9 @@ using Teronis.Identity.Presenters.Generic.ObjectModel;
 using Teronis.Identity.Presenters.ObjectModel;
 using Teronis.Identity.Presenters.Generic;
 
-namespace Teronis.Identity.SignInServicing
+namespace Teronis.Identity.BearerSignInManaging
 {
-    public class SignInServiceContext : IServiceResultInjection<SignInTokens>
+    public class BearerSignInManagerContext : IServiceResultInjection<SignInTokens>
     {
         public ClaimsPrincipal Principal { get; }
         public IServiceResult<SignInTokens>? Result { get; private set; }
@@ -15,8 +15,8 @@ namespace Teronis.Identity.SignInServicing
         public RefreshTokenEntity? RefreshTokenEntity { get; set; }
         public string? RefreshToken { get; set; }
 
-        public SignInServiceContext(ClaimsPrincipal principal)
-            => Principal = principal ?? throw SignInServiceThrowHelper.GetPrincipalNullException(nameof(principal));
+        public BearerSignInManagerContext(ClaimsPrincipal principal)
+            => Principal = principal ?? throw BearerSignInManagerThrowHelper.GetPrincipalNullException(nameof(principal));
 
         public void SetResult(IServiceResult<SignInTokens> result) =>
             Result = result;

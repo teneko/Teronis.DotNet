@@ -7,8 +7,8 @@ namespace Teronis.Identity.Extensions
     public static class ObjectResultExtensions
     {
         [return: NotNullIfNotNull("objectResult")]
-        public static T? WithHttpStatusCode<T>(this T objectResult, HttpStatusCode statusCode)
-            where T : ObjectResult
+        public static T WithHttpStatusCode<T>(this T objectResult, HttpStatusCode statusCode)
+            where T : ObjectResult?
         {
             if (!ReferenceEquals(objectResult, null)) {
                 objectResult.StatusCode = (int)statusCode;

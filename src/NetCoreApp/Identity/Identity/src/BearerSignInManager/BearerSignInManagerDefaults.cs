@@ -1,8 +1,8 @@
 ﻿
 
-namespace Teronis.Identity.SignInServicing
+namespace Teronis.Identity.BearerSignInManaging
 {
-    public static class SignInServiceDefaults
+    public static class BearerSignInManagerDefaults
     {
         public const string SignInServiceRefreshTokenIdClaimType = "SignInService.RefreshTokenId";
     }

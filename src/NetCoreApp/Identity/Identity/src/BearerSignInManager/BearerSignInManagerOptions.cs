@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Teronis.Identity.SignInServicing
+namespace Teronis.Identity.BearerSignInManaging
 {
-    public class SignInServiceOptions
+    public class BearerSignInManagerOptions
     {
         public bool SetDefaultTimesOnTokenCreation { get; set; } = false;
 

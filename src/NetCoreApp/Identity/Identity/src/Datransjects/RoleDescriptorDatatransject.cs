@@ -1,11 +1,8 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Teronis.Identity.Datransjects
 {
-    public class RoleDescriptorDatatransject
+    public class RoleDescriptorDatatransject : IRoleDescriptor
     {
         [Required(AllowEmptyStrings = true)]
         public string Role { get; set; } = null!;

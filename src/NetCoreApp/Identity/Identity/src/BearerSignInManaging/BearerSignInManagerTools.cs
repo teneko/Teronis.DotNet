@@ -43,24 +43,25 @@ namespace Teronis.Identity.BearerSignInManaging
         /// It tries to resolve refresh token id from claim <see cref="BearerSignInManagerDefaults.SignInServiceRefreshTokenIdClaimType"/> 
         /// and then look in the database. If a refresh token has been found, it will be returned.
         /// </summary>
-        public static async Task<ServiceResult<RefreshTokenEntity>> FindRefreshTokenAsync(IRefreshTokenStore refreshTokenStore, ClaimsPrincipal principal, ILogger? logger = null)
+        public static async Task<ServiceResult<BearerTokenType>> FindRefreshTokenAsync<BearerTokenType>(IBearerTokenStore<BearerTokenType> refreshTokenStore, ClaimsPrincipal principal, ILogger? logger = null)
+            where BearerTokenType : class, IBearerTokenEntity
         {
             principal = principal ?? throw BearerSignInManagerThrowHelper.GetPrincipalNullException(nameof(principal));
             var refreshTokenIdResult = FindRefreshTokenId(principal);
 
             if (!refreshTokenIdResult.Succeeded) {
-                return ServiceResult<RefreshTokenEntity>.Failed(refreshTokenIdResult);
+                return ServiceResult<BearerTokenType>.Failed(refreshTokenIdResult);
             }
 
             try {
                 // Then we need the entity that belongs to refresh token id.
-                var refreshTokenEntity = await refreshTokenStore.FindAsync(new object[] { refreshTokenIdResult.Content });
+                var refreshTokenEntity = await refreshTokenStore.FindAsync(refreshTokenIdResult.Content);
 
                 return ReferenceEquals(refreshTokenEntity, null) ?
-                    ServiceResult<RefreshTokenEntity>
+                    ServiceResult<BearerTokenType>
                         .FailedWithErrorMessage("The refresh token has been redeemed")
                         .WithHttpStatusCode(HttpStatusCode.BadRequest) :
-                    ServiceResult<RefreshTokenEntity>
+                    ServiceResult<BearerTokenType>
                         .SucceededWithContent(refreshTokenEntity)
                         .WithHttpStatusCode(HttpStatusCode.OK);
             } catch (Exception error) {
@@ -68,7 +69,7 @@ namespace Teronis.Identity.BearerSignInManaging
                 logger?.LogError(error, errorMessage);
 
                 return errorMessage.ToJsonError()
-                    .ToServiceResultFactory<RefreshTokenEntity>()
+                    .ToServiceResultFactory<BearerTokenType>()
                     .WithHttpStatusCode(HttpStatusCode.InternalServerError)
                     .AsServiceResult();
             }

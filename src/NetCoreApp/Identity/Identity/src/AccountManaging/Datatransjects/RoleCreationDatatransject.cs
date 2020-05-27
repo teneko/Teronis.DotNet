@@ -1,6 +1,6 @@
 ﻿
 
-namespace Teronis.Identity.AccountServicing.Datatransjects
+namespace Teronis.Identity.AccountManaging.Datatransjects
 {
     public class RoleCreationDatatransject
     {

@@ -1,6 +1,6 @@
 ﻿using Teronis.ObjectModel.Annotations;
 
-namespace Teronis.Identity.AccountServicing
+namespace Teronis.Identity.AccountManaging
 {
     public enum AccountServiceErrorCodes
     {

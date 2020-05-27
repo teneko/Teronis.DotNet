@@ -49,7 +49,7 @@ namespace Teronis.Identity.Presenters
 
         public JsonErrors() { }
 
-        public JsonErrors([DisallowNull]JsonError error) =>
+        public JsonErrors(JsonError error) =>
             AddError(error);
 
         public JsonErrors(string errorCode, Exception errorMessage)
@@ -76,7 +76,7 @@ namespace Teronis.Identity.Presenters
             fillWithErrors(errors);
         }
 
-        public void AddError([DisallowNull]JsonError error)
+        public void AddError(JsonError error)
         {
             error = error ?? throw new ArgumentNullException(nameof(error));
             Errors.Add(error.ErrorCode, error);
@@ -105,7 +105,7 @@ namespace Teronis.Identity.Presenters
 
         #region ICollection<JsonError>
 
-        public void Add([DisallowNull]JsonError error)
+        public void Add(JsonError error)
         {
             error = error ?? throw new ArgumentNullException(nameof(error));
             Errors.Add(error.ErrorCode, error);
@@ -114,13 +114,13 @@ namespace Teronis.Identity.Presenters
         public void Clear() =>
             Errors.Clear();
 
-        public bool Contains([DisallowNull]JsonError error)
+        public bool Contains(JsonError error)
         {
             error = error ?? throw new ArgumentNullException(nameof(error));
             return Errors.ContainsKey(error.ErrorCode);
         }
 
-        public void CopyTo([DisallowNull]JsonError[] array, int beginInsertAtIndex)
+        public void CopyTo(JsonError[] array, int beginInsertAtIndex)
         {
             array = array ?? throw new ArgumentNullException(nameof(array));
             var errorValues = Errors.Values;
@@ -138,7 +138,7 @@ namespace Teronis.Identity.Presenters
             }
         }
 
-        public bool Remove([DisallowNull]JsonError error)
+        public bool Remove(JsonError error)
         {
             error = error ?? throw new ArgumentNullException(nameof(error));
             return Errors.Remove(error.ErrorCode);

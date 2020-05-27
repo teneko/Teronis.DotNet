@@ -16,18 +16,19 @@ namespace Teronis.Identity.Authentication.Tools
         /// Validates whether <see cref="BearerSignInManagerDefaults.SignInServiceRefreshTokenIdClaimType"/> does exist
         /// and if so, it does add an user related identity to the claims principal of <paramref name="tokenValidatedContext"/>.
         /// </summary>
-        public static async Task ValidateRefreshTokenIdClaim(TokenValidatedContext tokenValidatedContext)
+        public static async Task ValidateRefreshTokenIdClaim<BearerTokenType>(TokenValidatedContext tokenValidatedContext)
+            where BearerTokenType : class, IBearerTokenEntity
         {
-            var refreshTokenStore = tokenValidatedContext.HttpContext.RequestServices.GetService<IRefreshTokenStore>();
+            var bearerTokenStore = tokenValidatedContext.HttpContext.RequestServices.GetService<IBearerTokenStore<BearerTokenType>>();
             var identityOptions = tokenValidatedContext.HttpContext.RequestServices.GetService<IOptions<IdentityOptions>>();
 
             var principal = tokenValidatedContext.Principal;
-            var result = await BearerSignInManagerTools.FindRefreshTokenAsync(refreshTokenStore, principal);
+            var result = await BearerSignInManagerTools.FindRefreshTokenAsync(bearerTokenStore, principal);
 
             if (result.Succeeded) {
                 // When succeeded, we can assure that refresh token entity is not null.
                 var refreshTokenEntity = result.Content ?? throw new ArgumentException($"The member '{nameof(result.Content)}' is null");
-                var claims = new[] { new Claim(identityOptions.Value.ClaimsIdentity.UserIdClaimType, refreshTokenEntity.UserId) };
+                var claims = new[] { new Claim(identityOptions.Value.ClaimsIdentity.UserIdClaimType, refreshTokenEntity.UserId.ToString()) };
                 var identity = new ClaimsIdentity(claims);
                 // We add a user related identity to the claims principal.
                 tokenValidatedContext.Principal.AddIdentity(identity);
@@ -54,8 +55,9 @@ namespace Teronis.Identity.Authentication.Tools
 
             /// The result of <see cref="TokenValidatedContext.Result"/> will be set.
             /// And when it is faulty, then this result will be the http response.
-            if (user == null)
+            if (user == null) {
                 context.Fail("You are not authenticated anymore.");
+            }
         }
     }
 }

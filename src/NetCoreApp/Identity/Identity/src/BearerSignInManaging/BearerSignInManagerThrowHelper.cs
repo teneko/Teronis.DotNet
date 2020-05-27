@@ -1,4 +1,5 @@
 ﻿using System;
+using Teronis.Identity.Entities;
 
 namespace Teronis.Identity.BearerSignInManaging
 {
@@ -8,6 +9,6 @@ namespace Teronis.Identity.BearerSignInManaging
             => new ArgumentNullException(paramName);
 
         public static ArgumentNullException GetContextArgumentException(string paramName)
-            => new ArgumentNullException($"{nameof(BearerSignInManagerContext)}.{paramName}");
+            => new ArgumentNullException($"{nameof(BearerSignInManagerContext<UserEntity, BearerTokenEntity>)}.{paramName}");
     }
 }

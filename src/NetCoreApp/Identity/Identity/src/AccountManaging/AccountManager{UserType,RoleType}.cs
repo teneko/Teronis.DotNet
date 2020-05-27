@@ -7,62 +7,64 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Teronis.Identity.Presenters;
 using Teronis.Identity.Presenters.Generic;
-using Teronis.Identity.Entities;
 using Teronis.Identity.Datransjects;
 using Teronis.Identity.Extensions;
 using Teronis.ObjectModel.Annotations;
-using Teronis.Identity.AccountServicing.Datatransjects;
 using System.Transactions;
 
-namespace Teronis.Identity.AccountServicing
+namespace Teronis.Identity.AccountManaging
 {
-    public class AccountService
+    public abstract class AccountManager<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType> : IAccountManager<UserDescriptorType, UserCreationType, RoleDescriptorType, RoleCreationType> 
+        where UserDescriptorType : IUserDescriptor
+        where UserType : class
+        where RoleDescriptorType : IRoleDescriptor
+        where RoleType : class
     {
-        private readonly UserManager<UserEntity> userManager;
-        private readonly RoleManager<RoleEntity> roleManager;
-        private readonly ILogger<AccountService>? logger;
+        private readonly UserManager<UserType> userManager;
+        private readonly RoleManager<RoleType> roleManager;
+        private readonly ILogger<AccountManager<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>>? logger;
 
-        public AccountService(UserManager<UserEntity> userManager, RoleManager<RoleEntity> roleManager, ILogger<AccountService>? logger = null)
+        public AccountManager(UserManager<UserType> userManager, RoleManager<RoleType> roleManager, ILogger<AccountManager<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>>? logger = null)
         {
             this.userManager = userManager;
             this.roleManager = roleManager;
             this.logger = logger;
         }
 
-        public async Task<IServiceResult<RoleCreationDatatransject>> CreateRoleAsync(RoleDescriptorDatatransject roleDescriptor)
+        protected abstract RoleType CreateRoleEntity(RoleDescriptorType roleDescriptor);
+        protected abstract RoleCreationType CreateRoleCreationObject(RoleType roleEntity);
+        protected abstract UserType CreateUserEntity(UserDescriptorType roleDescriptor);
+        protected abstract UserCreationType CreateUserCreationObject(UserType userEntity);
+
+        public async Task<IServiceResult<RoleCreationType>> CreateRoleAsync(RoleDescriptorType roleDescriptor)
         {
             Validator.ValidateObject(roleDescriptor, new ComponentDataValidationContext(roleDescriptor), true);
-
-            var createdRole = new Lazy<RoleCreationDatatransject>(() => new RoleCreationDatatransject() {
-                Role = roleDescriptor.Role
-            });
-
             var roleName = roleDescriptor.Role;
-            RoleEntity role;
+            RoleType roleEntity;
 
             try {
-                role = await roleManager.FindByNameAsync(roleName);
+                roleEntity = await roleManager.FindByNameAsync(roleName);
             } catch (Exception error) {
                 var errorMessage = $"The role '{roleName}' existence couldn't be checked";
                 logger?.LogError(error, errorMessage);
 
                 return errorMessage
                     .ToJsonError()
-                    .ToServiceResultFactory<RoleCreationDatatransject>()
+                    .ToServiceResultFactory<RoleCreationType>()
                     .WithHttpStatusCode(HttpStatusCode.InternalServerError)
                     .AsServiceResult();
             }
 
-            if (role != null) {
+            if (roleEntity != null) {
                 return $"The role '{roleName}' has been already created"
                     .ToJsonError(AccountServiceErrorCodes.RoleAlreadyCreatedErrorCode.GetStringValue())
-                    .ToServiceResultFactory<RoleCreationDatatransject>()
+                    .ToServiceResultFactory<RoleCreationType>()
                     .WithHttpStatusCode(HttpStatusCode.BadRequest)
                     .AsServiceResult();
             }
 
-            role = new RoleEntity(roleName);
-            var result = await roleManager.CreateAsync(role);
+            roleEntity = CreateRoleEntity(roleDescriptor);
+            var result = await roleManager.CreateAsync(roleEntity);
 
             if (!result.Succeeded) {
                 var errorMessage = $"The role '{roleName}' could not be created";
@@ -70,44 +72,35 @@ namespace Teronis.Identity.AccountServicing
 
                 return errorMessage
                     .ToJsonError()
-                    .ToServiceResultFactory<RoleCreationDatatransject>()
+                    .ToServiceResultFactory<RoleCreationType>()
                     .WithHttpStatusCode(HttpStatusCode.InternalServerError)
                     .AsServiceResult();
             }
 
-            return ServiceResult<RoleCreationDatatransject>
-                .SucceededWithContent(createdRole.Value)
+            var roleCration = CreateRoleCreationObject(roleEntity);
+
+            return ServiceResult<RoleCreationType>
+                .SucceededWithContent(roleCration)
                 .WithHttpStatusCode(HttpStatusCode.OK);
         }
 
-        public async Task<IServiceResult<UserCreationDatatransject>> CreateUserAsync(UserDescriptorDatatransject userDescriptor)
+        public async Task<IServiceResult<UserCreationType>> CreateUserAsync(UserDescriptorType userDescriptor)
         {
             Validator.ValidateObject(userDescriptor, new ComponentDataValidationContext(userDescriptor), true);
-
-            var lazyUserCreation = new Lazy<UserCreationDatatransject>(() => new UserCreationDatatransject() {
-                UserName = userDescriptor.UserName,
-                Roles = userDescriptor.Roles,
-                Email = userDescriptor.Email,
-                PhoneNumber = userDescriptor.PhoneNumber
-            });
-
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var userName = userDescriptor.UserName;
-            var user = await userManager.FindByNameAsync(userName);
+            UserType user = await userManager.FindByNameAsync(userName);
 
             if (!ReferenceEquals(user, null)) {
                 return $"The user '{userName}' has been already created"
                     .ToJsonError(AccountServiceErrorCodes.UserAlreadyCreatedErrorCode.GetStringValue())
-                    .ToServiceResultFactory<UserCreationDatatransject>()
+                    .ToServiceResultFactory<UserCreationType>()
                     .WithHttpStatusCode(HttpStatusCode.BadRequest)
                     .AsServiceResult();
             }
             // User does not exist, we continue user creation.
             else {
-                user = new UserEntity(userName) {
-                    Email = userDescriptor.Email,
-                    PhoneNumber = userDescriptor.PhoneNumber,
-                };
+                user = CreateUserEntity(userDescriptor) ?? throw new ArgumentNullException(nameof(user));
 
                 var userResult = await userManager.CreateAsync(user, userDescriptor.Password);
 
@@ -117,7 +110,7 @@ namespace Teronis.Identity.AccountServicing
 
                     var failedCreateUserResult = errorMessage
                         .ToJsonError()
-                        .ToServiceResultFactory<UserCreationDatatransject>()
+                        .ToServiceResultFactory<UserCreationType>()
                         .WithHttpStatusCode(HttpStatusCode.InternalServerError)
                         .AsServiceResult();
 
@@ -129,18 +122,18 @@ namespace Teronis.Identity.AccountServicing
                 }
             }
 
-            ServiceResult<UserCreationDatatransject>? userCreationResult = null;
+            ServiceResult<UserCreationType>? userCreationResult = null;
             var roleNames = userDescriptor.Roles;
 
             if (roleNames != null) {
-                ServiceResult<UserCreationDatatransject> createRoleCouldNotBeAssignedErrorResult(string roleName)
+                ServiceResult<UserCreationType> createRoleCouldNotBeAssignedErrorResult(string roleName)
                 {
                     var errorMessage = $"The user '{userName}' couldn't be assigned to role '{roleName}'. The user creation has been aborted.";
                     logger?.LogError(errorMessage);
 
                     return errorMessage
                         .ToJsonError()
-                        .ToServiceResultFactory<UserCreationDatatransject>()
+                        .ToServiceResultFactory<UserCreationType>()
                         .WithHttpStatusCode(HttpStatusCode.InternalServerError)
                         .AsServiceResult();
                 };
@@ -153,14 +146,14 @@ namespace Teronis.Identity.AccountServicing
 
                             userCreationResult = errorMessage
                                 .ToJsonError()
-                                .ToServiceResultFactory<UserCreationDatatransject>()
+                                .ToServiceResultFactory<UserCreationType>()
                                 .WithHttpStatusCode(HttpStatusCode.InternalServerError)
                                 .AsServiceResult();
 
                             break;
                         }
 
-                        if (user != null && !await userManager.IsInRoleAsync(user, roleName)) {
+                        if (!await userManager.IsInRoleAsync(user, roleName)) {
                             var result = await userManager.AddToRoleAsync(user, roleName);
 
                             if (!result.Succeeded) {
@@ -185,14 +178,15 @@ namespace Teronis.Identity.AccountServicing
                     logger?.LogCritical(error, errorMessage);
                 }
 
-                return ServiceResult<UserCreationDatatransject>
+                return ServiceResult<UserCreationType>
                     .Failed(userCreationResult!);
             } else {
                 transactionScope.Complete();
+                var userCreation = CreateUserCreationObject(user);
 
-                return ServiceResult<UserCreationDatatransject>
-                .SucceededWithContent(lazyUserCreation.Value)
-                .WithHttpStatusCode(HttpStatusCode.OK);
+                return ServiceResult<UserCreationType>
+                    .SucceededWithContent(userCreation)
+                    .WithHttpStatusCode(HttpStatusCode.OK);
             }
         }
     }

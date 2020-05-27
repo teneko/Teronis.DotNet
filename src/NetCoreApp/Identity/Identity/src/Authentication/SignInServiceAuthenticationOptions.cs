@@ -9,7 +9,7 @@ namespace Teronis.Identity.Authentication
         [Required]
         public SymmetricSecurityKey TokenSigningKey { get; set; }
 
-        public SignInServiceAuthenticationOptions([DisallowNull]SymmetricSecurityKey tokenSigningKey)
+        public SignInServiceAuthenticationOptions(SymmetricSecurityKey tokenSigningKey)
         {
             TokenSigningKey = tokenSigningKey;
         }

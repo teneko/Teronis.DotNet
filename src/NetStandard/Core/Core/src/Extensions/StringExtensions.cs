@@ -30,13 +30,13 @@ namespace Teronis.Extensions
         /// <summary>
         /// Returns the input string with the first character converted to uppercase, or mutates any nulls passed into string.Empty
         /// </summary>
-        public static string UppercaseFirstLetter(this string source)
+        public static string UpperFirstLetter(this string source)
             => ManipulateFirstLetter(source, c => char.ToUpper(c));
 
         /// <summary>
         /// Returns the input string with the first character converted to uppercase, or mutates any nulls passed into string.Empty
         /// </summary>
-        public static string LowercaseFirstLetter(this string source)
+        public static string LowerFirstLetter(this string source)
             => ManipulateFirstLetter(source, c => char.ToLower(c));
 
         /// <summary>

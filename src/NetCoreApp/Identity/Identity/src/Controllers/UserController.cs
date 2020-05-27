@@ -4,20 +4,20 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Teronis.Identity.Authentication;
 using Teronis.Identity.BearerSignInManaging;
-using ZNetCS.AspNetCore.Authentication.Basic;
+using Teronis.Identity.Entities;
 
 namespace Teronis.Identity.Controllers
 {
-    [ApiController]
-    [Route("api/user")]
+    //[ApiController]
+    //[Route("api/user")]
     public class UserController : Controller
     {
-        private readonly BearerSignInManager signInService;
+        private readonly IBearerSignInManager signInManager;
 
-        public UserController(BearerSignInManager signInService) =>
-            this.signInService = signInService;
+        public UserController(IBearerSignInManager signInManager) =>
+            this.signInManager = signInManager;
 
-        [HttpGet("authenticate")]
+        //[HttpGet("authenticate")]
         [Produces("application/json")]
         [ProducesErrorResponseType(typeof(void))]
         [ProducesResponseType(typeof(SignInTokens), StatusCodes.Status200OK)]
@@ -25,15 +25,15 @@ namespace Teronis.Identity.Controllers
         // Very important, otherwise the user entity cannot be resolved.
         [Authorize(AuthenticationSchemes = SignInServiceAuthenticationDefaults.RefreshTokenBasicScheme)]
         public async Task<IActionResult> Authenticate() =>
-            await signInService.CreateInitialSignInTokensAsync(HttpContext.User);
+            await signInManager.CreateInitialSignInTokensAsync(HttpContext.User);
 
-        [HttpGet("refreshToken")]
+        //[HttpGet("refreshToken")]
         [Produces("application/json")]
         [ProducesErrorResponseType(typeof(void))]
         [ProducesResponseType(typeof(SignInTokens), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Authorize(AuthenticationSchemes = SignInServiceAuthenticationDefaults.RefreshTokenBearerScheme)]
         public async Task<IActionResult> RefreshToken() =>
-            await signInService.CreateNextSignInTokensAsync(HttpContext.User);
+            await signInManager.CreateNextSignInTokensAsync(HttpContext.User);
     }
 }

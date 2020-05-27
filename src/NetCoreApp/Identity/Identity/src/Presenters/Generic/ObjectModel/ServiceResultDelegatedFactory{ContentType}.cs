@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using Teronis.Identity.Presenters.Generic;
 using Teronis.Identity.Presenters.ObjectModel;
 
 namespace Teronis.Identity.Presenters.Generic.ObjectModel
@@ -9,7 +7,7 @@ namespace Teronis.Identity.Presenters.Generic.ObjectModel
     {
         private readonly IServiceResultInjection<ContentType> serviceResultInjection;
 
-        public ServiceResultDelegatedFactory([DisallowNull] IServiceResultInjection<ContentType> serviceResultInjection) =>
+        public ServiceResultDelegatedFactory(IServiceResultInjection<ContentType> serviceResultInjection) =>
             this.serviceResultInjection = serviceResultInjection ?? throw new ArgumentNullException(nameof(serviceResultInjection));
 
         private IServiceResultFactory<IServiceResult<ContentType>, ContentType> setServiceResult(ServiceResult<ContentType> serviceResult)

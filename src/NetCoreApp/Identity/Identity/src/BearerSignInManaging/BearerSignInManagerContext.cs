@@ -6,13 +6,15 @@ using Teronis.Identity.Presenters.Generic;
 
 namespace Teronis.Identity.BearerSignInManaging
 {
-    public class BearerSignInManagerContext : IServiceResultInjection<SignInTokens>
+    public class BearerSignInManagerContext<UserEntityType, BearerTokenType> : IServiceResultInjection<SignInTokens>
+        where UserEntityType : class, IUserEntity
+        where BearerTokenType : class, IBearerTokenEntity
     {
         public ClaimsPrincipal Principal { get; }
         public IServiceResult<SignInTokens>? Result { get; private set; }
-        public UserEntity? User { get; set; }
+        public UserEntityType? User { get; set; }
         public string? AccessToken { get; set; }
-        public RefreshTokenEntity? RefreshTokenEntity { get; set; }
+        public BearerTokenType? RefreshTokenEntity { get; set; }
         public string? RefreshToken { get; set; }
 
         public BearerSignInManagerContext(ClaimsPrincipal principal)

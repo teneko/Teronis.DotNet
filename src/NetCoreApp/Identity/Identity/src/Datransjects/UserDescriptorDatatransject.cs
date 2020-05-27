@@ -2,7 +2,7 @@
 
 namespace Teronis.Identity.Datransjects
 {
-    public class UserDescriptorDatatransject
+    public class UserDescriptorDatatransject : IUserDescriptor
     {
         [Required(AllowEmptyStrings = true)]
         public string UserName { get; set; } = null!;

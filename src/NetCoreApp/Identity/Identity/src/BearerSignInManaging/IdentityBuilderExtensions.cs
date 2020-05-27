@@ -1,14 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Teronis.Extensions;
 using Teronis.Identity.BearerSignInManaging;
+using Teronis.Identity.Entities;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace Teronis.Identity
 {
-    public static class BearerSignInManagerExtensions
+    public static partial class IdentityBuilderExtensions
     {
-        public static IServiceCollection AddSignInService(this IServiceCollection services, Action<BearerSignInManagerOptions>? configureOptions)
+        private static void addBearerSignInManagerOptions(IdentityBuilder identityBuilder, Action<BearerSignInManagerOptions>? configureOptions = null)
         {
+            var services = identityBuilder.Services;
             // Both are used by underlying services.
             services.AddLogging();
             services.AddOptions();
@@ -19,21 +25,21 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.PostConfigure<BearerSignInManagerOptions>(options => {
                 options.CreateDefaultedTokenDescriptor ??= () => new SecurityTokenDescriptor();
-                var defaultTokenDescriptor = options.CreateDefaultedTokenDescriptor();
+                SecurityTokenDescriptor defaultTokenDescriptor = options.CreateDefaultedTokenDescriptor() ?? new SecurityTokenDescriptor();
 
                 // Only those values are taken over whose property values are null.
                 void TakeOverFromDefaultOptions(SecurityTokenDescriptor tokenDescriptor)
                 {
                     // Claims can be null..
-                    if (tokenDescriptor.Claims == null && defaultTokenDescriptor.Claims == null) {
+                    if (tokenDescriptor.Claims.IsNullOrEmpty() && defaultTokenDescriptor.Claims.IsNullOrEmpty()) {
                         tokenDescriptor.Claims = new Dictionary<string, object>();
                     }
                     // Take over claims.
-                    else if (tokenDescriptor.Claims == null && defaultTokenDescriptor.Claims != null) {
+                    else if (tokenDescriptor.Claims.IsNullOrEmpty() && !defaultTokenDescriptor.Claims.IsNullOrEmpty()) {
                         tokenDescriptor.Claims = new Dictionary<string, object>(defaultTokenDescriptor.Claims);
                     }
                     // Add defaulted claims to existing claims.
-                    else if (tokenDescriptor.Claims != null && defaultTokenDescriptor.Claims != null) {
+                    else if (!tokenDescriptor.Claims.IsNullOrEmpty() && !defaultTokenDescriptor.Claims.IsNullOrEmpty()) {
                         foreach (var claim in (ICollection<KeyValuePair<string, object>>)defaultTokenDescriptor.Claims) {
                             tokenDescriptor.Claims.Add(claim);
                         }
@@ -67,12 +73,18 @@ namespace Microsoft.Extensions.DependencyInjection
                     return tokenDescriptor;
                 };
             });
-
-            services.AddScoped<BearerSignInManager>();
-            return services;
         }
 
-        public static IServiceCollection AddSignInService(this IServiceCollection services) =>
-            AddSignInService(services, null);
+        public static IdentityBuilder AddBearerSignInManager<DbContextType>(this IdentityBuilder identityBuilder, Action<BearerSignInManagerOptions>? configureOptions = null)
+            where DbContextType : DbContext
+        {
+            addBearerSignInManagerOptions(identityBuilder, configureOptions);
+            var services = identityBuilder.Services;
+            services.AddScoped<BearerSignInManager>();
+            services.AddScoped<BearerSignInManager<UserEntity, BearerTokenEntity>>(serviceProvider => serviceProvider.GetRequiredService<BearerSignInManager>());
+            services.AddScoped<IBearerSignInManager>(serviceProvider => serviceProvider.GetRequiredService<BearerSignInManager>());
+            AddBearerSignInStores<DbContextType>(identityBuilder);
+            return identityBuilder;
+        }
     }
 }

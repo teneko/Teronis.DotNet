@@ -7,7 +7,7 @@ namespace Teronis.Identity.Presenters.Generic
         /// <summary>
         /// Creates a result that is marked as succeeded.
         /// </summary>
-        public static ServiceResult<ContentType> SucceededWithContent(ContentType content) =>
+        public static ServiceResult<ContentType> SucceededWithContent([AllowNull] ContentType content) =>
             new ServiceResult<ContentType>(content);
 
         /// <summary>
@@ -40,10 +40,10 @@ namespace Teronis.Identity.Presenters.Generic
         public ServiceResult(bool succeeded)
             : this(succeeded, default, default) { }
 
-        public ServiceResult(ContentType content, int? statusCode = null)
+        public ServiceResult([AllowNull] ContentType content, int? statusCode = null)
             : base(true, content, statusCode) { }
 
-        public ServiceResult(JsonErrors errors, int? statusCode = null)
+        public ServiceResult([AllowNull] JsonErrors errors, int? statusCode = null)
             : base(false, errors, statusCode) { }
     }
 }

@@ -36,36 +36,43 @@ namespace Teronis.DotNet.Build
             // Marker file represents root directory
             var rootDirectory = Utilities.GetRootDirectory() ?? throw new DirectoryNotFoundException("Root directory not found.");
             var sourceDirectory = Path.Combine(rootDirectory.FullName, "src");
+
             var projects = Directory.GetFiles(sourceDirectory, "*.csproj", SearchOption.AllDirectories)
                    .Select(x => new FileInfo(x));
+
             var matchTestProjects = @"(\.Test\.csproj|\\test\\)";
-            var matchBuildProjects = Regex.Escape(Path.Combine(sourceDirectory, "DotNet", "Build", @"Build\"));
-            var matchNonBuildProjects = string.Format(@"({0}|{1})", matchTestProjects, matchBuildProjects);
+
+            var matchBuildProgramProjects = Regex.Escape(Path.Combine(sourceDirectory, "DotNet", "Build", @"Build\"));
+            var matchBuildExcludedProjects = string.Format(@"({0}|{1})", matchTestProjects, matchBuildProgramProjects);
+
+            var matchExampleProjects = @"\.Example\.csproj|\\example\\";
+            var matchPackExcludedProjects = string.Format(@"({0}|{1})", matchBuildExcludedProjects, matchExampleProjects);
 
             Task RunDotNet(string command, string project, string additionalArguments = null) =>
                 RunAsync($"dotnet.exe", $"{command} {project} --{ConfigurationLongName} {options.Configuration} --{VerbosityLongName} {options.Verbosity} {additionalArguments}");
 
             Target(BuildCommandOptions.BuildCommand, async () => {
-                var buildProjects = projects.Where(x => !Regex.IsMatch(x.FullName, matchNonBuildProjects));
+                var buildProjects = projects.Where(x => !Regex.IsMatch(x.FullName, matchBuildExcludedProjects));
 
                 foreach (var buildProject in buildProjects) {
-                    await RunDotNet("build", buildProject.FullName);
+                    await RunDotNet(BuildCommandOptions.BuildCommand, buildProject.FullName);
                 }
             });
 
             Target(PackCommandOptions.PackCommand, async () => {
-                var packProjects = projects.Where(x => !Regex.IsMatch(x.FullName, matchNonBuildProjects));
+
+                var packProjects = projects.Where(x => !Regex.IsMatch(x.FullName, matchPackExcludedProjects));
 
                 foreach (var buildProject in packProjects) {
                     await RunDotNet("pack", buildProject.FullName);
                 }
             });
 
-            Target(TestCommandOptions.TestCommand, DependsOn("build", "pack"), async () => {
+            Target(TestCommandOptions.TestCommand, DependsOn(BuildCommandOptions.BuildCommand, PackCommandOptions.PackCommand), async () => {
                 var testProjects = projects.Where(x => Regex.IsMatch(x.FullName, matchTestProjects));
 
                 foreach (var buildProject in testProjects) {
-                    await RunDotNet("build", buildProject.FullName);
+                    await RunDotNet(BuildCommandOptions.BuildCommand, buildProject.FullName);
                 }
             });
 

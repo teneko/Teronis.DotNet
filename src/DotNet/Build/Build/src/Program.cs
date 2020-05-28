@@ -48,8 +48,18 @@ namespace Teronis.DotNet.Build
             var matchExampleProjects = @"\.Example\.csproj|\\example\\";
             var matchPackExcludedProjects = string.Format(@"({0}|{1})", matchBuildExcludedProjects, matchExampleProjects);
 
-            Task RunDotNet(string command, string project, string additionalArguments = null) =>
-                RunAsync($"dotnet.exe", $"{command} {project} --{ConfigurationLongName} {options.Configuration} --{VerbosityLongName} {options.Verbosity} {additionalArguments}");
+            Task RunDotNet(string command, string project, string additionalArguments = null)
+            {
+                var dotNetProgram = $"dotnet.exe";
+                var dotNetCommandArgs = $"{command} \"{project}\" --{ConfigurationLongName} {options.Configuration} --{VerbosityLongName} {options.Verbosity} {additionalArguments}";
+
+                if (options.DryRun) {
+                    Console.WriteLine($"{dotNetProgram} {dotNetCommandArgs}");
+                    return Task.CompletedTask;
+                } else {
+                    return RunAsync(dotNetProgram, args: dotNetCommandArgs);
+                }
+            }
 
             Target(BuildCommandOptions.BuildCommand, async () => {
                 var buildProjects = projects.Where(x => !Regex.IsMatch(x.FullName, matchBuildExcludedProjects));
@@ -59,7 +69,7 @@ namespace Teronis.DotNet.Build
                 }
             });
 
-            Target(PackCommandOptions.PackCommand, async () => {
+            Target(PackCommandOptions.PackCommand, DependsOn(), async () => {
 
                 var packProjects = projects.Where(x => !Regex.IsMatch(x.FullName, matchPackExcludedProjects));
 

@@ -6,12 +6,10 @@ using CommandLine;
 namespace Teronis.DotNet.Build.CommandOptions
 {
     [Verb(PackCommand)]
-    public class PackCommandOptions : ICommandOptions
+    public class PackCommandOptions : CommandOptionsBase
     {
         public const string PackCommand = "pack";
 
-        public string Command => PackCommand;
-        public string Configuration { get; set; }
-        public string Verbosity { get; set; }
+        public override string Command => PackCommand;
     }
 }

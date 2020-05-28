@@ -3,7 +3,7 @@ using Teronis.Collections.Synchronization.Example1.Models;
 using Teronis.Collections.Synchronization.Example1.ViewModels;
 using Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollections;
 
-namespace Teronis.Collections.Sync
+namespace Teronis.Collections.Synchronization
 {
     class Program
     {

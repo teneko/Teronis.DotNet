@@ -8,16 +8,16 @@ using Teronis.Identity.Entities;
 
 namespace Teronis.Identity.Controllers
 {
-    //[ApiController]
-    //[Route("api/user")]
-    public class UserController : Controller
+    [ApiController]
+    [Route("api/sign-in")]
+    public class SignInController : Controller
     {
         private readonly IBearerSignInManager signInManager;
 
-        public UserController(IBearerSignInManager signInManager) =>
+        public SignInController(IBearerSignInManager signInManager) =>
             this.signInManager = signInManager;
 
-        //[HttpGet("authenticate")]
+        [HttpGet("authenticate")]
         [Produces("application/json")]
         [ProducesErrorResponseType(typeof(void))]
         [ProducesResponseType(typeof(SignInTokens), StatusCodes.Status200OK)]
@@ -27,7 +27,7 @@ namespace Teronis.Identity.Controllers
         public async Task<IActionResult> Authenticate() =>
             await signInManager.CreateInitialSignInTokensAsync(HttpContext.User);
 
-        //[HttpGet("refreshToken")]
+        [HttpGet("refreshToken")]
         [Produces("application/json")]
         [ProducesErrorResponseType(typeof(void))]
         [ProducesResponseType(typeof(SignInTokens), StatusCodes.Status200OK)]

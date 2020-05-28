@@ -3,5 +3,5 @@
 namespace Teronis.Identity.BearerSignInManaging
 {
     public interface IBearerTokenStore : IBearerTokenStore<BearerTokenEntity>
-    {}
+    { }
 }

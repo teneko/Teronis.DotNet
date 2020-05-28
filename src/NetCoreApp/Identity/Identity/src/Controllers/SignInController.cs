@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Teronis.Identity.Authentication;
 using Teronis.Identity.BearerSignInManaging;
-using Teronis.Identity.Entities;
 
 namespace Teronis.Identity.Controllers
 {
@@ -23,7 +22,7 @@ namespace Teronis.Identity.Controllers
         [ProducesResponseType(typeof(SignInTokens), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         // Very important, otherwise the user entity cannot be resolved.
-        [Authorize(AuthenticationSchemes = SignInServiceAuthenticationDefaults.RefreshTokenBasicScheme)]
+        [Authorize(AuthenticationSchemes = AuthenticationDefaults.IdentityBasicScheme)]
         public async Task<IActionResult> Authenticate() =>
             await signInManager.CreateInitialSignInTokensAsync(HttpContext.User);
 
@@ -32,7 +31,7 @@ namespace Teronis.Identity.Controllers
         [ProducesErrorResponseType(typeof(void))]
         [ProducesResponseType(typeof(SignInTokens), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [Authorize(AuthenticationSchemes = SignInServiceAuthenticationDefaults.RefreshTokenBearerScheme)]
+        [Authorize(AuthenticationSchemes = AuthenticationDefaults.IdentityRefreshTokenBearerScheme)]
         public async Task<IActionResult> RefreshToken() =>
             await signInManager.CreateNextSignInTokensAsync(HttpContext.User);
     }

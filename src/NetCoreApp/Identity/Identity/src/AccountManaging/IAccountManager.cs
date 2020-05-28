@@ -1,8 +1,7 @@
-﻿using Teronis.Identity.AccountManaging.Datatransjects;
-using Teronis.Identity.Datransjects;
+﻿using Teronis.Identity.Entities;
 
 namespace Teronis.Identity.AccountManaging
 {
-    public interface IAccountManager : IAccountManager<UserDescriptorDatatransject, UserCreationDatatransject, RoleDescriptorDatatransject, RoleCreationDatatransject>
-    {}
+    public interface IAccountManager : IAccountManager<UserEntity, RoleEntity>
+    { }
 }

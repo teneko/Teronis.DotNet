@@ -4,7 +4,7 @@ namespace Teronis.Identity.Presenters.Generic
 {
     public interface IServiceResult<out ContentType> : IServiceResult
     {
-        [MaybeNull, AllowNull]
+        [MaybeNull]
         ContentType Content { get; }
     }
 }

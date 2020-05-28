@@ -6,9 +6,9 @@ using Teronis.Identity.Entities;
 
 namespace Teronis.Identity.BearerSignInManaging
 {
-    public abstract class BearerSignInManager : BearerSignInManager<UserEntity, BearerTokenEntity>
+    public class BearerSignInManager : BearerSignInManager<UserEntity, BearerTokenEntity>
     {
-        protected BearerSignInManager(IOptions<BearerSignInManagerOptions> options, UserManager<UserEntity> userManager,
+        public BearerSignInManager(IOptions<BearerSignInManagerOptions> options, UserManager<UserEntity> userManager,
             IOptions<IdentityOptions> identityOptions, IBearerTokenStore bearerTokenStore,
             ILogger<BearerSignInManager>? logger = null)
             : base(options, userManager, identityOptions, bearerTokenStore, logger)

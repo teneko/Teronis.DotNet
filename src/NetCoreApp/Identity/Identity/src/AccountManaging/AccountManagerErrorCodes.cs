@@ -2,11 +2,11 @@
 
 namespace Teronis.Identity.AccountManaging
 {
-    public enum AccountServiceErrorCodes
+    public enum AccountManagerErrorCodes
     {
         [StringValue("RoleAlreadyCreated")]
-        RoleAlreadyCreatedErrorCode,
+        RoleAlreadyCreated,
         [StringValue("UserAlreadyCreated")]
-        UserAlreadyCreatedErrorCode
+        UserAlreadyCreated
     }
 }

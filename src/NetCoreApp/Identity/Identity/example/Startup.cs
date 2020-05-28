@@ -1,9 +1,15 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Teronis.Identity.Controllers;
+using Teronis.Identity.Entities;
+using Microsoft.EntityFrameworkCore;
+using Teronis.Identity.Authentication;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Teronis.Identity
 {
@@ -20,8 +26,25 @@ namespace Teronis.Identity
         public void ConfigureServices(IServiceCollection services)
         {
             var assembly = typeof(SignInController).Assembly;
-            services.AddMvc().AddApplicationPart(assembly).AddControllersAsServices();
-            services.AddControllers();
+
+            services.AddMvc()
+                .AddApplicationPart(assembly).AddControllersAsServices();
+
+            services.AddDbContext<BearerIdentityDbContext>(options => {
+                options.UseSqlite("Data Source=:memory:");
+            });
+
+            var test = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("test"));
+
+            services.AddIdentity<UserEntity, RoleEntity>()
+                .AddEntityFrameworkStores<BearerIdentityDbContext>()
+                .AddAccountManager()
+                .AddBearerSignInManager<BearerIdentityDbContext>();
+
+            services.AddAuthentication()
+                .AddIdentityBasic()
+                .AddIdentityJwtRefreshToken(new JwtBearerAuthenticationOptions(test))
+                .AddJwtAccessToken(new JwtBearerAuthenticationOptions(test));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,10 +62,12 @@ namespace Teronis.Identity
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
+                endpoints.Map("/", (context) => context.Response.WriteAsync("Hello"));
             });
         }
     }

@@ -1,15 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Teronis.Identity.Authentication
 {
-    public class SignInServiceAuthenticationOptions
+    public class JwtBearerAuthenticationOptions
     {
         [Required]
         public SymmetricSecurityKey TokenSigningKey { get; set; }
 
-        public SignInServiceAuthenticationOptions(SymmetricSecurityKey tokenSigningKey)
+        public JwtBearerAuthenticationOptions(SymmetricSecurityKey tokenSigningKey)
         {
             TokenSigningKey = tokenSigningKey;
         }

@@ -1,8 +1,13 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace Teronis.Identity.Presenters.Generic
 {
-    public class ServiceResult<ContentType> : ServiceResultBase, IServiceResult<ContentType>
+    public class ServiceResult<ContentType> : ServiceResult, IServiceResult<ContentType>, IMutableServiceResult
     {
         /// <summary>
         /// Creates a result that is marked as succeeded.
@@ -28,11 +33,13 @@ namespace Teronis.Identity.Presenters.Generic
         public static ServiceResult<ContentType> Failed(IServiceResult result) =>
             new ServiceResult<ContentType>(false, JsonErrors.FromJsonErrors(result.Errors), result.StatusCode);
 
-        [MaybeNull, AllowNull]
+        [MaybeNull]
         public ContentType Content {
             get => Value is ContentType value ? value : default;
-            set => Value = value;
         }
+
+        internal ServiceResult(in ServiceResultDatransject datransject)
+            : base(datransject) { }
 
         protected ServiceResult(bool succeeded, object? content = null, int? statusCode = null)
             : base(succeeded, content, statusCode) { }

@@ -10,34 +10,31 @@ namespace Teronis.Identity
 {
     public static partial class IdentityBuilderExtensions
     {
-        private static IdentityBuilder addAccountManager<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>(this IdentityBuilder identityBuilder,
-            Func<IServiceProvider, AccountManager<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>>? getRequiredService)
-            where UserDescriptorType : IUserDescriptor
-            where UserType : class
-            where RoleDescriptorType : IRoleDescriptor
-            where RoleType : class
+        private static IdentityBuilder addAccountManager<UserType, RoleType>(this IdentityBuilder identityBuilder,
+            Func<IServiceProvider, AccountManager<UserType, RoleType>>? getRequiredService)
+            where UserType : class, IAccountUserEntity
+            where RoleType : class, IAccountRoleEntity
         {
             var services = identityBuilder.Services;
 
             if (getRequiredService is null) {
-                services.AddScoped<AccountManager<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>>();
+                services.AddScoped<AccountManager<UserType, RoleType>>();
             } else {
                 services.AddScoped(getRequiredService);
             }
 
-            services.AddScoped<IAccountManager<UserDescriptorType, UserCreationType, RoleDescriptorType, RoleCreationType>>(serviceProvider =>
-                serviceProvider.GetRequiredService<AccountManager<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>>());
+            services.AddScoped<IAccountManager<UserType, RoleType>>(serviceProvider =>
+                serviceProvider.GetRequiredService<AccountManager<UserType, RoleType>>());
 
             return identityBuilder;
         }
 
-        public static IdentityBuilder AddAccountManager<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>(this IdentityBuilder identityBuilder)
-            where UserDescriptorType : IUserDescriptor
-            where UserType : class
-            where RoleDescriptorType : IRoleDescriptor
-            where RoleType : class
+        public static IdentityBuilder AddAccountManager<UserType, RoleType>(this IdentityBuilder identityBuilder,
+            Func<IServiceProvider, AccountManager<UserType, RoleType>>? getRequiredService)
+            where UserType : class, IAccountUserEntity
+            where RoleType : class, IAccountRoleEntity
         {
-            addAccountManager<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>(identityBuilder, null);
+            addAccountManager<UserType, RoleType>(identityBuilder, null);
             return identityBuilder;
         }
 

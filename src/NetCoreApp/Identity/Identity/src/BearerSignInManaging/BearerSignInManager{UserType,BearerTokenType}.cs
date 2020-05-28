@@ -50,7 +50,7 @@ namespace Teronis.Identity.BearerSignInManaging
                     context.User = user;
                     return true;
                 } else {
-                    const string errorMessage = "The user couldn't be found";
+                    const string errorMessage = "The user could not be found";
                     logger?.LogDebug(errorMessage);
 
                     context.SetResult()
@@ -58,7 +58,7 @@ namespace Teronis.Identity.BearerSignInManaging
                         .WithHttpStatusCode(HttpStatusCode.BadRequest);
                 }
             } catch (Exception error) {
-                logger?.LogError(error, $"The user couldn't be loaded");
+                logger?.LogError(error, $"The user could not be loaded");
 
                 context.SetResult()
                     .ToFailed()
@@ -105,7 +105,7 @@ namespace Teronis.Identity.BearerSignInManaging
                             .WithHttpStatusCode(HttpStatusCode.Unauthorized);
                     }
                 } catch (Exception error) {
-                    logger?.LogError(error, $"The refresh token couldn't be deleted");
+                    logger?.LogError(error, $"The refresh token could not be deleted");
 
                     context.SetResult()
                         .ToFailed()
@@ -143,7 +143,7 @@ namespace Teronis.Identity.BearerSignInManaging
                 context.AccessToken = BearerSignInManagerTools.GenerateJwtToken(accessTokenDescriptor, signInServiceOptions.SetDefaultTimesOnTokenCreation);
                 return true;
             } catch (Exception error) {
-                var errorMessage = $"The access token couldn't be created";
+                var errorMessage = $"The access token could not be created";
                 logger.LogError(error, errorMessage);
 
                 context.SetResult()

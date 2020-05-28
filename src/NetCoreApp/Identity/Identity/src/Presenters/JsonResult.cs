@@ -9,7 +9,7 @@ namespace Teronis.Identity.Presenters
         /// <summary>
         /// If not specified, the formatters from startup are used by default.
         /// </summary>
-        public new FormatterCollection<IOutputFormatter> Formatters {
+        public new FormatterCollection<IOutputFormatter>? Formatters {
             get => base.Formatters;
             set => base.Formatters = value;
         }

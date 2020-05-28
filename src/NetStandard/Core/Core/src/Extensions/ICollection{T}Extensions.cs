@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Teronis.Extensions
 {
@@ -20,6 +21,19 @@ namespace Teronis.Extensions
         {
             source.Add(item);
             return item;
+        }
+
+        public static ListType Include<ListType, ItemType>(this ListType original, IEnumerable<ItemType> source)
+            where ListType : ICollection<ItemType>
+        {
+            original = original ?? throw new ArgumentNullException(nameof(original));
+            source = source ?? throw new ArgumentNullException(nameof(source));
+
+            foreach (var item in source) {
+                original.Add(item);
+            }
+
+            return original;
         }
     }
 }

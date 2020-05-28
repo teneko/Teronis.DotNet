@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Teronis.Identity.Entities
 {
-    public class UserEntity : IdentityUser, IUserEntity
+    public class UserEntity : IdentityUser, IAccountUserEntity, IUserEntity
     {
         // EF Core uses backed field by default.
         public IReadOnlyList<BearerTokenEntity> RefreshTokens =>

@@ -46,6 +46,7 @@ namespace Teronis.Identity
             BearerTokenStore<DbContextType> getRequiredService(IServiceProvider serviceProvider) =>
                serviceProvider.GetRequiredService<BearerTokenStore<DbContextType>>();
 
+            services.AddScoped<IBearerTokenStore>(getRequiredService);
             addBearerSignInStores<UserEntity, BearerTokenEntity, DbContextType>(identityBuilder, getRequiredService);
             return identityBuilder;
         }

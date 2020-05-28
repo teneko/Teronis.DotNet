@@ -8,10 +8,12 @@ namespace Teronis.Identity.Presenters
     public interface IServiceResult : IStatusCodeActionResult, IActionResult
     {
         bool Succeeded { get; }
-        object Value { get; }
+        object? Value { get; }
         JsonErrors? Errors { get; }
         Type DeclaredType { get; }
-        FormatterCollection<IOutputFormatter> Formatters { get; }
-        MediaTypeCollection ContentTypes { get; }
+        FormatterCollection<IOutputFormatter>? Formatters { get; }
+        MediaTypeCollection? ContentTypes { get; }
+
+        ServiceResultDatransject DeepCopy();
     }
 }

@@ -8,7 +8,7 @@ namespace Teronis.Identity.Authentication.Extensions
         /// <summary>
         /// The property <see cref="BasicAuthenticationEvents.OnValidatePrincipal"/> will be overridden.
         /// </summary>
-        public static BasicAuthenticationEvents AddAuthenticateWhenValidatePrincipal(this BasicAuthenticationEvents events)
+        public static BasicAuthenticationEvents UseAuthenticateWhenValidatePrincipal(this BasicAuthenticationEvents events)
         {
             events.OnValidatePrincipal = BasicAuthenticationEventsTools.ValidatePrincipal;
             return events;

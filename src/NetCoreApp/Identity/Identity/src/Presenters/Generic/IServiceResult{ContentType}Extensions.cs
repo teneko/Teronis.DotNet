@@ -30,7 +30,7 @@ namespace Teronis.Identity.Presenters.Generic
             var copiedResult = copy<SourceContentType, TargetContentType>(result);
             IMutableServiceResult mutableServiceResult = copiedResult;
             mutableServiceResult.Succeeded = true;
-            mutableServiceResult.Value = content;
+            mutableServiceResult.Content = content;
             return copiedResult;
         }
 
@@ -52,7 +52,7 @@ namespace Teronis.Identity.Presenters.Generic
             mutableServiceResult.Succeeded = true;
 
             if (errors != null) {
-                mutableServiceResult.Value = errors;
+                mutableServiceResult.Errors = errors;
             }
 
             return copiedResult;

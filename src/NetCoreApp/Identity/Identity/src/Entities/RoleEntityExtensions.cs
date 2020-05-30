@@ -7,7 +7,7 @@ namespace Teronis.Identity.Entities
         public static RoleCreationDatatransject ToRoleCreation(this RoleEntity roleEntity)
         {
             return new RoleCreationDatatransject() {
-                Role = roleEntity.Id
+                RoleName = roleEntity.Name
             };
         }
     }

@@ -34,7 +34,7 @@ namespace Teronis.Identity.BearerSignInManaging
                     .WithHttpStatusCode(HttpStatusCode.Unauthorized)
                     .AsServiceResult();
             } else {
-                return ServiceResult<Guid>.SucceededWithContent(refreshTokenId)
+                return ServiceResult<Guid>.Success(refreshTokenId)
                     .WithHttpStatusCode(HttpStatusCode.OK);
             }
         }
@@ -50,7 +50,7 @@ namespace Teronis.Identity.BearerSignInManaging
             var refreshTokenIdResult = FindRefreshTokenId(principal);
 
             if (!refreshTokenIdResult.Succeeded) {
-                return ServiceResult<BearerTokenType>.Failed(refreshTokenIdResult);
+                return ServiceResult<BearerTokenType>.Failure(refreshTokenIdResult);
             }
 
             try {
@@ -59,13 +59,13 @@ namespace Teronis.Identity.BearerSignInManaging
 
                 return ReferenceEquals(refreshTokenEntity, null) ?
                     ServiceResult<BearerTokenType>
-                        .FailedWithErrorMessage("The refresh token has been redeemed")
+                        .Failure("The refresh token has been redeemed.")
                         .WithHttpStatusCode(HttpStatusCode.BadRequest) :
                     ServiceResult<BearerTokenType>
-                        .SucceededWithContent(refreshTokenEntity)
+                        .Success(refreshTokenEntity)
                         .WithHttpStatusCode(HttpStatusCode.OK);
             } catch (Exception error) {
-                const string errorMessage = "Search for refresh token failed";
+                const string errorMessage = "Search for refresh token failed.";
                 logger?.LogError(error, errorMessage);
 
                 return errorMessage.ToJsonError()

@@ -4,6 +4,6 @@ namespace Teronis.Identity.Datransjects
 {
     public interface IRoleDescriptor
     {
-        string Role { get; }
+        string RoleName { get; }
     }
 }

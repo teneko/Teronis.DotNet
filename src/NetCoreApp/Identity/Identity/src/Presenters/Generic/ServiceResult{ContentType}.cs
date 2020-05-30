@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace Teronis.Identity.Presenters.Generic
 {
@@ -12,30 +8,38 @@ namespace Teronis.Identity.Presenters.Generic
         /// <summary>
         /// Creates a result that is marked as succeeded.
         /// </summary>
-        public static ServiceResult<ContentType> SucceededWithContent([AllowNull] ContentType content) =>
+        public static ServiceResult<ContentType> Success([AllowNull] ContentType content) =>
             new ServiceResult<ContentType>(content);
 
         /// <summary>
         /// Creates a result that is marked as failed with json error as content.
         /// </summary>
-        public static ServiceResult<ContentType> FailedWithJsonError(JsonError error) =>
+        public static ServiceResult<ContentType> Failure(JsonError? error) =>
+            new ServiceResult<ContentType>(false, content: new JsonErrors(error));
+
+        /// <summary>
+        /// Creates a result that is marked as failed with json error as content.
+        /// </summary>
+        public static ServiceResult<ContentType> Failure(Exception? error) =>
             new ServiceResult<ContentType>(false, content: new JsonErrors(error));
 
         /// <summary>
         /// Creates a result that is marked as failed with json converted error message as content.
         /// </summary>
-        public static ServiceResult<ContentType> FailedWithErrorMessage(string errorMessage) =>
-            ServiceResult<ContentType>.FailedWithJsonError(errorMessage);
+        public static ServiceResult<ContentType> Failure(string? errorMessage) =>
+            ServiceResult<ContentType>.Failure((JsonError)errorMessage);
 
         /// <summary>
         /// Creates a copy of <paramref name="result"/> but failed.
         /// <returns>
-        public static ServiceResult<ContentType> Failed(IServiceResult result) =>
-            new ServiceResult<ContentType>(false, JsonErrors.FromJsonErrors(result.Errors), result.StatusCode);
+        public static ServiceResult<ContentType> Failure(IServiceResult? result) =>
+            new ServiceResult<ContentType>(false, JsonErrors.FromJsonErrors(result?.Errors), result?.StatusCode);
+
+        protected override object? ContentOrDefault => Succeeded ? Value : default(ContentType);
 
         [MaybeNull]
-        public ContentType Content {
-            get => Value is ContentType value ? value : default;
+        public new ContentType Content {
+            get => (ContentType)ContentOrDefault;
         }
 
         internal ServiceResult(in ServiceResultDatransject datransject)
@@ -50,7 +54,7 @@ namespace Teronis.Identity.Presenters.Generic
         public ServiceResult([AllowNull] ContentType content, int? statusCode = null)
             : base(true, content, statusCode) { }
 
-        public ServiceResult([AllowNull] JsonErrors errors, int? statusCode = null)
+        public ServiceResult(JsonErrors? errors, int? statusCode = null)
             : base(false, errors, statusCode) { }
     }
 }

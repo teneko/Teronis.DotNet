@@ -4,7 +4,7 @@ namespace Teronis.Identity.Entities
 {
     public class RoleEntity : IdentityRole, IAccountRoleEntity
     {
-        string IAccountRoleEntity.RoleName => Id;
+        string IAccountRoleEntity.RoleName => Name;
 
         public RoleEntity()
             : base() { }

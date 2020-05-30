@@ -4,7 +4,7 @@ namespace Teronis.Identity.Datransjects
 {
     public class RoleDescriptorDatatransject : IRoleDescriptor
     {
-        [Required(AllowEmptyStrings = true)]
-        public string Role { get; set; } = null!;
+        [Required(AllowEmptyStrings = false)]
+        public string RoleName { get; set; } = null!;
     }
 }

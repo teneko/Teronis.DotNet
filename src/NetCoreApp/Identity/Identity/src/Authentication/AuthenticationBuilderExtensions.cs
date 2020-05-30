@@ -9,18 +9,20 @@ using Teronis.Identity.Authentication.Extensions;
 using Teronis.Identity.Authentication.Tools;
 using Teronis.Identity.Entities;
 using ZNetCS.AspNetCore.Authentication.Basic;
+using System.Threading.Tasks;
 
 namespace Teronis.Identity.Authentication
 {
     public static class AuthenticationBuilderExtensions
     {
-        private static AuthenticationBuilder addIdentityBasic(AuthenticationBuilder authenticationBuilder, Action<Action<BasicAuthenticationOptions>> addBasicAuthentication, Action<BasicAuthenticationOptions>? configureOptions = null)
+        private static AuthenticationBuilder addIdentityBasic<UserType>(AuthenticationBuilder authenticationBuilder, Action<Action<BasicAuthenticationOptions>> addBasicAuthentication, Action<BasicAuthenticationOptions>? configureOptions = null)
+            where UserType : class, IUserEntity
         {
             addBasicAuthentication(options => {
                 configureOptions?.Invoke(options);
 
                 options.Events = (options.Events ?? new BasicAuthenticationEvents())
-                   .UseAuthenticateWhenValidatePrincipal();
+                   .UseAuthenticateWhenValidatePrincipal<UserType>();
             });
 
             return authenticationBuilder;
@@ -29,18 +31,20 @@ namespace Teronis.Identity.Authentication
         /// <summary>
         /// Uses <see cref="AuthenticationDefaults.IdentityBasicScheme"/> as scheme.
         /// </summary>
-        public static AuthenticationBuilder AddIdentityBasic(this AuthenticationBuilder authenticationBuilder, Action<BasicAuthenticationOptions>? configureOptions = null)
+        public static AuthenticationBuilder AddIdentityBasic<UserType>(this AuthenticationBuilder authenticationBuilder, Action<BasicAuthenticationOptions>? configureOptions = null)
+            where UserType : class, IUserEntity
         {
-            return addIdentityBasic(authenticationBuilder, _configureOptions =>
+            return addIdentityBasic<UserType>(authenticationBuilder, _configureOptions =>
                 authenticationBuilder.AddBasicAuthentication(AuthenticationDefaults.IdentityBasicScheme, _configureOptions), configureOptions);
         }
 
         /// <summary>
         /// Uses <see cref="AuthenticationDefaults.IdentityBasicScheme"/> as scheme.
         /// </summary>
-        public static AuthenticationBuilder AddIdentityBasic(this AuthenticationBuilder authenticationBuilder, string authenticationScheme, Action<BasicAuthenticationOptions>? configureOptions)
+        public static AuthenticationBuilder AddIdentityBasic<UserType>(this AuthenticationBuilder authenticationBuilder, string authenticationScheme, Action<BasicAuthenticationOptions>? configureOptions)
+            where UserType : class, IUserEntity
         {
-            return addIdentityBasic(authenticationBuilder, _configureOptions =>
+            return addIdentityBasic<UserType>(authenticationBuilder, _configureOptions =>
                 authenticationBuilder.AddBasicAuthentication(authenticationScheme, _configureOptions), configureOptions);
         }
 
@@ -56,6 +60,7 @@ namespace Teronis.Identity.Authentication
             validateJwtBearerAuthenticationOptions(options);
 
             addJwtBearer(jwtBearerOptions => {
+                jwtBearerOptions.IncludeErrorDetails = options.IncludeErrorDetails;
                 jwtBearerOptions.RequireHttpsMetadata = false;
 
                 jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters {
@@ -68,6 +73,13 @@ namespace Teronis.Identity.Authentication
                 };
 
                 jwtBearerOptions.Events = new JwtBearerEvents()
+#if DEBUG
+                {
+                    OnAuthenticationFailed = (context) => {
+                        return Task.CompletedTask;
+                    }
+                }
+#endif
                    .WhenTokenValidated(
                        // The order matters! When validating, the user
                        // related identity is added to the claims principal.

@@ -1,25 +1,34 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Teronis.Identity.Entities;
 
 namespace Teronis.Identity
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+
+            await host.SeedIdentity(async (serviceProvider, accountManager) => {
+                var dbContext = serviceProvider.GetRequiredService<BearerIdentityDbContext>();
+                await dbContext.Database.EnsureDeletedAsync();
+                await dbContext.Database.EnsureCreatedAsync();
+
+                var roleEntity = new RoleEntity("Administrator");
+                await accountManager.CreateRoleIfNotExistsAsync(roleEntity);
+                var userEntity = new UserEntity("Administrator");
+                await accountManager.CreateUserIfNotExistsAsync(userEntity, "aA#123");
+            });
+
+            await host.RunAsync();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
+                .ConfigureWebHostDefaults(webBuilder => {
                     webBuilder.UseStartup<Startup>();
                 });
     }

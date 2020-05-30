@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Teronis.Identity.AccountManaging;
+using Teronis.Identity.Entities;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -32,11 +33,14 @@ namespace Microsoft.Extensions.DependencyInjection
         public static async Task<IHost> SeedIdentity<UserType, RoleType>(this IHost host, Func<IServiceProvider, IAccountManager<UserType, RoleType>, Task> handler)
         {
             await CreateScopeAsync(host, serviceProvider => {
-                var accountManager = serviceProvider.GetService<IAccountManager<UserType, RoleType>>();
+                var accountManager = serviceProvider.GetRequiredService<IAccountManager<UserType, RoleType>>();
                 return handler(serviceProvider, accountManager);
             });
 
             return host;
         }
+
+        public static Task<IHost> SeedIdentity(this IHost host, Func<IServiceProvider, IAccountManager<UserEntity, RoleEntity>, Task> handler) =>
+            SeedIdentity<UserEntity, RoleEntity>(host, handler);
     }
 }

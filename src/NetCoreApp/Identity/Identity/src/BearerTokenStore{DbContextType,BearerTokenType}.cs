@@ -22,12 +22,13 @@ namespace Teronis.Identity.BearerSignInManaging
         }
 
         public ValueTask<BearerTokenType> FindAsync(Guid bearerTokenId, CancellationToken cancellationToken = default) =>
-            bearerTokenSet.FindAsync(bearerTokenId, cancellationToken);
+            bearerTokenSet.FindAsync(new object[] { bearerTokenId }, cancellationToken);
 
         public ValueTask<List<BearerTokenType>> GetUserTokensAsync(string userId, CancellationToken cancellationToken = default) =>
             bearerTokenSet.AsAsyncEnumerable().Where(x => x.UserId.Equals(userId)).ToListAsync(cancellationToken);
 
-        public async Task InsertAsync(BearerTokenType refreshTokenEntity, bool throwOnDuplication = true, CancellationToken cancellationToken = default) {
+        public async Task InsertAsync(BearerTokenType refreshTokenEntity, bool throwOnDuplication = true, CancellationToken cancellationToken = default)
+        {
             await bearerTokenSet.AddAsync(refreshTokenEntity, cancellationToken);
             await dbContext.SaveChangesAsync(cancellationToken);
         }

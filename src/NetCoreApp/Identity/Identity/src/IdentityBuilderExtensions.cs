@@ -4,12 +4,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Teronis.Identity.Entities;
 using Teronis.Identity.BearerSignInManaging;
 using System;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Teronis.Identity
 {
     public static partial class IdentityBuilderExtensions
     {
-        private static IdentityBuilder addBearerSignInStores<UserType, BearerTokenType, DbContextType>(this IdentityBuilder identityBuilder,
+        private static IdentityBuilder addBearerTokenStore<UserType, BearerTokenType, DbContextType>(this IdentityBuilder identityBuilder,
             Func<IServiceProvider, BearerTokenStore<DbContextType, BearerTokenType>>? getRequiredService)
             where UserType : class, IUserEntity
             where BearerTokenType : class, IBearerTokenEntity
@@ -27,17 +28,17 @@ namespace Teronis.Identity
             return identityBuilder;
         }
 
-        public static IdentityBuilder AddBearerSignInStores<UserType, BearerTokenType, DbContextType>(this IdentityBuilder identityBuilder)
+        public static IdentityBuilder AddBearerTokenStore<UserType, BearerTokenType, DbContextType>(this IdentityBuilder identityBuilder)
             where UserType : class, IUserEntity
             where BearerTokenType : class, IBearerTokenEntity
             where DbContextType : DbContext
         {
             var services = identityBuilder.Services;
-            addBearerSignInStores<UserType, BearerTokenType, DbContextType>(identityBuilder, null);
+            addBearerTokenStore<UserType, BearerTokenType, DbContextType>(identityBuilder, null);
             return identityBuilder;
         }
 
-        public static IdentityBuilder AddBearerSignInStores<DbContextType>(this IdentityBuilder identityBuilder)
+        public static IdentityBuilder AddBearerTokenStore<DbContextType>(this IdentityBuilder identityBuilder)
             where DbContextType : DbContext
         {
             var services = identityBuilder.Services;
@@ -47,7 +48,7 @@ namespace Teronis.Identity
                serviceProvider.GetRequiredService<BearerTokenStore<DbContextType>>();
 
             services.AddScoped<IBearerTokenStore>(getRequiredService);
-            addBearerSignInStores<UserEntity, BearerTokenEntity, DbContextType>(identityBuilder, getRequiredService);
+            addBearerTokenStore<UserEntity, BearerTokenEntity, DbContextType>(identityBuilder, getRequiredService);
             return identityBuilder;
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Teronis.Identity.Presenters.ObjectModel;
 
 namespace Teronis.Identity.Presenters.Generic.ObjectModel
@@ -16,61 +17,70 @@ namespace Teronis.Identity.Presenters.Generic.ObjectModel
             return new ServiceResultFactory<IServiceResult<ContentType>, ContentType>(serviceResult, serviceResult);
         }
 
-        public IServiceResultFactory<IServiceResult<ContentType>, ContentType> ToSucceeded()
+        public IServiceResultFactory<IServiceResult<ContentType>, ContentType> ToSuccess()
         {
             var serviceResult = new ServiceResult<ContentType>(true);
             return setServiceResult(serviceResult);
         }
 
-        public IServiceResultFactory<IServiceResult<ContentType>, ContentType> ToSucceededWithContent(ContentType content)
+        public IServiceResultFactory<IServiceResult<ContentType>, ContentType> ToSuccess([AllowNull] ContentType content)
         {
-            var serviceResult = ServiceResult<ContentType>.SucceededWithContent(content);
+            var serviceResult = ServiceResult<ContentType>.Success(content);
             return setServiceResult(serviceResult);
         }
 
-        public IServiceResultFactory<IServiceResult<ContentType>, ContentType> ToFailed()
+        public IServiceResultFactory<IServiceResult<ContentType>, ContentType> ToFailure()
         {
             var serviceResult = new ServiceResult<ContentType>(false);
             return setServiceResult(serviceResult);
         }
 
-        public IServiceResultFactory<IServiceResult<ContentType>, ContentType> ToFailed(IServiceResult serviceResult)
+        public IServiceResultFactory<IServiceResult<ContentType>, ContentType> ToFailure(IServiceResult? serviceResult)
         {
-            var newServiceResult = ServiceResult<ContentType>.Failed(serviceResult);
+            var newServiceResult = ServiceResult<ContentType>.Failure(serviceResult);
             return setServiceResult(newServiceResult);
         }
 
-        public IServiceResultFactory<IServiceResult<ContentType>, ContentType> ToFailedWithJsonError(JsonError error)
+        public IServiceResultFactory<IServiceResult<ContentType>, ContentType> ToFailure(JsonError? error)
         {
-            var serviceResult = ServiceResult<ContentType>.FailedWithJsonError(error);
+            var serviceResult = ServiceResult<ContentType>.Failure(error);
             return setServiceResult(serviceResult);
         }
 
-        public IServiceResultFactory<IServiceResult<ContentType>, ContentType> ToFailedWithErrorMessage(string errorMessage)
+        public IServiceResultFactory<IServiceResult<ContentType>, ContentType> ToFailure(Exception? error)
         {
-            var serviceResult = ServiceResult<ContentType>.FailedWithErrorMessage(errorMessage);
+            var serviceResult = ServiceResult<ContentType>.Failure(error);
+            return setServiceResult(serviceResult);
+        }
+
+        public IServiceResultFactory<IServiceResult<ContentType>, ContentType> ToFailure(string? errorMessage)
+        {
+            var serviceResult = ServiceResult<ContentType>.Failure(errorMessage);
             return setServiceResult(serviceResult);
         }
 
         #region IServiceResultDelegatedFactory<IServiceResult<ContentType>, ContentType>
 
-        IServiceResultFactory IServiceResultDelegatedFactory<ContentType>.ToSucceeded() =>
-            ToSucceeded();
+        IServiceResultFactory IServiceResultDelegatedFactory<ContentType>.ToSuccess() =>
+            ToSuccess();
 
-        IServiceResultFactory IServiceResultDelegatedFactory<ContentType>.ToSucceededWithContent(ContentType content) =>
-            ToSucceededWithContent(content);
+        IServiceResultFactory IServiceResultDelegatedFactory<ContentType>.ToSuccess([AllowNull] ContentType content) =>
+            ToSuccess(content);
 
-        IServiceResultFactory IServiceResultDelegatedFactory<ContentType>.ToFailed() =>
-            ToFailed();
+        IServiceResultFactory IServiceResultDelegatedFactory<ContentType>.ToFailure() =>
+            ToFailure();
 
-        IServiceResultFactory IServiceResultDelegatedFactory<ContentType>.ToFailed(IServiceResult serviceResult) =>
-            ToFailed(serviceResult);
+        IServiceResultFactory IServiceResultDelegatedFactory<ContentType>.ToFailure(IServiceResult? serviceResult) =>
+            ToFailure(serviceResult);
 
-        IServiceResultFactory IServiceResultDelegatedFactory<ContentType>.ToFailedWithJsonError(JsonError error) =>
-            ToFailedWithJsonError(error);
+        IServiceResultFactory IServiceResultDelegatedFactory<ContentType>.ToFailure(JsonError? error) =>
+            ToFailure(error);
 
-        IServiceResultFactory IServiceResultDelegatedFactory<ContentType>.ToFailedWithErrorMessage(string errorMessage) =>
-            ToFailedWithErrorMessage(errorMessage);
+        IServiceResultFactory IServiceResultDelegatedFactory<ContentType>.ToFailure(Exception? error) =>
+            ToFailure(error);
+
+        IServiceResultFactory IServiceResultDelegatedFactory<ContentType>.ToFailure(string? errorMessage) =>
+            ToFailure(errorMessage);
 
         #endregion
     }

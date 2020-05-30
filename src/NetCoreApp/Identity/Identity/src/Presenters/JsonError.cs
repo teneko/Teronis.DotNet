@@ -6,7 +6,7 @@ namespace Teronis.Identity.Presenters
     public class JsonError : IJsonError
     {
         internal const string DefaultErrorCode = "error";
-        internal const string DefaultErrorMessage = "An exception occured";
+        internal const string DefaultErrorMessage = "An exception has been occured.";
 
         public string ErrorCode { get; private set; }
         public Exception Error { get; private set; }

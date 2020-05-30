@@ -27,7 +27,7 @@ namespace Teronis.Identity.Authentication.Tools
 
             if (result.Succeeded) {
                 // When succeeded, we can assure that refresh token entity is not null.
-                var refreshTokenEntity = result.Content ?? throw new ArgumentException($"The member '{nameof(result.Content)}' is null");
+                var refreshTokenEntity = result.Content ?? throw new ArgumentException($"The member '{nameof(result.Content)}' is null.");
                 var claims = new[] { new Claim(identityOptions.Value.ClaimsIdentity.UserIdClaimType, refreshTokenEntity.UserId.ToString()) };
                 var identity = new ClaimsIdentity(claims);
                 // We add a user related identity to the claims principal.

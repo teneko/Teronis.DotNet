@@ -1,52 +1,53 @@
 ﻿using System;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Teronis.Identity.AccountManaging;
-using Teronis.Identity.AccountManaging.Datatransjects;
-using Teronis.Identity.Datransjects;
 using Teronis.Identity.Entities;
 
 namespace Teronis.Identity
 {
     public static partial class IdentityBuilderExtensions
     {
-        private static IdentityBuilder addAccountManager<UserType, RoleType>(this IdentityBuilder identityBuilder,
-            Func<IServiceProvider, AccountManager<UserType, RoleType>>? getRequiredService)
+        private static IdentityBuilder addAccountManager<DbContextType, UserType, RoleType>(this IdentityBuilder identityBuilder,
+            Func<IServiceProvider, AccountManager<DbContextType, UserType, RoleType>>? getRequiredService)
+            where DbContextType : DbContext
             where UserType : class, IAccountUserEntity
             where RoleType : class, IAccountRoleEntity
         {
             var services = identityBuilder.Services;
 
             if (getRequiredService is null) {
-                services.AddScoped<AccountManager<UserType, RoleType>>();
+                services.AddScoped<AccountManager<DbContextType, UserType, RoleType>>();
             } else {
                 services.AddScoped(getRequiredService);
             }
 
             services.AddScoped<IAccountManager<UserType, RoleType>>(serviceProvider =>
-                serviceProvider.GetRequiredService<AccountManager<UserType, RoleType>>());
+                serviceProvider.GetRequiredService<AccountManager<DbContextType, UserType, RoleType>>());
 
             return identityBuilder;
         }
 
-        public static IdentityBuilder AddAccountManager<UserType, RoleType>(this IdentityBuilder identityBuilder,
-            Func<IServiceProvider, AccountManager<UserType, RoleType>>? getRequiredService)
+        public static IdentityBuilder AddAccountManager<DbContextType, UserType, RoleType>(this IdentityBuilder identityBuilder)
+            where DbContextType : DbContext
             where UserType : class, IAccountUserEntity
             where RoleType : class, IAccountRoleEntity
         {
-            addAccountManager<UserType, RoleType>(identityBuilder, null);
+            addAccountManager<DbContextType, UserType, RoleType>(identityBuilder, null);
             return identityBuilder;
         }
 
-        public static IdentityBuilder AddAccountManager(this IdentityBuilder identityBuilder)
+        public static IdentityBuilder AddAccountManager<DbContextType>(this IdentityBuilder identityBuilder)
+            where DbContextType : DbContext
         {
             var services = identityBuilder.Services;
-            services.AddScoped<AccountManager>();
+            services.AddScoped<AccountManager<DbContextType>>();
 
-            AccountManager getRequiredService(IServiceProvider serviceProvider) =>
-                serviceProvider.GetRequiredService<AccountManager>();
+            AccountManager<DbContextType> getRequiredService(IServiceProvider serviceProvider) =>
+                serviceProvider.GetRequiredService<AccountManager<DbContextType>>();
 
-            services.AddScoped<IAccountManager>(getRequiredService);
             addAccountManager(identityBuilder, getRequiredService);
             return identityBuilder;
         }

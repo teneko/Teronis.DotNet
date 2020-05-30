@@ -2,15 +2,18 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.Collections.Extensions;
 using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace Teronis.Identity.Presenters
 {
+    [System.Text.Json.Serialization.JsonConverter(typeof(JsonErrorsJsonConverter))]
     [JsonObject(MemberSerialization.OptIn)]
     public class JsonErrors : ICollection<JsonError>
     {
+        internal const string ErrorsPropertyName = "errors";
+
         /// <summary>
         /// Makes a copy of <see cref="jsonErrors"/>.
         /// </summary>
@@ -34,7 +37,7 @@ namespace Teronis.Identity.Presenters
 
         public JsonError? Error => Errors.Values.FirstOrDefault();
 
-        [JsonProperty("errors")]
+        [JsonProperty(ErrorsPropertyName)]
         private JsonErrorsEntity jsonErrors {
             get => (JsonErrorsEntity)this;
             set => Errors = ((JsonErrors)value).Errors;
@@ -49,17 +52,15 @@ namespace Teronis.Identity.Presenters
 
         public JsonErrors() { }
 
-        public JsonErrors(JsonError error) =>
-            AddError(error);
+        public JsonErrors(JsonError? error) =>
+            AddError(error ?? new JsonError(null));
 
-        public JsonErrors(string errorCode, Exception errorMessage)
-            : this(new JsonError(
-                errorCode,
-                errorMessage ?? throw new ArgumentNullException(nameof(errorMessage))))
+        public JsonErrors(string? errorCode, Exception? error)
+            : this(new JsonError(errorCode, error))
         { }
 
-        public JsonErrors(Exception errorMessage)
-            : this(JsonError.DefaultErrorCode, errorMessage) { }
+        public JsonErrors(Exception? error)
+            : this(JsonError.DefaultErrorCode, error) { }
 
         public JsonErrors(string errorMessage)
             : this(new Exception(errorMessage)) { }
@@ -127,9 +128,9 @@ namespace Teronis.Identity.Presenters
             var errorsValuesCount = errorValues.Count;
 
             if (beginInsertAtIndex < 0) {
-                throw new IndexOutOfRangeException("The array index is smaller than zero");
+                throw new IndexOutOfRangeException("The array index is smaller than zero.");
             } else if ((beginInsertAtIndex + errorsValuesCount) > array.Length) {
-                throw new IndexOutOfRangeException("The array is too small");
+                throw new IndexOutOfRangeException("The array is too small.");
             }
 
             for (var errorValuesIndex = 0; errorValuesIndex < errorsValuesCount; errorValuesIndex++) {

@@ -11,7 +11,7 @@ namespace Teronis.Identity.Extensions
         /// <summary>
         /// Check conditions for a succeeded result. You may ingnore error codes that could cause to a failed result.
         /// </summary>
-        public static bool Succeeded(this IServiceResult serviceResult, IEnumerable<string> ignoredErrorCodes)
+        public static bool Success(this IServiceResult serviceResult, IEnumerable<string> ignoredErrorCodes)
         {
             serviceResult = serviceResult ?? throw new ArgumentNullException(nameof(serviceResult));
             var errors = serviceResult.Errors;
@@ -33,7 +33,7 @@ namespace Teronis.Identity.Extensions
             return false;
         }
 
-        public static bool Succeeded(this IServiceResult serviceResult, params string[] excludeErrorCodes) =>
-            Succeeded(serviceResult, (IEnumerable<string>)excludeErrorCodes);
+        public static bool Success(this IServiceResult serviceResult, params string[] excludeErrorCodes) =>
+            Success(serviceResult, (IEnumerable<string>)excludeErrorCodes);
     }
 }

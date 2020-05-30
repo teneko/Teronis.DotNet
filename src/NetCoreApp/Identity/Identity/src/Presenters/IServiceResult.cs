@@ -8,7 +8,7 @@ namespace Teronis.Identity.Presenters
     public interface IServiceResult : IStatusCodeActionResult, IActionResult
     {
         bool Succeeded { get; }
-        object? Value { get; }
+        object? Content { get; }
         JsonErrors? Errors { get; }
         Type DeclaredType { get; }
         FormatterCollection<IOutputFormatter>? Formatters { get; }

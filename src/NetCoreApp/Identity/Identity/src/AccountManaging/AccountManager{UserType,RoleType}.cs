@@ -9,36 +9,39 @@ using Teronis.Identity.Presenters;
 using Teronis.Identity.Presenters.Generic;
 using Teronis.Identity.Extensions;
 using Teronis.ObjectModel.Annotations;
-using System.Transactions;
 using Teronis.Identity.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Teronis.Identity.AccountManaging
 {
-    public class AccountManager<UserType, RoleType> : IAccountManager<UserType, RoleType>
+    public class AccountManager<DbContextType, UserType, RoleType> : IAccountManager<UserType, RoleType>
+        where DbContextType : DbContext
         where UserType : class, IAccountUserEntity
         where RoleType : class, IAccountRoleEntity
     {
+        private readonly DbContextType dbContext;
         private readonly UserManager<UserType> userManager;
         private readonly RoleManager<RoleType> roleManager;
-        private readonly ILogger<AccountManager<UserType, RoleType>>? logger;
+        private readonly ILogger<AccountManager<DbContextType, UserType, RoleType>>? logger;
 
-        public AccountManager(UserManager<UserType> userManager, RoleManager<RoleType> roleManager, ILogger<AccountManager<UserType, RoleType>>? logger = null)
+        public AccountManager(DbContextType dbContext, UserManager<UserType> userManager, RoleManager<RoleType> roleManager, ILogger<AccountManager<DbContextType, UserType, RoleType>>? logger = null)
         {
+            this.dbContext = dbContext;
             this.userManager = userManager;
             this.roleManager = roleManager;
             this.logger = logger;
         }
 
-        private async Task<IServiceResult<RoleType>> loadRoleAsync(string roleName)
+        private async Task<IServiceResult<RoleType>> loadRoleByNameAsync(string roleName)
         {
             try {
-                var createdRoleEntity = await roleManager.FindByIdAsync(roleName);
+                var createdRoleEntity = await roleManager.FindByNameAsync(roleName);
 
                 return ServiceResult<RoleType>
-                    .SucceededWithContent(createdRoleEntity)
+                    .Success(createdRoleEntity)
                     .WithHttpStatusCode(HttpStatusCode.OK);
             } catch (Exception error) {
-                var errorMessage = $"The role '{roleName}' could not be loaded from the database";
+                var errorMessage = $"The role '{roleName}' could not be loaded from the database.";
                 logger?.LogCritical(error, errorMessage);
 
                 return errorMessage
@@ -58,7 +61,7 @@ namespace Teronis.Identity.AccountManaging
             try {
                 existingRoleEntity = await roleManager.FindByNameAsync(roleName);
             } catch (Exception error) {
-                var errorMessage = $"The role '{roleName}' existence could not be checked";
+                var errorMessage = $"The role '{roleName}' could not be reconciled against database.";
                 logger?.LogError(error, errorMessage);
 
                 return errorMessage
@@ -69,7 +72,7 @@ namespace Teronis.Identity.AccountManaging
             }
 
             if (existingRoleEntity != null) {
-                return $"The role '{roleName}' has been already created"
+                return $"The role '{roleName}' has been already created."
                     .ToJsonError(AccountManagerErrorCodes.RoleAlreadyCreated.GetStringValue())
                     .ToServiceResultFactory<RoleType>()
                     .WithHttpStatusCode(HttpStatusCode.BadRequest)
@@ -89,30 +92,30 @@ namespace Teronis.Identity.AccountManaging
                     .AsServiceResult();
             }
 
-            return await loadRoleAsync(roleName);
+            return await loadRoleByNameAsync(roleName);
         }
 
         public async Task<IServiceResult<RoleType>> CreateRoleIfNotExistsAsync(RoleType roleEntity)
         {
             var result = await CreateRoleAsync(roleEntity);
 
-            if (result.Succeeded(AccountManagerErrorCodes.RoleAlreadyCreated.GetStringValue())) {
-                return await loadRoleAsync(roleEntity.RoleName);
+            if (result.Success(AccountManagerErrorCodes.RoleAlreadyCreated.GetStringValue())) {
+                return await loadRoleByNameAsync(roleEntity.RoleName);
             }
 
             return result;
         }
 
-        private async Task<IServiceResult<UserType>> loadUserAsync(string userName)
+        private async Task<IServiceResult<UserType>> loadUserByNameAsync(string userName)
         {
             try {
                 var createdUserEntity = await userManager.FindByNameAsync(userName);
 
                 return ServiceResult<UserType>
-                    .SucceededWithContent(createdUserEntity)
+                    .Success(createdUserEntity)
                     .WithHttpStatusCode(HttpStatusCode.OK);
             } catch (Exception error) {
-                var errorMessage = $"The user '{userName}' could not be loaded from the database";
+                var errorMessage = $"The user '{userName}' could not be loaded from the database.";
                 logger?.LogCritical(error, errorMessage);
 
                 return errorMessage
@@ -126,12 +129,12 @@ namespace Teronis.Identity.AccountManaging
         public async Task<IServiceResult<UserType>> CreateUserAsync(UserType userEntity, string password, string[]? roles = null)
         {
             Validator.ValidateObject(userEntity, new ComponentDataValidationContext(userEntity), true);
-            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            using var transactionScope = await dbContext.Database.BeginTransactionAsync();
             var userName = userEntity.UserName;
             UserType existingUser = await userManager.FindByNameAsync(userName);
 
             if (!ReferenceEquals(existingUser, null)) {
-                return $"The user '{userName}' has been already created"
+                return $"The user '{userName}' has been already created."
                     .ToJsonError(AccountManagerErrorCodes.UserAlreadyCreated.GetStringValue())
                     .ToServiceResultFactory<UserType>()
                     .WithHttpStatusCode(HttpStatusCode.BadRequest)
@@ -142,7 +145,7 @@ namespace Teronis.Identity.AccountManaging
                 var userResult = await userManager.CreateAsync(userEntity, password);
 
                 if (!userResult.Succeeded) {
-                    var errorMessage = $"The user '{userName}' could not be created";
+                    var errorMessage = $"The user '{userName}' could not be created.";
                     logger?.LogError(errorMessage);
 
                     var failedCreateUserResult = errorMessage
@@ -159,7 +162,7 @@ namespace Teronis.Identity.AccountManaging
                 }
             }
 
-            var loadUserResult = await loadUserAsync(userName);
+            var loadUserResult = await loadUserByNameAsync(userName);
 
             if (!loadUserResult.Succeeded) {
                 return loadUserResult;
@@ -184,7 +187,7 @@ namespace Teronis.Identity.AccountManaging
                 foreach (var roleName in roles)
                     try {
                         if (string.IsNullOrWhiteSpace(roleName)) {
-                            var errorMessage = $"The role '{userName}' is null or empty";
+                            var errorMessage = $"The role '{userName}' is null or empty.";
                             logger?.LogError(errorMessage);
 
                             userRoleAssignmentResult = errorMessage
@@ -210,24 +213,24 @@ namespace Teronis.Identity.AccountManaging
                     }
             }
 
-            var shouldAbortUserCreation = !(userRoleAssignmentResult?.Succeeded() ?? true);
+            var shouldAbortUserCreation = !(userRoleAssignmentResult?.Success() ?? true);
 
             if (shouldAbortUserCreation) {
                 try {
                     // TODO: Check if it works.
-                    transactionScope.Dispose();
+                    await transactionScope.RollbackAsync();
                 } catch (Exception error) {
-                    var errorMessage = $"User abortion failed. The user '{userName}' could not be deleted from the database.";
+                    var errorMessage = $"The abortion of the user creation failed. The user '{userName}' could not be deleted from the database.";
                     logger?.LogCritical(error, errorMessage);
                 }
 
                 return ServiceResult<UserType>
-                    .Failed(userRoleAssignmentResult!);
+                    .Failure(userRoleAssignmentResult!);
             } else {
-                transactionScope.Complete();
+                await transactionScope.CommitAsync();
 
                 return ServiceResult<UserType>
-                    .SucceededWithContent(loadedUser)
+                    .Success(loadedUser)
                     .WithHttpStatusCode(HttpStatusCode.OK);
             }
         }
@@ -236,8 +239,8 @@ namespace Teronis.Identity.AccountManaging
         {
             var result = await CreateUserAsync(userEntity, password, roles);
 
-            if (result.Succeeded(AccountManagerErrorCodes.UserAlreadyCreated.GetStringValue())) {
-                return await loadUserAsync(userEntity.UserName);
+            if (result.Success(AccountManagerErrorCodes.UserAlreadyCreated.GetStringValue())) {
+                return await loadUserByNameAsync(userEntity.UserName);
             }
 
             return result;

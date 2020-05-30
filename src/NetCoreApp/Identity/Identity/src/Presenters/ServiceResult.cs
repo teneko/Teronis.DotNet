@@ -6,25 +6,32 @@ namespace Teronis.Identity.Presenters
     public class ServiceResult : JsonResult, IServiceResult, IMutableServiceResult
     {
         public JsonErrors? Errors {
-            get => Value is JsonErrors value ? value : default;
+            get => Succeeded ? null : (JsonErrors)Value;
             private set => Value = value;
         }
 
-        public new object? Value {
-            get => base.Value is JsonErrors ? default : base.Value;
-            private set => base.Value = value;
+        public object? Content {
+            get => ContentOrDefault;
+            private set => Value = value;
         }
 
         public bool Succeeded { get; private set; }
+
+        protected virtual object? ContentOrDefault => Succeeded ? Value : null;
 
         bool IMutableServiceResult.Succeeded {
             get => Succeeded;
             set => Succeeded = value;
         }
 
-        object? IMutableServiceResult.Value {
-            get => Value;
-            set => base.Value = value;
+        object? IMutableServiceResult.Content {
+            get => Content;
+            set => Content = value;
+        }
+
+        JsonErrors? IMutableServiceResult.Errors {
+            get => Errors;
+            set => Errors = value;
         }
 
         /// <summary>
@@ -34,8 +41,13 @@ namespace Teronis.Identity.Presenters
         internal ServiceResult(in ServiceResultDatransject datransject)
         {
             Succeeded = datransject.Succeeded;
-            Value = datransject.Value;
-            Errors = datransject.Errors;
+
+            if (Succeeded) {
+                Content = datransject.Content;
+            } else {
+                Errors = datransject.Errors;
+            }
+
             DeclaredType = datransject.DeclaredType;
             Formatters = datransject.Formatters;
             ContentTypes = datransject.ContentTypes;
@@ -45,13 +57,13 @@ namespace Teronis.Identity.Presenters
         public ServiceResult(bool succeeded, object? content = null, int? statusCode = null)
         {
             Succeeded = succeeded;
-            Value = content;
+            Content = content;
             StatusCode = statusCode;
         }
 
         public ServiceResultDatransject DeepCopy()
         {
-            return new ServiceResultDatransject(Succeeded, Value, Errors is null ? null : new JsonErrors().Include(Errors),
+            return new ServiceResultDatransject(Succeeded, Content, Errors is null ? null : new JsonErrors().Include(Errors),
                 DeclaredType, Formatters is null ? null : new FormatterCollection<IOutputFormatter>().Include(Formatters),
                 ContentTypes is null ? null : new MediaTypeCollection().Include(ContentTypes), StatusCode);
         }

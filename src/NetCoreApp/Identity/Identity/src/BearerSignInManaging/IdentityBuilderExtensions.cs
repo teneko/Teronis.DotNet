@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Teronis.Extensions;
 using Teronis.Identity.BearerSignInManaging;
@@ -24,8 +25,8 @@ namespace Teronis.Identity
             }
 
             services.PostConfigure<BearerSignInManagerOptions>(options => {
-                options.CreateDefaultedTokenDescriptor ??= () => new SecurityTokenDescriptor();
-                SecurityTokenDescriptor defaultTokenDescriptor = options.CreateDefaultedTokenDescriptor() ?? new SecurityTokenDescriptor();
+                options.CreateDefaultedTokenDescriptor ??= () => new BearerTokenDescriptor(null);
+                BearerTokenDescriptor defaultTokenDescriptor = options.CreateDefaultedTokenDescriptor() ?? new BearerTokenDescriptor(null);
 
                 // Only those values are taken over whose property values are null.
                 void TakeOverFromDefaultOptions(SecurityTokenDescriptor tokenDescriptor)
@@ -54,7 +55,7 @@ namespace Teronis.Identity
                 }
 
                 var createAccessTokenDescriptor = options.CreateAccessTokenDescriptor ??=
-                    () => new SecurityTokenDescriptor();
+                    () => new BearerTokenDescriptor(null);
 
                 options.CreateAccessTokenDescriptor = () => {
                     var tokenDescriptor = createAccessTokenDescriptor();
@@ -64,7 +65,7 @@ namespace Teronis.Identity
                 };
 
                 var createRefreshTokenDescriptor = options.CreateRefreshTokenDescriptor ??=
-                    () => new SecurityTokenDescriptor();
+                    () => new BearerTokenDescriptor(null);
 
                 options.CreateRefreshTokenDescriptor = () => {
                     var tokenDescriptor = createRefreshTokenDescriptor();
@@ -75,15 +76,28 @@ namespace Teronis.Identity
             });
         }
 
-        public static IdentityBuilder AddBearerSignInManager<DbContextType>(this IdentityBuilder identityBuilder, Action<BearerSignInManagerOptions>? configureOptions = null)
+        public static IdentityBuilder AddBearerSignInManager<DbContextType, UserType, RoleType>(this IdentityBuilder identityBuilder, Func<IServiceProvider, IBearerSignInManager> bearerSignInManagerFactory,
+            Action<BearerSignInManagerOptions>? configureOptions = null)
             where DbContextType : DbContext
+            where UserType : class
+            where RoleType : class
         {
             addBearerSignInManagerOptions(identityBuilder, configureOptions);
             var services = identityBuilder.Services;
+            services.AddScoped(bearerSignInManagerFactory);
+            return identityBuilder;
+        }
+
+        public static IdentityBuilder AddBearerSignInManager<DbContextType>(this IdentityBuilder identityBuilder, Action<BearerSignInManagerOptions>? configureOptions = null)
+            where DbContextType : DbContext
+        {
+            var services = identityBuilder.Services;
             services.AddScoped<BearerSignInManager>();
-            services.AddScoped<BearerSignInManager<UserEntity, BearerTokenEntity>>(serviceProvider => serviceProvider.GetRequiredService<BearerSignInManager>());
-            services.AddScoped<IBearerSignInManager>(serviceProvider => serviceProvider.GetRequiredService<BearerSignInManager>());
-            AddBearerSignInStores<DbContextType>(identityBuilder);
+
+            IBearerSignInManager getRequiredService(IServiceProvider serviceProvider) =>
+                serviceProvider.GetRequiredService<BearerSignInManager>();
+
+            AddBearerSignInManager<DbContextType, UserEntity, RoleEntity>(identityBuilder, getRequiredService, configureOptions);
             return identityBuilder;
         }
     }

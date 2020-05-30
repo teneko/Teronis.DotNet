@@ -52,11 +52,29 @@ namespace Teronis.Extensions
             return new string(a);
         }
 
-        public static string TrimEnd(this string source, string value)
-            => (source?.EndsWith(value) ?? false) ? source.Remove(source.LastIndexOf(value, StringComparison.Ordinal)) : source;
+        public static string TrimEnd(this string source, string value, StringComparison comparisonType)
+        {
+            if (source?.EndsWith(value, comparisonType) ?? false) {
+                return source.Remove(source.LastIndexOf(value, comparisonType));
+            } else {
+                return source;
+            }
+        }
 
-        public static string TrimStart(this string source, string value)
-            => (source?.StartsWith(value) ?? false) ? source.Remove(source.IndexOf(value, StringComparison.Ordinal), value.Length) : source;
+        public static string TrimEnd(this string source, string value) =>
+            TrimEnd(source, value, StringComparison.Ordinal);
+
+        public static string TrimStart(this string source, string value, StringComparison comparisonType)
+        {
+            if (source?.StartsWith(value, comparisonType) ?? false) {
+                return source.Remove(source.IndexOf(value, comparisonType), value.Length);
+            } else {
+                return source;
+            }
+        }
+
+        public static string TrimStart(this string source, string value) =>
+            TrimStart(source, value, StringComparison.Ordinal);
 
         public static string DecodeHtml(this string htmlText)
             => htmlText.Replace("&nbsp;", " ").Replace("\n", "").Replace("\t", "").Trim();
@@ -81,42 +99,27 @@ namespace Teronis.Extensions
             var builder = new StringBuilder();
             var wasLastLetterCapitalUmlaut = false;
 
-            foreach (var letter in content)
-            {
-                if (letter == 'Ä')
-                {
+            foreach (var letter in content) {
+                if (letter == 'Ä') {
                     builder.Append('A');
                     builder.Append('E');
-                }
-                else if (letter == 'ä')
-                {
+                } else if (letter == 'ä') {
                     builder.Append('a');
                     builder.Append('e');
-                }
-                else if (letter == 'Ö')
-                {
+                } else if (letter == 'Ö') {
                     builder.Append('O');
                     builder.Append('E');
-                }
-                else if (letter == 'ö')
-                {
+                } else if (letter == 'ö') {
                     builder.Append('o');
                     builder.Append('e');
-                }
-                else if (letter == 'Ü')
-                {
+                } else if (letter == 'Ü') {
                     builder.Append('U');
                     builder.Append('E');
-                }
-                else if (letter == 'ü')
-                {
+                } else if (letter == 'ü') {
                     builder.Append('u');
                     builder.Append('e');
-                }
-                else
-                {
-                    if (char.IsLower(letter) && wasLastLetterCapitalUmlaut)
-                    {
+                } else {
+                    if (char.IsLower(letter) && wasLastLetterCapitalUmlaut) {
                         var lastIndex = builder.Length - 1;
                         var lastCapitalLetter = builder[lastIndex];
                         builder.Remove(lastIndex, 1);

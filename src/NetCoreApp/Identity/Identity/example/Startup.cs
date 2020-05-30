@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Teronis.Identity.Authentication;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Teronis.Identity
 {
@@ -28,23 +29,37 @@ namespace Teronis.Identity
             var assembly = typeof(SignInController).Assembly;
 
             services.AddMvc()
-                .AddApplicationPart(assembly).AddControllersAsServices();
+                .AddIdentityControllers();
 
             services.AddDbContext<BearerIdentityDbContext>(options => {
-                options.UseSqlite("Data Source=:memory:");
+                options.UseSqlite("Data Source=bearerIdentity.db;");
+
+                // Uncomment when using EntityFrameworkCore.InMemory.
+                //options.ConfigureWarnings(warnings =>
+                //    warnings.Ignore(InMemoryEventId.TransactionIgnoredWarning));
             });
 
-            var test = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("test"));
+            var securityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("a security key a security key a security key a security key"));
 
             services.AddIdentity<UserEntity, RoleEntity>()
                 .AddEntityFrameworkStores<BearerIdentityDbContext>()
-                .AddAccountManager()
-                .AddBearerSignInManager<BearerIdentityDbContext>();
+                .AddAccountManager<BearerIdentityDbContext>()
+                .AddBearerTokenStore<BearerIdentityDbContext>()
+                .AddBearerSignInManager<BearerIdentityDbContext>(options => {
+                    options.IncludeErrorDetails = true;
+
+                    var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+                    options.CreateDefaultedTokenDescriptor = () => new BearerTokenDescriptor(signingCredentials);
+                });
 
             services.AddAuthentication()
-                .AddIdentityBasic()
-                .AddIdentityJwtRefreshToken(new JwtBearerAuthenticationOptions(test))
-                .AddJwtAccessToken(new JwtBearerAuthenticationOptions(test));
+                .AddIdentityBasic<UserEntity>()
+                .AddIdentityJwtRefreshToken(new JwtBearerAuthenticationOptions(securityKey))
+                .AddJwtAccessToken(new JwtBearerAuthenticationOptions(securityKey) {
+                    IncludeErrorDetails = true
+                });
+
+            services.AddAuthorization();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -67,7 +82,7 @@ namespace Teronis.Identity
 
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
-                endpoints.Map("/", (context) => context.Response.WriteAsync("Hello"));
+                endpoints.Map("/", (context) => context.Response.WriteAsync("Hello Teronis.Identity"));
             });
         }
     }

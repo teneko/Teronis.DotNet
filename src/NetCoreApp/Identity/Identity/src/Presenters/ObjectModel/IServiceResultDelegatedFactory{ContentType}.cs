@@ -1,5 +1,8 @@
 ﻿
 
+using System;
+using System.Diagnostics.CodeAnalysis;
+
 namespace Teronis.Identity.Presenters.ObjectModel
 {
     /// <summary>
@@ -7,11 +10,12 @@ namespace Teronis.Identity.Presenters.ObjectModel
     /// </summary>
     public interface IServiceResultDelegatedFactory<ContentType>
     {
-        IServiceResultFactory ToSucceeded();
-        IServiceResultFactory ToSucceededWithContent(ContentType content);
-        IServiceResultFactory ToFailed();
-        IServiceResultFactory ToFailed(IServiceResult serviceResult);
-        IServiceResultFactory ToFailedWithJsonError(JsonError error);
-        IServiceResultFactory ToFailedWithErrorMessage(string errorMessage);
+        IServiceResultFactory ToSuccess();
+        IServiceResultFactory ToSuccess([AllowNull]ContentType content);
+        IServiceResultFactory ToFailure();
+        IServiceResultFactory ToFailure(IServiceResult? serviceResult);
+        IServiceResultFactory ToFailure(JsonError? error);
+        IServiceResultFactory ToFailure(Exception? error);
+        IServiceResultFactory ToFailure(string? errorMessage);
     }
 }

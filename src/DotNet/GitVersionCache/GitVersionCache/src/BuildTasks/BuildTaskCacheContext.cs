@@ -7,6 +7,7 @@ using Teronis.DotNet.GitVersionCache.BuildTasks.Models;
 using Teronis.Extensions;
 using Microsoft.Build.Utilities;
 using Teronis.Text.Json.Serialization;
+using Microsoft.Build.Framework;
 
 namespace Teronis.DotNet.GitVersionCache.BuildTasks
 {
@@ -24,6 +25,7 @@ namespace Teronis.DotNet.GitVersionCache.BuildTasks
         {
             GitVersionYamlDirectory = BuildTaskUtilities.GetGitVersionYamlDirectory() ??
                 throw new FileNotFoundException("Could not find parent GitVersion.yml file.");
+
             CacheDirectoryName = BuildTaskCacheContextDefaults.CacheDirectoryName;
             this.buildIdentification = buildIdentification;
             this.buildTask = buildTask;
@@ -46,15 +48,21 @@ namespace Teronis.DotNet.GitVersionCache.BuildTasks
 
         public void SaveGetVersionToDisk()
         {
+            dynamic test = buildTask;
+            buildTask.Log.LogMessage(MessageImportance.High, test.Major);
+
             EnsureCacheDirectoryExistence();
             var buildTaskType = buildTask.GetType();
             var variablesInclusionJsonConverter = JsonConverterFactory.CreateOnlyIncludedVariablesJsonConverter(buildTaskType, out var variablesHelper);
 
-            foreach (var propertyMember in buildTask.GetType().GetPropertyMembers(typeof(Task))) {
+            foreach (var propertyMember in buildTask.GetType().GetPropertyMembers(typeof(GitVersionTaskBase))) {
                 variablesHelper.ConsiderVariable(propertyMember.DeclaringType, propertyMember.Name);
             }
 
-            var options = new JsonSerializerOptions();
+            var options = new JsonSerializerOptions() { 
+                WriteIndented = true
+            };
+
             options.Converters.Add(variablesInclusionJsonConverter);
             var serializedData = JsonSerializer.Serialize(buildTask, buildTaskType, options);
 

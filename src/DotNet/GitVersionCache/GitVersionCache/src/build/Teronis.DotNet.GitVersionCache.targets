@@ -2,7 +2,7 @@
 <Project InitialTargets="welcome" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <UsingTask AssemblyFile="$(GitVersionCacheAssemblyFile)" TaskName="SaveGetVersionTask" />
-  
+
   <Target Name="welcome">
     <Message Text="Welcome" Importance="high" />
   </Target>
@@ -37,89 +37,154 @@
   <Target Name="BeforeGitVersionCache" BeforeTargets="$(GitVersionTaskTargets)">
     <!-- TODO: implement here task to ask for cache and set ShouldCacheVersionInformations -->
 
+    <GetVersion SolutionDirectory="$(GitVersionPath)"
+                ConfigFilePath="$(GitVersionConfig)"
+                NoFetch="$(GitVersion_NoFetchEnabled)"
+                NoNormalize="$(GitVersion_NoNormalizeEnabled)">
+      <Output TaskParameter="Major" PropertyName="GitVersion_Major" />
+      <Output TaskParameter="Minor" PropertyName="GitVersion_Minor" />
+      <Output TaskParameter="Patch" PropertyName="GitVersion_Patch" />
+      <Output TaskParameter="PreReleaseTag" PropertyName="GitVersion_PreReleaseTag" />
+      <Output TaskParameter="PreReleaseTagWithDash" PropertyName="GitVersion_PreReleaseTagWithDash" />
+      <Output TaskParameter="PreReleaseLabel" PropertyName="GitVersion_PreReleaseLabel" />
+      <Output TaskParameter="PreReleaseNumber" PropertyName="GitVersion_PreReleaseNumber" />
+      <Output TaskParameter="BuildMetaData" PropertyName="GitVersion_BuildMetaData" />
+      <Output TaskParameter="BuildMetaDataPadded" PropertyName="GitVersion_BuildMetaDataPadded" />
+      <Output TaskParameter="FullBuildMetaData" PropertyName="GitVersion_FullBuildMetaData" />
+      <Output TaskParameter="MajorMinorPatch" PropertyName="GitVersion_MajorMinorPatch" />
+      <Output TaskParameter="SemVer" PropertyName="GitVersion_SemVer" />
+      <Output TaskParameter="LegacySemVer" PropertyName="GitVersion_LegacySemVer" />
+      <Output TaskParameter="LegacySemVerPadded" PropertyName="GitVersion_LegacySemVerPadded" />
+      <Output TaskParameter="AssemblySemVer" PropertyName="GitVersion_AssemblySemVer" />
+      <Output TaskParameter="AssemblySemFileVer" PropertyName="GitVersion_AssemblySemFileVer" />
+      <Output TaskParameter="FullSemVer" PropertyName="GitVersion_FullSemVer" />
+      <Output TaskParameter="InformationalVersion" PropertyName="GitVersion_InformationalVersion" />
+      <Output TaskParameter="BranchName" PropertyName="GitVersion_BranchName" />
+      <Output TaskParameter="Sha" PropertyName="GitVersion_Sha" />
+      <Output TaskParameter="NuGetVersionV2" PropertyName="GitVersion_NuGetVersionV2" />
+      <Output TaskParameter="NuGetVersion" PropertyName="GitVersion_NuGetVersion" />
+      <Output TaskParameter="NuGetPreReleaseTagV2" PropertyName="GitVersion_NuGetPreReleaseTagV2" />
+      <Output TaskParameter="NuGetPreReleaseTag" PropertyName="GitVersion_NuGetPreReleaseTag" />
+      <Output TaskParameter="CommitDate" PropertyName="GitVersion_CommitDate" />
+      <Output TaskParameter="CommitsSinceVersionSource" PropertyName="GitVersion_CommitsSinceVersionSource" />
+      <Output TaskParameter="CommitsSinceVersionSourcePadded" PropertyName="GitVersion_CommitsSinceVersionSourcePadded" />
+    </GetVersion>
+
     <PropertyGroup>
-      <GetVersion>false</GetVersion>
+      <GetVersion>true</GetVersion>
     </PropertyGroup>
   </Target>
 
   <!--<Target Name="GitVersionCache" AfterTargets="$(GitVersionTaskTargets)">-->
   <!--<Target Name="GitVersionCache" AfterTargets="CopyFilesToOutputDirectory">-->
-    <Target Name="GitVersionCache" AfterTargets="PrepareForRun">
+  <Target Name="GitVersionCache" AfterTargets="PrepareForRun">
 
-      <Message Text="[$(MSBuildThisFilename)] Informations are going to create: $(GitVersion_Major)" Importance="high" />
+    <Message Text="[$(MSBuildThisFilename)] Informations are going to create: $(GitVersion_Major)" Importance="high" />
 
-      <PropertyGroup>
-        <!--<GitVersionCache_BuildIdentifier></GitVersionCache_BuildIdentifier>
+    <PropertyGroup>
+      <!--<GitVersionCache_BuildIdentifier></GitVersionCache_BuildIdentifier>
         <GitVersionCache_IsDateIdentifier></GitVersionCache_IsDateIdentifier>-->
-        <!--<GitVersionCache_Major Condition="'$(GitVersion_Major)' == ''">*Undefined*</GitVersionCache_Major>-->
-        <GitVersionCache_Major Condition="'$(GitVersion_Major)' == ''">*Undefined*</GitVersionCache_Major>
-        <GitVersionCache_Minor Condition="'$(GitVersion_Minor)' == ''">*Undefined*</GitVersionCache_Minor>
-        <GitVersionCache_Patch Condition="'$(GitVersion_Patch)' == ''">*Undefined*</GitVersionCache_Patch>
-        <GitVersionCache_PreReleaseTag Condition="'$(GitVersion_PreReleaseTag)' == ''">*Undefined*</GitVersionCache_PreReleaseTag>
-        <GitVersionCache_PreReleaseTagWithDash Condition="'$(GitVersion_PreReleaseTagWithDash)' == ''">*Undefined*</GitVersionCache_PreReleaseTagWithDash>
-        <GitVersionCache_PreReleaseLabel Condition="'$(GitVersion_PreReleaseLabel)' == ''">*Undefined*</GitVersionCache_PreReleaseLabel>
-        <GitVersionCache_PreReleaseNumber Condition="'$(GitVersion_PreReleaseNumber)' == ''">*Undefined*</GitVersionCache_PreReleaseNumber>
-        <GitVersionCache_WeightedPreReleaseNumber Condition="'$(GitVersion_WeightedPreReleaseNumber)' == ''">*Undefined*</GitVersionCache_WeightedPreReleaseNumber>
-        <GitVersionCache_BuildMetaData Condition="'$(GitVersion_BuildMetaData)' == ''">*Undefined*</GitVersionCache_BuildMetaData>
-        <GitVersionCache_BuildMetaDataPadded Condition="'$(GitVersion_BuildMetaDataPadded)' == ''">*Undefined*</GitVersionCache_BuildMetaDataPadded>
-        <GitVersionCache_FullBuildMetaData Condition="'$(GitVersion_FullBuildMetaData)' == ''">*Undefined*</GitVersionCache_FullBuildMetaData>
-        <GitVersionCache_MajorMinorPatch Condition="'$(GitVersion_MajorMinorPatch)' == ''">*Undefined*</GitVersionCache_MajorMinorPatch>
-        <GitVersionCache_SemVer Condition="'$(GitVersion_SemVer)' == ''">*Undefined*</GitVersionCache_SemVer>
-        <GitVersionCache_LegacySemVer Condition="'$(GitVersion_LegacySemVer)' == ''">*Undefined*</GitVersionCache_LegacySemVer>
-        <GitVersionCache_LegacySemVerPadded Condition="'$(GitVersion_LegacySemVerPadded)' == ''">*Undefined*</GitVersionCache_LegacySemVerPadded>
-        <GitVersionCache_AssemblySemVer Condition="'$(GitVersion_AssemblySemVer)' == ''">*Undefined*</GitVersionCache_AssemblySemVer>
-        <GitVersionCache_AssemblySemFileVer Condition="'$(GitVersion_AssemblySemFileVer)' == ''">*Undefined*</GitVersionCache_AssemblySemFileVer>
-        <GitVersionCache_FullSemVer Condition="'$(GitVersion_FullSemVer)' == ''">*Undefined*</GitVersionCache_FullSemVer>
-        <GitVersionCache_InformationalVersion Condition="'$(GitVersion_InformationalVersion)' == ''">*Undefined*</GitVersionCache_InformationalVersion>
-        <GitVersionCache_BranchName Condition="'$(GitVersion_BranchName)' == ''">*Undefined*</GitVersionCache_BranchName>
-        <GitVersionCache_Sha Condition="'$(GitVersion_Sha)' == ''">*Undefined*</GitVersionCache_Sha>
-        <GitVersionCache_ShortSha Condition="'$(GitVersion_ShortSha)' == ''">*Undefined*</GitVersionCache_ShortSha>
-        <GitVersionCache_VersionSourceSha Condition="'$(GitVersion_VersionSourceSha)' == ''">*Undefined*</GitVersionCache_VersionSourceSha>
-        <GitVersionCache_NuGetVersionV2 Condition="'$(GitVersion_NuGetVersionV2)' == ''">*Undefined*</GitVersionCache_NuGetVersionV2>
-        <GitVersionCache_NuGetVersion Condition="'$(GitVersion_NuGetVersion)' == ''">*Undefined*</GitVersionCache_NuGetVersion>
-        <GitVersionCache_NuGetPreReleaseTagV2 Condition="'$(GitVersion_NuGetPreReleaseTagV2)' == ''">*Undefined*</GitVersionCache_NuGetPreReleaseTagV2>
-        <GitVersionCache_NuGetPreReleaseTag Condition="'$(GitVersion_NuGetPreReleaseTag)' == ''">*Undefined*</GitVersionCache_NuGetPreReleaseTag>
-        <GitVersionCache_CommitDate Condition="'$(GitVersion_CommitDate)' == ''">*Undefined*</GitVersionCache_CommitDate>
-        <GitVersionCache_CommitsSinceVersionSource Condition="'$(GitVersion_CommitsSinceVersionSource)' == ''">*Undefined*</GitVersionCache_CommitsSinceVersionSource>
-        <GitVersionCache_CommitsSinceVersionSourcePadded Condition="'$(GitVersion_CommitsSinceVersionSourcePadded)' == ''">*Undefined*</GitVersionCache_CommitsSinceVersionSourcePadded>
-      </PropertyGroup>
+      <!--<GitVersionCache_Major Condition="'$(GitVersion_Major)' == ''">*Undefined*</GitVersionCache_Major>-->
+      <GitVersionCache_Major Condition="'$(GitVersion_Major)' != ''">$(GitVersion_Major)</GitVersionCache_Major>
+      <GitVersionCache_Major Condition="'$(GitVersion_Major)' == ''">*Undefined*</GitVersionCache_Major>
+      <GitVersionCache_Minor Condition="'$(GitVersion_Minor)' != ''">$(GitVersion_Minor)</GitVersionCache_Minor>
+      <GitVersionCache_Minor Condition="'$(GitVersion_Minor)' == ''">*Undefined*</GitVersionCache_Minor>
+      <GitVersionCache_Patch Condition="'$(GitVersion_Patch)' != ''">$(GitVersion_Patch)</GitVersionCache_Patch>
+      <GitVersionCache_Patch Condition="'$(GitVersion_Patch)' == ''">*Undefined*</GitVersionCache_Patch>
+      <GitVersionCache_PreReleaseTag Condition="'$(GitVersion_PreReleaseTag)' != ''">$(GitVersion_PreReleaseTag)</GitVersionCache_PreReleaseTag>
+      <GitVersionCache_PreReleaseTag Condition="'$(GitVersion_PreReleaseTag)' == ''">*Undefined*</GitVersionCache_PreReleaseTag>
+      <GitVersionCache_PreReleaseTagWithDash Condition="'$(GitVersion_PreReleaseTagWithDash)' != ''">$(GitVersion_PreReleaseTagWithDash)</GitVersionCache_PreReleaseTagWithDash>
+      <GitVersionCache_PreReleaseTagWithDash Condition="'$(GitVersion_PreReleaseTagWithDash)' == ''">*Undefined*</GitVersionCache_PreReleaseTagWithDash>
+      <GitVersionCache_PreReleaseLabel Condition="'$(GitVersion_PreReleaseLabel)' != ''">$(GitVersion_PreReleaseLabel)</GitVersionCache_PreReleaseLabel>
+      <GitVersionCache_PreReleaseLabel Condition="'$(GitVersion_PreReleaseLabel)' == ''">*Undefined*</GitVersionCache_PreReleaseLabel>
+      <GitVersionCache_PreReleaseNumber Condition="'$(GitVersion_PreReleaseNumber)' != ''">$(GitVersion_PreReleaseNumber)</GitVersionCache_PreReleaseNumber>
+      <GitVersionCache_PreReleaseNumber Condition="'$(GitVersion_PreReleaseNumber)' == ''">*Undefined*</GitVersionCache_PreReleaseNumber>
+      <GitVersionCache_WeightedPreReleaseNumber Condition="'$(GitVersion_WeightedPreReleaseNumber)' != ''">$(GitVersion_WeightedPreReleaseNumber)</GitVersionCache_WeightedPreReleaseNumber>
+      <GitVersionCache_WeightedPreReleaseNumber Condition="'$(GitVersion_WeightedPreReleaseNumber)' == ''">*Undefined*</GitVersionCache_WeightedPreReleaseNumber>
+      <GitVersionCache_BuildMetaData Condition="'$(GitVersion_BuildMetaData)' != ''">$(GitVersion_BuildMetaData)</GitVersionCache_BuildMetaData>
+      <GitVersionCache_BuildMetaData Condition="'$(GitVersion_BuildMetaData)' == ''">*Undefined*</GitVersionCache_BuildMetaData>
+      <GitVersionCache_BuildMetaDataPadded Condition="'$(GitVersion_BuildMetaDataPadded)' != ''">$(GitVersion_BuildMetaDataPadded)</GitVersionCache_BuildMetaDataPadded>
+      <GitVersionCache_BuildMetaDataPadded Condition="'$(GitVersion_BuildMetaDataPadded)' == ''">*Undefined*</GitVersionCache_BuildMetaDataPadded>
+      <GitVersionCache_FullBuildMetaData Condition="'$(GitVersion_FullBuildMetaData)' != ''">$(GitVersion_FullBuildMetaData)</GitVersionCache_FullBuildMetaData>
+      <GitVersionCache_FullBuildMetaData Condition="'$(GitVersion_FullBuildMetaData)' == ''">*Undefined*</GitVersionCache_FullBuildMetaData>
+      <GitVersionCache_MajorMinorPatch Condition="'$(GitVersion_MajorMinorPatch)' != ''">$(GitVersion_MajorMinorPatch)</GitVersionCache_MajorMinorPatch>
+      <GitVersionCache_MajorMinorPatch Condition="'$(GitVersion_MajorMinorPatch)' == ''">*Undefined*</GitVersionCache_MajorMinorPatch>
+      <GitVersionCache_SemVer Condition="'$(GitVersion_SemVer)' != ''">$(GitVersion_SemVer)</GitVersionCache_SemVer>
+      <GitVersionCache_SemVer Condition="'$(GitVersion_SemVer)' == ''">*Undefined*</GitVersionCache_SemVer>
+      <GitVersionCache_LegacySemVer Condition="'$(GitVersion_LegacySemVer)' != ''">$(GitVersion_LegacySemVer)</GitVersionCache_LegacySemVer>
+      <GitVersionCache_LegacySemVer Condition="'$(GitVersion_LegacySemVer)' == ''">*Undefined*</GitVersionCache_LegacySemVer>
+      <GitVersionCache_LegacySemVerPadded Condition="'$(GitVersion_LegacySemVerPadded)' != ''">$(GitVersion_LegacySemVerPadded)</GitVersionCache_LegacySemVerPadded>
+      <GitVersionCache_LegacySemVerPadded Condition="'$(GitVersion_LegacySemVerPadded)' == ''">*Undefined*</GitVersionCache_LegacySemVerPadded>
+      <GitVersionCache_AssemblySemVer Condition="'$(GitVersion_AssemblySemVer)' != ''">$(GitVersion_AssemblySemVer)</GitVersionCache_AssemblySemVer>
+      <GitVersionCache_AssemblySemVer Condition="'$(GitVersion_AssemblySemVer)' == ''">*Undefined*</GitVersionCache_AssemblySemVer>
+      <GitVersionCache_AssemblySemFileVer Condition="'$(GitVersion_AssemblySemFileVer)' != ''">$(GitVersion_AssemblySemFileVer)</GitVersionCache_AssemblySemFileVer>
+      <GitVersionCache_AssemblySemFileVer Condition="'$(GitVersion_AssemblySemFileVer)' == ''">*Undefined*</GitVersionCache_AssemblySemFileVer>
+      <GitVersionCache_FullSemVer Condition="'$(GitVersion_FullSemVer)' != ''">$(GitVersion_FullSemVer)</GitVersionCache_FullSemVer>
+      <GitVersionCache_FullSemVer Condition="'$(GitVersion_FullSemVer)' == ''">*Undefined*</GitVersionCache_FullSemVer>
+      <GitVersionCache_InformationalVersion Condition="'$(GitVersion_InformationalVersion)' != ''">$(GitVersion_InformationalVersion)</GitVersionCache_InformationalVersion>
+      <GitVersionCache_InformationalVersion Condition="'$(GitVersion_InformationalVersion)' == ''">*Undefined*</GitVersionCache_InformationalVersion>
+      <GitVersionCache_BranchName Condition="'$(GitVersion_BranchName)' != ''">$(GitVersion_BranchName)</GitVersionCache_BranchName>
+      <GitVersionCache_BranchName Condition="'$(GitVersion_BranchName)' == ''">*Undefined*</GitVersionCache_BranchName>
+      <GitVersionCache_Sha Condition="'$(GitVersion_Sha)' != ''">$(GitVersion_Sha)</GitVersionCache_Sha>
+      <GitVersionCache_Sha Condition="'$(GitVersion_Sha)' == ''">*Undefined*</GitVersionCache_Sha>
+      <GitVersionCache_ShortSha Condition="'$(GitVersion_ShortSha)' != ''">$(GitVersion_ShortSha)</GitVersionCache_ShortSha>
+      <GitVersionCache_ShortSha Condition="'$(GitVersion_ShortSha)' == ''">*Undefined*</GitVersionCache_ShortSha>
+      <GitVersionCache_VersionSourceSha Condition="'$(GitVersion_VersionSourceSha)' != ''">$(GitVersion_VersionSourceSha)</GitVersionCache_VersionSourceSha>
+      <GitVersionCache_VersionSourceSha Condition="'$(GitVersion_VersionSourceSha)' == ''">*Undefined*</GitVersionCache_VersionSourceSha>
+      <GitVersionCache_NuGetVersionV2 Condition="'$(GitVersion_NuGetVersionV2)' != ''">$(GitVersion_NuGetVersionV2)</GitVersionCache_NuGetVersionV2>
+      <GitVersionCache_NuGetVersionV2 Condition="'$(GitVersion_NuGetVersionV2)' == ''">*Undefined*</GitVersionCache_NuGetVersionV2>
+      <GitVersionCache_NuGetVersion Condition="'$(GitVersion_NuGetVersion)' != ''">$(GitVersion_NuGetVersion)</GitVersionCache_NuGetVersion>
+      <GitVersionCache_NuGetVersion Condition="'$(GitVersion_NuGetVersion)' == ''">*Undefined*</GitVersionCache_NuGetVersion>
+      <GitVersionCache_NuGetPreReleaseTagV2 Condition="'$(GitVersion_NuGetPreReleaseTagV2)' != ''">$(GitVersion_NuGetPreReleaseTagV2)</GitVersionCache_NuGetPreReleaseTagV2>
+      <GitVersionCache_NuGetPreReleaseTagV2 Condition="'$(GitVersion_NuGetPreReleaseTagV2)' == ''">*Undefined*</GitVersionCache_NuGetPreReleaseTagV2>
+      <GitVersionCache_NuGetPreReleaseTag Condition="'$(GitVersion_NuGetPreReleaseTag)' != ''">$(GitVersion_NuGetPreReleaseTag)</GitVersionCache_NuGetPreReleaseTag>
+      <GitVersionCache_NuGetPreReleaseTag Condition="'$(GitVersion_NuGetPreReleaseTag)' == ''">*Undefined*</GitVersionCache_NuGetPreReleaseTag>
+      <GitVersionCache_CommitDate Condition="'$(GitVersion_CommitDate)' != ''">$(GitVersion_CommitDate)</GitVersionCache_CommitDate>
+      <GitVersionCache_CommitDate Condition="'$(GitVersion_CommitDate)' == ''">*Undefined*</GitVersionCache_CommitDate>
+      <GitVersionCache_CommitsSinceVersionSource Condition="'$(GitVersion_CommitsSinceVersionSource)' != ''">$(GitVersion_CommitsSinceVersionSource)</GitVersionCache_CommitsSinceVersionSource>
+      <GitVersionCache_CommitsSinceVersionSource Condition="'$(GitVersion_CommitsSinceVersionSource)' == ''">*Undefined*</GitVersionCache_CommitsSinceVersionSource>
+      <GitVersionCache_CommitsSinceVersionSourcePadded Condition="'$(GitVersion_CommitsSinceVersionSourcePadded)' != ''">$(GitVersion_CommitsSinceVersionSourcePadded)</GitVersionCache_CommitsSinceVersionSourcePadded>
+      <GitVersionCache_CommitsSinceVersionSourcePadded Condition="'$(GitVersion_CommitsSinceVersionSourcePadded)' == ''">*Undefined*</GitVersionCache_CommitsSinceVersionSourcePadded>
+    </PropertyGroup>
 
-      <SaveGetVersionTask BuildIdentifier="test"
-                          IsDateIdentifier="false"
-                          SolutionDirectory="$(RootDirectory)"
-                          Major="$(GitVersionCache_Major)"
-                          Minor="$(GitVersionCache_Minor)"
-                          Patch="$(GitVersionCache_Patch)"
-                          PreReleaseTag="$(GitVersionCache_PreReleaseTag)"
-                          PreReleaseTagWithDash="$(GitVersionCache_PreReleaseTagWithDash)"
-                          PreReleaseLabel="$(GitVersionCache_PreReleaseLabel)"
-                          PreReleaseNumber="$(GitVersionCache_PreReleaseNumber)"
-                          WeightedPreReleaseNumber="$(GitVersionCache_WeightedPreReleaseNumber)"
-                          BuildMetaData="$(GitVersionCache_BuildMetaData)"
-                          BuildMetaDataPadded="$(GitVersionCache_BuildMetaDataPadded)"
-                          FullBuildMetaData="$(GitVersionCache_FullBuildMetaData)"
-                          MajorMinorPatch="$(GitVersionCache_MajorMinorPatch)"
-                          SemVer="$(GitVersionCache_SemVer)"
-                          LegacySemVer="$(GitVersionCache_LegacySemVer)"
-                          LegacySemVerPadded="$(GitVersionCache_LegacySemVerPadded)"
-                          AssemblySemVer="$(GitVersionCache_AssemblySemVer)"
-                          AssemblySemFileVer="$(GitVersionCache_AssemblySemFileVer)"
-                          FullSemVer="$(GitVersionCache_FullSemVer)"
-                          InformationalVersion="$(GitVersionCache_InformationalVersion)"
-                          BranchName="$(GitVersionCache_BranchName)"
-                          VersionSourceSha="$(GitVersionCache_VersionSourceSha)"
-                          ShortSha="$(GitVersionCache_ShortSha)"
-                          Sha="$(GitVersionCache_Sha)"
-                          NuGetVersionV2="$(GitVersionCache_NuGetVersionV2)"
-                          NuGetVersion="$(GitVersionCache_NuGetVersion)"
-                          NuGetPreReleaseTagV2="$(GitVersionCache_NuGetPreReleaseTagV2)"
-                          NuGetPreReleaseTag="$(GitVersionCache_NuGetPreReleaseTag)"
-                          CommitDate="$(GitVersionCache_CommitDate)"
-                          CommitsSinceVersionSource="$(GitVersionCache_CommitsSinceVersionSource)"
-                          CommitsSinceVersionSourcePadded="$(GitVersionCache_CommitsSinceVersionSourcePadded)" />
+    <Message Text="GitVersionCache_Major: $(GitVersionCache_Major)" Importance="high" />
 
-      <!--<SaveGetVersionTask />-->
-    
+    <SaveGetVersionTask BuildIdentifier="test"
+                        IsDateIdentifier="false"
+                        SolutionDirectory="$(RootDirectory)"
+                        Major="$(GitVersionCache_Major)"
+                        Minor="$(GitVersionCache_Minor)"
+                        Patch="$(GitVersionCache_Patch)"
+                        PreReleaseTag="$(GitVersionCache_PreReleaseTag)"
+                        PreReleaseTagWithDash="$(GitVersionCache_PreReleaseTagWithDash)"
+                        PreReleaseLabel="$(GitVersionCache_PreReleaseLabel)"
+                        PreReleaseNumber="$(GitVersionCache_PreReleaseNumber)"
+                        WeightedPreReleaseNumber="$(GitVersionCache_WeightedPreReleaseNumber)"
+                        BuildMetaData="$(GitVersionCache_BuildMetaData)"
+                        BuildMetaDataPadded="$(GitVersionCache_BuildMetaDataPadded)"
+                        FullBuildMetaData="$(GitVersionCache_FullBuildMetaData)"
+                        MajorMinorPatch="$(GitVersionCache_MajorMinorPatch)"
+                        SemVer="$(GitVersionCache_SemVer)"
+                        LegacySemVer="$(GitVersionCache_LegacySemVer)"
+                        LegacySemVerPadded="$(GitVersionCache_LegacySemVerPadded)"
+                        AssemblySemVer="$(GitVersionCache_AssemblySemVer)"
+                        AssemblySemFileVer="$(GitVersionCache_AssemblySemFileVer)"
+                        FullSemVer="$(GitVersionCache_FullSemVer)"
+                        InformationalVersion="$(GitVersionCache_InformationalVersion)"
+                        BranchName="$(GitVersionCache_BranchName)"
+                        VersionSourceSha="$(GitVersionCache_VersionSourceSha)"
+                        ShortSha="$(GitVersionCache_ShortSha)"
+                        Sha="$(GitVersionCache_Sha)"
+                        NuGetVersionV2="$(GitVersionCache_NuGetVersionV2)"
+                        NuGetVersion="$(GitVersionCache_NuGetVersion)"
+                        NuGetPreReleaseTagV2="$(GitVersionCache_NuGetPreReleaseTagV2)"
+                        NuGetPreReleaseTag="$(GitVersionCache_NuGetPreReleaseTag)"
+                        CommitDate="$(GitVersionCache_CommitDate)"
+                        CommitsSinceVersionSource="$(GitVersionCache_CommitsSinceVersionSource)"
+                        CommitsSinceVersionSourcePadded="$(GitVersionCache_CommitsSinceVersionSourcePadded)" />
+
+    <!--<SaveGetVersionTask />-->
+
     <Message Text="[$(MSBuildThisFilename)] Informations created from GitVersion has been cached" Importance="high" />
   </Target>
 

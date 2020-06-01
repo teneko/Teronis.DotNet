@@ -8,9 +8,9 @@ using Teronis.DotNet.GitVersionCache.BuildTasks.Models;
 
 namespace Teronis.DotNet.GitVersionCache.BuildTasks
 {
-    public class SaveGetVersionTask : SaveGetVersionTaskBase, IBuildIdentification
+    public class SaveGetVersionTask : SaveGetVersionTaskBase
     {
-        public override bool Execute()
+        protected override bool OnExecute()
         {
             Log.LogMessage(MessageImportance.High, "######################## IT");
             Log.LogMessage(MessageImportance.High, "########################    DOES");

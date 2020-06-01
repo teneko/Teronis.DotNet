@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using GitVersion.MSBuildTask;
+using GitVersionTask.MsBuild;
 using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
+//using Microsoft.Build.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Teronis.IO;
 

@@ -146,6 +146,10 @@ namespace Teronis.Tools
 
         public static IEnumerable<MemberInfo> GetMembers(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType, VariableInfoSettings settings)
         {
+            if (beginningType is null) {
+                yield break;
+            }
+
             settings = settings.DefaultIfNull(true);
 
             if (settings.Flags.HasFlag(BindingFlags.DeclaredOnly))
@@ -157,9 +161,13 @@ namespace Teronis.Tools
                 interruptingBaseType = interruptingBaseType ?? typeof(object);
             }
 
-            foreach (var type in beginningType.GetBaseTypes(interruptingBaseType))
-                foreach (var varInfo in getMembers(type, settings))
+            var basesTypes = beginningType.GetBaseTypes(interruptingBaseType);
+
+            foreach (var type in basesTypes) {
+                foreach (var varInfo in getMembers(type, settings)) {
                     yield return varInfo;
+                }
+            }
         }
 
         public static IEnumerable<MemberInfo> GetMembers(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType)

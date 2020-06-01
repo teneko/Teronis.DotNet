@@ -23,16 +23,23 @@ namespace Teronis.Extensions
         public static bool HasDefaultConstructor(this Type type)
             => type.IsValueType || type.GetConstructor(Type.EmptyTypes) != null;
 
-        public static IEnumerable<Type> GetBaseTypes(this Type type, Type interruptingBaseType)
+        public static IEnumerable<Type> GetBaseTypes(this Type type, Type? interruptingBaseType = null)
         {
+            if (type is null) {
+                yield break;
+            }
+
             var nextType = type;
+            var objectType = typeof(object);
 
-            do {
+            for (; ; ) {
                 yield return nextType;
-            } while ((nextType = nextType.BaseType) != (interruptingBaseType ?? type.BaseType));
-        }
+                nextType = nextType.BaseType;
 
-        public static IEnumerable<Type> GetBaseTypes(this Type type)
-            => GetBaseTypes(type, default);
+                if (nextType == interruptingBaseType || nextType == objectType) {
+                    break;
+                }
+            }
+        }
     }
 }

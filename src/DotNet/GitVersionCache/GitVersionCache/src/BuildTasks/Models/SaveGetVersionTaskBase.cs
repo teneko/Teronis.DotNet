@@ -200,7 +200,7 @@ namespace Teronis.DotNet.GitVersionCache.BuildTasks.Models
         }
 
 
-        public override bool Execute() => true;
+        protected override bool OnExecute() => true;
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {

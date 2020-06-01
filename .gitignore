@@ -270,3 +270,6 @@ Teronis.DotNet.sln
 Teronis.NetCoreApp.sln
 Teronis.NetStandard.sln
 .gvc
+
+# Ignore folders who are only temporary
+[Gg][Ii][Tt][Ii][Gg][Nn][Oo][Rr][Ee][._]*/

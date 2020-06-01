@@ -31,6 +31,7 @@ namespace Teronis.Extensions
 
         public static IEnumerable<MemberInfo> GetPropertyMembers(this Type type, VariableInfoSettings settings)
         {
+            type = type ?? throw new ArgumentNullException(nameof(type));
             settings = settings.DefaultIfNull(true);
 
             foreach (MemberInfo property in type.GetProperties(settings.Flags))
@@ -182,6 +183,7 @@ namespace Teronis.Extensions
         public static AttributeMemberInfo<TAttribute> GetAttributeFieldMember<TAttribute>(this Type type, string fieldName, VariableInfoSettings settings, bool? getCustomAttributesInherit)
             where TAttribute : Attribute
         {
+            type = type ?? throw new ArgumentNullException(nameof(type));
             settings = settings.DefaultIfNull(true);
             var field = GetFieldMember(type, fieldName, settings);
 
@@ -233,6 +235,7 @@ namespace Teronis.Extensions
 
         public static AttributeMemberInfo GetAttributeFieldMember(this Type type, Type attributeType, string fieldName, VariableInfoSettings settings, bool? getCustomAttributesInherit)
         {
+            type = type ?? throw new ArgumentNullException(nameof(type));
             settings = settings.DefaultIfNull(true);
             var field = GetFieldMember(type, fieldName, settings);
 

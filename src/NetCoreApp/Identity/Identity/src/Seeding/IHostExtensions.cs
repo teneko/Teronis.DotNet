@@ -30,7 +30,7 @@ namespace Microsoft.Extensions.DependencyInjection
             return host;
         }
 
-        public static async Task<IHost> SeedIdentity<UserType, RoleType>(this IHost host, Func<IServiceProvider, IAccountManager<UserType, RoleType>, Task> handler)
+        public static async Task<IHost> SeedIdentityAsync<UserType, RoleType>(this IHost host, Func<IServiceProvider, IAccountManager<UserType, RoleType>, Task> handler)
         {
             await CreateScopeAsync(host, serviceProvider => {
                 var accountManager = serviceProvider.GetRequiredService<IAccountManager<UserType, RoleType>>();
@@ -40,7 +40,7 @@ namespace Microsoft.Extensions.DependencyInjection
             return host;
         }
 
-        public static Task<IHost> SeedIdentity(this IHost host, Func<IServiceProvider, IAccountManager<UserEntity, RoleEntity>, Task> handler) =>
-            SeedIdentity<UserEntity, RoleEntity>(host, handler);
+        public static Task<IHost> SeedIdentityAsync(this IHost host, Func<IServiceProvider, IAccountManager<UserEntity, RoleEntity>, Task> handler) =>
+            SeedIdentityAsync<UserEntity, RoleEntity>(host, handler);
     }
 }

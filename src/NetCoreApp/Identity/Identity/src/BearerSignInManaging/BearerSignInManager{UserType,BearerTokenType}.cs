@@ -9,7 +9,7 @@ using Teronis.Identity.Presenters.Extensions;
 using Teronis.Identity.Entities;
 using Teronis.Identity.Extensions;
 using Teronis.Identity.Presenters.Generic;
-using System.Reflection;
+using Teronis.Identity.Presenters;
 
 namespace Teronis.Identity.BearerSignInManaging
 {
@@ -17,7 +17,8 @@ namespace Teronis.Identity.BearerSignInManaging
         where UserType : class, IUserEntity
         where BearerTokenType : class, IBearerTokenEntity
     {
-        private readonly BearerSignInManagerOptions signInServiceOptions;
+        private readonly ErrorDetailsProvider errorDetailsProvider;
+        private readonly BearerSignInManagerOptions signInManagerOptions;
         private readonly UserManager<UserType> userManager;
         private readonly IOptions<IdentityOptions> identityOptions;
         private readonly IBearerTokenStore<BearerTokenType> bearerTokenStore;
@@ -27,7 +28,8 @@ namespace Teronis.Identity.BearerSignInManaging
             UserManager<UserType> userManager, IOptions<IdentityOptions> identityOptions,
             IBearerTokenStore<BearerTokenType> bearerTokenStore, ILogger<BearerSignInManager<UserType, BearerTokenType>>? logger = null)
         {
-            signInServiceOptions = options.Value;
+            errorDetailsProvider = new ErrorDetailsProvider(() => options.Value.IncludeErrorDetails, logger);
+            signInManagerOptions = options.Value;
             this.userManager = userManager;
             this.identityOptions = identityOptions;
             this.bearerTokenStore = bearerTokenStore;
@@ -35,21 +37,6 @@ namespace Teronis.Identity.BearerSignInManaging
         }
 
         protected abstract BearerTokenType CreateRefreshToken(string userId, DateTime issuedAtUtc, DateTime expiresAtUtc);
-
-        private Exception? asDetailedError(Exception error, string? errorMessage = null)
-        {
-            if (signInServiceOptions.IncludeErrorDetails) {
-                var errorDetailMessage = $"{error.GetType().GetTypeInfo().Name}: {error.Message}";
-
-                if (string.IsNullOrWhiteSpace(errorMessage)) {
-                    return new Exception(errorDetailMessage, error);
-                }
-
-                return new Exception($"{errorMessage} {errorDetailMessage}", error);
-            }
-
-            return errorMessage is null ? null : new Exception(errorMessage);
-        }
 
         /// <summary>
         /// Set context user.
@@ -74,11 +61,10 @@ namespace Teronis.Identity.BearerSignInManaging
                         .WithHttpStatusCode(HttpStatusCode.BadRequest);
                 }
             } catch (Exception error) {
-                logger?.LogError(error, $"The user could not be loaded.");
+                var insensitiveErrorMessage = $"The user could not be loaded.";
 
-                context.SetResult()
-                    .ToFailure(asDetailedError(error))
-                    .WithHttpStatusCode(HttpStatusCode.InternalServerError);
+                context.SetResult(errorDetailsProvider.LogCriticalThenBuildAppropiateError<object>(error, insensitiveErrorMessage)
+                    .WithHttpStatusCode(HttpStatusCode.InternalServerError));
             }
 
             context.User = null;
@@ -90,8 +76,6 @@ namespace Teronis.Identity.BearerSignInManaging
         /// </summary>
         protected virtual async Task<bool> TryDeleteExpiredRefreshTokensAsync(BearerSignInManagerContext<UserType, BearerTokenType> context)
         {
-            var user = context.User ?? throw BearerSignInManagerThrowHelper.GetContextArgumentException(nameof(context.User));
-
             try {
                 await bearerTokenStore.DeleteExpiredOnesAsync();
                 return true;
@@ -120,12 +104,9 @@ namespace Teronis.Identity.BearerSignInManaging
                             .ToFailure("The user does not have the refresh token.")
                             .WithHttpStatusCode(HttpStatusCode.Unauthorized);
                     }
-                } catch (Exception error) {
-                    logger?.LogError(error, $"The refresh token could not be deleted.");
-
-                    context.SetResult()
-                        .ToFailure(asDetailedError(error))
-                        .WithHttpStatusCode(HttpStatusCode.InternalServerError);
+                } catch (Exception? error) {
+                    context.SetResult(errorDetailsProvider.LogErrorThenBuildAppropiateError<object>(error, "The refresh token could not be deleted.")
+                        .WithHttpStatusCode(HttpStatusCode.InternalServerError));
                 }
             else {
                 context.SetResult()
@@ -141,7 +122,7 @@ namespace Teronis.Identity.BearerSignInManaging
         protected virtual async Task<bool> TrySetContextAccessTokenAsync(BearerSignInManagerContext<UserType, BearerTokenType> context)
         {
             var user = context.User ?? throw BearerSignInManagerThrowHelper.GetContextArgumentException(nameof(context.User));
-            var accessTokenDescriptor = signInServiceOptions.CreateAccessTokenDescriptor();
+            var accessTokenDescriptor = signInManagerOptions.CreateAccessTokenDescriptor();
 
             // Used by authentication middleware.
             accessTokenDescriptor.Claims.Add(ClaimTypes.NameIdentifier, user.Id);
@@ -156,14 +137,11 @@ namespace Teronis.Identity.BearerSignInManaging
                     }
                 }
 
-                context.AccessToken = BearerSignInManagerTools.GenerateJwtToken(accessTokenDescriptor, signInServiceOptions.SetDefaultTimesOnTokenCreation);
+                context.AccessToken = BearerSignInManagerTools.GenerateJwtToken(accessTokenDescriptor, signInManagerOptions.SetDefaultTimesOnTokenCreation);
                 return true;
             } catch (Exception error) {
-                logger.LogError(error, $"The access token could not be created.");
-
-                context.SetResult()
-                    .ToFailure(asDetailedError(error))
-                    .WithHttpStatusCode(HttpStatusCode.InternalServerError);
+                context.SetResult(errorDetailsProvider.LogCriticalThenBuildAppropiateError<object>(error, "The access token could not be created.")
+                    .WithHttpStatusCode(HttpStatusCode.InternalServerError));
             }
 
             return false;
@@ -177,12 +155,8 @@ namespace Teronis.Identity.BearerSignInManaging
                 await bearerTokenStore.InsertAsync(refreshToken);
                 return true;
             } catch (Exception error) {
-                var errorMessage = $"Refresh token cannot be stored. Try again later.";
-                logger?.LogError(error, errorMessage);
-
-                context.SetResult()
-                    .ToFailure(asDetailedError(error, errorMessage))
-                    .WithHttpStatusCode(HttpStatusCode.Unauthorized);
+                context.SetResult(errorDetailsProvider.LogErrorThenBuildAppropiateError<object>(error, "Refresh token cannot be stored. Try again later.")
+                    .WithHttpStatusCode(HttpStatusCode.Unauthorized));
             }
 
             return false;
@@ -194,7 +168,7 @@ namespace Teronis.Identity.BearerSignInManaging
         protected virtual async Task<bool> TrySetContextRefreshTokenEntityAsync(BearerSignInManagerContext<UserType, BearerTokenType> context)
         {
             var user = context.User ?? throw new ArgumentNullException(nameof(BearerSignInManagerContext<UserType, BearerTokenType>.User));
-            var refreshTokenDescriptor = signInServiceOptions.CreateRefreshTokenDescriptor();
+            var refreshTokenDescriptor = signInManagerOptions.CreateRefreshTokenDescriptor();
 
             var issuedAtUtc = refreshTokenDescriptor.IssuedAt == null ? DateTime.UtcNow :
                 DateTime.SpecifyKind((DateTime)refreshTokenDescriptor.IssuedAt, DateTimeKind.Utc);
@@ -206,7 +180,7 @@ namespace Teronis.Identity.BearerSignInManaging
             if (hasStorageSucceeded) {
                 refreshTokenDescriptor.Claims.Add(identityOptions.Value.ClaimsIdentity.SecurityStampClaimType, user.SecurityStamp);
                 refreshTokenDescriptor.Claims.Add(BearerSignInManagerDefaults.SignInServiceRefreshTokenIdClaimType, refreshTokenEntity.BearerTokenId);
-                var refreshToken = BearerSignInManagerTools.GenerateJwtToken(refreshTokenDescriptor, signInServiceOptions.SetDefaultTimesOnTokenCreation);
+                var refreshToken = BearerSignInManagerTools.GenerateJwtToken(refreshTokenDescriptor, signInManagerOptions.SetDefaultTimesOnTokenCreation);
                 context.RefreshTokenEntity = refreshTokenEntity;
                 context.RefreshToken = refreshToken;
                 return true;
@@ -219,57 +193,72 @@ namespace Teronis.Identity.BearerSignInManaging
             await TrySetContextAccessTokenAsync(context) &&
             await TrySetContextRefreshTokenEntityAsync(context);
 
-        /// <summary>
-        /// Create sign in tokens, so a new refresh token and a new access token.
-        /// </summary>
-        public async Task<IServiceResult<SignInTokens>> CreateInitialSignInTokensAsync(ClaimsPrincipal principal)
+        /// <inheritdoc/>
+        public async Task<IServiceResult<SignInTokens>> CreateTokensAsync(ClaimsPrincipal principal)
         {
             principal = principal ?? throw BearerSignInManagerThrowHelper.GetPrincipalNullException(nameof(principal));
             var context = new BearerSignInManagerContext<UserType, BearerTokenType>(principal);
 
             if (await TrySetContextUserAsync(context) && await TrySetContextSignInTokensAsync(context)) {
                 var authenticationTokens = new SignInTokens(context.AccessToken!, context.RefreshToken!);
-
-                context.SetResult()
-                    .ToSuccess(authenticationTokens)
-                    .WithHttpStatusCode(HttpStatusCode.OK);
+                return ServiceResult<SignInTokens>.Success(authenticationTokens).WithHttpStatusCode(HttpStatusCode.OK);
             }
 
-            return context.Result!;
+            return context.Result!.CopyButFailed<object, SignInTokens>();
         }
 
-        /// <summary>
-        /// Create next sign in tokens, so a new access token.
-        /// </summary>
-        public async Task<IServiceResult<SignInTokens>> CreateNextSignInTokensAsync(ClaimsPrincipal principal)
+        public bool HasPrincipalRefreshToken(BearerSignInManagerContext<UserType, BearerTokenType> context)
         {
-            var context = new BearerSignInManagerContext<UserType, BearerTokenType>(principal);
+            var principal = context.Principal ?? throw BearerSignInManagerThrowHelper.GetContextArgumentException(nameof(BearerSignInManagerContext<UserType, BearerTokenType>.Principal));
             var hasRefreshTokenId = Guid.TryParse(principal.FindFirstValue(BearerSignInManagerDefaults.SignInServiceRefreshTokenIdClaimType), out _);
 
-            if (hasRefreshTokenId) {
-                try {
-                    if (await TrySetContextUserAsync(context) && await TryDeleteUserRefreshTokenAsync(context) && await TrySetContextSignInTokensAsync(context)) {
-                        var refreshTokens = new SignInTokens(context.AccessToken!, context.RefreshToken!);
-
-                        context.SetResult()
-                            .ToSuccess(refreshTokens)
-                            .WithHttpStatusCode(HttpStatusCode.OK);
-                    }
-                } catch (Exception error) {
-                    var errorMessage = $"An unhandled exception has been occured.";
-                    logger.LogError(error, errorMessage);
-
-                    context.SetResult()
-                        .ToFailure(asDetailedError(error, errorMessage))
-                        .WithHttpStatusCode(HttpStatusCode.InternalServerError);
-                }
-            } else {
+            if (!hasRefreshTokenId) {
                 context.SetResult()
                     .ToFailure("The refresh token is not valid.")
                     .WithHttpStatusCode(HttpStatusCode.Unauthorized);
+
+                return false;
             }
 
-            return context.Result!;
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<IServiceResult<SignInTokens>> CreateNextTokensAsync(ClaimsPrincipal principal)
+        {
+            var context = new BearerSignInManagerContext<UserType, BearerTokenType>(principal);
+
+            if (HasPrincipalRefreshToken(context)) {
+                try {
+                    if (await TrySetContextUserAsync(context) && await TryDeleteUserRefreshTokenAsync(context) && await TrySetContextSignInTokensAsync(context)) {
+                        var refreshTokens = new SignInTokens(context.AccessToken!, context.RefreshToken!);
+                        return ServiceResult<SignInTokens>.Success(refreshTokens).WithHttpStatusCode(HttpStatusCode.OK);
+                    }
+                } catch (Exception error) {
+                    context.SetResult(errorDetailsProvider.LogErrorThenBuildAppropiateError<object>(error)
+                        .WithHttpStatusCode(HttpStatusCode.InternalServerError));
+                }
+            }
+
+            return context.Result!.CopyButFailed<object, SignInTokens>();
+        }
+
+        public async Task<IServiceResult> InvalidateIssuesAsync(ClaimsPrincipal principal)
+        {
+            var context = new BearerSignInManagerContext<UserType, BearerTokenType>(principal);
+
+            if (HasPrincipalRefreshToken(context)) {
+                try {
+                    if (await TrySetContextUserAsync(context) && await TryDeleteUserRefreshTokenAsync(context)) {
+                        return new ServiceResult(true).WithHttpStatusCode(HttpStatusCode.OK);
+                    }
+                } catch (Exception error) {
+                    context.SetResult(errorDetailsProvider.LogErrorThenBuildAppropiateError<object>(error)
+                        .WithHttpStatusCode(HttpStatusCode.InternalServerError));
+                }
+            }
+
+            return context.Result!.CopyButFailed<object, object>();
         }
     }
 }

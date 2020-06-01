@@ -1,17 +1,16 @@
 ﻿using System.Security.Claims;
 using Teronis.Identity.Entities;
 using Teronis.Identity.Presenters.Generic.ObjectModel;
-using Teronis.Identity.Presenters.ObjectModel;
 using Teronis.Identity.Presenters.Generic;
 
 namespace Teronis.Identity.BearerSignInManaging
 {
-    public class BearerSignInManagerContext<UserEntityType, BearerTokenType> : IServiceResultInjection<SignInTokens>
+    public class BearerSignInManagerContext<UserEntityType, BearerTokenType> : IServiceResultInjection<object>
         where UserEntityType : class, IUserEntity
         where BearerTokenType : class, IBearerTokenEntity
     {
         public ClaimsPrincipal Principal { get; }
-        public IServiceResult<SignInTokens>? Result { get; private set; }
+        public IServiceResult<object>? Result { get; private set; }
         public UserEntityType? User { get; set; }
         public string? AccessToken { get; set; }
         public BearerTokenType? RefreshTokenEntity { get; set; }
@@ -20,7 +19,7 @@ namespace Teronis.Identity.BearerSignInManaging
         public BearerSignInManagerContext(ClaimsPrincipal principal)
             => Principal = principal ?? throw BearerSignInManagerThrowHelper.GetPrincipalNullException(nameof(principal));
 
-        public void SetResult(IServiceResult<SignInTokens> result) =>
+        public void SetResult(IServiceResult<object> result) =>
             Result = result;
 
         public IServiceResultDelegatedFactory<SignInTokens> SetResult() =>

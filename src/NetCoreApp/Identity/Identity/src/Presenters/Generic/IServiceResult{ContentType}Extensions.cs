@@ -25,7 +25,7 @@ namespace Teronis.Identity.Presenters.Generic
             return new ServiceResult<TargetContentType>(resultDeepCopyDatransject);
         }
 
-        public static IServiceResult<TargetContentType> CopyButSucceededWithContent<SourceContentType, TargetContentType>(this IServiceResult<SourceContentType> result, TargetContentType content)
+        public static ServiceResult<TargetContentType> CopyButSucceededWithContent<SourceContentType, TargetContentType>(this IServiceResult<SourceContentType> result, TargetContentType content)
         {
             var copiedResult = copy<SourceContentType, TargetContentType>(result);
             IMutableServiceResult mutableServiceResult = copiedResult;
@@ -34,7 +34,7 @@ namespace Teronis.Identity.Presenters.Generic
             return copiedResult;
         }
 
-        public static IServiceResult<TargetContentType> CopyButSucceededWithContentIfSucceeded<SourceContentType, TargetContentType>(this IServiceResult<SourceContentType> result, TargetContentType content)
+        public static ServiceResult<TargetContentType> CopyButSucceededWithContentIfSucceeded<SourceContentType, TargetContentType>(this IServiceResult<SourceContentType> result, TargetContentType content)
         {
             result = result ?? throw new ArgumentNullException(nameof(result));
 
@@ -45,11 +45,11 @@ namespace Teronis.Identity.Presenters.Generic
             return copy<SourceContentType, TargetContentType>(result);
         }
 
-        public static IServiceResult<TargetContentType> CopyButFailed<SourceContentType, TargetContentType>(this IServiceResult<SourceContentType> result, JsonErrors? errors = null)
+        public static ServiceResult<TargetContentType> CopyButFailed<SourceContentType, TargetContentType>(this IServiceResult<SourceContentType> result, JsonErrors? errors = null)
         {
             var copiedResult = copy<SourceContentType, TargetContentType>(result);
             IMutableServiceResult mutableServiceResult = copiedResult;
-            mutableServiceResult.Succeeded = true;
+            mutableServiceResult.Succeeded = false;
 
             if (errors != null) {
                 mutableServiceResult.Errors = errors;
@@ -58,11 +58,11 @@ namespace Teronis.Identity.Presenters.Generic
             return copiedResult;
         }
 
-        public static IServiceResult<TargetContentType> CopyButFailedIfFailed<SourceContentType, TargetContentType>(this IServiceResult<SourceContentType> result, JsonErrors? errors = null)
+        public static ServiceResult<TargetContentType> CopyButFailedIfFailed<SourceContentType, TargetContentType>(this IServiceResult<SourceContentType> result, JsonErrors? errors = null)
         {
             result = result ?? throw new ArgumentNullException(nameof(result));
 
-            if (result.Succeeded) {
+            if (!result.Succeeded) {
                 return CopyButFailed<SourceContentType, TargetContentType>(result, errors);
             }
 

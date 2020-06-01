@@ -20,4 +20,8 @@
     <ProjectReference Include="..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Presenters\ObjectModel\" />
+  </ItemGroup>
+
 </Project>

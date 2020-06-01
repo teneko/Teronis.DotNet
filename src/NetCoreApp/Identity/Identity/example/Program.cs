@@ -12,7 +12,7 @@ namespace Teronis.Identity
         {
             var host = CreateHostBuilder(args).Build();
 
-            await host.SeedIdentity(async (serviceProvider, accountManager) => {
+            await host.SeedIdentityAsync(async (serviceProvider, accountManager) => {
                 var dbContext = serviceProvider.GetRequiredService<BearerIdentityDbContext>();
                 await dbContext.Database.EnsureDeletedAsync();
                 await dbContext.Database.EnsureCreatedAsync();

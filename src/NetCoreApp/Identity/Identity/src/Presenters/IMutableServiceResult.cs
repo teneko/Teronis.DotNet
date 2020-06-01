@@ -6,6 +6,6 @@ namespace Teronis.Identity.Presenters
     {
         bool Succeeded { get; set; }
         object? Content { get; set; }
-        JsonErrors? Errors{ get; set; }
+        JsonErrors? Errors { get; set; }
     }
 }

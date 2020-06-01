@@ -2,7 +2,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Teronis.Identity.Presenters.Generic;
-using Teronis.Identity.Presenters.ObjectModel;
 
 namespace Teronis.Identity.Presenters.Generic.ObjectModel
 {
@@ -16,6 +15,7 @@ namespace Teronis.Identity.Presenters.Generic.ObjectModel
         new IServiceResultFactory<ServiceResultType, ServiceResultContentType> ToSuccess([AllowNull]ServiceResultContentType content);
         new IServiceResultFactory<ServiceResultType, ServiceResultContentType> ToFailure();
         new IServiceResultFactory<ServiceResultType, ServiceResultContentType> ToFailure(IServiceResult? serviceResult);
+        new IServiceResultFactory<ServiceResultType, ServiceResultContentType> ToFailure(JsonErrors? errors);
         new IServiceResultFactory<ServiceResultType, ServiceResultContentType> ToFailure(JsonError? error);
         new IServiceResultFactory<ServiceResultType, ServiceResultContentType> ToFailure(string? errorMessage);
     }

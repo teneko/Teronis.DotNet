@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using Teronis.Identity.Presenters.ObjectModel;
 
 namespace Teronis.Identity.Presenters.Generic.ObjectModel
 {
@@ -31,7 +30,7 @@ namespace Teronis.Identity.Presenters.Generic.ObjectModel
 
         public IServiceResultFactory<IServiceResult<ContentType>, ContentType> ToFailure()
         {
-            var serviceResult = new ServiceResult<ContentType>(false);
+            var serviceResult = ServiceResult<ContentType>.Failure();
             return setServiceResult(serviceResult);
         }
 
@@ -39,6 +38,12 @@ namespace Teronis.Identity.Presenters.Generic.ObjectModel
         {
             var newServiceResult = ServiceResult<ContentType>.Failure(serviceResult);
             return setServiceResult(newServiceResult);
+        }
+
+        public IServiceResultFactory<IServiceResult<ContentType>, ContentType> ToFailure(JsonErrors? errors)
+        {
+            var serviceResult = ServiceResult<ContentType>.Failure(errors);
+            return setServiceResult(serviceResult);
         }
 
         public IServiceResultFactory<IServiceResult<ContentType>, ContentType> ToFailure(JsonError? error)
@@ -72,6 +77,9 @@ namespace Teronis.Identity.Presenters.Generic.ObjectModel
 
         IServiceResultFactory IServiceResultDelegatedFactory<ContentType>.ToFailure(IServiceResult? serviceResult) =>
             ToFailure(serviceResult);
+
+        IServiceResultFactory IServiceResultDelegatedFactory<ContentType>.ToFailure(JsonErrors? errors) =>
+            ToFailure(errors);
 
         IServiceResultFactory IServiceResultDelegatedFactory<ContentType>.ToFailure(JsonError? error) =>
             ToFailure(error);

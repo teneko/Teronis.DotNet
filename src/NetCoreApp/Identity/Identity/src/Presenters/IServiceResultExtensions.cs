@@ -20,13 +20,17 @@ namespace Teronis.Identity.Extensions
                 return true;
             }
 
-            ignoredErrorCodes ??= ignoredErrorCodes ?? Enumerable.Empty<string>();
+            int notIgnoredErrorCodesCount;
 
-            var filteredErrorCodes = errors.Errors.Keys
-                .Except(ignoredErrorCodes)
-                .Count();
+            if (ignoredErrorCodes is null) {
+                notIgnoredErrorCodesCount = errors.Count;
+            } else {
+                notIgnoredErrorCodesCount = errors.Errors
+                    .Where(x => !ignoredErrorCodes.Contains(x.ErrorCode))
+                    .Count();
+            }
 
-            if (filteredErrorCodes == 0) {
+            if (notIgnoredErrorCodesCount == 0) {
                 return true;
             }
 

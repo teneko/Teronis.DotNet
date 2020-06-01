@@ -5,34 +5,27 @@ namespace Teronis.Identity.Presenters
 {
     public class JsonError : IJsonError
     {
-        internal const string DefaultErrorCode = "error";
-        internal const string DefaultErrorMessage = "An exception has been occured.";
+        internal const string DefaultErrorCode = "Error";
 
         public string ErrorCode { get; private set; }
         public Exception Error { get; private set; }
 
-        public JsonError(string? errorCode, Exception? error)
+        public JsonError(Exception? error = null, string? errorCode = null)
         {
-            ErrorCode = errorCode ?? error?.GetType().Name.LowerFirstLetter() ?? DefaultErrorCode;
-            Error = error ?? new Exception(DefaultErrorMessage);
+            Error = error ?? new Exception(StringResources.DefaultErrorMessage);
+            ErrorCode = errorCode ?? error?.GetType().Name.UpperFirstLetter() ?? DefaultErrorCode;
         }
 
         public JsonError(Exception? error)
-            : this(null, error) { }
+            : this(error, null) { }
 
-        public JsonError(string? errorCode, string? error)
-            : this(errorCode, error is null ? null : new Exception(error)) { }
+        public JsonError(string? errorMessage, string? errorCode = null)
+            : this(errorMessage is null ? null : new Exception(errorMessage), errorCode) { }
 
         public static implicit operator JsonError(string? errorMessage) =>
-            new JsonError(null, errorMessage);
+            new JsonError(errorMessage, null);
 
-        public override string ToString()
-        {
-            if (Error is null) {
-                return ErrorCode;
-            } else {
-                return $"{ErrorCode}: {Error}";
-            }
-        }
+        public override string ToString() =>
+            $"{Error} (Code: {ErrorCode})";
     }
 }

@@ -5,12 +5,12 @@
   <UsingTask AssemblyFile="$(GitVersionCacheAssemblyFile)" TaskName="SaveGetVersionTask" />
 
   <Target Name="welcome">
-    <Message Text="Welcome" Importance="high" />
+    <Message Text="Welcome: $(GitVersionCacheAssemblyFile)" Importance="high" />
   </Target>
 
   <!--<Import Project="$(LocalGitVersionTaskTargetsFile)" Condition="'$(ImportGlobalGitVersionTaskTargets)' != 'true'" />
   <Import Project="$(GlobalGitVersionTaskTargetsFile)" Condition="'$(ImportGlobalGitVersionTaskTargets)' == 'true'" />-->
-
+  
   <PropertyGroup>
     <ShouldCacheVersionInformations>true</ShouldCacheVersionInformations>
     <DisableBeforeGitVersionCache Condition="'$(DisableGitVersionCache)'">true</DisableBeforeGitVersionCache>

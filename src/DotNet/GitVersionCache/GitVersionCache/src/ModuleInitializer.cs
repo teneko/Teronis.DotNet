@@ -14,9 +14,12 @@ namespace Teronis.DotNet.GitVersionCache
             ExecutingAssemblyDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
             LoadAssemblies = new[] {
-                ExecutingAssemblyDirectory + @"\tools\netstandard2.0\GitVersionCore.dll",
-                ExecutingAssemblyDirectory + @"\tools\netstandard2.0\GitVersionTask.MsBuild.dll",
-                ExecutingAssemblyDirectory + @"\tools\netstandard2.0\GitVersionTask.dll",
+                //ExecutingAssemblyDirectory + @"\tools\netstandard2.0\GitVersionCore.dll",
+                //ExecutingAssemblyDirectory + @"\tools\netstandard2.0\GitVersionTask.MsBuild.dll",
+                //ExecutingAssemblyDirectory + @"\tools\netstandard2.0\GitVersionTask.dll",
+                ExecutingAssemblyDirectory + @"\GitVersionCore.dll",
+                ExecutingAssemblyDirectory + @"\GitVersionTask.MsBuild.dll",
+                ExecutingAssemblyDirectory + @"\GitVersionTask.dll",
                 //ExecutingAssemblyDirectory + @"\lib\netstandard2.0\System.ComponentModel.Annotations.dll"
                 //ExecutingAssemblyDirectory + @"\System.ComponentModel.Annotations.dll"
             };

@@ -1,5 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  TODO: MAKE SUB PROJECT PACK IT AND ADD IT IN THIS PROJECT PACK THIS AND MAKE THIS PUBLISHABLE
+  
   <PropertyGroup>
 
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -34,7 +36,10 @@
        This pre-build is finished before the actual build. When building pre-build GitVersion is disabled. The pre-built
        is implemented in such a way that it can also serve the real build of this project. -->
   <Target Name="GitVersionCachePreBuild" Condition="'$(DisableGitVersionCachePreBuildTarget)' != 'true'" BeforeTargets="BeforeBuild">
-    <MSBuild Projects="$(MSBuildThisFile)" Targets="Restore;Build;Publish" Properties="$(GitVersionCachePreBuildProperties)" />
+    <Exec Command="dotnet msbuild /restore -property:DisableGitVersionCache=true" />
+    <!--<MSBuild Projects="$(MSBuildThisFile)" Targets="Restore" Properties="$(GitVersionCachePreBuildProperties)" />-->
+    <!--<Exec Command="dotnet msbuild /build -property:DisableGitVersionCache=true" />-->
+    <MSBuild Projects="$(MSBuildThisFile)" Targets="Build;Publish" Properties="$(GitVersionCachePreBuildProperties)" />
     <!--<Exec Command="dotnet msbuild -t:Build;Publish -p:$(GitVersionCachePreBuildProperties)" />-->
     <Error Condition="!Exists('$(GitVersionCacheAssemblyFile)')" Text="[$(MSBuildThisFilename)] GitVersionCache assembly file not found. It should have been created just before." />
   </Target>
@@ -69,16 +74,21 @@
 
   <PropertyGroup>
     <GitVersionToolFilesIncludes>
-      $(PkgGitVersionTask)\tools\**\GitVersion*.dll;
-      $(PkgGitVersionTask)\tools\**\GitVersion*.pdb;
-      $(PkgGitVersionTask)\tools\**\GitVersion*.deps.json
+      $(PkgGitVersionTask)\tools\netstandard2.0\**\GitVersion*.dll;
+      $(PkgGitVersionTask)\tools\netstandard2.0\**\GitVersion*.pdb;
+      $(PkgGitVersionTask)\tools\netstandard2.0\**\GitVersion*.deps.json
     </GitVersionToolFilesIncludes>
   </PropertyGroup>
 
   <ItemGroup>
 
-    <None Include="$(GitVersionToolFilesIncludes)" Pack="true" PackagePath="tools\">
+    <!--<None Include="$(GitVersionToolFilesIncludes)" Pack="true" PackagePath="tools\">
       <Link>tools\%(RecursiveDir)\%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>-->
+
+    <None Include="$(GitVersionToolFilesIncludes)" Pack="true" PackagePath="tools\">
+      <Link>%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
 
@@ -108,6 +118,18 @@
     <Reference Include="$(PkgGitVersionTask)\tools\netstandard2.0\GitVersionTask.dll">
       <Private>false</Private>
     </Reference>
+
+    <!--<Reference Include="$(MSBuildThisFileDirectory)tools\netstandard2.0\GitVersionCore.dll">
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="$(MSBuildThisFileDirectory)tools\netstandard2.0\GitVersionTask.MsBuild.dll">
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="$(MSBuildThisFileDirectory)tools\netstandard2.0\GitVersionTask.dll">
+      <Private>false</Private>
+    </Reference>-->
 
     <None Include="$(PkgGitVersionTask)\build\**\*" Pack="true" PackagePath="build\">
       <Link>build\%(RecursiveDir)\%(Filename)%(Extension)</Link>

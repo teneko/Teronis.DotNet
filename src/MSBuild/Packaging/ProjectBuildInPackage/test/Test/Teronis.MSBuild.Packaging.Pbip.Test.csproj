@@ -1,4 +1,6 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\src\build\Teronis.MSBuild.Packaging.ProjectBuildInPackage.props"/>
 
   <PropertyGroup>
     <!-- To generate a package is part of the test -->
@@ -7,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Teronis.MSBuild.Packaging.ProjectBuildInPackage.csproj" />
     <ProjectReference Include="..\Test.Localization\Teronis.MSBuild.Packaging.Pbip.Test.Localization.csproj" PrivateAssets="all" />
   </ItemGroup>
 
@@ -48,20 +51,6 @@
       PackageSearchId=$(FeatureProjectId)
     </SearchFeaturePackageProperties>
   </PropertyGroup>
-
-  <!-- Target does inject package reference before they get resolved. -->
-  <Target Name="AddFeaturePackageReference" BeforeTargets="CollectPackageReferences">
-    <MSBuild Projects="$(MSBuildThisFile)" Targets="SearchPackage" Properties="$(SearchFeaturePackageProperties)">
-      <Output TaskParameter="TargetOutputs" ItemName="FoundFeaturePackage" />
-    </MSBuild>
-
-    <ItemGroup>
-      <PackageReference Include="%(FoundFeaturePackage.Id)" Version="%(FoundFeaturePackage.Version)" />
-    </ItemGroup>
-
-    <Message Text="[$(MSBuildThisFileName)] Added package reference %(FoundFeaturePackage.Id) (%(FoundFeaturePackage.Version))." Importance="high" />
-
-  </Target>
 
   <PropertyGroup>
     <LocalPackageSearchProperties>
@@ -108,5 +97,7 @@
     <Delete Files="@(FoundLocalPackage)" />
     <Message Text="[$(MSBuildThisFileName)] package %(FoundLocalPackage.Filename)%(FoundLocalPackage.Extension) has been deleted from the disk." Importance="high" />
   </Target>
+  
+  <Import Project="..\..\src\build\Teronis.MSBuild.Packaging.ProjectBuildInPackage.targets"/>
 
 </Project>

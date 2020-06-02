@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using GitVersion.MSBuildTask.Tasks;
-using Microsoft.Build.Utilities;
-using Teronis.DotNet.GitVersionCache.BuildTasks.Models;
+﻿using Teronis.DotNet.GitVersionCache.BuildTasks.Models;
 
 namespace Teronis.DotNet.GitVersionCache.BuildTasks
 {
@@ -11,7 +6,9 @@ namespace Teronis.DotNet.GitVersionCache.BuildTasks
     {
         protected override bool OnExecute()
         {
-            //new BuildTaskCacheContext(this, this).SaveGetVersionToDisk;
+            var taskTaskExecutor = new BuildTaskExecutor(this);
+            taskTaskExecutor.LoadCacheOrGetVersion(this);
+            taskTaskExecutor.SaveToFilesystem(this);
             return true;
         }
     }

@@ -4,14 +4,15 @@ namespace Teronis.Extensions
 {
     public static class VariableInfoSettingsExtensions
     {
-        public static VariableInfoSettings DefaultIfNull(this VariableInfoSettings settings, bool seal)
+        internal static VariableInfoDescriptor DefaultIfNull(this VariableInfoDescriptor descriptor, bool seal)
         {
-            settings = settings ?? new VariableInfoSettings();
+            descriptor = descriptor ?? new VariableInfoDescriptor();
 
-            if (seal)
-                settings.Seal();
+            if (seal) {
+                descriptor.Seal();
+            }
 
-            return settings;
+            return descriptor;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project InitialTargets="welcome" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <UsingTask AssemblyFile="$(GitVersionCacheAssemblyFile)" TaskName="GetVersionCacheTask" />
   <UsingTask AssemblyFile="$(GitVersionCacheAssemblyFile)" TaskName="SaveGetVersionTask" />
 
   <Target Name="welcome">
@@ -12,6 +13,7 @@
 
   <PropertyGroup>
     <ShouldCacheVersionInformations>true</ShouldCacheVersionInformations>
+    <DisableBeforeGitVersionCache Condition="'$(DisableGitVersionCache)'">true</DisableBeforeGitVersionCache>
 
     <GitVersionTaskBeforeTargets>
       WriteVersionInfoToBuildLog;
@@ -34,10 +36,12 @@
     </GitVersionTaskTargets>
   </PropertyGroup>
 
-  <Target Name="BeforeGitVersionCache" BeforeTargets="$(GitVersionTaskTargets)">
+  <Target Name="BeforeGitVersionCache" Condition="'$(DisableBeforeGitVersionCache)' != 'true'" BeforeTargets="$(GitVersionTaskTargets)">
     <!-- TODO: implement here task to ask for cache and set ShouldCacheVersionInformations -->
 
-    <GetVersion SolutionDirectory="$(GitVersionPath)"
+    <GetVersionCacheTask BuildIdentifier="test"
+                        IsDateIdentifier="false"
+                        SolutionDirectory="$(RootDirectory)"
                 ConfigFilePath="$(GitVersionConfig)"
                 NoFetch="$(GitVersion_NoFetchEnabled)"
                 NoNormalize="$(GitVersion_NoNormalizeEnabled)">
@@ -68,23 +72,20 @@
       <Output TaskParameter="CommitDate" PropertyName="GitVersion_CommitDate" />
       <Output TaskParameter="CommitsSinceVersionSource" PropertyName="GitVersion_CommitsSinceVersionSource" />
       <Output TaskParameter="CommitsSinceVersionSourcePadded" PropertyName="GitVersion_CommitsSinceVersionSourcePadded" />
-    </GetVersion>
+    </GetVersionCacheTask>
 
     <PropertyGroup>
-      <GetVersion>true</GetVersion>
+      <GetVersion>false</GetVersion>
     </PropertyGroup>
   </Target>
 
   <!--<Target Name="GitVersionCache" AfterTargets="$(GitVersionTaskTargets)">-->
   <!--<Target Name="GitVersionCache" AfterTargets="CopyFilesToOutputDirectory">-->
-  <Target Name="GitVersionCache" AfterTargets="PrepareForRun">
+  <!--<Target Name="GitVersionCache" AfterTargets="PrepareForRun">
 
     <Message Text="[$(MSBuildThisFilename)] Informations are going to create: $(GitVersion_Major)" Importance="high" />
 
     <PropertyGroup>
-      <!--<GitVersionCache_BuildIdentifier></GitVersionCache_BuildIdentifier>
-        <GitVersionCache_IsDateIdentifier></GitVersionCache_IsDateIdentifier>-->
-      <!--<GitVersionCache_Major Condition="'$(GitVersion_Major)' == ''">*Undefined*</GitVersionCache_Major>-->
       <GitVersionCache_Major Condition="'$(GitVersion_Major)' != ''">$(GitVersion_Major)</GitVersionCache_Major>
       <GitVersionCache_Major Condition="'$(GitVersion_Major)' == ''">*Undefined*</GitVersionCache_Major>
       <GitVersionCache_Minor Condition="'$(GitVersion_Minor)' != ''">$(GitVersion_Minor)</GitVersionCache_Minor>
@@ -183,9 +184,7 @@
                         CommitsSinceVersionSource="$(GitVersionCache_CommitsSinceVersionSource)"
                         CommitsSinceVersionSourcePadded="$(GitVersionCache_CommitsSinceVersionSourcePadded)" />
 
-    <!--<SaveGetVersionTask />-->
-
     <Message Text="[$(MSBuildThisFilename)] Informations created from GitVersion has been cached" Importance="high" />
-  </Target>
+  </Target>-->
 
 </Project>

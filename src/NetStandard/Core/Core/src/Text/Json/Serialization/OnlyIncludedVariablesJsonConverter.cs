@@ -35,7 +35,7 @@ namespace Teronis.Text.Json.Serialization
             using var document = JsonDocument.Parse(JsonSerializer.Serialize(value));
             var valueType = typeof(T);
 
-            var variableSettings = new VariableInfoSettings() {
+            var variableSettings = new VariableInfoDescriptor() {
                 Flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance
             };
 

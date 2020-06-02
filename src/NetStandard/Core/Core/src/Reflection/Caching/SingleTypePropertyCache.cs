@@ -33,6 +33,10 @@ namespace Teronis.Reflection.Caching
         public IEqualityComparer<PropertyType> PropertyValueEqualityComparer { get; private set; }
         public ReadOnlyDictionary<string, PropertyType> CachedPropertyValues { get; private set; }
         /// <summary>
+        /// Used when it is tried to get a variable member of <see cref="SingleTypedPropertiesOwnerType"/> by its name.
+        /// </summary>
+        public VariableInfoDescriptor VariableInfoDescriptor { get; }
+        /// <summary>
         /// It does skip the invocation of the property removed event. It may help
         /// if you can handle the retrack in the property added event.
         /// </summary>
@@ -63,6 +67,7 @@ namespace Teronis.Reflection.Caching
 
             cachedPropertyValues = new Dictionary<string, PropertyType>();
             CachedPropertyValues = new ReadOnlyDictionary<string, PropertyType>(cachedPropertyValues);
+            VariableInfoDescriptor = new VariableInfoDescriptor();
             TrackingPropertyDefaultValue = default;
             CanHandleDefaultValue = true;
 
@@ -97,29 +102,25 @@ namespace Teronis.Reflection.Caching
         /// <param name="propertyName"></param>
         public void SingleTypePropertyNotifierPropertyChanged(string propertyName)
         {
-            var propertySettings = new VariableInfoSettings();
-            propertySettings.Flags |= BindingFlags.NonPublic | BindingFlags.GetProperty | BindingFlags.GetField;
+            VariableInfoDescriptor.Flags |= BindingFlags.NonPublic | BindingFlags.GetProperty | BindingFlags.GetField;
+            var propertyMember = SingleTypedPropertiesOwnerType.GetVariableMember(propertyName, VariableInfoDescriptor);
 
-            var propertyMember = SingleTypedPropertiesOwnerType
-                .GetVariableMember(propertyName, propertySettings);
-
-            // There is no member that can be handled, so we return
-            if (propertyMember == null)
+            // There is no member that can be handled, so we return.
+            if (propertyMember == null) {
                 return;
-
-            var propertyValue = propertyMember
-                .GetValue(SingleTypedPropertiesOwner);
-
-            PropertyType typedPropertyValue;
+            }
 
             var propertyType = propertyMember.GetVariableType();
+            PropertyType typedPropertyValue;
+            var propertyValue = propertyMember.GetValue(SingleTypedPropertiesOwner);
 
             // We want to assign property value (object) to typed property value. 
             if (propertyComparisonMode == PropertyComparisonMode.ValueType && TrackingPropertyType == propertyType
-                || propertyComparisonMode == PropertyComparisonMode.ReferenceType && TrackingPropertyType.IsAssignableFrom(propertyType))
+                || propertyComparisonMode == PropertyComparisonMode.ReferenceType && TrackingPropertyType.IsAssignableFrom(propertyType)) {
                 typedPropertyValue = (PropertyType)propertyValue;
-            else
+            } else {
                 return; // The type of the property does not meet the requirements, so we skip the property
+            }
 
             var isPropertNameTracked = cachedPropertyValues.ContainsKey(propertyName);
 
@@ -146,8 +147,9 @@ namespace Teronis.Reflection.Caching
             {
                 cachedPropertyValues.Remove(propertyName);
 
-                if (isRetrack && CanSkipPropertyRemovedEventInvocationWhenRetracking)
+                if (isRetrack && CanSkipPropertyRemovedEventInvocationWhenRetracking) {
                     return;
+                }
 
                 var args = new PropertyCacheRemovedEventArgs<PropertyType>(propertyName, cachedProperty);
                 OnPropertyCacheRemoved(args);
@@ -164,21 +166,23 @@ namespace Teronis.Reflection.Caching
                 var args = new PropertyCachingEventArgs<PropertyType>(propertyName, typedPropertyValue);
                 OnPropertyCacheAdding(args);
 
-                if (!args.CanTrackProperty)
+                if (!args.CanTrackProperty) {
                     return;
+                }
 
                 // Add new subscription
                 trackProperty(typedPropertyValue);
             } else {
                 var cachedProperty = cachedPropertyValues[propertyName];
 
-                if (CanHandleDefaultValue && PropertyValueEqualityComparer.Equals(typedPropertyValue, TrackingPropertyDefaultValue))
+                if (CanHandleDefaultValue && PropertyValueEqualityComparer.Equals(typedPropertyValue, TrackingPropertyDefaultValue)) {
                     untrackProperty(cachedProperty, false);
-                else if (!PropertyValueEqualityComparer.Equals(typedPropertyValue, cachedProperty))
+                } else if (!PropertyValueEqualityComparer.Equals(typedPropertyValue, cachedProperty)) {
                     retrackProperty(cachedProperty, typedPropertyValue);
-                else
+                } else {
                     // Both values are equal, so we don't need to uncache
                     return;
+                }
             }
         }
 

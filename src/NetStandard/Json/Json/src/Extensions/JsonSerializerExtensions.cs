@@ -9,20 +9,20 @@ namespace Teronis.Json.Extensions
     {
         public static JsonSerializerSettings GetSettings(this JsonSerializer serializer)
         {
-            var jsonSerializerSettingsVariableInfoSettings = new VariableInfoSettings() {
+            var jsonSerializerSettingsVariableInfoSettings = new VariableInfoDescriptor() {
                 IncludeIfWritable = true,
             };
 
             var serializerSettingsVariableInfoByNameList = typeof(JsonSerializerSettings)
-                .GetVariableMembers(jsonSerializerSettingsVariableInfoSettings)
+                .GetVariableMembers(descriptor: jsonSerializerSettingsVariableInfoSettings)
                 .ToDictionary(x => x.Name);
 
-            var jsonSerializerVariableInfoSettings = new VariableInfoSettings() {
+            var jsonSerializerVariableInfoSettings = new VariableInfoDescriptor() {
                 IncludeIfReadable = true,
             };
 
             var serializerVariableInfoByNameList = typeof(JsonSerializer)
-                .GetVariableMembers(jsonSerializerVariableInfoSettings)
+                .GetVariableMembers(descriptor: jsonSerializerVariableInfoSettings)
                 .ToDictionary(x => x.Name);
 
             var serializerSettings = new JsonSerializerSettings();

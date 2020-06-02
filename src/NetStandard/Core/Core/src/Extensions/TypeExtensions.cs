@@ -4,7 +4,7 @@ using Teronis.Tools;
 
 namespace Teronis.Extensions
 {
-    public static class TypeExtensions
+    public static partial class TypeExtensions
     {
         public static bool IsNullable(this Type type)
             => TypeTools.IsNullable(type);
@@ -23,23 +23,7 @@ namespace Teronis.Extensions
         public static bool HasDefaultConstructor(this Type type)
             => type.IsValueType || type.GetConstructor(Type.EmptyTypes) != null;
 
-        public static IEnumerable<Type> GetBaseTypes(this Type type, Type? interruptingBaseType = null)
-        {
-            if (type is null) {
-                yield break;
-            }
-
-            var nextType = type;
-            var objectType = typeof(object);
-
-            for (; ; ) {
-                yield return nextType;
-                nextType = nextType.BaseType;
-
-                if (nextType == interruptingBaseType || nextType == objectType) {
-                    break;
-                }
-            }
-        }
+        public static IEnumerable<Type> GetBaseTypes(this Type type, Type? interruptingBaseType = null) =>
+            TypeTools.GetBaseTypes(type, interruptingBaseType);
     }
 }

@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace Teronis.Reflection
 {
-    public sealed class VariableInfoSettings : INotifyPropertyChanging
+    public sealed class VariableInfoDescriptor : INotifyPropertyChanging
     {
 #pragma warning disable 0067
         public event PropertyChangingEventHandler PropertyChanging;
@@ -30,7 +30,7 @@ namespace Teronis.Reflection
         public bool IncludeByAttributeTypesInherit { get; set; }
         public bool IsSealed { get; private set; }
 
-        public VariableInfoSettings()
+        public VariableInfoDescriptor()
         {
             Flags = DefaultFlags;
             ExcludeByAttributeTypesInherit = true; // Library.DefaultCustomAttributesInherit
@@ -41,10 +41,10 @@ namespace Teronis.Reflection
         /// A shallow copy of 
         /// </summary>
         /// <returns></returns>
-        public VariableInfoSettings ShallowCopy()
+        public VariableInfoDescriptor ShallowCopy()
         {
             var properties = GetType().GetProperties(DefaultFlags);
-            var settings = new VariableInfoSettings();
+            var settings = new VariableInfoDescriptor();
 
             foreach (var property in properties) {
                 // We Want to exclude IsSealed consequently

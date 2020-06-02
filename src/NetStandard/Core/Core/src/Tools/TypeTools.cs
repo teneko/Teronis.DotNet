@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Teronis.Tools
@@ -28,6 +29,25 @@ namespace Teronis.Tools
                 return InstantiateUninitializedObject(type);
             else
                 return null;
+        }
+
+        public static IEnumerable<Type> GetBaseTypes(Type type, Type? interruptingBaseType = null)
+        {
+            if (type is null) {
+                yield break;
+            }
+
+            var nextType = type;
+            var objectType = typeof(object);
+
+            for (; ; ) {
+                yield return nextType;
+                nextType = nextType.BaseType;
+
+                if (nextType == interruptingBaseType || nextType == objectType) {
+                    break;
+                }
+            }
         }
     }
 }

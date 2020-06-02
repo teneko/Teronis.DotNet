@@ -23,17 +23,17 @@ namespace Teronis.Extensions
             return item;
         }
 
-        public static ListType Include<ListType, ItemType>(this ListType original, IEnumerable<ItemType> source)
+        public static ListType AddRange<ListType, ItemType>(this ListType target, IEnumerable<ItemType> source)
             where ListType : ICollection<ItemType>
         {
-            original = original ?? throw new ArgumentNullException(nameof(original));
+            target = target ?? throw new ArgumentNullException(nameof(target));
             source = source ?? throw new ArgumentNullException(nameof(source));
 
             foreach (var item in source) {
-                original.Add(item);
+                target.Add(item);
             }
 
-            return original;
+            return target;
         }
     }
 }

@@ -10,23 +10,25 @@ namespace Teronis.Extensions
     {
         #region Imported from extensions
 
-        public static bool IsVariable(this MemberInfo memberInfo, VariableInfoSettings settings)
+        public static bool IsVariable(this MemberInfo memberInfo, VariableInfoDescriptor variableInfoDescriptor)
         {
-            if (!MemberInfoTools.IsVariable(memberInfo))
+            if (!MemberInfoTools.IsVariable(memberInfo)) {
                 return false;
+            }
 
-            var isIncludedByAttributeTypes = settings.IncludeByAttributeTypes == null || settings.IncludeByAttributeTypes.All(attrType => memberInfo.IsDefined(attrType, settings.IncludeByAttributeTypesInherit));
-            var notExcludedByAttributeTypes = !(settings.ExcludeByAttributeTypes != null && settings.ExcludeByAttributeTypes.Any(attrType => memberInfo.IsDefined(attrType, settings.ExcludeByAttributeTypesInherit)));
+            var isIncludedByAttributeTypes = variableInfoDescriptor.IncludeByAttributeTypes == null || variableInfoDescriptor.IncludeByAttributeTypes.All(attrType => memberInfo.IsDefined(attrType, variableInfoDescriptor.IncludeByAttributeTypesInherit));
+            var notExcludedByAttributeTypes = !(variableInfoDescriptor.ExcludeByAttributeTypes != null && variableInfoDescriptor.ExcludeByAttributeTypes.Any(attrType => memberInfo.IsDefined(attrType, variableInfoDescriptor.ExcludeByAttributeTypesInherit)));
 
-            if (memberInfo is FieldInfo fieldInfo)
+            if (memberInfo is FieldInfo fieldInfo) {
                 return isIncludedByAttributeTypes && notExcludedByAttributeTypes;
-            else if (memberInfo is PropertyInfo propertyInfo)
-                return (!settings.IncludeIfReadable || propertyInfo.CanRead)
-                    && (!settings.IncludeIfWritable || propertyInfo.CanWrite)
+            } else if (memberInfo is PropertyInfo propertyInfo) {
+                return (!variableInfoDescriptor.IncludeIfReadable || propertyInfo.CanRead)
+                    && (!variableInfoDescriptor.IncludeIfWritable || propertyInfo.CanWrite)
                     && isIncludedByAttributeTypes
-                    && !(settings.ExcludeIfReadable && propertyInfo.CanRead)
-                    && !(settings.ExcludeIfWritable && propertyInfo.CanWrite)
+                    && !(variableInfoDescriptor.ExcludeIfReadable && propertyInfo.CanRead)
+                    && !(variableInfoDescriptor.ExcludeIfWritable && propertyInfo.CanWrite)
                     && notExcludedByAttributeTypes;
+            }
 
             return false;
         }
@@ -34,8 +36,8 @@ namespace Teronis.Extensions
         private static bool isVariable(this MemberInfo memberInfo, Type attributeType, bool getCustomAttributesInherit)
             => memberInfo.IsDefined(attributeType, getCustomAttributesInherit);
 
-        public static bool IsVariable(this MemberInfo memberInfo, VariableInfoSettings settings, Type attributeType, bool getCustomAttributesInherit)
-            => IsVariable(memberInfo, settings) && isVariable(memberInfo, attributeType, getCustomAttributesInherit);
+        public static bool IsVariable(this MemberInfo memberInfo, VariableInfoDescriptor descriptor, Type attributeType, bool getCustomAttributesInherit)
+            => IsVariable(memberInfo, descriptor) && isVariable(memberInfo, attributeType, getCustomAttributesInherit);
 
         /// <param name="memberInfo">Pass <see cref="PropertyInfo"/> or <see cref="FieldInfo"/>.</param>
         public static AttributeMemberInfo<T> GetAttributeVariableMember<T>(this MemberInfo memberInfo, bool? getCustomAttributesInherit = null)

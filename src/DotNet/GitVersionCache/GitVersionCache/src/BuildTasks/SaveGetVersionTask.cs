@@ -1,10 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Reflection;
-using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
-using Teronis.DotNet.GitVersionCache.BuildTasks.Models;
-//using Teronis.DotNet.GitVersionCache.Core.ContextIsolation2;
+﻿using Teronis.DotNet.GitVersionCache.BuildTasks.Models;
 
 namespace Teronis.DotNet.GitVersionCache.BuildTasks
 {
@@ -12,14 +6,8 @@ namespace Teronis.DotNet.GitVersionCache.BuildTasks
     {
         protected override bool OnExecute()
         {
-            Log.LogMessage(MessageImportance.High, "######################## IT");
-            Log.LogMessage(MessageImportance.High, "########################    DOES");
-            Log.LogMessage(MessageImportance.High, "########################         WORK");
-            Log.LogMessage(MessageImportance.High, $"########################         {ModuleInitializer.ExecutingAssemblyDirectory}");
-
-
-            new BuildTaskCacheContext(this, this).SaveGetVersionToDisk();
-
+            var buildTaskExecutor = new BuildTaskExecutor(this);
+            buildTaskExecutor.SaveToFilesystem(this);
             return true;
         }
     }

@@ -27,7 +27,7 @@ namespace Teronis.ObjectModel
 
         public PropertyChangedRelay()
         {
-            propertyBindingFlags = VariableInfoSettings.DefaultFlags | BindingFlags.GetProperty;
+            propertyBindingFlags = VariableInfoDescriptor.DefaultFlags | BindingFlags.GetProperty;
             propertyChangedNotifiers = new List<INotifyPropertyChanged>();
             PropertyChangedNotifiers = new ReadOnlyCollection<INotifyPropertyChanged>(propertyChangedNotifiers);
         }

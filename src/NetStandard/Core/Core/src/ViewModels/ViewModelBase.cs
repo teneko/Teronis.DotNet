@@ -1,14 +1,12 @@
 ﻿using System.ComponentModel;
 using System.Linq;
 using Teronis.Data;
-using Teronis.Extensions;
-using Teronis.Reflection;
 using System.Runtime.CompilerServices;
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using Teronis.Extensions;
 using Teronis.Reflection.Caching;
-using Teronis.ObjectModel;
 
 namespace Teronis.ViewModels
 {
@@ -19,11 +17,8 @@ namespace Teronis.ViewModels
 #pragma warning restore 0067
         public event WantParentsEventHandler WantParents;
 
-        [IgnoreEntityVariable]
         public DynamicParentResolver DynamicParentResolver { get; private set; }
-
-        public bool IsWorking
-            => workStatusPropertyChangedCache.CachedPropertyValues.Values.Any(x => x.IsWorking);
+        public bool IsWorking => workStatusPropertyChangedCache.CachedPropertyValues.Values.Any(x => x.IsWorking);
 
         protected WorkStatus WorkStatus { get; private set; }
 

@@ -63,9 +63,9 @@ namespace Teronis.Identity.Presenters
 
         public ServiceResultDatransject DeepCopy()
         {
-            return new ServiceResultDatransject(Succeeded, Content, Errors is null ? null : new JsonErrors().Include(Errors),
-                DeclaredType, Formatters is null ? null : new FormatterCollection<IOutputFormatter>().Include(Formatters),
-                ContentTypes is null ? null : new MediaTypeCollection().Include(ContentTypes), StatusCode);
+            return new ServiceResultDatransject(Succeeded, Content, Errors is null ? null : new JsonErrors().AddRange(Errors),
+                DeclaredType, Formatters is null ? null : new FormatterCollection<IOutputFormatter>().AddRange(Formatters),
+                ContentTypes is null ? null : new MediaTypeCollection().AddRange(ContentTypes), StatusCode);
         }
     }
 }

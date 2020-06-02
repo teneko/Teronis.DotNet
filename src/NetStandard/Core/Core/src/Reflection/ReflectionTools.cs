@@ -9,18 +9,20 @@ namespace Teronis.Tools
 {
     public static class ReflectionTools
     {
+        // Property <see cref="VariableInfoSettings.ExcludeByAttributeTypes"/> contains <see cref="IgnoreEntityVariableAttribute"/>.
         /// <summary>
         /// Property <see cref="VariableInfoSettings.IncludeIfReadable"/> is true.
         /// Property <see cref="VariableInfoSettings.IncludeIfWritable"/> is true.
-        /// Property <see cref="VariableInfoSettings.ExcludeByAttributeTypes"/> contains <see cref="IgnoreEntityVariableAttribute"/>.
         /// </summary>
-        public static VariableInfoSettings CreateDefaultVariableInfoSettings() => new VariableInfoSettings() {
-            IncludeIfReadable = true,
-            IncludeIfWritable = true,
-            ExcludeByAttributeTypes = new[] { typeof(IgnoreEntityVariableAttribute) }
-        };
+        private static VariableInfoDescriptor createDefaultVariableInfoSettings()
+        {
+            return new VariableInfoDescriptor() {
+                IncludeIfReadable = true,
+                IncludeIfWritable = true,
+            };
+        }
 
-        #region Update Entity
+        #region Update Entity Variables
 
         public static void UpdateEntityVariables<T>(T leftEntity, T rightEntity, IEnumerable<MemberInfo> variableInfos)
         {
@@ -45,79 +47,66 @@ namespace Teronis.Tools
 
         // NON-ATTRIBUTE
 
-        public static void UpdateEntityVariables<T>(T leftEntity, T rightEntity, Type interruptingBaseType, VariableInfoSettings variableInfoSettings)
+        public static void UpdateEntityVariables<T>(T leftEntity, T rightEntity, VariableInfoDescriptor leftVariablesDescriptor = null, VariableInfoDescriptor rightVariablesDescriptor = null)
         {
-            var entityType = leftEntity?.GetType();
+            var leftEntityType = leftEntity?.GetType();
+            var rightEntityType = rightEntity?.GetType();
 
-            if (entityType == null)
+            if (leftEntityType == null || rightEntityType == null)
                 return;
 
-            variableInfoSettings = variableInfoSettings ?? CreateDefaultVariableInfoSettings();
-            var variables = entityType.GetVariableMembers(interruptingBaseType, variableInfoSettings).ToList();
-            UpdateEntityVariables(leftEntity, rightEntity, variables);
+            leftVariablesDescriptor = leftVariablesDescriptor ?? createDefaultVariableInfoSettings();
+            var leftEntityVariableMembers = leftEntityType.GetVariableMembers(descriptor: leftVariablesDescriptor);
+            var intersectedEntityVariableMembers = leftEntityVariableMembers.Intersect(rightEntityType, rightVariablesDescriptor);
+            UpdateEntityVariables(leftEntity, rightEntity, intersectedEntityVariableMembers);
         }
-
-        public static void UpdateEntityVariables<T>(T leftEntity, T rightEntity, Type interruptingBaseType)
-            => UpdateEntityVariables(leftEntity, rightEntity, interruptingBaseType, default);
-
-        public static void UpdateEntityVariables<T>(T leftEntity, T rightEntity, VariableInfoSettings settings)
-            => UpdateEntityVariables(leftEntity, rightEntity, default, settings);
-
-        public static void UpdateEntityVariables<T>(T leftEntity, T rightEntity)
-            => UpdateEntityVariables(leftEntity, rightEntity, default, default);
 
         // ATTRIBUTE
 
-        public static void UpdateEntityVariablesByAttribute<T>(T leftEntity, T rightEntity, Type attributeType, Type interruptingBaseType, VariableInfoSettings variableInfoSettings)
+        public static void UpdateEntityVariablesByAttribute<T>(T leftEntity, T rightEntity, Type attributeType, VariableInfoDescriptor variableInfoSettings = null)
         {
             var entityType = leftEntity?.GetType();
 
             if (entityType == null)
                 return;
 
-            variableInfoSettings = variableInfoSettings ?? CreateDefaultVariableInfoSettings();
-            var variables = entityType.GetAttributeVariableMembers(attributeType, variableInfoSettings).Select(x => x.MemberInfo);
-            UpdateEntityVariables(leftEntity, rightEntity, variables);
+            variableInfoSettings = variableInfoSettings ?? createDefaultVariableInfoSettings();
+
+            var leftEntityVariableMembers = entityType.GetAttributeVariableMembers(attributeType, descriptor: variableInfoSettings)
+                .Select(x => x.MemberInfo);
+
+            UpdateEntityVariables(leftEntity, rightEntity, leftEntityVariableMembers);
         }
-
-        public static void UpdateEntityVariablesByAttribute<T>(T leftEntity, T rightEntity, Type attributeType, Type interruptingBaseType)
-            => UpdateEntityVariablesByAttribute(leftEntity, rightEntity, attributeType, interruptingBaseType, default);
-
-        public static void UpdateEntityVariablesByAttribute<T>(T leftEntity, T rightEntity, Type attributeType, VariableInfoSettings settings)
-            => UpdateEntityVariablesByAttribute(leftEntity, rightEntity, attributeType, default, settings);
-
-        public static void UpdateEntityVariablesByAttribute<T>(T leftEntity, T rightEntity, Type attributeType)
-            => UpdateEntityVariablesByAttribute(leftEntity, rightEntity, attributeType, default, default);
 
         #endregion
 
         #region Shallow Copy
 
-        public static TCloningObject ShallowCopy<TCloningObject, TCopyingObject>(TCopyingObject copyingObject)
+        public static TargetType ShallowCopy<TargetType, SourceType>(SourceType source)
         {
-            var flags = VariableInfoSettings.DefaultFlags | BindingFlags.NonPublic;
+            var flags = VariableInfoDescriptor.DefaultFlags | BindingFlags.NonPublic;
 
-            var cloningObjectMembersSettings = new VariableInfoSettings() {
+            var cloningObjectMembersSettings = new VariableInfoDescriptor() {
                 Flags = flags,
                 IncludeIfWritable = true,
             };
 
-            var declaredType = typeof(TCloningObject);
+            var declaredType = typeof(TargetType);
 
             var cloningObjectMembersByNameList = declaredType
-                .GetVariableMembers(cloningObjectMembersSettings)
+                .GetVariableMembers(descriptor: cloningObjectMembersSettings)
                 .ToDictionary(x => x.Name);
 
-            var copyingObjectMembersSettings = new VariableInfoSettings() {
+            var copyingObjectMembersSettings = new VariableInfoDescriptor() {
                 Flags = flags,
                 IncludeIfReadable = true,
             };
 
-            var copyingObjectMembersByNameList = typeof(TCopyingObject)
-                .GetVariableMembers(copyingObjectMembersSettings)
+            var copyingObjectMembersByNameList = typeof(SourceType)
+                .GetVariableMembers(descriptor: copyingObjectMembersSettings)
                 .ToDictionary(x => x.Name);
 
-            var clonedObejct = (TCloningObject)declaredType.InstantiateUninitializedObject();
+            var clonedObejct = (TargetType)declaredType.InstantiateUninitializedObject();
 
             foreach (var nameAndCloningObjectMembersPair in cloningObjectMembersByNameList) {
                 var cloningObjectMembersKey = nameAndCloningObjectMembersPair.Key;
@@ -129,7 +118,7 @@ namespace Teronis.Tools
                     if (!cloningObjectMember.GetVariableType().IsAssignableFrom(copyingObjectMember.GetVariableType()))
                         continue;
 
-                    var copyingObjectVariableValue = copyingObjectMember.GetValue(copyingObject);
+                    var copyingObjectVariableValue = copyingObjectMember.GetValue(source);
                     cloningObjectMember.SetValue(clonedObejct, copyingObjectVariableValue);
                 }
             }
@@ -137,44 +126,38 @@ namespace Teronis.Tools
             return clonedObejct;
         }
 
-        public static TCloningAndCopyingObject ShallowCopy<TCloningAndCopyingObject>(TCloningAndCopyingObject copyingObject)
-            => ShallowCopy<TCloningAndCopyingObject, TCloningAndCopyingObject>(copyingObject);
+        public static T ShallowCopy<T>(T entity)
+            => ShallowCopy<T, T>(entity);
 
         #endregion
 
         #region Members
 
-        public static IEnumerable<MemberInfo> GetMembers(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType, VariableInfoSettings settings)
+        public static IEnumerable<MemberInfo> GetMembers(Func<Type, VariableInfoDescriptor, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType = null, VariableInfoDescriptor variableInfoDescriptor = null)
         {
             if (beginningType is null) {
                 yield break;
             }
 
-            settings = settings.DefaultIfNull(true);
+            variableInfoDescriptor = variableInfoDescriptor.DefaultIfNull(true);
 
-            if (settings.Flags.HasFlag(BindingFlags.DeclaredOnly))
+            if (variableInfoDescriptor.Flags.HasFlag(BindingFlags.DeclaredOnly))
                 interruptingBaseType = beginningType.BaseType;
             else {
-                settings = settings.ShallowCopy();
-                settings.Flags |= BindingFlags.DeclaredOnly;
-                settings.Seal();
+                variableInfoDescriptor = variableInfoDescriptor.ShallowCopy();
+                variableInfoDescriptor.Flags |= BindingFlags.DeclaredOnly;
+                variableInfoDescriptor.Seal();
                 interruptingBaseType = interruptingBaseType ?? typeof(object);
             }
 
             var basesTypes = beginningType.GetBaseTypes(interruptingBaseType);
 
             foreach (var type in basesTypes) {
-                foreach (var varInfo in getMembers(type, settings)) {
+                foreach (var varInfo in getMembers(type, variableInfoDescriptor)) {
                     yield return varInfo;
                 }
             }
         }
-
-        public static IEnumerable<MemberInfo> GetMembers(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType)
-            => GetMembers(getMembers, beginningType, interruptingBaseType, default);
-
-        public static IEnumerable<MemberInfo> GetMembers(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, VariableInfoSettings settings)
-            => GetMembers(getMembers, beginningType, default, settings);
 
         #endregion
 
@@ -182,66 +165,24 @@ namespace Teronis.Tools
 
         // TYPED
 
-        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeMembers<TAttribute>(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType, VariableInfoSettings settings, bool? getCustomAttributesInherit)
+        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeMembers<TAttribute>(Func<Type, VariableInfoDescriptor, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType = null, VariableInfoDescriptor variableInfoDescriptor = null, bool? getCustomAttributesInherit = null)
             where TAttribute : Attribute
         {
             foreach (var type in beginningType.GetBaseTypes(interruptingBaseType))
-                foreach (var propertyInfo in GetMembers(getMembers, beginningType, interruptingBaseType, settings))
+                foreach (var propertyInfo in GetMembers(getMembers, beginningType, interruptingBaseType, variableInfoDescriptor))
                     if (propertyInfo.TryGetAttributeVariableMember(out AttributeMemberInfo<TAttribute> varAttrInfo, getCustomAttributesInherit))
                         yield return varAttrInfo;
         }
 
-        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeMembers<TAttribute>(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType, VariableInfoSettings settings)
-            where TAttribute : Attribute
-            => GetAttributeMembers<TAttribute>(getMembers, beginningType, interruptingBaseType, settings, default);
-
-        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeMembers<TAttribute>(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType, bool? getCustomAttributesInherit)
-            where TAttribute : Attribute
-            => GetAttributeMembers<TAttribute>(getMembers, beginningType, interruptingBaseType, default, getCustomAttributesInherit);
-
-        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeMembers<TAttribute>(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType)
-             where TAttribute : Attribute
-             => GetAttributeMembers<TAttribute>(getMembers, beginningType, interruptingBaseType, default, default);
-
-        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeMembers<TAttribute>(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType)
-             where TAttribute : Attribute
-             => GetAttributeMembers<TAttribute>(getMembers, beginningType, default, default, default);
-
-        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeMembers<TAttribute>(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, VariableInfoSettings settings)
-             where TAttribute : Attribute
-             => GetAttributeMembers<TAttribute>(getMembers, beginningType, default, settings, default);
-
-        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeMembers<TAttribute>(Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, bool? getCustomAttributesInherit)
-             where TAttribute : Attribute
-             => GetAttributeMembers<TAttribute>(getMembers, beginningType, default, default, getCustomAttributesInherit);
-
         // NON-TYPED
 
-        public static IEnumerable<AttributeMemberInfo> GetAttributeMembers(Type attributeType, Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType, VariableInfoSettings settings, bool? getCustomAttributesInherit)
+        public static IEnumerable<AttributeMemberInfo> GetAttributeMembers(Type attributeType, Func<Type, VariableInfoDescriptor, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType = null, VariableInfoDescriptor variableInfoDescriptor = null, bool? getCustomAttributesInherit = null)
         {
             foreach (var type in beginningType.GetBaseTypes(interruptingBaseType))
-                foreach (var propertyInfo in GetMembers(getMembers, beginningType, interruptingBaseType, settings))
+                foreach (var propertyInfo in GetMembers(getMembers, beginningType, interruptingBaseType, variableInfoDescriptor))
                     if (propertyInfo.TryGetAttributeVariableMember(attributeType, out var varAttrInfo, getCustomAttributesInherit))
                         yield return varAttrInfo;
         }
-
-        public static IEnumerable<AttributeMemberInfo> GetAttributeMembers(Type attributeType, Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType, VariableInfoSettings settings)
-            => GetAttributeMembers(attributeType, getMembers, beginningType, interruptingBaseType, settings, default);
-
-        public static IEnumerable<AttributeMemberInfo> GetAttributeMembers(Type attributeType, Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType, bool? getCustomAttributesInherit)
-            => GetAttributeMembers(attributeType, getMembers, beginningType, interruptingBaseType, default, getCustomAttributesInherit);
-
-        public static IEnumerable<AttributeMemberInfo> GetAttributeMembers(Type attributeType, Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType)
-             => GetAttributeMembers(attributeType, getMembers, beginningType, interruptingBaseType, default, default);
-
-        public static IEnumerable<AttributeMemberInfo> GetAttributeMembers(Type attributeType, Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType)
-             => GetAttributeMembers(attributeType, getMembers, beginningType, default, default, default);
-
-        public static IEnumerable<AttributeMemberInfo> GetAttributeMembers(Type attributeType, Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, VariableInfoSettings settings)
-             => GetAttributeMembers(attributeType, getMembers, beginningType, default, settings, default);
-
-        public static IEnumerable<AttributeMemberInfo> GetAttributeMembers(Type attributeType, Func<Type, VariableInfoSettings, IEnumerable<MemberInfo>> getMembers, Type beginningType, bool? getCustomAttributesInherit)
-             => GetAttributeMembers(attributeType, getMembers, beginningType, default, default, getCustomAttributesInherit);
 
         #endregion
     }

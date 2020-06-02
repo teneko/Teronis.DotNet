@@ -4,8 +4,6 @@ using System.IO;
 using System.Reflection;
 using GitVersion.MSBuildTask;
 using GitVersionTask.MsBuild;
-using Microsoft.Build.Framework;
-//using Microsoft.Build.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Teronis.IO;
 
@@ -19,11 +17,19 @@ namespace Teronis.DotNet.GitVersionCache.BuildTasks
         /// <summary>
         /// Gets the GitVersionCore owned list of <see cref="ServiceDescriptor"/>s.
         /// </summary>
-        public static IList<ServiceDescriptor> GetGitVersionCoreOwnedServiceDescriptors(GitVersionTaskBase buildTask)
+        public static IServiceProvider GetGitVersionCoreOwnedServiceProvider(GitVersionTaskBase buildTask)
         {
             var buildServiceProviderMethodInfo = typeof(GitVersionTasks).GetMethod("BuildServiceProvider", BindingFlags.Static | BindingFlags.NonPublic);
             var serviceProvider = (IServiceProvider)buildServiceProviderMethodInfo.Invoke(null, new[] { buildTask });
+            return serviceProvider;
+        }
 
+        /// <summary>
+        /// Gets the GitVersionCore owned list of <see cref="ServiceDescriptor"/>s.
+        /// </summary>
+        public static IList<ServiceDescriptor> GetGitVersionCoreOwnedServiceDescriptors(GitVersionTaskBase buildTask)
+        {
+            var serviceProvider = GetGitVersionCoreOwnedServiceProvider(buildTask);
             var instanceBindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
             var engine = serviceProvider.GetType().GetField("_engine", instanceBindingFlags).GetValue(serviceProvider);
             var callSiteFactory = engine.GetType().GetProperty("CallSiteFactory", instanceBindingFlags).GetValue(engine);

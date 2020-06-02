@@ -1,34 +1,33 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Text.Json;
+using Microsoft.Extensions.DependencyInjection;
 using GitVersion.MSBuildTask;
+using GitVersion.MSBuildTask.Tasks;
 using Teronis.DotNet.GitVersionCache.BuildTasks.Models;
 using Teronis.Extensions;
-using Microsoft.Build.Utilities;
 using Teronis.Text.Json.Serialization;
-using Microsoft.Build.Framework;
+using Teronis.Tools;
+using Teronis.Reflection;
 
 namespace Teronis.DotNet.GitVersionCache.BuildTasks
 {
-    public class BuildTaskCacheContext
+    public class BuildTaskExecutor
     {
         public DirectoryInfo GitVersionYamlDirectory { get; }
         public string CacheDirectoryName { get; set; }
         public string CacheDirectory => Path.Combine(GitVersionYamlDirectory.FullName, CacheDirectoryName);
         public string CacheFile => Path.Combine(CacheDirectory, buildIdentification.BuildIdentifier + ".json");
 
-        private readonly IBuildIdentification buildIdentification;
-        private readonly GitVersionTaskBase buildTask;
+        public readonly IBuildIdentification buildIdentification;
 
-        public BuildTaskCacheContext(IBuildIdentification buildIdentification, GitVersionTaskBase buildTask)
+        public BuildTaskExecutor(IBuildIdentification buildIdentification)
         {
             GitVersionYamlDirectory = BuildTaskUtilities.GetGitVersionYamlDirectory() ??
                 throw new FileNotFoundException("Could not find parent GitVersion.yml file.");
 
-            CacheDirectoryName = BuildTaskCacheContextDefaults.CacheDirectoryName;
+            CacheDirectoryName = BuildTaskExecutorDefaults.CacheDirectoryName;
             this.buildIdentification = buildIdentification;
-            this.buildTask = buildTask;
         }
 
         protected void EnsureCacheDirectoryExistence()
@@ -46,11 +45,23 @@ namespace Teronis.DotNet.GitVersionCache.BuildTasks
         //    var  Directory.GetFiles(TemporaryDirectory,"*",SearchOption.TopDirectoryOnly);
         //}
 
-        public void SaveGetVersionToDisk()
+        public void LoadCacheOrGetVersion(GetVersion buildTask)
         {
-            dynamic test = buildTask;
-            buildTask.Log.LogMessage(MessageImportance.High, test.Major);
+            if (!File.Exists(CacheFile)) {
+                var serviceCollection = BuildTaskUtilities.GetGitVersionCoreOwnedServiceProvider(buildTask);
+                var gitVersionTaskExecutor = serviceCollection.GetService<IGitVersionTaskExecutor>();
+                gitVersionTaskExecutor.GetVersion(buildTask);
+            } else {
+                using var file = File.Open(CacheFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                using var fileReader = new StreamReader(file, Encoding.UTF8);
+                var json = fileReader.ReadToEnd();
+                var getVersionData = (GetVersion)JsonSerializer.Deserialize(json, typeof(GetVersion));
+                ReflectionTools.UpdateEntityVariables(buildTask, getVersionData);
+            }
+        }
 
+        public void SaveToFilesystem(GetVersion buildTask)
+        {
             EnsureCacheDirectoryExistence();
             var buildTaskType = buildTask.GetType();
             var variablesInclusionJsonConverter = JsonConverterFactory.CreateOnlyIncludedVariablesJsonConverter(buildTaskType, out var variablesHelper);
@@ -59,7 +70,7 @@ namespace Teronis.DotNet.GitVersionCache.BuildTasks
                 variablesHelper.ConsiderVariable(propertyMember.DeclaringType, propertyMember.Name);
             }
 
-            var options = new JsonSerializerOptions() { 
+            var options = new JsonSerializerOptions() {
                 WriteIndented = true
             };
 

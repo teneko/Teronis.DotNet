@@ -3,41 +3,40 @@
   <PropertyGroup>
 
     <TargetFramework>netstandard2.0</TargetFramework>
+    <!--<TargetFramework>netcoreapp3.1</TargetFramework>-->
 
     <!--<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>-->
-    
+
     <!--<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>-->
 
-    <!--<DisabledGitVersionCacheCompilationOutputPath>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), GitVersion.yml))\.gv\bin</DisabledGitVersionCacheCompilationOutputPath>-->
+    <!--<DisabledGitVersionCacheCompilationOutputPath>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), GitVersion.yml))\.gvc\bin</DisabledGitVersionCacheCompilationOutputPath>-->
     <GitVersionCacheAssemblyFile>$(MSBuildThisFileDirectory)bin\Release\$(TargetFramework)\publish\$(MSBuildThisFilename).dll</GitVersionCacheAssemblyFile>
-    <!--<GitVersionCacheAssemblyFile>C:\Users\christoph\source\repos\Teronis.DotNet\src\DotNet\GitVersionCache\GitVersionCache\Teronis.DotNet.GitVersionCache\bin\DeleteMe.dll</GitVersionCacheAssemblyFile>-->
 
     <DisableGitVersionCacheImports>false</DisableGitVersionCacheImports>
     <DisableGitVersionCacheImports Condition="'$(DisableGitVersionCache)' == 'true'">true</DisableGitVersionCacheImports>
 
-    <!-- After DisableGitVersionCacheImports has been initialized we have to disable the target GitVersionCachePreBuild
-         if GitVersionCacheAssemblyFile does already exist because Visual Studio does cache the dll, but do not disable
-         the target when you are in the GitVersionCache soluion. -->
-    <AwaylsPreBuildGitVersionCache Condition="'$([MSBuild]::GetPathOfFileAbove(GitVersionCache.sln))' == '$(SolutionPath)'">true</AwaylsPreBuildGitVersionCache>
-    <DisableGitVersionCachePreBuildTarget Condition="'$(DisableGitVersionCache)' == 'true' Or 'DisableGitVersionCachePreBuildTarget' == 'true' Or ('$(AwaylsPreBuildGitVersionCache)' != 'true' And Exists('$(GitVersionCacheAssemblyFile)'))">true</DisableGitVersionCachePreBuildTarget>
+    <!-- After DisableGitVersionCacheImports has been set we have to disable the target GitVersionCachePreBuild if
+         GitVersionCacheAssemblyFile does already exist but not if we are working from the solution named below. -->
+    <AlwaysPreBuildGitVersionCache Condition="'$([MSBuild]::GetPathOfFileAbove(GitVersionCache.sln))' == '$(SolutionPath)'">true</AlwaysPreBuildGitVersionCache>
+    <DisableGitVersionCachePreBuildTarget Condition="'$(DisableGitVersionCache)' == 'true' Or 'DisableGitVersionCachePreBuildTarget' == 'true' Or ('$(AlwaysPreBuildGitVersionCache)' != 'true' And Exists('$(GitVersionCacheAssemblyFile)'))">true</DisableGitVersionCachePreBuildTarget>
 
+    <!-- DisableGitVersionTask=true -->
     <GitVersionCachePreBuildProperties>
       Configuration=Release;
       PublishProfile=GitVersionCachePreBuild.pubxml;
       DisableGitVersionCache=true;
-      DisableGitVersionTask=true
     </GitVersionCachePreBuildProperties>
 
   </PropertyGroup>
 
   <!-- This target is recursive, so to prevent firing more than once, we pass truthy DisableGitVersionCachePreBuildTarget.
        This pre-build is finished before the actual build. When building pre-build GitVersion is disabled. The pre-built
-       is implemented so that is can also serve its actual build. -->
+       is implemented in such a way that it can also serve the real build of this project. -->
   <Target Name="GitVersionCachePreBuild" Condition="'$(DisableGitVersionCachePreBuildTarget)' != 'true'" BeforeTargets="BeforeBuild">
-    <MSBuild Projects="$(MSBuildThisFile)" Targets="Build;Publish" Properties="$(GitVersionCachePreBuildProperties)" />
+    <MSBuild Projects="$(MSBuildThisFile)" Targets="Restore;Build;Publish" Properties="$(GitVersionCachePreBuildProperties)" />
     <!--<Exec Command="dotnet msbuild -t:Build;Publish -p:$(GitVersionCachePreBuildProperties)" />-->
-    <Error Condition="!Exists('$(GitVersionCacheAssemblyFile)')" Text="[$(MSBuildThisFilename)] GitVersionCache assembly file not found. It should has been created just before." />
+    <Error Condition="!Exists('$(GitVersionCacheAssemblyFile)')" Text="[$(MSBuildThisFilename)] GitVersionCache assembly file not found. It should have been created just before." />
   </Target>
 
   <PropertyGroup>
@@ -65,6 +64,7 @@
   <ItemGroup>
     <Folder Include="buildMultiTargeting\" />
     <Folder Include="tools\" />
+    <Folder Include="lib\" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -82,7 +82,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
 
-    <Reference Include="GitVersionCore">
+    <!--<Reference Include="GitVersionCore">
       <HintPath>$(PkgGitVersionTask)\tools\netstandard2.0\GitVersionCore.dll</HintPath>
       <Private>false</Private>
     </Reference>
@@ -94,6 +94,18 @@
 
     <Reference Include="GitVersionTask">
       <HintPath>$(PkgGitVersionTask)\tools\netstandard2.0\GitVersionTask.dll</HintPath>
+      <Private>false</Private>
+    </Reference>-->
+
+    <Reference Include="$(PkgGitVersionTask)\tools\netstandard2.0\GitVersionCore.dll">
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="$(PkgGitVersionTask)\tools\netstandard2.0\GitVersionTask.MsBuild.dll">
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="$(PkgGitVersionTask)\tools\netstandard2.0\GitVersionTask.dll">
       <Private>false</Private>
     </Reference>
 

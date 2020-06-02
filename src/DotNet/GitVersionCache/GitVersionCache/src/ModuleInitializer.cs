@@ -16,12 +16,22 @@ namespace Teronis.DotNet.GitVersionCache
             LoadAssemblies = new[] {
                 ExecutingAssemblyDirectory + @"\tools\netstandard2.0\GitVersionCore.dll",
                 ExecutingAssemblyDirectory + @"\tools\netstandard2.0\GitVersionTask.MsBuild.dll",
-                ExecutingAssemblyDirectory + @"\tools\netstandard2.0\GitVersionTask.dll"
+                ExecutingAssemblyDirectory + @"\tools\netstandard2.0\GitVersionTask.dll",
+                //ExecutingAssemblyDirectory + @"\lib\netstandard2.0\System.ComponentModel.Annotations.dll"
+                //ExecutingAssemblyDirectory + @"\System.ComponentModel.Annotations.dll"
             };
         }
 
         public static void Initialize()
         {
+            //var filePath = ExecutingAssemblyDirectory + @"\moduleinit-fody";
+
+            //if (File.Exists(filePath)) {
+            //    File.Delete(filePath);
+            //}
+
+            //using var stream = File.Create(filePath);
+
             //try {
             foreach (var loadAssembly in LoadAssemblies) {
                 Assembly.LoadFrom(loadAssembly);

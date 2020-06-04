@@ -5,17 +5,11 @@
   <Import Condition="'$(IsTeronisDotNetCorePropsFileImported)' != 'true'" Project="$(RootCorePropsPath)" />
   <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackageTargetsPath)" />
 
- <ItemGroup>
-
-    <!-- TODO: Perhaps you can attach PrivateAssets to reference projects. -->
-
-    <!-- <_ProjectReferences Include="@(ProjectReference)" Condition="%()" />
-    <ProjectReference Remove="@(_ProjectReferences)"/>
-    
-    <ProjectReference Include="@(_ProjectReferences)">
-      <PrivateAssets>all</PrivateAssets>
-    </ProjectReference> -->
-
+  <ItemGroup>
+    <ProjectReference Include="@(ProjectReference)">
+      <!-- Prevent Reference.*-projects from being tracked in *.nuspec files. -->
+      <PrivateAssets Condition="$([System.String]::Copy('%(Filename)').Contains('Reference.'))">all</PrivateAssets>
+    </ProjectReference>
   </ItemGroup>
 
   <Target Name="InstallGitVersionTask" >

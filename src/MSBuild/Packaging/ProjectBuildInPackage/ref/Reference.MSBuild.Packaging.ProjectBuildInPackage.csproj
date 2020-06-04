@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(TeronisMSBuildCoreTasksTargets)" />
 
@@ -9,11 +9,11 @@
   <ItemGroup>
     <GenerateFilesystemPackageProjects Include="..\src\*.csproj" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\..\..\Core\Core\ref\Reference.MSBuild.Core.csproj" />
   </ItemGroup>
- 
+
   <Import Project="$(TeronisMSBuildPackagingGenerateFilesystemPackageTargets)" />
 
 </Project>

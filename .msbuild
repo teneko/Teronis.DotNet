@@ -13,6 +13,10 @@
     <!-- /** (others) -->
     <TeronisMSBuildPackagingProjectBuildInPackagePropsPath Condition="'$(TeronisMSBuildPackagingProjectBuildInPackagePropsPath)' != 'true'">$(RootDirectory)\src\MSBuild\Packaging\ProjectBuildInPackage\src\build\Teronis.MSBuild.Packaging.ProjectBuildInPackage.props</TeronisMSBuildPackagingProjectBuildInPackagePropsPath>
     <TeronisMSBuildPackagingProjectBuildInPackageTargetsPath Condition="'$(TeronisMSBuildPackagingProjectBuildInPackageTargetsPath)' != 'true'">$(RootDirectory)\src\MSBuild\Packaging\ProjectBuildInPackage\src\build\Teronis.MSBuild.Packaging.ProjectBuildInPackage.Targets</TeronisMSBuildPackagingProjectBuildInPackageTargetsPath>
+    <TeronisMSBuildPackagingUnzipPackageTargets>$(RootDirectory)src\MSBuild\Core\Core\src\bin\PackagePublish\build\Teronis.MSBuild.Packaging.UnzipPackage.targets</TeronisMSBuildPackagingUnzipPackageTargets>
+    <TeronisMSBuildPackagingGenerateFilesystemPackageTargets>$(RootDirectory)src\MSBuild\Core\Core\src\bin\PackagePublish\build\Teronis.MSBuild.Packaging.GenerateFilesystemPackage.targets</TeronisMSBuildPackagingGenerateFilesystemPackageTargets>
+    <TeronisMSBuildCoreTasksTargets>$(RootDirectory)src\MSBuild\Core\Core\src\bin\PackagePublish\build\Teronis.MSBuild.Tasks.targets</TeronisMSBuildCoreTasksTargets>
+    <TeronisMSBuildCoreUtilitiesTargets>$(RootDirectory)src\MSBuild\Core\Core\src\bin\PackagePublish\build\Teronis.MSBuild.Utilities.targets</TeronisMSBuildCoreUtilitiesTargets>
   </PropertyGroup>
 
 </Project>

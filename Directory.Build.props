@@ -20,17 +20,17 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Authors>Teroneko</Authors>
-    <Company>$(MSBuildProjectName)</Company>
-    <Product>$(MSBuildProjectName)</Product>
-    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-    <RepositoryUrl>https://github.com/teroneko/Teronis.DotNet</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <Copyright>Teroneko</Copyright>
-    <PackageIcon>icon.png</PackageIcon>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <NeutralLanguage>en</NeutralLanguage>
+    <Authors Condition="'$(Authors)' == ''">Teroneko</Authors>
+    <Company Condition="'$(Company)' == ''">$(MSBuildProjectName)</Company>
+    <Product Condition="'$(Product)' == ''">$(MSBuildProjectName)</Product>
+    <PackageLicenseFile Condition="'$(PackageLicenseFile)' == ''">LICENSE.md</PackageLicenseFile>
+    <RepositoryUrl Condition="'$(RepositoryUrl)' == ''">https://github.com/teroneko/Teronis.DotNet</RepositoryUrl>
+    <RepositoryType Condition="'$(RepositoryType)' == ''">git</RepositoryType>
+    <Copyright Condition="'$(Copyright)' == ''">Teroneko</Copyright>
+    <PackageIcon Condition="'$(PackageIcon)' == ''">icon.png</PackageIcon>
+    <IncludeSymbols Condition="'$(IncludeSymbols)' == ''">true</IncludeSymbols>
+    <SymbolPackageFormat Condition="'$(SymbolPackageFormat)' == ''">snupkg</SymbolPackageFormat>
+    <NeutralLanguage Condition="'$(NeutralLanguage)' == ''">en</NeutralLanguage>
     <!-- <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb;.props;.targets</AllowedOutputExtensionsInPackageBuildOutputFolder> -->
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>

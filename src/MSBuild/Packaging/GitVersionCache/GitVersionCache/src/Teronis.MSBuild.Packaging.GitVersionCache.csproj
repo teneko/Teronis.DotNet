@@ -1,0 +1,107 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  
+  <PropertyGroup>
+
+    <!--<OutputType>Exe</OutputType>-->
+    
+    <!-- 
+    # REMINDER: Change specific string condition in
+    # ModuleInitializer if you change TargetFramework.
+    -->
+    <TargetFramework>netstandard2.0</TargetFramework>
+    
+    <!--<Startup-->
+    <!--<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>-->
+
+    <!-- We don't build a executable package. 
+         We build an only-build-time package. -->
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IncludeSymbols>false</IncludeSymbols>
+
+    <!--<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>-->
+
+  </PropertyGroup>
+
+  <ItemGroup>
+
+    <PackageReference Include="Fody" Version="6.0.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+
+    <PackageReference Include="GitVersion.CommandLine" Version="5.3.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.4.0" PrivateAssets="all" />
+    <!--<PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.4.0" />-->
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.4" />
+    <PackageReference Include="ModuleInit.Fody" Version="2.1.0" PrivateAssets="all" />
+    <!--<PackageReference Include="ModuleInit.Fody" Version="2.1.0" />-->
+    <PackageReference Include="PropertyChanged.Fody" Version="3.2.4" />
+    <PackageReference Include="System.Text.Json" Version="4.7.0" />
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="tools\" />
+    <Folder Include="buildMultiTargeting\" />
+    <Folder Include="Utilities\" />
+  </ItemGroup>
+
+  <PropertyGroup>
+
+    <GitVersionToolFilesIncludes>
+      $(PkgGitVersionTask)\tools\**\*;
+      $(PkgGitVersionTask)\tools\**\*;
+      $(PkgGitVersionTask)\tools\**\*
+    </GitVersionToolFilesIncludes>
+    
+    <RootNamespace>Teronis.GitVersionCache</RootNamespace>
+    
+  </PropertyGroup>
+
+  <ItemGroup>
+
+    <None Include="bin\Debug\netcoreapp2.1\publish\*" Pack="true" PackagePath="tools\netcoreapp2.1">
+      <Link>tools\netcoreapp2.1\%(RecursiveDir)\%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="build\**\*" Pack="true" PackagePath="build" />
+    
+    <None Include="$(PkgGitVersionTask)\tools\**\*" Pack="true" PackagePath="tools\">
+      <Link>tools\%(RecursiveDir)\%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+
+    <Reference Include="$(PkgGitVersionTask)\tools\netstandard2.0\GitVersionTask.MsBuild.dll">
+      <Private>false</Private>
+    </Reference>
+
+    <None Include="$(PkgGitVersionTask)\build\**\*" Pack="true" PackagePath="build\">
+      <Link>build\%(RecursiveDir)\%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+
+    <None Include="$(PkgGitVersionTask)\buildMultiTargeting\**\*" Pack="true" PackagePath="buildMultiTargeting\">
+      <Link>buildMultiTargeting\%(RecursiveDir)\%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="build\Teronis.DotNet.GitVersionCache.props">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="build\Teronis.DotNet.GitVersionCache.targets">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

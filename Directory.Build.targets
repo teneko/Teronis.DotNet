@@ -5,6 +5,19 @@
   <Import Condition="'$(IsTeronisDotNetCorePropsFileImported)' != 'true'" Project="$(RootCorePropsPath)" />
   <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackageTargetsPath)" />
 
+ <ItemGroup>
+
+    <!-- TODO: Perhaps you can attach PrivateAssets to reference projects. -->
+
+    <!-- <_ProjectReferences Include="@(ProjectReference)" Condition="%()" />
+    <ProjectReference Remove="@(_ProjectReferences)"/>
+    
+    <ProjectReference Include="@(_ProjectReferences)">
+      <PrivateAssets>all</PrivateAssets>
+    </ProjectReference> -->
+
+  </ItemGroup>
+
   <Target Name="InstallGitVersionTask" >
     <PropertyGroup>
       <HasGitVersionTask Condition="'%(PackageReference.Identity)' == 'GitVersionTask'">true</HasGitVersionTask>

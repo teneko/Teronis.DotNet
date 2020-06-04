@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(TeronisMSBuildCoreTasksTargets)" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <GenerateFilesystemPackageProjects Include="..\src\*.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Core\Core\ref\Reference.MSBuild.Core.csproj" />
+  </ItemGroup>
+ 
+  <Import Project="$(TeronisMSBuildPackagingGenerateFilesystemPackageTargets)" />
+
+</Project>

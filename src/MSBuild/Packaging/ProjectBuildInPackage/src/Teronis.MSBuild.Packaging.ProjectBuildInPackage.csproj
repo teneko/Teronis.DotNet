@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>
+    
     <Description>Allows project reference content to be added to the packing nuget package.</Description>
     
     <!-- We don't build a executable package. 
@@ -13,11 +14,14 @@
     <DevelopmentDependency>true</DevelopmentDependency>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IncludeSymbols>false</IncludeSymbols>
+    
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="build\**" Pack="true" PackagePath="build\" />
     <None Include="buildMultiTargeting\**" Pack="true" PackagePath="buildMultiTargeting\" />
   </ItemGroup>
+
+  <Import Project="$(TeronisMSBuildPackagingUnzipPackageTargets)" />
 
 </Project>

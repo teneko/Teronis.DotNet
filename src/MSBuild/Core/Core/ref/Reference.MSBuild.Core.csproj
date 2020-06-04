@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\src\build\Teronis.MSBuild.Packaging.GenerateFilesystemPackage.props" />
+  
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <GenerateFilesystemPackageProjects Include="..\src\*.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <MSBuildProperties>
+      Configuration=$(Configuration)
+    </MSBuildProperties>
+  </PropertyGroup>
+
+  <Import Project="..\src\build\Teronis.MSBuild.Packaging.GenerateFilesystemPackage.targets" />
+
+</Project>

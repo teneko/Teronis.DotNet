@@ -1,31 +1,22 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project InitialTargets="welcome" Sdk="Microsoft.NET.Sdk">
 
+  <PropertyGroup>
+    <!--<GitVersionCacheAssemblyFile Condition="!Exists(GitVersionCacheAssemblyFile)">$(RootDirectory)src\DotNet\GitVersionCache\GitVersionCache\src\bin\$(Configuration)\netcoreapp2.1\publish\Teronis.DotNet.GitVersionCache.dll</GitVersionCacheAssemblyFile>-->
+    <GitVersionCacheAssemblyFile Condition="!Exists(GitVersionCacheAssemblyFile)">$(RootDirectory)src\DotNet\GitVersionCache\GitVersionCache\src\bin\$(Configuration)\netstandard2.0\publish\Teronis.DotNet.GitVersionCache.dll</GitVersionCacheAssemblyFile>
+  </PropertyGroup>
+
+  <!--\bin\$(Configuration)\netcoreapp2.1\publish-->
+  <!--<Import Project="$(RootDirectory)src\DotNet\GitVersionCache\GitVersionCache\src\build\Teronis.DotNet.GitVersionCache.targets" />-->
+  <!--<Import Project="$(RootDirectory)src\DotNet\GitVersionCache\GitVersionCache\src\bin\$(Configuration)\netcoreapp2.1\publish\build\Teronis.DotNet.GitVersionCache.targets" />-->
+  <!--<Import Project="$(RootDirectory)src\DotNet\GitVersionCache\GitVersionCache\src\bin\$(Configuration)\netstandard2.0\publish\build\Teronis.DotNet.GitVersionCache.targets" />-->
+
+  <Target Name="welcome">
+    <Message Text=":::::::::::::::::: $(GitVersionCacheAssemblyFile)" Importance="high" />
+  </Target>
+  
   <PropertyGroup>
     <RootNamespace>Teronis</RootNamespace>
     <Description>This project contains core utility, core extension and core tool functions, but also core classes that extends known structures.</Description>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
@@ -48,6 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!--<ProjectReference Include="..\..\..\..\MSBuild\Packaging\GitVersionCache\Reference.GitVersionCache\src\Reference.MSBuild.Packaging.GitVersionCache.csproj" />-->
     <ProjectReference Include="..\..\Core.Localization\src\Teronis.NetStandard.Core.Localization.csproj" PrivateAssets="all" />
   </ItemGroup>
 </Project>

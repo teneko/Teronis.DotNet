@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <IsTeronisMSBuildPackUnzipPackagePropsImported>true</IsTeronisMSBuildPackUnzipPackagePropsImported>
+    <!-- The dependencies of target UnzipPackageAfterPack. -->
+    <!--<UnzipPackageAfterPackDependsOn>UnzipPackageClean</UnzipPackageAfterPackDependsOn>-->
+    <UnzipPackageAfterPackDependsOn Condition="'$(UnzipPackageAfterPackDependsOn)' == ''" />
+    <!-- The dependencies of target UnzipPackageClean. -->
+    <UnzipPackageCleanDependsOn Condition="'$(UnzipPackageCleanDependsOn)' == ''" />
+  </PropertyGroup>
+
+</Project>

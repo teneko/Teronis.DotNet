@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <IsTeronisMSBuildUtilitiesImported>true</IsTeronisMSBuildUtilitiesImported>
+  </PropertyGroup>
+
+  <!-- 
+  # Target searches for single package.
+  # It does not support searching recursively.
+  # It needs the following properties:
+  # - SearchPackageDirectory: The location where to search.
+  # - SearchPackageId: The base package name without '-<version>'.
+  # Target returns a single package represented as a collection (ItemGroup) of _FoundPackage.
+  -->
+  <Target Name="SearchPackage" Returns="@(_FoundPackage)">
+
+    <Message Text="[$(MSBuildThisFileName)] Try to find package $(SearchPackageId) in $(SearchPackageDirectory)" Importance="high" />
+
+    <ItemGroup>
+      <__FoundPackageFiles Include="$(SearchPackageDirectory)\$(SearchPackageId)*.nupkg" />
+    </ItemGroup>
+
+    <Message Text="[$(MSBuildThisFileName)] - Found package file -&gt; %(__FoundPackageFiles.Identity)" Importance="high" />
+
+    <Error Condition="@(__FoundPackageFiles-&gt;Count()) == 0" Text="[$(MSBuildThisFileName)] An error occured: In the folder $(SearchPackageDirectory) is no package. Please pack project." />
+    <Error Condition="@(__FoundPackageFiles-&gt;Count()) &gt; 1" Text="[$(MSBuildThisFileName)] An error occured: In the folder $(SearchPackageDirectory) is more than one package. Please delete relicts." />
+
+    <ItemGroup>
+      <_FoundPackage Include="@(__FoundPackageFiles)">
+        <Id>$(SearchPackageId)</Id>
+        <Version>$([System.String]::Copy('%(Filename)').Replace('$(SearchPackageId).',''))</Version>
+      </_FoundPackage>
+    </ItemGroup>
+
+    <Message Text="[$(MSBuildThisFileName)] - Evaluated package version -&gt; %(_FoundPackage.Version)" Importance="high" />
+
+  </Target>
+
+  <!-- 
+  # Please take a look at the description of Target SearchPackage above.
+  # Target does unzip package that has been found by Target SearchPackage
+  # It needs the following properties:
+  # - UnzipPackageDirectory: The location where to search.
+  # - UnzipPackageId: The base package name without '-<version>'.
+  # - UnzipPackageDestinationDirectory: The location where to unzip.
+  -->
+  <Target Name="UnzipPackage" Returns="@(_FoundPackage)">
+    
+    <PropertyGroup>
+      <_UnzipPackageDestinationDirectory>$(UnzipPackageDestinationDirectory)</_UnzipPackageDestinationDirectory>
+    </PropertyGroup>
+    
+    <PropertyGroup>
+      <_SearchPackageProperties>
+        SearchPackageId=$(UnzipPackageId);
+        SearchPackageDirectory=$(UnzipPackageDirectory)
+      </_SearchPackageProperties>
+    </PropertyGroup>
+    
+    <ItemGroup>
+      <_FoundPackage Remove="@(_FoundPackage)" />
+    </ItemGroup>
+    
+    <MSBuild Projects="$(MSBuildThisFile)" Targets="SearchPackage" Properties="$(_SearchPackageProperties)">
+      <Output TaskParameter="TargetOutputs" ItemName="_FoundPackage" />
+    </MSBuild>
+
+    <PropertyGroup>
+      <_UnzipPackageDestinationDirectory Condition="'$(_UnzipPackageDestinationDirectory)' == ''">%(_FoundPackage.RootDir)%(_FoundPackage.Directory)%(_FoundPackage.FileName)</_UnzipPackageDestinationDirectory>
+    </PropertyGroup>
+
+    <Unzip SourceFiles="@(_FoundPackage)" DestinationFolder="$(_UnzipPackageDestinationDirectory)" Condition="'@(_FoundPackage)' != ''" />
+    <Message Text="[$(MSBuildThisFileName)] Package @(_FoundPackage) has been unzipped to $(_UnzipPackageDestinationDirectory)" Importance="high" Condition="'@(_FoundPackage)' != ''" />
+    
+  </Target>
+
+  <!-- 
+  # Please take a look at the description of Target SearchPackage above.
+  # Target does delete package that has been found by Target SearchPackage
+  # It needs the following properties:
+  # - DeletePackageDirectory: The location where to search.
+  # - DeletePackageId: The base package name without '-<version>'.
+  -->
+  <!-- <Target Name="DeletePackage">
+    
+    <PropertyGroup>
+      <_SearchPackageProperties>
+        SearchPackageId=$(DeletePackageId);
+        SearchPackageDirectory=$(DeletePackageDirectory)
+        PackagePath
+      </_SearchPackageProperties>
+    </PropertyGroup>
+
+    <MSBuild Projects="$(MSBuildThisFile)" Targets="SearchPackage" Properties="$(_SearchPackageProperties)">
+      <Output TaskParameter="TargetOutputs" ItemName="_FoundPackage" />
+    </MSBuild>
+
+    <Delete Files="@(_FoundPackage)" />
+    <Message Text="[$(MSBuildThisFileName)] package %(_FoundPackage.Filename)%(_FoundPackage.Extension) has been deleted from the disk." Importance="high" />
+    
+  </Target> -->
+
+</Project>

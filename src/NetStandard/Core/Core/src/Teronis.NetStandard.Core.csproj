@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <!--<GitVersionCacheAssemblyFile Condition="!Exists(GitVersionCacheAssemblyFile)">$(RootDirectory)src\DotNet\GitVersionCache\GitVersionCache\src\bin\$(Configuration)\netcoreapp2.1\publish\Teronis.DotNet.GitVersionCache.dll</GitVersionCacheAssemblyFile>-->
-    <GitVersionCacheAssemblyFile Condition="!Exists(GitVersionCacheAssemblyFile)">$(RootDirectory)src\DotNet\GitVersionCache\GitVersionCache\src\bin\$(Configuration)\netstandard2.0\publish\Teronis.DotNet.GitVersionCache.dll</GitVersionCacheAssemblyFile>
+    <!-- <GitVersionCacheAssemblyFile Condition="!Exists(GitVersionCacheAssemblyFile)">$(RootDirectory)src\DotNet\GitVersionCache\GitVersionCache\src\bin\$(Configuration)\netstandard2.0\publish\Teronis.DotNet.GitVersionCache.dll</GitVersionCacheAssemblyFile> -->
   </PropertyGroup>
 
   <!--\bin\$(Configuration)\netcoreapp2.1\publish-->
@@ -11,11 +11,12 @@
   <!--<Import Project="$(RootDirectory)src\DotNet\GitVersionCache\GitVersionCache\src\bin\$(Configuration)\netstandard2.0\publish\build\Teronis.DotNet.GitVersionCache.targets" />-->
 
   <Target Name="welcome">
-    <Message Text=":::::::::::::::::: $(GitVersionCacheAssemblyFile)" Importance="high" />
+    <!-- <Message Text=":::::::::::::::::: $(GitVersionCacheAssemblyFile)" Importance="high" /> -->
   </Target>
   
   <PropertyGroup>
-    <RootNamespace>Teronis</RootNamespace>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Teronis</RootNamespace>  
     <Description>This project contains core utility, core extension and core tool functions, but also core classes that extends known structures.</Description>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>

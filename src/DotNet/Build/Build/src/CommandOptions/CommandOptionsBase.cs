@@ -1,4 +1,4 @@
-﻿
+﻿using CommandLine;
 
 namespace Teronis.DotNet.Build.CommandOptions
 {
@@ -10,6 +10,7 @@ namespace Teronis.DotNet.Build.CommandOptions
         /// <summary>
         /// The affected command will be printed out.
         /// </summary>
+        [Option("dry-run")]
         public bool DryRun { get; set; }
     }
 }

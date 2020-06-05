@@ -12,7 +12,7 @@
     # We don't build an executable package.
     # We build an only-build-time package. 
     -->
-    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking> 
     <DevelopmentDependency>true</DevelopmentDependency>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IncludeSymbols>false</IncludeSymbols>

@@ -36,18 +36,29 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
-  <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Localization'))">
-    <Description>Contains localization resources for assembly $(MSBuildProjectName.Replace('.Localization','')).</Description>
-    <!-- https://docs.microsoft.com/de-de/dotnet/core/tools/csproj#ispackable -->
-    <IsPackable>False</IsPackable>
+  <PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+    <IsTestProject Condition="$(MSBuildProjectName.EndsWith('.Test')) Or $(MSBuildProjectName.StartsWith('Test.'))">false</IsTestProject>
+    <IsReferenceProject>false</IsReferenceProject>
+    <IsReferenceProject Condition="$(MSBuildProjectName.StartsWith('Reference.'))">false</IsReferenceProject>
+    <IsLocalizationProject>false</IsLocalizationProject>
+    <IsLocalizationProject Condition="$(MSBuildProjectName.EndsWith('.Localization'))">false</IsLocalizationProject>
   </PropertyGroup>
 
-  <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Test')) Or $(MSBuildProjectName.StartsWith('Test.'))">
+  <PropertyGroup Condition="$(IsLocalizationProject)">
+    <Description>Contains localization resources for assembly $(MSBuildProjectName.Replace('.Localization','')).</Description>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(IsTestProject)">
     <_ProjectNameWithoutTest Condition="$(MSBuildProjectName.EndsWith('.Test'))">$(MSBuildProjectName.Replace('.Test','')</_ProjectNameWithoutTest>
-    <_ProjectNameWithoutTest Condition="$(MSBuildProjectName.StartsWith('Test.'))">$(MSBuildProjectName.Replace('Test.','')</_ProjectNameWithoutTest>
+    <_ProjectNameWithoutTest Condition="$(MSBuildProjectName.StartsWith('Test.'))">$(MSBuildProjectName.Replace('Test.','Teronis')</_ProjectNameWithoutTest>
     <Description>Contains test cases for assembly $(_ProjectNameWithoutTest).</Description>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <!-- https://docs.microsoft.com/de-de/dotnet/core/tools/csproj#ispackable -->
-    <IsPackable>False</IsPackable>
+    <IsPackable>true</IsPackable>
+    <IsPackable Condition="$(IsTestProject) Or $(IsReferenceProject) Or $(IsLocalizationProject)">false</IsPackable>
   </PropertyGroup>
 
   <PropertyGroup>

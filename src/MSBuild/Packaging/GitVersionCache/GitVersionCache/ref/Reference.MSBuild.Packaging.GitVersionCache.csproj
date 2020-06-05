@@ -4,14 +4,10 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <DotNetGitVersionCacheProjectPath>$(MSBuildThisFileDirectory)..\..\GitVersionCache\src\Teronis.DotNet.GitVersionCache.csproj</DotNetGitVersionCacheProjectPath>
-    <DotNetGitVersionCacheProjectPath>$([System.IO.Path]::GetFullPath('$(DotNetGitVersionCacheProjectPath)'))</DotNetGitVersionCacheProjectPath>
-  </PropertyGroup>
+  <ItemGroup>
+    <GenerateFilesystemPackageProjects Include="..\src\*.csproj" />
+  </ItemGroup>
 
-  <Target Name="OnBeforeBuild" BeforeTargets="BeforeBuild">
-    <MSBuild Projects="$(DotNetGitVersionCacheProjectPath)" Targets="Restore" Properties="Configuration=$(Configuration)" />
-    <MSBuild Projects="$(DotNetGitVersionCacheProjectPath)" Targets="Publish" Properties="Configuration=$(Configuration);PublishProfile=GitVersionCachePreBuild.pubxml" />
-  </Target>
+  <Import Project="$(TeronisMSBuildPackagingGenerateFilesystemPackageInProjectTargets)" />
 
 </Project>

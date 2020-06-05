@@ -5,6 +5,10 @@
   <Import Condition="'$(IsTeronisDotNetCorePropsFileImported)' != 'true'" Project="$(RootCorePropsPath)" />
   <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackageTargetsPath)" />
 
+  <PropertyGroup>
+    <TeronisMSBuildPackagingGenerateFilesystemPackageInProjectTargets>$(RootDirectory)src\MSBuild\Core\Core\src\bin\PackagePublish\build\Teronis.MSBuild.Packaging.GenerateFilesystemPackageInProject.targets</TeronisMSBuildPackagingGenerateFilesystemPackageInProjectTargets>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="@(ProjectReference)">
       <!-- Prevent Reference.*-projects from being tracked in *.nuspec files. -->

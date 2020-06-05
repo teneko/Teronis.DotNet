@@ -1,13 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <ItemGroup>
-    <GenerateFilesystemPackageProjects Remove="@(GenerateFilesystemPackageProjects)" Condition="'@(GenerateFilesystemPackageProjects)' == ''" />
-  </ItemGroup>
-  
   <PropertyGroup>
-    <GenerateFilesystemPackageRestoreBuildPackProjectsBeforeBuildDependsOn Condition="'$(GenerateFilesystemPackageRestoreBuildPackProjectsBeforeBuildDependsOn)' == ''" />
-    <GenerateFilesystemPackageCleanProjectsBeforeBuildDependsOn Condition="'$(GenerateFilesystemPackageCleanProjectsBeforeBuildDependsOn)' == ''" />
+    <IsTeronisMSBuildPackagingGenerateFilesystemPackagePropsImported>true</IsTeronisMSBuildPackagingGenerateFilesystemPackagePropsImported>
+    <UnzipPackageAfterPackDependsOn Condition="'$(UnzipPackageAfterPackDependsOn)' == ''" />
+    <!-- The dependencies of target UnzipPackageClean. -->
+    <CleanFilesystemPackageDependsOn Condition="'$(CleanFilesystemPackageDependsOn)' == ''" />
   </PropertyGroup>
-  
+
 </Project>

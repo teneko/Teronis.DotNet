@@ -11,7 +11,7 @@ namespace Teronis.GitVersionCache.BuildTasks
     public static class BuildTaskUtilities
     {
         public static DirectoryInfo GetGitVersionYamlDirectory() =>
-              DirectoryUtilities.GetDirectoryOfFileAbove("GitVersion.yml", ModuleInitializer.BaseDirectory);
+              DirectoryUtilities.GetDirectoryOfFileAbove("GitVersion.yml", ModuleInitializer.ContainerRootDirectory);
 
         ///// <summary>
         ///// Gets the GitVersionCore owned list of <see cref="ServiceDescriptor"/>s.

@@ -1,18 +1,66 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <Import Project="Teronis.MSBuild.Utilities.targets" Condition="'$(IsTeronisMSBuildUtilitiesImported)' != 'true'"/>
+
   <PropertyGroup>
-    <GenerateFilesystemPackageMSBuildProperties Condition="!$(GenerateFilesystemPackageMSBuildProperties.Contains('Configuration='))">
-      Configuration=$(Configuration);$(GenerateFilesystemPackageMSBuildProperties)
-    </GenerateFilesystemPackageMSBuildProperties>
+    <IsTeronisMSBuildPackUnzipPackageTargetsImported>true</IsTeronisMSBuildPackUnzipPackageTargetsImported>
+    <!-- The location where to search. -->
+    <UnzipPackageDirectory Condition="'$(UnzipPackageDirectory)' == ''">$(MSBuildProjectDirectory)\bin\$(Configuration)</UnzipPackageDirectory>
+    <!-- The location where to unzip. -->
+    <UnzipPackageDestinationDirectory Condition="'$(UnzipPackageDestinationDirectory)' == ''">$(MSBuildProjectDirectory)\bin\$(Configuration)\PackagePublish</UnzipPackageDestinationDirectory>
+    <_UnzipPackageCoreUtilitiesTargets Condition="'$(_UnzipPackageCoreUtilitiesTargets)' == ''">$(MSBuildThisFileDirectory)Teronis.MSBuild.Utilities.targets</_UnzipPackageCoreUtilitiesTargets>
+    <_UnzipPackageId>Reference.$(MSBuildProjectName)</_UnzipPackageId>
   </PropertyGroup>
 
-  <Target Name="RestoreBuildPackReferencesBeforeBuild" DependsOnTargets="$(GenerateFilesystemPackageRestoreBuildPackProjectsBeforeBuildDependsOn)" BeforeTargets="BeforeBuild" Condition="'@(GenerateFilesystemPackageProjects)' != ''">
-    <MSBuild Projects="%(GenerateFilesystemPackageProjects.Identity)" Targets="Restore;Build;GenerateFilesystemPackage" Properties="$(GenerateFilesystemPackageMSBuildProperties)" />
+  <Target Name="GenerateFilesystemPackage">
+
+    <PropertyGroup>
+      <ThisProjectMSBuildProperties>
+        Configuration=$(Configuration);
+        PackageId=$(_UnzipPackageId);
+        DisableGitVersionTask=true
+      </ThisProjectMSBuildProperties>
+    </PropertyGroup>
+
+    <MSBuild Projects="$(MSBuildProjectDirectory)\$(MSBuildProjectName).csproj" Targets="Pack" Properties="$(ThisProjectMSBuildProperties)" />
+
+    <PropertyGroup>
+
+      <_UnzipPackageSearchProperties>
+        UnzipPackageDirectory=$(UnzipPackageDirectory);
+        UnzipPackageId=$(_UnzipPackageId);
+        UnzipPackageDestinationDirectory=$(UnzipPackageDestinationDirectory)
+      </_UnzipPackageSearchProperties>
+
+    </PropertyGroup>
+
+    <MSBuild Projects="$(_UnzipPackageCoreUtilitiesTargets)" Targets="UnzipPackage" Properties="$(_UnzipPackageSearchProperties)">
+      <Output TaskParameter="TargetOutputs" ItemName="_FoundPackage" />
+    </MSBuild>
+
+    <Delete Files="@(_FoundPackage)" />
+
   </Target>
 
-  <Target Name="CleanReferencesBeforeBuild" DependsOnTargets="$(GenerateFilesystemPackageCleanProjectsBeforeBuildDependsOn)" BeforeTargets="BeforeClean" Condition="'@(GenerateFilesystemPackageProjects)' != ''">
-    <MSBuild Projects="%(GenerateFilesystemPackageProjects.Identity)" Targets="Clean" Properties="$(GenerateFilesystemPackageMSBuildProperties)" />
+  <!--<Target Name="UnzipPackageAfterPack" DependsOnTargets="$(UnzipPackageAfterPackDependsOn)" AfterTargets="Pack">
+
+    <PropertyGroup>
+
+      <_UnzipPackageSearchProperties>
+        UnzipPackageDirectory=$(UnzipPackageDirectory);
+        UnzipPackageId=$(_UnzipPackageId);
+        UnzipPackageDestinationDirectory=$(UnzipPackageDestinationDirectory)
+      </_UnzipPackageSearchProperties>
+
+    </PropertyGroup>
+
+    <MSBuild Projects="$(_UnzipPackageCoreUtilitiesTargets)" Targets="UnzipPackage" Properties="$(_UnzipPackageSearchProperties)" />
+
+  </Target>-->
+
+  <Target Name="_CleanFilesystemPackage" DependsOnTargets="$(CleanFilesystemPackageDependsOn)" BeforeTargets="BeforeClean">
+    <RemoveDir Directories="$(UnzipPackageDestinationDirectory)" />
   </Target>
 
 </Project>

@@ -3,7 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Teronis.Tools.GitVersion</RootNamespace>
-    <DevelopmentDependency>true</DevelopmentDependency>
+    <!--<SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>-->
+    <!--<IncludeBuildOutput>false</IncludeBuildOutput>-->
+    <!--<IncludeSymbols>false</IncludeSymbols>-->
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,8 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="$(PkgGitVersion_CommandLine)\tools\GitVersion.exe">
-      <Link>$(FileName)</Link>
+    <None Include="$(PkgGitVersion_CommandLine)\tools\GitVersion.exe" Pack="true" PackagePath="contentFiles">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

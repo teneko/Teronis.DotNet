@@ -1,18 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="build\Teronis.MSBuild.Packaging.UnzipPackage.props" />
+  <Import Project="build\Teronis.MSBuild.Packaging.GenerateFilesystemPackage.props" />
 
   <PropertyGroup>
 
     <TargetFramework>netstandard2.0</TargetFramework>
     <Nullable>enable</Nullable>
 
-    <!-- 
-    # We do build an executable package, but we 
-    # provide also only-build-time resources. 
-    -->
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <!-- We do not want a package that is transitive. -->
     <DevelopmentDependency>true</DevelopmentDependency>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IncludeSymbols>false</IncludeSymbols>
@@ -29,6 +26,6 @@
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.5.0" PrivateAssets="all" />
   </ItemGroup>
 
-  <Import Project="build\Teronis.MSBuild.Packaging.UnzipPackage.targets" />
+  <Import Project="build\Teronis.MSBuild.Packaging.GenerateFilesystemPackage.targets" />
 
 </Project>

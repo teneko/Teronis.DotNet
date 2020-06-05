@@ -42,8 +42,10 @@
     <IsPackable>False</IsPackable>
   </PropertyGroup>
 
-  <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Test'))">
-    <Description>Contains test cases for assembly $(MSBuildProjectName.Replace('.Test','').</Description>
+  <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Test')) Or $(MSBuildProjectName.StartsWith('Test.'))">
+    <_ProjectNameWithoutTest Condition="$(MSBuildProjectName.EndsWith('.Test'))">$(MSBuildProjectName.Replace('.Test','')</_ProjectNameWithoutTest>
+    <_ProjectNameWithoutTest Condition="$(MSBuildProjectName.StartsWith('Test.'))">$(MSBuildProjectName.Replace('Test.','')</_ProjectNameWithoutTest>
+    <Description>Contains test cases for assembly $(_ProjectNameWithoutTest).</Description>
     <!-- https://docs.microsoft.com/de-de/dotnet/core/tools/csproj#ispackable -->
     <IsPackable>False</IsPackable>
   </PropertyGroup>

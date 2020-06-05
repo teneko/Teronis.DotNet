@@ -37,7 +37,7 @@
     <Message Condition="'$(IsVerbosityDetailed)' == 'true' And '@(_ReferenceCopyLocalPaths)' == ''" Text="[$(MSBuildThisFileName)] There are no copy operations. You need to specify PrivateAssets=&quot;all&quot; to to those projects which build output you want to to have copied to the package." Importance="high" />
 
     <ItemGroup>
-      <!-- Add file to package with consideration of sub folder. If empty, the root folder is chosen. -->
+      <!-- Add file to package with consideration of sub folder. If sub folder is empty, the root folder is chosen. -->
       <BuildOutputInPackage Include="@(_ReferenceCopyLocalPaths)" TargetPath="%(_ReferenceCopyLocalPaths.DestinationSubDirectory)" />
     </ItemGroup>
 

@@ -1,19 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  
+
   <PropertyGroup>
 
     <!--<OutputType>Exe</OutputType>-->
-    
+
     <!-- 
     # REMINDER: Change specific string condition in
     # ModuleInitializer if you change TargetFramework.
     -->
     <TargetFramework>netstandard2.0</TargetFramework>
-    
-    <!--<Startup-->
+    <RootNamespace>Teronis.GitVersionCache</RootNamespace>
     <!--<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>-->
 
-    <!-- We don't build a executable package. 
+    <!-- We don't build an executable package. 
          We build an only-build-time package. -->
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <DevelopmentDependency>true</DevelopmentDependency>
@@ -23,14 +22,20 @@
     <!--<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>-->
 
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);FilesystemPublishmentRootContentInPackage</TargetsForTfmSpecificContentInPackage>
+
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\NetStandard\Tools\GitVersion\GitVersion\src\Teronis.NetStandard.Tools.GitVersion.csproj" PrivateAssets="all" />
+  </ItemGroup>
 
-    <PackageReference Include="Fody" Version="6.0.6">
+  <ItemGroup>
+
+    <!--<PackageReference Include="Fody" Version="6.0.6">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    </PackageReference>-->
 
     <PackageReference Include="GitVersion.CommandLine" Version="5.3.5">
       <PrivateAssets>all</PrivateAssets>
@@ -41,16 +46,15 @@
     <!--<PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.4.0" />-->
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.1" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.4" />
-    <PackageReference Include="ModuleInit.Fody" Version="2.1.0" PrivateAssets="all" />
+    <!--<PackageReference Include="ModuleInit.Fody" Version="2.1.0" PrivateAssets="all" />-->
     <!--<PackageReference Include="ModuleInit.Fody" Version="2.1.0" />-->
-    <PackageReference Include="PropertyChanged.Fody" Version="3.2.4" />
+    <!--<PackageReference Include="PropertyChanged.Fody" Version="3.2.4" />-->
     <PackageReference Include="System.Text.Json" Version="4.7.0" />
 
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="tools\" />
-    <Folder Include="buildMultiTargeting\" />
     <Folder Include="Utilities\" />
   </ItemGroup>
 
@@ -61,47 +65,77 @@
       $(PkgGitVersionTask)\tools\**\*;
       $(PkgGitVersionTask)\tools\**\*
     </GitVersionToolFilesIncludes>
-    
-    <RootNamespace>Teronis.GitVersionCache</RootNamespace>
-    
+
+    <FilesystemPublishmentDirectory>bin\$(Configuration)\netstandard2.0\filesystemPublish</FilesystemPublishmentDirectory>
+
   </PropertyGroup>
 
   <ItemGroup>
 
-    <None Include="bin\Debug\netcoreapp2.1\publish\*" Pack="true" PackagePath="tools\netcoreapp2.1">
-      <Link>tools\netcoreapp2.1\%(RecursiveDir)\%(Filename)%(Extension)</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="build\**\*" Pack="true" PackagePath="build" />
-    
-    <None Include="$(PkgGitVersionTask)\tools\**\*" Pack="true" PackagePath="tools\">
-      <Link>tools\%(RecursiveDir)\%(Filename)%(Extension)</Link>
+    <None Include="build\**\*" Pack="true" PackagePath="buildMultiTargeting" />
+
+    <None Include="$(PkgGitVersionTask)\tools\**\*" Pack="true" PackagePath="GitVersion\">
+      <Link>GitVersion\%(RecursiveDir)\%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+
+    <Compile Remove="buildMultiTargeting\**" />
+
+    <EmbeddedResource Remove="buildMultiTargeting\**" />
+
+    <None Remove="buildMultiTargeting\**" />
 
     <Reference Include="$(PkgGitVersionTask)\tools\netstandard2.0\GitVersionTask.MsBuild.dll">
       <Private>false</Private>
     </Reference>
 
-    <None Include="$(PkgGitVersionTask)\build\**\*" Pack="true" PackagePath="build\">
-      <Link>build\%(RecursiveDir)\%(Filename)%(Extension)</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-
-    <None Include="$(PkgGitVersionTask)\buildMultiTargeting\**\*" Pack="true" PackagePath="buildMultiTargeting\">
-      <Link>buildMultiTargeting\%(RecursiveDir)\%(Filename)%(Extension)</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="build\Teronis.DotNet.GitVersionCache.props">
+    <None Update="build\Teronis.MSBuild.Packaging.GitVersionCache.props">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="build\Teronis.DotNet.GitVersionCache.targets">
+    <None Update="build\Teronis.MSBuild.Packaging.GitVersionCache.targets">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <!-- BeforeTargets="Pack" -->
+  <Target Name="_FilesystemPublishmentBeforePack">
+
+    <PropertyGroup>
+      <PublishProjectMSBuildProperties>
+        PublishProfile=GitVersionCachePreBuild.pubxml;
+        Configuration=$(Configuration)
+      </PublishProjectMSBuildProperties>
+    </PropertyGroup>
+
+    <MSBuild Projects="$(MSBuildThisFileDirectory)$(MSBuildProjectName).csproj" Targets="Publish" Properties="$(PublishProjectMSBuildProperties)" />
+
+  </Target>
+
+  <!-- We depend on creation of filesystem publishment. -->
+  <Target Name="FilesystemPublishmentRootContentInPackage" DependsOnTargets="_FilesystemPublishmentBeforePack">
+    <!-- 
+    # We have to include those files in this way, because 
+    # <None Include=".." Pack="true" PackagePath=".." />
+    # does only work if publish folder already exists at
+    # the time where the target pack is called, so you
+    # would have to pack twice to get desired package.
+    -->
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="$(FilesystemPublishmentDirectory)\*">
+        <!-- When you change it, you have to adjust ContainerRootDirectory in ModuleInitializer. -->
+        <PackagePath>GitVersionCache\netstandard2.0</PackagePath>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="CleanPublishToFilesystemBeforeClean" BeforeTargets="BeforeClean">
+    <RemoveDir Directories="$(FilesystemPublishmentDirectory)" />
+  </Target>
+
+  <Import Project="$(TeronisMSBuildPackagingGenerateFilesystemPackageTargets)" />
 
 </Project>

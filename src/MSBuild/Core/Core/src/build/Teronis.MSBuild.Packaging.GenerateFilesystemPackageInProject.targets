@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <GenerateFilesystemPackageMSBuildProperties Condition="!$(GenerateFilesystemPackageMSBuildProperties.Contains('Configuration='))">
+      Configuration=$(Configuration);$(GenerateFilesystemPackageMSBuildProperties)
+    </GenerateFilesystemPackageMSBuildProperties>
+  </PropertyGroup>
+
+  <Target Name="_RestoreBuildAndGenerateFilesystemPackageProjects" DependsOnTargets="$(RestoreBuildAndGenerateFilesystemPackageProjectsDependsOn)" BeforeTargets="BeforeBuild" Condition="'@(GenerateFilesystemPackageProjects)' != ''">
+    <MSBuild Projects="%(GenerateFilesystemPackageProjects.Identity)" Targets="Restore;Build;GenerateFilesystemPackage" Properties="$(GenerateFilesystemPackageMSBuildProperties)" />
+  </Target>
+
+  <Target Name="_CleanFilesystemPackageProjects" DependsOnTargets="$(CleanFilesystemPackageProjectsDependsOn)" BeforeTargets="BeforeClean" Condition="'@(GenerateFilesystemPackageProjects)' != ''">
+    <MSBuild Projects="%(GenerateFilesystemPackageProjects.Identity)" Targets="Clean" Properties="$(GenerateFilesystemPackageMSBuildProperties)" />
+  </Target>
+
+</Project>

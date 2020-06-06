@@ -16,8 +16,14 @@
     </ProjectReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="@(ProjectReference)">
+      <AdditionalProperties Condition="'%(Filename)' == 'Teronis.NetStandard.Core'">%(AdditionalProperties);TargetFramework=$(TargetFramework)</AdditionalProperties>
+    </ProjectReference>
+  </ItemGroup>
+
   <Target Name="InstallGitVersionTask" >
-  
+
     <PropertyGroup>
       <HasGitVersionTask Condition="'%(PackageReference.Identity)' == 'GitVersionTask'">true</HasGitVersionTask>
     </PropertyGroup>

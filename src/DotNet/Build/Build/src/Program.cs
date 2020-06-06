@@ -37,8 +37,8 @@ namespace Teronis.DotNet.Build
 
             // Marker file represents root directory
             var dotNetProgram = $"dotnet.exe";
-            //var dotNetArguments = $"--{ConfigurationLongName} {options.Configuration} --{VerbosityLongName} {options.Verbosity}";
-            var dotNetArguments = $"-p:{ConfigurationLongName}={options.Configuration} -p:{VerbosityLongName}={options.Verbosity}";
+            var dotNetArguments = $"--{ConfigurationLongName} {options.Configuration} --{VerbosityLongName} {options.Verbosity}";
+            //var dotNetArguments = $"-p:{ConfigurationLongName}={options.Configuration} -p:{VerbosityLongName}={options.Verbosity}";
             var rootDirectory = Utilities.GetRootDirectory() ?? throw new DirectoryNotFoundException("Root directory not found.");
             var sourceDirectory = Path.Combine(rootDirectory.FullName, "src");
 
@@ -76,8 +76,8 @@ namespace Teronis.DotNet.Build
             Task RunDotNetProject(string command, ProjectInfo project, string? arguments = null)
             {
                 //var dotNetArgumentsWithAdditionals = dotNetArguments + " " + arguments;
-                //var dotNetCommand = $"{command} \"{project.Path}\" {arguments}";
-                var dotNetCommand = $"msbuild -t:{command} \"{project.Path}\" {arguments}";
+                var dotNetCommand = $"{command} \"{project.Path}\" {arguments}";
+                //var dotNetCommand = $"msbuild -t:{command} \"{project.Path}\" {arguments}";
 
                 if (options.DryRun) {
                     Console.WriteLine($"{project.Name}");

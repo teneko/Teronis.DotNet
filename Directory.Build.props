@@ -6,6 +6,7 @@
   <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackagePropsPath)" />
 
   <PropertyGroup>
+    <!-- <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies> -->
     <DisableGitVersionTaskAutoInstall>false</DisableGitVersionTaskAutoInstall>
     <ProjectBuildInPackageVerbosity>detailed</ProjectBuildInPackageVerbosity>
   </PropertyGroup>

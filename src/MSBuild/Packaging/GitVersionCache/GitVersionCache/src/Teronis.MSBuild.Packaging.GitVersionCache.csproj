@@ -136,6 +136,6 @@
     <RemoveDir Directories="$(FilesystemPublishmentDirectory)" />
   </Target>
 
-  <Import Project="$(TeronisMSBuildPackagingGenerateFilesystemPackageTargets)" />
+  <Import Project="$(TeronisMSBuildPackagingGenerateFilesystemPackageTargetsPath)" />
 
 </Project>

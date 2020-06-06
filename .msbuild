@@ -14,9 +14,9 @@
     <TeronisMSBuildCoreUtilitiesTargets>$(RootDirectory)src\MSBuild\Core\Core\src\build\Teronis.MSBuild.Utilities.targets</TeronisMSBuildCoreUtilitiesTargets>
     <TeronisMSBuildPackagingProjectBuildInPackagePropsPath Condition="'$(TeronisMSBuildPackagingProjectBuildInPackagePropsPath)' != 'true'">$(RootDirectory)\src\MSBuild\Packaging\ProjectBuildInPackage\src\build\Teronis.MSBuild.Packaging.ProjectBuildInPackage.props</TeronisMSBuildPackagingProjectBuildInPackagePropsPath>
     <TeronisMSBuildPackagingProjectBuildInPackageTargetsPath Condition="'$(TeronisMSBuildPackagingProjectBuildInPackageTargetsPath)' != 'true'">$(RootDirectory)\src\MSBuild\Packaging\ProjectBuildInPackage\src\build\Teronis.MSBuild.Packaging.ProjectBuildInPackage.Targets</TeronisMSBuildPackagingProjectBuildInPackageTargetsPath>
-    <TeronisMSBuildPackagingGenerateFilesystemPackageTargets>$(RootDirectory)src\MSBuild\Core\Core\src\build\Teronis.MSBuild.Packaging.GenerateFilesystemPackage.targets</TeronisMSBuildPackagingGenerateFilesystemPackageTargets>
+    <TeronisMSBuildPackagingGenerateFilesystemPackageTargetsPath>$(RootDirectory)src\MSBuild\Core\Core\src\build\Teronis.MSBuild.Packaging.GenerateFilesystemPackage.targets</TeronisMSBuildPackagingGenerateFilesystemPackageTargetsPath>
     <TeronisMSBuildPackagingGenerateFilesystemPackageInProjectTargets>$(RootDirectory)src\MSBuild\Core\Core\src\build\Teronis.MSBuild.Packaging.GenerateFilesystemPackageInProject.targets</TeronisMSBuildPackagingGenerateFilesystemPackageInProjectTargets>
-    <TeronisMSBuildCoreTasksTargets>$(RootDirectory)src\MSBuild\Core\Core\src\bin\$(Configuration)\PackagePublish\build\Teronis.MSBuild.Tasks.targets</TeronisMSBuildCoreTasksTargets>
+    <TeronisMSBuildCoreTasksTargetsPathTemplate>$(RootDirectory)src\MSBuild\Core\Core\src\bin\$(Configuration)\(TargetFramework)\packagePublish\build\Teronis.MSBuild.Tasks.targets</TeronisMSBuildCoreTasksTargetsPathTemplate>
   </PropertyGroup>
 
 </Project>

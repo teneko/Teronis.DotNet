@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <IsTeronisMSBuildPackagingGenerateFilesystemPackagePropsImported>true</IsTeronisMSBuildPackagingGenerateFilesystemPackagePropsImported>
-    <UnzipPackageAfterPackDependsOn Condition="'$(UnzipPackageAfterPackDependsOn)' == ''" />
+    <GenerateFilesystemPackageDependsOn Condition="'$(UnzipPackageAfterPackDependsOn)' == ''" />
     <!-- The dependencies of target UnzipPackageClean. -->
     <CleanFilesystemPackageDependsOn Condition="'$(CleanFilesystemPackageDependsOn)' == ''" />
   </PropertyGroup>

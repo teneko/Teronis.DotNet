@@ -2,9 +2,17 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <GenerateFilesystemPackageMSBuildProperties Condition="!$(GenerateFilesystemPackageMSBuildProperties.Contains('Configuration='))">
+
+    <!-- The properties below are inherited. -->
+    
+    <!--<GenerateFilesystemPackageMSBuildProperties Condition="!$(GenerateFilesystemPackageMSBuildProperties.Contains('Configuration='))">
       Configuration=$(Configuration);$(GenerateFilesystemPackageMSBuildProperties)
-    </GenerateFilesystemPackageMSBuildProperties>
+    </GenerateFilesystemPackageMSBuildProperties>-->
+
+    <!--<GenerateFilesystemPackageMSBuildProperties Condition="!$(GenerateFilesystemPackageMSBuildProperties.Contains('TargetFramework='))">
+      TargetFramework=$(TargetFramework);$(GenerateFilesystemPackageMSBuildProperties)
+    </GenerateFilesystemPackageMSBuildProperties>-->
+
   </PropertyGroup>
 
   <Target Name="_RestoreBuildAndGenerateFilesystemPackageProjects" DependsOnTargets="$(RestoreBuildAndGenerateFilesystemPackageProjectsDependsOn)" BeforeTargets="BeforeBuild" Condition="'@(GenerateFilesystemPackageProjects)' != ''">

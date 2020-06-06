@@ -1,16 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Condition="'$(IsRootMarkerFileImported)' != 'true'" Project="$([MSBuild]::GetPathOfFileAbove(.msbuild))" />
-  <Import Project="..\..\src\build\Teronis.MSBuild.Packaging.ProjectBuildInPackage.props" />
+  <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackagePropsPath)" />
 
   <PropertyGroup>
-    <!-- To generate a package is part of the test. -->
     <IncludeSymbols>false</IncludeSymbols>
+    <!-- To generate a package is part of the test. -->
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ref\Reference.MSBuild.Packaging.ProjectBuildInPackage.csproj" />
     <ProjectReference Include="..\Test.Localization\Test.MSBuild.Packaging.ProjectBuildInPackage.Localization.csproj" PrivateAssets="all" />
   </ItemGroup>
 
@@ -58,6 +57,6 @@
 
   </Target>
   
-  <Import Project="..\..\src\build\Teronis.MSBuild.Packaging.ProjectBuildInPackage.targets" />
+  <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackageTargetsPath)" />
 
 </Project>

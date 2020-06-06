@@ -34,11 +34,13 @@
     </MSBuild>
 
     <ItemGroup>
+      
       <_UnzippedFiles Include="$(UnzipProjectBuildInPackageDestinationDirectory)\**\*" />
 
       <_UnzippedFiles Include="@(_UnzippedFiles)">
         <DirectoryWithoutSlash>$([System.IO.Path]::GetFileName($([System.IO.Path]::GetDirectoryName('%(_UnzippedFiles.FullPath)'))))\%(_UnzippedFiles.Filename)%(_UnzippedFiles.Extension)</DirectoryWithoutSlash>
       </_UnzippedFiles>
+      
     </ItemGroup>
 
     <PropertyGroup>
@@ -49,7 +51,7 @@
     <Error Condition="'$(HasLocalizationResources)' != 'true'" Text="[$(MSBuildThisFileName)] Test failed: The local package %(_FoundPackage.Identity) did not contain expected private assets." />
     <Message Text="[$(MSBuildThisFileName)] Test succeeded: The local package %(_FoundPackage.Identity) contained expected private assets." Importance="high" />
 
-    <!--<Delete Files="@(_FoundPackage)" />-->
+    <Delete Files="@(_FoundPackage)" />
     <Delete Files="@(_UnzippedFiles)" />
     <RemoveDir Directories="@(_UnzippedFiles->'%(RootDir)%(Directory)')" />
     <Message Text="[$(MSBuildThisFileName)] package %(_FoundPackage.Filename)%(_FoundPackage.Extension) has been deleted from the disk." Importance="high" />

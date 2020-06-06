@@ -20,7 +20,7 @@ jobs:
     inputs:
       filePath: '$(Build.SourcesDirectory)\build.ps1'
       # test depeneds on [ build, pack ]
-      arguments: 'test --configuration $(configuration) --verbosity $(verbosity)'
+      arguments: 'azure --configuration $(configuration) --verbosity $(verbosity)'
       
   - task: CopyFiles@2
     displayName: 'Copy Build Artifacts'

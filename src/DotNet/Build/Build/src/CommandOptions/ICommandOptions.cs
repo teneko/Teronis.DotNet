@@ -12,10 +12,10 @@ namespace Teronis.DotNet.Build
         string Command { get; }
 
         [Option(ConfigurationLongName, Default = "Release")]
-        string Configuration { get; set; }
+        string? Configuration { get; set; }
 
         [Option(VerbosityLongName, Default = "normal")]
-        string Verbosity { get; set; }
+        string? Verbosity { get; set; }
 
         /// <summary>
         /// The affected command will be printed out.

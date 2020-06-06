@@ -5,12 +5,11 @@ using System.Text.RegularExpressions;
 using CommandLine;
 using System.Threading.Tasks;
 using Teronis.DotNet.Build.CommandOptions;
+using System.Collections.Generic;
 
 using static Bullseye.Targets;
 using static SimpleExec.Command;
 using static Teronis.DotNet.Build.ICommandOptions;
-using System.Collections.Generic;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Teronis.DotNet.Build
 {
@@ -18,7 +17,7 @@ namespace Teronis.DotNet.Build
     {
         static async Task<int> Main(string[] args)
         {
-            var options = Parser.Default.ParseArguments<RestoreCommandOptions, BuildCommandOptions, PackCommandOptions, TestCommandOptions>(args)
+            var options = Parser.Default.ParseArguments<RestoreCommandOptions, BuildCommandOptions, PackCommandOptions, TestCommandOptions, AzureCommandOptions>(args)
                 .MapResult<ICommandOptions, ICommandOptions>((options) => options, (errors) => {
 #if DEBUG
                     if (errors != null) {
@@ -37,58 +36,89 @@ namespace Teronis.DotNet.Build
 
             // Marker file represents root directory
             var dotNetProgram = $"dotnet.exe";
-            var dotNetArguments = $"--{ConfigurationLongName} {options.Configuration} --{VerbosityLongName} {options.Verbosity}";
-            //var dotNetArguments = $"-p:{ConfigurationLongName}={options.Configuration} -p:{VerbosityLongName}={options.Verbosity}";
             var rootDirectory = Utilities.GetRootDirectory() ?? throw new DirectoryNotFoundException("Root directory not found.");
             var sourceDirectory = Path.Combine(rootDirectory.FullName, "src");
 
             var allProjects = Directory.GetFiles(sourceDirectory, "*.csproj", SearchOption.AllDirectories)
                    .Select(x => new ProjectInfo(new FileInfo(x)));
 
-            var matchTestProjects = @"(\.Test\.csproj|\\test\\)";
-
-            var matchBuildProgramProjects = Regex.Escape(Path.Combine(sourceDirectory, "DotNet", "Build", @"Build\"));
-            var matchBuildExcludedProjects = string.Format(@"({0}|{1})", matchTestProjects, matchBuildProgramProjects);
-
-            var matchExampleProjects = @"(\.Example\.csproj|\\example\\)";
             var matchReferenceProjects = @"(\\Reference\.|\\ref\\)";
-            var matchPackExcludedProjects = string.Format(@"({0}|{1}|{2})", matchBuildExcludedProjects, matchExampleProjects, matchReferenceProjects);
+            var matchTestProjects = @"(\.Test\.csproj|\\test\\)";
+            var matchBuildProgramProjects = Regex.Escape(Path.Combine(sourceDirectory, "DotNet", "Build", @"Build\"));
+            var matchBuildExcludedProjects = string.Format(@"({0}|{1}|{2})", matchReferenceProjects, matchTestProjects, matchBuildProgramProjects);
 
-            IEnumerable<ProjectInfo> filteredProjects;
+            var matchExampleProjects = @"(\\Example\.|\.Example\.csproj|\\example\\)";
+            var matchPackExcludedProjects = string.Format(@"({0}|{1})", matchBuildExcludedProjects, matchExampleProjects);
 
-            switch (options.Command) {
-                case RestoreCommandOptions.RestoreCommand:
-                    filteredProjects = allProjects;
-                    break;
-                case BuildCommandOptions.BuildCommand:
-                    filteredProjects = allProjects.Where(x => !Regex.IsMatch(x.Path, matchBuildExcludedProjects));
-                    break;
-                case PackCommandOptions.PackCommand:
-                    filteredProjects = allProjects.Where(x => !Regex.IsMatch(x.Path, matchPackExcludedProjects));
-                    break;
-                case TestCommandOptions.TestCommand:
-                    filteredProjects = allProjects.Where(x => Regex.IsMatch(x.Path, matchTestProjects));
-                    break;
-                default:
-                    throw new ArgumentException();
+            var matchAzureExcludedProjects = string.Format(@"({0}|{1})", matchReferenceProjects, matchBuildProgramProjects);
+
+            IEnumerable<ProjectInfo> restoreProjects = null!;
+            IEnumerable<ProjectInfo> buildProjects = null!;
+            IEnumerable<ProjectInfo> packProjects = null!;
+            IEnumerable<ProjectInfo> testProjects = null!;
+            IEnumerable<ProjectInfo> azureProjects = null!;
+
+            IEnumerable<ProjectInfo> getPackProjects() =>
+                allProjects.Where(x => !Regex.IsMatch(x.Path, matchPackExcludedProjects));
+
+            IEnumerable<ProjectInfo> getTestProjects() =>
+                allProjects.Where(x => Regex.IsMatch(x.Path, matchTestProjects));
+
+            if (options.Command == RestoreCommandOptions.RestoreCommand) {
+                restoreProjects = allProjects;
+            } else if (options.Command == BuildCommandOptions.BuildCommand) {
+                buildProjects = allProjects.Where(x => !Regex.IsMatch(x.Path, matchBuildExcludedProjects));
+                restoreProjects = buildProjects;
+            } else if (options.Command == PackCommandOptions.PackCommand) {
+                packProjects = getPackProjects();
+                buildProjects = packProjects;
+            } else if (options.Command == TestCommandOptions.TestCommand) {
+                testProjects = getTestProjects();
+                buildProjects = testProjects;
+                restoreProjects = testProjects;
+            } else if (options.Command == AzureCommandOptions.AzureCommand) {
+                azureProjects = allProjects.Where(x => !Regex.IsMatch(x.Path, matchAzureExcludedProjects));
+                testProjects = getTestProjects();
+                packProjects = getPackProjects();
+                buildProjects = azureProjects;
+                restoreProjects = azureProjects;
+            } else {
+                throw new ArgumentException();
             }
 
-            Task RunDotNetProject(string command, ProjectInfo project, string? arguments = null)
+            Task RunDotNetProject(BuildStyle buildStyle, string command, ProjectInfo project, string? additionalArguments = null)
             {
-                //var dotNetArgumentsWithAdditionals = dotNetArguments + " " + arguments;
-                var dotNetCommand = $"{command} \"{project.Path}\" {arguments}";
-                //var dotNetCommand = $"msbuild -t:{command} \"{project.Path}\" {arguments}";
+                string commandArgs;
+
+                if (buildStyle == BuildStyle.DotNet) {
+                    commandArgs = $"{command} \"{project.Path}\" {additionalArguments}";
+                } else if (buildStyle == BuildStyle.MSBuild) {
+                    commandArgs = $"msbuild -t:{command} \"{project.Path}\" {additionalArguments}";
+                } else {
+                    throw new ArgumentException("Bad build style.");
+                }
 
                 if (options.DryRun) {
                     Console.WriteLine($"{project.Name}");
                     return Task.CompletedTask;
                 } else {
-                    return RunAsync(dotNetProgram, args: dotNetCommand);
+                    return RunAsync(dotNetProgram, args: commandArgs);
                 }
             }
 
-            async Task RunDotNetProjects(string command, IEnumerable<ProjectInfo> projects, string? arguments = null)
+            async Task RunDotNetProjects(BuildStyle buildStyle, string command, IEnumerable<ProjectInfo> projects)
             {
+                options = options ?? throw new ArgumentNullException(nameof(options));
+                string additonalArguments;
+
+                if (buildStyle == BuildStyle.DotNet) {
+                    additonalArguments = $"--{ConfigurationLongName} {options.Configuration} --{VerbosityLongName} {options.Verbosity}";
+                } else if (buildStyle == BuildStyle.MSBuild) {
+                    additonalArguments = $"-p:{ConfigurationLongName}={options.Configuration} -p:{VerbosityLongName}={options.Verbosity}";
+                } else {
+                    throw new ArgumentException("Bad build style.");
+                }
+
                 if (options.DryRun) {
                     Console.ForegroundColor = ConsoleColor.Gray;
                     Console.WriteLine(dotNetProgram + " " + command);
@@ -96,16 +126,16 @@ namespace Teronis.DotNet.Build
                 }
 
                 foreach (var project in projects) {
-                    await RunDotNetProject(command, project, arguments);
+                    await RunDotNetProject(buildStyle, command, project, additonalArguments);
 
                     if (!options.DryRun) {
-                        Console.WriteLine(new string(Enumerable.Range(0, Console.WindowWidth).Select(x => '_').ToArray()));
+                        Console.WriteLine(new string(Enumerable.Range(0, 80).Select(x => '_').ToArray()));
                     }
                 }
 
                 if (options.DryRun) {
                     Console.ForegroundColor = ConsoleColor.Gray;
-                    Console.WriteLine(dotNetArguments);
+                    Console.WriteLine(additonalArguments);
                     Console.ResetColor();
                 }
             }
@@ -114,23 +144,31 @@ namespace Teronis.DotNet.Build
                 options.NoDependencies ? new string[] { } : dependencies;
 
             Target(RestoreCommandOptions.RestoreCommand, async () => {
-                await RunDotNetProjects(RestoreCommandOptions.RestoreCommand, filteredProjects);
+                await RunDotNetProjects(BuildStyle.MSBuild, RestoreCommandOptions.RestoreCommand, restoreProjects);
             });
 
             Target(BuildCommandOptions.BuildCommand, DependsOnIf(RestoreCommandOptions.RestoreCommand), async () => {
-                await RunDotNetProjects(BuildCommandOptions.BuildCommand, filteredProjects, dotNetArguments);
+                await RunDotNetProjects(BuildStyle.MSBuild, BuildCommandOptions.BuildCommand, buildProjects);
             });
 
             Target(PackCommandOptions.PackCommand, DependsOnIf(BuildCommandOptions.BuildCommand), async () => {
-                await RunDotNetProjects(PackCommandOptions.PackCommand, filteredProjects, dotNetArguments);
+                await RunDotNetProjects(BuildStyle.MSBuild, PackCommandOptions.PackCommand, packProjects);
             });
 
             Target(TestCommandOptions.TestCommand, DependsOnIf(BuildCommandOptions.BuildCommand), async () => {
-                await RunDotNetProjects(BuildCommandOptions.BuildCommand, filteredProjects, dotNetArguments);
+                await RunDotNetProjects(BuildStyle.DotNet, TestCommandOptions.TestCommand, testProjects);
             });
+
+            Target(AzureCommandOptions.AzureCommand, DependsOnIf(PackCommandOptions.PackCommand, TestCommandOptions.TestCommand), () => { });
 
             await RunTargetsAndExitAsync(new string[] { options.Command });
             return 0;
+        }
+
+        private enum BuildStyle
+        {
+            DotNet,
+            MSBuild
         }
     }
 }

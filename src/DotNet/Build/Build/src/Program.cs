@@ -37,7 +37,8 @@ namespace Teronis.DotNet.Build
 
             // Marker file represents root directory
             var dotNetProgram = $"dotnet.exe";
-            var dotNetArguments = $"--{ConfigurationLongName} {options.Configuration} --{VerbosityLongName} {options.Verbosity}";
+            //var dotNetArguments = $"--{ConfigurationLongName} {options.Configuration} --{VerbosityLongName} {options.Verbosity}";
+            var dotNetArguments = $"-p:{ConfigurationLongName}={options.Configuration} -p:{VerbosityLongName}={options.Verbosity}";
             var rootDirectory = Utilities.GetRootDirectory() ?? throw new DirectoryNotFoundException("Root directory not found.");
             var sourceDirectory = Path.Combine(rootDirectory.FullName, "src");
 
@@ -75,7 +76,8 @@ namespace Teronis.DotNet.Build
             Task RunDotNetProject(string command, ProjectInfo project, string? arguments = null)
             {
                 //var dotNetArgumentsWithAdditionals = dotNetArguments + " " + arguments;
-                var dotNetCommand = $"{command} \"{project.Path}\" {arguments}";
+                //var dotNetCommand = $"{command} \"{project.Path}\" {arguments}";
+                var dotNetCommand = $"msbuild -t:{command} \"{project.Path}\" {arguments}";
 
                 if (options.DryRun) {
                     Console.WriteLine($"{project.Name}");
@@ -95,6 +97,10 @@ namespace Teronis.DotNet.Build
 
                 foreach (var project in projects) {
                     await RunDotNetProject(command, project, arguments);
+
+                    if (!options.DryRun) {
+                        Console.WriteLine(new string(Enumerable.Range(0, Console.WindowWidth).Select(x => '_').ToArray()));
+                    }
                 }
 
                 if (options.DryRun) {
@@ -104,19 +110,22 @@ namespace Teronis.DotNet.Build
                 }
             }
 
+            string[] DependsOnIf(params string[] dependencies) =>
+                options.NoDependencies ? new string[] { } : dependencies;
+
             Target(RestoreCommandOptions.RestoreCommand, async () => {
                 await RunDotNetProjects(RestoreCommandOptions.RestoreCommand, filteredProjects);
             });
 
-            Target(BuildCommandOptions.BuildCommand, DependsOn(RestoreCommandOptions.RestoreCommand), async () => {
+            Target(BuildCommandOptions.BuildCommand, DependsOnIf(RestoreCommandOptions.RestoreCommand), async () => {
                 await RunDotNetProjects(BuildCommandOptions.BuildCommand, filteredProjects, dotNetArguments);
             });
 
-            Target(PackCommandOptions.PackCommand, DependsOn(BuildCommandOptions.BuildCommand), async () => {
+            Target(PackCommandOptions.PackCommand, DependsOnIf(BuildCommandOptions.BuildCommand), async () => {
                 await RunDotNetProjects(PackCommandOptions.PackCommand, filteredProjects, dotNetArguments);
             });
 
-            Target(TestCommandOptions.TestCommand, DependsOn(BuildCommandOptions.BuildCommand), async () => {
+            Target(TestCommandOptions.TestCommand, DependsOnIf(BuildCommandOptions.BuildCommand), async () => {
                 await RunDotNetProjects(BuildCommandOptions.BuildCommand, filteredProjects, dotNetArguments);
             });
 

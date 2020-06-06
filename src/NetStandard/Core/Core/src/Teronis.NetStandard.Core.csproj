@@ -16,13 +16,14 @@
   
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
     <RootNamespace>Teronis</RootNamespace>  
     <Description>This project contains core utility, core extension and core tool functions, but also core classes that extends known structures.</Description>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Fody" Version="6.0.6">
+    <PackageReference Include="Fody" Version="6.2.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -30,8 +31,8 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.0" />
     <PackageReference Include="MorseCode.ITask" Version="2.0.3" />
-    <PackageReference Include="PropertyChanged.Fody" Version="3.2.1" />
-    <PackageReference Include="PropertyChanging.Fody" Version="1.30.0" />
+    <PackageReference Include="PropertyChanged.Fody" Version="3.2.8" />
+    <PackageReference Include="PropertyChanging.Fody" Version="1.30.1" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
     <PackageReference Include="System.Interactive.Async" Version="4.0.0" />
     <PackageReference Include="System.Management" Version="4.7.0" />
@@ -43,4 +44,11 @@
     <!--<ProjectReference Include="..\..\..\..\MSBuild\Packaging\GitVersionCache\Reference.GitVersionCache\src\Reference.MSBuild.Packaging.GitVersionCache.csproj" />-->
     <ProjectReference Include="..\..\Core.Localization\src\Teronis.NetStandard.Core.Localization.csproj" PrivateAssets="all" />
   </ItemGroup>
+
+  <!--<Target Name="GetTargetPath" Returns="@(_FakeOutputPath)">
+    <ItemGroup>
+      <_FakeOutputPath Include="$(MSBuildProjectDirectory)\$(PackageOutputPath)\$(AssemblyName).UNK" />
+    </ItemGroup>
+  </Target>-->
+
 </Project>

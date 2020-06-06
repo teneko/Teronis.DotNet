@@ -6,7 +6,8 @@ namespace Teronis.DotNet.Build
     {
         public const string ConfigurationLongName = "configuration";
         public const string VerbosityLongName = "verbosity";
-        public const string DryRunLongName = "dryrun";
+        public const string DryRunLongName = "dry-run";
+        public const string NoDependenciesLongName = "no-dependencies";
 
         string Command { get; }
 
@@ -16,7 +17,13 @@ namespace Teronis.DotNet.Build
         [Option(VerbosityLongName, Default = "normal")]
         string Verbosity { get; set; }
 
+        /// <summary>
+        /// The affected command will be printed out.
+        /// </summary>
         [Option(DryRunLongName, Default = false)]
         bool DryRun { get; set; }
+
+        [Option(NoDependenciesLongName, Default = false)]
+        bool NoDependencies { get; set; }
     }
 }

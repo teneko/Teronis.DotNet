@@ -10,8 +10,4 @@
     <PackageReference Include="System.Management" Version="4.7.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj" />
-  </ItemGroup>
-
 </Project>

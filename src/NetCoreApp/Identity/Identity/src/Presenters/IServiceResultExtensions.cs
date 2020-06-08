@@ -39,5 +39,12 @@ namespace Teronis.Identity.Extensions
 
         public static bool Success(this IServiceResult serviceResult, params string[] excludeErrorCodes) =>
             Success(serviceResult, (IEnumerable<string>)excludeErrorCodes);
+
+        public static void ThrowOnError(this IServiceResult serviceResult)
+        {
+            if (!serviceResult.Succeeded) {
+                throw new NotSucceededException(serviceResult, $"Service result did not succeed. {serviceResult.Errors.ToStringOrDefaultMessage()}");
+            }
+        }
     }
 }

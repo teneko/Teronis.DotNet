@@ -17,7 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj">
+      <AdditionalProperties>TargetFramework=$(TargetFramework)</AdditionalProperties>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>

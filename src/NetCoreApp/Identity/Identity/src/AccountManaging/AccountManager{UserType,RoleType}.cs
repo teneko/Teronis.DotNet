@@ -12,6 +12,7 @@ using Teronis.ObjectModel.Annotations;
 using Teronis.Identity.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System.Linq;
 
 namespace Teronis.Identity.AccountManaging
 {
@@ -31,6 +32,12 @@ namespace Teronis.Identity.AccountManaging
         {
             errorDetailsProvider = new ErrorDetailsProvider(() => accountManagerOptions.Value.IncludeErrorDetails, logger);
             this.accountManagerOptions = accountManagerOptions.Value;
+            // We ensure, that this instance is not tracking user or role. But it does not
+            // prevent that the user manager and the role manager are tracking them. So we
+            // have to try to get first the local tracked entity before we get an untracked
+            // entity. Otherwise it would cause into an exception where two instances with
+            // same key are accidentally tracked.
+            dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             this.dbContext = dbContext;
             this.userManager = userManager;
             this.roleManager = roleManager;
@@ -40,7 +47,8 @@ namespace Teronis.Identity.AccountManaging
         private async Task<IServiceResult<RoleType>> loadRoleByNameAsync(string roleName)
         {
             try {
-                var createdRoleEntity = await roleManager.FindByNameAsync(roleName);
+                var createdRoleEntity =  dbContext.Set<RoleType>().Local.SingleOrDefault(x => x.RoleName == roleName) ??
+                    await roleManager.FindByNameAsync(roleName);
 
                 return ServiceResult<RoleType>
                     .Success(createdRoleEntity)
@@ -101,7 +109,11 @@ namespace Teronis.Identity.AccountManaging
         private async Task<IServiceResult<UserType>> loadUserByNameAsync(string userName)
         {
             try {
-                var createdUserEntity = await userManager.FindByNameAsync(userName);
+                var createdUserEntity = dbContext.Set<UserType>().Local.SingleOrDefault(x => x.UserName == userName) ??
+                    await userManager.FindByNameAsync(userName);
+
+                //var createdUserEntry = dbContext.Entry(createdUserEntity);
+                //createdUserEntry.State = EntityState.Detached;
 
                 return ServiceResult<UserType>
                     .Success(createdUserEntity)
@@ -134,7 +146,7 @@ namespace Teronis.Identity.AccountManaging
 
                 try {
                     var userResult = await userManager.CreateAsync(userEntity, password);
-
+                    
                     if (!userResult.Succeeded) {
                         var resultJsonErrors = userResult.ToJsonErrors();
                         resultJsonErrors.Insert(0, insensitiveErrorMessage.ToJsonError());
@@ -156,6 +168,7 @@ namespace Teronis.Identity.AccountManaging
             }
 
             var loadedUser = loadUserResult.Content!;
+            //dbContext.Entrie(loadedUser).State = EntityState.Detached;
             IServiceResult<UserType>? userRoleAssignmentResult = null;
 
             if (roles != null) {

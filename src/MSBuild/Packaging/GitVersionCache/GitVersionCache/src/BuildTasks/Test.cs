@@ -5,7 +5,7 @@ using Microsoft.Build.Utilities;
 
 namespace Teronis.GitVersionCache.BuildTasks.Models
 {
-    public class TestTask : Task
+    public class Test : Task
     {
         public override bool Execute()
         {

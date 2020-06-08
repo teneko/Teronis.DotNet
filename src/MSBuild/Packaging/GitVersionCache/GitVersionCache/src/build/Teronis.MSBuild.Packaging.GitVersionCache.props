@@ -14,8 +14,8 @@
     <GlobalGitVersionTaskTargetsFile>$(PkgGitVersionTask)\build\$(GitVersionTaskTargetsFilenameWithExtension)</GlobalGitVersionTaskTargetsFile>
     <ImportGlobalGitVersionTaskTargets Condition="!Exists('$(LocalGitVersionTaskTargetsFile)')">true</ImportGlobalGitVersionTaskTargets>-->
 
-    <GitVersionCacheAssemblyFile Condition="$(GitVersionCacheAssemblyFile) == ''">$(MSBuildThisFileDirectory)..\lib\netcoreapp2.1\Teronis.DotNet.GitVersionCache.dll</GitVersionCacheAssemblyFile>
-    <!--<DisableGitVersionCache Condition="'$(DisableGitVersionCache)' == ''">false</DisableGitVersionCache>-->
+    <GitVersionCacheAssemblyFile Condition="$(GitVersionCacheAssemblyFile) == ''">$(MSBuildThisFileDirectory)..\GitVersionCache\netstandard2.0\Teronis.MSBuild.Packaging.GitVersionCache.dll</GitVersionCacheAssemblyFile>
+    <DisableGitVersionCache Condition="'$(DisableGitVersionCache)' == ''">false</DisableGitVersionCache>
   </PropertyGroup>
 
   <!--<Import Project="$(LocalGitVersionTaskPropsFile)" Condition="'$(ImportGlobalGitVersionTaskProps)' != 'true'" />

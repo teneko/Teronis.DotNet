@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project InitialTargets="CopySourceProjectToLocal" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="CopySourceProjectToLocal">
+
+    <ItemGroup>
+      <FodyFiles Include="$(SourceProjectDirectory)\FodyWeavers*"></FodyFiles>
+    </ItemGroup>
+
+    <Copy SourceFiles="@(FodyFiles)" DestinationFolder="." SkipUnchangedFiles="true" Condition="'@(FodyFiles)' != ''" />
+
+  </Target>
+
+</Project>

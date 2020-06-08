@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Condition="'$(IsRootMarkerFileImported)' != 'true'" Project="$([MSBuild]::GetPathOfFileAbove(.msbuild))" />
-  <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackagePropsPath)" />
+  <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackagePropsFile)" />
 
   <PropertyGroup>
     <IncludeSymbols>false</IncludeSymbols>
@@ -28,7 +28,7 @@
       </LocalPackageSearchProperties>
     </PropertyGroup>
     
-    <MSBuild Projects="$(TeronisMSBuildCoreUtilitiesTargets)" Targets="UnzipPackage" Properties="$(LocalPackageSearchProperties)">
+    <MSBuild Projects="$(TeronisMSBuildCoreUtilitiesTargetsFile)" Targets="UnzipPackage" Properties="$(LocalPackageSearchProperties)">
       <Output TaskParameter="TargetOutputs" ItemName="_FoundPackage" />
     </MSBuild>
 
@@ -57,6 +57,6 @@
 
   </Target>
   
-  <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackageTargetsPath)" />
+  <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackageTargetsFile)" />
 
 </Project>

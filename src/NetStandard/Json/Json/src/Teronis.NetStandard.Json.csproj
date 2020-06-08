@@ -1,17 +1,19 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project>
+  
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Teronis.Json</RootNamespace>
     <Description>This project contains classes for Json purposes.</Description>
   </PropertyGroup>
 
+  <Import Project="Sdk.props" Condition="'$(DisableSdk)' != 'true'" />
+
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Core\Core\src\Teronis.NetStandard.Core.csproj" />
+    <ProjectReference Include="..\..\..\Core\Core\src\Teronis.NetStandard.Core.csproj" Condition="'$(DisableCoreProject)' != 'true'" />
   </ItemGroup>
 
 </Project>

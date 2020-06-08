@@ -3,7 +3,7 @@
 
   <Import Condition="'$(IsRootMarkerFileImported)' != 'true'" Project="$([MSBuild]::GetPathOfFileAbove(.msbuild))" />
   <Import Condition="'$(IsTeronisDotNetCorePropsFileImported)' != 'true'" Project="$(RootCorePropsPath)" />
-  <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackagePropsPath)" />
+  <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackagePropsFile)" />
 
   <PropertyGroup>
     <!-- <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies> -->

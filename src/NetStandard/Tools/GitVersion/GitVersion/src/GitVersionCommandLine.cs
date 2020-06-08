@@ -7,10 +7,10 @@ namespace Teronis.Tools.GitVersion
     {
         private const string GitVersionExecutableName = "GitVersion.exe";
 
-        public static string ExecuteGitVersion(string args) =>
+        public static string ExecuteGitVersion(string? args = null) =>
             Read(GitVersionExecutableName, args);
 
-        public static Task<string> ExecuteGitVersionAsync(string args) =>
+        public static Task<string> ExecuteGitVersionAsync(string? args= null) =>
             ReadAsync(GitVersionExecutableName, args);
     }
 }

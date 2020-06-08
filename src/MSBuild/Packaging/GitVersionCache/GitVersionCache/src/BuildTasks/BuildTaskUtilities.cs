@@ -5,13 +5,15 @@ using System.Reflection;
 using GitVersion.MSBuildTask;
 using GitVersionTask.MsBuild;
 using Teronis.GitVersionCache.Utilities;
+using Teronis.IO;
 
 namespace Teronis.GitVersionCache.BuildTasks
 {
     public static class BuildTaskUtilities
     {
         public static DirectoryInfo GetGitVersionYamlDirectory() =>
-              DirectoryUtilities.GetDirectoryOfFileAbove("GitVersion.yml", ModuleInitializer.ContainerRootDirectory);
+              DirectoryTools.GetDirectoryOfFileAbove("GitVersion.yml", ModuleInitializer.ContainerRootDirectory);
+        //DirectoryUtilities.GetDirectoryOfFileAbove("GitVersion.yml", ModuleInitializer.ContainerRootDirectory);
 
         ///// <summary>
         ///// Gets the GitVersionCore owned list of <see cref="ServiceDescriptor"/>s.

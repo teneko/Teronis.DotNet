@@ -3,22 +3,24 @@
 
   <Import Condition="'$(IsRootMarkerFileImported)' != 'true'" Project="$([MSBuild]::GetPathOfFileAbove(.msbuild))" />
   <Import Condition="'$(IsTeronisDotNetCorePropsFileImported)' != 'true'" Project="$(RootCorePropsPath)" />
-  <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackageTargetsPath)" />
+  <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackageTargetsFile)" />
 
   <PropertyGroup>
-    <TeronisMSBuildPackagingGenerateFilesystemPackageInProjectTargets>$(RootDirectory)src\MSBuild\Core\Core\src\bin\PackagePublish\build\Teronis.MSBuild.Packaging.GenerateFilesystemPackageInProject.targets</TeronisMSBuildPackagingGenerateFilesystemPackageInProjectTargets>
+    <TeronisMSBuildPackagingGenerateFilesystemPackageInProjectTargetsFile>$(RootDirectory)src\MSBuild\Core\Core\src\bin\PackagePublish\build\Teronis.MSBuild.Packaging.GenerateFilesystemPackageInProject.targets</TeronisMSBuildPackagingGenerateFilesystemPackageInProjectTargetsFile>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="@(ProjectReference)">
       <!-- Prevent Reference.*-projects from being tracked in *.nuspec files. -->
-      <PrivateAssets Condition="$([System.String]::Copy('%(Filename)').Contains('Reference.'))">all</PrivateAssets>
+      <!-- <PrivateAssets Condition="$([System.String]::Copy('%(Filename)').Contains('Reference.'))">all</PrivateAssets> -->
+      <!-- <ReferenceOutputAssembly Condition="$([System.String]::Copy('%(Filename)').Contains('Reference.'))">false</ReferenceOutputAssembly> -->
     </ProjectReference>
   </ItemGroup>
-
+  
   <ItemGroup>
     <ProjectReference Include="@(ProjectReference)">
-      <AdditionalProperties Condition="'%(Filename)' == 'Teronis.NetStandard.Core'">%(AdditionalProperties);TargetFramework=$(TargetFramework)</AdditionalProperties>
+      <!-- <AdditionalProperties Condition="'%(Filename)' == 'Teronis.NetStandard.Core'">%(AdditionalProperties);TargetFramework=netstandard2.0</AdditionalProperties> -->
+      <!-- <AdditionalProperties Condition="'%(Filename)' == 'Teronis.NetStandard.Core'">%(AdditionalProperties);TargetFramework=$(TargetFramework)</AdditionalProperties> -->
     </ProjectReference>
   </ItemGroup>
 

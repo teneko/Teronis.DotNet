@@ -2,7 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <!--<TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>-->
     <RootNamespace>Teronis.Tools.GitVersion</RootNamespace>
+    <Nullable>Enable</Nullable>
     <!--<SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>-->
     <!--<IncludeBuildOutput>false</IncludeBuildOutput>-->
     <!--<IncludeSymbols>false</IncludeSymbols>-->

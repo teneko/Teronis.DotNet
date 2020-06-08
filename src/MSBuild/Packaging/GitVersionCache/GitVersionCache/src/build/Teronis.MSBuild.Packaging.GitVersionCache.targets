@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project InitialTargets="welcome" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <UsingTask AssemblyFile="$(GitVersionCacheAssemblyFile)" TaskName="GetVersionCacheTask" />
+  <UsingTask AssemblyFile="$(GitVersionCacheAssemblyFile)" TaskName="GetVersionCache" />
   <!--<UsingTask AssemblyFile="$(GitVersionCacheAssemblyFile)" TaskName="SaveGetVersionTask" />-->
-  <UsingTask AssemblyFile="$(GitVersionCacheAssemblyFile)" TaskName="TestTask" />
+  <UsingTask AssemblyFile="$(GitVersionCacheAssemblyFile)" TaskName="Test" />
 
   <Target Name="welcome">
     <Message Text="Welcome: $(GitVersionCacheAssemblyFile)" Importance="high" />
@@ -42,7 +42,7 @@
 
     <!--<TestTask />-->
     
-    <GetVersionCacheTask BuildIdentifier="test"
+    <GetVersionCache BuildIdentifier="test"
                         IsDateIdentifier="false"
                         SolutionDirectory="$(RootDirectory)"
                 ConfigFilePath="$(GitVersionConfig)"
@@ -75,7 +75,7 @@
       <Output TaskParameter="CommitDate" PropertyName="GitVersion_CommitDate" />
       <Output TaskParameter="CommitsSinceVersionSource" PropertyName="GitVersion_CommitsSinceVersionSource" />
       <Output TaskParameter="CommitsSinceVersionSourcePadded" PropertyName="GitVersion_CommitsSinceVersionSourcePadded" />
-    </GetVersionCacheTask>
+    </GetVersionCache>
 
     <PropertyGroup>
       <GetVersion>false</GetVersion>

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project InitialTargets="EnsureSourceProjectDirectory" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <!-- The directory from where the shadow is being created. -->
+    <SourceProjectDirectory Condition="'$(SourceProjectDirectory)' == ''"></SourceProjectDirectory>
+    <SourceProjectDirectory Condition="'$(SourceProjectDirectory)' != ''">$(SourceProjectDirectory.TrimEnd('\'))</SourceProjectDirectory>
+    <ShadowProjectDirectory Condition="'$(ShadowProjectDirectory)' == ''">$(MSBuildProjectDirectory.TrimEnd('\'))</ShadowProjectDirectory>
+    <ShadowProjectDirectory Condition="'$(ShadowProjectDirectory)' != ''">$(ShadowProjectDirectory.TrimEnd('\'))</ShadowProjectDirectory>
+  </PropertyGroup>
+
+  <Target Name="EnsureSourceProjectDirectory">
+    <Error Text="[$(MSBuildThisFileName)] Property 'SourceProjectDirectory' is empty " Condition="'$(SourceProjectDirectory)' == ''" />
+    <Error Text="[$(MSBuildThisFileName)] Directory of source project '$(SourceProjectDirectory)' does not exist." Condition="!Exists('$(SourceProjectDirectory)')" />
+    <Error Text="[$(MSBuildThisFileName)] Directory of shadow project '$(ShadowProjectDirectory)' does not exist." Condition="!Exists('$(ShadowProjectDirectory)')" />
+  </Target>
+
+  <ItemGroup>
+    
+    <Compile Include="$(SourceProjectDirectory)\**\*.cs" Exclude="$(SourceProjectDirectory)\bin\**\*;$(SourceProjectDirectory)\obj\**\*" />
+    
+    <EmbeddedResource Include="$(SourceProjectDirectory)\**\*.resx">
+    </EmbeddedResource>
+    
+  </ItemGroup>
+
+</Project>

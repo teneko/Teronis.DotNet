@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+
+    <SourceProjectDirectory>$(MSBuildThisFileDirectory)..\..\src\</SourceProjectDirectory>
+
+    <DisableGitVersion>true</DisableGitVersion>
+    <DisableGitVersionCache>true</DisableGitVersionCache>
+    <DisableSdkProps>true</DisableSdkProps>
+
+  </PropertyGroup>
+
+  <Import Project="$(TeronisMSBuildCoreProjectShadowPropsFile)" />
+  <Import Project="$(TeronisMSBuildCoreProjectShadowTargetsFile)" />
+  <Import Project="$(SourceProjectDirectory)\Teronis.NetStandard.Core.Localization.csproj" />
+
+</Project>

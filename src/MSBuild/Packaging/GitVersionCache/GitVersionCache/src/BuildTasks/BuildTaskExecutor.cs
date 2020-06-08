@@ -4,6 +4,11 @@ using System.Text.Json;
 using GitVersion.MSBuildTask.Tasks;
 using Teronis.GitVersionCache.BuildTasks.Models;
 using System.Reflection;
+using Teronis.Text.Json.Serialization;
+using Teronis.Extensions;
+using GitVersion.MSBuildTask;
+using Teronis.Tools.GitVersion;
+using System;
 
 namespace Teronis.GitVersionCache.BuildTasks
 {
@@ -46,7 +51,10 @@ namespace Teronis.GitVersionCache.BuildTasks
                 //var serviceCollection = BuildTaskUtilities.GetGitVersionCoreOwnedServiceProvider(buildTask);
                 //var gitVersionTaskExecutor = serviceCollection.GetService<IGitVersionTaskExecutor>();
                 //gitVersionTaskExecutor.GetVersion(buildTask);
-                buildTask.Log.LogError("# 5 3 HALLO ES FUNKTTKJDFJ");
+
+                buildTask.Log.LogError(GitVersionCommandLine.ExecuteGitVersion());
+
+                //buildTask.Log.LogError("# 5 3 HALLO ES FUNKTTKJDFJ");
             } else {
                 using var file = File.Open(CacheFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 using var fileReader = new StreamReader(file, Encoding.UTF8);
@@ -65,17 +73,17 @@ namespace Teronis.GitVersionCache.BuildTasks
         {
             EnsureCacheDirectoryExistence();
             var buildTaskType = buildTask.GetType();
-            //var variablesInclusionJsonConverter = JsonConverterFactory.CreateOnlyIncludedVariablesJsonConverter(buildTaskType, out var variablesHelper);
+            var variablesInclusionJsonConverter = JsonConverterFactory.CreateOnlyIncludedVariablesJsonConverter(buildTaskType, out var variablesHelper);
 
-            //foreach (var propertyMember in buildTask.GetType().GetPropertyMembers(typeof(GitVersionTaskBase))) {
-            //    variablesHelper.ConsiderVariable(propertyMember.DeclaringType, propertyMember.Name);
-            //}
+            foreach (var propertyMember in buildTask.GetType().GetPropertyMembers(typeof(GitVersionTaskBase))) {
+                variablesHelper.ConsiderVariable(propertyMember.DeclaringType, propertyMember.Name);
+            }
 
             var options = new JsonSerializerOptions() {
                 WriteIndented = true
             };
 
-            //options.Converters.Add(variablesInclusionJsonConverter);
+            options.Converters.Add(variablesInclusionJsonConverter);
             var serializedData = JsonSerializer.Serialize(buildTask, buildTaskType, options);
 
             using (var file = File.Open(CacheFile, FileMode.Create)) {

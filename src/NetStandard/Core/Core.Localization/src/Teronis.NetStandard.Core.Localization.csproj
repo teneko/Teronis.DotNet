@@ -1,10 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project InitialTargets="welcome">
 
   <PropertyGroup>
-    <!--<TargetFramework>netstandard2.0</TargetFramework>-->
     <TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
     <RootNamespace>Teronis.Localization</RootNamespace>
   </PropertyGroup>
+
+  <Import Project="Sdk.props" Condition="'$(DisableSdkProps)' != 'true'" />
+
+  <Target Name="welcome">
+    <Message Text="################# $(DisableGitVersionCache)" Importance="high" />
+  </Target>
 
   <ItemGroup>
     <Compile Update="StringResources.Designer.cs">

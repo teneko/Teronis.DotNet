@@ -17,6 +17,7 @@ namespace Teronis.MSBuild.Tools
             processInfo.UseShellExecute = false;
             processInfo.RedirectStandardOutput = true;
             processInfo.RedirectStandardError = true;
+            processInfo.CreateNoWindow = true;
 
             var process = new Process() {
                 StartInfo = processInfo,

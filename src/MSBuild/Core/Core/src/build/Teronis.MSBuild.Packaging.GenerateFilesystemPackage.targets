@@ -16,12 +16,12 @@
   <Target Name="GenerateFilesystemPackage" DependsOnTargets="$(GenerateFilesystemPackageDependsOn)">
 
     <Message Text="[$(MSBuildThisFileName)] Generate filesystem package for $(MSBuildProjectName). (Configuration=$(Configuration), TargetFramework=$(TargetFramework)" Importance="high" />
-    
+
     <PropertyGroup>
       <ThisProjectMSBuildProperties>
         Configuration=$(Configuration);
         PackageId=$(_UnzipPackageId);
-        PackageVersion=0.0.1-$(TargetFramework.ToLower().Replace('.','m'));
+        PackageVersion=0.0.1-$(TargetFramework.ToLower().Replace('.','v'));
         DisableGitVersionTask=true
       </ThisProjectMSBuildProperties>
     </PropertyGroup>
@@ -47,7 +47,14 @@
   </Target>
 
   <Target Name="_CleanFilesystemPackage" DependsOnTargets="$(CleanFilesystemPackageDependsOn)" BeforeTargets="BeforeClean">
+
+    <ItemGroup>
+      <_FilesystemPackageFiles Include="$(UnzipPackageDestinationDirectory)\**\*" />
+    </ItemGroup>
+
+    <Delete Files="@(_FilesystemPackageFiles)" />
     <RemoveDir Directories="$(UnzipPackageDestinationDirectory)" />
+
   </Target>
 
 </Project>

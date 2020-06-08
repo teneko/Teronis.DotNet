@@ -7,9 +7,9 @@ namespace Teronis.Identity.Authentication
     {
         public bool IncludeErrorDetails { get; set; }
         [Required]
-        public SymmetricSecurityKey TokenSigningKey { get; }
+        public SecurityKey TokenSigningKey { get; }
 
-        public JwtBearerAuthenticationOptions(SymmetricSecurityKey tokenSigningKey)
+        public JwtBearerAuthenticationOptions(SecurityKey tokenSigningKey)
         {
             TokenSigningKey = tokenSigningKey;
         }

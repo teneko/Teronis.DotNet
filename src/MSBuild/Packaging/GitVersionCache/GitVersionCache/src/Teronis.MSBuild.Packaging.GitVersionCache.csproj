@@ -42,6 +42,10 @@
 
     <ProjectReference Include="..\..\..\..\..\NetStandard\Tools\GitVersion\GitVersion\src\Teronis.NetStandard.Tools.GitVersion.csproj" />
 
+    <ProjectReference Include="..\..\..\..\Core\Core\src\Teronis.MSBuild.Core.csproj">
+      <AdditionalProperties>TargetFramework=$(TargetFramework)</AdditionalProperties>
+    </ProjectReference>
+
   </ItemGroup>
 
   <ItemGroup>
@@ -99,6 +103,9 @@
 
     <None Remove="buildMultiTargeting\**" />
 
+    <Reference Include="$(PkgGitVersionTask)\tools\netstandard2.0\GitVersionCore.dll">
+      <Private>false</Private>
+    </Reference>
     <Reference Include="$(PkgGitVersionTask)\tools\netstandard2.0\GitVersionTask.MsBuild.dll">
       <Private>false</Private>
     </Reference>
@@ -106,6 +113,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="build\GitVersionCache.targets">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="build\Teronis.MSBuild.Packaging.GitVersionCache.props">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -2,6 +2,8 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
+    <TeronisMSBuildPackagingGitVersionCacheHasBeenLoaded>true</TeronisMSBuildPackagingGitVersionCacheHasBeenLoaded>
+
     <!--<GitVersionTaskName>GitVersionTask</GitVersionTaskName>
     <GitVersionTaskPropsFilenameWithExtension>$(GitVersionTaskName).props</GitVersionTaskPropsFilenameWithExtension>
     <GitVersionTaskTargetsFilenameWithExtension>$(GitVersionTaskName).targets</GitVersionTaskTargetsFilenameWithExtension>
@@ -15,10 +17,8 @@
     <ImportGlobalGitVersionTaskTargets Condition="!Exists('$(LocalGitVersionTaskTargetsFile)')">true</ImportGlobalGitVersionTaskTargets>-->
 
     <GitVersionCacheAssemblyFile Condition="$(GitVersionCacheAssemblyFile) == ''">$(MSBuildThisFileDirectory)..\GitVersionCache\netstandard2.0\Teronis.MSBuild.Packaging.GitVersionCache.dll</GitVersionCacheAssemblyFile>
+    <MSBuildCoreAssemblyFile Condition="$(MSBuildCoreAssemblyFile) == ''">$(MSBuildThisFileDirectory)..\GitVersionCache\netstandard2.0\Teronis.MSBuild.Core.dll</MSBuildCoreAssemblyFile>
     <DisableGitVersionCache Condition="'$(DisableGitVersionCache)' == ''">false</DisableGitVersionCache>
   </PropertyGroup>
-
-  <!--<Import Project="$(LocalGitVersionTaskPropsFile)" Condition="'$(ImportGlobalGitVersionTaskProps)' != 'true'" />
-  <Import Project="$(GlobalGitVersionTaskPropsFile)" Condition="'$(ImportGlobalGitVersionTaskProps)' == 'true'" />-->
 
 </Project>

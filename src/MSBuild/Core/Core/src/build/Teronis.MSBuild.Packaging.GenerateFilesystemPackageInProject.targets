@@ -15,14 +15,30 @@
       TargetFramework=$(TargetFramework);$(GenerateFilesystemPackageMSBuildProperties)
     </GenerateFilesystemPackageMSBuildProperties>-->
 
+    <GenerateFilesystemPackageMSBuildProperties>
+      Configuration=$(Configuration);
+      TargetFramework=$(TargetFramework);
+      $(GenerateFilesystemPackageMSBuildProperties)
+    </GenerateFilesystemPackageMSBuildProperties>
+
+    <!--<GenerateFilesystemPackageDotNetMSBuildProperties>-p:Configuration=$(Configuration) -p:TargetFramework=$(TargetFramework)</GenerateFilesystemPackageDotNetMSBuildProperties>-->
+
   </PropertyGroup>
 
-  <Target Name="_RestoreBuildAndGenerateFilesystemPackageProjects" DependsOnTargets="$(RestoreBuildAndGenerateFilesystemPackageProjectsDependsOn)" BeforeTargets="BeforeBuild" Condition="'@(GenerateFilesystemPackageProjects)' != ''">
+  <!--<Target Name="_RestoreFilesystemPackageProjects" BeforeTargets="Restore">
+    <MSBuild Projects="%(GenerateFilesystemPackageProjects.Identity)" Targets="Restore" Properties="$(GenerateFilesystemPackageMSBuildProperties)" />
+  </Target>-->
+
+  <Target Name="_RestoreBuildAndGenerateFilesystemPackageProjects" DependsOnTargets="$(RestoreBuildAndGenerateFilesystemPackageProjectsDependsOn)" BeforeTargets="Build" Condition="'@(GenerateFilesystemPackageProjects)' != ''">
     <Exec Command="dotnet build &quot;%(GenerateFilesystemPackageProjects.Identity)&quot; $(GenerateFilesystemPackageDotNetProperties)" />
-    <MSBuild Projects="%(GenerateFilesystemPackageProjects.Identity)" Targets="GenerateFilesystemPackage" Properties="$(GenerateFilesystemPackageMSBuildProperties)" />
+    <!--<MSBuild Projects="%(GenerateFilesystemPackageProjects.Identity)" Targets="Restore" Properties="$(GenerateFilesystemPackageMSBuildProperties)" />-->
+    <!--Targets="Build"-->
+    <!--<MSBuild Projects="%(GenerateFilesystemPackageProjects.Identity)"  />--> 
+    <!--<Exec Command="dotnet msbuild -t:GenerateFilesystemPackage $(GenerateFilesystemPackageDotNetMSBuildProperties)" />-->
+    <MSBuild Projects="%(GenerateFilesystemPackageProjects.Identity)" Targets="GenerateFilesystemPackage" Properties="$(GenerateFilesystemPackageMSBuildProperties)"  />
   </Target>
 
-  <Target Name="_CleanFilesystemPackageProjects" DependsOnTargets="$(CleanFilesystemPackageProjectsDependsOn)" BeforeTargets="BeforeClean" Condition="'@(GenerateFilesystemPackageProjects)' != ''">
+  <Target Name="_CleanFilesystemPackageProjects" DependsOnTargets="$(CleanFilesystemPackageProjectsDependsOn)" BeforeTargets="Clean" Condition="'@(GenerateFilesystemPackageProjects)' != ''">
     <MSBuild Projects="%(GenerateFilesystemPackageProjects.Identity)" Targets="Clean" Properties="$(GenerateFilesystemPackageMSBuildProperties)" />
   </Target>
 

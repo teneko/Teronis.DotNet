@@ -1,13 +1,13 @@
 ﻿using System.IO;
 using System.Text;
 using System.Text.Json;
-using GitVersion.MSBuildTask.Tasks;
 using Teronis.GitVersionCache.BuildTasks.Models;
 using System.Reflection;
 using Teronis.Text.Json.Serialization;
 using Teronis.Extensions;
-using GitVersion.MSBuildTask;
 using Teronis.Tools.GitVersion;
+using Teronis.Text.Json.Converters;
+using Microsoft.Build.Utilities;
 using System;
 
 namespace Teronis.GitVersionCache.BuildTasks
@@ -39,43 +39,52 @@ namespace Teronis.GitVersionCache.BuildTasks
             GitVersionYamlDirectory.CreateSubdirectory(CacheDirectoryName);
         }
 
-        //protected void CleanTemporaryDirectory() {
-        //    if
-
-        //    var  Directory.GetFiles(TemporaryDirectory,"*",SearchOption.TopDirectoryOnly);
-        //}
-
-        public void LoadCacheOrGetVersion(GetVersion buildTask)
+        /// <summary>
+        /// Gets the cached, or not existing, the new calculated git version variables.
+        /// </summary>
+        /// <returns>If true the cache could be retrieved.</returns>
+        public bool LoadCacheOrGetVersion(GetVersionCacheTask buildTask)
         {
+            string serializedGitVariables;
+            bool isCache;
+
             if (!File.Exists(CacheFile)) {
-                //var serviceCollection = BuildTaskUtilities.GetGitVersionCoreOwnedServiceProvider(buildTask);
-                //var gitVersionTaskExecutor = serviceCollection.GetService<IGitVersionTaskExecutor>();
-                //gitVersionTaskExecutor.GetVersion(buildTask);
-
-                buildTask.Log.LogError(GitVersionCommandLine.ExecuteGitVersion());
-
-                //buildTask.Log.LogError("# 5 3 HALLO ES FUNKTTKJDFJ");
+                serializedGitVariables = GitVersionCommandLine.ExecuteGitVersion();
+                isCache = false;
             } else {
                 using var file = File.Open(CacheFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 using var fileReader = new StreamReader(file, Encoding.UTF8);
-                var json = fileReader.ReadToEnd();
-                var getVersionData = (GetVersion)JsonSerializer.Deserialize(json, typeof(GetVersion));
-                var getVersionProperties = typeof(GetVersion).GetProperties(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public);
-
-                foreach (var getVersionProperty in getVersionProperties) {
-                    var value = getVersionProperty.GetValue(getVersionData);
-                    getVersionProperty.SetValue(buildTask, value);
-                }
+                serializedGitVariables = fileReader.ReadToEnd();
+                isCache = true;
             }
+
+            var jsonSerializerOptions = new JsonSerializerOptions();
+            jsonSerializerOptions.Converters.Add(new NumberStringificationJsonConverter());
+
+            var getVersionData = (GetVersionCacheTask)JsonSerializer.Deserialize(serializedGitVariables, typeof(GetVersionCacheTask), options: jsonSerializerOptions);
+            var getVersionProperties = typeof(GetVersionCacheTask).GetProperties(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public);
+
+            foreach (var getVersionProperty in getVersionProperties) {
+                var value = getVersionProperty.GetValue(getVersionData);
+
+                if (value is null) {
+                    continue;
+                }
+
+                getVersionProperty.SetValue(buildTask, value);
+            }
+
+            return isCache;
         }
 
-        public void SaveToFilesystem(GetVersion buildTask)
+        public void SaveToFilesystem(GetVersionCacheTask buildTask)
         {
             EnsureCacheDirectoryExistence();
             var buildTaskType = buildTask.GetType();
             var variablesInclusionJsonConverter = JsonConverterFactory.CreateOnlyIncludedVariablesJsonConverter(buildTaskType, out var variablesHelper);
+            variablesHelper.ConsiderVariable(typeof(string), nameof(GetVersionCacheTask.SolutionDirectory));
 
-            foreach (var propertyMember in buildTask.GetType().GetPropertyMembers(typeof(GitVersionTaskBase))) {
+            foreach (var propertyMember in buildTask.GetType().GetPropertyMembers(typeof(Task))) {
                 variablesHelper.ConsiderVariable(propertyMember.DeclaringType, propertyMember.Name);
             }
 

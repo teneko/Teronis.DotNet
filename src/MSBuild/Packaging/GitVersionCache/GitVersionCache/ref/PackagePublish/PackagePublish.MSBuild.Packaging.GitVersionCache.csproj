@@ -9,6 +9,14 @@
     <GenerateFilesystemPackageProjects Include="..\..\src\*.csproj" />
   </ItemGroup>
 
+  <!--<ItemGroup>
+    <ProjectReference Include="..\..\src\Teronis.MSBuild.Packaging.GitVersionCache.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+      <GlobalPropertiesToRemove>TargetFramework</GlobalPropertiesToRemove>
+    </ProjectReference>
+  </ItemGroup>-->
+
   <Import Project="$(TeronisMSBuildPackagingGenerateFilesystemPackageInProjectTargetsFile)" />
 
 </Project>

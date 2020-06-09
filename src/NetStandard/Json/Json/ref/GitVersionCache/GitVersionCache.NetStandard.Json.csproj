@@ -16,7 +16,9 @@
   <Import Project="$(SourceProjectDirectory)\Teronis.NetStandard.Json.csproj" />
   
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Core\Core\ref\GitVersionCache\GitVersionCache.NetStandard.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\Core\Core\ref\GitVersionCache\GitVersionCache.NetStandard.Core.csproj">
+      <AdditionalProperties>TargetFramework=$(TargetFramework)</AdditionalProperties>
+    </ProjectReference>
   </ItemGroup>
 
 </Project>

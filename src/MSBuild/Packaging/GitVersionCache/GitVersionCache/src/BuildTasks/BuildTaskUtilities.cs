@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using GitVersion.MSBuildTask;
-using GitVersionTask.MsBuild;
+using Microsoft.Build.Utilities;
 using Teronis.GitVersionCache.Utilities;
 using Teronis.IO;
 

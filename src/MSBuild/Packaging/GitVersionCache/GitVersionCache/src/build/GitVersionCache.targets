@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="Teronis.MSBuild.Packaging.GitVersionCache.props" Condition="'$(TeronisMSBuildPackagingGitVersionCacheHasBeenLoaded)' != 'true'" />
+
+  <UsingTask AssemblyFile="$(GitVersionCacheAssemblyFile)" TaskName="GetVersionCacheTask" />
+  <UsingTask AssemblyFile="$(MSBuildCoreAssemblyFile)" TaskName="MetadataToStringTask" />
+
+  <Target Name="GetVersionCache">
+    <GetVersionCacheTask BuildIdentifier="test"
+                         IsDateIdentifier="false"
+                         SolutionDirectory="test1"
+                         ConfigFilePath="test2"
+                         NoFetch="$(GitVersion_NoFetchEnabled)"
+                         NoNormalize="$(GitVersion_NoNormalizeEnabled)">
+      <Output TaskParameter="Major" PropertyName="GitVersion_Major" />
+      <Output TaskParameter="Minor" PropertyName="GitVersion_Minor" />
+      <Output TaskParameter="Patch" PropertyName="GitVersion_Patch" />
+      <Output TaskParameter="PreReleaseTag" PropertyName="GitVersion_PreReleaseTag" />
+      <Output TaskParameter="PreReleaseTagWithDash" PropertyName="GitVersion_PreReleaseTagWithDash" />
+      <Output TaskParameter="PreReleaseLabel" PropertyName="GitVersion_PreReleaseLabel" />
+      <Output TaskParameter="PreReleaseNumber" PropertyName="GitVersion_PreReleaseNumber" />
+      <Output TaskParameter="BuildMetaData" PropertyName="GitVersion_BuildMetaData" />
+      <Output TaskParameter="BuildMetaDataPadded" PropertyName="GitVersion_BuildMetaDataPadded" />
+      <Output TaskParameter="FullBuildMetaData" PropertyName="GitVersion_FullBuildMetaData" />
+      <Output TaskParameter="MajorMinorPatch" PropertyName="GitVersion_MajorMinorPatch" />
+      <Output TaskParameter="SemVer" PropertyName="GitVersion_SemVer" />
+      <Output TaskParameter="LegacySemVer" PropertyName="GitVersion_LegacySemVer" />
+      <Output TaskParameter="LegacySemVerPadded" PropertyName="GitVersion_LegacySemVerPadded" />
+      <Output TaskParameter="AssemblySemVer" PropertyName="GitVersion_AssemblySemVer" />
+      <Output TaskParameter="AssemblySemFileVer" PropertyName="GitVersion_AssemblySemFileVer" />
+      <Output TaskParameter="FullSemVer" PropertyName="GitVersion_FullSemVer" />
+      <Output TaskParameter="InformationalVersion" PropertyName="GitVersion_InformationalVersion" />
+      <Output TaskParameter="BranchName" PropertyName="GitVersion_BranchName" />
+      <Output TaskParameter="Sha" PropertyName="GitVersion_Sha" />
+      <Output TaskParameter="NuGetVersionV2" PropertyName="GitVersion_NuGetVersionV2" />
+      <Output TaskParameter="NuGetVersion" PropertyName="GitVersion_NuGetVersion" />
+      <Output TaskParameter="NuGetPreReleaseTagV2" PropertyName="GitVersion_NuGetPreReleaseTagV2" />
+      <Output TaskParameter="NuGetPreReleaseTag" PropertyName="GitVersion_NuGetPreReleaseTag" />
+      <Output TaskParameter="CommitDate" PropertyName="GitVersion_CommitDate" />
+      <Output TaskParameter="CommitsSinceVersionSource" PropertyName="GitVersion_CommitsSinceVersionSource" />
+      <Output TaskParameter="CommitsSinceVersionSourcePadded" PropertyName="GitVersion_CommitsSinceVersionSourcePadded" />
+    </GetVersionCacheTask>
+  </Target>
+
+  <Target Name="GetVersionCacheInline" Outputs="@(InlinedVersionCache)" DependsOnTargets="$(GetVersionCache)">
+
+    <ItemGroup>
+      <VersionVariables Include="VersionVariables">
+        <ConsoleMajor>$(GitVersion_Major)</ConsoleMajor>
+        <ConsoleMinor>$(GitVersion_Minor)</ConsoleMinor>
+        <ConsolePatch>$(GitVersion_Patch)</ConsolePatch>
+        <ConsolePreReleaseTag>$(GitVersion_PreReleaseTag)</ConsolePreReleaseTag>
+        <ConsolePreReleaseTagWithDash>$(GitVersion_PreReleaseTagWithDash)</ConsolePreReleaseTagWithDash>
+        <ConsolePreReleaseLabel>$(GitVersion_PreReleaseLabel)</ConsolePreReleaseLabel>
+        <ConsolePreReleaseNumber>$(GitVersion_PreReleaseNumber)</ConsolePreReleaseNumber>
+        <ConsoleBuildMetaData>$(GitVersion_BuildMetaData)</ConsoleBuildMetaData>
+        <ConsoleBuildMetaDataPadded>$(GitVersion_BuildMetaDataPadded)</ConsoleBuildMetaDataPadded>
+        <ConsoleFullBuildMetaData>$(GitVersion_FullBuildMetaData)</ConsoleFullBuildMetaData>
+        <ConsoleMajorMinorPatch>$(GitVersion_MajorMinorPatch)</ConsoleMajorMinorPatch>
+        <ConsoleSemVer>$(GitVersion_SemVer)</ConsoleSemVer>
+        <ConsoleLegacySemVer>$(GitVersion_LegacySemVer)</ConsoleLegacySemVer>
+        <ConsoleLegacySemVerPadded>$(GitVersion_LegacySemVerPadded)</ConsoleLegacySemVerPadded>
+        <ConsoleAssemblySemVer>$(GitVersion_AssemblySemVer)</ConsoleAssemblySemVer>
+        <ConsoleAssemblySemFileVer>$(GitVersion_AssemblySemFileVer)</ConsoleAssemblySemFileVer>
+        <ConsoleFullSemVer>$(GitVersion_FullSemVer)</ConsoleFullSemVer>
+        <ConsoleInformationalVersion>$(GitVersion_InformationalVersion)</ConsoleInformationalVersion>
+        <ConsoleBranchName>$(GitVersion_BranchName)</ConsoleBranchName>
+        <ConsoleSha>$(GitVersion_Sha)</ConsoleSha>
+        <ConsoleNuGetVersionV2>$(GitVersion_NuGetVersionV2)</ConsoleNuGetVersionV2>
+        <ConsoleNuGetVersion>$(GitVersion_NuGetVersion)</ConsoleNuGetVersion>
+        <ConsoleNuGetPreReleaseTagV2>$(GitVersion_NuGetPreReleaseTagV2)</ConsoleNuGetPreReleaseTagV2>
+        <ConsoleNuGetPreReleaseTag>$(GitVersion_NuGetPreReleaseTag)</ConsoleNuGetPreReleaseTag>
+        <ConsoleCommitDate>$(GitVersion_CommitDate)</ConsoleCommitDate>
+        <ConsoleCommitsSinceVersionSource>$(GitVersion_CommitsSinceVersionSource)</ConsoleCommitsSinceVersionSource>
+        <ConsoleCommitsSinceVersionSourcePadded>$(GitVersion_CommitsSinceVersionSourcePadded)</ConsoleCommitsSinceVersionSourcePadded>
+      </VersionVariables>
+    </ItemGroup>
+
+    <MetadataToStringTask Item="@(VersionVariables)">
+      <Output TaskParameter="Metadata" PropertyName="InlinedVersionCache" />
+    </MetadataToStringTask>
+
+    <Message Text="$(InlinedVersionCache)" Importance="high" />
+
+  </Target>
+
+  <!-- 
+  # Target gets the value of a property.
+  # It needs the following properties:
+  # - GetVersionCacheInline:
+  #   The string with key value pairs separated by semicolons. 
+  #   The string has to end with semicolon.
+  # - GetVersionPropertyName: The name of the property.
+  # - PrintDebug: If true debug information is shown.
+  -->
+  <Target Name="GetVersionCacheInlineProperty" Outputs="$(ConsolePropertyValue)">
+    
+    <PropertyGroup>
+      <ConsolePropertyName>Console$(GetVersionPropertyName)=</ConsolePropertyName>
+      <ConsolePropertyLength>$(ConsolePropertyName.Length)</ConsolePropertyLength>
+      <ConsolePropertyIndex>$(GetVersionCacheInline.IndexOf('$(ConsolePropertyName)'))</ConsolePropertyIndex>
+      <ConsolePropertyValueIndex>$([MSBuild]::Add($(ConsolePropertyIndex),$(ConsolePropertyName.Length)))</ConsolePropertyValueIndex>
+      <ConsolePropertySemicolonIndex>$(GetVersionCacheInline.IndexOf(';',$(ConsolePropertyValueIndex)))</ConsolePropertySemicolonIndex>
+      <ConsolePropertyValueLength>$([MSBuild]::Subtract($(ConsolePropertySemicolonIndex),$(ConsolePropertyValueIndex)))</ConsolePropertyValueLength>
+      <ConsolePropertyValue>$(GetVersionCacheInline.SubString($(ConsolePropertyValueIndex),$(ConsolePropertyValueLength)))</ConsolePropertyValue>
+    </PropertyGroup>
+
+    <Message Text="[$(MSBuildThisFile)] ConsolePropertyName: $(ConsolePropertyName)" Importance="high" Condition="'$(PrintDebug)' == 'true'" />
+    <Message Text="[$(MSBuildThisFile)] ConsolePropertyLength: $(ConsolePropertyLength)" Importance="high" Condition="'$(PrintDebug)' == 'true'" />
+    <Message Text="[$(MSBuildThisFile)] ConsolePropertyIndex: $(ConsolePropertyIndex)" Importance="high" Condition="'$(PrintDebug)' == 'true'" />
+    <Message Text="[$(MSBuildThisFile)] ConsolePropertyValueIndex: $(ConsolePropertyValueIndex)" Importance="high" Condition="'$(PrintDebug)' == 'true'" />
+    <Message Text="[$(MSBuildThisFile)] ConsolePropertySemicolonIndex: $(ConsolePropertySemicolonIndex)" Importance="high" Condition="'$(PrintDebug)' == 'true'" />
+    <Message Text="[$(MSBuildThisFile)] ConsolePropertyValue: $(ConsolePropertyValue)" Importance="high" Condition="'$(PrintDebug)' == 'true'" />
+
+  </Target>
+
+</Project>

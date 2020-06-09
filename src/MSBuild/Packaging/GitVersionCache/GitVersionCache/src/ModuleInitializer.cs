@@ -21,9 +21,9 @@ namespace Teronis.GitVersionCache
             }
 
             LoadAssemblies = new[] {
-                //BaseDirectory + @"\tools\netstandard2.0\GitVersionCore.dll",
+                ContainerRootDirectory + @"\GitVersion\netstandard2.0\GitVersionCore.dll",
                 ContainerRootDirectory + @"\GitVersion\netstandard2.0\GitVersionTask.MsBuild.dll",
-                //BaseDirectory + @"\tools\netstandard2.0\GitVersionTask.dll",
+                //ContainerRootDirectory + @"\tools\netstandard2.0\GitVersionTask.dll",
             };
         }
 

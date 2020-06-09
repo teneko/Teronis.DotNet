@@ -1,5 +1,7 @@
 ﻿<Project InitialTargets="welcome">
 
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" Condition="'$(DisableSdkProps)' != 'true'" />
+
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
     <RootNamespace>Teronis</RootNamespace>
@@ -7,22 +9,24 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   
-  <Import Project="Sdk.props" Condition="'$(DisableSdkProps)' != 'true'" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" Condition="'$(DisableSdkProps)' != 'true'" />
+
+  <!--<Import Project="Teronis.NetStandard.Core.Sdk.props" Condition="'$(DisableSdkProps)' != 'true'" />-->
 
   <PropertyGroup>
     <!--<GitVersionCacheAssemblyFile Condition="!Exists(GitVersionCacheAssemblyFile)">$(RootDirectory)src\DotNet\GitVersionCache\GitVersionCache\src\bin\$(Configuration)\netcoreapp2.1\publish\Teronis.DotNet.GitVersionCache.dll</GitVersionCacheAssemblyFile>-->
     <!--<GitVersionCacheAssemblyFile Condition="!Exists(GitVersionCacheAssemblyFile)">$(RootDirectory)src\DotNet\GitVersionCache\GitVersionCache\src\bin\$(Configuration)\netstandard2.0\publish\Teronis.DotNet.GitVersionCache.dll</GitVersionCacheAssemblyFile>-->
     <!--<DisableGitVersionCache>true</DisableGitVersionCache>-->
-    <FileA>$(RootDirectory)src\MSBuild\Packaging\GitVersionCache\GitVersionCache\src\bin\Release\netstandard2.0\packagePublish\build\Teronis.MSBuild.Packaging.GitVersionCache.props</FileA>
-    <FileB>$(RootDirectory)src\MSBuild\Packaging\GitVersionCache\GitVersionCache\src\bin\Release\netstandard2.0\packagePublish\build\Teronis.MSBuild.Packaging.GitVersionCache.targets</FileB>
+    <FileA>$(RootDirectory)src\MSBuild\Packaging\GitVersionCache\GitVersionCache\src\bin\$(Configuration)\netstandard2.0\packagePublish\build\Teronis.MSBuild.Packaging.GitVersionCache.props</FileA>
+    <FileB>$(RootDirectory)src\MSBuild\Packaging\GitVersionCache\GitVersionCache\src\bin\$(Configuration)\netstandard2.0\packagePublish\build\Teronis.MSBuild.Packaging.GitVersionCache.targets</FileB>
   </PropertyGroup>
 
   <!--\bin\$(Configuration)\netcoreapp2.1\publish-->
   <!--<Import Project="$(FileA)" Condition="Exists('$(FileA)') And '$(DisableGitVersionCache)' != 'true'" />
   <Import Project="$(FileB)" Condition="Exists('$(FileB)') And '$(DisableGitVersionCache)' != 'true'" />-->
 
-  <Import Project="$(FileA)" Condition="'$(DisableGitVersionCache)' != 'true'" />
-  <Import Project="$(FileB)" Condition="'$(DisableGitVersionCache)' != 'true'" />
+  <Import Project="$(FileA)" Condition="Exists('$(FileA)') And '$(DisableGitVersionCache)' != 'true'" />
+  <Import Project="$(FileB)" Condition="Exists('$(FileB)') And '$(DisableGitVersionCache)' != 'true'" />
 
   <Target Name="welcome">
     <Message Text=":::::::::::::::::: $(DisableGitVersionCache)" Importance="high" />
@@ -53,8 +57,6 @@
   </Target>
 
   <ItemGroup>
-
-    <None Include="$(MSbuildThisFileDirectory)Teronis.NetStandard.Core.project" />
 
     <!--<ProjectReference Include="..\..\..\..\MSBuild\Packaging\GitVersionCache\Reference.GitVersionCache\src\Reference.MSBuild.Packaging.GitVersionCache.csproj" />-->
     <!--<ProjectReference Include="..\..\..\..\MSBuild\Packaging\GitVersionCache\GitVersionCache\ref\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj">

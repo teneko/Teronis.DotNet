@@ -1,11 +1,17 @@
 ﻿<Project InitialTargets="welcome">
 
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" Condition="'$(DisableSdkProps)' != 'true'" />
+
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
     <RootNamespace>Teronis.Localization</RootNamespace>
   </PropertyGroup>
+  
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" Condition="'$(DisableSdkProps)' != 'true'" />
 
-  <Import Project="Sdk.props" Condition="'$(DisableSdkProps)' != 'true'" />
+  <PropertyGroup>
+    <DisableSdkProps>true</DisableSdkProps>
+  </PropertyGroup>
 
   <Target Name="welcome">
     <Message Text="################# $(DisableGitVersionCache)" Importance="high" />

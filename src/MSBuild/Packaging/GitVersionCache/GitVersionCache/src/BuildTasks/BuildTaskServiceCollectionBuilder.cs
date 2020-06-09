@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using GitVersion.MSBuildTask;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Teronis.GitVersionCache.BuildTasks

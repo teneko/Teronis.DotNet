@@ -8,9 +8,9 @@ namespace Teronis.Tools.GitVersion
         private const string GitVersionExecutableName = "GitVersion.exe";
 
         public static string ExecuteGitVersion(string? args = null) =>
-            Read(GitVersionExecutableName, args);
+            Read(GitVersionExecutableName, args, noEcho: true);
 
         public static Task<string> ExecuteGitVersionAsync(string? args= null) =>
-            ReadAsync(GitVersionExecutableName, args);
+            ReadAsync(GitVersionExecutableName, args, noEcho: true);
     }
 }

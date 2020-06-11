@@ -2,23 +2,17 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
+    
     <TeronisMSBuildPackagingGitVersionCacheHasBeenLoaded>true</TeronisMSBuildPackagingGitVersionCacheHasBeenLoaded>
-
-    <!--<GitVersionTaskName>GitVersionTask</GitVersionTaskName>
-    <GitVersionTaskPropsFilenameWithExtension>$(GitVersionTaskName).props</GitVersionTaskPropsFilenameWithExtension>
-    <GitVersionTaskTargetsFilenameWithExtension>$(GitVersionTaskName).targets</GitVersionTaskTargetsFilenameWithExtension>
-
-    <LocalGitVersionTaskPropsFile>$(MSBuildThisFileDirectory)\$(GitVersionTaskPropsFilenameWithExtension)</LocalGitVersionTaskPropsFile>
-    <GlobalGitVersionTaskPropsFile>$(PkgGitVersionTask)\build\$(GitVersionTaskPropsFilenameWithExtension)</GlobalGitVersionTaskPropsFile>
-    <ImportGlobalGitVersionTaskProps Condition="!Exists('$(LocalGitVersionTaskPropsFile)')">true</ImportGlobalGitVersionTaskProps>
-
-    <LocalGitVersionTaskTargetsFile>$(MSBuildThisFileDirectory)\$(GitVersionTaskTargetsFilenameWithExtension)</LocalGitVersionTaskTargetsFile>
-    <GlobalGitVersionTaskTargetsFile>$(PkgGitVersionTask)\build\$(GitVersionTaskTargetsFilenameWithExtension)</GlobalGitVersionTaskTargetsFile>
-    <ImportGlobalGitVersionTaskTargets Condition="!Exists('$(LocalGitVersionTaskTargetsFile)')">true</ImportGlobalGitVersionTaskTargets>-->
 
     <GitVersionCacheAssemblyFile Condition="$(GitVersionCacheAssemblyFile) == ''">$(MSBuildThisFileDirectory)..\GitVersionCache\netstandard2.0\Teronis.MSBuild.Packaging.GitVersionCache.dll</GitVersionCacheAssemblyFile>
     <MSBuildCoreAssemblyFile Condition="$(MSBuildCoreAssemblyFile) == ''">$(MSBuildThisFileDirectory)..\GitVersionCache\netstandard2.0\Teronis.MSBuild.Core.dll</MSBuildCoreAssemblyFile>
+    
     <DisableGitVersionCache Condition="'$(DisableGitVersionCache)' == ''">false</DisableGitVersionCache>
+    
+    <DisableVersionUpdate Condition="'$(DisableVersionUpdate)' == ''">false</DisableVersionUpdate>
+    <DisableVersionUpdate Condition="'$(DisableGitVersionCache)' == true">true</DisableVersionUpdate>
+    
   </PropertyGroup>
 
 </Project>

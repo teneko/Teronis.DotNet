@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+
+    <AssemblyName>Teronis.MSBuild.Packaging.GitVersionCache</AssemblyName>
+    <SourceProjectDirectory>$(MSBuildThisFileDirectory)..\..\src\</SourceProjectDirectory>
+
+    <DisableGitVersion>true</DisableGitVersion>
+    <DisableGitVersionCache>true</DisableGitVersionCache>
+    <DisableSdkProps>true</DisableSdkProps>
+    <MSBuildPackagingGitVersionProjectFile>$(MSBuildThisFileDirectory)$(MSBuildProjectName).csproj</MSBuildPackagingGitVersionProjectFile>
+
+  </PropertyGroup>
+
+  <Import Project="$(TeronisMSBuildCoreProjectShadowPropsFile)" />
+  <Import Project="$(TeronisMSBuildCoreProjectShadowTargetsFile)" />
+  <Import Project="$(SourceProjectDirectory)$(AssemblyName).csproj" />
+
+</Project>

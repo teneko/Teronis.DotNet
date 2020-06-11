@@ -2,21 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <!--<TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>-->
   </PropertyGroup>
 
   <ItemGroup>
-    <GenerateFilesystemPackageProjects Include="..\..\src\*.csproj" />
+    <!--<GenerateFilesystemPackageProjects Include="..\..\src\*.csproj" />-->
+    <GenerateFilesystemPackageProjects Include="..\GitVersionCache\*.csproj" />
   </ItemGroup>
 
-  <!--<ItemGroup>
-    <ProjectReference Include="..\..\src\Teronis.MSBuild.Packaging.GitVersionCache.csproj">
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
-      <GlobalPropertiesToRemove>TargetFramework</GlobalPropertiesToRemove>
-    </ProjectReference>
-  </ItemGroup>-->
-
-  <Import Project="$(TeronisMSBuildPackagingGenerateFilesystemPackageInProjectTargetsFile)" />
+  <Import Project="$(TeronisMSBuildCorePackagingGenerateFilesystemPackageInProjectTargetsFile)" />
 
 </Project>

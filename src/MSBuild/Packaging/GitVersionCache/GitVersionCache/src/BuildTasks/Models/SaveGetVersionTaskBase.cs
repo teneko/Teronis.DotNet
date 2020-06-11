@@ -8,7 +8,7 @@
 //    {
 //        public event PropertyChangedEventHandler PropertyChanged;
 
-//        public string BuildIdentifier { get; set; }
+//        public string CacheIdentifier { get; set; }
 //        [Required]
 //        public bool IsDateIdentifier { get; set; }
 

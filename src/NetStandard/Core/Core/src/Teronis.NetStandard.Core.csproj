@@ -1,4 +1,4 @@
-﻿<Project InitialTargets="welcome">
+﻿<Project>
 
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" Condition="'$(DisableSdkProps)' != 'true'" />
 
@@ -8,7 +8,7 @@
     <Description>This project contains core utility, core extension and core tool functions, but also core classes that extends known structures.</Description>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  
+
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" Condition="'$(DisableSdkProps)' != 'true'" />
 
   <!--<Import Project="Teronis.NetStandard.Core.Sdk.props" Condition="'$(DisableSdkProps)' != 'true'" />-->
@@ -17,20 +17,17 @@
     <!--<GitVersionCacheAssemblyFile Condition="!Exists(GitVersionCacheAssemblyFile)">$(RootDirectory)src\DotNet\GitVersionCache\GitVersionCache\src\bin\$(Configuration)\netcoreapp2.1\publish\Teronis.DotNet.GitVersionCache.dll</GitVersionCacheAssemblyFile>-->
     <!--<GitVersionCacheAssemblyFile Condition="!Exists(GitVersionCacheAssemblyFile)">$(RootDirectory)src\DotNet\GitVersionCache\GitVersionCache\src\bin\$(Configuration)\netstandard2.0\publish\Teronis.DotNet.GitVersionCache.dll</GitVersionCacheAssemblyFile>-->
     <!--<DisableGitVersionCache>true</DisableGitVersionCache>-->
-    <FileA>$(RootDirectory)src\MSBuild\Packaging\GitVersionCache\GitVersionCache\src\bin\$(Configuration)\netstandard2.0\packagePublish\build\Teronis.MSBuild.Packaging.GitVersionCache.props</FileA>
-    <FileB>$(RootDirectory)src\MSBuild\Packaging\GitVersionCache\GitVersionCache\src\bin\$(Configuration)\netstandard2.0\packagePublish\build\Teronis.MSBuild.Packaging.GitVersionCache.targets</FileB>
+
+    <!--<FileA>$(RootDirectory)src\MSBuild\Packaging\GitVersionCache\GitVersionCache\src\bin\$(Configuration)\netstandard2.0\packagePublish\build\Teronis.MSBuild.Packaging.GitVersionCache.props</FileA>
+    <FileB>$(RootDirectory)src\MSBuild\Packaging\GitVersionCache\GitVersionCache\src\bin\$(Configuration)\netstandard2.0\packagePublish\build\Teronis.MSBuild.Packaging.GitVersionCache.targets</FileB>-->
   </PropertyGroup>
 
   <!--\bin\$(Configuration)\netcoreapp2.1\publish-->
   <!--<Import Project="$(FileA)" Condition="Exists('$(FileA)') And '$(DisableGitVersionCache)' != 'true'" />
   <Import Project="$(FileB)" Condition="Exists('$(FileB)') And '$(DisableGitVersionCache)' != 'true'" />-->
 
-  <Import Project="$(FileA)" Condition="Exists('$(FileA)') And '$(DisableGitVersionCache)' != 'true'" />
-  <Import Project="$(FileB)" Condition="Exists('$(FileB)') And '$(DisableGitVersionCache)' != 'true'" />
-
-  <Target Name="welcome">
-    <Message Text=":::::::::::::::::: $(DisableGitVersionCache)" Importance="high" />
-  </Target>
+  <!--<Import Project="$(FileA)" Condition="Exists('$(FileA)') And '$(DisableGitVersionCache)' != 'true'" />
+  <Import Project="$(FileB)" Condition="Exists('$(FileB)') And '$(DisableGitVersionCache)' != 'true'" />-->
 
   <ItemGroup>
     <PackageReference Include="Fody" Version="6.2.0">
@@ -63,16 +60,31 @@
       <AdditionalProperties>TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>-->
 
-    <ProjectReference Include="..\..\..\..\MSBuild\Packaging\GitVersionCache\GitVersionCache\ref\PackagePublish\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj" Condition="'$(DisableGitVersionCache)' != 'true'">
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    <!--<ProjectReference Include="..\..\..\..\MSBuild\Packaging\GitVersionCache\GitVersionCache\ref\PackagePublish\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj" Condition="'$(DisableGitVersionCache)' != 'true'">
+      --><!--<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
       <GlobalPropertiesToRemove>TargetFramework</GlobalPropertiesToRemove>
-      <BuildProjectReferences>false</BuildProjectReferences>
-    </ProjectReference>
+      <BuildProjectReferences>false</BuildProjectReferences>--><!--
+    </ProjectReference>-->
 
     <ProjectReference Include="..\..\Core.Localization\src\Teronis.NetStandard.Core.Localization.csproj" PrivateAssets="all" Condition="'$(DisableLocalizationProject)' != 'true'" />
 
   </ItemGroup>
+
+  <!--<ItemGroup>
+
+    <_ProjectReferences2 Include="@(ProjectReference)">
+      <IsPackagePublish Condition="'%(IsPackagePublish)' == ''">$([System.String]::Copy('%(Filename)').Contains('PackagePublish.'))</IsPackagePublish>
+      <ReferenceOutputAssembly Condition="'%(IsPackagePublish)' == 'true'">false</ReferenceOutputAssembly>
+      <SkipGetTargetFrameworkProperties Condition="'%(IsPackagePublish)' == 'true'">true</SkipGetTargetFrameworkProperties>
+      <GlobalPropertiesToRemove Condition="'%(IsPackagePublish)' == 'true'">TargetFramework</GlobalPropertiesToRemove>
+      <BuildProjectReferences Condition="'%(IsPackagePublish)' == 'true'">false</BuildProjectReferences>
+    </_ProjectReferences2>
+
+    <ProjectReference Remove="@(ProjectReference)" />
+    <ProjectReference Include="@(_ProjectReferences2)" />
+
+  </ItemGroup>-->
 
   <!--<Target Name="GetTargetPath" Returns="@(_FakeOutputPath)">
     -->

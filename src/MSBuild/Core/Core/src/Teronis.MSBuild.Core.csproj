@@ -1,5 +1,6 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project>
 
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" Condition="'$(DisableSdkProps)' != 'true'" />
   <Import Project="build\Teronis.MSBuild.Packaging.GenerateFilesystemPackage.props" />
 
   <PropertyGroup>
@@ -16,6 +17,8 @@
     <RootNamespace>Teronis.MSBuild</RootNamespace>
 
   </PropertyGroup>
+
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" Condition="'$(DisableSdkProps)' != 'true'" />
 
   <ItemGroup>
     <None Include="build\*" Pack="true" PackagePath="build" />

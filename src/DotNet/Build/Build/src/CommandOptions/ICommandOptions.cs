@@ -7,7 +7,7 @@ namespace Teronis.DotNet.Build
         public const string ConfigurationLongName = "configuration";
         public const string VerbosityLongName = "verbosity";
         public const string DryRunLongName = "dry-run";
-        public const string NoDependenciesLongName = "no-dependencies";
+        public const string SkipDependenciesLongName = "skip-dependencies";
 
         string Command { get; }
 
@@ -23,7 +23,7 @@ namespace Teronis.DotNet.Build
         [Option(DryRunLongName, Default = false)]
         bool DryRun { get; set; }
 
-        [Option(NoDependenciesLongName, Default = false)]
-        bool NoDependencies { get; set; }
+        [Option(SkipDependenciesLongName, Default = false)]
+        bool SkipDependencies { get; set; }
     }
 }

@@ -20,19 +20,19 @@ namespace Teronis.GitVersionCache
                 ContainerRootDirectory = ExecutingAssemblyDirectory;
             }
 
-            LoadAssemblies = new[] {
-                ContainerRootDirectory + @"\GitVersion\netstandard2.0\GitVersionCore.dll",
-                ContainerRootDirectory + @"\GitVersion\netstandard2.0\GitVersionTask.MsBuild.dll",
-                //ContainerRootDirectory + @"\tools\netstandard2.0\GitVersionTask.dll",
-            };
+            //LoadAssemblies = new[] {
+            //    ContainerRootDirectory + @"\GitVersion\netstandard2.0\GitVersionCore.dll",
+            //    ContainerRootDirectory + @"\GitVersion\netstandard2.0\GitVersionTask.MsBuild.dll",
+            //    //ContainerRootDirectory + @"\tools\netstandard2.0\GitVersionTask.dll",
+            //};
         }
 
         public static void Initialize()
         {
             //try {
-            foreach (var loadAssembly in LoadAssemblies) {
-                Assembly.LoadFrom(loadAssembly);
-            }
+            //foreach (var loadAssembly in LoadAssemblies) {
+            //    Assembly.LoadFrom(loadAssembly);
+            //}
             //} catch {
             //    // We ignore them, because MSBuild can't resolve them.
             //}

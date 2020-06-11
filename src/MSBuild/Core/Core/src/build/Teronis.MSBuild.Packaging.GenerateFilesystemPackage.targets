@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Import Project="Teronis.MSBuild.Utilities.targets" Condition="'$(IsTeronisMSBuildUtilitiesImported)' != 'true'"/>
+  <!--<Import Project="TargetTasks.targets" Condition="'$(IsTeronisMSBuildCoreTargetTasksImported)' != 'true'"/>-->
 
   <PropertyGroup>
     <IsTeronisMSBuildPackUnzipPackageTargetsImported>true</IsTeronisMSBuildPackUnzipPackageTargetsImported>
@@ -9,10 +9,11 @@
     <UnzipPackageDirectory Condition="'$(UnzipPackageDirectory)' == ''">$(MSBuildProjectDirectory)\bin\$(Configuration)</UnzipPackageDirectory>
     <!-- The location where to unzip. -->
     <UnzipPackageDestinationDirectory Condition="'$(UnzipPackageDestinationDirectory)' == ''">$(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)\packagePublish</UnzipPackageDestinationDirectory>
-    <_UnzipPackageCoreUtilitiesTargets Condition="'$(_UnzipPackageCoreUtilitiesTargets)' == ''">$(MSBuildThisFileDirectory)Teronis.MSBuild.Utilities.targets</_UnzipPackageCoreUtilitiesTargets>
+    <_TargetTasksTargets Condition="'$(_TargetTasksTargets)' == ''">$(MSBuildThisFileDirectory)TargetTasks.targets</_TargetTasksTargets>
     <_UnzipPackageId>FilesystemPackage.$(MSBuildProjectName)</_UnzipPackageId>
   </PropertyGroup>
 
+  <!--Condition="!Exists('$(UnzipPackageDestinationDirectory)')"-->
   <Target Name="GenerateFilesystemPackage" DependsOnTargets="$(GenerateFilesystemPackageDependsOn)">
 
     <Message Text="[$(MSBuildThisFileName)] Generate filesystem package for $(MSBuildProjectName). (Configuration=$(Configuration), TargetFramework=$(TargetFramework)" Importance="high" />
@@ -38,7 +39,7 @@
 
     </PropertyGroup>
 
-    <MSBuild Projects="$(_UnzipPackageCoreUtilitiesTargets)" Targets="UnzipPackage" Properties="$(_UnzipPackageSearchProperties)">
+    <MSBuild Projects="$(_TargetTasksTargets)" Targets="UnzipPackage" Properties="$(_UnzipPackageSearchProperties)">
       <Output TaskParameter="TargetOutputs" ItemName="_FoundPackage" />
     </MSBuild>
 
@@ -48,12 +49,23 @@
 
   <Target Name="_CleanFilesystemPackage" DependsOnTargets="$(CleanFilesystemPackageDependsOn)" BeforeTargets="BeforeClean">
 
-    <ItemGroup>
-      <_FilesystemPackageFiles Include="$(UnzipPackageDestinationDirectory)\**\*" />
+    <!--<ItemGroup>
+      <_FilesystemPackageFiles Include="$(UnzipPackageDestinationDirectory)\**\*" Condition="Exists('$(UnzipPackageDestinationDirectory)')" />
+      <_FilesystemPackageDirectories Include="$([System.IO.Directory]::GetDirectories('$(UnzipPackageDestinationDirectory)', '*', System.IO.SearchOption.AllDirectories))" Condition="Exists('$(UnzipPackageDestinationDirectory)')" />
     </ItemGroup>
 
     <Delete Files="@(_FilesystemPackageFiles)" />
-    <RemoveDir Directories="$(UnzipPackageDestinationDirectory)" />
+    <RemoveDir Directories="@(_FilesystemPackageDirectories)" Condition="Exists('$(UnzipPackageDestinationDirectory)')" />
+    <RemoveDir Directories="$(UnzipPackageDestinationDirectory)" Condition="Exists('$(UnzipPackageDestinationDirectory)')" />-->
+
+    <PropertyGroup>
+      <DeleteDirectoryMSBuildProperties>
+        Directory=$(UnzipPackageDestinationDirectory);
+        Retries=5
+      </DeleteDirectoryMSBuildProperties>
+    </PropertyGroup>
+
+    <MSBuild Projects="$(_TargetTasksTargets)" Targets="DeleteDirectory" Properties="$(DeleteDirectoryMSBuildProperties)" ContinueOnError="true" />
 
   </Target>
 

@@ -1,13 +1,41 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project InitialTargets="CopySourceProjectToLocal" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project InitialTargets="_CopySourceProjectToLocal;_Ensure_SourceProjectDirectory" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Target Name="CopySourceProjectToLocal">
+  <PropertyGroup>
+    <_SourceProjectDirectory>$(SourceProjectDirectory)</_SourceProjectDirectory>
+    <_SourceProjectDirectory Condition="'$(_SourceProjectDirectory)' != '' And !$(_SourceProjectDirectory.EndsWith('\'))">$(_SourceProjectDirectory)\</_SourceProjectDirectory>
+    <_ShadowProjectDirectory>$(ShadowProjectDirectory)</_ShadowProjectDirectory>
+    <_ShadowProjectDirectory Condition="'$(_ShadowProjectDirectory)' != '' And !$(_ShadowProjectDirectory.EndsWith('\'))">$(_ShadowProjectDirectory)\</_ShadowProjectDirectory>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(_SourceProjectDirectory)' != ''">
+
+    <Compile Include="$(_SourceProjectDirectory)**\*.cs" Exclude="$(_SourceProjectDirectory)bin\**\*;$(_SourceProjectDirectory)obj\**\*" />
+
+    <EmbeddedResource Include="$(_SourceProjectDirectory)\**\*.resx">
+    </EmbeddedResource>
+
+  </ItemGroup>
+
+  <Target Name="_Ensure_SourceProjectDirectory">
+    <Error Text="[$(MSBuildThisFileName)] Property '_SourceProjectDirectory' is empty " Condition="'$(_SourceProjectDirectory)' == ''" />
+    <Error Text="[$(MSBuildThisFileName)] Directory of source project '$(_SourceProjectDirectory)' does not exist." Condition="!Exists('$(_SourceProjectDirectory)')" />
+    <Error Text="[$(MSBuildThisFileName)] Directory of shadow project '$(_ShadowProjectDirectory)' does not exist." Condition="!Exists('$(_ShadowProjectDirectory)')" />
+  </Target>
+
+  <Target Name="_CopySourceProjectToLocal">
 
     <ItemGroup>
-      <FodyFiles Include="$(SourceProjectDirectory)\FodyWeavers*"></FodyFiles>
+      <_FodyFiles Include="$(_SourceProjectDirectory)FodyWeavers*" />
+      <_PropertiesFiles Include="$(_SourceProjectDirectory)Properties\**\*" />
+      <!--<_BuildFiles Include="$(_SourceProjectDirectory)build\**\*" />
+      <_BuildMultiTargetingFiles Include="$(_SourceProjectDirectory)buildMultiTargeting\**\*" />-->
     </ItemGroup>
 
-    <Copy SourceFiles="@(FodyFiles)" DestinationFolder="." SkipUnchangedFiles="true" Condition="'@(FodyFiles)' != ''" />
+    <Copy SourceFiles="@(_FodyFiles)" DestinationFolder="." SkipUnchangedFiles="true" Condition="'@(_FodyFiles)' != ''" />
+    <Copy SourceFiles="@(_PropertiesFiles)" DestinationFolder="Properties\%(RecursiveDir)" SkipUnchangedFiles="true" Condition="'@(_PropertiesFiles)' != ''" />
+    <!--<Copy SourceFiles="@(_BuildFiles)" DestinationFolder="build\%(RecursiveDir)" SkipUnchangedFiles="true" Condition="'@(_BuildFiles)' != ''" />
+    <Copy SourceFiles="@(_BuildMultiTargetingFiles)" DestinationFolder="buildMultiTargeting\%(RecursiveDir)" SkipUnchangedFiles="true" Condition="'@(_BuildMultiTargetingFiles)' != ''" />-->
 
   </Target>
 

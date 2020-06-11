@@ -36,6 +36,7 @@ namespace Teronis.DotNet.Build
 
             // Marker file represents root directory
             var dotNetProgram = $"dotnet.exe";
+            var gitVersionCacheIdentifier = Guid.NewGuid();
             var rootDirectory = Utilities.GetRootDirectory() ?? throw new DirectoryNotFoundException("Root directory not found.");
             var sourceDirectory = Path.Combine(rootDirectory.FullName, "src");
 
@@ -72,6 +73,7 @@ namespace Teronis.DotNet.Build
             } else if (options.Command == PackCommandOptions.PackCommand) {
                 packProjects = getPackProjects();
                 buildProjects = packProjects;
+                restoreProjects = buildProjects;
             } else if (options.Command == TestCommandOptions.TestCommand) {
                 testProjects = getTestProjects();
                 buildProjects = testProjects;
@@ -109,12 +111,14 @@ namespace Teronis.DotNet.Build
             async Task RunDotNetProjects(BuildStyle buildStyle, string command, IEnumerable<ProjectInfo> projects)
             {
                 options = options ?? throw new ArgumentNullException(nameof(options));
+                projects = projects ?? throw new ArgumentNullException(nameof(projects));
+                var additionalArgumentProperties = $"\"-p:GitVersionCacheIdentifier={gitVersionCacheIdentifier}\"";
                 string additonalArguments;
 
                 if (buildStyle == BuildStyle.DotNet) {
-                    additonalArguments = $"--{ConfigurationLongName} {options.Configuration} --{VerbosityLongName} {options.Verbosity}";
+                    additonalArguments = $"--{ConfigurationLongName} {options.Configuration} --{VerbosityLongName} {options.Verbosity} {additionalArgumentProperties}";
                 } else if (buildStyle == BuildStyle.MSBuild) {
-                    additonalArguments = $"-p:{ConfigurationLongName}={options.Configuration} -p:{VerbosityLongName}={options.Verbosity}";
+                    additonalArguments = $"-p:{ConfigurationLongName}={options.Configuration} -p:{VerbosityLongName}={options.Verbosity} {additionalArgumentProperties}";
                 } else {
                     throw new ArgumentException("Bad build style.");
                 }
@@ -141,7 +145,7 @@ namespace Teronis.DotNet.Build
             }
 
             string[] DependsOnIf(params string[] dependencies) =>
-                options.NoDependencies ? new string[] { } : dependencies;
+                options.SkipDependencies ? new string[] { } : dependencies;
 
             Target(RestoreCommandOptions.RestoreCommand, async () => {
                 await RunDotNetProjects(BuildStyle.MSBuild, RestoreCommandOptions.RestoreCommand, restoreProjects);

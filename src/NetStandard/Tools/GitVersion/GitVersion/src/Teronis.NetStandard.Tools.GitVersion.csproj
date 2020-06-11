@@ -1,4 +1,6 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project>
+
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" Condition="'$(DisableSdkProps)' != 'true'" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -9,6 +11,8 @@
     <!--<IncludeBuildOutput>false</IncludeBuildOutput>-->
     <!--<IncludeSymbols>false</IncludeSymbols>-->
   </PropertyGroup>
+
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" Condition="'$(DisableSdkProps)' != 'true'" />
 
   <ItemGroup>
     <PackageReference Include="GitVersion.CommandLine" Version="5.3.5" GeneratePathProperty="true">

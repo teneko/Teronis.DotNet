@@ -13,7 +13,7 @@ namespace Teronis.GitVersionCache.BuildTasks
         public bool NoNormalize { get; set; }
 
         [Required]
-        public string BuildIdentifier { get; set; }
+        public string CacheIdentifier { get; set; }
         [Required]
         public bool IsDateIdentifier { get; set; }
 

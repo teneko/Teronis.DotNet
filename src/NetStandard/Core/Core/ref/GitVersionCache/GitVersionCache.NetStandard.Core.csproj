@@ -13,7 +13,7 @@
 
   <Import Project="$(TeronisMSBuildCoreProjectShadowPropsFile)" />
   <Import Project="$(TeronisMSBuildCoreProjectShadowTargetsFile)" />
-  <Import Project="$(SourceProjectDirectory)\Teronis.NetStandard.Core.csproj" />
+  <Import Project="$(SourceProjectDirectory)Teronis.NetStandard.Core.csproj" />
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Core.Localization\ref\GitVersionCache\GitVersionCache.NetStandard.Core.Localization.csproj" PrivateAssets="all" />

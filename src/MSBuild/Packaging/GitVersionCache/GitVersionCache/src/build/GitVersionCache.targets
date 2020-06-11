@@ -1,13 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Import Project="Teronis.MSBuild.Packaging.GitVersionCache.props" Condition="'$(TeronisMSBuildPackagingGitVersionCacheHasBeenLoaded)' != 'true'" />
+  <Import Project="$(MSBuildThisDirectory)GitVersionCache.props" Condition="'$(GitVersionCachePropsHasBeenLoaded)' != 'true'"/>
+  <Import Project="$(MSBuildThisDirectory)Teronis.MSBuild.Packaging.GitVersionCache.props" Condition="'$(TeronisMSBuildPackagingGitVersionCacheHasBeenLoaded)' != 'true'" />
 
   <UsingTask AssemblyFile="$(GitVersionCacheAssemblyFile)" TaskName="GetVersionCacheTask" />
   <UsingTask AssemblyFile="$(MSBuildCoreAssemblyFile)" TaskName="MetadataToStringTask" />
 
+  <!--
+  # Optional parameters:
+  # - GitVersionCacheIdentifier: The identifier of cache.
+  -->
   <Target Name="GetVersionCache">
-    <GetVersionCacheTask BuildIdentifier="test"
+    
+    <GetVersionCacheTask CacheIdentifier="$(GitVersionCacheIdentifier)" 
                          IsDateIdentifier="false"
                          SolutionDirectory="test1"
                          ConfigFilePath="test2"
@@ -41,9 +47,14 @@
       <Output TaskParameter="CommitsSinceVersionSource" PropertyName="GitVersion_CommitsSinceVersionSource" />
       <Output TaskParameter="CommitsSinceVersionSourcePadded" PropertyName="GitVersion_CommitsSinceVersionSourcePadded" />
     </GetVersionCacheTask>
+    
   </Target>
 
-  <Target Name="GetVersionCacheInline" Outputs="@(InlinedVersionCache)" DependsOnTargets="$(GetVersionCache)">
+  <!--
+  # Optional parameters:
+  # - GitVersionCacheIdentifier: The identifier of cache.
+  -->
+  <Target Name="GetVersionCacheInline" DependsOnTargets="$(GetVersionCache)" Outputs="@(InlinedVersionCache)">
 
     <ItemGroup>
       <VersionVariables Include="VersionVariables">
@@ -81,6 +92,7 @@
       <Output TaskParameter="Metadata" PropertyName="InlinedVersionCache" />
     </MetadataToStringTask>
 
+    <!-- DO NOT DELETE! It is the output by MSBuild-task and can be used with target GetVersionCacheInlineProperty. -->
     <Message Text="$(InlinedVersionCache)" Importance="high" />
 
   </Target>

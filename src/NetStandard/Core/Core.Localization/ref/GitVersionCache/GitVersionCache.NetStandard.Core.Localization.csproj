@@ -12,6 +12,6 @@
 
   <Import Project="$(TeronisMSBuildCoreProjectShadowPropsFile)" />
   <Import Project="$(TeronisMSBuildCoreProjectShadowTargetsFile)" />
-  <Import Project="$(SourceProjectDirectory)\Teronis.NetStandard.Core.Localization.csproj" />
+  <Import Project="$(SourceProjectDirectory)Teronis.NetStandard.Core.Localization.csproj" />
 
 </Project>

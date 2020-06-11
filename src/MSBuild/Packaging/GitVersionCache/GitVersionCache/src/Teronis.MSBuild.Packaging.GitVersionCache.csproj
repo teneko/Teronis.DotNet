@@ -1,5 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-  
+﻿<Project>
+
+  <PropertyGroup>
+    <!-- Will be overwritten by GitVersionCache.MSBuild.Packaging.GitVersionCache. -->
+    <MSBuildPackagingGitVersionProjectFile Condition="'$(MSBuildPackagingGitVersionProjectFile)' == ''">$(MSBuildThisFileDirectory)$(MSBuildProjectName).csproj</MSBuildPackagingGitVersionProjectFile>
+  </PropertyGroup>
+
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" Condition="'$(DisableSdkProps)' != 'true'" />
+
   <PropertyGroup>
 
     <!--<OutputType>Exe</OutputType>-->
@@ -22,29 +29,28 @@
     <!--<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>-->
 
-    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);FilesystemPublishmentRootContentInPackage</TargetsForTfmSpecificContentInPackage>
+    <!-- We only need the package reference for binaries. -->
+    <!--<DisableGitVersionTask>true</DisableGitVersionTask>
+    <WriteVersionInfoToBuildLog>false</WriteVersionInfoToBuildLog>
+    <UpdateAssemblyInfo>false</UpdateAssemblyInfo>
+    <GenerateGitVersionInformation>false</GenerateGitVersionInformation>
+    <GetVersion>false</GetVersion>-->
+
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_PublishedProjectContentInPackage</TargetsForTfmSpecificContentInPackage>
 
   </PropertyGroup>
 
-  <ItemGroup>
-
-    <ProjectReference Include="..\..\..\..\..\NetStandard\Core\Core\ref\GitVersionCache\GitVersionCache.NetStandard.Core.csproj">
-      <AdditionalProperties>TargetFramework=$(TargetFramework)</AdditionalProperties>
-    </ProjectReference>
-
-    <ProjectReference Include="..\..\..\..\..\NetStandard\Json\Json\ref\GitVersionCache\GitVersionCache.NetStandard.Json.csproj" />
-
-    <ProjectReference Include="..\..\..\..\..\NetStandard\Tools\GitVersion\GitVersion\src\Teronis.NetStandard.Tools.GitVersion.csproj" />
-
-  </ItemGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" Condition="'$(DisableSdkProps)' != 'true'" />
 
   <ItemGroup>
 
-    <ProjectReference Include="..\..\..\..\..\NetStandard\Tools\GitVersion\GitVersion\src\Teronis.NetStandard.Tools.GitVersion.csproj" />
-
-    <ProjectReference Include="..\..\..\..\Core\Core\src\Teronis.MSBuild.Core.csproj">
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\..\..\NetStandard\Core\Core\ref\GitVersionCache\GitVersionCache.NetStandard.Core.csproj">
       <AdditionalProperties>TargetFramework=$(TargetFramework)</AdditionalProperties>
     </ProjectReference>
+
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\..\..\NetStandard\Json\Json\ref\GitVersionCache\GitVersionCache.NetStandard.Json.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\..\..\NetStandard\Tools\GitVersion\GitVersion\ref\GitVersionCache\GitVersionCache.NetStandard.Tools.GitVersion.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\..\Core\Core\ref\GitVersionCache\GitVersionCache.MSBuild.Core.csproj" />
 
   </ItemGroup>
 
@@ -63,25 +69,28 @@
     </PackageReference>
 
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.4.0" PrivateAssets="all" />
-    <!--<PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.4.0" />-->
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.1" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.4" />
     <PackageReference Include="System.Text.Json" Version="4.7.0" />
 
+    <PackageReference Include="GitVersionTask" Version="$(GitVersionTaskVersion)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="tools\" />
     <Folder Include="Utilities\" />
   </ItemGroup>
 
   <PropertyGroup>
 
-    <GitVersionToolFilesIncludes>
+    <!--<GitVersionToolFilesIncludes>
       $(PkgGitVersionTask)\tools\**\*;
       $(PkgGitVersionTask)\tools\**\*;
       $(PkgGitVersionTask)\tools\**\*
-    </GitVersionToolFilesIncludes>
+    </GitVersionToolFilesIncludes>-->
 
     <FilesystemPublishmentDirectory>bin\$(Configuration)\netstandard2.0\filesystemPublish</FilesystemPublishmentDirectory>
 
@@ -89,43 +98,17 @@
 
   <ItemGroup>
 
-    <None Include="build\**\*" Pack="true" PackagePath="build" />
-    <None Include="build\**\*" Pack="true" PackagePath="buildMultiTargeting" />
+    <None Include="$(MSBuildThisFileDirectory)build\**\*" Pack="true" PackagePath="build" />
+    <None Include="$(MSBuildThisFileDirectory)build\**\*" Pack="true" PackagePath="buildMultiTargeting" />
 
-    <None Include="$(PkgGitVersionTask)\tools\**\*" Pack="true" PackagePath="GitVersion\">
+    <!--<None Include="$(PkgGitVersionTask)\tools\**\*" Pack="true" PackagePath="GitVersion\">
       <Link>GitVersion\%(RecursiveDir)\%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-
-    <Compile Remove="buildMultiTargeting\**" />
-
-    <EmbeddedResource Remove="buildMultiTargeting\**" />
-
-    <None Remove="buildMultiTargeting\**" />
-
-    <Reference Include="$(PkgGitVersionTask)\tools\netstandard2.0\GitVersionCore.dll">
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="$(PkgGitVersionTask)\tools\netstandard2.0\GitVersionTask.MsBuild.dll">
-      <Private>false</Private>
-    </Reference>
+    </None>-->
 
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="build\GitVersionCache.targets">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="build\Teronis.MSBuild.Packaging.GitVersionCache.props">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="build\Teronis.MSBuild.Packaging.GitVersionCache.targets">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <!-- BeforeTargets="Pack" -->
-  <Target Name="_FilesystemPublishmentBeforePack">
+  <Target Name="_PublishThisProject">
 
     <PropertyGroup>
       <PublishProjectMSBuildProperties>
@@ -134,12 +117,12 @@
       </PublishProjectMSBuildProperties>
     </PropertyGroup>
 
-    <MSBuild Projects="$(MSBuildThisFileDirectory)$(MSBuildProjectName).csproj" Targets="Publish" Properties="$(PublishProjectMSBuildProperties)" />
+    <MSBuild Projects="$(MSBuildPackagingGitVersionProjectFile)" Targets="Publish" Properties="$(PublishProjectMSBuildProperties)" />
 
   </Target>
 
   <!-- We depend on creation of filesystem publishment. -->
-  <Target Name="FilesystemPublishmentRootContentInPackage" DependsOnTargets="_FilesystemPublishmentBeforePack">
+  <Target Name="_PublishedProjectContentInPackage" DependsOnTargets="_PublishThisProject">
     <!-- 
     # We have to include those files in this way, because 
     # <None Include=".." Pack="true" PackagePath=".." />
@@ -159,6 +142,6 @@
     <RemoveDir Directories="$(FilesystemPublishmentDirectory)" />
   </Target>
 
-  <Import Project="$(TeronisMSBuildPackagingGenerateFilesystemPackageTargetsFile)" />
+  <Import Project="$(TeronisMSBuildCorePackagingGenerateFilesystemPackageTargetsFile)" />
 
 </Project>

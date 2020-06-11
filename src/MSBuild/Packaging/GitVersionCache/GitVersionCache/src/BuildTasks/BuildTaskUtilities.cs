@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using GitVersion.MSBuildTask;
+//using GitVersion.MSBuildTask;
 using Microsoft.Build.Utilities;
 using Teronis.GitVersionCache.Utilities;
 using Teronis.IO;
@@ -11,8 +11,13 @@ namespace Teronis.GitVersionCache.BuildTasks
 {
     public static class BuildTaskUtilities
     {
-        public static DirectoryInfo GetGitVersionYamlDirectory() =>
+        public static DirectoryInfo GetParentOfGitVersionYamlDirectory() =>
               DirectoryTools.GetDirectoryOfFileAbove("GitVersion.yml", ModuleInitializer.ContainerRootDirectory);
+
+        public static DirectoryInfo GetParentOfGitDirectory() =>
+              DirectoryTools.GetDirectoryOfDirectoryAbove(".git", ModuleInitializer.ContainerRootDirectory);
+
+
         //DirectoryUtilities.GetDirectoryOfFileAbove("GitVersion.yml", ModuleInitializer.ContainerRootDirectory);
 
         ///// <summary>

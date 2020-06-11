@@ -2,24 +2,39 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <IsRootMarkerFileImported>true</IsRootMarkerFileImported>
+
+    <IsMSBuildFileImported>true</IsMSBuildFileImported>
+
     <!-- / (root) -->
-    <!-- <RootDirectory Condition="'$(RootDirectory)' == ''">$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory),.msbuild))</RootDirectory> -->
     <RootDirectory Condition="'$(RootDirectory)' == ''">$(MSBuildThisFileDirectory)</RootDirectory>
     <RootBuildPropsPath Condition="'$(RootBuildPropsPath)' == ''">$(RootDirectory)\Directory.Build.props</RootBuildPropsPath>
     <RootBuildTargetsPath Condition="'$(RootBuildTargetsPath)' == ''">$(RootDirectory)\Directory.Build.targets</RootBuildTargetsPath>
+
     <!-- /.msbuild-projects/ -->
     <RootCorePropsPath Condition="'$(RootCorePropsPath)' == ''">$(RootDirectory)\.msbuild-projects\Directory.Core.props</RootCorePropsPath>
-    <!-- /** (others) -->
+
+    <!-- Teronis.NetStandard.Core -->
     <TeronisNetStandardCoreDirectory Condition="'$(TeronisNetStandardCoreDirectory)' == ''">$(RootDirectory)\src\NetStandard\Core\Core\</TeronisNetStandardCoreDirectory>
-    <TeronisMSBuildCoreUtilitiesTargetsFile>$(RootDirectory)src\MSBuild\Core\Core\src\build\Teronis.MSBuild.Utilities.targets</TeronisMSBuildCoreUtilitiesTargetsFile>
+
+    <!-- Teronis.MSBuild.Core -->
+    <TeronisMSBuildCoreTargetTasksTargetsFile>$(RootDirectory)src\MSBuild\Core\Core\src\build\TargetTasks.targets</TeronisMSBuildCoreTargetTasksTargetsFile>
+
     <TeronisMSBuildCoreProjectShadowPropsFile>$(RootDirectory)src\MSBuild\Core\Core\src\build\Teronis.MSBuild.Packaging.ProjectShadow.props</TeronisMSBuildCoreProjectShadowPropsFile>
     <TeronisMSBuildCoreProjectShadowTargetsFile>$(RootDirectory)src\MSBuild\Core\Core\src\build\Teronis.MSBuild.Packaging.ProjectShadow.targets</TeronisMSBuildCoreProjectShadowTargetsFile>
+
+    <TeronisMSBuildCorePackagingGenerateFilesystemPackageTargetsFile>$(RootDirectory)src\MSBuild\Core\Core\src\build\Teronis.MSBuild.Packaging.GenerateFilesystemPackage.targets</TeronisMSBuildCorePackagingGenerateFilesystemPackageTargetsFile>
+    <TeronisMSBuildCorePackagingGenerateFilesystemPackageInProjectTargetsFile>$(RootDirectory)src\MSBuild\Core\Core\src\build\Teronis.MSBuild.Packaging.GenerateFilesystemPackageInProject.targets</TeronisMSBuildCorePackagingGenerateFilesystemPackageInProjectTargetsFile>
+
+    <TeronisMSBuildCoreMSBuildTasksTargetsFileTemplate>$(RootDirectory)src\MSBuild\Core\Core\src\bin\$(Configuration)\(TargetFramework)\packagePublish\build\MSBuildTasks.targets</TeronisMSBuildCoreMSBuildTasksTargetsFileTemplate>
+
+    <!-- Teronis.MSBuild.ProjectBuildInPackage -->
     <TeronisMSBuildPackagingProjectBuildInPackagePropsFile Condition="'$(TeronisMSBuildPackagingProjectBuildInPackagePropsFile)' == ''">$(RootDirectory)\src\MSBuild\Packaging\ProjectBuildInPackage\src\build\Teronis.MSBuild.Packaging.ProjectBuildInPackage.props</TeronisMSBuildPackagingProjectBuildInPackagePropsFile>
     <TeronisMSBuildPackagingProjectBuildInPackageTargetsFile Condition="'$(TeronisMSBuildPackagingProjectBuildInPackageTargetsFile)' == ''">$(RootDirectory)\src\MSBuild\Packaging\ProjectBuildInPackage\src\build\Teronis.MSBuild.Packaging.ProjectBuildInPackage.targets</TeronisMSBuildPackagingProjectBuildInPackageTargetsFile>
-    <TeronisMSBuildPackagingGenerateFilesystemPackageTargetsFile>$(RootDirectory)src\MSBuild\Core\Core\src\build\Teronis.MSBuild.Packaging.GenerateFilesystemPackage.targets</TeronisMSBuildPackagingGenerateFilesystemPackageTargetsFile>
-    <TeronisMSBuildPackagingGenerateFilesystemPackageInProjectTargetsFile>$(RootDirectory)src\MSBuild\Core\Core\src\build\Teronis.MSBuild.Packaging.GenerateFilesystemPackageInProject.targets</TeronisMSBuildPackagingGenerateFilesystemPackageInProjectTargetsFile>
-    <TeronisMSBuildCoreTasksTargetsFileTemplate>$(RootDirectory)src\MSBuild\Core\Core\src\bin\$(Configuration)\(TargetFramework)\packagePublish\build\Teronis.MSBuild.Tasks.targets</TeronisMSBuildCoreTasksTargetsFileTemplate>
+
+    <!-- Teronis.MSBuild.GitVersionCache -->
+    <TeronisMSBuildPackagingGitVersionCachePropsFileTemplate>$(RootDirectory)src\MSBuild\Packaging\GitVersionCache\GitVersionCache\ref\GitVersionCache\bin\(Configuration)\netstandard2.0\packagePublish\build\Teronis.MSBuild.Packaging.GitVersionCache.props</TeronisMSBuildPackagingGitVersionCachePropsFileTemplate>
+    <TeronisMSBuildPackagingGitVersionCacheTargetsFileTemplate>$(RootDirectory)src\MSBuild\Packaging\GitVersionCache\GitVersionCache\ref\GitVersionCache\bin\(Configuration)\netstandard2.0\packagePublish\build\Teronis.MSBuild.Packaging.GitVersionCache.targets</TeronisMSBuildPackagingGitVersionCacheTargetsFileTemplate>
+
   </PropertyGroup>
 
 </Project>

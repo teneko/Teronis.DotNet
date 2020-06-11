@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
 
@@ -7,18 +7,16 @@
     <DisableGitVersion>true</DisableGitVersion>
     <DisableGitVersionCache>true</DisableGitVersionCache>
     <DisableSdkProps>true</DisableSdkProps>
-    <DisableCoreProject>true</DisableCoreProject>
+    <DisableNetStandardCoreProject>true</DisableNetStandardCoreProject>
 
   </PropertyGroup>
 
   <Import Project="$(TeronisMSBuildCoreProjectShadowPropsFile)" />
   <Import Project="$(TeronisMSBuildCoreProjectShadowTargetsFile)" />
-  <Import Project="$(SourceProjectDirectory)\Teronis.NetStandard.Json.csproj" />
+  <Import Project="$(SourceProjectDirectory)Teronis.NetStandard.Json.csproj" />
   
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Core\Core\ref\GitVersionCache\GitVersionCache.NetStandard.Core.csproj">
-      <AdditionalProperties>TargetFramework=$(TargetFramework)</AdditionalProperties>
-    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Core\Core\ref\GitVersionCache\GitVersionCache.NetStandard.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,30 +1,56 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Project InitialTargets="InstallGitVersionTask" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Import Condition="'$(IsRootMarkerFileImported)' != 'true'" Project="$([MSBuild]::GetPathOfFileAbove(.msbuild))" />
+  <Import Condition="'$(IsMSBuildFileImported)' != 'true'" Project="$([MSBuild]::GetPathOfFileAbove(.msbuild))" />
   <Import Condition="'$(IsTeronisDotNetCorePropsFileImported)' != 'true'" Project="$(RootCorePropsPath)" />
   <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackageTargetsFile)" />
-
-  <PropertyGroup>
-    <TeronisMSBuildPackagingGenerateFilesystemPackageInProjectTargetsFile>$(RootDirectory)src\MSBuild\Core\Core\src\bin\PackagePublish\build\Teronis.MSBuild.Packaging.GenerateFilesystemPackageInProject.targets</TeronisMSBuildPackagingGenerateFilesystemPackageInProjectTargetsFile>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="@(ProjectReference)">
-      <!-- Prevent Reference.*-projects from being tracked in *.nuspec files. -->
-      <!-- <PrivateAssets Condition="$([System.String]::Copy('%(Filename)').Contains('Reference.'))">all</PrivateAssets> -->
-      <!-- <ReferenceOutputAssembly Condition="$([System.String]::Copy('%(Filename)').Contains('Reference.'))">false</ReferenceOutputAssembly> -->
-    </ProjectReference>
-  </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="@(ProjectReference)">
-      <!-- <AdditionalProperties Condition="'%(Filename)' == 'Teronis.NetStandard.Core'">%(AdditionalProperties);TargetFramework=netstandard2.0</AdditionalProperties> -->
-      <!-- <AdditionalProperties Condition="'%(Filename)' == 'Teronis.NetStandard.Core'">%(AdditionalProperties);TargetFramework=$(TargetFramework)</AdditionalProperties> -->
-    </ProjectReference>
+    <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\GitVersionCache\GitVersionCache\ref\PackagePublish\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj" Condition="'$(DisableGitVersionCache)' != 'true' And $(MSBuildProjectName.StartsWith('Teronis.'))" />
   </ItemGroup>
 
-  <Target Name="InstallGitVersionTask" >
+  <PropertyGroup>
+    <_TeronisMSBuildPackagingGitVersionCachePropsFile>$(TeronisMSBuildPackagingGitVersionCachePropsFileTemplate.Replace('(Configuration)','$(Configuration)'))</_TeronisMSBuildPackagingGitVersionCachePropsFile>
+    <_TeronisMSBuildPackagingGitVersionCacheTargetsFile>$(TeronisMSBuildPackagingGitVersionCacheTargetsFileTemplate.Replace('(Configuration)','$(Configuration)'))</_TeronisMSBuildPackagingGitVersionCacheTargetsFile>
+  </PropertyGroup>
+
+  <Import Project="$(_TeronisMSBuildPackagingGitVersionCachePropsFile)" Condition="Exists('$(_TeronisMSBuildPackagingGitVersionCachePropsFile)') And '$(DisableGitVersionCache)' != 'true'" />
+  <Import Project="$(_TeronisMSBuildPackagingGitVersionCacheTargetsFile)" Condition="Exists('$(_TeronisMSBuildPackagingGitVersionCacheTargetsFile)') And '$(DisableGitVersionCache)' != 'true'" />
+
+  <ItemGroup>
+
+    <_ProjectReferences Include="@(ProjectReference)">
+      <!-- Prevent PackagePublish.*-projects from being tracked in *.nuspec files. -->
+      <IsPackagePublish Condition="'%(IsPackagePublish)' == ''">$([System.String]::Copy('%(Filename)').Contains('PackagePublish.'))</IsPackagePublish>
+      <ReferenceOutputAssembly Condition="'%(IsPackagePublish)' == 'true'">false</ReferenceOutputAssembly>
+      <SkipGetTargetFrameworkProperties Condition="'%(IsPackagePublish)' == 'true'">true</SkipGetTargetFrameworkProperties>
+      <GlobalPropertiesToRemove Condition="'%(IsPackagePublish)' == 'true'">TargetFramework</GlobalPropertiesToRemove>
+      <BuildProjectReferences Condition="'%(IsPackagePublish)' == 'true'">false</BuildProjectReferences>
+
+      <!-- <AdditionalProperties Condition="'%(Filename)' == 'Teronis.NetStandard.Core'">%(AdditionalProperties);TargetFramework=netstandard2.0</AdditionalProperties> -->
+      <!-- <AdditionalProperties >%(AdditionalProperties);TargetFramework=$(TargetFramework)</AdditionalProperties> -->
+      <!-- <AdditionalProperties Condition="'%(Filename)' == 'Teronis.NetStandard.Core'">TargetFramework=$(TargetFramework)</AdditionalProperties> -->
+      <AdditionalProperties Condition="'%(Filename)' == 'Teronis.NetStandard.Core'">%(AdditionalProperties);TargetFramework=$(TargetFramework)</AdditionalProperties>
+    </_ProjectReferences>
+
+    <ProjectReference Remove="@(ProjectReference)" />
+    <ProjectReference Include="@(_ProjectReferences)" />
+
+  </ItemGroup>
+
+  <Target Name="_DirectoryBuildBeforeClean" BeforeTargets="BeforeClean">
+    <PropertyGroup>
+      <DisableGitVersionCache>true</DisableGitVersionCache>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="_DirectoryBuildAfterClean" BeforeTargets="AfterClean">
+    <PropertyGroup>
+      <DisableGitVersionCache>false</DisableGitVersionCache>
+    </PropertyGroup>
+  </Target>
+
+  <!-- <Target Name="InstallGitVersionTask" >
 
     <PropertyGroup>
       <HasGitVersionTask Condition="'%(PackageReference.Identity)' == 'GitVersionTask'">true</HasGitVersionTask>
@@ -37,6 +63,6 @@
       </PackageReference>
     </ItemGroup>
 
-  </Target>
+  </Target> -->
 
 </Project>

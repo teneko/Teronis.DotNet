@@ -9,21 +9,35 @@
 
   <!--
   # Optional parameters:
-  # - GitVersionCacheIdentifier: The identifier of cache. It is by default [System.Guid]::NewGuid()
+  # - GitVersionCacheIdentifier: The identifier for current cache. It is by default [System.Guid]::NewGuid(). Set it only when you know what you do.
+  # - GitVersionCacheProjectDirectory: The project directory from where the GitVersion.yml is searched.
+  # - GitVersionCacheConfigFile: The config file that is needed for GitVersion.exe.
+  # - GitVersionCacheNoFetch: The parameter that gets passed to GitVersion.exe.
+  # - GitVersionCacheNoNormalize: The parameter that gets passed to GitVersion.exe.
   -->
   <Target Name="GetVersionCache">
 
     <PropertyGroup>
+
       <_GitVersionCacheIdentifier Condition="'$(_GitVersionCacheIdentifier)' == ''">$(GitVersionCacheIdentifier)</_GitVersionCacheIdentifier>
       <_GitVersionCacheIdentifier Condition="'$(_GitVersionCacheIdentifier)' == ''">$([System.Guid]::NewGuid())</_GitVersionCacheIdentifier>
+
+      <_GitVersionCacheProjectDirectory Condition="'$(_GitVersionCacheProjectDirectory)' == ''">$(GitVersionCacheProjectDirectory)</_GitVersionCacheProjectDirectory>
+      <_GitVersionCacheProjectDirectory Condition="'$(_GitVersionCacheProjectDirectory)' == ''">$(MSBuildProjectDirectory)</_GitVersionCacheProjectDirectory>
+
+      <_GitVersionCacheConfigFile Condition="'$(_GitVersionCacheConfigFile)' == ''">$(GitVersionCacheConfigFile)</_GitVersionCacheConfigFile>
+
+      <_GitVersionCacheNoFetch Condition="'$(_GitVersionCacheNoFetch)' == ''">$(GitVersionCacheNoFetch)</_GitVersionCacheNoFetch>
+
+      <_GitVersionCacheNoNormalize Condition="'$(_GitVersionCacheNoNormalize)' == ''">$(GitVersionCacheNoNormalize)</_GitVersionCacheNoNormalize>
+
     </PropertyGroup>
-    
+
     <GetVersionCacheTask CacheIdentifier="$(_GitVersionCacheIdentifier)"
-                         IsDateIdentifier="false"
-                         SolutionDirectory="test1"
-                         ConfigFilePath="test2"
-                         NoFetch="$(GitVersion_NoFetchEnabled)"
-                         NoNormalize="$(GitVersion_NoNormalizeEnabled)">
+                         ProjectDirectory="$(_GitVersionCacheProjectDirectory)"
+                         ConfigFile="$(_GitVersionCacheConfigFile)"
+                         NoFetch="$(_GitVersionCacheNoFetch)"
+                         NoNormalize="$(_GitVersionCacheNoNormalize)">
       <Output TaskParameter="Major" PropertyName="GitVersion_Major" />
       <Output TaskParameter="Minor" PropertyName="GitVersion_Minor" />
       <Output TaskParameter="Patch" PropertyName="GitVersion_Patch" />
@@ -52,7 +66,7 @@
       <Output TaskParameter="CommitsSinceVersionSource" PropertyName="GitVersion_CommitsSinceVersionSource" />
       <Output TaskParameter="CommitsSinceVersionSourcePadded" PropertyName="GitVersion_CommitsSinceVersionSourcePadded" />
     </GetVersionCacheTask>
-    
+
   </Target>
 
   <!--
@@ -112,7 +126,7 @@
   # - PrintDebug: If true debug information is shown.
   -->
   <Target Name="GetVersionCacheInlineProperty" Outputs="$(ConsolePropertyValue)">
-    
+
     <PropertyGroup>
       <ConsolePropertyName>Console$(GetVersionPropertyName)=</ConsolePropertyName>
       <ConsolePropertyLength>$(ConsolePropertyName.Length)</ConsolePropertyLength>

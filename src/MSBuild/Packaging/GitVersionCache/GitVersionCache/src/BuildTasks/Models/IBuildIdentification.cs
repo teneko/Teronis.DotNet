@@ -7,6 +7,5 @@ namespace Teronis.GitVersionCache.BuildTasks.Models
     public interface IBuildIdentification
     {
         string CacheIdentifier { get; set; }
-        bool IsDateIdentifier { get; set; }
     }
 }

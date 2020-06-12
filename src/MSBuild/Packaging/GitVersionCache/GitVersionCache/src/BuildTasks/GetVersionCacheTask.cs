@@ -7,15 +7,13 @@ namespace Teronis.GitVersionCache.BuildTasks
     public class GetVersionCacheTask : Task, IBuildIdentification
     {
         [Required]
-        public string SolutionDirectory { get; set; }
-        public string ConfigFilePath { get; set; }
+        public string ProjectDirectory { get; set; }
+        public string ConfigFile { get; set; }
         public bool NoFetch { get; set; }
         public bool NoNormalize { get; set; }
 
         [Required]
         public string CacheIdentifier { get; set; }
-        [Required]
-        public bool IsDateIdentifier { get; set; }
 
         [Output]
         public string LegacySemVerPadded { get; set; }

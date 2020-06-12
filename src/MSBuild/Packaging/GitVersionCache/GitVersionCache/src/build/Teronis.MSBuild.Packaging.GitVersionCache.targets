@@ -11,30 +11,6 @@
     <_GetVersionCache>$(GetVersionCache)</_GetVersionCache>
   </PropertyGroup>
 
-  <!--<Target Name="A" BeforeTargets="CoreCompile">
-    <Message Text="~~~~~~~~~~~~~~~ CoreCompile" Importance="high" />
-  </Target>
-
-  <Target Name="B" BeforeTargets="GetAssemblyVersion">
-    <Message Text="~~~~~~~~~~~~~~~ GetAssemblyVersion" Importance="high" />
-  </Target>
-
-  <Target Name="C" BeforeTargets="GenerateNuspec">
-    <Message Text="~~~~~~~~~~~~~~~ GenerateNuspec" Importance="high" />
-  </Target>
-
-  <Target Name="D" BeforeTargets="_GenerateRestoreProjectSpec">
-    <Message Text="~~~~~~~~~~~~~~~ _GenerateRestoreProjectSpec" Importance="high" />
-  </Target>
-
-  <Target Name="E" BeforeTargets="_GetOutputItemsFromPack">
-    <Message Text="~~~~~~~~~~~~~~~ _GetOutputItemsFromPack" Importance="high" />
-  </Target>
-
-  <Target Name="F" BeforeTargets="EnsureWixToolsetInstalled">
-    <Message Text="~~~~~~~~~~~~~~~ EnsureWixToolsetInstalled" Importance="high" />
-  </Target>-->
-
   <PropertyGroup>
 
     <GitVersionCacheTargetsFile>$(MSBuildThisFileDirectory)GitVersionCache.targets</GitVersionCacheTargetsFile>
@@ -64,12 +40,22 @@
 
   <Target Name="_GetVersionCacheInline">
     <PropertyGroup>
-      <GitVersionCacheIdentifierProperty>-p:GitVersionCacheIdentifier=$(GitVersionCacheIdentifier)</GitVersionCacheIdentifierProperty>
+      <_GitVersionCacheIdentifierProperties>&quot;-p:GitVersionCacheIdentifier=$(GitVersionCacheIdentifier)&quot; &quot;-p:GitVersionCacheProjectDirectory=$(GitVersionCacheProjectDirectory)&quot; &quot;-p:GitVersionCacheConfigFile=$(GitVersionCacheConfigFile)&quot; &quot;-p:GitVersionCacheNoFetch=$(GitVersionCacheNoFetch)&quot; &quot;-p:GitVersionCacheNoNormalize=$(GitVersionCacheNoNormalize)&quot;</_GitVersionCacheIdentifierProperties>
     </PropertyGroup>
     
-    <Exec Command="dotnet msbuild &quot;$(GitVersionCacheTargetsFile)&quot; -nologo -nodereuse:false &quot;-t:GetVersionCache;GetVersionCacheInline&quot; &quot;$(GitVersionCacheIdentifierProperty)&quot;" ConsoleToMSBuild="true" >
+    <Exec Command="dotnet msbuild &quot;$(GitVersionCacheTargetsFile)&quot; -nologo -nodereuse:false &quot;-t:GetVersionCache;GetVersionCacheInline&quot; $(_GitVersionCacheIdentifierProperties)" ConsoleToMSBuild="true" >
       <Output TaskParameter="ConsoleOutput" PropertyName="GetVersionCacheInline" />
     </Exec>
+  </Target>
+
+  <Target Name="GetVersionCache" BeforeTargets="$(GetVersionCacheBeforeTargets)" DependsOnTargets="_GetVersionCacheInline" Condition="'$(DisableGitVersionCache)' != 'true' And '$(_GetVersionCache)' != 'false'">
+
+    <PropertyGroup>
+      <_GetVersionCache Condition="'$(MSBuildLastTaskResult)' == 'false'">false</_GetVersionCache>
+    </PropertyGroup>
+
+    <Warning Text="[$(MSBuildThisFileName)] The git version cache could not been retrieved." Condition="'$(_GetVersionCache)' == 'false'" />
+
   </Target>
 
   <!--
@@ -206,24 +192,6 @@
       <RepositoryBranch Condition=" '$(RepositoryBranch)' == '' ">$(GitVersion_BranchName)</RepositoryBranch>
       <RepositoryCommit Condition=" '$(RepositoryCommit)' == '' ">$(GitVersion_Sha)</RepositoryCommit>
     </PropertyGroup>
-
-  </Target>
-
-  <Target Name="GetVersionCache" BeforeTargets="$(GetVersionCacheBeforeTargets)" DependsOnTargets="_GetVersionCacheInline" Condition="'$(DisableGitVersionCache)' != 'true' And '$(_GetVersionCache)' != 'false'">
-
-    <PropertyGroup>
-      <_GetVersionCache Condition="'$(MSBuildLastTaskResult)' == 'false'">false</_GetVersionCache>
-    </PropertyGroup>
-
-    <Warning Text="[$(MSBuildThisFileName)] The git version cache could not been retrieved." Condition="'$(_GetVersionCache)' == 'false'" />
-
-    <!--<PropertyGroup>
-      <_ApplyVersionCacheMSBuildProperties>
-        GetVersionCacheInline=$(GetVersionCacheInline)
-      </_ApplyVersionCacheMSBuildProperties>
-    </PropertyGroup>
-    
-    <MSBuild Projects="$(MSBuildThisFileFullPath)" Targets="_ApplyVersionCache" Properties="$(_ApplyVersionCacheMSBuildProperties)" Condition="'$(_GetVersionCache)' != 'false'" />-->
 
   </Target>
 

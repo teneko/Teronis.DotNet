@@ -3,8 +3,16 @@
 
   <PropertyGroup>
     <GitVersionCachePropsHasBeenLoaded>true</GitVersionCachePropsHasBeenLoaded>
-    <!-- The identifier for current cache. Set it only when you know what you do. -->
+    <!-- The identifier for current cache. It is by default [System.Guid]::NewGuid(). Set it only when you know what you do. -->
     <GitVersionCacheIdentifier Condition="'$(GitVersionCacheIdentifier)' == ''"></GitVersionCacheIdentifier>
+    <!-- The project directory from where the GitVersion.yml is searched. -->
+    <GitVersionCacheProjectDirectory Condition="'$(GitVersionCacheProjectDirectory)' == ''"></GitVersionCacheProjectDirectory>
+    <!-- The config file that is needed for GitVersion.exe.  -->
+    <GitVersionCacheConfigFile Condition="'$(GitVersionCacheConfigFile)' == ''"></GitVersionCacheConfigFile>
+    <!-- The parameter that gets passed to GitVersion.exe. -->
+    <GitVersionCacheNoFetch Condition="'$(GitVersionCacheNoFetch)' == ''"></GitVersionCacheNoFetch>
+    <!-- The parameter that gets passed to GitVersion.exe. -->
+    <GitVersionCacheNoNormalize Condition="'$(GitVersionCacheNoNormalize)' == ''"></GitVersionCacheNoNormalize>
   </PropertyGroup>
 
 </Project>

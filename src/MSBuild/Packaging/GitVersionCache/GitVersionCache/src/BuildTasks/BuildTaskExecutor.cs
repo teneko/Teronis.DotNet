@@ -117,7 +117,7 @@ namespace Teronis.GitVersionCache.BuildTasks
 
             var buildTaskType = buildTask.GetType();
             var variablesInclusionJsonConverter = JsonConverterFactory.CreateOnlyIncludedVariablesJsonConverter(buildTaskType, out var variablesHelper);
-            variablesHelper.ConsiderVariable(typeof(string), nameof(GetVersionCacheTask.SolutionDirectory));
+            variablesHelper.ConsiderVariable(typeof(string), nameof(GetVersionCacheTask.ProjectDirectory));
 
             foreach (var propertyMember in buildTask.GetType().GetPropertyMembers(typeof(Task))) {
                 variablesHelper.ConsiderVariable(propertyMember.DeclaringType, propertyMember.Name);

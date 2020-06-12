@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using static Bullseye.Targets;
 using static SimpleExec.Command;
 using static Teronis.DotNet.Build.ICommandOptions;
+using System.Xml.Linq;
 
 namespace Teronis.DotNet.Build
 {
@@ -59,8 +60,27 @@ namespace Teronis.DotNet.Build
             IEnumerable<ProjectInfo> testProjects = null!;
             IEnumerable<ProjectInfo> azureProjects = null!;
 
-            IEnumerable<ProjectInfo> getPackProjects() =>
-                allProjects.Where(x => !Regex.IsMatch(x.Path, matchPackExcludedProjects));
+            IList<ProjectInfo> getPackProjects()
+            {
+                var validProjects = allProjects.Where(x => !Regex.IsMatch(x.Path, matchPackExcludedProjects)).ToList();
+                var validProjectsLength = validProjects.Count;
+
+                for (var index = validProjectsLength - 1; index >= 0; index--) {
+                    var projectFile = validProjects[index].Path;
+                    var projectDocument = XDocument.Load(projectFile);
+
+                    var lastIsPackableElement = projectDocument.Root
+                        .Elements("PropertyGroup")
+                        .Elements("IsPackable")
+                        .LastOrDefault();
+
+                    if (lastIsPackableElement != null && lastIsPackableElement.Value == "false") {
+                        validProjects.RemoveAt(index);
+                    }
+                }
+
+                return validProjects;
+            }
 
             IEnumerable<ProjectInfo> getTestProjects() =>
                 allProjects.Where(x => Regex.IsMatch(x.Path, matchTestProjects));

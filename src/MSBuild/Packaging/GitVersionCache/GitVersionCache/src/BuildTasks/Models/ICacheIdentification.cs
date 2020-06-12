@@ -4,8 +4,9 @@ using System.Text;
 
 namespace Teronis.GitVersionCache.BuildTasks.Models
 {
-    public interface IBuildIdentification
+    public interface ICacheIdentification
     {
-        string CacheIdentifier { get; set; }
+        string CacheIdentifier { get; }
+        string ProjectDirectory { get; }
     }
 }

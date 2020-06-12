@@ -4,7 +4,7 @@ using Teronis.GitVersionCache.BuildTasks.Models;
 
 namespace Teronis.GitVersionCache.BuildTasks
 {
-    public class GetVersionCacheTask : Task, IBuildIdentification
+    public class GetVersionCacheTask : Task, ICacheIdentification
     {
         [Required]
         public string ProjectDirectory { get; set; }

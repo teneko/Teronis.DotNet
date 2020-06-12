@@ -38,19 +38,19 @@ namespace Teronis.GitVersionCache.BuildTasks
         public string CacheDirectory => getCacheDirectory(ParentOfGitVersionYamlDirectoryInfo);
         public string CacheFile => Path.Combine(CacheDirectory, buildIdentification.CacheIdentifier + ".json");
 
-        public readonly IBuildIdentification buildIdentification;
+        public readonly ICacheIdentification buildIdentification;
         private string cacheDirectoryName;
 
-        public BuildTaskExecutor(IBuildIdentification buildIdentification)
+        public BuildTaskExecutor(ICacheIdentification cacheIdentification)
         {
-            ParentOfGitVersionYamlDirectoryInfo = BuildTaskUtilities.GetParentOfGitVersionYamlDirectory() ??
+            ParentOfGitVersionYamlDirectoryInfo = BuildTaskUtilities.GetParentOfGitVersionYamlDirectory(cacheIdentification.ProjectDirectory) ??
                 throw new FileNotFoundException("Could not find parent GitVersion.yml file.");
 
-            ParentOfGitDirectoryInfo = BuildTaskUtilities.GetParentOfGitDirectory() ??
+            ParentOfGitDirectoryInfo = BuildTaskUtilities.GetParentOfGitDirectory(cacheIdentification.ProjectDirectory) ??
                 throw new FileNotFoundException("Could not find parent .git directory.");
 
             CacheDirectoryName = BuildTaskExecutorDefaults.CacheDirectoryName;
-            this.buildIdentification = buildIdentification;
+            this.buildIdentification = cacheIdentification;
         }
 
         private string getCacheDirectory(DirectoryInfo baseDirectory) =>

@@ -9,11 +9,16 @@
 
   <!--
   # Optional parameters:
-  # - GitVersionCacheIdentifier: The identifier of cache.
+  # - GitVersionCacheIdentifier: The identifier of cache. It is by default [System.Guid]::NewGuid()
   -->
   <Target Name="GetVersionCache">
+
+    <PropertyGroup>
+      <_GitVersionCacheIdentifier Condition="'$(_GitVersionCacheIdentifier)' == ''">$(GitVersionCacheIdentifier)</_GitVersionCacheIdentifier>
+      <_GitVersionCacheIdentifier Condition="'$(_GitVersionCacheIdentifier)' == ''">$([System.Guid]::NewGuid())</_GitVersionCacheIdentifier>
+    </PropertyGroup>
     
-    <GetVersionCacheTask CacheIdentifier="$(GitVersionCacheIdentifier)" 
+    <GetVersionCacheTask CacheIdentifier="$(_GitVersionCacheIdentifier)"
                          IsDateIdentifier="false"
                          SolutionDirectory="test1"
                          ConfigFilePath="test2"

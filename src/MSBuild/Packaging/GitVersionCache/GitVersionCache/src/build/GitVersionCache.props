@@ -3,7 +3,8 @@
 
   <PropertyGroup>
     <GitVersionCachePropsHasBeenLoaded>true</GitVersionCachePropsHasBeenLoaded>
-    <GitVersionCacheIdentifier Condition="'$(GitVersionCacheIdentifier)' == ''">$([System.Guid]::NewGuid())</GitVersionCacheIdentifier>
+    <!-- The identifier for current cache. Set it only when you know what you do. -->
+    <GitVersionCacheIdentifier Condition="'$(GitVersionCacheIdentifier)' == ''"></GitVersionCacheIdentifier>
   </PropertyGroup>
 
 </Project>

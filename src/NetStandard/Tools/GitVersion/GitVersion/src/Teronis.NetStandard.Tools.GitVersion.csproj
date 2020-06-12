@@ -4,12 +4,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <!--<TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>-->
     <RootNamespace>Teronis.Tools.GitVersion</RootNamespace>
     <Nullable>Enable</Nullable>
-    <!--<SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>-->
-    <!--<IncludeBuildOutput>false</IncludeBuildOutput>-->
-    <!--<IncludeSymbols>false</IncludeSymbols>-->
   </PropertyGroup>
 
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" Condition="'$(DisableSdkProps)' != 'true'" />
@@ -23,7 +19,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="$(PkgGitVersion_CommandLine)\tools\GitVersion.exe" Pack="true" PackagePath="contentFiles">
+    <None Include="build\*" Pack="true" PackagePath="build" />
+    <None Include="buildMultiTargeting\*" Pack="true" PackagePath="buildMultiTargeting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(PkgGitVersion_CommandLine)\tools\GitVersion.exe" Pack="true" PackagePath="GitVersion"> 
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

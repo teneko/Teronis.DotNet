@@ -11,7 +11,7 @@
     <DisableGitVersionCache Condition="'$(DisableGitVersionCache)' == ''">false</DisableGitVersionCache>
     
     <DisableVersionUpdate Condition="'$(DisableVersionUpdate)' == ''">false</DisableVersionUpdate>
-    <DisableVersionUpdate Condition="'$(DisableGitVersionCache)' == true">true</DisableVersionUpdate>
+    <DisableVersionUpdate Condition="'$(DisableGitVersionCache)' == 'true'">true</DisableVersionUpdate> 
     
   </PropertyGroup>
 

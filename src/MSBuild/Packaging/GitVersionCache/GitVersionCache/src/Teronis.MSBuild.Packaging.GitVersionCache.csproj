@@ -98,8 +98,13 @@
 
   <ItemGroup>
 
-    <None Include="$(MSBuildThisFileDirectory)build\**\*" Pack="true" PackagePath="build" />
-    <None Include="$(MSBuildThisFileDirectory)build\**\*" Pack="true" PackagePath="buildMultiTargeting" />
+    <None Include="$(MSBuildThisFileDirectory)build\**\*" Pack="true" PackagePath="build">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    
+    <None Include="$(MSBuildThisFileDirectory)build\**\*" Pack="true" PackagePath="buildMultiTargeting">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
 
     <!--<None Include="$(PkgGitVersionTask)\tools\**\*" Pack="true" PackagePath="GitVersion\">
       <Link>GitVersion\%(RecursiveDir)\%(Filename)%(Extension)</Link>

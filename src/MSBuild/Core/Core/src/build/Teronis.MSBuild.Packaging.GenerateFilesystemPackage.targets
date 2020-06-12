@@ -1,20 +1,49 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <!--<Import Project="TargetTasks.targets" Condition="'$(IsTeronisMSBuildCoreTargetTasksImported)' != 'true'"/>-->
+  <Import Project="$(MSBuildThisFileName).props" Condition="'$(IsTeronisMSBuildPackagingGenerateFilesystemPackagePropsImported)' != 'true'"/>
 
   <PropertyGroup>
+
     <IsTeronisMSBuildPackUnzipPackageTargetsImported>true</IsTeronisMSBuildPackUnzipPackageTargetsImported>
     <!-- The location where to search. -->
     <UnzipPackageDirectory Condition="'$(UnzipPackageDirectory)' == ''">$(MSBuildProjectDirectory)\bin\$(Configuration)</UnzipPackageDirectory>
+
+    <_FilesystemPackageProjectBinaryDirectory>$(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)\</_FilesystemPackageProjectBinaryDirectory>
+
     <!-- The location where to unzip. -->
-    <UnzipPackageDestinationDirectory Condition="'$(UnzipPackageDestinationDirectory)' == ''">$(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework)\packagePublish</UnzipPackageDestinationDirectory>
+    <UnzipPackageDestinationDirectory Condition="'$(UnzipPackageDestinationDirectory)' == ''">$(_FilesystemPackageProjectBinaryDirectory)packagePublish</UnzipPackageDestinationDirectory>
     <_TargetTasksTargets Condition="'$(_TargetTasksTargets)' == ''">$(MSBuildThisFileDirectory)TargetTasks.targets</_TargetTasksTargets>
     <_UnzipPackageId>FilesystemPackage.$(MSBuildProjectName)</_UnzipPackageId>
+
+    <_FilesystemPackageIntermediateOutputPath Condition="'$(_FilesystemPackageIntermediateOutputPath)' == '' And '$(IntermediateOutputPath)' != ''">$(IntermediateOutputPath.TrimEnd('\'))\</_FilesystemPackageIntermediateOutputPath>
+    <_FilesystemPackageIntermediateOutputPath Condition="'$(_FilesystemPackageIntermediateOutputPath)' == ''">$(MSBuildProjectDirectory)\obj\</_FilesystemPackageIntermediateOutputPath>
+    <_GenerateFilesystemPackageInputsFile>$(_FilesystemPackageIntermediateOutputPath)PackagePublish.Inputs.txt</_GenerateFilesystemPackageInputsFile>
+    <_GenerateFilesystemPackageOutputsFile>$(_FilesystemPackageIntermediateOutputPath)PackagePublish.Outputs.txt</_GenerateFilesystemPackageOutputsFile>
+
   </PropertyGroup>
 
-  <!--Condition="!Exists('$(UnzipPackageDestinationDirectory)')"-->
-  <Target Name="GenerateFilesystemPackage" DependsOnTargets="$(GenerateFilesystemPackageDependsOn)">
+  <Target Name="_CalculateInputsOutputsForGenerateFilesystemPackage">
+
+    <ItemGroup>
+      <_GenerateFilesystemPackageInputFiles Include="$(_FilesystemPackageProjectBinaryDirectory)**\*" />
+      <_GenerateFilesystemPackageInputFiles Remove="$(_FilesystemPackageProjectBinaryDirectory)filesystemPublish\**\*" />
+      <_GenerateFilesystemPackageInputFiles Remove="$(_FilesystemPackageProjectBinaryDirectory)packagePublish\**\*" />
+      <_GenerateFilesystemPackageInputs Include="@(_GenerateFilesystemPackageInputFiles->'%(FullPath))')" />
+    </ItemGroup>
+
+    <ReadLinesFromFile File="$(_GenerateFilesystemPackageOutputsFile)">
+      <Output TaskParameter="Lines" ItemName="_GenerateFilesystemPackageOutputs" />
+    </ReadLinesFromFile>
+    
+    <!--<WriteLinesToFile File="$(_GenerateFilesystemPackageOutputsFile).latest.txt" Lines="@(_GenerateFilesystemPackageOutputs)" Overwrite="true" WriteOnlyWhenDifferent="true" />-->
+
+    <WriteLinesToFile File="$(_GenerateFilesystemPackageInputsFile)" Lines="@(_GenerateFilesystemPackageInputs)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+
+  </Target>
+
+  <Target Name="GenerateFilesystemPackage" DependsOnTargets="$(GenerateFilesystemPackageDependsOn)"
+          Inputs="$(_GenerateFilesystemPackageInputsFile)" Outputs="$(_GenerateFilesystemPackageOutputsFile)">
 
     <Message Text="[$(MSBuildThisFileName)] Generate filesystem package for $(MSBuildProjectName). (Configuration=$(Configuration), TargetFramework=$(TargetFramework)" Importance="high" />
 
@@ -43,20 +72,13 @@
       <Output TaskParameter="TargetOutputs" ItemName="_FoundPackage" />
     </MSBuild>
 
+    <WriteLinesToFile File="$(_GenerateFilesystemPackageOutputsFile)" Lines="@(_GenerateFilesystemPackageInputs)" Overwrite="true" />
+
     <Delete Files="@(_FoundPackage)" />
 
   </Target>
 
   <Target Name="_CleanFilesystemPackage" DependsOnTargets="$(CleanFilesystemPackageDependsOn)" BeforeTargets="BeforeClean">
-
-    <!--<ItemGroup>
-      <_FilesystemPackageFiles Include="$(UnzipPackageDestinationDirectory)\**\*" Condition="Exists('$(UnzipPackageDestinationDirectory)')" />
-      <_FilesystemPackageDirectories Include="$([System.IO.Directory]::GetDirectories('$(UnzipPackageDestinationDirectory)', '*', System.IO.SearchOption.AllDirectories))" Condition="Exists('$(UnzipPackageDestinationDirectory)')" />
-    </ItemGroup>
-
-    <Delete Files="@(_FilesystemPackageFiles)" />
-    <RemoveDir Directories="@(_FilesystemPackageDirectories)" Condition="Exists('$(UnzipPackageDestinationDirectory)')" />
-    <RemoveDir Directories="$(UnzipPackageDestinationDirectory)" Condition="Exists('$(UnzipPackageDestinationDirectory)')" />-->
 
     <PropertyGroup>
       <DeleteDirectoryMSBuildProperties>

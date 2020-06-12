@@ -31,7 +31,7 @@ namespace Teronis.MSBuild
 
             var item = Item[0];
 
-            foreach (object parameterObject in item.MetadataNames) {
+            foreach (object? parameterObject in item.MetadataNames) {
                 if (parameterObject is string parameter) {
                     command.AppendFormat("{0}={1};", parameter, item.GetMetadata(parameter));
                 }

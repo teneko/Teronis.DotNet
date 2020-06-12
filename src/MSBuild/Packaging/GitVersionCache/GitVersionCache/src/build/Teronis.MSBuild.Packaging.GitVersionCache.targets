@@ -36,9 +36,11 @@
       $(GetVersionBeforeTargets)
     </GetVersionCacheBeforeTargets>
 
-  </PropertyGroup>
+    <_GetVersionCacheInline>true</_GetVersionCacheInline>
 
-  <Target Name="_GetVersionCacheInline">
+  </PropertyGroup>
+  
+  <Target Name="_GetVersionCacheInline" Condition="'$(_GetVersionCacheInline)' == 'true'">
     <PropertyGroup>
       <_GitVersionCacheIdentifierProperties>&quot;-p:GitVersionCacheIdentifier=$(GitVersionCacheIdentifier)&quot; &quot;-p:GitVersionCacheProjectDirectory=$(GitVersionCacheProjectDirectory)&quot; &quot;-p:GitVersionCacheConfigFile=$(GitVersionCacheConfigFile)&quot; &quot;-p:GitVersionCacheNoFetch=$(GitVersionCacheNoFetch)&quot; &quot;-p:GitVersionCacheNoNormalize=$(GitVersionCacheNoNormalize)&quot;</_GitVersionCacheIdentifierProperties>
     </PropertyGroup>
@@ -48,7 +50,7 @@
     </Exec>
   </Target>
 
-  <Target Name="GetVersionCache" BeforeTargets="$(GetVersionCacheBeforeTargets)" DependsOnTargets="_GetVersionCacheInline" Condition="'$(DisableGitVersionCache)' != 'true' And '$(_GetVersionCache)' != 'false'">
+  <Target Name="GetVersionCache" BeforeTargets="$(GetVersionCacheBeforeTargets)" DependsOnTargets=" _GetVersionCacheInline" Condition="'$(DisableGitVersionCache)' != 'true' And '$(_GetVersionCache)' != 'false'">
 
     <PropertyGroup>
       <_GetVersionCache Condition="'$(MSBuildLastTaskResult)' == 'false'">false</_GetVersionCache>

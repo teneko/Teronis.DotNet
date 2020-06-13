@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <None Include="build\*" Pack="true" PackagePath="build" />
-    <None Include="bin\$(Configuration)\$(TargetFramework)\*" Pack="true" PackagePath="tools" />
   </ItemGroup>
 
   <ItemGroup>

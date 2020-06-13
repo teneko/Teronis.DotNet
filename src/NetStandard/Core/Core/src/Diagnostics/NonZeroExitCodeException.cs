@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Teronis.MSBuild
+namespace Teronis.Diagnostics
 {
     public class NonZeroExitCodeException : Exception
     {

@@ -96,12 +96,17 @@ namespace Teronis.GitVersionCache.BuildTasks
             bool isCache;
 
             if (!File.Exists(CacheFile)) {
+                var gitDirectory = ParentOfGitDirectoryInfo.FullName.Replace("\\", "/");
+                var configFile = GitVersionYamlFileInfo.FullName.Replace("\\", "/");
+                var arguments = $"{gitDirectory} /config {configFile}";
+
                 try {
-                    var arguments = $"{ParentOfGitDirectoryInfo.FullName} /config {GitVersionYamlFileInfo.FullName}";
                     serializedGitVariables = GitVersionCommandLine.ExecuteGitVersion(arguments);
                     isCache = false;
                 } catch (SimpleExec.NonZeroExitCodeException error) {
-                    var errorMessage = error.Message + (error.InnerException is Exception ? " " + error.InnerException.Message : null);
+                    var errorMessage = error.Message + $"(arguments: {arguments})" + 
+                        (error.InnerException is Exception ? " " + error.InnerException.Message : null);
+
                     throw new NonZeroExitCodeException(error.ExitCode, errorMessage);
                 }
             } else {

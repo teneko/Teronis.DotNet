@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Import Project="Teronis.MSBuild.Packaging.GitVersionCache.props" Condition="'$(TeronisMSBuildPackagingGitVersionCacheHasBeenLoaded)' != 'true'" />
+  <Import Project="$(MSBuildThisFileName).props" Condition="'$(TeronisMSBuildPackagingGitVersionCacheHasBeenLoaded)' != 'true'" />
 
   <PropertyGroup>
     <WriteVersionInfoToBuildLog>false</WriteVersionInfoToBuildLog>
@@ -41,8 +41,26 @@
   </PropertyGroup>
   
   <Target Name="_GetVersionCacheInline" Condition="'$(_GetVersionCacheInline)' == 'true'">
+
     <PropertyGroup>
-      <_GitVersionCacheIdentifierProperties>&quot;-p:GitVersionCacheIdentifier=$(GitVersionCacheIdentifier)&quot; &quot;-p:GitVersionCacheProjectDirectory=$(GitVersionCacheProjectDirectory)&quot; &quot;-p:GitVersionCacheConfigFile=$(GitVersionCacheConfigFile)&quot; &quot;-p:GitVersionCacheNoFetch=$(GitVersionCacheNoFetch)&quot; &quot;-p:GitVersionCacheNoNormalize=$(GitVersionCacheNoNormalize)&quot;</_GitVersionCacheIdentifierProperties>
+
+      <_GitVersionCacheUseSemVer2 Condition="'$(_GitVersionCacheUseSemVer2)' == ''">$(GitVersionCacheUseSemVer2)</_GitVersionCacheUseSemVer2>
+      <_GitVersionCacheUseSemVer2 Condition="'$(_GitVersionCacheUseSemVer2)' == ''">true</_GitVersionCacheUseSemVer2>
+      
+      <_GitVersionCacheIdentifier Condition="'$(_GitVersionCacheIdentifier)' == ''">$(GitVersionCacheIdentifier)</_GitVersionCacheIdentifier>
+
+      <_GitVersionCacheProjectDirectory Condition="'$(_GitVersionCacheProjectDirectory)' == ''">$(GitVersionCacheProjectDirectory)</_GitVersionCacheProjectDirectory>
+      <_GitVersionCacheProjectDirectory Condition="'$(_GitVersionCacheProjectDirectory)' == ''">$(MSBuildProjectDirectory)</_GitVersionCacheProjectDirectory>
+
+      <_GitVersionCacheConfigFile Condition="'$(_GitVersionCacheConfigFile)' == ''">$(GitVersionCacheConfigFile)</_GitVersionCacheConfigFile>
+      <_GitVersionCacheNoFetch Condition="'$(_GitVersionCacheNoFetch)' == ''">$(GitVersionCacheNoFetch)</_GitVersionCacheNoFetch>
+      <_GitVersionCacheNoNormalize Condition="'$(_GitVersionCacheNoNormalize)' == ''">$(GitVersionCacheNoNormalize)</_GitVersionCacheNoNormalize>
+
+    </PropertyGroup>
+    
+    <PropertyGroup>
+      <!-- Have to be inlined. -->
+      <_GitVersionCacheIdentifierProperties>&quot;-p:GitVersionCacheIdentifier=$(_GitVersionCacheIdentifier)&quot; &quot;-p:GitVersionCacheProjectDirectory=$(_GitVersionCacheProjectDirectory)&quot; &quot;-p:GitVersionCacheConfigFile=$(_GitVersionCacheConfigFile)&quot; &quot;-p:GitVersionCacheNoFetch=$(_GitVersionCacheNoFetch)&quot; &quot;-p:GitVersionCacheNoNormalize=$(_GitVersionCacheNoNormalize)&quot;</_GitVersionCacheIdentifierProperties>
     </PropertyGroup>
     
     <Exec Command="dotnet msbuild &quot;$(GitVersionCacheTargetsFile)&quot; -nologo -nodereuse:false &quot;-t:GetVersionCache;GetVersionCacheInline&quot; $(_GitVersionCacheIdentifierProperties)" ConsoleToMSBuild="true" >
@@ -184,10 +202,10 @@
     <PropertyGroup Condition="'$(DisableVersionUpdate)' != 'true'">
       <Version>$(GitVersion_FullSemVer)</Version>
       <VersionPrefix>$(GitVersion_MajorMinorPatch)</VersionPrefix>
-      <VersionSuffix Condition=" '$(UseFullSemVerForNuGet)' == 'false' ">$(GitVersion_NuGetPreReleaseTag)</VersionSuffix>
-      <VersionSuffix Condition=" '$(UseFullSemVerForNuGet)' == 'true' ">$(GitVersion_PreReleaseTag)</VersionSuffix>
-      <PackageVersion Condition=" '$(UseFullSemVerForNuGet)' == 'false' ">$(GitVersion_NuGetVersion)</PackageVersion>
-      <PackageVersion Condition=" '$(UseFullSemVerForNuGet)' == 'true' ">$(GitVersion_FullSemVer)</PackageVersion>
+      <VersionSuffix Condition=" '$(_GitVersionCacheUseSemVer2)' == 'false' ">$(GitVersion_NuGetPreReleaseTag)</VersionSuffix>
+      <VersionSuffix Condition=" '$(_GitVersionCacheUseSemVer2)' == 'true' ">$(GitVersion_PreReleaseTag)</VersionSuffix>
+      <PackageVersion Condition=" '$(_GitVersionCacheUseSemVer2)' == 'false' ">$(GitVersion_NuGetVersion)</PackageVersion>
+      <PackageVersion Condition=" '$(_GitVersionCacheUseSemVer2)' == 'true' ">$(GitVersion_FullSemVer)</PackageVersion>
       <InformationalVersion Condition=" '$(InformationalVersion)' == '' ">$(GitVersion_InformationalVersion)</InformationalVersion>
       <AssemblyVersion Condition=" '$(AssemblyVersion)' == '' ">$(GitVersion_AssemblySemVer)</AssemblyVersion>
       <FileVersion Condition=" '$(FileVersion)' == '' ">$(GitVersion_AssemblySemFileVer)</FileVersion>

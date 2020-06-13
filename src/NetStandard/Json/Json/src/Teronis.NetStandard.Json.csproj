@@ -13,7 +13,7 @@
   <!--<Import Project="Teronis.MSBuild.Packaging.GitVersionCache.Sdk.props" Condition="'$(DisableSdk)' != 'true'" />-->
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
   <ItemGroup>

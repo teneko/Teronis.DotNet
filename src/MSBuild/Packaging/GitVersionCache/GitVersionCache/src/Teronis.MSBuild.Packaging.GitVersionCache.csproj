@@ -30,11 +30,11 @@
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>-->
 
     <!-- We only need the package reference for binaries. -->
-    <!--<DisableGitVersionTask>true</DisableGitVersionTask>
+    <DisableGitVersionTask>true</DisableGitVersionTask>
     <WriteVersionInfoToBuildLog>false</WriteVersionInfoToBuildLog>
     <UpdateAssemblyInfo>false</UpdateAssemblyInfo>
     <GenerateGitVersionInformation>false</GenerateGitVersionInformation>
-    <GetVersion>false</GetVersion>-->
+    <GetVersion>false</GetVersion>
 
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_PublishedProjectContentInPackage</TargetsForTfmSpecificContentInPackage>
 
@@ -68,12 +68,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
 
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.4.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.4" />
-    <PackageReference Include="System.Text.Json" Version="4.7.0" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.6.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.5" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.5" />
+    <PackageReference Include="System.Text.Json" Version="4.7.2" />
 
-    <PackageReference Include="GitVersionTask" Version="$(GitVersionTaskVersion)">
+    <PackageReference Include="GitVersionTask" Version="5.3.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

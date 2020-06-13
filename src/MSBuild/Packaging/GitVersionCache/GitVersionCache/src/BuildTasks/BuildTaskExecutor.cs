@@ -11,6 +11,7 @@ using Microsoft.Build.Utilities;
 using System;
 using Teronis.IO;
 using System.Threading;
+using SimpleExec;
 
 namespace Teronis.GitVersionCache.BuildTasks
 {
@@ -25,7 +26,7 @@ namespace Teronis.GitVersionCache.BuildTasks
             Directory.CreateDirectory(directory);
         }
 
-        public DirectoryInfo ParentOfGitVersionYamlDirectoryInfo { get; }
+        public FileInfo GitVersionYamlFileInfo { get; }
         public DirectoryInfo ParentOfGitDirectoryInfo { get; }
 
         public string CacheDirectoryName {
@@ -35,22 +36,36 @@ namespace Teronis.GitVersionCache.BuildTasks
                 throw new ArgumentNullException(nameof(CacheDirectoryName));
         }
 
-        public string CacheDirectory => getCacheDirectory(ParentOfGitVersionYamlDirectoryInfo);
-        public string CacheFile => Path.Combine(CacheDirectory, buildIdentification.CacheIdentifier + ".json");
+        public string CacheDirectory => getCacheDirectory(GitVersionYamlFileInfo.Directory);
+        public string CacheFile => Path.Combine(CacheDirectory, cacheIdentification.CacheIdentifier + ".json");
 
-        public readonly ICacheIdentification buildIdentification;
+        public readonly ICacheIdentification cacheIdentification;
         private string cacheDirectoryName;
 
         public BuildTaskExecutor(ICacheIdentification cacheIdentification)
         {
-            ParentOfGitVersionYamlDirectoryInfo = BuildTaskUtilities.GetParentOfGitVersionYamlDirectory(cacheIdentification.ProjectDirectory) ??
-                throw new FileNotFoundException("Could not find parent GitVersion.yml file.");
+            string configFile;
+
+            if (cacheIdentification.ConfigFile != null) {
+                configFile = cacheIdentification.ConfigFile;
+
+                if (!File.Exists(configFile)) {
+                    throw new FileNotFoundException($"The config file {configFile} does not exist.");
+                }
+            } else {
+                var parentOfGitVersionYamlDirectoryInfo = BuildTaskUtilities.GetParentOfGitVersionYamlDirectory(cacheIdentification.ProjectDirectory) ??
+                    throw new FileNotFoundException($"Could not find parent GitVersion.yml file upwards {cacheIdentification.ProjectDirectory}.");
+
+                configFile = Path.Combine(parentOfGitVersionYamlDirectoryInfo.FullName, BuildTaskExecutorDefaults.GitVersionFileNameWithExtension);
+            }
+
+            GitVersionYamlFileInfo = new FileInfo(configFile);
 
             ParentOfGitDirectoryInfo = BuildTaskUtilities.GetParentOfGitDirectory(cacheIdentification.ProjectDirectory) ??
-                throw new FileNotFoundException("Could not find parent .git directory.");
+                throw new FileNotFoundException($"Could not find parent .git directory upwards {cacheIdentification.ProjectDirectory}.");
 
             CacheDirectoryName = BuildTaskExecutorDefaults.CacheDirectoryName;
-            this.buildIdentification = cacheIdentification;
+            this.cacheIdentification = cacheIdentification;
         }
 
         private string getCacheDirectory(DirectoryInfo baseDirectory) =>
@@ -58,15 +73,15 @@ namespace Teronis.GitVersionCache.BuildTasks
 
         public void EnsureCacheDirectoryExistence()
         {
-            var cacheDirectory = getCacheDirectory(ParentOfGitVersionYamlDirectoryInfo);
-            ensureDirectoryExistence(cacheDirectory);
+            var gitVersionFileScopedCacheDirectory = getCacheDirectory(GitVersionYamlFileInfo.Directory);
+            ensureDirectoryExistence(gitVersionFileScopedCacheDirectory);
         }
 
         private IDisposable lockFile()
         {
-            var cacheDirectory = getCacheDirectory(ParentOfGitDirectoryInfo);
-            ensureDirectoryExistence(cacheDirectory);
-            var lockFile = Path.Combine(cacheDirectory, "GitVersionCache.lock");
+            var gitFolderScopedCacheDirectory = getCacheDirectory(ParentOfGitDirectoryInfo);
+            ensureDirectoryExistence(gitFolderScopedCacheDirectory);
+            var lockFile = Path.Combine(gitFolderScopedCacheDirectory, "GitVersionCache.lock");
             return LockFile.WaitUntilAcquired(lockFile);
         }
 
@@ -81,8 +96,14 @@ namespace Teronis.GitVersionCache.BuildTasks
             bool isCache;
 
             if (!File.Exists(CacheFile)) {
-                serializedGitVariables = GitVersionCommandLine.ExecuteGitVersion();
-                isCache = false;
+                try {
+                    var arguments = $"{ParentOfGitDirectoryInfo.FullName} /config {GitVersionYamlFileInfo.FullName}";
+                    serializedGitVariables = GitVersionCommandLine.ExecuteGitVersion(arguments);
+                    isCache = false;
+                } catch (SimpleExec.NonZeroExitCodeException error) {
+                    var errorMessage = error.Message + (error.InnerException is Exception ? " " + error.InnerException.Message : null);
+                    throw new NonZeroExitCodeException(error.ExitCode, errorMessage);
+                }
             } else {
                 using var file = File.Open(CacheFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 using var fileReader = new StreamReader(file, Encoding.UTF8);

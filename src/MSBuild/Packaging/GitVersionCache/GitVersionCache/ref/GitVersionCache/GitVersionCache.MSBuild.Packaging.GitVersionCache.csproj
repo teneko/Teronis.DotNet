@@ -14,5 +14,15 @@
 
   <Import Project="$(TeronisMSBuildCoreProjectShadowTargetsFile)" />
   <Import Project="$(SourceProjectDirectory)$(AssemblyName).csproj" />
+  <ItemGroup>
+    <PackageReference Update="GitVersionTask" Version="5.3.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Update="Microsoft.Build.Utilities.Core" Version="16.6.0" />
+    <PackageReference Update="Microsoft.Extensions.DependencyInjection" Version="3.1.5" />
+    <PackageReference Update="Microsoft.Extensions.Options" Version="3.1.5" />
+    <PackageReference Update="System.Text.Json" Version="4.7.2" />
+  </ItemGroup>
 
 </Project>

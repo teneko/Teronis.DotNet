@@ -2,17 +2,21 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
+    
     <GitVersionCachePropsHasBeenLoaded>true</GitVersionCachePropsHasBeenLoaded>
+    
+    <!-- Only for documentation. -->
     <!-- The identifier for current cache. It is by default [System.Guid]::NewGuid(). Set it only when you know what you do. -->
     <GitVersionCacheIdentifier Condition="'$(GitVersionCacheIdentifier)' == ''"></GitVersionCacheIdentifier>
     <!-- The project directory from where the GitVersion.yml is searched. -->
     <GitVersionCacheProjectDirectory Condition="'$(GitVersionCacheProjectDirectory)' == ''"></GitVersionCacheProjectDirectory>
-    <!-- The config file that is needed for GitVersion.exe.  -->
+    <!-- The config file that is needed for GitVersion.exe. It is by default empty.  -->
     <GitVersionCacheConfigFile Condition="'$(GitVersionCacheConfigFile)' == ''"></GitVersionCacheConfigFile>
-    <!-- The parameter that gets passed to GitVersion.exe. -->
+    <!-- The parameter that gets passed to GitVersion.exe. it is by default false. -->
     <GitVersionCacheNoFetch Condition="'$(GitVersionCacheNoFetch)' == ''"></GitVersionCacheNoFetch>
-    <!-- The parameter that gets passed to GitVersion.exe. -->
+    <!-- The parameter that gets passed to GitVersion.exe. It is by default false. -->
     <GitVersionCacheNoNormalize Condition="'$(GitVersionCacheNoNormalize)' == ''"></GitVersionCacheNoNormalize>
+    
   </PropertyGroup>
 
 </Project>

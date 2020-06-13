@@ -32,6 +32,8 @@
       <_GenerateFilesystemPackageInputs Include="@(_GenerateFilesystemPackageInputFiles->'%(FullPath))')" />
     </ItemGroup>
 
+    <Message Text="# $(_GenerateFilesystemPackageOutputsFile)" Importance="high" />
+    
     <ReadLinesFromFile File="$(_GenerateFilesystemPackageOutputsFile)">
       <Output TaskParameter="Lines" ItemName="_GenerateFilesystemPackageOutputs" />
     </ReadLinesFromFile>
@@ -87,6 +89,7 @@
       </DeleteDirectoryMSBuildProperties>
     </PropertyGroup>
 
+    <Delete Files="$(_GenerateFilesystemPackageInputsFile);$(_GenerateFilesystemPackageOutputsFile)" />
     <MSBuild Projects="$(_TargetTasksTargets)" Targets="DeleteDirectory" Properties="$(DeleteDirectoryMSBuildProperties)" ContinueOnError="true" />
 
   </Target>

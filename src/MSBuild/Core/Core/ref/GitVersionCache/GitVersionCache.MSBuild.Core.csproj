@@ -13,5 +13,8 @@
 
   <Import Project="$(TeronisMSBuildCoreProjectShadowTargetsFile)" />
   <Import Project="$(SourceProjectDirectory)$(AssemblyName).csproj" />
+  <ItemGroup>
+    <PackageReference Update="Microsoft.Build.Utilities.Core" Version="16.6.0" />
+  </ItemGroup>
 
 </Project>

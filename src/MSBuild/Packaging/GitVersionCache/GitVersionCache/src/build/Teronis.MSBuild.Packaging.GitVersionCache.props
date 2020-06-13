@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <!-- Only for documentation. -->
+  <Import Project="GitVersionCache.props" Condition="'$(GitVersionCachePropsHasBeenLoaded)' != 'true'" />
+  
   <PropertyGroup>
     
     <TeronisMSBuildPackagingGitVersionCacheHasBeenLoaded>true</TeronisMSBuildPackagingGitVersionCacheHasBeenLoaded>
@@ -11,7 +14,11 @@
     <DisableGitVersionCache Condition="'$(DisableGitVersionCache)' == ''">false</DisableGitVersionCache>
     
     <DisableVersionUpdate Condition="'$(DisableVersionUpdate)' == ''">false</DisableVersionUpdate>
-    <DisableVersionUpdate Condition="'$(DisableGitVersionCache)' == 'true'">true</DisableVersionUpdate> 
+    <DisableVersionUpdate Condition="'$(DisableGitVersionCache)' == 'true'">true</DisableVersionUpdate>
+
+    <!-- Only for documentation. -->
+    <!-- Use SemVer 2.0 notation. It is by default true. -->
+    <GitVersionCacheUseSemVer2></GitVersionCacheUseSemVer2>
     
   </PropertyGroup>
 

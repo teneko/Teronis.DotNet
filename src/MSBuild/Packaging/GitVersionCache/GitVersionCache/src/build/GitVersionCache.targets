@@ -10,10 +10,10 @@
   <!--
   # Optional parameters:
   # - GitVersionCacheIdentifier: The identifier for current cache. It is by default [System.Guid]::NewGuid(). Set it only when you know what you do.
-  # - GitVersionCacheProjectDirectory: The project directory from where the GitVersion.yml is searched.
-  # - GitVersionCacheConfigFile: The config file that is needed for GitVersion.exe.
-  # - GitVersionCacheNoFetch: The parameter that gets passed to GitVersion.exe.
-  # - GitVersionCacheNoNormalize: The parameter that gets passed to GitVersion.exe.
+  # - GitVersionCacheProjectDirectory: The project directory from where the GitVersion.yml is searched. It is by default the project directory.
+  # - GitVersionCacheConfigFile: The config file that is needed for GitVersion.exe. It is by default empty.
+  # - GitVersionCacheNoFetch: The parameter that gets passed to GitVersion.exe. It is by default false.
+  # - GitVersionCacheNoNormalize: The parameter that gets passed to GitVersion.exe. It is by default false.
   -->
   <Target Name="GetVersionCache">
 
@@ -23,12 +23,8 @@
       <_GitVersionCacheIdentifier Condition="'$(_GitVersionCacheIdentifier)' == ''">$([System.Guid]::NewGuid())</_GitVersionCacheIdentifier>
 
       <_GitVersionCacheProjectDirectory Condition="'$(_GitVersionCacheProjectDirectory)' == ''">$(GitVersionCacheProjectDirectory)</_GitVersionCacheProjectDirectory>
-      <_GitVersionCacheProjectDirectory Condition="'$(_GitVersionCacheProjectDirectory)' == ''">$(MSBuildProjectDirectory)</_GitVersionCacheProjectDirectory>
-
       <_GitVersionCacheConfigFile Condition="'$(_GitVersionCacheConfigFile)' == ''">$(GitVersionCacheConfigFile)</_GitVersionCacheConfigFile>
-
       <_GitVersionCacheNoFetch Condition="'$(_GitVersionCacheNoFetch)' == ''">$(GitVersionCacheNoFetch)</_GitVersionCacheNoFetch>
-
       <_GitVersionCacheNoNormalize Condition="'$(_GitVersionCacheNoNormalize)' == ''">$(GitVersionCacheNoNormalize)</_GitVersionCacheNoNormalize>
 
     </PropertyGroup>

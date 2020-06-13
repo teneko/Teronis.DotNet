@@ -8,5 +8,6 @@ namespace Teronis.GitVersionCache.BuildTasks.Models
     {
         string CacheIdentifier { get; }
         string ProjectDirectory { get; }
+        string ConfigFile { get; }
     }
 }

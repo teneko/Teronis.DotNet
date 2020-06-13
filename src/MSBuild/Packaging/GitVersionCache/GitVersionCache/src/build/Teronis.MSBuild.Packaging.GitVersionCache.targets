@@ -15,21 +15,31 @@
 
     <GitVersionCacheTargetsFile>$(MSBuildThisFileDirectory)GitVersionCache.targets</GitVersionCacheTargetsFile>
 
+    <!-- Possible canditates: -->
     <!--CoreCompile;-->
     <!--GetAssemblyVersion;
     GenerateNuspec;
     _GenerateRestoreProjectSpec;
     _GetOutputItemsFromPack;-->
     <!--EnsureWixToolsetInstalled-->
+    <!-- 
+    # Always generate version informations before the following targets are going
+    # to be called:
+    # - GenerateNuspec: When packing, this target creates nuspec file for package.
+    # - _GetProjectVersion: 
+    # Before nuspec can be built it has to collect the 
+    # versions of project references the package depends on. 
+    -->
     <GetVersionBeforeTargets>
+      _GetProjectVersion;
       GenerateNuspec;
     </GetVersionBeforeTargets>
 
-    <GetVersionCacheBeforeGetVersionTaskTargets>
+    <!--<GetVersionCacheBeforeGetVersionTaskTargets>
       WriteVersionInfoToBuildLog;
       GenerateGitVersionInformation;
       GetVersion
-    </GetVersionCacheBeforeGetVersionTaskTargets>
+    </GetVersionCacheBeforeGetVersionTaskTargets>-->
 
     <!--$(GetVersionCacheBeforeGetVersionTaskTargets)-->
     <GetVersionCacheBeforeTargets>

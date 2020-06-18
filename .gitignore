@@ -273,3 +273,6 @@ Teronis.NetStandard.sln
 
 # Ignore folders who are only temporary
 [Gg][Ii][Tt][Ii][Gg][Nn][Oo][Rr][Ee][._]*/
+
+# Ignore databases
+*.db

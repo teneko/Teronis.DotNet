@@ -10,8 +10,6 @@ using Teronis.Text.Json.Converters;
 using Microsoft.Build.Utilities;
 using System;
 using Teronis.IO;
-using System.Threading;
-using SimpleExec;
 
 namespace Teronis.GitVersionCache.BuildTasks
 {
@@ -103,7 +101,7 @@ namespace Teronis.GitVersionCache.BuildTasks
                 try {
                     serializedGitVariables = GitVersionCommandLine.ExecuteGitVersion(arguments);
                     isCache = false;
-                } catch (SimpleExec.NonZeroExitCodeException error) {
+                } catch (Diagnostics.NonZeroExitCodeException error) {
                     var errorMessage = error.Message + $"(arguments: {arguments})" + 
                         (error.InnerException is Exception ? " " + error.InnerException.Message : null);
 

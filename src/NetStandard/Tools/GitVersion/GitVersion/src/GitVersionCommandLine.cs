@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using static SimpleExec.Command;
+using Teronis.Diagnostics;
 
 namespace Teronis.Tools.GitVersion
 {
@@ -8,9 +8,9 @@ namespace Teronis.Tools.GitVersion
         private const string GitVersionExecutableName = "GitVersion.exe";
 
         public static string ExecuteGitVersion(string? args = null) =>
-            Read(GitVersionExecutableName, args, noEcho: true);
+            SimpleProcess.Read(GitVersionExecutableName, args);
 
-        public static Task<string> ExecuteGitVersionAsync(string? args= null) =>
-            ReadAsync(GitVersionExecutableName, args, noEcho: true);
+        public static ValueTask<string> ExecuteGitVersionAsync(string? args= null) =>
+            SimpleProcess.ReadAsync(GitVersionExecutableName, args);
     }
 }

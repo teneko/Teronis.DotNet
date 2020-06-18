@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using Teronis.Identity.Presenters.Generic;
+using Teronis.Mvc.ServiceResulting.Generic;
 
 namespace Teronis.Identity.BearerSignInManaging
 {

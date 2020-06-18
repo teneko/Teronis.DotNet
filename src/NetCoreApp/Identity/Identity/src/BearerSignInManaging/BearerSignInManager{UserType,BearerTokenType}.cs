@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Teronis.Identity.Presenters.Extensions;
 using Teronis.Identity.Entities;
 using Teronis.Identity.Extensions;
-using Teronis.Identity.Presenters.Generic;
-using Teronis.Identity.Presenters;
+using Teronis.Mvc.ServiceResulting;
+using Teronis.Mvc.ServiceResulting.Extensions;
+using Teronis.Mvc.ServiceResulting.Generic;
 
 namespace Teronis.Identity.BearerSignInManaging
 {

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -7,10 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Presenters\ObjectModel\**" />
+    <EmbeddedResource Remove="Presenters\ObjectModel\**" />
+    <None Remove="Presenters\ObjectModel\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.5" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-    <PackageReference Include="Microsoft.Experimental.Collections" Version="1.0.6-e190117-3" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.6.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.6.0" />
     <PackageReference Include="ZNetCS.AspNetCore.Authentication.Basic" Version="4.0.0" />
@@ -20,10 +25,12 @@
     <ProjectReference Include="..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj">
       <AdditionalProperties>TargetFramework=$(TargetFramework)</AdditionalProperties>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Core\Core\src\Teronis.NetCoreApp.Core.csproj" />
+    <ProjectReference Include="..\..\..\Mvc\Mvc\Teronis.NetCoreApp.Mvc.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Presenters\ObjectModel\" />
+    <Folder Include="Presenters\" />
   </ItemGroup>
 
 </Project>

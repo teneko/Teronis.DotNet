@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Teronis.Identity.AccountManaging;
 using Teronis.Identity.Datransjects;
 using Teronis.Identity.Entities;
-using Teronis.Identity.Presenters.Generic;
+using Teronis.Mvc.ServiceResulting.Generic;
 
 namespace Teronis.Identity.Controllers
 {

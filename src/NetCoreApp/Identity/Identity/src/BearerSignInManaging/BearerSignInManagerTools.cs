@@ -7,8 +7,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Teronis.Identity.Entities;
 using Teronis.Identity.Extensions;
-using Teronis.Identity.Presenters.Generic;
 using Teronis.Identity.Tools;
+using Teronis.Mvc.ServiceResulting.Generic;
 
 namespace Teronis.Identity.BearerSignInManaging
 {
@@ -24,15 +24,13 @@ namespace Teronis.Identity.BearerSignInManaging
             if (string.IsNullOrEmpty(refreshTokenIdString)) {
                 return "There has been no refresh token id been found."
                     .ToJsonError()
-                    .ToServiceResultFactory<Guid>()
-                    .WithHttpStatusCode(HttpStatusCode.BadRequest)
-                    .AsServiceResult();
+                    .ToServiceResult<Guid>()
+                    .WithHttpStatusCode(HttpStatusCode.BadRequest);
             } else if (!Guid.TryParse(refreshTokenIdString, out var refreshTokenId)) {
                 return "The refresh token id is not valid."
                     .ToJsonError()
-                    .ToServiceResultFactory<Guid>()
-                    .WithHttpStatusCode(HttpStatusCode.Unauthorized)
-                    .AsServiceResult();
+                    .ToServiceResult<Guid>()
+                    .WithHttpStatusCode(HttpStatusCode.Unauthorized);
             } else {
                 return ServiceResult<Guid>.Success(refreshTokenId)
                     .WithHttpStatusCode(HttpStatusCode.OK);
@@ -69,9 +67,8 @@ namespace Teronis.Identity.BearerSignInManaging
                 logger?.LogError(error, errorMessage);
 
                 return errorMessage.ToJsonError()
-                    .ToServiceResultFactory<BearerTokenType>()
-                    .WithHttpStatusCode(HttpStatusCode.InternalServerError)
-                    .AsServiceResult();
+                    .ToServiceResult<BearerTokenType>()
+                    .WithHttpStatusCode(HttpStatusCode.InternalServerError);
             }
         }
 

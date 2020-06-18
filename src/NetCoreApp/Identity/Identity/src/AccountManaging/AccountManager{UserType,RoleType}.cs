@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 using ComponentDataValidationContext = System.ComponentModel.DataAnnotations.ValidationContext;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using Teronis.Identity.Presenters;
-using Teronis.Identity.Presenters.Generic;
 using Teronis.Identity.Extensions;
 using Teronis.ObjectModel.Annotations;
 using Teronis.Identity.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Linq;
+using Teronis.Mvc.ServiceResulting.Generic;
+using Teronis.Mvc.ServiceResulting;
 
 namespace Teronis.Identity.AccountManaging
 {
@@ -77,9 +77,8 @@ namespace Teronis.Identity.AccountManaging
             if (existingRoleEntity != null) {
                 return $"The role '{roleName}' has been already created."
                     .ToJsonError(AccountManagerErrorCodes.RoleAlreadyCreated.GetStringValue())
-                    .ToServiceResultFactory<RoleType>()
-                    .WithHttpStatusCode(HttpStatusCode.BadRequest)
-                    .AsServiceResult();
+                    .ToServiceResult<RoleType>()
+                    .WithHttpStatusCode(HttpStatusCode.BadRequest);
             }
             // TODO: Integrate IdentityResult.Errors in detailed errors
             var result = await roleManager.CreateAsync(roleEntity);
@@ -136,9 +135,8 @@ namespace Teronis.Identity.AccountManaging
             if (!ReferenceEquals(existingUser, null)) {
                 return $"The user '{userName}' has been already created."
                     .ToJsonError(AccountManagerErrorCodes.UserAlreadyCreated.GetStringValue())
-                    .ToServiceResultFactory<UserType>()
-                    .WithHttpStatusCode(HttpStatusCode.BadRequest)
-                    .AsServiceResult();
+                    .ToServiceResult<UserType>()
+                    .WithHttpStatusCode(HttpStatusCode.BadRequest);
             }
             // User does not exist, we continue user creation.
             else {
@@ -181,9 +179,8 @@ namespace Teronis.Identity.AccountManaging
 
                             userRoleAssignmentResult = errorMessage
                                 .ToJsonError()
-                                .ToServiceResultFactory<UserType>()
-                                .WithHttpStatusCode(HttpStatusCode.InternalServerError)
-                                .AsServiceResult();
+                                .ToServiceResult<UserType>()
+                                .WithHttpStatusCode(HttpStatusCode.InternalServerError);
 
                             break;
                         }

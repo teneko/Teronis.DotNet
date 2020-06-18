@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
-using Teronis.Identity.Presenters;
+using Teronis.Mvc.ServiceResulting;
 
 namespace Teronis.Identity.Extensions
 {

@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Teronis.Identity.Entities;
-using Teronis.Identity.Presenters.Generic.ObjectModel;
-using Teronis.Identity.Presenters.Generic;
+using Teronis.Mvc.ServiceResulting.Generic;
+using Teronis.Mvc.ServiceResulting.Generic.ObjectModel;
 
 namespace Teronis.Identity.BearerSignInManaging
 {

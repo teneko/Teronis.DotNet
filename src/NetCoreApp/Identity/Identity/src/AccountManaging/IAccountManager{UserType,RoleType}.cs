@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Teronis.Identity.Presenters.Generic;
+using Teronis.Mvc.ServiceResulting.Generic;
 
 namespace Teronis.Identity.AccountManaging
 {

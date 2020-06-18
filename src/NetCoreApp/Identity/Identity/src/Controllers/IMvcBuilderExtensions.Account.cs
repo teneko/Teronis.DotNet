@@ -21,7 +21,7 @@ namespace Teronis.Identity.Controllers
                     accountControllerTypeInfo
                 };
 
-                var constrainedTypesProvider = new TypesProviderApplicationPart(applicationTypes);
+                var constrainedTypesProvider = new TypesProvidingApplicationPart(applicationTypes);
                 setup.ApplicationParts.Add(constrainedTypesProvider);
             });
 

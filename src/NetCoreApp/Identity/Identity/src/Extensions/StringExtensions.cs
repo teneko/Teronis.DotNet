@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Teronis.Identity.Presenters;
+using Teronis.Mvc.ServiceResulting;
 
 namespace Teronis.Identity.Extensions
 {

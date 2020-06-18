@@ -9,7 +9,7 @@ namespace Teronis.Identity.Controllers
         {
             mvcBuilder.ConfigureApplicationPartManager(setup => {
                 var types = new[] { typeof(SignInController).GetTypeInfo() };
-                var typesProvider = new TypesProviderApplicationPart(types);
+                var typesProvider = new TypesProvidingApplicationPart(types);
                 setup.ApplicationParts.Add(typesProvider);
             });
 

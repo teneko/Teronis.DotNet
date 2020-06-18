@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using Teronis.Identity.Extensions;
-using Teronis.Identity.Presenters;
-using Teronis.Identity.Presenters.Generic;
+using Teronis.Mvc.ServiceResulting;
+using Teronis.Mvc.ServiceResulting.Generic;
 
 namespace Teronis.Identity
 {

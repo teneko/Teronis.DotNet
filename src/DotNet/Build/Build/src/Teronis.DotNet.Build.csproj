@@ -12,7 +12,6 @@
   <ItemGroup>
     <PackageReference Include="Bullseye" Version="3.3.0" />
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
-    <PackageReference Include="SimpleExec" Version="6.2.0" />
   </ItemGroup>
 
   <ItemGroup>

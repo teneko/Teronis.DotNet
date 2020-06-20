@@ -137,6 +137,7 @@ namespace Teronis.Diagnostics
                 }
             }
 
+            process.EnableRaisingEvents = true;
             process.Exited += onExited;
 
             try {
@@ -145,7 +146,6 @@ namespace Teronis.Diagnostics
                 process.BeginErrorReadLine();
             } catch (Exception error) {
                 processCompletionSource.SetException(error);
-            } finally {
                 dispose();
             }
 

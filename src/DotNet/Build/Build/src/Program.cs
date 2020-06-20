@@ -8,9 +8,9 @@ using Teronis.DotNet.Build.CommandOptions;
 using System.Collections.Generic;
 
 using static Bullseye.Targets;
-using static SimpleExec.Command;
 using static Teronis.DotNet.Build.ICommandOptions;
 using System.Xml.Linq;
+using Teronis.Diagnostics;
 
 namespace Teronis.DotNet.Build
 {
@@ -124,7 +124,7 @@ namespace Teronis.DotNet.Build
                     Console.WriteLine($"{project.Name}");
                     return Task.CompletedTask;
                 } else {
-                    return RunAsync(dotNetProgram, args: commandArgs);
+                    return SimpleProcess.RunAsync(dotNetProgram, args: commandArgs, outputReceived: Console.Out.WriteLine, errorReceived: Console.Error.WriteLine);
                 }
             }
 

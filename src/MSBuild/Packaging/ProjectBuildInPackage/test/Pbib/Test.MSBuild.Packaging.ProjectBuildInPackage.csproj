@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Test.Localization\Test.MSBuild.Packaging.ProjectBuildInPackage.Localization.csproj" PrivateAssets="all" />
+    <ProjectReference Include="..\Pbip.Localization\Test.MSBuild.Packaging.ProjectBuildInPackage.Localization.csproj" PrivateAssets="all" />
   </ItemGroup>
 
   <!-- The package ProjectBuildInPackage is created with the project Reference.ProjectBuildInPackage. -->

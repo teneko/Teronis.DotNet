@@ -5,23 +5,38 @@ namespace Teronis.IO
 {
     public struct FileLockUse : IDisposable
     {
-        public FileStream FileStream => fileLocker.FileStream;
+        public FileStream FileStream => fileLockContext.FileStream;
 
-        private readonly FileLocker fileLocker;
-        private readonly FileStream fileStream;
+        private readonly FileLockContext fileLockContext;
+#if DEBUG && TRACE
+        private readonly string lockId;
+#endif
 
-        internal FileLockUse(FileLocker fileLocker, FileStream fileStream)
+        internal FileLockUse(FileLockContext fileLockContext)
         {
-            this.fileLocker = fileLocker;
-            this.fileStream = fileStream;
+#if DEBUG && TRACE
+            lockId = null;
+#endif
+            this.fileLockContext = fileLockContext;
         }
+
+#if DEBUG && TRACE
+        internal FileLockUse(FileLockContext fileLockContext, string lockId
+            )
+        {
+            this.fileLockContext = fileLockContext;
+            this.lockId = lockId;
+        }
+#endif
 
         public void Dispose()
         {
             // When stream not closed, we can decrease lock use.
-            if (fileStream.CanRead || fileStream.CanWrite) {
-                fileLocker.DecreaseLockUse();
-            }
+#if DEBUG && TRACE
+            fileLockContext.DecreaseLockUse(false, lockId);
+#else
+            fileLockContext.DecreaseLockUse(false);
+#endif
         }
     }
 }

@@ -29,6 +29,7 @@ namespace Teronis.NetStandard.IO
                     void lockFile()
                     {
                         manualResetEvent.Wait();
+
                         for (var index = 0; index < 25; index++) {
                             var lockId = $"#{index}";
 #if DEBUG && TRACE
@@ -89,6 +90,7 @@ namespace Teronis.NetStandard.IO
                     void lockFile()
                     {
                         manualResetEvent.Wait();
+
                         for (var index = 0; index < 10; index++) {
                             FileStream threadWideLockUse = null;
 
@@ -138,6 +140,56 @@ namespace Teronis.NetStandard.IO
             }
 
             Assert.True(fileLocker.LocksInUse == 0, "The number of locks in use is not zero.");
+        }
+
+        [Fact]
+        public void TestMultipleFileLockers()
+        {
+            using var manualResetEvent = new ManualResetEventSlim(false);
+            var threadsCount = 2;
+            using var countdownEvent = new CountdownEvent(threadsCount);
+            var spinWait = new SpinWait();
+            var random = new Random();
+
+            var threads = Enumerable.Range(0, threadsCount).Select(x => {
+                var thread = new Thread(new ThreadStart(() => {
+                    void lockFile()
+                    {
+                        manualResetEvent.Wait();
+
+                        for (var index = 0; index < 25; index++) {
+                            var fileLocker = new FileLocker(LockFilePath);
+                            var lockId = $"#{index}";
+#if DEBUG && TRACE
+                            Trace.WriteLine($"{FileLocker.CurrentThreadWithLockIdPrefix(lockId)} Lock file {LockFilePath}.");
+                            using var lockUse = fileLocker.Lock(lockId);
+#else
+                                    using var lockUse = fileLocker.Lock();
+#endif
+                            spinWait.SpinOnce();
+                        }
+                    }
+
+                    lockFile();
+                    countdownEvent.Signal();
+                })) {
+                    Name = x.ToString()
+                };
+
+                return thread;
+            }).ToList();
+
+            foreach (var thread in threads) {
+                thread.Start();
+            }
+
+            manualResetEvent.Set();
+            countdownEvent.Wait();
+
+            foreach (var thread in threads) {
+                // When joining we want no excpetion to appear.
+                thread.Join();
+            }
         }
     }
 }

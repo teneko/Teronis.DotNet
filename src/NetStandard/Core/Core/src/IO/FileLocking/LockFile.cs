@@ -7,7 +7,7 @@ namespace Teronis.IO
     /// <summary>
     /// This helper class can lock files.
     /// </summary>
-    public class LockFile
+    public static class LockFile
     {
         public const FileMode DefaultFileMode = FileMode.OpenOrCreate;
         public const FileAccess DefaultFileAccess = FileAccess.ReadWrite;
@@ -100,6 +100,7 @@ namespace Teronis.IO
         /// <param name="fileMode">The file mode when opening file.</param>
         /// <param name="fileAccess">The file access when opening file.</param>
         /// <param name="fileShare">The file share when opening file</param>
+        /// <param name="throwOnTimeout">Enable throw when exception occured due due to timeout.</param>
         /// <returns>If true the lock acquirement was successful.</returns>
         public static bool WaitUntilAcquired(string filePath, out FileStream? fileStream, FileMode fileMode = DefaultFileMode,
             FileAccess fileAccess = DefaultFileAccess, FileShare fileShare = DefaultFileShare, bool throwOnTimeout = false)
@@ -115,6 +116,7 @@ namespace Teronis.IO
         /// <param name="fileMode">The file mode when opening file.</param>
         /// <param name="fileAccess">The file access when opening file.</param>
         /// <param name="fileShare">The file share when opening file</param>
+        /// <param name="noThrowOnTimeout">Disable throw when exception occured due due to timeout.</param>
         /// <returns>If not null the lock acquirement was successful.</returns>
         public static FileStream? WaitUntilAcquired(string filePath, FileMode fileMode = DefaultFileMode,
             FileAccess fileAccess = DefaultFileAccess, FileShare fileShare = DefaultFileShare, bool noThrowOnTimeout = false)
@@ -132,6 +134,7 @@ namespace Teronis.IO
         /// <param name="fileMode">The file mode when opening file.</param>
         /// <param name="fileAccess">The file access when opening file.</param>
         /// <param name="fileShare">The file share when opening file</param>
+        /// <param name="throwOnTimeout">Enable throw when exception occured due due to timeout.</param>
         /// <returns>If true the lock acquirement was successful.</returns>
         public static bool WaitUntilAcquired(string filePath, int timeoutInMilliseconds, out FileStream? fileStream, FileMode fileMode = DefaultFileMode,
             FileAccess fileAccess = DefaultFileAccess, FileShare fileShare = DefaultFileShare, bool throwOnTimeout = false) =>
@@ -145,6 +148,7 @@ namespace Teronis.IO
         /// <param name="fileMode">The file mode when opening file.</param>
         /// <param name="fileAccess">The file access when opening file.</param>
         /// <param name="fileShare">The file share when opening file</param>
+        /// <param name="noThrowOnTimeout">Disable throw when exception occured due due to timeout.</param>
         /// <returns>If not null the lock acquirement was successful.</returns>
         public static FileStream? WaitUntilAcquired(string filePath, int timeoutInMilliseconds, FileMode fileMode = DefaultFileMode,
             FileAccess fileAccess = DefaultFileAccess, FileShare fileShare = DefaultFileShare, bool noThrowOnTimeout = false) =>
@@ -159,6 +163,7 @@ namespace Teronis.IO
         /// <param name="fileMode">The file mode when opening file.</param>
         /// <param name="fileAccess">The file access when opening file.</param>
         /// <param name="fileShare">The file share when opening file</param>
+        /// <param name="throwOnTimeout">Enable throw when exception occured due due to timeout.</param>
         /// <returns>If true the lock acquirement was successful.</returns>
         public static bool WaitUntilAcquired(string filePath, TimeSpan timeout, out FileStream? fileStream, FileMode fileMode = DefaultFileMode,
             FileAccess fileAccess = DefaultFileAccess, FileShare fileShare = DefaultFileShare, bool throwOnTimeout = false)
@@ -175,6 +180,7 @@ namespace Teronis.IO
         /// <param name="fileMode">The file mode when opening file.</param>
         /// <param name="fileAccess">The file access when opening file.</param>
         /// <param name="fileShare">The file share when opening file</param>
+        /// <param name="noThrowOnTimeout">Disable throw when exception occured due due to timeout.</param>
         /// <returns>If ont null lock acquirement was successful.</returns>
         public static FileStream? WaitUntilAcquired(string filePath, TimeSpan timeout, FileMode fileMode = DefaultFileMode,
             FileAccess fileAccess = DefaultFileAccess, FileShare fileShare = DefaultFileShare, bool noThrowOnTimeout = false)

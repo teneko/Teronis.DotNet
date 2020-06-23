@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
 
@@ -8,7 +7,7 @@ namespace Teronis.IO
     /// <summary>
     /// This helper class can lock files.
     /// </summary>
-    public static class LockFile
+    public class LockFile
     {
         public const FileMode DefaultFileMode = FileMode.OpenOrCreate;
         public const FileAccess DefaultFileAccess = FileAccess.ReadWrite;
@@ -31,8 +30,17 @@ namespace Teronis.IO
 
             try {
                 fileStream = File.Open(filePath, fileMode, fileAccess, fileShare);
+                // Add UNIX support (reference https://github.com/dotnet/coreclr/pull/8233).
+                fileStream.Lock(0, 0);
                 return true;
-            } catch (Exception error) when (error.GetType() == typeof(IOException)) {
+            }
+            // The IOException does specify that the file could not been accessed because 
+            // it was partially locked. All other exception have to be handled by consumer.
+            // 
+            // See references:
+            // https://docs.microsoft.com/en-US/dotnet/api/system.io.file.open?view=netcore-3.1 (exceptions)
+            // https://docs.microsoft.com/en-US/dotnet/api/system.io.filestream.lock?view=netcore-3.1#exceptions
+            catch (Exception error) when (error.GetType() == typeof(IOException)) {
                 fileStream = null;
                 return false;
             }
@@ -69,7 +77,7 @@ namespace Teronis.IO
                 return true;
             } else {
                 if (throwOnTimeout) {
-                    throw new TimeoutException($"Waiting until file got acquired failed.");
+                    throw new TimeoutException($"Acquiring file lock failed due to timeout.");
                 }
 
                 fileStream = null;
@@ -134,7 +142,6 @@ namespace Teronis.IO
         /// </summary>
         /// <param name="filePath">The path to file that get locked.</param>
         /// <param name="timeoutInMilliseconds">The timeout in milliseconds.</param>
-        /// <param name="fileStream">The locked file as file stream.</param>
         /// <param name="fileMode">The file mode when opening file.</param>
         /// <param name="fileAccess">The file access when opening file.</param>
         /// <param name="fileShare">The file share when opening file</param>
@@ -165,7 +172,6 @@ namespace Teronis.IO
         /// </summary>
         /// <param name="filePath">The path to file that get locked.</param>
         /// <param name="timeout">The timeout specified as <see cref="TimeSpan"/>.</param>
-        /// <param name="fileStream">The locked file as file stream.</param>
         /// <param name="fileMode">The file mode when opening file.</param>
         /// <param name="fileAccess">The file access when opening file.</param>
         /// <param name="fileShare">The file share when opening file</param>

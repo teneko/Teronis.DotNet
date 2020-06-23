@@ -10,7 +10,7 @@ namespace Teronis.Tools.GitVersion
         public static string ExecuteGitVersion(string? args = null) =>
             SimpleProcess.Read(GitVersionExecutableName, args);
 
-        public static ValueTask<string> ExecuteGitVersionAsync(string? args= null) =>
+        public static ValueTask<string> ExecuteGitVersionAsync(string? args = null) =>
             SimpleProcess.ReadAsync(GitVersionExecutableName, args);
     }
 }

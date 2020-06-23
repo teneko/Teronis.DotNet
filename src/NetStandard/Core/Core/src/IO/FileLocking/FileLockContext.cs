@@ -21,11 +21,7 @@ namespace Teronis.IO
             this.decreaseLockUseLocker = decreaseLockUseLocker;
         }
 
-#if DEBUG && TRACE
         public void DecreaseLockUse(bool decreaseToZero, string lockId)
-#else
-        public void DecreaseLockUse(bool decreaseToZero)
-#endif
         {
             var decreaseLockUseLocker = this.decreaseLockUseLocker;
 
@@ -43,17 +39,11 @@ namespace Teronis.IO
             // two times accidentally.
             lock (decreaseLockUseLocker) {
                 if (!(FileStream.CanRead || FileStream.CanWrite)) {
-#if DEBUG && TRACE
-                    Trace.WriteLine($"{FileLocker.CurrentThreadWithLockIdPrefix(lockId)} Lock use has been invalidated before. Skip decreasing lock use.");
-#endif
+                    Trace.WriteLine($"{FileLocker.CurrentThreadWithLockIdPrefix(lockId)} Lock use has been invalidated before. Skip decreasing lock use.", FileLocker.TraceCategory);
                     return;
                 }
 
-#if DEBUG && TRACE
                 var locksInUse = fileLocker.DecreaseLockUse(decreaseToZero, lockId);
-#else
-                var locksInUse = fileLocker.DecreaseLockUse(decreaseToZero);
-#endif
 
                 if (0 == locksInUse) {
                     this.decreaseLockUseLocker = null;

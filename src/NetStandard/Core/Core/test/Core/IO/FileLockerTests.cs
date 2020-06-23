@@ -31,21 +31,10 @@ namespace Teronis.NetStandard.IO
                         manualResetEvent.Wait();
 
                         for (var index = 0; index < 25; index++) {
-                            var lockId = $"#{index}";
-#if DEBUG && TRACE
-                            Trace.WriteLine($"{FileLocker.CurrentThreadWithLockIdPrefix(lockId)} Lock file {LockFilePath}.");
-                            using var lockUse = fileLocker.Lock(lockId);
-#else
-                                    using var lockUse = fileLocker.Lock();
-#endif
+                            using var lockUse = fileLocker.WaitUntilAcquired();
 
                             if (index % 7 == 0) {
-#if DEBUG && TRACE
-                                Trace.WriteLine($"{FileLocker.CurrentThreadWithLockIdPrefix(lockId)} Manually unlock file.");
-                                fileLocker.Unlock(lockId);
-#else
-                                fileLocker.Unlock();
-#endif
+                                fileLocker.Unlock(lockUse.LockId);
                             }
 
                             spinWait.SpinOnce();
@@ -98,17 +87,8 @@ namespace Teronis.NetStandard.IO
                                 threadWideLockUse = LockFile.WaitUntilAcquired(LockFilePath);
                             }
 
-                            var lockId = $"#{index}";
-#if DEBUG && TRACE
-                            Trace.WriteLine($"{FileLocker.CurrentThreadWithLockIdPrefix(lockId)} Lock file {LockFilePath}.");
-#endif
-
                             try {
-#if DEBUG && TRACE
-                                using var lockUse = fileLocker.Lock(lockId);
-#else
-                                using var lockUse = fileLocker.Lock();
-#endif
+                                using var lockUse = fileLocker.WaitUntilAcquired();
                             } catch {
                                 // Ingore intentionally.
                             } finally {
@@ -159,13 +139,7 @@ namespace Teronis.NetStandard.IO
 
                         for (var index = 0; index < 25; index++) {
                             var fileLocker = new FileLocker(LockFilePath);
-                            var lockId = $"#{index}";
-#if DEBUG && TRACE
-                            Trace.WriteLine($"{FileLocker.CurrentThreadWithLockIdPrefix(lockId)} Lock file {LockFilePath}.");
-                            using var lockUse = fileLocker.Lock(lockId);
-#else
-                                    using var lockUse = fileLocker.Lock();
-#endif
+                            using var lockUse = fileLocker.WaitUntilAcquired();
                             spinWait.SpinOnce();
                         }
                     }

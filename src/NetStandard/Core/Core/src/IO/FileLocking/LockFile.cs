@@ -4,6 +4,9 @@ using System.Threading;
 
 namespace Teronis.IO
 {
+
+#nullable enable
+
     /// <summary>
     /// This helper class can lock files.
     /// </summary>
@@ -66,7 +69,7 @@ namespace Teronis.IO
         private static bool waitUntilAcquired(string filePath, out FileStream? fileStream, FileMode fileMode,
             FileAccess fileAccess, FileShare fileShare, int timeoutInMilliseconds, bool throwOnTimeout)
         {
-            FileStream spinningFileStream = null;
+            FileStream? spinningFileStream = null;
 
             var spinHasBeenFinished = SpinWait.SpinUntil(() => {
                 return TryAcquire(filePath, out spinningFileStream, fileMode: fileMode, fileAccess: fileAccess, fileShare: fileShare);

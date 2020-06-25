@@ -5,29 +5,48 @@ using System.Threading;
 
 namespace Teronis.IO
 {
+
+#nullable enable
+
     internal class FileLockContext
     {
-        public FileStream? FileStream { get; set; }
-        public Exception? Error { get; set; }
-        public ManualResetEvent ErrorUnlockDone { get; set; }
+        public FileStream? FileStream { get; }
+        public Exception? Error { get; }
+        public ManualResetEvent? ErrorUnlockDone { get; }
 
         private readonly FileLocker fileLocker;
-        private object decreaseLockUseLocker;
+        private object? decreaseLockUseLocker;
 
-        public FileLockContext(FileLocker fileLocker, object decreaseLockUseLocker)
+        private FileLockContext(FileLocker fileLocker, object decreaseLockUseLocker)
         {
-            this.fileLocker = fileLocker;
+            this.fileLocker = fileLocker ?? throw new ArgumentNullException(nameof(fileLocker));
             this.decreaseLockUseLocker = decreaseLockUseLocker;
-            this.decreaseLockUseLocker = decreaseLockUseLocker;
+        }
+
+        public FileLockContext(FileLocker fileLocker, object decreaseLockUseLocker, FileStream fileStream)
+            : this(fileLocker, decreaseLockUseLocker)
+        {
+            fileStream = fileStream ?? throw new ArgumentNullException(nameof(fileStream));
+            FileStream = fileStream;
+        }
+
+        public FileLockContext(FileLocker fileLocker, object decreaseLockUseLocker, Exception error, ManualResetEvent errorUnlockDone)
+            : this(fileLocker, decreaseLockUseLocker)
+        {
+            Error = error ?? throw new ArgumentNullException(nameof(error));
+            ErrorUnlockDone = errorUnlockDone ?? throw new ArgumentNullException(nameof(errorUnlockDone));
         }
 
         public void DecreaseLockUse(bool decreaseToZero, string lockId)
         {
+            if (FileStream == null) {
+                throw new InvalidOperationException("You cannot decrease lock use when no file stream has been assgined.");
+            }
+
             var decreaseLockUseLocker = this.decreaseLockUseLocker;
 
-            if (decreaseLockUseLocker == null) {
+            if (decreaseLockUseLocker == null)
                 return;
-            }
 
             // Why surround by lock?
             // There is a race condition, when number of file lock uses

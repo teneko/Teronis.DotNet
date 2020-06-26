@@ -1,61 +1,60 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
 namespace Teronis.Reflection
 {
     public static class NestedPropertyTools
     {
-
-
-        public static NestedProperty GetNestedProperty(object obj, string path, int startIndex = 0)
+        public static NestedProperty GetNestedProperty(object deepObject, string dotSeparatedPathParts, int startAtPathPart = 0)
         {
-            if (obj == null)
-                throw new ArgumentNullException(nameof(obj));
-            if (startIndex < 0)
+            deepObject = deepObject ?? throw new ArgumentNullException(nameof(deepObject));
+
+            if (startAtPathPart < 0) {
                 throw new IndexOutOfRangeException("The start index cannot be negative.");
+            }
 
-            Type objectType = obj.GetType();
+            Type objectType = deepObject.GetType();
 
-            PropertyInfo getNestedProperty(string pathPart) => objectType.GetProperty(pathPart);
+            PropertyInfo getNestedProperty(string pathPart) =>
+                objectType.GetProperty(pathPart);
 
-            PropertyInfo nestedPropertyInfo = null;
-            object originObject = null;
-            object currentObject = obj;
+            PropertyInfo? nestedPropertyInfo = null;
+            object? propertyHolderObject = null;
+            object pathPartObject = deepObject;
 
-            foreach (var partedPath in path.Split('.')) {
-                if (startIndex > 0)
-                    startIndex--;
-                else {
+            foreach (var partedPath in dotSeparatedPathParts.Split('.')) {
+                if (startAtPathPart > 0) {
+                    startAtPathPart--;
+                } else {
                     nestedPropertyInfo = getNestedProperty(partedPath);
                 }
 
                 if (nestedPropertyInfo == null) {
-                    originObject = null;
+                    propertyHolderObject = null;
                     break;
-                } else {
-                    objectType = nestedPropertyInfo.PropertyType;
-                    originObject = currentObject;
-                    currentObject = nestedPropertyInfo.GetValue(originObject);
                 }
+
+                objectType = nestedPropertyInfo.PropertyType;
+                propertyHolderObject = pathPartObject;
+                pathPartObject = nestedPropertyInfo.GetValue(propertyHolderObject);
             }
 
             return new NestedProperty() {
-                OriginObject = originObject,
+                PropertyHolderObject = propertyHolderObject,
                 PropertyInfo = nestedPropertyInfo,
             };
         }
 
-        public static object GetNestedValue(NestedProperty nestedProperty)
+        public static object? GetNestedValue(NestedProperty nestedProperty)
         {
-            if (nestedProperty.OriginObject != null && nestedProperty.PropertyInfo != null)
-                return nestedProperty.PropertyInfo.GetValue(nestedProperty.OriginObject);
-            else
-                return null;
+            if (nestedProperty.PropertyHolderObject != null && nestedProperty.PropertyInfo != null) {
+                return nestedProperty.PropertyInfo.GetValue(nestedProperty.PropertyHolderObject);
+            }
+
+            return null;
         }
 
-        public static object GetNestedValue(object obj, string path, int startIndex = 0)
+        public static object? GetNestedValue(object obj, string path, int startIndex = 0)
             => GetNestedValue(GetNestedProperty(obj, path, startIndex));
     }
 }

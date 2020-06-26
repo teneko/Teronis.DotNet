@@ -11,9 +11,6 @@ namespace Teronis.Collections.CollectionChanging
             return new CollectionChangeConversionAppliedEventArgs<ConvertedItemType, CommonValueType, OriginContentType>(bundles, eventSequence);
         }
 
-        public static CollectionChangeConversionAppliedEventArgs<ConvertedItemType, CommonValueType, OriginContentType> CreateSynchronous(IConversionCollectionChangeBundles<ConvertedItemType, CommonValueType, OriginContentType> bundles)
-            => new CollectionChangeConversionAppliedEventArgs<ConvertedItemType, CommonValueType, OriginContentType>(bundles, null);
-
         /// <summary>
         /// This is the aspected original change that has been already applied.
         /// </summary>
@@ -25,6 +22,8 @@ namespace Teronis.Collections.CollectionChanging
             AsyncEventSequence eventSequence)
         {
             bundles = bundles ?? throw new ArgumentNullException(nameof(bundles));
+            ConvertedCollectionChangeBundle = bundles.ConvertedBundle;
+            OriginCollectionChangeBundle = bundles.OriginBundle;
             EventSequence = eventSequence;
         }
     }

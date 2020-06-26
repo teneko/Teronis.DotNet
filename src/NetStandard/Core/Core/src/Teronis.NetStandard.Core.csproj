@@ -7,6 +7,7 @@
     <RootNamespace>Teronis</RootNamespace>
     <Description>This project contains core utility, core extension and core tool functions, but also core classes that extends known structures.</Description>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" Condition="'$(DisableSdkProps)' != 'true'" />

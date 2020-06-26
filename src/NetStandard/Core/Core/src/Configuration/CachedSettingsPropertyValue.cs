@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Teronis.Extensions;
 using Teronis.Reflection.Caching;
@@ -16,12 +17,12 @@ namespace Teronis.Configuration
     /// <typeparam name="PropertyType"></typeparam>
     public class CachedSettingsPropertyValue<PropertyType> : ICachedSettingsPropertyValue, INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public string PropertyName
             => settingsProperty.Name;
 
-        private object propertyValue {
+        private object? propertyValue {
             get => settings[PropertyName];
             set => settings[PropertyName] = value;
         }
@@ -33,16 +34,18 @@ namespace Teronis.Configuration
         /// won't know about any changes made to the property
         /// of <see cref="settings"/>.
         /// </summary>
+        [MaybeNull]
         public PropertyType PropertyValue {
             get => (PropertyType)propertyValue;
             set => propertyValue = value;
         }
 
-        object ICachedSettingsPropertyValue.PropertyValue {
+        object? ICachedSettingsPropertyValue.PropertyValue {
             get => propertyValue;
             set => propertyValue = value;
         }
 
+        [MaybeNull]
         public PropertyType CachedPropertyValue {
             get => cachedProperty;
 
@@ -53,7 +56,7 @@ namespace Teronis.Configuration
             }
         }
 
-        object ICachedSettingsPropertyValue.CachedPropertyValue
+        object? ICachedSettingsPropertyValue.CachedPropertyValue
             => CachedPropertyValue;
 
         public bool IsCacheSynchronous {
@@ -74,14 +77,16 @@ namespace Teronis.Configuration
         /// property of <see cref="settings"/> if it does not implement 
         /// <see cref="INotifyPropertyChanged"/> already.
         /// </summary>
-        public Action<string> NotifySettingsAboutPropertyChange { get; set; }
+        public Action<string>? NotifySettingsAboutPropertyChange { get; set; }
 
         public IEqualityComparer<PropertyType> PropertyValueEqualityComparer { get; private set; }
 
         private SettingsProperty settingsProperty
             => settingsPropertyValue.Property;
 
-        private PropertyType cachedProperty;
+        [AllowNull]
+        [MaybeNull]
+        private PropertyType cachedProperty = default!;
         private SettingsBase settings;
         private SettingsPropertyValue settingsPropertyValue;
         private bool isCopySynchronous;
@@ -89,9 +94,9 @@ namespace Teronis.Configuration
         /// The tracked properties are restricted by the name of the 
         /// property. So effectively one property gets ever tracked.
         /// </summary>
-        private SingleTypePropertyCache<PropertyType> propertyChangedCache;
+        private SingleTypePropertyCache<PropertyType>? propertyChangedCache;
 
-        public CachedSettingsPropertyValue(SettingsBase settings, string name, IEqualityComparer<PropertyType> propertyValueEqualityComparer)
+        public CachedSettingsPropertyValue(SettingsBase settings, string name, IEqualityComparer<PropertyType>? propertyValueEqualityComparer)
         {
             this.settings = settings
                 ?? throw new ArgumentNullException(nameof(settings));
@@ -137,10 +142,10 @@ namespace Teronis.Configuration
             if (PropertyValueEqualityComparer == null)
                 return;
 
-            var isPropertyChangedCacheNotNull = propertyChangedCache != null;
+            var isPropertyChangedCacheNotNull = !(propertyChangedCache is null);
 
             var doesCachedPropertyExist = isPropertyChangedCacheNotNull
-                && propertyChangedCache.CachedPropertyValues.ContainsKey(PropertyName);
+                && propertyChangedCache!.CachedPropertyValues.ContainsKey(PropertyName);
 
             if (isPropertyChangedCacheNotNull && !doesCachedPropertyExist)
                 IsCacheSynchronous = false;
@@ -148,11 +153,11 @@ namespace Teronis.Configuration
                 PropertyType cachedProperty;
 
                 if (doesCachedPropertyExist)
-                    cachedProperty = propertyChangedCache.CachedPropertyValues[PropertyName];
+                    cachedProperty = propertyChangedCache!.CachedPropertyValues[PropertyName];
                 else
                     cachedProperty = PropertyValue;
 
-                IsCacheSynchronous = PropertyValueEqualityComparer.Equals(CachedPropertyValue, cachedProperty);
+                IsCacheSynchronous = PropertyValueEqualityComparer.Equals(CachedPropertyValue!, cachedProperty!);
             }
         }
 
@@ -171,7 +176,7 @@ namespace Teronis.Configuration
                 settingsPropertyCollectionNotifier.CollectionChanged -= SettingsPropertyCollectionNotifier_CollectionChanged;
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         private void PropertyChangedCache_PropertyCacheAdded(object sender, PropertyCachedEventArgs<PropertyType> args)
@@ -233,7 +238,7 @@ namespace Teronis.Configuration
             TriggerSettingsPropertyChanged();
         }
 
-        private void setOriginal(object source)
+        private void setOriginal(object? source)
         {
             propertyValue = source;
             TriggerSettingsPropertyChanged();

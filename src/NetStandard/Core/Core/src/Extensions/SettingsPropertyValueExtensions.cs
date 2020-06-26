@@ -12,7 +12,7 @@ namespace Teronis.Extensions
         /// or a serialized value (ex. <see cref="SettingsProperty.DefaultValue"/>).
         /// </param>
         /// <param name="isDeserialized">Indicates whether <paramref name="value"/> is deserialized or serialized.</param>
-        public static object CopyValue(this SettingsPropertyValue propertyValue, object value, bool isDeserialized)
+        public static object? CopyValue(this SettingsPropertyValue propertyValue, object? value, bool isDeserialized)
         {
             var cachedPropertyValue = propertyValue.PropertyValue;
             propertyValue.PropertyValue = value;

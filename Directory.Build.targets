@@ -6,6 +6,10 @@
   <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackageTargetsFile)" />
   
   <ItemGroup>
+	<Compile Include="$(MSBuildThisFileDirectory)/Nullable.cs" Conditions="'$(Nullable)' == 'enable'" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\GitVersionCache\GitVersionCache\ref\PackagePublish\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj" Condition="'$(DisableGitVersionCache)' != 'true' And $(MSBuildProjectName.StartsWith('Teronis.'))" />
   </ItemGroup>
 

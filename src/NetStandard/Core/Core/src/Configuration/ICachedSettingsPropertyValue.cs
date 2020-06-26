@@ -6,10 +6,10 @@ namespace Teronis.Configuration
     public interface ICachedSettingsPropertyValue : INotifyPropertyChanged
     {
         string PropertyName { get; }
-        object PropertyValue { get; set; }
-        object CachedPropertyValue { get; }
+        object? PropertyValue { get; set; }
+        object? CachedPropertyValue { get; }
         bool IsCacheSynchronous { get; }
-        Action<string> NotifySettingsAboutPropertyChange { get; set; }
+        Action<string>? NotifySettingsAboutPropertyChange { get; set; }
 
         void ResetCachedValue();
         void RefreshCachedValue();

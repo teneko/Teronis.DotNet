@@ -41,7 +41,7 @@ namespace Teronis.Diagnostics
             process.Exited += onExited;
 
             void onOutputDataReceived(object sender, DataReceivedEventArgs e) =>
-                outputReceived.Invoke(e.Data);
+                outputReceived?.Invoke(e.Data);
 
             if (outputReceived != null) {
                 process.OutputDataReceived += onOutputDataReceived;

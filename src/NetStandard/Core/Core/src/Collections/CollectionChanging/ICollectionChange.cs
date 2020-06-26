@@ -6,9 +6,9 @@ namespace Teronis.Collections.CollectionChanging
     public interface ICollectionChange<OldItemType, NewItemType>
     {
         NotifyCollectionChangedAction Action { get; }
-        IReadOnlyList<OldItemType> OldItems { get; }
+        IReadOnlyList<OldItemType>? OldItems { get; }
         int OldIndex { get; }
-        IReadOnlyList<NewItemType> NewItems { get; }
+        IReadOnlyList<NewItemType>? NewItems { get; }
         int NewIndex { get; }
     }
 }

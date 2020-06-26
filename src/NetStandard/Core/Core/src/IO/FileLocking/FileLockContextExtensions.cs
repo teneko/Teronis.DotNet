@@ -1,13 +1,7 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Threading;
+﻿
 
-namespace Teronis.IO
+namespace Teronis.IO.FileLocking
 {
-
-#nullable enable
-
     internal static class FileLockContextExtensions
     {
         public static bool IsErroneous(this FileLockContext? fileLockContext) {

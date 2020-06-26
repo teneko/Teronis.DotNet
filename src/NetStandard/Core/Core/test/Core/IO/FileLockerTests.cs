@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Teronis.IO;
+using Teronis.IO.FileLocking;
 using Xunit;
 
 namespace Teronis.NetStandard.IO
@@ -84,7 +83,7 @@ namespace Teronis.NetStandard.IO
                             FileStream threadWideLockUse = null;
 
                             if (x == 0 && index % 3 == 0) {
-                                threadWideLockUse = LockFile.WaitUntilAcquired(LockFilePath);
+                                threadWideLockUse = LockFileApi.Default.WaitUntilAcquired(LockFilePath);
                             }
 
                             try {

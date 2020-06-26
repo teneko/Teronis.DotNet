@@ -10,6 +10,7 @@ using Teronis.Text.Json.Converters;
 using Microsoft.Build.Utilities;
 using System;
 using Teronis.IO;
+using Teronis.IO.FileLocking;
 
 namespace Teronis.GitVersionCache.BuildTasks
 {
@@ -80,7 +81,7 @@ namespace Teronis.GitVersionCache.BuildTasks
             var gitFolderScopedCacheDirectory = getCacheDirectory(ParentOfGitDirectoryInfo);
             ensureDirectoryExistence(gitFolderScopedCacheDirectory);
             var lockFile = Path.Combine(gitFolderScopedCacheDirectory, "GitVersionCache.lock");
-            return LockFile.WaitUntilAcquired(lockFile);
+            return LockFileApi.Default.WaitUntilAcquired(lockFile);
         }
 
         /// <summary>

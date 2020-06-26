@@ -2,10 +2,8 @@
 using System.ComponentModel;
 using System.IO;
 
-namespace Teronis.IO
+namespace Teronis.IO.FileLocking
 {
-
-#nullable enable
 
     public struct FileLockUse : IDisposable
     {

@@ -7,11 +7,8 @@ using System.Threading;
 
 [assembly: InternalsVisibleTo("Test.NetStandard.Core")]
 
-namespace Teronis.IO
+namespace Teronis.IO.FileLocking
 {
-
-#nullable enable
-
     /// <summary>
     /// Provides a file locker that is thread-safe and supports nesting.
     /// </summary>
@@ -19,7 +16,6 @@ namespace Teronis.IO
     {
 #if TRACE
         internal const string TraceCategory = nameof(FileLocker);
-
         private static Random random = new Random();
 
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -67,27 +63,34 @@ namespace Teronis.IO
         private int locksInUse = 0;
         private FileLockContext? fileLockerState;
         private object decreaseLockUseLocker;
+        private readonly ILockFileApi lockFileApi;
 
-        public FileLocker(string filePath, FileMode fileMode = LockFile.DefaultFileMode, FileAccess fileAccess = LockFile.DefaultFileAccess,
-            FileShare fileShare = LockFile.DefaultFileShare)
+        public FileLocker(ILockFileApi lockFileApi, string filePath, FileMode fileMode = LockFileApi.DefaultFileMode, FileAccess fileAccess = LockFileApi.DefaultFileAccess,
+            FileShare fileShare = LockFileApi.DefaultFileShare)
         {
             decreaseLockUseLocker = new object();
+            this.lockFileApi = lockFileApi;
             FilePath = filePath;
             FileMode = fileMode;
             FileAccess = fileAccess;
             FileShare = fileShare;
-            TimeoutInMilliseconds = LockFile.DefaultTimeoutInMilliseconds;
+            TimeoutInMilliseconds = LockFileApi.DefaultTimeoutInMilliseconds;
         }
 
-        public FileLocker(string filePath, int timeoutInMilliseconds, FileMode fileMode = LockFile.DefaultFileMode, FileAccess fileAccess = LockFile.DefaultFileAccess,
-            FileShare fileShare = LockFile.DefaultFileShare)
+        public FileLocker(string filePath, FileMode fileMode = LockFileApi.DefaultFileMode, FileAccess fileAccess = LockFileApi.DefaultFileAccess,
+           FileShare fileShare = LockFileApi.DefaultFileShare)
+            : this(LockFileApi.Default, filePath, fileMode, fileAccess, fileShare)
+        { }
+
+        public FileLocker(string filePath, int timeoutInMilliseconds, FileMode fileMode = LockFileApi.DefaultFileMode, FileAccess fileAccess = LockFileApi.DefaultFileAccess,
+            FileShare fileShare = LockFileApi.DefaultFileShare)
             : this(filePath, fileMode, fileAccess, fileShare)
         {
             TimeoutInMilliseconds = timeoutInMilliseconds;
         }
 
-        public FileLocker(string filePath, TimeSpan timeout, FileMode fileMode = LockFile.DefaultFileMode, FileAccess fileAccess = LockFile.DefaultFileAccess,
-            FileShare fileShare = LockFile.DefaultFileShare)
+        public FileLocker(string filePath, TimeSpan timeout, FileMode fileMode = LockFileApi.DefaultFileMode, FileAccess fileAccess = LockFileApi.DefaultFileAccess,
+            FileShare fileShare = LockFileApi.DefaultFileShare)
             : this(filePath, fileMode, fileAccess, fileShare)
         {
             TimeoutInMilliseconds = Convert.ToInt32(timeout.TotalMilliseconds);
@@ -141,7 +144,7 @@ namespace Teronis.IO
                     // to acquire the lock.
                     if (desiredLocksInUse == 1) {
                         try {
-                            var fileStream = LockFile.WaitUntilAcquired(FilePath, TimeoutInMilliseconds, fileMode: FileMode,
+                            var fileStream = LockFileApi.Default.WaitUntilAcquired(FilePath, TimeoutInMilliseconds, fileMode: FileMode,
                                     fileAccess: FileAccess, fileShare: FileShare)!;
 
                             currentFileLockerState = new FileLockContext(this, decreaseLockUseLocker, fileStream);

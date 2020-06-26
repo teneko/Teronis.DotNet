@@ -3,11 +3,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
-namespace Teronis.IO
+namespace Teronis.IO.FileLocking
 {
-
-#nullable enable
-
     internal class FileLockContext
     {
         public FileStream? FileStream { get; }

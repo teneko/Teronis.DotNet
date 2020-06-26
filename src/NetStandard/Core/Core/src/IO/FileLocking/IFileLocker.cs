@@ -1,4 +1,6 @@
-﻿namespace Teronis.IO
+﻿
+
+namespace Teronis.IO.FileLocking
 {
     public interface IFileLocker
     {

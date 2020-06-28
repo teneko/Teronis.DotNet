@@ -8,7 +8,7 @@ namespace Teronis.Reflection
     public sealed class VariableInfoDescriptor : INotifyPropertyChanging
     {
 #pragma warning disable 0067
-        public event PropertyChangingEventHandler PropertyChanging;
+        public event PropertyChangingEventHandler? PropertyChanging;
 #pragma warning restore 0067
 
         /// <summary>
@@ -24,9 +24,9 @@ namespace Teronis.Reflection
         public bool ExcludeIfWritable { get; set; }
         public bool IncludeIfReadable { get; set; }
         public bool IncludeIfWritable { get; set; }
-        public IEnumerable<Type> ExcludeByAttributeTypes { get; set; }
+        public IEnumerable<Type>? ExcludeByAttributeTypes { get; set; }
         public bool ExcludeByAttributeTypesInherit { get; set; }
-        public IEnumerable<Type> IncludeByAttributeTypes { get; set; }
+        public IEnumerable<Type>? IncludeByAttributeTypes { get; set; }
         public bool IncludeByAttributeTypesInherit { get; set; }
         public bool IsSealed { get; private set; }
 

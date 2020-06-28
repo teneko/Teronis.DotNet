@@ -34,12 +34,7 @@ namespace Teronis.Collections.Synchronization
                     var oldItem = oldItemsEnumerator.Current;
                     var newItem = newItemsEnumerator.Current;
                     var oldItemUpdate = new ContentUpdate<ContentType>(newItem, this);
-
-                    var oldItemUpdateContainer = new UpdateWithTargetContainer<ContentType, ItemType>() {
-                        Update = oldItemUpdate,
-                        Target = oldItem
-                    };
-
+                    var oldItemUpdateContainer = new UpdateWithTargetContainer<ContentType, ItemType>(oldItemUpdate, oldItem);
                     yield return oldItemUpdateContainer;
                 }
             }

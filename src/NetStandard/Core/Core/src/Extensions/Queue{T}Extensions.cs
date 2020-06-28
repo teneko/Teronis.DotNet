@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis.Extensions
 {
@@ -10,6 +11,7 @@ namespace Teronis.Extensions
                 yield return queue.Dequeue();
         }
 
+        [return: MaybeNull]
         public static T DequeueAt<T>(this Queue<T> queue, int index)
         {
             for (int i = 0; i < index && queue.Count > 0; i++)

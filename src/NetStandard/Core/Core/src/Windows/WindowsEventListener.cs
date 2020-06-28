@@ -10,7 +10,7 @@ namespace Teronis.Windows
     {
         public delegate void WinEventDelegate(WindowEventListener listener, IntPtr hWnd);
 
-        public event WinEventDelegate WinEventRaised;
+        public event WinEventDelegate? WinEventRaised;
 
         Win32.WinEventDelegate win32EventHandler;
         IntPtr hookId;

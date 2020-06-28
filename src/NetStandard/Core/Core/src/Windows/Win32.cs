@@ -713,9 +713,8 @@ namespace Teronis.Windows
                 return false;
             }
 
-            List<IntPtr> childHandles = gcChildhandlesList.Target as List<IntPtr>;
+            List<IntPtr> childHandles = (List<IntPtr>)gcChildhandlesList.Target;
             childHandles.Add(hWnd);
-
             return true;
         }
     }

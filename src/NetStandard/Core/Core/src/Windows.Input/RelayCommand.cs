@@ -5,15 +5,15 @@ namespace Teronis.Windows.Input
 {
     public class RelayCommand<T> : ICommand
     {
-        private readonly Action<T> executeAction = null;
-        private readonly Predicate<T> canExecutePredicate = null;
+        private readonly Action<T> executeAction;
+        private readonly Predicate<T>? canExecutePredicate;
 
         /// <summary>
         /// Creates a new command.
         /// </summary>
         /// <param name="executeAction">The execution logic.</param>
         /// <param name="canExecutePredicate">The execution status logic.</param>
-        public RelayCommand(Action<T> executeAction, Predicate<T> canExecutePredicate)
+        public RelayCommand(Action<T> executeAction, Predicate<T>? canExecutePredicate)
         {
             this.executeAction = executeAction ?? throw new ArgumentNullException(nameof(executeAction));
             this.canExecutePredicate = canExecutePredicate;
@@ -41,7 +41,7 @@ namespace Teronis.Windows.Input
         /// Occurs never and can be ignored if <see cref="canExecutePredicate"/> is null. It could for example reexposes RequerySuggested of the class of CommandManager.
         ///</summary>
 #pragma warning disable 0067
-        public virtual event EventHandler CanExecuteChanged;
+        public virtual event EventHandler? CanExecuteChanged;
 #pragma warning restore
 
         ///<summary>

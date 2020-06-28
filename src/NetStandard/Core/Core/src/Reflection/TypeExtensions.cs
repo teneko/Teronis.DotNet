@@ -128,14 +128,15 @@ namespace Teronis.Extensions
 
         // NON-TYPED
 
-        public static AttributeMemberInfo GetAttributeFieldMember(this Type type, Type attributeType, string fieldName, VariableInfoDescriptor descriptor = null, bool? getCustomAttributesInherit = null)
+        public static AttributeMemberInfo? GetAttributeFieldMember(this Type type, Type attributeType, string fieldName, VariableInfoDescriptor descriptor = null, bool? getCustomAttributesInherit = null)
         {
             type = type ?? throw new ArgumentNullException(nameof(type));
             descriptor = descriptor.DefaultIfNull(true);
             var field = GetFieldMember(type, fieldName, descriptor);
 
-            if (field == null)
+            if (field == null) {
                 return null;
+            }
 
             return new AttributeMemberInfo(field, attributeType, getCustomAttributesInherit);
         }
@@ -239,11 +240,14 @@ namespace Teronis.Extensions
         // TYPED
 
         /// <returns>Returns null if passed attribute allows multiple declarations.</returns>
-        public static AttributeMemberInfo<TAttribute>[] TryGetOrderedAttributeMemberInfos<TAttribute>(this Type type, Type interruptingBaseType = null, VariableInfoDescriptor descriptor = null, bool? getCustomAttributesInherit = null)
+        public static AttributeMemberInfo<TAttribute>[]? TryGetOrderedAttributeMemberInfos<TAttribute>(this Type type, Type interruptingBaseType = null, VariableInfoDescriptor descriptor = null, bool? getCustomAttributesInherit = null)
             where TAttribute : Attribute, IZeroBasedIndex
         {
-            if (typeof(TAttribute).GetCustomAttribute<AttributeUsageAttribute>().AllowMultiple)
+            var customAttribute = typeof(TAttribute).GetCustomAttribute<AttributeUsageAttribute>();
+
+            if (customAttribute is null || customAttribute.AllowMultiple) {
                 return null;
+            }
 
             var vars = GetAttributeVariableMembers<TAttribute>(type, interruptingBaseType, descriptor, getCustomAttributesInherit).ToList();
             var array = new AttributeMemberInfo<TAttribute>[vars.Count];

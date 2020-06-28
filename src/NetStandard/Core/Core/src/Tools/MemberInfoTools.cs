@@ -5,7 +5,7 @@ namespace Teronis.Tools
 {
     public static class MemberInfoTools
     {
-        public static object GetValue(MemberInfo memberInfo, object owner)
+        public static object? GetValue(MemberInfo memberInfo, object owner)
         {
             switch (memberInfo.MemberType) {
                 case MemberTypes.Field:
@@ -17,7 +17,7 @@ namespace Teronis.Tools
             }
         }
 
-        public static void SetValue(MemberInfo memberInfo, object owner, object value)
+        public static void SetValue(MemberInfo memberInfo, object owner, object? value)
         {
             switch (memberInfo.MemberType) {
                 case MemberTypes.Field:

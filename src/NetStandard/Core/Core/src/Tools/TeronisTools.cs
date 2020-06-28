@@ -2,62 +2,71 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Teronis.Data;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis.Tools
 {
     public static class TeronisTools
     {
-        public static bool CompareEquality<T>(T one, T two) => EqualityComparer<T>.Default.Equals(one, two);
+        public static bool CompareEquality<T>([AllowNull] T one, [AllowNull] T two) => EqualityComparer<T>.Default.Equals(one, two);
 
-        public static bool ReturnNonDefault<T>(T inValue, out T outValue, Func<T> getNonDefaultIfDefault = null)
+        public static bool ReturnNonDefault<T>([AllowNull] T inValue, [MaybeNull] out T outValue, Func<T>? getNonDefaultIfDefault = null)
             => !CompareEquality(outValue = inValue, default) || (FuncGenericTools.ReturnIsInvocable(getNonDefaultIfDefault, out outValue) && !CompareEquality(outValue, default));
 
-        public static I ReturnInValue<I>(I inValue, out I outInValue)
+        [return: MaybeNull]
+        public static I ReturnInValue<I>([AllowNull] I inValue, [MaybeNull] out I outInValue)
         {
             outInValue = inValue;
             return inValue;
         }
 
-        public static I ReturnInValue<I>(I inValue, Action<I> modifyInValue)
+        [return: MaybeNull]
+        public static I ReturnInValue<I>([AllowNull] I inValue, MutateValue<I> mutateInValue)
         {
-            modifyInValue(inValue);
+            mutateInValue(inValue);
             return inValue;
         }
 
-        public static I ReturnInValue<I>(I inValue, Func<I, I> modifyInValue)
+        [return: MaybeNull]
+        public static I ReturnInValue<I>([AllowNull] I inValue, ReplaceValueDelegate<I, I> modifyInValue)
             => modifyInValue(inValue);
 
-        public static I ReturnInValue<I>(I inValue, Action doSomething)
+        [return: MaybeNull]
+        public static I ReturnInValue<I>([AllowNull] I inValue, Action doSomething)
         {
             doSomething();
             return inValue;
         }
 
-        public static async Task<I> ReturnInValue<I>(I inValue, Task task)
+        public static async Task<I> ReturnInValue<I>([AllowNull] I inValue, Task task)
         {
             await task;
-            return inValue;
+            return inValue!;
         }
 
-        public static V ReturnValue<I, V>(I inValue, out I outInValue, V value)
+        [return: MaybeNull]
+        public static V ReturnValue<I, V>([AllowNull] I inValue, [MaybeNull] out I outInValue, [AllowNull] V value)
         {
             outInValue = inValue;
             return value;
         }
 
-        public static V ReturnValue<I, V>(I inValue, out I outInValue, Func<V> getValue)
+        [return: MaybeNull]
+        public static V ReturnValue<I, V>([AllowNull] I inValue, [MaybeNull] out I outInValue, Func<V> getValue)
         {
             outInValue = inValue;
             return getValue();
         }
 
-        public static V ReturnValue<I, V>(I inValue, out I outInValue, Func<I, V> getValue)
+        [return: MaybeNull]
+        public static V ReturnValue<I, V>([AllowNull] I inValue, [MaybeNull] out I outInValue, GetInputDelegate<I, V> getValue)
         {
             outInValue = inValue;
             return getValue(inValue);
         }
 
-        public static V ReturnValue<I, V>(I inValue, Func<I, V> getValue)
+        [return: MaybeNull]
+        public static V ReturnValue<I, V>([AllowNull] I inValue, GetInputDelegate<I, V> getValue)
             => getValue(inValue);
 
         /// <summary>
@@ -70,6 +79,7 @@ namespace Teronis.Tools
             return defaultValueWrapper;
         }
 
+        [return: MaybeNull]
         public static T ReturnDefaultValueReplacement<T>(Func<WrappedValue<T>, T> getDefaultValueReplacement) =>
             ReturnDefaultReplacement(getDefaultValueReplacement).Value;
     }

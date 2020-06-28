@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Data;
 using System.Linq;
 
@@ -15,13 +16,18 @@ namespace Teronis.Extensions
         //    return null;
         //}
 
-        public static Hashtable GetHashtable(this DataRow row, string prefix = null)
+        public static Hashtable GetHashtable(this DataRow row, string? prefix = null)
         {
             var columns = row.Table.Columns;
             var ht = new Hashtable();
 
-            foreach (DataColumn column in columns)
+            foreach (DataColumn? column in columns) {
+                if (column is null) {
+                    throw new ArgumentNullException("One column in array is null.");
+                }
+
                 ht[prefix + column.ColumnName] = row[column.ColumnName];
+            }
 
             return ht;
         }
@@ -78,9 +84,15 @@ namespace Teronis.Extensions
 
         public static DataRow RightToLeft(this DataRow left, Hashtable right)
         {
-            if (!(right == null || right.Count == 0))
-                foreach (string key in right.Keys)
+            if (!(right == null || right.Count == 0)) {
+                foreach (string? key in right.Keys) {
+                    if (key == null) {
+                        throw new ArgumentNullException("One key in array is null.");
+                    }
+
                     left[key] = right[key];
+                }
+            }
 
             return left;
         }
@@ -89,7 +101,11 @@ namespace Teronis.Extensions
         {
             var leftKeys = left.Keys.Cast<string>();
 
-            foreach (string key in right.Keys) {
+            foreach (var key in right.Keys) {
+                if (key == null) {
+                    throw new ArgumentNullException("One key in array is null.");
+                }
+
                 // Continue if new keys are not wished to be added to left.
                 if (!addNewKeys && leftKeys.Contains(key))
                     continue;
@@ -102,8 +118,13 @@ namespace Teronis.Extensions
 
         public static Hashtable LeftWithoutRight(this Hashtable left, Hashtable right)
         {
-            foreach (var key in right.Keys)
+            foreach (var key in right.Keys) {
+                if (key == null) {
+                    throw new ArgumentNullException("One key in array is null.");
+                }
+
                 left.Remove(key);
+            }
 
             return left;
         }

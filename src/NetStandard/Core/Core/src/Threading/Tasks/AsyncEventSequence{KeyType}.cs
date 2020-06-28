@@ -17,6 +17,7 @@ namespace Teronis.Threading.Tasks
     /// </summary>
     /// <typeparam name="KeyType"></typeparam>
     public class AsyncEventSequence<KeyType>
+        where KeyType : notnull
     {
         public AsyncEventSequenceStatus Status { get; private set; }
         public IEqualityComparer<KeyType> EqualityComparer { get; protected set; }
@@ -24,7 +25,7 @@ namespace Teronis.Threading.Tasks
 
         private Dictionary<KeyType, List<TaskCompletionSource>> tcsDependencies;
         private TaskCompletionSource tcsRegistrationPhaseEnd;
-        private Task finishDependenciesTask;
+        private Task? finishDependenciesTask;
 
         public AsyncEventSequence(IEqualityComparer<KeyType> equalityComparer)
         {

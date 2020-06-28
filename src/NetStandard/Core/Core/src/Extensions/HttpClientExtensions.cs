@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Teronis.Extensions
@@ -10,29 +8,31 @@ namespace Teronis.Extensions
     {
         #region PrepareHttpRequest
 
-        public static async Task<T> PrepareHttpRequestAsync<T>(this HttpClient client, HttpClientHandler clientHandler, Func<HttpClient, HttpClientHandler, Task<T>> callback)
+        public static Task<T> PrepareHttpRequestAsync<T>(this HttpClient client, HttpClientHandler? clientHandler, Func<HttpClient, HttpClientHandler?, Task<T>> callback)
         {
-            if (callback != null)
-                return await callback.Invoke(client, clientHandler);
+            if (callback != null) {
+                return callback.Invoke(client, clientHandler);
+            }
 
-            return default;
+            return Task.FromResult<T>(default!);
         }
 
-        public static async Task<T> PrepareHttpRequestAsync<T>(this HttpClient pseudoClient, Func<HttpClient, Task<T>> clientHandler)
-            => await PrepareHttpRequestAsync(pseudoClient, null, async (client, handler) => await clientHandler?.Invoke(client));
+        public static Task<T> PrepareHttpRequestAsync<T>(this HttpClient pseudoClient, Func<HttpClient, Task<T>> clientHandler)
+            => PrepareHttpRequestAsync(pseudoClient, null, async (client, handler) => await clientHandler?.Invoke(client)!);
 
-        public static async Task PrepareHttpRequestAsync(this HttpClient pseudoClient, HttpClientHandler clientHandler, Func<HttpClient, HttpClientHandler, Task> callback)
+        public static async Task PrepareHttpRequestAsync(this HttpClient pseudoClient, HttpClientHandler? clientHandler, Func<HttpClient, HttpClientHandler?, Task> callback)
         {
-            await PrepareHttpRequestAsync(pseudoClient, clientHandler, async (_client, _handler) => {
-                if (callback != null)
-                    await callback.Invoke(_client, clientHandler);
+            await PrepareHttpRequestAsync(pseudoClient, clientHandler, (_client, _handler) => {
+                if (callback != null) {
+                    return callback.Invoke(_client, clientHandler);
+                }
 
-                return default(object);
+                return Task.CompletedTask;
             });
         }
 
         public static async Task PrepareHttpRequestAsync(this HttpClient pseudoClient, Func<HttpClient, Task> clientHandler)
-            => await PrepareHttpRequestAsync(pseudoClient, null, async (client, handler) => await clientHandler?.Invoke(client));
+            => await PrepareHttpRequestAsync(pseudoClient, null, async (client, handler) => await clientHandler?.Invoke(client)!);
 
         #endregion
     }

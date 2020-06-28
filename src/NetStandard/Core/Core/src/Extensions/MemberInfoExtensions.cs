@@ -6,10 +6,10 @@ namespace Teronis.Extensions
 {
     public static class MemberInfoExtensions
     {
-        public static object GetValue(this MemberInfo memberInfo, object owner)
+        public static object? GetValue(this MemberInfo memberInfo, object owner)
             => MemberInfoTools.GetValue(memberInfo, owner);
 
-        public static void SetValue(this MemberInfo memberInfo, object owner, object value)
+        public static void SetValue(this MemberInfo memberInfo, object owner, object? value)
             => MemberInfoTools.SetValue(memberInfo, owner, value);
 
         public static bool IsFieldOrProperty(this MemberInfo memberInfo)

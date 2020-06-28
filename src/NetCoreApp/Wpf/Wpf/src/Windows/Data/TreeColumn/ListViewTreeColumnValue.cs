@@ -14,10 +14,7 @@ namespace Teronis.Windows.Data.TreeColumn
         public override string Path => Binding.Path.Path;
 
         public ListViewTreeColumnValue(ListViewTreeColumnKey key, Binding binding, int index)
-        {
-            Key = key;
-            Binding = binding;
-            Index = index;
-        }
+            : base(key, binding.Path.Path, index)
+        { }
     }
 }

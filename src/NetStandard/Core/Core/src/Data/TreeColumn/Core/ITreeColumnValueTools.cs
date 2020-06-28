@@ -9,7 +9,21 @@ namespace Teronis.Tools
     public static class ITreeColumnValueTools
     {
         public static bool DoesAnyColumnContainText(IEnumerable<ITreeColumnValue<ITreeColumnKey>> treeColumns, object entity, string searchText)
-            => treeColumns.Any(x => x == null ? false : NestedPropertyTools.GetNestedValue(entity, x.Path)?.ToString().IndexOf(searchText, StringComparison.InvariantCultureIgnoreCase) >= 0);
+        {
+            return treeColumns.Any(x => {
+                if (x is null) {
+                    return false;
+                }
+
+                var nestedPropertyValue = NestedPropertyTools.GetNestedValue(entity, x.Path)?.ToString();
+
+                if (nestedPropertyValue is null) {
+                    return false;
+                }
+
+                return nestedPropertyValue.IndexOf(searchText, StringComparison.InvariantCultureIgnoreCase) >= 0;
+            });
+        }
 
         public static IEnumerable<object?> GetCellContent(IEnumerable<ITreeColumnValue<ITreeColumnKey>> treeColumnValues, object cellContentContainer)
         {

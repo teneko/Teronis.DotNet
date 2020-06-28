@@ -1,4 +1,5 @@
 ﻿using System.Configuration;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis.Extensions
 {
@@ -27,23 +28,26 @@ namespace Teronis.Extensions
             return valueCopy;
         }
 
+        [return: MaybeNull]
         public static PropertyType CopyValue<PropertyType>(this SettingsPropertyValue propertyValue, object value, bool isDeserialized)
             => (PropertyType)CopyValue(propertyValue, value, isDeserialized);
 
-        public static object CopyPropertyValue(this SettingsPropertyValue settingsPropertyValue) {
+        public static object? CopyPropertyValue(this SettingsPropertyValue settingsPropertyValue) {
             var propertyValue = settingsPropertyValue.PropertyValue;
             return CopyValue(settingsPropertyValue, propertyValue, false);
         }
 
+        [return: MaybeNull]
         public static PropertyType CopyPropertyValue<PropertyType>(this SettingsPropertyValue propertyValue)
             => (PropertyType)CopyPropertyValue(propertyValue);
 
-        public static object CopyDefaultValue(this SettingsPropertyValue settingsPropertyValue)
+        public static object? CopyDefaultValue(this SettingsPropertyValue settingsPropertyValue)
         {
             var defaultValue = settingsPropertyValue.Property.DefaultValue;
             return CopyValue(settingsPropertyValue, defaultValue, false);
         }
 
+        [return: MaybeNull]
         public static PropertyType CopyDefaultValue<PropertyType>(this SettingsPropertyValue propertyValue)
             => (PropertyType)CopyDefaultValue(propertyValue);
     }

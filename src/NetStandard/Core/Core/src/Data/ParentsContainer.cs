@@ -7,13 +7,13 @@ namespace Teronis.Data
     public class ParentsContainer
     {
         public ParentCollection Parents { get; private set; }
-        public Type WantedType { get; private set; }
+        public Type? WantedType { get; private set; }
 
         /// <summary>
         /// If <paramref name="wantedType"/> is null, then all parents may attach themselves.
         /// </summary>
         /// <param name="wantedType"></param>
-        public ParentsContainer(Type wantedType)
+        public ParentsContainer(Type? wantedType)
         {
             Parents = new ParentCollection();
             WantedType = wantedType;
@@ -44,8 +44,9 @@ namespace Teronis.Data
 
         public void AddParents(IEnumerable<object> parents)
         {
-            foreach (var parent in parents)
+            foreach (var parent in parents) {
                 AddParent(parent);
+            }
         }
 
         public class ParentCollection : Collection<object> { }

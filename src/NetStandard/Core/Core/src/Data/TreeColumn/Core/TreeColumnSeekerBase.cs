@@ -23,18 +23,19 @@ namespace Teronis.Data.TreeColumn.Core
         public IDictionary<TreeColumnKeyType, TreeColumnValueType> SearchTreeColumnDefinitions(IList<TreeColumnKeyType> treeColumnOrdering)
         {
             /// Cache for declaration paths of children that are decorated with <see cref="HasTreeColumnsAttribute"/>
-            var columnDefinitionsByParent = new List<(Type DeclaringType, string Path)>(new[] { (TreeColumnsHolderType, default(string)) });
+            var columnDefinitionsByParent = new List<(Type DeclaringType, string? Path)>(new[] { (TreeColumnsHolderType, default(string)) });
             var treeColumnDefinitions = new OrderedDictionary<TreeColumnKeyType, TreeColumnValueType>();
 
             while (columnDefinitionsByParent.Count > 0) {
-                string combinePath(string left, string right)
+                string combinePath(string? left, string right)
                 {
                     string combinedPath;
 
-                    if (left == null)
+                    if (left == null) {
                         combinedPath = right;
-                    else
+                    } else {
                         combinedPath = left + "." + right;
+                    }
 
                     return combinedPath;
                 }

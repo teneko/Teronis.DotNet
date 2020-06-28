@@ -124,7 +124,7 @@ namespace Teronis.DotNet.Build
                     Console.WriteLine($"{project.Name}");
                     return Task.CompletedTask;
                 } else {
-                    return SimpleProcess.RunAsync(dotNetProgram, args: commandArgs, outputReceived: Console.Out.WriteLine, errorReceived: Console.Error.WriteLine);
+                    return SimpleProcess.RunAsync(dotNetProgram!, args: commandArgs, outputReceived: Console.Out.WriteLine, errorReceived: Console.Error.WriteLine);
                 }
             }
 

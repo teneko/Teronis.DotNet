@@ -9,13 +9,15 @@ namespace Teronis.Diagnostics
         /// If implemented, <see cref="IDebuggerDisplay.DebuggerDisplay"/> is 
         /// returned, otherwise <see cref="object.ToString"/>.
         /// </summary>
-        public static string GetDebuggerDisplay(object obj)
+        public static string? GetDebuggerDisplay(object? obj)
         {
-            if (obj == null)
-                new ArgumentNullException(nameof(obj));
+            if (obj is null) {
+                return "No debugger information provided.";
+            }
 
-            if (obj is IDebuggerDisplay debuggerDisplay)
+            if (obj is IDebuggerDisplay debuggerDisplay) {
                 return debuggerDisplay.DebuggerDisplay;
+            }
 
             return obj.ToString();
         }

@@ -7,15 +7,15 @@ namespace Teronis.Data
     {
         public object Sender { get; private set; }
 
-        private WantParentsEventHandler eventHandler;
+        private WantParentsEventHandler? eventHandler;
 
-        public ParentsPicker(object sender, WantParentsEventHandler eventHandler)
+        public ParentsPicker(object sender, WantParentsEventHandler? eventHandler)
         {
             Sender = sender;
             this.eventHandler = eventHandler;
         }
 
-        public ParentsContainer.ParentCollection GetParents(Type wantedParentType)
+        public ParentsContainer.ParentCollection GetParents(Type? wantedParentType)
             => new HavingParentsEventArgs(Sender, wantedParentType).GetParents(eventHandler);
 
         public object GetSingleParent(Type wantedParentType)

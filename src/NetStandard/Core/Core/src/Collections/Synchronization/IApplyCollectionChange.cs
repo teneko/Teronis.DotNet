@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Teronis.Collections.CollectionChanging;
+﻿using Teronis.Collections.CollectionChanging;
 
 namespace Teronis.Collections.Synchronization
 {

@@ -4,7 +4,7 @@ namespace Teronis.Collections.ObjectModel
 {
     public class IndexShifter<TShiftCondition> : IDisposable
     {
-        public event EventHandler<IndexShiftConditionEvaluatingEventArgs<TShiftCondition>> IndexShiftConditionEvaluating;
+        public event EventHandler<IndexShiftConditionEvaluatingEventArgs<TShiftCondition>>? IndexShiftConditionEvaluating;
 
         private bool isDisposed;
 
@@ -16,8 +16,9 @@ namespace Teronis.Collections.ObjectModel
 
         protected virtual void Dispose(bool disposing)
         {
-            if (isDisposed)
+            if (isDisposed) {
                 return;
+            }
 
             IndexShiftConditionEvaluating = null;
             isDisposed = true;

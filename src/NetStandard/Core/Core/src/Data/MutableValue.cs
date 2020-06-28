@@ -1,14 +1,16 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis.Data
 {
     public class MutableValue<T> : IEquatable<T> where T : IEquatable<T>
     {
-        public event EventHandler<T> ValueMutated;
+        public event EventHandler<T>? ValueMutated;
 
+        [MaybeNull, AllowNull]
         public T Value { get; private set; }
 
-        public MutableValue(T value)
+        public MutableValue([AllowNull] T value)
         {
             Value = value;
         }
@@ -19,18 +21,44 @@ namespace Teronis.Data
             ValueMutated?.Invoke(this, Value);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            if (obj is MutableValue<T> mutation)
-                return Value.Equals(mutation.Value);
-            else if (obj is T val)
-                return Value.Equals(val);
-            else
+            if (Value is null) {
                 return false;
+            } else if (obj is MutableValue<T> mutation) {
+                return Value.Equals(mutation.Value);
+            } else if (obj is T val) {
+                return Value.Equals(val);
+            } else {
+                return false;
+            }
         }
 
-        public override int GetHashCode() => Value.GetHashCode();
-        public bool Equals(T other) => Value.Equals(other);
-        public override string ToString() => Value.ToString();
+        public override int GetHashCode()
+        {
+            if (Value is null) {
+                return 0;
+            }
+
+            return Value.GetHashCode();
+        }
+
+        public bool Equals([AllowNull] T other)
+        {
+            if (Value is null) {
+                return false;
+            }
+
+            return Value.Equals(other);
+        }
+
+        public override string? ToString()
+        {
+            if (Value is null) {
+                return null;
+            }
+
+            return Value.ToString();
+        }
     }
 }

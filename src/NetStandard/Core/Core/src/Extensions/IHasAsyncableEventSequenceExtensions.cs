@@ -5,6 +5,6 @@ namespace Teronis.Extensions
     public static class IHasAsyncableEventSequenceExtensions
     {
         public static bool IsAsyncEvent<KeyType>(this IHasAsyncableEventSequence<KeyType> asyncableEventSequenceContainer)
-            => asyncableEventSequenceContainer.AsyncEventSequence != null;
+            => !(asyncableEventSequenceContainer.AsyncEventSequence is null);
     }
 }

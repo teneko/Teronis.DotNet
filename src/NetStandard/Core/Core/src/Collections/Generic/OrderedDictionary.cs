@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using Teronis.Collections.Specialized;
 using Teronis.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis.Collections.Generic
 {
@@ -19,19 +20,20 @@ namespace Teronis.Collections.Generic
     /// advanced dictionary construct allows for a very natural and robust handling of indexed
     /// structured data.
     /// </remarks>
+    // https://stackoverflow.com/a/9844528/11044059 (reference)
     public class OrderedDictionary<K, V> : IOrderedDictionary<K, V>
+        where K : notnull
     {
-        /* Fields/Properties */
-
         IEnumerable<K> IReadOnlyDictionary<K, V>.Keys => Keys;
         IEnumerable<V> IReadOnlyDictionary<K, V>.Values => Values;
 
-        private SortableKeyCollection<K, KeyValuePair<K, V>> _keyedCollection;
+        private SortableKeyCollection<K, KeyValuePair<K, V>> keyedCollection = null!;
 
         /// <summary>
         /// Gets or sets the value associated with the specified key.
         /// </summary>
         /// <param name="key">The key associated with the value to get or set.</param>
+        [MaybeNull, AllowNull]
         public V this[K key] {
             get => GetValue(key);
             set => SetValue(key, value);
@@ -49,74 +51,77 @@ namespace Teronis.Collections.Generic
         /// <summary>
         /// Gets the number of items in the dictionary
         /// </summary>
-        public int Count => _keyedCollection.Count;
+        public int Count => keyedCollection.Count;
 
         /// <summary>
         /// Gets all the keys in the ordered dictionary in their proper order.
         /// </summary>
-        public ICollection<K> Keys => _keyedCollection.Select(x => x.Key).ToList();
+        public ICollection<K> Keys => keyedCollection.Select(x => x.Key).ToList();
 
         /// <summary>
         /// Gets all the values in the ordered dictionary in their proper order.
         /// </summary>
-        public ICollection<V> Values => _keyedCollection.Select(x => x.Value).ToList();
+        public ICollection<V> Values => keyedCollection.Select(x => x.Value).ToList();
 
         /// <summary>
         /// Gets the key comparer for this dictionary
         /// </summary>
-        public IEqualityComparer<K> Comparer { get; private set; }
+        public IEqualityComparer<K>? Comparer { get; private set; }
 
         /* Constructors */
 
-        public OrderedDictionary() => Initialize();
-        public OrderedDictionary(IEqualityComparer<K> comparer) => Initialize(comparer);
+        public OrderedDictionary()
+            => onConstruction();
+
+        public OrderedDictionary(IEqualityComparer<K> comparer)
+            => onConstruction(comparer);
 
         public OrderedDictionary(IOrderedDictionary<K, V> dictionary)
         {
-            Initialize();
+            onConstruction();
 
             foreach (var pair in dictionary) {
-                _keyedCollection.Add(pair);
+                keyedCollection.Add(pair);
             }
         }
 
         public OrderedDictionary(IOrderedDictionary<K, V> dictionary, IEqualityComparer<K> comparer)
         {
-            Initialize(comparer);
+            onConstruction(comparer);
 
             foreach (var pair in dictionary) {
-                _keyedCollection.Add(pair);
+                keyedCollection.Add(pair);
             }
         }
 
         public OrderedDictionary(IEnumerable<KeyValuePair<K, V>> items)
         {
-            Initialize();
+            onConstruction();
 
             foreach (var pair in items) {
-                _keyedCollection.Add(pair);
+                keyedCollection.Add(pair);
             }
         }
 
         public OrderedDictionary(IEnumerable<KeyValuePair<K, V>> items, IEqualityComparer<K> comparer)
         {
-            Initialize(comparer);
+            onConstruction(comparer);
 
             foreach (var pair in items) {
-                _keyedCollection.Add(pair);
+                keyedCollection.Add(pair);
             }
         }
 
         /* Methods */
 
-        private void Initialize(IEqualityComparer<K> comparer = null)
+        private void onConstruction(IEqualityComparer<K>? comparer = null)
         {
             Comparer = comparer;
 
             if (comparer != null) {
-                _keyedCollection = new SortableKeyCollection<K, KeyValuePair<K, V>>(x => x.Key, comparer);
+                keyedCollection = new SortableKeyCollection<K, KeyValuePair<K, V>>(x => x.Key, comparer);
             } else {
-                _keyedCollection = new SortableKeyCollection<K, KeyValuePair<K, V>>(x => x.Key);
+                keyedCollection = new SortableKeyCollection<K, KeyValuePair<K, V>>(x => x.Key);
             }
         }
 
@@ -125,24 +130,17 @@ namespace Teronis.Collections.Generic
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.  The value can be null for reference types.</param>
-        public void Add(K key, V value) => _keyedCollection.Add(new KeyValuePair<K, V>(key, value));
-
-        //public void Add<KeyableV>(KeyableV keyableVal) where KeyableV: V, IKeyable<K>
-        //{
-        //    Add(keyableVal.KeyItem, keyableVal);
-        //}
-
-        //public void TryAdd<KeyableV>(KeyableV keyableVal) where KeyableV : V, IKeyable<K>
-        //{
-        //    return TryAdd(keyableVal.KeyItem, keyableVal);
-        //}
+        public void Add(K key, [AllowNull] V value) =>
+            keyedCollection.Add(new KeyValuePair<K, V>(key, value!));
 
         /// <summary>
         /// Removes all keys and values from this object.
         /// </summary>
-        public void Clear() => _keyedCollection.Clear();
+        public void Clear() =>
+            keyedCollection.Clear();
 
-        public void Insert(int index, KeyValuePair<K, V> pair) => _keyedCollection.Insert(index, pair);
+        public void Insert(int index, KeyValuePair<K, V> pair) =>
+            keyedCollection.Insert(index, pair);
 
         /// <summary>
         /// Inserts a new key-value pair at the index specified.
@@ -159,10 +157,11 @@ namespace Teronis.Collections.Generic
         /// <returns>Returns the index of the key specified if found.  Returns -1 if the key could not be located.</returns>
         public int IndexOf(K key)
         {
-            if (_keyedCollection.Contains(key))
-                return _keyedCollection.IndexOf(_keyedCollection[key]);
-            else
+            if (keyedCollection.Contains(key)) {
+                return keyedCollection.IndexOf(keyedCollection[key]);
+            } else {
                 return -1;
+            }
         }
 
         /// <summary>
@@ -170,7 +169,8 @@ namespace Teronis.Collections.Generic
         /// </summary>
         /// <param name="value">The value to locate in this object.</param>
         /// <returns>True if the value is found.  False otherwise.</returns>
-        public bool ContainsValue(V value) => Values.Contains(value);
+        public bool ContainsValue([AllowNull] V value) =>
+            Values.Contains(value!);
 
         /// <summary>
         /// Determines whether this object contains the specified value.
@@ -178,14 +178,16 @@ namespace Teronis.Collections.Generic
         /// <param name="value">The value to locate in this object.</param>
         /// <param name="comparer">The equality comparer used to locate the specified value in this object.</param>
         /// <returns>True if the value is found.  False otherwise.</returns>
-        public bool ContainsValue(V value, IEqualityComparer<V> comparer) => Values.Contains(value, comparer);
+        public bool ContainsValue([AllowNull] V value, IEqualityComparer<V> comparer) =>
+            Values.Contains(value!, comparer);
 
         /// <summary>
         /// Determines whether this object contains the specified key.
         /// </summary>
         /// <param name="key">The key to locate in this object.</param>
         /// <returns>True if the key is found.  False otherwise.</returns>
-        public bool ContainsKey(K key) => _keyedCollection.Contains(key);
+        public bool ContainsKey(K key) =>
+            keyedCollection.Contains(key);
 
         /// <summary>
         /// Returns the KeyValuePair at the index specified.
@@ -196,10 +198,11 @@ namespace Teronis.Collections.Generic
         /// </exception>
         public KeyValuePair<K, V> GetItem(int index)
         {
-            if (index < 0 || index >= _keyedCollection.Count)
+            if (index < 0 || index >= keyedCollection.Count) {
                 throw new ArgumentException("The index was outside the bounds of the dictionary: " + index);
+            }
 
-            return _keyedCollection[index];
+            return keyedCollection[index];
         }
 
         /// <summary>
@@ -210,26 +213,27 @@ namespace Teronis.Collections.Generic
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the index specified does not refer to a KeyValuePair in this object
         /// </exception>
-        public void SetItem(int index, V value)
+        public void SetItem(int index, [AllowNull] V value)
         {
-            if (index < 0 || index >= _keyedCollection.Count)
+            if (index < 0 || index >= keyedCollection.Count) {
                 throw new ArgumentException("The index is outside the bounds of the dictionary: " + index);
+            }
 
-            _keyedCollection[index] = new KeyValuePair<K, V>(_keyedCollection[index].Key, value);
-            ;
+            keyedCollection[index] = new KeyValuePair<K, V>(keyedCollection[index].Key, value!);
         }
 
         /// <summary>
         /// Returns an enumerator that iterates through all the KeyValuePairs in this object.
         /// </summary>
-        public IEnumerator<KeyValuePair<K, V>> GetEnumerator() => _keyedCollection.GetEnumerator();
+        public IEnumerator<KeyValuePair<K, V>> GetEnumerator() =>
+            keyedCollection.GetEnumerator();
 
         /// <summary>
         /// Removes the key-value pair for the specified key.
         /// </summary>
         /// <param name="key">The key to remove from the dictionary.</param>
         /// <returns>True if the item specified existed and the removal was successful.  False otherwise.</returns>
-        public bool Remove(K key) => _keyedCollection.Remove(key);
+        public bool Remove(K key) => keyedCollection.Remove(key);
 
         /// <summary>
         /// Removes the key-value pair at the specified index.
@@ -237,20 +241,22 @@ namespace Teronis.Collections.Generic
         /// <param name="index">The index of the key-value pair to remove from the dictionary.</param>
         public void RemoveAt(int index)
         {
-            if (index < 0 || index >= _keyedCollection.Count)
+            if (index < 0 || index >= keyedCollection.Count)
                 throw new ArgumentException("The index was outside the bounds of the dictionary: " + index);
-            _keyedCollection.RemoveAt(index);
+
+            keyedCollection.RemoveAt(index);
         }
 
         /// <summary>
         /// Gets the value associated with the specified key.
         /// </summary>
         /// <param name="key">The key associated with the value to get.</param>
+        [return: MaybeNull]
         public V GetValue(K key)
         {
-            if (_keyedCollection.Contains(key) == false)
+            if (keyedCollection.Contains(key) == false)
                 throw new ArgumentException("The given key is not present in the dictionary: " + key);
-            var kvp = _keyedCollection[key];
+            var kvp = keyedCollection[key];
             return kvp.Value;
         }
 
@@ -259,15 +265,15 @@ namespace Teronis.Collections.Generic
         /// </summary>
         /// <param name="key">The key associated with the value to set.</param>
         /// <param name="value">The the value to set.</param>
-        public void SetValue(K key, V value)
+        public void SetValue(K key, [AllowNull] V value)
         {
-            var kvp = new KeyValuePair<K, V>(key, value);
+            var kvp = new KeyValuePair<K, V>(key, value!);
             var idx = IndexOf(key);
 
             if (idx > -1) {
-                _keyedCollection[idx] = kvp;
+                keyedCollection[idx] = kvp;
             } else {
-                _keyedCollection.Add(kvp);
+                keyedCollection.Add(kvp);
             }
         }
 
@@ -282,10 +288,10 @@ namespace Teronis.Collections.Generic
         /// </param>
         /// <returns>True if the value was found.  False otherwise.</returns>
         /// <remarks></remarks>
-        public bool TryGetValue(K key, out V value)
+        public bool TryGetValue(K key, [MaybeNullWhen(false)] out V value)
         {
-            if (_keyedCollection.Contains(key)) {
-                value = _keyedCollection[key].Value;
+            if (keyedCollection.Contains(key)) {
+                value = keyedCollection[key].Value;
                 return true;
             } else {
                 value = default;
@@ -293,12 +299,13 @@ namespace Teronis.Collections.Generic
             }
         }
 
-        public ReadOnlyDictionary<K, V> AsReadOnly() => new ReadOnlyDictionary<K, V>(this);
+        public ReadOnlyDictionary<K, V> AsReadOnly() =>
+            new ReadOnlyDictionary<K, V>(this);
 
         /* Sorting */
-        public void SortKeys() => _keyedCollection.SortByKeys();
-        public void SortKeys(IComparer<K> comparer) => _keyedCollection.SortByKeys(comparer);
-        public void SortKeys(Comparison<K> comparison) => _keyedCollection.SortByKeys(comparison);
+        public void SortKeys() => keyedCollection.SortByKeys();
+        public void SortKeys(IComparer<K> comparer) => keyedCollection.SortByKeys(comparer);
+        public void SortKeys(Comparison<K> comparison) => keyedCollection.SortByKeys(comparison);
 
         public void SortValues()
         {
@@ -306,74 +313,120 @@ namespace Teronis.Collections.Generic
             SortValues(comparer);
         }
 
-        public void SortValues(IComparer<V> comparer) => _keyedCollection.Sort((x, y) => comparer.Compare(x.Value, y.Value));
-        public void SortValues(Comparison<V> comparison) => _keyedCollection.Sort((x, y) => comparison(x.Value, y.Value));
+        public void SortValues(IComparer<V> comparer) => keyedCollection.Sort((x, y) => comparer.Compare(x.Value, y.Value));
+        public void SortValues(Comparison<V> comparison) => keyedCollection.Sort((x, y) => comparison(x.Value, y.Value));
 
-        /* IDictionary<TKey, TValue> */
+        #region IDictionary<TKey, TValue>
 
         void IDictionary<K, V>.Add(K key, V value) => Add(key, value);
         bool IDictionary<K, V>.ContainsKey(K key) => ContainsKey(key);
         ICollection<K> IDictionary<K, V>.Keys => Keys;
         bool IDictionary<K, V>.Remove(K key) => Remove(key);
-        bool IDictionary<K, V>.TryGetValue(K key, out V value) => TryGetValue(key, out value);
+        bool IDictionary<K, V>.TryGetValue(K key, out V value) => TryGetValue(key, out value!);
         ICollection<V> IDictionary<K, V>.Values => Values;
 
         V IDictionary<K, V>.this[K key] {
-            get => this[key];
+            get => this[key]!;
             set => this[key] = value;
         }
 
-        /* ICollection<KeyValuePair<TKey, TValue>> */
+        #endregion
 
-        void ICollection<KeyValuePair<K, V>>.Add(KeyValuePair<K, V> item) => _keyedCollection.Add(item);
-        void ICollection<KeyValuePair<K, V>>.Clear() => _keyedCollection.Clear();
-        bool ICollection<KeyValuePair<K, V>>.Contains(KeyValuePair<K, V> item) => _keyedCollection.Contains(item);
-        void ICollection<KeyValuePair<K, V>>.CopyTo(KeyValuePair<K, V>[] array, int arrayIndex) => _keyedCollection.CopyTo(array, arrayIndex);
-        int ICollection<KeyValuePair<K, V>>.Count => _keyedCollection.Count;
+        #region IReadOnlyDictionary<TKey, TValue>
+
+        V IReadOnlyDictionary<K, V>.this[K key] {
+            get => GetValue(key)!;
+        }
+
+        bool IReadOnlyDictionary<K, V>.TryGetValue(K key, out V value) =>
+            TryGetValue(key, out value!);
+
+        #endregion
+
+        #region ICollection<KeyValuePair<TKey, TValue>>
+
+        void ICollection<KeyValuePair<K, V>>.Add(KeyValuePair<K, V> item) => keyedCollection.Add(item);
+        void ICollection<KeyValuePair<K, V>>.Clear() => keyedCollection.Clear();
+        bool ICollection<KeyValuePair<K, V>>.Contains(KeyValuePair<K, V> item) => keyedCollection.Contains(item);
+        void ICollection<KeyValuePair<K, V>>.CopyTo(KeyValuePair<K, V>[] array, int arrayIndex) => keyedCollection.CopyTo(array, arrayIndex);
+        int ICollection<KeyValuePair<K, V>>.Count => keyedCollection.Count;
         bool ICollection<KeyValuePair<K, V>>.IsReadOnly => false;
-        bool ICollection<KeyValuePair<K, V>>.Remove(KeyValuePair<K, V> item) => _keyedCollection.Remove(item);
+        bool ICollection<KeyValuePair<K, V>>.Remove(KeyValuePair<K, V> item) => keyedCollection.Remove(item);
 
-        /* IEnumerable<KeyValuePair<TKey, TValue>> */
+        #endregion
 
-        IEnumerator<KeyValuePair<K, V>> IEnumerable<KeyValuePair<K, V>>.GetEnumerator() => GetEnumerator();
+        #region IEnumerable<KeyValuePair<TKey, TValue>>
 
-        /* IEnumerable */
+        IEnumerator<KeyValuePair<K, V>> IEnumerable<KeyValuePair<K, V>>.GetEnumerator() =>
+            GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        #endregion
 
-        /* IOrderedDictionary */
+        #region IEnumerable
 
-        IDictionaryEnumerator IOrderedDictionary.GetEnumerator() => new DictionaryEnumerator<K, V>(this);
-        void IOrderedDictionary.Insert(int index, object key, object value) => Insert(index, (K)key, (V)value);
-        void IOrderedDictionary.RemoveAt(int index) => RemoveAt(index);
+        IEnumerator IEnumerable.GetEnumerator() =>
+            GetEnumerator();
+
+        #endregion
+
+        #region IOrderedDictionary
+
+        IDictionaryEnumerator IOrderedDictionary.GetEnumerator() =>
+            new DictionaryEnumerator<K, V>(this);
+
+        void IOrderedDictionary.Insert(int index, object key, object value) =>
+            Insert(index, (K)key, (V)value);
+
+        void IOrderedDictionary.RemoveAt(int index) =>
+            RemoveAt(index);
 
         object IOrderedDictionary.this[int index] {
             get => this[index];
             set => this[index] = (KeyValuePair<K, V>)value;
         }
 
-        /* IDictionary */
+        #endregion
 
-        void IDictionary.Add(object key, object value) => Add((K)key, (V)value);
-        void IDictionary.Clear() => Clear();
-        bool IDictionary.Contains(object key) => _keyedCollection.Contains((K)key);
-        IDictionaryEnumerator IDictionary.GetEnumerator() => new DictionaryEnumerator<K, V>(this);
+        #region IDictionary
+
+        void IDictionary.Add(object key, object? value) =>
+            Add((K)key, (V)value);
+
+        void IDictionary.Clear() =>
+            Clear();
+
+        bool IDictionary.Contains(object key) =>
+            keyedCollection.Contains((K)key);
+
+        IDictionaryEnumerator IDictionary.GetEnumerator() =>
+            new DictionaryEnumerator<K, V>(this);
+
         bool IDictionary.IsFixedSize => false;
         bool IDictionary.IsReadOnly => false;
-        ICollection IDictionary.Keys => (ICollection)Keys;
-        void IDictionary.Remove(object key) => Remove((K)key);
-        ICollection IDictionary.Values => (ICollection)Values;
+        ICollection IDictionary.Keys =>
+            (ICollection)Keys;
 
-        object IDictionary.this[object key] {
-            get => this[(K)key];
-            set => this[(K)key] = (V)value;
+        void IDictionary.Remove(object key) =>
+            Remove((K)key);
+
+        ICollection IDictionary.Values =>
+            (ICollection)Values;
+
+        object? IDictionary.this[object key] {
+            get => this[(K)key]!;
+            set => this[(K)key] = (V)value!;
         }
 
-        /* ICollection */
+        #endregion
 
-        void ICollection.CopyTo(Array array, int index) => ((ICollection)_keyedCollection).CopyTo(array, index);
-        int ICollection.Count => ((ICollection)_keyedCollection).Count;
-        bool ICollection.IsSynchronized => ((ICollection)_keyedCollection).IsSynchronized;
-        object ICollection.SyncRoot => ((ICollection)_keyedCollection).SyncRoot;
+        #region ICollection
+
+        void ICollection.CopyTo(Array array, int index) => ((ICollection)keyedCollection).CopyTo(array, index);
+        int ICollection.Count => ((ICollection)keyedCollection).Count;
+        bool ICollection.IsSynchronized => ((ICollection)keyedCollection).IsSynchronized;
+        object ICollection.SyncRoot => ((ICollection)keyedCollection).SyncRoot;
+
+        #endregion
+
     }
 }

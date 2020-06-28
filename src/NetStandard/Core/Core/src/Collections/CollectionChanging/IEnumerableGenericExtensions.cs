@@ -43,13 +43,14 @@ namespace Teronis.Extensions
             var lateRightItemContainers = new OrderedHashSet<CommonValueContainer<CommonValueType>, RightItemContainer<LeftItemType, RightItemType, CommonValueType>>(commonValueContainerEqualityComparer);
             var areEarlyIterationValuesEqual = true;
 
-            bool getHasValue(ref bool hasItem, IEnumerator itemEnumerator)
+            bool hasValue(ref bool hasItem, IEnumerator itemEnumerator)
                 => hasItem && (hasItem = itemEnumerator.MoveNext());
 
-            while (getHasValue(ref hasLeftItem, leftItemsEnumerator) | getHasValue(ref hasRightItem, rightItemsEnumerator)) {
+            while (hasValue(ref hasLeftItem, leftItemsEnumerator) | hasValue(ref hasRightItem, rightItemsEnumerator)) {
                 // Cancel if not a left and right value is available
-                if (!(hasLeftItem || hasRightItem))
+                if (!(hasLeftItem || hasRightItem)) {
                     break;
+                }
 
                 var leftItem = hasLeftItem ? leftItemsEnumerator.Current : default;
                 var leftCommonValue = hasLeftItem ? getCommonValueFromLeftItem(leftItem!) : default;
@@ -91,29 +92,34 @@ namespace Teronis.Extensions
                         // to delete the left value at index of the greatest right value index plus one
                         var newLeftValueIndex = earlyLeftValueIndex - (earlyLeftValueIndex - earlyRightValueIndex);
                         earlyIterationChange = CollectionChange<LeftItemType, RightItemType>.CreateOld(NotifyCollectionChangedAction.Remove, leftItem, newLeftValueIndex);
-                    } else
+                    } else {
                         lateLeftItemContainers.Add(createLeftItemContainer());
+                    }
 
                     earlyLeftValueIndex++;
                 } else {
-                    if (areEarlyIterationValuesEqual)
+                    if (areEarlyIterationValuesEqual) {
                         earlyIterationChange = CollectionChange<LeftItemType, RightItemType>.CreateNew(NotifyCollectionChangedAction.Add, rightItem, earlyRightValueIndex);
-                    else
+                    } else {
                         lateRightItemContainers.Add(createRightItemContainer());
+                    }
 
                     earlyRightValueIndex++;
                 }
 
-                if (earlyIterationChange != null)
+                if (earlyIterationChange != null) {
                     earlyIterationChanges.Add(earlyIterationChange);
+                }
             }
 
-            foreach (var change in earlyIterationChanges)
+            foreach (var change in earlyIterationChanges) {
                 yield return change;
+            }
 
             // Exit only if both lists were synchronized from early on
-            if (areEarlyIterationValuesEqual)
+            if (areEarlyIterationValuesEqual) {
                 yield break;
+            }
 
             foreach (var rightItemContainer in lateRightItemContainers) {
                 // This index represents the current index of the right value collection.
@@ -125,8 +131,9 @@ namespace Teronis.Extensions
                 if (hasCachedLeftItem)
                     foundLeftValueIndexPair = rightItemContainer.CachedLeftItem;
                 else {
-                    if (lateLeftItemContainers.TryGetValue(CommonValueContainer<CommonValueType>.CreateEqualComparableItem(rightValue), out foundLeftValueIndexPair))
+                    if (lateLeftItemContainers.TryGetValue(CommonValueContainer<CommonValueType>.CreateEqualComparableItem(rightValue), out foundLeftValueIndexPair!)) {
                         lateLeftItemContainers.Remove(foundLeftValueIndexPair);
+                    }
                 }
 
                 var rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount = rightValueIndex;
@@ -152,15 +159,17 @@ namespace Teronis.Extensions
                         leftItemIndexShifter.Shift(change);
                     }
 
-                    if (!hasCachedLeftItem)
+                    if (!hasCachedLeftItem) {
                         // Then we replace the left item by moved item at the destination index of the moved item
                         yield return new CollectionChange<LeftItemType, RightItemType>(NotifyCollectionChangedAction.Replace, foundLeftValueIndexPair.LeftItem, rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount, rightItemContainer.RightItem, rightValueIndex);
+                    }
                 }
             }
 
             // We remove all left left-value-index-pairs, because they did not match any condition above and have to be removed in REVERSED order
-            foreach (var leftValueIndexPair in lateLeftItemContainers.YieldReversedItems())
+            foreach (var leftValueIndexPair in lateLeftItemContainers.YieldReversedItems()) {
                 yield return CollectionChange<LeftItemType, RightItemType>.CreateOld(NotifyCollectionChangedAction.Remove, leftValueIndexPair.LeftItem, leftValueIndexPair.ShiftedIndex);
+            }
         }
 
         public static IEnumerable<CollectionChange<LeftItemType, RightItemType>> GetCollectionChanges<LeftItemType, RightItemType>(this IEnumerable<LeftItemType> leftItems, IEnumerable<RightItemType> rightItems, Func<LeftItemType, RightItemType> getCommonValueFromLeftItem, IEqualityComparer<RightItemType> commonValueEqualityComparer)
@@ -201,7 +210,7 @@ namespace Teronis.Extensions
                 shifter.IndexShiftConditionEvaluating += Shifter_IndexShiftConditionEvaluating;
             }
 
-            protected void Shifter_IndexShiftConditionEvaluating(object sender, IndexShiftConditionEvaluatingEventArgs<CollectionChange<LeftItemType, RightItemType>> args)
+            protected void Shifter_IndexShiftConditionEvaluating(object? sender, IndexShiftConditionEvaluatingEventArgs<CollectionChange<LeftItemType, RightItemType>> args)
             {
                 var change = args.ShiftCondition;
 

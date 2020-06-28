@@ -1,61 +1,69 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Teronis.Extensions;
 
 namespace Teronis.Collections.Generic
 {
-    public class OrderedHashSet<TKey, TValue> : ICollection<TValue>
-        where TValue : TKey
+    public class OrderedHashSet<KeyType, ValueType> : ICollection<ValueType>
+        where KeyType : notnull
+        where ValueType : KeyType
     {
-        public int Count => valueDictionary.Count;
-        public virtual bool IsReadOnly => ((ICollection<TValue>)valueDictionary).IsReadOnly;
+        public int Count =>
+            valueDictionary.Count;
 
-        private readonly Dictionary<TKey, LinkedListNode<TValue>> valueDictionary;
+        public virtual bool IsReadOnly =>
+            ((ICollection<ValueType>)valueDictionary).IsReadOnly;
+
+        private readonly Dictionary<KeyType, LinkedListNode<ValueType>> valueDictionary;
         /// <summary>
         /// Only used for <see cref="GetEnumerator"/>
         /// </summary>
-        private readonly LinkedList<TValue> valueLinkedList;
+        private readonly LinkedList<ValueType> valueLinkedList;
 
-        public OrderedHashSet(IEqualityComparer<TKey> comparer)
+        public OrderedHashSet(IEqualityComparer<KeyType> comparer)
         {
-            valueDictionary = new Dictionary<TKey, LinkedListNode<TValue>>(comparer);
-            valueLinkedList = new LinkedList<TValue>();
+            valueDictionary = new Dictionary<KeyType, LinkedListNode<ValueType>>(comparer);
+            valueLinkedList = new LinkedList<ValueType>();
         }
 
         public OrderedHashSet()
-            : this(EqualityComparer<TKey>.Default) { }
+            : this(EqualityComparer<KeyType>.Default) { }
 
-        public bool Add(TValue item)
+        public bool Add(ValueType item)
         {
-            if (valueDictionary.ContainsKey(item))
+            if (valueDictionary.ContainsKey(item)) {
                 return false;
+            }
 
             var node = valueLinkedList.AddLast(item);
             valueDictionary.Add(item, node);
             return true;
         }
 
-        public bool TryGetValue(TKey key, out TValue value)
+        public bool TryGetValue(KeyType key, [MaybeNull] out ValueType value)
         {
             var hasValue = valueDictionary.TryGetValue(key, out var node);
 
-            if (hasValue)
-                value = node.Value;
-            else
+            if (hasValue) {
+                value = node!.Value;
+            } else {
                 value = default;
+            }
 
             return hasValue;
         }
 
-        void ICollection<TValue>.Add(TValue item)
+        void ICollection<ValueType>.Add(ValueType item)
             => Add(item);
 
-        public bool Remove(TValue item)
+        public bool Remove(ValueType item)
         {
-            LinkedListNode<TValue> node;
+            LinkedListNode<ValueType> node;
 
-            if (!valueDictionary.TryGetValue(item, out node))
+            if (!valueDictionary.TryGetValue(item, out node!)) {
                 return false;
+            }
 
             valueDictionary.Remove(item);
             valueLinkedList.Remove(node);
@@ -68,21 +76,23 @@ namespace Teronis.Collections.Generic
             valueDictionary.Clear();
         }
 
-        public bool Contains(TValue item)
+        public bool Contains(ValueType item)
             => valueDictionary.ContainsKey(item);
 
-        public IEnumerator<TValue> GetEnumerator()
+        public IEnumerator<ValueType> GetEnumerator()
             => valueLinkedList.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator()
             => GetEnumerator();
 
-        public IEnumerable<TValue> YieldReversedItems()
+        public IEnumerable<ValueType> YieldReversedItems()
             => valueLinkedList.YieldReversedItems();
 
-        public void CopyTo(TValue[] array, int arrayIndex)
+        public void CopyTo(ValueType[] array, int arrayIndex)
             => valueLinkedList.CopyTo(array, arrayIndex);
     }
 
-    public class OrderedHashSet<TValue> : OrderedHashSet<TValue, TValue> { }
+    public class OrderedHashSet<TValue> : OrderedHashSet<TValue, TValue>
+        where TValue : notnull
+    { }
 }

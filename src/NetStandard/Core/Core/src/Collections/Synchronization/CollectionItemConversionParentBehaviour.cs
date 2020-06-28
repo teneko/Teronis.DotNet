@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Specialized;
 using Teronis.Collections.CollectionChanging;
 using Teronis.Data;
 using Teronis.Extensions;
@@ -29,8 +30,14 @@ namespace Teronis.Collections.Synchronization
             switch (action) {
                 case NotifyCollectionChangedAction.Remove:
                 case NotifyCollectionChangedAction.Add:
-                    var originalItemsEnumerator = convertedContentContentChange.NewItems.GetEnumerator();
-                    var convertedItemsEnumerator = convertedItemItemChange.NewItems.GetEnumerator();
+                    var newConvertedContentContentItems = convertedContentContentChange.NewItems ??
+                        throw new ArgumentException("No new converted content-content-items were given that can be attached as wanted parents.");
+
+                    var newConvertedItemItemItems = convertedItemItemChange.NewItems ??
+                        throw new ArgumentException("No new converted item-item-items were given that can be attached as wanted parents.");
+
+                    var originalItemsEnumerator = newConvertedContentContentItems.GetEnumerator();
+                    var convertedItemsEnumerator = newConvertedItemItemItems.GetEnumerator();
 
                     while (originalItemsEnumerator.MoveNext() && convertedItemsEnumerator.MoveNext()) {
                         var originalItem = originalItemsEnumerator.Current;
@@ -40,7 +47,8 @@ namespace Teronis.Collections.Synchronization
                                 originalItem.DetachKnownWantParentsHandler(this);
                                 break;
                             case NotifyCollectionChangedAction.Add:
-                                var convertedItem = convertedItemsEnumerator.Current;
+                                var convertedItem = convertedItemsEnumerator.Current ??
+                                    throw new ArgumentException("One item of the new converted item-item-items is null and cannot be attached as wanted parent.");
 
                                 void OriginalItem_WantParents(object s, HavingParentsEventArgs e)
                                     => e.AttachParentParents(convertedItem);

@@ -9,7 +9,7 @@ namespace Teronis.Collections.DataSources.Generic
     {
         private CancellationTokenSource cancellationTokenSource;
 
-        public AsyncDataSource(ILogger logger)
+        public AsyncDataSource(ILogger? logger = null)
         : base(logger)
             => cancellationTokenSource = new CancellationTokenSource();
 

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using Teronis.Extensions;
+using System;
 
 namespace Teronis.Collections.CollectionChanging
 {
@@ -54,7 +55,10 @@ namespace Teronis.Collections.CollectionChanging
         public static List<TargetItemType>? GetNewItems<OldItemType, NewItemType, TargetItemType>(this ICollectionChange<OldItemType, NewItemType> change, IEnumerable<TargetItemType> collection, int collectionCount)
             => getItems(collection, collectionCount, change.NewIndex, change.NewItems?.Count);
 
-        public static CollectionChange<TargetOldItemType, TargetNewItemType> CreateOf<SourceOldItemType, SourceNewItemType, TargetOldItemType, TargetNewItemType>(this ICollectionChange<SourceOldItemType, SourceNewItemType> change, IReadOnlyList<TargetOldItemType> oldItems, IReadOnlyList<TargetNewItemType> newItems)
-            => new CollectionChange<TargetOldItemType, TargetNewItemType>(change.Action, oldItems, change.OldIndex, newItems, change.NewIndex);
+        public static CollectionChange<TargetOldItemType, TargetNewItemType> CreateOf<SourceOldItemType, SourceNewItemType, TargetOldItemType, TargetNewItemType>(this ICollectionChange<SourceOldItemType, SourceNewItemType> change, IReadOnlyList<TargetOldItemType>? oldItems, IReadOnlyList<TargetNewItemType>? newItems)
+        {
+            change = change ?? throw new ArgumentNullException(nameof(change));
+            return new CollectionChange<TargetOldItemType, TargetNewItemType>(change.Action, oldItems, change.OldIndex, newItems, change.NewIndex);
+        }
     }
 }

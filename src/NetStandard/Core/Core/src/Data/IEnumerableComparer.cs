@@ -12,13 +12,13 @@ namespace Teronis.Data
 
         public IEqualityComparer<T> ItemEqualityComparer { get; private set; }
 
-        public IEnumerableComparer(IEqualityComparer<T> itemEqualityComparer)
+        public IEnumerableComparer(IEqualityComparer<T>? itemEqualityComparer)
             => ItemEqualityComparer = itemEqualityComparer ?? EqualityComparer<T>.Default;
 
         public IEnumerableComparer()
             : this(null) { }
 
-        public override bool Equals(IEnumerable<T> x, IEnumerable<T> y)
+        public override bool Equals(IEnumerable<T>? x, IEnumerable<T>? y)
             => ReferenceEquals(x, y) || (x != null && y != null && x.SequenceEqual(y));
 
         public override int GetHashCode(IEnumerable<T> obj)

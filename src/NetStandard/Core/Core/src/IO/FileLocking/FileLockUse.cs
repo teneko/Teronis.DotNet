@@ -13,7 +13,7 @@ namespace Teronis.IO.FileLocking
         [EditorBrowsable(EditorBrowsableState.Never)]
         public readonly string LockId;
 
-        internal FileLockUse(FileLockContext fileLockContext, string LockId)
+        internal FileLockUse(FileLockContext fileLockContext, string lockId)
         {
             this.fileLockContext = fileLockContext ?? throw new ArgumentNullException(nameof(fileLockContext));
 
@@ -21,7 +21,7 @@ namespace Teronis.IO.FileLocking
                 throw new ArgumentException("File stream context has invalid file stream.");
             }
 
-            this.LockId = LockId;
+            LockId = lockId;
         }
 
         public void Dispose()

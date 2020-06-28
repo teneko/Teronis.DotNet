@@ -23,8 +23,7 @@ namespace Teronis.IO.FileLocking
         public FileLockContext(FileLocker fileLocker, object decreaseLockUseLocker, FileStream fileStream)
             : this(fileLocker, decreaseLockUseLocker)
         {
-            fileStream = fileStream ?? throw new ArgumentNullException(nameof(fileStream));
-            FileStream = fileStream;
+            FileStream = fileStream ?? throw new ArgumentNullException(nameof(fileStream));
         }
 
         public FileLockContext(FileLocker fileLocker, object decreaseLockUseLocker, Exception error, ManualResetEvent errorUnlockDone)
@@ -42,8 +41,9 @@ namespace Teronis.IO.FileLocking
 
             var decreaseLockUseLocker = this.decreaseLockUseLocker;
 
-            if (decreaseLockUseLocker == null)
+            if (decreaseLockUseLocker == null) {
                 return;
+            }
 
             // Why surround by lock?
             // There is a race condition, when number of file lock uses

@@ -48,7 +48,7 @@ namespace Teronis.Extensions
                 AttachParentParents(args, parent);
         }
 
-        public static ParentsContainer.ParentCollection GetParents(this HavingParentsEventArgs args, WantParentsEventHandler eventHandler)
+        public static ParentsContainer.ParentCollection GetParents(this HavingParentsEventArgs args, WantParentsEventHandler? eventHandler)
         {
             eventHandler?.Invoke(args.OriginalSource, args);
             return args.Container.Parents;

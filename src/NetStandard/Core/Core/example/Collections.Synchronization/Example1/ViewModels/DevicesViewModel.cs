@@ -9,8 +9,6 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels
 {
     public class DevicesViewModel : ViewModelBase
     {
-        //public delegate DevicesViewModel CreateFromSession(AuthenticatedSession session);
-
         public DeviceHeaderCollectionSynchronisation DeviceHeaderCollectionSynchronisation { get; private set; }
         public DeviceCollectionSynchronisation DeviceCollectionSynchronisation { get; private set; }
 

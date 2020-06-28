@@ -6,18 +6,21 @@ namespace Teronis.Drawing
     {
         public new static XYZEqualityComparer Default { get; } = new XYZEqualityComparer();
 
-        public override bool Equals(IXYZ x, IXYZ y)
+        public override bool Equals(IXYZ? x, IXYZ? y)
         {
-            if (x == null && y == null)
+            if (x == null && y == null) {
                 return true;
+            }
 
-            if (x == null || y == null)
+            if (x == null || y == null) {
                 return false;
+            }
 
-            if (XYEqualityComparer.Default.Equals(x, y) && x.Z == y.Z)
+            if (XYEqualityComparer.Default.Equals(x, y) && x.Z == y.Z) {
                 return true;
-            else
-                return false;
+            }
+
+            return false;
         }
 
         public override int GetHashCode(IXYZ obj)

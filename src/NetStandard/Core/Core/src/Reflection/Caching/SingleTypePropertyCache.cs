@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Teronis.Extensions;
 
@@ -14,9 +15,9 @@ namespace Teronis.Reflection.Caching
     /// <typeparam name="PropertyType"></typeparam>
     public class SingleTypePropertyCache<PropertyType>
     {
-        public event PropertyCachingEvent<PropertyType> PropertyAdding;
-        public event PropertyCachedEvent<PropertyType> PropertyAdded;
-        public event PropertyCacheRemovedEvent<PropertyType> PropertyRemoved;
+        public event PropertyCachingEvent<PropertyType>? PropertyAdding;
+        public event PropertyCachedEvent<PropertyType>? PropertyAdded;
+        public event PropertyCacheRemovedEvent<PropertyType>? PropertyRemoved;
 
         public Type TrackingPropertyType { get; set; }
         /// <summary>
@@ -26,6 +27,7 @@ namespace Teronis.Reflection.Caching
         /// are equals <see cref="TrackingPropertyDefaultValue"/>.
         /// </summary>
         public bool CanHandleDefaultValue { get; set; }
+        [AllowNull, MaybeNull]
         public PropertyType TrackingPropertyDefaultValue { get; set; }
         public INotifyPropertyChanged SingleTypedPropertyNotifier { get; private set; }
         public object SingleTypedPropertiesOwner { get; private set; }
@@ -45,7 +47,7 @@ namespace Teronis.Reflection.Caching
         private Dictionary<string, PropertyType> cachedPropertyValues;
         private PropertyComparisonMode propertyComparisonMode;
 
-        public SingleTypePropertyCache(INotifyPropertyChanged singleTypedPropertyNotifier, object singleTypedPropertiesOwner, IEqualityComparer<PropertyType> propertyValueEqualityComparer)
+        public SingleTypePropertyCache(INotifyPropertyChanged singleTypedPropertyNotifier, object singleTypedPropertiesOwner, IEqualityComparer<PropertyType>? propertyValueEqualityComparer)
         {
             singleTypedPropertyNotifier = singleTypedPropertyNotifier
                 ?? throw new ArgumentNullException(nameof(singleTypedPropertyNotifier));
@@ -81,7 +83,7 @@ namespace Teronis.Reflection.Caching
         public SingleTypePropertyCache(INotifyPropertyChanged singleTypedPropertyNotifier, object propertyChangedRelayTarget)
             : this(singleTypedPropertyNotifier, propertyChangedRelayTarget, default) { }
 
-        public SingleTypePropertyCache(INotifyPropertyChanged singleTypedPropertyNotifierAndTarget, IEqualityComparer<PropertyType> propertyValueEqualityComparer)
+        public SingleTypePropertyCache(INotifyPropertyChanged singleTypedPropertyNotifierAndTarget, IEqualityComparer<PropertyType>? propertyValueEqualityComparer)
             : this(singleTypedPropertyNotifierAndTarget, singleTypedPropertyNotifierAndTarget, propertyValueEqualityComparer) { }
 
         public SingleTypePropertyCache(INotifyPropertyChanged singleTypedPropertyNotifierAndTarget)
@@ -127,7 +129,7 @@ namespace Teronis.Reflection.Caching
             // We want to abort if tracking property name is untracked and tracking property value is equals default/null.
             if (!isPropertNameTracked
                 && CanHandleDefaultValue
-                && PropertyValueEqualityComparer.Equals(typedPropertyValue, TrackingPropertyDefaultValue)) {
+                && PropertyValueEqualityComparer.Equals(typedPropertyValue, TrackingPropertyDefaultValue!)) {
                 return;
             }
 
@@ -175,7 +177,7 @@ namespace Teronis.Reflection.Caching
             } else {
                 var cachedProperty = cachedPropertyValues[propertyName];
 
-                if (CanHandleDefaultValue && PropertyValueEqualityComparer.Equals(typedPropertyValue, TrackingPropertyDefaultValue)) {
+                if (CanHandleDefaultValue && PropertyValueEqualityComparer.Equals(typedPropertyValue, TrackingPropertyDefaultValue!)) {
                     untrackProperty(cachedProperty, false);
                 } else if (!PropertyValueEqualityComparer.Equals(typedPropertyValue, cachedProperty)) {
                     retrackProperty(cachedProperty, typedPropertyValue);

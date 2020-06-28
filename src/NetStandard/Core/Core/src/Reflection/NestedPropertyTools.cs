@@ -15,12 +15,12 @@ namespace Teronis.Reflection
 
             Type objectType = deepObject.GetType();
 
-            PropertyInfo getNestedProperty(string pathPart) =>
+            PropertyInfo? getNestedProperty(string pathPart) =>
                 objectType.GetProperty(pathPart);
 
             PropertyInfo? nestedPropertyInfo = null;
             object? propertyHolderObject = null;
-            object pathPartObject = deepObject;
+            object? pathPartObject = deepObject;
 
             foreach (var partedPath in dotSeparatedPathParts.Split('.')) {
                 if (startAtPathPart > 0) {

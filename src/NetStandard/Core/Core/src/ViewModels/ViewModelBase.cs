@@ -13,9 +13,9 @@ namespace Teronis.ViewModels
     public abstract class ViewModelBase : INotifyPropertyChanged, IHaveParents, IHaveKnownParents, IWorking, INotifyDataErrorInfo
     {
 #pragma warning disable 0067
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 #pragma warning restore 0067
-        public event WantParentsEventHandler WantParents;
+        public event WantParentsEventHandler? WantParents;
 
         public DynamicParentResolver DynamicParentResolver { get; private set; }
         public bool IsWorking => workStatusPropertyChangedCache.CachedPropertyValues.Values.Any(x => x.IsWorking);
@@ -53,7 +53,7 @@ namespace Teronis.ViewModels
         protected void OnPropertyChanged(PropertyChangedEventArgs args)
             => PropertyChanged?.Invoke(this, args);
 
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             var args = new PropertyChangedEventArgs(propertyName);
             OnPropertyChanged(args);
@@ -64,7 +64,7 @@ namespace Teronis.ViewModels
 
         #region INotifyDataErrorInfo
 
-        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
+        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
         public virtual bool HasErrors
             => validationErrors.Count > 0;
@@ -75,12 +75,13 @@ namespace Teronis.ViewModels
         private Dictionary<string, ICollection<string>> validationErrors;
         private Dictionary<string, ICollection<string>> validationErrorPreviews;
 
-        public IEnumerable GetErrors(string propertyName)
+        public IEnumerable? GetErrors(string propertyName)
         {
-            if (string.IsNullOrEmpty(propertyName) || !validationErrors.ContainsKey(propertyName))
+            if (string.IsNullOrEmpty(propertyName) || !validationErrors.ContainsKey(propertyName)) {
                 return null;
-            else
-                return validationErrors[propertyName];
+            }
+
+            return validationErrors[propertyName];
         }
 
         private void onErrorsChanged(string propertyName)

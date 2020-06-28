@@ -20,6 +20,10 @@ namespace Teronis.Collections.Synchronization.Example1.Models
 
         public override int GetHashCode(DeviceHeaderEntity obj)
         {
+            if (obj is null) {
+                return 0;
+            }
+
             var hash = 17;
             hash = hash * 17 + obj.Serial.GetHashCode();
             return hash;

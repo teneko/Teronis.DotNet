@@ -1,21 +1,21 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis.Collections.Generic
 {
     public class ListQueue<T> : List<T>
     {
-        public T Push(T input)
+        [return: MaybeNull]
+        public T Push([AllowNull] T input)
         {
-            Add(input);
-            //
+            Add(input!);
             return input;
         }
 
-        public T Peek()
-        {
-            return this[0];
-        }
+        public T Peek() =>
+            this[0];
 
+        [return: MaybeNull]
         public T Pop()
         {
             T output = default;
@@ -24,15 +24,16 @@ namespace Teronis.Collections.Generic
                 output = this[0];
                 RemoveAt(0);
             }
-            //
+
             return output;
         }
 
         public ListQueue<T> PopAndPush()
         {
-            if (Count != 0)
+            if (Count != 0) {
                 Push(Pop());
-            //
+            }
+
             return this;
         }
     }

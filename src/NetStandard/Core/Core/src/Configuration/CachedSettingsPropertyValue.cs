@@ -34,7 +34,7 @@ namespace Teronis.Configuration
         /// won't know about any changes made to the property
         /// of <see cref="settings"/>.
         /// </summary>
-        [MaybeNull]
+        [MaybeNull, AllowNull]
         public PropertyType PropertyValue {
             get => (PropertyType)propertyValue;
             set => propertyValue = value;
@@ -45,7 +45,7 @@ namespace Teronis.Configuration
             set => propertyValue = value;
         }
 
-        [MaybeNull]
+        [MaybeNull, AllowNull]
         public PropertyType CachedPropertyValue {
             get => cachedProperty;
 
@@ -206,9 +206,11 @@ namespace Teronis.Configuration
             recalculateIsCopySynchronous();
         }
 
+        [return: MaybeNull]
         private PropertyType copySettingsPropertyDefaultValue() =>
             settingsPropertyValue.CopyDefaultValue<PropertyType>();
 
+        [return: MaybeNull]
         private PropertyType copySettingsPropertyValue() =>
             settingsPropertyValue.CopyPropertyValue<PropertyType>();
 

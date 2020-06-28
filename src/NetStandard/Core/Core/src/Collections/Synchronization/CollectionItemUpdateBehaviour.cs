@@ -21,8 +21,14 @@ namespace Teronis.Collections.Synchronization
         private IEnumerable<UpdateWithTargetContainer<ContentType, ItemType>> getOldItemUpdateContainerIterator(ICollectionChange<ItemType, ContentType> change)
         {
             if (change.Action == NotifyCollectionChangedAction.Replace) {
-                var oldItemsEnumerator = change.OldItems.GetEnumerator();
-                var newItemsEnumerator = change.NewItems.GetEnumerator();
+                var oldItems = change.OldItems ??
+                throw new ArgumentException("The old item-item-items were not given that can be processed as collection change");
+
+                var newItems = change.NewItems ??
+                    throw new ArgumentException("The new item-item-items were not given that can be processed as collection change");
+
+                var oldItemsEnumerator = oldItems.GetEnumerator();
+                var newItemsEnumerator = newItems.GetEnumerator();
 
                 while (oldItemsEnumerator.MoveNext() && newItemsEnumerator.MoveNext()) {
                     var oldItem = oldItemsEnumerator.Current;

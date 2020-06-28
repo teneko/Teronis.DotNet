@@ -8,7 +8,7 @@ namespace Teronis.IO
         /// <summary>
         /// Get the absolute file path of file above beginning from the parent directory of <paramref name="directory"/>, unless <paramref name="includePassedDirectory"/> is true.
         /// </summary>
-        public static FileInfo GetPathOfFileAbove(string fileNameWithExtension, DirectoryInfo directory, bool includePassedDirectory = false)
+        public static FileInfo? GetPathOfFileAbove(string fileNameWithExtension, DirectoryInfo directory, bool includePassedDirectory = false)
         {
             var foundDirectory = DirectoryTools.GetDirectoryOfFileAbove(fileNameWithExtension, directory, includePassedDirectory);
 
@@ -22,13 +22,16 @@ namespace Teronis.IO
         /// <summary>
         /// Get the absolute file path of file above beginning from the parent directory of <paramref name="directory"/>, unless <paramref name="includePassedDirectory"/> is true.
         /// </summary>
-        public static FileInfo GetPathOfFileAbove(string fileNameWithExtension, string directory, bool includePassedDirectory = false) => 
-            GetPathOfFileAbove(fileNameWithExtension, new DirectoryInfo(directory), includePassedDirectory);
+        public static FileInfo? GetPathOfFileAbove(string fileNameWithExtension, string directory, bool includePassedDirectory = false)
+        {
+            directory = directory ?? throw new ArgumentNullException(directory);
+            return GetPathOfFileAbove(fileNameWithExtension, new DirectoryInfo(directory), includePassedDirectory);
+        }
 
         /// <summary>
         /// Get the absolute file path of file above beginning from the parent directory of the entry point, unless <paramref name="includePassedDirectory"/> is true.
         /// </summary>
-        public static FileInfo GetPathOfFileAbove(string fileNameWithExtension, bool includePassedDirectory = false) => 
-            GetPathOfFileAbove(fileNameWithExtension, AppDomain.CurrentDomain.BaseDirectory, includePassedDirectory);
+        public static FileInfo? GetPathOfFileAbove(string fileNameWithExtension, bool includePassedDirectory = false) =>
+            GetPathOfFileAbove(fileNameWithExtension, AppDomain.CurrentDomain.BaseDirectory!, includePassedDirectory);
     }
 }

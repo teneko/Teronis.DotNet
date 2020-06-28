@@ -15,11 +15,13 @@ using Teronis.Threading.Tasks;
 namespace Teronis.Collections.Synchronization
 {
     public abstract class CollectionSynchronisation<ItemType, ContentType> : IApplyCollectionChange<ItemType, ContentType>, IApplyCollectionChangeAsync<ItemType, ContentType>, ISynchronizeCollectionAsync<ContentType>, INotifyCollectionChangeApplied<ItemType, ContentType>, INotifyPropertyChanged, IWorking
+        where ItemType : notnull
+        where ContentType : notnull
     {
-        public event CollectionChangeAppliedEventHandler<ItemType, ContentType> CollectionChangeApplied;
+        public event CollectionChangeAppliedEventHandler<ItemType, ContentType>? CollectionChangeApplied;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        public event WantParentsEventHandler WantParents;
+        public event PropertyChangedEventHandler? PropertyChanged;
+        public event WantParentsEventHandler? WantParents;
 
         public virtual bool IsWorking => workStatus.IsWorking;
         public IList<ItemType> ItemList { get; private set; }
@@ -29,7 +31,7 @@ namespace Teronis.Collections.Synchronization
         private WorkStatus workStatus;
         private PropertyChangedRelay propertyChangedRelay;
 
-        public CollectionSynchronisation(IList<ItemType> initialItemCollection, IList<ContentType> initialContentCollection, IEqualityComparer<ContentType> equalityComparer)
+        public CollectionSynchronisation(IList<ItemType> initialItemCollection, IList<ContentType> initialContentCollection, IEqualityComparer<ContentType>? equalityComparer)
         {
             workStatus = new WorkStatus();
 
@@ -67,15 +69,21 @@ namespace Teronis.Collections.Synchronization
 
         protected virtual void ApplyCollectionItemRemove(ApplyingCollectionChangeBundle bundle)
         {
-            var change = bundle.ContentContentChange;
-            var oldItemsCount = change.OldItems.Count;
-            var oldIndex = change.OldIndex;
+            var contentContentChange = bundle.ContentContentChange;
+            var oldItems = contentContentChange.OldItems;
+
+            if (oldItems is null) {
+                throw new ArgumentException("No old content-content-items were given although a remove collection change action has been triggered.");
+            }
+
+            var oldItemsCount = oldItems.Count;
+            var oldIndex = contentContentChange.OldIndex;
 
             for (var oldItemIndex = oldItemsCount - 1; oldItemIndex >= 0; oldItemIndex--) {
                 var removeIndex = oldItemIndex + oldIndex;
 #if DEBUG
                 var removingContent = ContentList[removeIndex];
-                var oldContent = change.OldItems[oldItemIndex];
+                var oldContent = oldItems[oldItemIndex];
 
                 if (!EqualityComparer.Equals(removingContent, oldContent))
                     throw new Exception("Removing item is not equals old item that should be removed instead");
@@ -87,12 +95,18 @@ namespace Teronis.Collections.Synchronization
 
         protected virtual void ApplyCollectionItemAdd(ApplyingCollectionChangeBundle bundle)
         {
-            var change = bundle.ContentContentChange;
-            var newItemsCount = change.NewItems.Count;
+            var itemContentChange = bundle.ItemContentChange;
+            var newContentContentItems = itemContentChange.NewItems;
+
+            if (newContentContentItems is null) {
+                throw new ArgumentException("No new item-content-items were given although an add collection change action has been triggered.");
+            }
+
+            var newItemsCount = newContentContentItems.Count;
 
             for (int itemIndex = 0; itemIndex < newItemsCount; itemIndex++) {
-                var content = bundle.ItemContentChange.NewItems[itemIndex];
-                var itemInsertIndex = change.NewIndex + itemIndex;
+                var content = newContentContentItems[itemIndex];
+                var itemInsertIndex = itemContentChange.NewIndex + itemIndex;
                 var item = CreateItem(content);
 
                 ItemList.Insert(itemInsertIndex, item);
@@ -130,22 +144,19 @@ namespace Teronis.Collections.Synchronization
         protected virtual void ApplyCollectionReset(ApplyingCollectionChangeBundle bundle)
         {
             var change = bundle.ItemContentChange;
-
-            var newContentList = change.NewItems
-                ?? throw new ArgumentNullException(nameof(change.NewItems));
-
-            var newItemList = newContentList
-                .Select(x => CreateItem(x));
+            var newContentList = change.NewItems ?? throw new ArgumentNullException(nameof(change.NewItems));
+            var newItemList = newContentList.Select(x => CreateItem(x));
 
             void resetList<T>(IList<T> list, IEnumerable<T> newList)
             {
                 list.Clear();
 
-                if (list is List<T> typedList)
+                if (list is List<T> typedList) {
                     typedList.AddRange(newList);
-                else
+                } else {
                     foreach (var item in newList)
                         list.Add(item);
+                }
             }
 
             resetList(ItemList, newItemList);
@@ -307,25 +318,24 @@ namespace Teronis.Collections.Synchronization
 
         protected class AppliedCollectionChangeBundle : CollectionChangeBundle<ItemType, ContentType>
         {
-            public AsyncEventSequence EventSequence { get; private set; }
+            //public AsyncEventSequence? EventSequence { get; private set; }
+
+            //public AppliedCollectionChangeBundle(ICollectionChange<ItemType, ItemType> itemItemChange,
+            //    ICollectionChange<ItemType, ContentType> itemContentChange,
+            //    ICollectionChange<ContentType, ContentType> contentContentChange, AsyncEventSequence? eventSequence)
+            //    : base(itemItemChange, itemContentChange, contentContentChange)
+            //    => EventSequence = eventSequence;
 
             public AppliedCollectionChangeBundle(ICollectionChange<ItemType, ItemType> itemItemChange,
-            ICollectionChange<ItemType, ContentType> itemContentChange,
-            ICollectionChange<ContentType, ContentType> contentContentChange,
-            AsyncEventSequence eventSequence)
+                ICollectionChange<ItemType, ContentType> itemContentChange,
+                ICollectionChange<ContentType, ContentType> contentContentChange)
                 : base(itemItemChange, itemContentChange, contentContentChange)
-                => EventSequence = eventSequence;
-
-            public AppliedCollectionChangeBundle(ICollectionChange<ItemType, ItemType> itemItemChange,
-            ICollectionChange<ItemType, ContentType> itemContentChange,
-            ICollectionChange<ContentType, ContentType> contentContentChange)
-                : this(itemItemChange, itemContentChange, contentContentChange, null)
             { }
         }
 
         public class ConversionAdapter<OriginContentType> : INotifyCollectionChangeConversionApplied<ItemType, ContentType, OriginContentType>
         {
-            public event EventHandler<object, CollectionChangeConversionAppliedEventArgs<ItemType, ContentType, OriginContentType>> CollectionChangeConversionApplied;
+            public event EventHandler<object, CollectionChangeConversionAppliedEventArgs<ItemType, ContentType, OriginContentType>>? CollectionChangeConversionApplied;
 
             private CollectionSynchronisation<ItemType, ContentType> synchronizer;
 

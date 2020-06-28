@@ -10,9 +10,9 @@ namespace Teronis.Collections.DataSources.Generic
         public DataSourceEnumerationState EnumerationState { get; protected set; }
         public Type DataType { get; private set; }
 
-        protected ILogger Logger { get; private set; }
+        protected ILogger? Logger { get; private set; }
 
-        public DataSourceBase(ILogger logger)
+        public DataSourceBase(ILogger? logger = null)
         {
             EnumerationState = DataSourceEnumerationState.Enumerable;
             DataType = typeof(TData);
@@ -33,7 +33,7 @@ namespace Teronis.Collections.DataSources.Generic
 
         protected void LogEnumerationReachedEnd()
         {
-            Logger.LogDebug($"Enumeration of type {DataType.Name} reached end ({nameof(EnumerationState)}={EnumerationState})");
+            Logger?.LogDebug($"Enumeration of type {DataType.Name} reached end ({nameof(EnumerationState)}={EnumerationState})");
         }
 
         public void Dispose()

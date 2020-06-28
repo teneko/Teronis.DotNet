@@ -6,7 +6,7 @@ namespace Teronis.Diagnostics
 {
     public static class ProcessStartInfoTools
     {
-        public static string GetExecutionInfoText(ProcessStartInfo startInfo, string? commandEchoPrefix = null)
+        public static string? GetExecutionInfoText(ProcessStartInfo startInfo, string? commandEchoPrefix = null)
         {
             if (startInfo == null) {
                 return null;

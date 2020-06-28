@@ -1,30 +1,36 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis.Collections.Generic
 {
     public class DictionaryEnumerator<TKey, TValue> : IDictionaryEnumerator, IDisposable
+        where TKey : notnull
     {
         public DictionaryEntry Entry {
             get {
-                var pair = enumerator.Current;
-                return new DictionaryEntry(pair.Key, pair.Value);
+                return new DictionaryEntry(enumerator.Current.Key,
+                    enumerator.Current.Value);
             }
         }
 
         public object Key { get { return enumerator.Current.Key; } }
-        public object Value { get { return enumerator.Current.Value; } }
+        public object? Value { get { return enumerator.Current.Value; } }
         public object Current { get { return Entry; } }
 
         readonly IEnumerator<KeyValuePair<TKey, TValue>> enumerator;
 
-        public DictionaryEnumerator(IDictionary<TKey, TValue> value) => enumerator = value.GetEnumerator();
+        public DictionaryEnumerator(IDictionary<TKey, TValue> value) => 
+            enumerator = value.GetEnumerator() ?? throw new ArgumentException("An empty enumerator has been obtained.");
 
-        public void Reset() { enumerator.Reset(); }
+        public void Reset() =>
+            enumerator.Reset();
 
-        public bool MoveNext() { return enumerator.MoveNext(); }
+        public bool MoveNext() =>
+            enumerator.MoveNext();
 
-        public void Dispose() { enumerator.Dispose(); }
+        public void Dispose() =>
+            enumerator.Dispose();
     }
 }

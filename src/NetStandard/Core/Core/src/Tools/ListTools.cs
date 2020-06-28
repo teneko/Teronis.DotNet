@@ -8,7 +8,7 @@ namespace Teronis.Tools
         /// <summary>
         /// A generic swap-item version for list, collection or dictionary.
         /// </summary>
-        public static bool SwapItem(int fromIndex, int toIndex, Action<int, object> insertAt, Func<int, object> getAt, Action<int> removeAt)
+        public static bool SwapItem(int fromIndex, int toIndex, Action<int, object?> insertAt, Func<int, object?> getAt, Action<int> removeAt)
         {
             Action<int, int> swap = (smallerIndex, biggerIndex) => {
                 var smallerItem = getAt(smallerIndex);

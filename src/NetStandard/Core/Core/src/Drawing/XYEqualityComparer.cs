@@ -6,18 +6,21 @@ namespace Teronis.Drawing
     {
         public new static XYEqualityComparer Default { get; } = new XYEqualityComparer();
 
-        public override bool Equals(IXY x, IXY y)
+        public override bool Equals(IXY? x, IXY? y)
         {
-            if (x == null && y == null)
+            if (x == null && y == null) {
                 return true;
+            }
 
-            if (x == null || y == null)
+            if (x == null || y == null) {
                 return false;
+            }
 
-            if (x.X == y.X && x.Y == y.Y)
+            if (x.X == y.X && x.Y == y.Y) {
                 return true;
-            else
-                return false;
+            }
+
+            return false;
         }
 
         public override int GetHashCode(IXY obj)

@@ -5,6 +5,7 @@ namespace Teronis.Extensions
 {
     public static class ArrayGenericExtensions
     {
-        public static T[] ExcludeNulls<T>(this T[] array) where T : class => ((IEnumerable<T>)array).ExcludeNulls().ToArray();
+        public static T[] ExcludeNulls<T>(this T[] array) where T : class => 
+            ((IEnumerable<T>)array).ExcludeNulls().ToArray();
     }
 }

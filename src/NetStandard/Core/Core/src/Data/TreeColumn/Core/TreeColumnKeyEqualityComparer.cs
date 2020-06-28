@@ -6,14 +6,15 @@ namespace Teronis.Data.TreeColumn.Core
     {
         public new static readonly TreeColumnKeyEqualityComparer Default = new TreeColumnKeyEqualityComparer();
 
-        public override bool Equals(TreeColumnKey x, TreeColumnKey y)
+        public override bool Equals(TreeColumnKey? x, TreeColumnKey? y)
         {
-            if (x == null && y == null)
+            if (x is null && y is null) {
                 return true;
-            else if (x == null || y == null)
+            } else if (x == null || y == null) {
                 return false;
-            else
+            } else {
                 return x.DeclaringType == y.DeclaringType && x.VariableName == y.VariableName;
+            }
         }
 
         public override int GetHashCode(TreeColumnKey obj)

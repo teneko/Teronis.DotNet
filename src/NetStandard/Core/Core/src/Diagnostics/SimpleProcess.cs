@@ -35,7 +35,7 @@ namespace Teronis.Diagnostics
                 process.ErrorDataReceived -= onOutputDataReceived;
             }
 
-            void onExited(object sender, EventArgs e) =>
+            void onExited(object? sender, EventArgs e) =>
                 _dettachHandlers();
 
             process.Exited += onExited;
@@ -125,7 +125,7 @@ namespace Teronis.Diagnostics
                 process.Exited -= onExited;
             }
 
-            void onExited(object sender, EventArgs e)
+            void onExited(object? sender, EventArgs e)
             {
                 dispose();
 

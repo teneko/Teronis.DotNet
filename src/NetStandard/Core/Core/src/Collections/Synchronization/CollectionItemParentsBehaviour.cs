@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Teronis.Collections.CollectionChanging;
@@ -34,22 +35,28 @@ namespace Teronis.Collections.Synchronization
         {
             var change = args.ItemItemChange;
 
+            var oldItemItemItems = change.OldItems ?? 
+                throw new ArgumentException("The old item-item-items were not given that can be processed as collection change");
+
+            var newItemItemItems = change.NewItems ?? 
+                throw new ArgumentException("The new item-item-items were not given that can be processed as collection change");
+
             switch (change.Action) {
                 case NotifyCollectionChangedAction.Remove:
-                    foreach (var item in change.OldItems)
+                    foreach (var item in oldItemItemItems)
                         detachWantParentsHandler(item);
 
                     break;
                 case NotifyCollectionChangedAction.Add:
-                    foreach (var item in change.NewItems)
+                    foreach (var item in newItemItemItems)
                         attachWantParentsHandler(item);
 
                     break;
                 case NotifyCollectionChangedAction.Reset:
-                    foreach (var oldItem in change.OldItems)
+                    foreach (var oldItem in oldItemItemItems)
                         detachWantParentsHandler(oldItem);
 
-                    foreach (var newItem in change.NewItems)
+                    foreach (var newItem in newItemItemItems)
                         attachWantParentsHandler(newItem);
 
                     break;

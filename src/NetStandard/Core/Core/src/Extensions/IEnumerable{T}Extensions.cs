@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Teronis.Collections.Generic;
 using Teronis.Extensions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis.Extensions
 {
@@ -10,6 +11,7 @@ namespace Teronis.Extensions
     {
         public static IEnumerable<T> ExcludeNulls<T>(this IEnumerable<T> collection) where T : class => collection.Where(x => x != null);
 
+        [return: MaybeNull]
         public static R FirstNonDefaultOrDefault<T, R>(this IEnumerable<T> collection, Func<T, R> getObj)
         {
             var defaultObj = default(R);
@@ -39,7 +41,7 @@ namespace Teronis.Extensions
         {
             T _last = default;
             var retVal = collection.Any(x => predicate(_last = x));
-            last = _last;
+            last = _last!;
             return retVal;
         }
 

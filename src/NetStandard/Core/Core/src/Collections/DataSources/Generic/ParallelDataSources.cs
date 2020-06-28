@@ -13,14 +13,14 @@ namespace Teronis.Collections.DataSources.Generic
         private IEnumerable<IAsyncDataSource<DataType>> asyncDataSources;
         //private CancellationTokenSource asyncDataSourcesCancellationTokenSource;
 
-        public ParallelDataSources(IEnumerable<IAsyncDataSource<DataType>> asyncDataSources, ILogger logger = null)
+        public ParallelDataSources(IEnumerable<IAsyncDataSource<DataType>> asyncDataSources, ILogger? logger = null)
             : base(logger)
             => this.asyncDataSources = asyncDataSources ?? throw new ArgumentNullException(nameof(asyncDataSources));
 
         protected override async IAsyncEnumerable<DataType> EnumerateAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             await Task.Yield();
-            yield return default;
+            yield return default!;
 
             var asyncEnumerators = asyncDataSources.Select(x => {
                 var enumerationCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);

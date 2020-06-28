@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis.Data
 {
@@ -6,6 +7,7 @@ namespace Teronis.Data
     {
         public bool IsValueCached { get; private set; }
 
+        [MaybeNull]
         public override T Value {
             get {
                 if (IsValueCached)
@@ -21,6 +23,7 @@ namespace Teronis.Data
 
         private Func<T> getValue;
 
-        public CachedValue(Func<T> getValue) : base(default) => this.getValue = getValue;
+        public CachedValue(Func<T> getValue) 
+            : base(default) => this.getValue = getValue;
     }
 }

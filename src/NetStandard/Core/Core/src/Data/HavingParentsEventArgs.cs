@@ -7,7 +7,7 @@ namespace Teronis.Data
         public object OriginalSource { get; private set; }
         public ParentsContainer Container { get; private set; }
 
-        public HavingParentsEventArgs(object originalSource, Type wantedType)
+        public HavingParentsEventArgs(object originalSource, Type? wantedType)
         {
             OriginalSource = originalSource;
             Container = new ParentsContainer(wantedType);

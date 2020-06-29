@@ -9,12 +9,12 @@
 	  <Compile Include="$(MSBuildThisFileDirectory)/Nullable.cs" Conditions="'$(Nullable)' == 'enable'" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <!--   -->
-  </PropertyGroup>
-  
   <ItemGroup>
+
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" Conditions="'$(DisableGitVersionCache)' != 'true' And $(IsPackable)" />
+
     <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\GitVersionCache\GitVersionCache\ref\PackagePublish\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj" Condition="'$(DisableGitVersionCache)' != 'true' And $(IsPackable)" />
+    
   </ItemGroup>
 
   <PropertyGroup>

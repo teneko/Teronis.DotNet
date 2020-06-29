@@ -28,8 +28,8 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <Copyright Condition="'$(Copyright)' == ''">Teroneko</Copyright>
     <PackageIcon Condition="'$(PackageIcon)' == ''">icon.png</PackageIcon>
-    <IncludeSymbols Condition="'$(IncludeSymbols)' == ''">true</IncludeSymbols>
-    <SymbolPackageFormat Condition="'$(SymbolPackageFormat)' == ''">snupkg</SymbolPackageFormat>
+    <!-- <IncludeSymbols Condition="'$(IncludeSymbols)' == ''">true</IncludeSymbols>
+    <SymbolPackageFormat Condition="'$(SymbolPackageFormat)' == ''">snupkg</SymbolPackageFormat> -->
     <!-- <EmbedAllSources>true</EmbedAllSources> -->
     <!--
     Embed source files that are not tracked by the source control manager to the PDB.
@@ -38,8 +38,8 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <!-- Source Link -->
     <DebugType>portable</DebugType>
-    <DebugSymbols>True</DebugSymbols>
-    <!-- <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder> -->
+    <DebugSymbols>true</DebugSymbols>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <NeutralLanguage Condition="'$(NeutralLanguage)' == ''">en</NeutralLanguage>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>

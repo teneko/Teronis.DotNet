@@ -5,7 +5,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Teronis.Json</RootNamespace>
-    <Description>This project contains classes for Json purposes.</Description>
+    <Description>An extension to the native function range of Newtonsoft.Json.</Description>
   </PropertyGroup>
   
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" Condition="'$(DisableSdkProps)' != 'true'" />

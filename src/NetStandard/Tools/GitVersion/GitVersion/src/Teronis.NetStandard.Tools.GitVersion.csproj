@@ -6,6 +6,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Teronis.Tools.GitVersion</RootNamespace>
     <Nullable>Enable</Nullable>
+    <Description>A wrapper to use the executable of GitVersion (https://chocolatey.org/packages/GitVersion.Portable) in C# programmatically.</Description>
   </PropertyGroup>
 
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" Condition="'$(DisableSdkProps)' != 'true'" />

@@ -5,7 +5,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
     <RootNamespace>Teronis</RootNamespace>
-    <Description>This project contains core utility, core extension and core tool functions, but also core classes that extends known structures.</Description>
+    <Description>A collection of utilities, extensions, tools and classes for the .NET Standard implementation.</Description>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Nullable>enable</Nullable>
   </PropertyGroup>

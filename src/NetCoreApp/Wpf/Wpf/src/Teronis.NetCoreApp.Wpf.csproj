@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
     <RootNamespace>Teronis</RootNamespace>
-    <Description>This project contains WPF sources.</Description>
+    <Description>A collection of utilities, extensions, tools and classes for WPF.</Description>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,7 +17,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.19" />
-    <PackageReference Include="PropertyChanged.Fody" Version="3.2.8" PrivateAssets="all"/>
+    <PackageReference Include="PropertyChanged.Fody" Version="3.2.8" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

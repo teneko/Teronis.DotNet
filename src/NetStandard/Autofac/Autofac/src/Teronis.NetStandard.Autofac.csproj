@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Teronis.Autofac</RootNamespace>
-    <Description>This project contains Autofac relevant code.</Description>
+    <Description>An extension to the native function range of AutoFac.</Description>
   </PropertyGroup>
 
   <ItemGroup>

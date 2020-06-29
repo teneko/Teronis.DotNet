@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Teronis</RootNamespace>
-    <Description>This project contains abstractions.</Description>
+    <Description>Some abstractions.</Description>
   </PropertyGroup>
 
   <ItemGroup>

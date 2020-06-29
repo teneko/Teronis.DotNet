@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Teronis</RootNamespace>
+    <Description>A collection of utilities, extensions, tools and classes for the .NET Core implementation.</Description>
   </PropertyGroup>
 
   <ItemGroup>

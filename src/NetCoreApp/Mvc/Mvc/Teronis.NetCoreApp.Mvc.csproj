@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
     <RootNamespace>Teronis.Mvc</RootNamespace>
+    <Description>An extension to the native function range of Microsoft.AspNetCore.Mvc.Core.</Description>
   </PropertyGroup>
 
   <ItemGroup>

@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Teronis.Identity</RootNamespace>
     <Nullable>enable</Nullable>
+    <Description>Teronis Identity provides you a bearer token integration for ASP.NET Core Identity.</Description>
   </PropertyGroup>
 
   <ItemGroup>

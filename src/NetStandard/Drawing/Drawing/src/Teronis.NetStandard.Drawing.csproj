@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Teronis.Drawing</RootNamespace>
-    <Description>Contains tool functions, extensions functions and classes for drawing purposes.</Description>
+    <Description>Some simplifications for System.Drawing.Common.</Description>
   </PropertyGroup>
 
   <PropertyGroup>

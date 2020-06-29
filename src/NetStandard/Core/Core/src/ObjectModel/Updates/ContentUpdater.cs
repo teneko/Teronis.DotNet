@@ -7,9 +7,9 @@ namespace Teronis.ObjectModel.Updates
 {
     public class ContentUpdater<ContentType> : INotifyPropertyChanged, IApplyContentUpdate<ContentType>
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-        public event ContentUpdatingEventHandler<ContentType> ContainerUpdating;
-        public event ContentUpdatedEventHandler<ContentType> ContainerUpdated;
+        public event PropertyChangedEventHandler? PropertyChanged;
+        public event ContentUpdatingEventHandler<ContentType>? ContainerUpdating;
+        public event ContentUpdatedEventHandler<ContentType>? ContainerUpdated;
 
         public bool IsWorking => workStatus.IsWorking;
 

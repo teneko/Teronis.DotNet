@@ -9,12 +9,12 @@ namespace Teronis.Threading.Tasks
     {
         public Task Task => tcs.Task;
 
-        private TaskCompletionSource<object> tcs;
+        private TaskCompletionSource<object?> tcs;
 
-        public TaskCompletionSource() => tcs = new TaskCompletionSource<object>();
-        public TaskCompletionSource(object state) => tcs = new TaskCompletionSource<object>(state);
-        public TaskCompletionSource(TaskCreationOptions creationOptions) => tcs = new TaskCompletionSource<object>(creationOptions);
-        public TaskCompletionSource(object state, TaskCreationOptions creationOptions) => tcs = new TaskCompletionSource<object>(state, creationOptions);
+        public TaskCompletionSource() => tcs = new TaskCompletionSource<object?>();
+        public TaskCompletionSource(object state) => tcs = new TaskCompletionSource<object?>(state);
+        public TaskCompletionSource(TaskCreationOptions creationOptions) => tcs = new TaskCompletionSource<object?>(creationOptions);
+        public TaskCompletionSource(object state, TaskCreationOptions creationOptions) => tcs = new TaskCompletionSource<object?>(state, creationOptions);
 
         public void SetResult() => tcs.SetResult(null);
         public void SetCanceled() => tcs.SetCanceled();

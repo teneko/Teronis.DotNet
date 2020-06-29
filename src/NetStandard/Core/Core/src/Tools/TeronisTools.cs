@@ -8,7 +8,8 @@ namespace Teronis.Tools
 {
     public static class TeronisTools
     {
-        public static bool CompareEquality<T>([AllowNull] T one, [AllowNull] T two) => EqualityComparer<T>.Default.Equals(one, two);
+        public static bool CompareEquality<T>([AllowNull] T one, [AllowNull] T two) => 
+            EqualityComparer<T>.Default.Equals(one!, two!);
 
         public static bool ReturnNonDefault<T>([AllowNull] T inValue, [MaybeNull] out T outValue, Func<T>? getNonDefaultIfDefault = null)
             => !CompareEquality(outValue = inValue, default) || (FuncGenericTools.ReturnIsInvocable(getNonDefaultIfDefault, out outValue) && !CompareEquality(outValue, default));

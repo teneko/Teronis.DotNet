@@ -11,29 +11,30 @@ namespace Teronis.Tools
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
 
-        public static object InstantiateUninitializedObject(Type type)
+        public static object? InstantiateUninitializedObject(Type type)
         {
             var instantiatorType = typeof(Instantiator<>);
             var genericInstantiatorType = instantiatorType.MakeGenericType(type);
             var instantiateMethodName = nameof(Instantiator<object>.Instantiate);
             var instanteMethodBindingFlags = BindingFlags.Public | BindingFlags.Static;
             var instantiateMethod = genericInstantiatorType.GetMethod(instantiateMethodName, instanteMethodBindingFlags);
-            return instantiateMethod.Invoke(null, null);
+            return instantiateMethod?.Invoke(null, null);
         }
 
-        public static object GetDefault(Type type)
+        public static object? GetDefault(Type type)
         {
             type = type ?? throw new ArgumentNullException(nameof(type));
 
-            if (type.IsValueType)
+            if (type.IsValueType) {
                 return InstantiateUninitializedObject(type);
-            else
-                return null;
+            }
+
+            return null;
         }
 
         public static IEnumerable<Type> GetBaseTypes(Type type, Type? interruptingBaseType = null)
         {
-            if (type is null) {
+            if (type == null) {
                 yield break;
             }
 
@@ -44,7 +45,7 @@ namespace Teronis.Tools
                 yield return nextType;
                 nextType = nextType.BaseType;
 
-                if (nextType == interruptingBaseType || nextType == objectType) {
+                if (nextType == null || nextType == interruptingBaseType || nextType == objectType) {
                     break;
                 }
             }

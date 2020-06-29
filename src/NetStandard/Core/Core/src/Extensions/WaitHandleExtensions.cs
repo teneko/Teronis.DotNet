@@ -13,15 +13,17 @@ namespace Teronis.Extensions
 
             var registration = ThreadPool.RegisterWaitForSingleObject(handle, (state, isTimedOut) =>
             {
-                var localTcs = (TaskCompletionSource)state;
+                var localTcs = (TaskCompletionSource)state!;
 
-                if (isTimedOut)
+                if (isTimedOut) {
                     localTcs.TrySetCanceled();
-                else
+                } else {
                     localTcs.TrySetResult();
+                }
             }, tcs, timeout, executeOnlyOnce: true);
 
-            return tcs.Task.ContinueWith((_, state) => ((RegisteredWaitHandle)state).Unregister(null), registration, TaskScheduler.Default);
+            return tcs.Task.ContinueWith((_, state) => 
+                ((RegisteredWaitHandle)state!).Unregister(null), registration, TaskScheduler.Default);
         }
 
         public static Task AsTask(this WaitHandle handle)

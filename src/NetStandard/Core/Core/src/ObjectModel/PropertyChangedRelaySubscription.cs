@@ -30,11 +30,11 @@ namespace Teronis.ObjectModel
             }
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is PropertyChangedRelaySubscription subscription &&
-                   EqualityComparer<PropertyChangedRelay>.Default.Equals(relay, subscription.relay) &&
-                   EqualityComparer<SingleTypePropertyCache<INotifyPropertyChanged>>.Default.Equals(cache, subscription.cache);
+                EqualityComparer<PropertyChangedRelay>.Default.Equals(relay, subscription.relay) &&
+                EqualityComparer<SingleTypePropertyCache<INotifyPropertyChanged>>.Default.Equals(cache, subscription.cache);
         }
 
         public override int GetHashCode()

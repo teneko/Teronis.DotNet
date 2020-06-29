@@ -7,7 +7,7 @@ namespace Teronis.Reflection
 {
     public static class IEnumerableMemberInfoTools
     {
-        public static IEnumerable<MemberInfo> Intersect(IEnumerable<MemberInfo> memberInfos, Type entityType, VariableInfoDescriptor descriptor = null)
+        public static IEnumerable<MemberInfo> Intersect(IEnumerable<MemberInfo> memberInfos, Type entityType, VariableInfoDescriptor? descriptor = null)
         {
             memberInfos = memberInfos ?? throw new ArgumentNullException(nameof(memberInfos));
             entityType = entityType ?? throw new ArgumentNullException(nameof(entityType));

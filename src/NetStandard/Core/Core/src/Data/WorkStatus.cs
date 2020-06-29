@@ -6,7 +6,7 @@ namespace Teronis.Data
 {
     public class WorkStatus : INotifyPropertyChanged, IWorking
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private bool isWorking;
         private int deepWorkCounter;
@@ -22,7 +22,7 @@ namespace Teronis.Data
 
         public WorkStatus() { }
 
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         public void BeginWork()

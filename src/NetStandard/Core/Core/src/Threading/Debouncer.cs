@@ -7,12 +7,13 @@ namespace Teronis.Threading
 {
     public class Debouncer
     {
-        IProcessingDebounce cachedProcessingDebounce;
+        IProcessingDebounce? cachedProcessingDebounce;
 
         public async Task<T> Debounce<T>(int interval, Func<Task<T>> debouncedAction)
         {
-            if (cachedProcessingDebounce != null)
+            if (cachedProcessingDebounce != null) {
                 await cachedProcessingDebounce.TryCancel();
+            }
 
             var processingDebounce = new ProcessingDebounce<T>(interval, debouncedAction);
             cachedProcessingDebounce = processingDebounce;

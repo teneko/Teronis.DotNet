@@ -102,12 +102,12 @@ namespace Teronis.Configuration
                 ?? throw new ArgumentNullException(nameof(settings));
 
             settingsPropertyValue = settings.PropertyValues[name]
-                ?? throw new ArgumentException($"Property '{name}' is not member of {nameof(settings)}");
+                ?? throw new ArgumentException($"Property '{name}' is not member of {nameof(settings)}.");
 
             var genericPropertyType = typeof(PropertyType);
 
             if (genericPropertyType != settingsProperty.PropertyType && !typeof(PropertyType).IsAssignableFrom(settingsProperty.PropertyType))
-                throw new ArgumentException($"The types aren't the same");
+                throw new ArgumentException($"The types are not the same.");
 
             PropertyValueEqualityComparer = propertyValueEqualityComparer
                 ?? EqualityComparer<PropertyType>.Default;
@@ -127,7 +127,7 @@ namespace Teronis.Configuration
                 propertyChangedCache.SingleTypePropertyNotifierPropertyChanged(PropertyName);
 
                 if (propertyChangedCache.CachedPropertyValues.Count == 0)
-                    throw new Exception($"The property {PropertyName} has not been found");
+                    throw new Exception($"The property {PropertyName} has not been found.");
             }
         }
 
@@ -183,6 +183,9 @@ namespace Teronis.Configuration
         {
             // When it is a recache, then first we have to remove the attached handlers we added before
             if (args.IsRecache) {
+                var removedPropertyValue = args.RemovedPropertyValue ??
+                    throw ShortException.ArgumentNullException(() => args.RemovedPropertyValue);
+
                 propertyChangedCache_PropertyCacheRemoved(args.RemovedPropertyValue);
             }
 
@@ -202,7 +205,8 @@ namespace Teronis.Configuration
 
         private void PropertyChangedCache_PropertyCacheRemoved(object sender, PropertyCacheRemovedEventArgs<PropertyType> args)
         {
-            propertyChangedCache_PropertyCacheRemoved(args.OldPropertyValue);
+            var propertyValue = args.PropertyValue ?? throw ShortException.ArgumentNullException(() => args.PropertyValue);
+            propertyChangedCache_PropertyCacheRemoved(args.PropertyValue);
             recalculateIsCopySynchronous();
         }
 

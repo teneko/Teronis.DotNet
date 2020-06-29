@@ -13,6 +13,9 @@
 
   <Import Project="$(TeronisMSBuildCoreProjectShadowTargetsFile)" />
   <Import Project="$(SourceProjectDirectory)Teronis.NetStandard.Core.csproj" />
+  <ItemGroup>
+    <Compile Remove="C:\Users\christoph\source\repos\Teronis.DotNet\src\NetStandard\Core\Core\ref\GitVersionCache\..\..\src\Extensions\Expression{T}Extensions.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Core.Localization\ref\GitVersionCache\GitVersionCache.NetStandard.Core.Localization.csproj" PrivateAssets="all" />

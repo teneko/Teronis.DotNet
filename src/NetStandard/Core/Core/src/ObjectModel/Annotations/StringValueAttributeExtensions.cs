@@ -10,16 +10,20 @@ namespace Teronis.ObjectModel.Annotations
         /// will only work if you assign the StringValue attribute to
         /// the items in your enum.
         /// </summary>
-        public static string GetStringValue(this Enum value)
+        public static string GetStringValue(this Enum value, int index = 0)
         {
             // Get the type.
-            Type type = value.GetType();
+            Type type = value.GetType() ?? throw new ArgumentException("Enum value type is null.");
             // Get fieldinfo for this type.
-            FieldInfo fieldInfo = type.GetField(value.ToString());
+            FieldInfo fieldInfo = type.GetField(value.ToString()) ?? throw new ArgumentException("Enum value does not exist.");
             // Get the stringvalue attributes.
-            StringValueAttribute[] attributes = fieldInfo.GetCustomAttributes(typeof(StringValueAttribute), false) as StringValueAttribute[];
-            // Return the first if there was a match.
-            return attributes.Length > 0 ? attributes[0].StringValue : null;
+            StringValueAttribute[]? attributes = fieldInfo?.GetCustomAttributes(typeof(StringValueAttribute), false) as StringValueAttribute[];
+
+            if (attributes == null || !(attributes.Length > index)) {
+                throw new ArgumentException("Enum value has no string value attribute");
+            }
+
+            return attributes[index].StringValue;
         }
     }
 }

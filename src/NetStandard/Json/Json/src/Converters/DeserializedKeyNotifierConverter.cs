@@ -84,7 +84,7 @@ namespace Teronis.Json.Converters
                         switch (reader.TokenType) {
                             case JsonToken.PropertyName:
                                 var property = JProperty.Load(reader);
-                                var key = Convert.ChangeType(property.Name, keyType).CastTo<TKey>();
+                                var key = (TKey)Convert.ChangeType(property.Name, keyType);
                                 var value = JsonPropertyEntifier.EntitifyJsonProperty(property, serializer);
                                 // TODO: look for key
                                 value.NotifyDeserializedJsonKey(key);

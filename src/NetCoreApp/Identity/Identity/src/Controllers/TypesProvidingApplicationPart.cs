@@ -15,7 +15,9 @@ namespace Teronis.Identity.Controllers
             new TypesProvidingApplicationPart(typeInfos);
 
         public IEnumerable<TypeInfo> Types { get; }
-        public override string Name => nameof(TypesProvidingApplicationPart).TrimEnd(nameof(ApplicationPart));
+
+        public override string? Name => 
+            nameof(TypesProvidingApplicationPart).TrimEnd(nameof(ApplicationPart));
 
         public TypesProvidingApplicationPart(IEnumerable<TypeInfo> typeInfos)
         {

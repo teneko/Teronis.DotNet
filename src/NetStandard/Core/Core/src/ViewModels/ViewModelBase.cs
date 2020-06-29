@@ -45,10 +45,16 @@ namespace Teronis.ViewModels
             => havingParents.AttachParentParents(this);
 
         private void HavingParentsPropertyChangedCache_PropertyCacheAdded(object sender, PropertyCachedEventArgs<IHaveParents> args)
-            => args.PropertyValue.WantParents += Property_WantParents;
+        {
+            var propertyValue = args.PropertyValue ?? throw new ArgumentNullException("Property value is null.");
+            propertyValue.WantParents += Property_WantParents;
+        }
 
         private void HavingParentsPropertyChangedCache_PropertyCacheRemoved(object sender, PropertyCacheRemovedEventArgs<IHaveParents> args)
-            => args.OldPropertyValue.WantParents -= Property_WantParents;
+        {
+            var propertyValue = args.PropertyValue ?? throw new ArgumentNullException("Property value is null.");
+            propertyValue.WantParents -= Property_WantParents;
+        }
 
         protected void OnPropertyChanged(PropertyChangedEventArgs args)
             => PropertyChanged?.Invoke(this, args);

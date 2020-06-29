@@ -9,7 +9,7 @@ namespace Teronis
     {
         public delegate Func<T> InstantiateDelegate();
 
-        private static InstantiateDelegate instantiateDelegateReference;
+        private static InstantiateDelegate? instantiateDelegateReference;
 
         private static Func<T> instantiate()
         {
@@ -26,8 +26,9 @@ namespace Teronis
 
         public static T Instantiate()
         {
-            if (instantiateDelegateReference == null)
+            if (instantiateDelegateReference == null) {
                 instantiateDelegateReference = instantiate;
+            }
 
             return instantiateDelegateReference()();
         }

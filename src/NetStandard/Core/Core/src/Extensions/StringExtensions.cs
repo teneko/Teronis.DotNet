@@ -11,10 +11,11 @@ namespace Teronis.Extensions
         public static bool Contains(this string source, string search, StringComparison comparison)
             => source.IndexOf(search, comparison) >= 0;
 
-        public static string Format(this string text, params object[] args)
+        public static string? Format(this string text, params object[] args)
         {
-            if (text == null)
+            if (text == null) {
                 return null;
+            }
 
             return string.Format(text, args);
         }
@@ -52,7 +53,7 @@ namespace Teronis.Extensions
             return new string(a);
         }
 
-        public static string TrimEnd(this string source, string value, StringComparison comparisonType)
+        public static string? TrimEnd(this string source, string value, StringComparison comparisonType)
         {
             if (source?.EndsWith(value, comparisonType) ?? false) {
                 return source.Remove(source.LastIndexOf(value, comparisonType));
@@ -61,10 +62,10 @@ namespace Teronis.Extensions
             }
         }
 
-        public static string TrimEnd(this string source, string value) =>
+        public static string? TrimEnd(this string source, string value) =>
             TrimEnd(source, value, StringComparison.Ordinal);
 
-        public static string TrimStart(this string source, string value, StringComparison comparisonType)
+        public static string? TrimStart(this string source, string value, StringComparison comparisonType)
         {
             if (source?.StartsWith(value, comparisonType) ?? false) {
                 return source.Remove(source.IndexOf(value, comparisonType), value.Length);
@@ -73,7 +74,7 @@ namespace Teronis.Extensions
             }
         }
 
-        public static string TrimStart(this string source, string value) =>
+        public static string? TrimStart(this string source, string value) =>
             TrimStart(source, value, StringComparison.Ordinal);
 
         public static string DecodeHtml(this string htmlText)

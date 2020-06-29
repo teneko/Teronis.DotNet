@@ -4,7 +4,7 @@ namespace Teronis.Extensions
 {
     public static class ExceptionExtensions
     {
-        public static string ListInnerMessages(this Exception exception)
+        public static string ListInnerMessages(this Exception? exception)
         {
             var lines = exception?.Message ?? string.Empty;
 

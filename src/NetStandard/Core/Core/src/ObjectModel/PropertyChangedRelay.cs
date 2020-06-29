@@ -12,14 +12,14 @@ namespace Teronis.ObjectModel
 {
     public class PropertyChangedRelay : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler NotifiersPropertyChanged;
+        public event PropertyChangedEventHandler? NotifiersPropertyChanged;
 
         event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged {
             add => NotifiersPropertyChanged += value;
             remove => NotifiersPropertyChanged -= value;
         }
 
-        public Dictionary<string, Type> AllowedProperties { get; set; }
+        public Dictionary<string, Type>? AllowedProperties { get; set; }
         public readonly ReadOnlyCollection<INotifyPropertyChanged> PropertyChangedNotifiers;
 
         private BindingFlags propertyBindingFlags;
@@ -111,11 +111,11 @@ namespace Teronis.ObjectModel
         public PropertyChangedRelay AddAllowedProperty(string propertyName, Type valueType)
         {
             ensureAllowedPropertiesInitialization();
-            AllowedProperties.Add(propertyName, valueType);
+            AllowedProperties!.Add(propertyName, valueType);
             return this;
         }
 
-        public PropertyChangedRelay AddAllowedProperty<T>(Expression<Func<T, object>> expression)
+        public PropertyChangedRelay AddAllowedProperty<T>(Expression<Func<T, object?>> expression)
         {
             var returnName = ExpressionTools.GetReturnName(expression);
             var returnType = ExpressionTools.GetReturnType(expression);
@@ -125,7 +125,7 @@ namespace Teronis.ObjectModel
         public PropertyChangedRelay AddAllowedProperties(IEnumerable<KeyValuePair<string, Type>> allowedProperties)
         {
             ensureAllowedPropertiesInitialization();
-            var allowedPropertyCollection = (ICollection<KeyValuePair<string, Type>>)AllowedProperties;
+            var allowedPropertyCollection = (ICollection<KeyValuePair<string, Type>>)AllowedProperties!;
 
             foreach (var allowedProperty in allowedProperties)
                 allowedPropertyCollection.Add(allowedProperty);
@@ -138,7 +138,7 @@ namespace Teronis.ObjectModel
             ensureAllowedPropertiesInitialization();
 
             foreach (var propertyInfo in propertyInfos)
-                AllowedProperties.Add(propertyInfo.Name, propertyInfo.PropertyType);
+                AllowedProperties!.Add(propertyInfo.Name, propertyInfo.PropertyType);
 
             return this;
         }
@@ -151,7 +151,7 @@ namespace Teronis.ObjectModel
             var shouldNotifyUnknownProperty = AllowedProperties == null
                 || AllowedProperties.TryGetValue(e.PropertyName, out var propertyType)
                     && (propertyType == null
-                        || sender.GetType().GetProperty(e.PropertyName, propertyBindingFlags).PropertyType == propertyType);
+                        || sender.GetType().GetProperty(e.PropertyName, propertyBindingFlags)?.PropertyType == propertyType);
 
             if (!shouldNotifyUnknownProperty)
                 return;
@@ -161,6 +161,9 @@ namespace Teronis.ObjectModel
 
         public PropertyChangedRelay SubscribePropertyChangedNotifier(INotifyPropertyChanged propertyChangedNotifier)
         {
+            propertyChangedNotifier = propertyChangedNotifier ??
+                throw new ArgumentNullException(nameof(propertyChangedNotifier));
+
             if (!propertyChangedNotifiers.Contains(propertyChangedNotifier)) {
                 propertyChangedNotifier.PropertyChanged += PropertyChangedNotifier_PropertyChanged;
                 propertyChangedNotifiers.Add(propertyChangedNotifier);
@@ -180,10 +183,10 @@ namespace Teronis.ObjectModel
         }
 
         private void Cache_PropertyAdded(object sender, PropertyCachedEventArgs<INotifyPropertyChanged> args) =>
-            SubscribePropertyChangedNotifier(args.PropertyValue);
+            SubscribePropertyChangedNotifier(args.PropertyValue!);
 
         private void Cache_PropertyRemoved(object sender, PropertyCacheRemovedEventArgs<INotifyPropertyChanged> args) =>
-            UnsubscribePropertyChangedNotifier(args.PropertyValue);
+            UnsubscribePropertyChangedNotifier(args.PropertyValue!);
 
         public PropertyChangedRelaySubscription SubscribeSingleTypePropertyCache(SingleTypePropertyCache<INotifyPropertyChanged> cache)
         {
@@ -194,6 +197,9 @@ namespace Teronis.ObjectModel
 
         public void UnsubscribePropertyChangedNotifier(INotifyPropertyChanged propertyChangedNotifier)
         {
+            propertyChangedNotifier = propertyChangedNotifier ??
+                throw new ArgumentNullException(nameof(propertyChangedNotifier));
+
             if (!propertyChangedNotifiers.Contains(propertyChangedNotifier)) {
                 return;
             }

@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
-using Teronis.Reflection;
 using Teronis.Tools;
 
 namespace Teronis.Extensions
@@ -13,28 +12,32 @@ namespace Teronis.Extensions
         public static void PrintCookies(this CookieContainer cookieContainer)
         {
             try {
-                var table = (Hashtable)cookieContainer
-                    .GetType().InvokeMember("m_domainTable",
-                    BindingFlags.NonPublic |
-                    BindingFlags.GetField |
-                    BindingFlags.Instance,
-                    null,
-                    cookieContainer,
-                    new object[] { });
+                var domainTableFieldName = "m_domainTable";
 
-                foreach (var key in table.Keys) {
-                    if (key.ToString().StartsWith("."))
+                var domainTable = cookieContainer.GetType().InvokeMember("m_domainTable",
+                    BindingFlags.NonPublic | BindingFlags.GetField | BindingFlags.Instance,
+                    null, cookieContainer, new object[] { }) as Hashtable;
+
+                if (domainTable is null) {
+                    throw new ArgumentNullException($"Field {domainTableFieldName} is not existing.");
+                }
+
+                foreach (var key in domainTable.Keys) {
+                    if (key?.ToString()?.StartsWith(".") ?? true) {
                         continue;
+                    }
 
                     // Look for http cookies.
                     if (cookieContainer.GetCookies(
                         new Uri(string.Format("http://{0}/", key))).Count > 0) {
                         Console.WriteLine(cookieContainer.Count + " HTTP COOKIES FOUND:");
                         Console.WriteLine("----------------------------------");
-                        foreach (Cookie cookie in cookieContainer.GetCookies(
-                            new Uri(string.Format("http://{0}/", key)))) {
-                            Console.WriteLine(
-                                "Name = {0} ; Value = {1} ; Domain = {2}",
+                        foreach (Cookie? cookie in cookieContainer.GetCookies(new Uri(string.Format("http://{0}/", key)))) {
+                            if (cookie is null) {
+                                continue;
+                            }
+
+                            Console.WriteLine("Name = {0} ; Value = {1} ; Domain = {2}",
                                 cookie.Name, cookie.Value, cookie.Domain);
                         }
                     }
@@ -44,10 +47,12 @@ namespace Teronis.Extensions
                         new Uri(string.Format("https://{0}/", key))).Count > 0) {
                         Console.WriteLine(cookieContainer.Count + " HTTPS COOKIES FOUND:");
                         Console.WriteLine("----------------------------------");
-                        foreach (Cookie cookie in cookieContainer.GetCookies(
-                            new Uri(string.Format("https://{0}/", key)))) {
-                            Console.WriteLine(
-                                "Name = {0} ; Value = {1} ; Domain = {2}",
+                        foreach (Cookie? cookie in cookieContainer.GetCookies(new Uri(string.Format("https://{0}/", key)))) {
+                            if (cookie is null) {
+                                continue;
+                            }
+
+                            Console.WriteLine("Name = {0} ; Value = {1} ; Domain = {2}",
                                 cookie.Name, cookie.Value, cookie.Domain);
                         }
                     }
@@ -66,8 +71,13 @@ namespace Teronis.Extensions
         /// <returns></returns>
         public static IEnumerable<Cookie> GetCookies(this CookieContainer cookieContainer, string domain)
         {
+            var domainTableFieldName = "m_domainTable";
             var bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-            var domainTable = ObjectTools.GetFieldValue<dynamic>(cookieContainer, "m_domainTable", bindFlags);
+            var domainTable = ObjectTools.GetFieldValue<dynamic>(cookieContainer, domainTableFieldName, bindFlags);
+
+            if (domainTable is null) {
+                throw new ArgumentNullException($"Field {domainTableFieldName} is not existing.");
+            }
 
             foreach (var entry in domainTable) {
                 string key = ObjectTools.GetPropertyValue<string>(entry, "Key");
@@ -77,7 +87,15 @@ namespace Teronis.Extensions
 
                     var internalList = ObjectTools.GetFieldValue<SortedList<string, CookieCollection>>(value, "_list", bindFlags);
                     foreach (var li in internalList) {
-                        foreach (Cookie cookie in li.Value) {
+                        if (li is null) {
+                            continue;
+                        }
+
+                        foreach (Cookie? cookie in li.Value) {
+                            if (cookie is null) {
+                                continue;
+                            }
+
                             yield return cookie;
                         }
                     }
@@ -87,16 +105,39 @@ namespace Teronis.Extensions
 
         public static IEnumerable<Cookie> GetAllCookies(this CookieContainer cookieContainer)
         {
-            var k = (Hashtable)cookieContainer.GetType().GetField("m_domainTable", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(cookieContainer);
+            var domainTableFieldName = "m_domainTable";
+            var k = cookieContainer.GetType().GetField(domainTableFieldName, BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(cookieContainer) as Hashtable;
 
-            foreach (DictionaryEntry element in k) {
-                var l = (SortedList)element.Value.GetType().GetField("m_list", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(element.Value);
+            if (k is null) {
+                throw new ArgumentNullException($"Field {domainTableFieldName} is not existing.");
+            }
+
+            foreach (DictionaryEntry? element in k) {
+                if (element is null) {
+                    continue;
+                }
+
+                var listFieldName = "m_list";
+                var l = element.Value.GetType().GetField(listFieldName, BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(element.Value) as SortedList;
+
+                if (l is null) {
+                    throw new ArgumentNullException($"Field {listFieldName} is not existing.");
+                }
 
                 foreach (var e in l) {
-                    var cl = (CookieCollection)((DictionaryEntry)e).Value;
+                    if (e is null) {
+                        continue;
+                    }
 
-                    foreach (Cookie fc in cl)
+                    var cl = (CookieCollection)((DictionaryEntry)e).Value!;
+
+                    foreach (Cookie? fc in cl) {
+                        if (fc is null) {
+                            continue;
+                        }
+
                         yield return fc;
+                    }
                 }
             }
         }

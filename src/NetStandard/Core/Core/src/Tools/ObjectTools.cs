@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Linq.Expressions;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace Teronis.Tools
@@ -13,10 +13,11 @@ namespace Teronis.Tools
         /// <param name="instance">The Type instance to extract the Property's data from.</param>
         /// <param name="propertyName">The name of the Property to extract the data from.</param>
         /// <returns></returns>
+        [return: MaybeNull]
         internal static ValueType GetPropertyValue<ValueType>(object instance, string propertyName, BindingFlags flags = 0)
         {
             var pi = instance.GetType().GetProperty(propertyName, flags);
-            return (ValueType)pi.GetValue(instance, null);
+            return (ValueType)pi?.GetValue(instance, null);
         }
 
         /// <summary>
@@ -26,10 +27,11 @@ namespace Teronis.Tools
         /// <param name="instance">The Type instance to extract the Property's data from.</param>
         /// <param name="fieldName">The name of the Property to extract the data from.</param>
         /// <returns></returns>
+        [return: MaybeNull]
         internal static ValueType GetFieldValue<ValueType>(object instance, string fieldName, BindingFlags flags = 0)
         {
             var pi = instance.GetType().GetField(fieldName, 0);
-            return (ValueType)pi.GetValue(instance);
+            return (ValueType)pi?.GetValue(instance);
         }
     }
 }

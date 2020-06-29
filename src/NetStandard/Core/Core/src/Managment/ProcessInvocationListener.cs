@@ -7,7 +7,7 @@ namespace Teronis.Managment
 {
     public class ProcessInvocationListener : IDisposable
     {
-        public event Action<Process> ProcessCreated;
+        public event Action<Process>? ProcessCreated;
 
         ManagementEventWatcher mew;
         string processName;
@@ -19,41 +19,59 @@ namespace Teronis.Managment
             mew.EventArrived += Event_Arrived;
         }
 
-        private void addValidProcess(Process process) => ProcessCreated?.Invoke(process);
+        private void ensureNotDisposed()
+        {
+            if (mew == null) {
+                throw new ObjectDisposedException("This instance has been already disposed.");
+            }
+        }
+
+        private void addValidProcess(Process process) =>
+            ProcessCreated?.Invoke(process);
 
         private async void tryAddProcess(Process process)
         {
             await Task.Run(() => {
-                while (!process.HasExited)
+                while (!process.HasExited) {
                     if (process.MainWindowHandle != IntPtr.Zero) {
                         addValidProcess(process);
                         break;
                     }
+                }
             });
         }
 
         private void Event_Arrived(object sender, EventArrivedEventArgs e)
         {
             try {
-                tryAddProcess(Process.GetProcessById(int.Parse(e.NewEvent.Properties["ProcessID"].Value.ToString())));
+                tryAddProcess(Process.GetProcessById(int.Parse(e.NewEvent.Properties["ProcessID"].Value.ToString()!)));
             } catch (ArgumentException) { }
         }
 
-        public void StartListener() => mew.Start();
+        public void StartListener()
+        {
+            ensureNotDisposed();
+            mew.Start();
+        }
 
         public void ListenToExistingProccesses()
         {
-            foreach (var process in Process.GetProcessesByName(System.IO.Path.GetFileNameWithoutExtension(processName)))
+            foreach (var process in Process.GetProcessesByName(System.IO.Path.GetFileNameWithoutExtension(processName))) {
                 tryAddProcess(process);
+            }
         }
 
-        public void StopListener() => mew.Stop();
+        public void StopListener()
+        {
+            ensureNotDisposed();
+            mew.Stop();
+        }
 
         public void Dispose()
         {
             mew.Stop();
             mew.Dispose();
-            mew = null;
+            mew = null!;
         }
     }
 }

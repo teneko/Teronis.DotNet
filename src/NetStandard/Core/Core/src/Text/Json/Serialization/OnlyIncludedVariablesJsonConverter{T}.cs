@@ -42,7 +42,7 @@ namespace Teronis.Text.Json.Serialization
             foreach (var property in document.RootElement.EnumerateObject()) {
                 var memberInfo = valueType.GetVariableMember(property.Name, variableSettings);
 
-                if (!variablesInclusionHelper.IsVariableConsidered(memberInfo.DeclaringType, property.Name)) {
+                if (memberInfo?.DeclaringType == null || !variablesInclusionHelper.IsVariableConsidered(memberInfo.DeclaringType, property.Name)) {
                     continue;
                 }
 

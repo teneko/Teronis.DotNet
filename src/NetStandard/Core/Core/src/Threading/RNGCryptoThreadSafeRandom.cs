@@ -20,8 +20,8 @@ namespace Teronis.Threading
             });
         }
 
-        public static int Next() => local.Value.Next();
-        public static int Next(int maxValue) => local.Value.Next(maxValue);
-        public static int Next(int minValue, int maxValue) => local.Value.Next(minValue, maxValue);
+        public static int Next() => local.Value!.Next();
+        public static int Next(int maxValue) => local.Value!.Next(maxValue);
+        public static int Next(int minValue, int maxValue) => local.Value!.Next(minValue, maxValue);
     }
 }

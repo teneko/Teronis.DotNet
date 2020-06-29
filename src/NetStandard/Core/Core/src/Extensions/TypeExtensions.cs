@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Teronis.Tools;
 
 namespace Teronis.Extensions
@@ -9,13 +10,14 @@ namespace Teronis.Extensions
         public static bool IsNullable(this Type type)
             => TypeTools.IsNullable(type);
 
-        public static object InstantiateUninitializedObject(this Type type)
+        public static object? InstantiateUninitializedObject(this Type type)
             => TypeTools.InstantiateUninitializedObject(type);
 
+        [return: MaybeNull]
         public static T InstantiateUninitializedObject<T>(this Type type)
             => (T)TypeTools.InstantiateUninitializedObject(type);
 
-        public static object GetDefault(this Type type)
+        public static object? GetDefault(this Type type)
             => TypeTools.GetDefault(type);
 
         public static bool HasInterface<T>(this Type type) => type != null && typeof(T).IsAssignableFrom(type);

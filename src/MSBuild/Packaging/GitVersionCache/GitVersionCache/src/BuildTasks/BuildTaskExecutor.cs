@@ -103,7 +103,7 @@ namespace Teronis.GitVersionCache.BuildTasks
                     serializedGitVariables = GitVersionCommandLine.ExecuteGitVersion(arguments);
                     isCache = false;
                 } catch (Diagnostics.NonZeroExitCodeException error) {
-                    var errorMessage = error.Message + $"(arguments: {arguments})" + 
+                    var errorMessage = error.Message + $"(arguments: {arguments})" +
                         (error.InnerException is Exception ? " " + error.InnerException.Message : null);
 
                     throw new NonZeroExitCodeException(error.ExitCode, errorMessage);
@@ -141,7 +141,7 @@ namespace Teronis.GitVersionCache.BuildTasks
 
 
             var buildTaskType = buildTask.GetType();
-            var variablesInclusionJsonConverter = JsonConverterFactory.CreateOnlyIncludedVariablesJsonConverter(buildTaskType, out var variablesHelper);
+            var variablesInclusionJsonConverter = OnlyIncludedVariablesJsonConverter.CreateNonGeneric(buildTaskType, out var variablesHelper);
             variablesHelper.ConsiderVariable(typeof(string), nameof(GetVersionCacheTask.ProjectDirectory));
 
             foreach (var propertyMember in buildTask.GetType().GetPropertyMembers(typeof(Task))) {

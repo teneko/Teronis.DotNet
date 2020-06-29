@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis.Extensions
 {
     public static class IDictionaryGenericExtensions
     {
         public static V AddOrUpdate<K, V>(this IDictionary<K, V> dictionary, K key, V value)
+            where K : notnull
         {
             if (!dictionary.ContainsKey(key))
                 return dictionary.AddAndReturn(key, value);
@@ -14,6 +16,7 @@ namespace Teronis.Extensions
         }
 
         public static V AddOrUpdate<K, V>(this IDictionary<K, V> dictionary, K key, V value, Func<V, V> getUpdatedValue)
+            where K : notnull
         {
             if (!dictionary.ContainsKey(key))
                 return dictionary.AddAndReturn(key, value);
@@ -26,22 +29,28 @@ namespace Teronis.Extensions
         /// <summary>
         /// Does not throw an exception when key does not exist, instead the default value will be returned.
         /// </summary>
-        public static V GetValue<K, V>(this IDictionary<K, V> dictionary, K key) => dictionary.TryGetValue(key, out V value) ? value : value;
+        [return: MaybeNull]
+        public static V GetValue<K, V>(this IDictionary<K, V> dictionary, K key)
+            where K : notnull =>
+            dictionary.TryGetValue(key, out V value) ? value : value;
 
         public static V AddAndReturn<K, V>(this IDictionary<K, V> source, K key, V value)
+            where K : notnull
         {
             source.Add(key, value);
             return value;
         }
 
         public static V RemoveAndReturn<K, V>(this IDictionary<K, V> source, K key)
+            where K : notnull
         {
             var value = source[key];
             source.Remove(key);
             return value;
         }
 
-        public static bool TryRemove<K, V>(this IDictionary<K, V> source, K key, out V value)
+        public static bool TryRemove<K, V>(this IDictionary<K, V> source, K key, [MaybeNullWhen(false)] out V value)
+            where K : notnull
         {
             if (source.TryGetValue(key, out value)) {
                 source.Remove(key);

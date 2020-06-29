@@ -25,13 +25,21 @@ namespace Teronis.Data
         {
             if (Value is null) {
                 return false;
-            } else if (obj is MutableValue<T> mutation) {
-                return Value.Equals(mutation.Value);
-            } else if (obj is T val) {
-                return Value.Equals(val);
-            } else {
-                return false;
             }
+
+            if (obj is MutableValue<T> mutation) {
+                if (mutation is null) {
+                    return false;
+                }
+
+                return Value.Equals(mutation.Value!);
+            }
+
+            if (obj is T val) {
+                return Value.Equals(val);
+            }
+
+            return false;
         }
 
         public override int GetHashCode()
@@ -49,7 +57,7 @@ namespace Teronis.Data
                 return false;
             }
 
-            return Value.Equals(other);
+            return Value.Equals(other!);
         }
 
         public override string? ToString()

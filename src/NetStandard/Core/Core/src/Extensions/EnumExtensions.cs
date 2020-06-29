@@ -6,12 +6,16 @@ namespace Teronis.Extensions
 {
     public static class EnumExtensions
     {
-        public static IEnumerable<ENUM_TYPE> CrushContainingBitsToEnumerable<ENUM_TYPE>(this ENUM_TYPE enumValue, bool ignoreZero = TeronisCoreDefaults.IgnoreZeroWhenCrushingContainingBits) where ENUM_TYPE : struct, IComparable, IFormattable, IConvertible
-        {
-            var enumValue2 = enumValue.CastTo<Enum>();
-            var enumerator = Enum.GetValues(typeof(ENUM_TYPE)).GetEnumerator();
+        public const bool IgnoreZeroWhenCrushingContainingBits = false;
 
-            bool hasFlag(out ENUM_TYPE enumValue3) => enumValue2.HasFlag((enumValue3 = enumerator.Current.CastTo<ENUM_TYPE>()).CastTo<Enum>());
+        public static IEnumerable<EnumType> CrushContainingBitsToEnumerable<EnumType>(this EnumType enumValue, bool ignoreZero = IgnoreZeroWhenCrushingContainingBits) 
+            where EnumType : struct, IComparable, IFormattable, IConvertible
+        {
+            var enumValue2 = (Enum)(object)enumValue;
+            var enumerator = Enum.GetValues(typeof(EnumType)).GetEnumerator();
+
+            bool hasFlag(out EnumType enumValue3) =>
+                enumValue2.HasFlag((Enum)(object)(enumValue3 = (EnumType)enumerator.Current!));
 
             if (enumerator.MoveNext() && !ignoreZero && hasFlag(out var enumValue4))
                 yield return enumValue4;
@@ -20,17 +24,18 @@ namespace Teronis.Extensions
                 yield return enumValue4;
         }
 
-        public static ENUM_TYPE[] CrushContainingBitsToArray<ENUM_TYPE>(this ENUM_TYPE enumValue, bool ignoreZero = TeronisCoreDefaults.IgnoreZeroWhenCrushingContainingBits) where ENUM_TYPE : struct, IComparable, IFormattable, IConvertible
+        public static EnumType[] CrushContainingBitsToArray<EnumType>(this EnumType enumValue, bool ignoreZero = IgnoreZeroWhenCrushingContainingBits)
+            where EnumType : struct, IComparable, IFormattable, IConvertible
             => CrushContainingBitsToEnumerable(enumValue, ignoreZero).ToArray();
 
-        public static ENUM_TYPE CombineEachEnumValue<ENUM_TYPE>() where ENUM_TYPE : struct, IComparable, IFormattable, IConvertible
+        public static EnumType CombineEachEnumValue<EnumType>() where EnumType : struct, IComparable, IFormattable, IConvertible
         {
             var retVal = 0;
 
-            foreach (var enumVal in Enum.GetValues(typeof(ENUM_TYPE)).Cast<int>())
+            foreach (var enumVal in Enum.GetValues(typeof(EnumType)).Cast<int>())
                 retVal |= enumVal;
 
-            return retVal.CastTo<ENUM_TYPE>();
+            return (EnumType)(object)retVal;
         }
     }
 }

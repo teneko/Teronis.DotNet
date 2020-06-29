@@ -129,13 +129,13 @@ namespace Teronis.Reflection.Caching
             // We want to abort if tracking property name is untracked and tracking property value is equals default/null.
             if (!isPropertNameTracked
                 && CanHandleDefaultValue
-                && PropertyValueEqualityComparer.Equals(typedPropertyValue, TrackingPropertyDefaultValue!)) {
+                && PropertyValueEqualityComparer.Equals(typedPropertyValue!, TrackingPropertyDefaultValue!)) {
                 return;
             }
 
             void trackPropertyViaArgs(PropertyCachedEventArgs<PropertyType> args)
             {
-                cachedPropertyValues.Add(propertyName, args.PropertyValue);
+                cachedPropertyValues.Add(propertyName, args.PropertyValue!);
                 OnPropertyCacheAdded(args);
             }
 
@@ -173,14 +173,14 @@ namespace Teronis.Reflection.Caching
                 }
 
                 // Add new subscription
-                trackProperty(typedPropertyValue);
+                trackProperty(typedPropertyValue!);
             } else {
                 var cachedProperty = cachedPropertyValues[propertyName];
 
-                if (CanHandleDefaultValue && PropertyValueEqualityComparer.Equals(typedPropertyValue, TrackingPropertyDefaultValue!)) {
+                if (CanHandleDefaultValue && PropertyValueEqualityComparer.Equals(typedPropertyValue!, TrackingPropertyDefaultValue!)) {
                     untrackProperty(cachedProperty, false);
-                } else if (!PropertyValueEqualityComparer.Equals(typedPropertyValue, cachedProperty)) {
-                    retrackProperty(cachedProperty, typedPropertyValue);
+                } else if (!PropertyValueEqualityComparer.Equals(typedPropertyValue!, cachedProperty)) {
+                    retrackProperty(cachedProperty, typedPropertyValue!);
                 } else {
                     // Both values are equal, so we don't need to uncache
                     return;

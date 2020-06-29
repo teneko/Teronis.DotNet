@@ -19,7 +19,7 @@ namespace Teronis.Extensions
             => TeronisTools.ReturnInValue(inValue, mutateInValue);
 
         [return: MaybeNull]
-        public static I ReturnInValue<I>(this I inValue, ReplaceValueDelegate<I,I> modifyInValue)
+        public static I ReturnInValue<I>(this I inValue, ReplaceValueDelegate<I, I> modifyInValue)
             => TeronisTools.ReturnInValue(inValue, modifyInValue);
 
         [return: MaybeNull]
@@ -45,10 +45,13 @@ namespace Teronis.Extensions
         public static V ReturnValue<I, V>(this I inValue, GetInputDelegate<I, V> getValue)
             => TeronisTools.ReturnValue(inValue, getValue);
 
-        public static TCloningObject ShallowCopy<TCloningObject, TCopyingObject>(this TCopyingObject copyingObject)
-            => ReflectionTools.ShallowCopy<TCloningObject, TCopyingObject>(copyingObject);
+        public static TargetType ShallowCopy<SourceType, TargetType>(this SourceType source)
+            where SourceType : notnull
+            where TargetType : notnull
+            => ReflectionTools.ShallowCopy<SourceType, TargetType>(source);
 
-        public static TCloningAndCopyingObject ShallowCopy<TCloningAndCopyingObject>(this TCloningAndCopyingObject copyingObject)
-            => ReflectionTools.ShallowCopy(copyingObject);
+        public static InstanceType ShallowCopy<InstanceType>(this InstanceType instance)
+            where InstanceType : notnull
+            => ReflectionTools.ShallowCopy(instance);
     }
 }

@@ -17,10 +17,10 @@ namespace Teronis.Drawing
             Z = z;
         }
 
-        public bool Equals(IXY other) => XYEqualityComparer.Default.Equals(this, other);
-        public bool Equals(IXYZ other) => XYZEqualityComparer.Default.Equals(this, other);
+        public bool Equals(IXY? other) => XYEqualityComparer.Default.Equals(this, other);
+        public bool Equals(IXYZ? other) => XYZEqualityComparer.Default.Equals(this, other);
 
-        public override bool Equals(object obj) => Equals(obj as IXYZ);
+        public override bool Equals(object? obj) => Equals(obj as IXYZ);
         public override int GetHashCode() => XYZEqualityComparer.Default.GetHashCode(this);
         public override string ToString() => XYZEqualityComparer.Default.ToString(this);
     }

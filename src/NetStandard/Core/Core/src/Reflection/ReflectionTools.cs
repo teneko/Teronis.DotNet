@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Teronis.Extensions;
@@ -24,10 +25,11 @@ namespace Teronis.Tools
 
         #region Update Entity Variables
 
-        public static void UpdateEntityVariables<T>(T leftEntity, T rightEntity, IEnumerable<MemberInfo> variableInfos)
+        private static void updateEntityVariables<T>(T leftEntity, T rightEntity, IEnumerable<MemberInfo> variableInfos)
+            where T : notnull
         {
             foreach (var variable in variableInfos) {
-                object value = null;
+                object? value = null;
 
                 try {
                     value = variable.GetValue(rightEntity);
@@ -43,36 +45,50 @@ namespace Teronis.Tools
             }
         }
 
+        private static void ensureNonNullEntityTypes<LeftEntityType, RightEntityType>(LeftEntityType leftEntity, RightEntityType rightEntity, out Type leftEntityType, out Type rightEntityType)
+            where LeftEntityType : notnull
+            where RightEntityType : notnull
+        {
+            leftEntityType = leftEntity?.GetType()!;
+            rightEntityType = rightEntity?.GetType()!;
+
+            if (leftEntityType == null) {
+                throw new ArgumentException("Left entity is null.");
+            } else if (rightEntityType == null) {
+                throw new ArgumentException("Right entity is null.");
+            }
+        }
+
+        public static void UpdateEntityVariables<T>(T leftEntity, T rightEntity, IEnumerable<MemberInfo> variableInfos)
+            where T : notnull
+        {
+            ensureNonNullEntityTypes(leftEntity, rightEntity, out _, out _);
+            updateEntityVariables(leftEntity, rightEntity, variableInfos);
+        }
+
         // // BASE-TYPE-LOOP
 
         // NON-ATTRIBUTE
 
-        public static void UpdateEntityVariables<T>(T leftEntity, T rightEntity, VariableInfoDescriptor leftVariablesDescriptor = null, VariableInfoDescriptor rightVariablesDescriptor = null)
+        public static void UpdateEntityVariables<T>(T leftEntity, T rightEntity, VariableInfoDescriptor? leftVariablesDescriptor = null, VariableInfoDescriptor? rightVariablesDescriptor = null)
+            where T : notnull
         {
-            var leftEntityType = leftEntity?.GetType();
-            var rightEntityType = rightEntity?.GetType();
-
-            if (leftEntityType == null || rightEntityType == null)
-                return;
-
+            ensureNonNullEntityTypes(leftEntity, rightEntity, out var leftEntityType, out var rightEntityType);
             leftVariablesDescriptor = leftVariablesDescriptor ?? createDefaultVariableInfoSettings();
             var leftEntityVariableMembers = leftEntityType.GetVariableMembers(descriptor: leftVariablesDescriptor);
             var intersectedEntityVariableMembers = leftEntityVariableMembers.Intersect(rightEntityType, rightVariablesDescriptor);
-            UpdateEntityVariables(leftEntity, rightEntity, intersectedEntityVariableMembers);
+            updateEntityVariables(leftEntity, rightEntity, intersectedEntityVariableMembers);
         }
 
         // ATTRIBUTE
 
-        public static void UpdateEntityVariablesByAttribute<T>(T leftEntity, T rightEntity, Type attributeType, VariableInfoDescriptor variableInfoSettings = null)
+        public static void UpdateEntityVariablesByAttribute<T>(T leftEntity, T rightEntity, Type attributeType, VariableInfoDescriptor? variableInfoSettings = null)
+            where T : notnull
         {
-            var entityType = leftEntity?.GetType();
-
-            if (entityType == null)
-                return;
-
+            ensureNonNullEntityTypes(leftEntity, rightEntity, out var leftEntityType, out _);
             variableInfoSettings = variableInfoSettings ?? createDefaultVariableInfoSettings();
 
-            var leftEntityVariableMembers = entityType.GetAttributeVariableMembers(attributeType, descriptor: variableInfoSettings)
+            var leftEntityVariableMembers = leftEntityType.GetAttributeVariableMembers(attributeType, descriptor: variableInfoSettings)
                 .Select(x => x.MemberInfo);
 
             UpdateEntityVariables(leftEntity, rightEntity, leftEntityVariableMembers);
@@ -82,7 +98,9 @@ namespace Teronis.Tools
 
         #region Shallow Copy
 
-        public static TargetType ShallowCopy<TargetType, SourceType>(SourceType source)
+        public static TargetType ShallowCopy<SourceType, TargetType>(SourceType source)
+            where TargetType : notnull
+            where SourceType : notnull
         {
             var flags = VariableInfoDescriptor.DefaultFlags | BindingFlags.NonPublic;
 
@@ -106,7 +124,7 @@ namespace Teronis.Tools
                 .GetVariableMembers(descriptor: copyingObjectMembersSettings)
                 .ToDictionary(x => x.Name);
 
-            var clonedObejct = (TargetType)declaredType.InstantiateUninitializedObject();
+            var clonedObejct = (TargetType)declaredType.InstantiateUninitializedObject()!;
 
             foreach (var nameAndCloningObjectMembersPair in cloningObjectMembersByNameList) {
                 var cloningObjectMembersKey = nameAndCloningObjectMembersPair.Key;
@@ -127,13 +145,14 @@ namespace Teronis.Tools
         }
 
         public static T ShallowCopy<T>(T entity)
+            where T : notnull
             => ShallowCopy<T, T>(entity);
 
         #endregion
 
         #region Members
 
-        public static IEnumerable<MemberInfo> GetMembers(Func<Type, VariableInfoDescriptor, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType = null, VariableInfoDescriptor variableInfoDescriptor = null)
+        public static IEnumerable<MemberInfo> GetMembers(Func<Type, VariableInfoDescriptor, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type? interruptingBaseType = null, VariableInfoDescriptor? variableInfoDescriptor = null)
         {
             if (beginningType is null) {
                 yield break;
@@ -165,23 +184,29 @@ namespace Teronis.Tools
 
         // TYPED
 
-        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeMembers<TAttribute>(Func<Type, VariableInfoDescriptor, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType = null, VariableInfoDescriptor variableInfoDescriptor = null, bool? getCustomAttributesInherit = null)
+        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeMembers<TAttribute>(Func<Type, VariableInfoDescriptor, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type? interruptingBaseType = null, VariableInfoDescriptor? variableInfoDescriptor = null, bool? getCustomAttributesInherit = null)
             where TAttribute : Attribute
         {
-            foreach (var type in beginningType.GetBaseTypes(interruptingBaseType))
-                foreach (var propertyInfo in GetMembers(getMembers, beginningType, interruptingBaseType, variableInfoDescriptor))
-                    if (propertyInfo.TryGetAttributeVariableMember(out AttributeMemberInfo<TAttribute> varAttrInfo, getCustomAttributesInherit))
+            foreach (var type in beginningType.GetBaseTypes(interruptingBaseType)) {
+                foreach (var propertyInfo in GetMembers(getMembers, beginningType, interruptingBaseType, variableInfoDescriptor)) {
+                    if (propertyInfo.TryGetAttributeVariableMember(out AttributeMemberInfo<TAttribute>? varAttrInfo, getCustomAttributesInherit) && !(varAttrInfo is null)) {
                         yield return varAttrInfo;
+                    }
+                }
+            }
         }
 
         // NON-TYPED
 
-        public static IEnumerable<AttributeMemberInfo> GetAttributeMembers(Type attributeType, Func<Type, VariableInfoDescriptor, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type interruptingBaseType = null, VariableInfoDescriptor variableInfoDescriptor = null, bool? getCustomAttributesInherit = null)
+        public static IEnumerable<AttributeMemberInfo> GetAttributeMembers(Type attributeType, Func<Type, VariableInfoDescriptor, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type? interruptingBaseType = null, VariableInfoDescriptor? variableInfoDescriptor = null, bool? getCustomAttributesInherit = null)
         {
-            foreach (var type in beginningType.GetBaseTypes(interruptingBaseType))
-                foreach (var propertyInfo in GetMembers(getMembers, beginningType, interruptingBaseType, variableInfoDescriptor))
-                    if (propertyInfo.TryGetAttributeVariableMember(attributeType, out var varAttrInfo, getCustomAttributesInherit))
+            foreach (var type in beginningType.GetBaseTypes(interruptingBaseType)) {
+                foreach (var propertyInfo in GetMembers(getMembers, beginningType, interruptingBaseType, variableInfoDescriptor)) {
+                    if (propertyInfo.TryGetAttributeVariableMember(attributeType, out var varAttrInfo, getCustomAttributesInherit) && !(varAttrInfo is null)) {
                         yield return varAttrInfo;
+                    }
+                }
+            }
         }
 
         #endregion

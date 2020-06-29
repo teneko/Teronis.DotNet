@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Teronis.Reflection;
@@ -55,7 +56,7 @@ namespace Teronis.Extensions
         }
 
         /// <param name="memberInfo">Pass <see cref="PropertyInfo"/> or <see cref="FieldInfo"/>.</param>
-        public static bool TryGetAttributeVariableMember<T>(this MemberInfo memberInfo, out AttributeMemberInfo<T> attrVarInfo, bool? getCustomAttributesInherit = null)
+        public static bool TryGetAttributeVariableMember<T>(this MemberInfo memberInfo, [MaybeNull] out AttributeMemberInfo<T> attrVarInfo, bool? getCustomAttributesInherit = null)
             where T : Attribute
         {
             bool _getCustomAttributesInherit = getCustomAttributesInherit ?? true; // Library.DefaultCustomAttributesInherit
@@ -70,7 +71,7 @@ namespace Teronis.Extensions
         }
 
         /// <param name="memberInfo">Pass <see cref="PropertyInfo"/> or <see cref="FieldInfo"/>.</param>
-        public static bool TryGetAttributeVariableMember(this MemberInfo memberInfo, Type attributeType, out AttributeMemberInfo attrVarInfo, bool? getCustomAttributesInherit = null)
+        public static bool TryGetAttributeVariableMember(this MemberInfo memberInfo, Type attributeType, [MaybeNull]out AttributeMemberInfo attrVarInfo, bool? getCustomAttributesInherit = null)
         {
             bool _getCustomAttributesInherit = getCustomAttributesInherit ?? true; // Library.DefaultCustomAttributesInherit
 

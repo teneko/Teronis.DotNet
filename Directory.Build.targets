@@ -6,11 +6,15 @@
   <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackageTargetsFile)" />
   
   <ItemGroup>
-	<Compile Include="$(MSBuildThisFileDirectory)/Nullable.cs" Conditions="'$(Nullable)' == 'enable'" />
+	  <Compile Include="$(MSBuildThisFileDirectory)/Nullable.cs" Conditions="'$(Nullable)' == 'enable'" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <!--   -->
+  </PropertyGroup>
   
   <ItemGroup>
-    <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\GitVersionCache\GitVersionCache\ref\PackagePublish\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj" Condition="'$(DisableGitVersionCache)' != 'true' And $(MSBuildProjectName.StartsWith('Teronis.'))" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\GitVersionCache\GitVersionCache\ref\PackagePublish\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj" Condition="'$(DisableGitVersionCache)' != 'true' And $(IsPackable)" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -25,11 +29,11 @@
 
     <_ProjectReferences Include="@(ProjectReference)">
       <!-- Prevent PackagePublish.*-projects from being tracked in *.nuspec files. -->
-      <IsPackagePublish Condition="'%(IsPackagePublish)' == ''">$([System.String]::Copy('%(Filename)').Contains('PackagePublish.'))</IsPackagePublish>
-      <ReferenceOutputAssembly Condition="'%(IsPackagePublish)' == 'true'">false</ReferenceOutputAssembly>
-      <SkipGetTargetFrameworkProperties Condition="'%(IsPackagePublish)' == 'true'">true</SkipGetTargetFrameworkProperties>
-      <GlobalPropertiesToRemove Condition="'%(IsPackagePublish)' == 'true'">TargetFramework</GlobalPropertiesToRemove>
-      <BuildProjectReferences Condition="'%(IsPackagePublish)' == 'true'">false</BuildProjectReferences>
+      <IsPackagePublishProject Condition="'%(IsPackagePublishProject)' == ''">$([System.String]::Copy('%(Filename)').Contains('PackagePublish.'))</IsPackagePublishProject>
+      <ReferenceOutputAssembly Condition="'%(IsPackagePublishProject)' == 'true'">false</ReferenceOutputAssembly>
+      <SkipGetTargetFrameworkProperties Condition="'%(IsPackagePublishProject)' == 'true'">true</SkipGetTargetFrameworkProperties>
+      <GlobalPropertiesToRemove Condition="'%(IsPackagePublishProject)' == 'true'">TargetFramework</GlobalPropertiesToRemove>
+      <BuildProjectReferences Condition="'%(IsPackagePublishProject)' == 'true'">false</BuildProjectReferences>
 
       <!-- <AdditionalProperties Condition="'%(Filename)' == 'Teronis.NetStandard.Core'">%(AdditionalProperties);TargetFramework=netstandard2.0</AdditionalProperties> -->
       <!-- <AdditionalProperties >%(AdditionalProperties);TargetFramework=$(TargetFramework)</AdditionalProperties> -->

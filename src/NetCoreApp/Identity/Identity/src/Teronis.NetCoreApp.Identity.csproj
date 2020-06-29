@@ -28,7 +28,6 @@
     </ProjectReference>
     <ProjectReference Include="..\..\..\Core\Core\src\Teronis.NetCoreApp.Core.csproj" />
     <ProjectReference Include="..\..\..\Mvc\Mvc\src\Teronis.NetCoreApp.Mvc.csproj" />
-    <ProjectReference Include="..\..\..\Mvc\Mvc\Teronis.NetCoreApp.Mvc.csproj" />
   </ItemGroup>
 
   <ItemGroup>

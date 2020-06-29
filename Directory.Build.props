@@ -25,15 +25,22 @@
     <Company Condition="'$(Company)' == ''">$(MSBuildProjectName)</Company>
     <Product Condition="'$(Product)' == ''">$(MSBuildProjectName)</Product>
     <PackageLicenseFile Condition="'$(PackageLicenseFile)' == ''">LICENSE.md</PackageLicenseFile>
-    <RepositoryUrl Condition="'$(RepositoryUrl)' == ''">https://github.com/teroneko/Teronis.DotNet</RepositoryUrl>
-    <RepositoryType Condition="'$(RepositoryType)' == ''">git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <Copyright Condition="'$(Copyright)' == ''">Teroneko</Copyright>
     <PackageIcon Condition="'$(PackageIcon)' == ''">icon.png</PackageIcon>
     <IncludeSymbols Condition="'$(IncludeSymbols)' == ''">true</IncludeSymbols>
     <SymbolPackageFormat Condition="'$(SymbolPackageFormat)' == ''">snupkg</SymbolPackageFormat>
-    <NeutralLanguage Condition="'$(NeutralLanguage)' == ''">en</NeutralLanguage>
-    <!-- <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb;.props;.targets</AllowedOutputExtensionsInPackageBuildOutputFolder> -->
+    <!-- <EmbedAllSources>true</EmbedAllSources> -->
+    <!--
+    Embed source files that are not tracked by the source control manager to the PDB.
+    This is useful if you generate files during the build .
+    -->
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <!-- Source Link -->
+    <DebugType>portable</DebugType>
+    <DebugSymbols>True</DebugSymbols>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <NeutralLanguage Condition="'$(NeutralLanguage)' == ''">en</NeutralLanguage>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
@@ -42,12 +49,25 @@
  </PropertyGroup>
 
   <PropertyGroup>
+
+    <IsTeronisProject>false</IsTeronisProject>
+    <IsTeronisProject Condition="$(MSBuildProjectName.StartsWith('Teronis.'))">true</IsTeronisProject>
+
+    <IsGitVersionCacheProject>false</IsGitVersionCacheProject>
+    <IsGitVersionCacheProject Condition="$(MSBuildProjectName.StartsWith('GitVersionCache.'))">true</IsGitVersionCacheProject>
+
     <IsTestProject>false</IsTestProject>
-    <IsTestProject Condition="$(MSBuildProjectName.EndsWith('.Test')) Or $(MSBuildProjectName.StartsWith('Test.'))">false</IsTestProject>
-    <IsReferenceProject>false</IsReferenceProject>
-    <IsReferenceProject Condition="$(MSBuildProjectName.StartsWith('Reference.'))">false</IsReferenceProject>
+    <IsTestProject Condition="$(MSBuildProjectName.EndsWith('.Test')) Or $(MSBuildProjectName.StartsWith('Test.'))">true</IsTestProject>
+
+    <IsPackagePublishProject>false</IsPackagePublishProject>
+    <IsPackagePublishProject Condition="$(MSBuildProjectName.StartsWith('PackagePublish.'))">true</IsPackagePublishProject>
+
     <IsLocalizationProject>false</IsLocalizationProject>
-    <IsLocalizationProject Condition="$(MSBuildProjectName.EndsWith('.Localization'))">false</IsLocalizationProject>
+    <IsLocalizationProject Condition="$(MSBuildProjectName.EndsWith('.Localization'))">true</IsLocalizationProject>
+
+    <IsExampleProject>false</IsExampleProject>
+    <IsExampleProject Condition="$(MSBuildProjectName.EndsWith('.Example'))">true</IsExampleProject>
+
   </PropertyGroup>
 
   <PropertyGroup Condition="$(IsLocalizationProject)">
@@ -61,14 +81,23 @@
   </PropertyGroup>
 
   <PropertyGroup>
+
     <!-- https://docs.microsoft.com/de-de/dotnet/core/tools/csproj#ispackable -->
-    <IsPackable>true</IsPackable>
-    <IsPackable Condition="$(IsTestProject) Or $(IsReferenceProject) Or $(IsLocalizationProject)">false</IsPackable>
+    <IsPackable Condition="'$(IsPackable)' == ''
+      And ($(IsGitVersionCacheProject) 
+        Or $(IsTestProject) 
+        Or $(IsPackagePublishProject) 
+        Or $(IsLocalizationProject) 
+        Or $(IsExampleProject))">false</IsPackable>
+
+    <IsPackable Condition="'$(IsPackable)' == ''">true</IsPackable>
+
   </PropertyGroup>
 
   <PropertyGroup>
     <!-- GitVersionTask: NuGet does support SemVer 2.0 -->
-    <UseFullSemVerForNuGet>true</UseFullSemVerForNuGet>
+    <!-- Disabled because we use GitVersionCache. -->
+    <!-- <UseFullSemVerForNuGet>true</UseFullSemVerForNuGet> -->
   </PropertyGroup>
 
   <ItemGroup>
@@ -82,11 +111,5 @@
       <PackagePath></PackagePath>
     </None>
   </ItemGroup>
-
-  <PropertyGroup>
-    <IsTeronisProject>false</IsTeronisProject>
-    <IsTeronisProject Condition="$(MSBuildProjectName.StartsWith('Teronis.'))">true</IsTeronisProject>
-    <DisableGitVersionCache Condition="!$(IsTeronisProject)">true</DisableGitVersionCache>
-  </PropertyGroup>
 
 </Project>

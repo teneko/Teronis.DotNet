@@ -9,6 +9,7 @@
     <DisableGitVersionCache>true</DisableGitVersionCache>
     <DisableSdkProps>true</DisableSdkProps>
     <MSBuildPackagingGitVersionProjectFile>$(MSBuildThisFileDirectory)$(MSBuildProjectName).csproj</MSBuildPackagingGitVersionProjectFile>
+    <IsPackable>true</IsPackable>
 
   </PropertyGroup>
 

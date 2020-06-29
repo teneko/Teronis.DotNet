@@ -15,6 +15,7 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IncludeSymbols>false</IncludeSymbols>
     <RootNamespace>Teronis.MSBuild</RootNamespace>
+    <Description>Some special targets and tasks. See comments in source code.</Description>
 
   </PropertyGroup>
 

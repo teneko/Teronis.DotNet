@@ -15,15 +15,21 @@ namespace Teronis.Extensions
                 return dictionary[key] = value;
         }
 
-        public static V AddOrUpdate<K, V>(this IDictionary<K, V> dictionary, K key, V value, Func<V, V> getUpdatedValue)
+        public static V AddOrUpdate<K, V>(this IDictionary<K, V> dictionary, K key, V value, Func<V, V> repalceValue)
             where K : notnull
         {
-            if (!dictionary.ContainsKey(key))
-                return dictionary.AddAndReturn(key, value);
-            else if (getUpdatedValue != null)
-                return dictionary[key] = getUpdatedValue(dictionary[key]);
-            else
-                return dictionary[key];
+            repalceValue = repalceValue ?? throw new ArgumentNullException(nameof(repalceValue));
+
+            if (dictionary.TryGetValue(key, out var dictionaryValue)) {
+
+                if (repalceValue != null) {
+                    return dictionary[key] = repalceValue(dictionaryValue);
+                }
+
+                return dictionaryValue;
+            }
+
+            return dictionary.AddAndReturn(key, value);
         }
 
         /// <summary>

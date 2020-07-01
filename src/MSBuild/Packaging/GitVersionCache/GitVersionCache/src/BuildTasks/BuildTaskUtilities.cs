@@ -17,32 +17,6 @@ namespace Teronis.GitVersionCache.BuildTasks
         public static DirectoryInfo GetParentOfGitDirectory(string beginningDirectory) =>
               DirectoryTools.GetDirectoryOfDirectoryAbove(".git", beginningDirectory, includeBeginningDirectory: true);
 
-
-        //DirectoryUtilities.GetDirectoryOfFileAbove("GitVersion.yml", ModuleInitializer.ContainerRootDirectory);
-
-        ///// <summary>
-        ///// Gets the GitVersionCore owned list of <see cref="ServiceDescriptor"/>s.
-        ///// </summary>
-        //public static IServiceProvider GetGitVersionCoreOwnedServiceProvider(GitVersionTaskBase buildTask)
-        //{
-        //    var buildServiceProviderMethodInfo = typeof(GitVersionTasks).GetMethod("BuildServiceProvider", BindingFlags.Static | BindingFlags.NonPublic);
-        //    var serviceProvider = (IServiceProvider)buildServiceProviderMethodInfo.Invoke(null, new[] { buildTask });
-        //    return serviceProvider;
-        //}
-
-        ///// <summary>
-        ///// Gets the GitVersionCore owned list of <see cref="ServiceDescriptor"/>s.
-        ///// </summary>
-        //public static IList<ServiceDescriptor> GetGitVersionCoreOwnedServiceDescriptors(GitVersionTaskBase buildTask)
-        //{
-        //    var serviceProvider = GetGitVersionCoreOwnedServiceProvider(buildTask);
-        //    var instanceBindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
-        //    var engine = serviceProvider.GetType().GetField("_engine", instanceBindingFlags).GetValue(serviceProvider);
-        //    var callSiteFactory = engine.GetType().GetProperty("CallSiteFactory", instanceBindingFlags).GetValue(engine);
-        //    var serviceDescriptors = (List<ServiceDescriptor>)callSiteFactory.GetType().GetField("_descriptors", instanceBindingFlags).GetValue(callSiteFactory);
-        //    return serviceDescriptors;
-        //}
-
         public static void SetUndefinedAsDefault(object instance, string propertyName, TaskLoggingHelper Log)
         {
             var instanceType = instance.GetType();

@@ -56,13 +56,6 @@
 
   <ItemGroup>
 
-    <PackageReference Include="Fody" Version="6.2.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-
-    <PackageReference Include="ModuleInit.Fody" Version="2.1.0" PrivateAssets="all" />
-
     <PackageReference Include="GitVersion.CommandLine" Version="5.3.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

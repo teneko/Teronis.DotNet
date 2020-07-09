@@ -7,7 +7,6 @@ using Teronis.Identity.BearerSignInManaging;
 
 namespace Teronis.Identity.Controllers
 {
-    [ApiController]
     [Route("api/sign-in")]
     public class SignInController : Controller
     {

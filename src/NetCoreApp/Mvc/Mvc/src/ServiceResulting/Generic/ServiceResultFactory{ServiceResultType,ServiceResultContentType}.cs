@@ -4,12 +4,10 @@
         where ServiceResultType : IServiceResult<ServiceResultContentType>
     {
         private readonly ServiceResult serviceResult;
-        private readonly ServiceResultType readOnlyServiceResult;
 
-        public ServiceResultPostConfiguration(ServiceResult serviceResult, ServiceResultType readOnlyServiceResult)
+        public ServiceResultPostConfiguration(ServiceResult serviceResult)
         {
             this.serviceResult = serviceResult;
-            this.readOnlyServiceResult = readOnlyServiceResult;
         }
 
         public IServiceResultPostConfiguration<ServiceResultType, ServiceResultContentType> WithStatusCode(int? statusCode)

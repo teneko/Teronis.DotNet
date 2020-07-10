@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Teronis.Identity.AccountManaging.Datatransjects;
 using Teronis.Identity.Datransjects;
 using Teronis.Identity.Entities;

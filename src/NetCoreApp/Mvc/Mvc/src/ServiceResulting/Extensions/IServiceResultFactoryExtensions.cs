@@ -9,8 +9,9 @@ namespace Teronis.Mvc.ServiceResulting.Extensions
         public static IServiceResultPostConfiguration? WithHttpStatusCode<ServiceResultPostConfigurationType>(this ServiceResultPostConfigurationType serviceResultPostConfiguration, HttpStatusCode statusCode)
             where ServiceResultPostConfigurationType : IServiceResultPostConfiguration
         {
-            if (!ReferenceEquals(serviceResultPostConfiguration, default(ServiceResultPostConfigurationType)))
+            if (!ReferenceEquals(serviceResultPostConfiguration, default(ServiceResultPostConfigurationType))) {
                 serviceResultPostConfiguration.WithStatusCode((int)statusCode);
+            }
 
             return serviceResultPostConfiguration;
         }

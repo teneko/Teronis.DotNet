@@ -8,8 +8,8 @@ namespace Teronis.Windows.Hooks
 {
     public class KeyboardHookManager
     {
-        KeyboardHook keyboardHook;
-        IDictionary<int, TParentHotkeyInvoker> registeredHotkeys;
+        readonly KeyboardHook keyboardHook;
+        readonly IDictionary<int, TParentHotkeyInvoker> registeredHotkeys;
         TParentHotkeyInvoker pressedHotkey = null;
 
         public KeyboardHookManager(System.Reflection.Assembly executingAssembly)
@@ -37,8 +37,9 @@ namespace Teronis.Windows.Hooks
                 //
                 return false;
             })) {
-                if (registeredHotkeys.Count == 0)
+                if (registeredHotkeys.Count == 0) {
                     start();
+                }
 
                 int id = 0;
 
@@ -60,11 +61,13 @@ namespace Teronis.Windows.Hooks
             if (registeredHotkeys.TryGetValue(registeredHotkeyId, out TParentHotkeyInvoker hotkeyInvoker) && hotkeyInvoker.Counter == 1) {
                 registeredHotkeys.Remove(registeredHotkeyId);
 
-                if (registeredHotkeys.Count == 0)
+                if (registeredHotkeys.Count == 0) {
                     stop();
+                }
             } else {
-                if (hotkeyInvoker != null)
+                if (hotkeyInvoker != null) {
                     hotkeyInvoker.Counter--;
+                }
             }
         }
 
@@ -72,10 +75,12 @@ namespace Teronis.Windows.Hooks
         {
             //Console.WriteLine($"DOWN control: {args.Control} alt: {args.Alt} shift: {args.Shift} keycode: {args.KeyCode} keydata: {args.KeyData} modifiers: {args.Modifiers} suppressKeyPress: {args.SuppressKeyPress}");
 
-            if (pressedHotkey != null)
+            if (pressedHotkey != null) {
                 return;
+            }
 
-            Func<bool> doesRegisteredHotkeysHaveAny = () => {
+            bool doesRegisteredHotkeysHaveAny()
+            {
                 return registeredHotkeys.Any(x => {
                     var keyArgs = x.Value.KeyEventArgs;
 
@@ -88,7 +93,7 @@ namespace Teronis.Windows.Hooks
                     //
                     return false;
                 });
-            };
+            }
 
             if (doesRegisteredHotkeysHaveAny()) {
                 pressedHotkey.Invoke(EHotkeyState.Down);
@@ -101,15 +106,17 @@ namespace Teronis.Windows.Hooks
         {
             //Console.WriteLine($"UP control: {e.Control} alt: {e.Alt} shift: {e.Shift} keycode: {e.KeyCode} keydata: {e.KeyData} modifiers: {e.Modifiers} suppressKeyPress: {e.SuppressKeyPress}");
 
-            if (pressedHotkey == null)
+            if (pressedHotkey == null) {
                 return;
+            }
 
-            Func<bool> isOnlyModifier = () => {
+            bool isOnlyModifier()
+            {
                 return (pressedHotkey.KeyEventArgs.Modifiers == EKeyboardModifier.Control && (e.KeyCode == Keys.LControlKey || e.KeyCode == Keys.RControlKey))
-                || (pressedHotkey.KeyEventArgs.Modifiers == EKeyboardModifier.Shift && (e.KeyCode == Keys.LShiftKey || e.KeyCode == Keys.RShiftKey))
-                || ((pressedHotkey.KeyEventArgs.Modifiers & EKeyboardModifier.Alt) == EKeyboardModifier.Alt && (e.KeyCode == Keys.LMenu || e.KeyCode == Keys.RMenu))
-                || pressedHotkey.KeyEventArgs.Modifiers == EKeyboardModifier.None;
-            };
+                    || (pressedHotkey.KeyEventArgs.Modifiers == EKeyboardModifier.Shift && (e.KeyCode == Keys.LShiftKey || e.KeyCode == Keys.RShiftKey))
+                    || ((pressedHotkey.KeyEventArgs.Modifiers & EKeyboardModifier.Alt) == EKeyboardModifier.Alt && (e.KeyCode == Keys.LMenu || e.KeyCode == Keys.RMenu))
+                    || pressedHotkey.KeyEventArgs.Modifiers == EKeyboardModifier.None;
+            }
 
             if (isOnlyModifier()) {
                 releaseKeyDown();
@@ -127,22 +134,26 @@ namespace Teronis.Windows.Hooks
 
         private void start()
         {
-            if (!keyboardHook.IsStarted)
+            if (!keyboardHook.IsStarted) {
                 keyboardHook.Start();
+            }
         }
 
         private void stop()
         {
-            if (keyboardHook.IsStarted)
+            if (keyboardHook.IsStarted) {
                 keyboardHook.Stop();
+            }
         }
 
         private class TParentHotkeyInvoker : TParentHotkey
         {
             public static TParentHotkeyInvoker Create(int id, TKeyEventArgs keyEventArgs, Action<TChildHotkey> unregister)
             {
-                var hotkeyInvoker = new TParentHotkeyInvoker(id, keyEventArgs, out Action<EHotkeyState> invokeHotkey, unregister);
-                hotkeyInvoker.Invoke = invokeHotkey;
+                var hotkeyInvoker = new TParentHotkeyInvoker(id, keyEventArgs, out Action<EHotkeyState> invokeHotkey, unregister) {
+                    Invoke = invokeHotkey
+                };
+
                 return hotkeyInvoker;
             }
 
@@ -169,8 +180,8 @@ namespace Teronis.Windows.Hooks
         public int Id { get; private set; }
         public TKeyEventArgs KeyEventArgs { get; private set; }
 
-        Action<TChildHotkey> unregister;
-        List<TChildHotkeyInvoker> hotkeys;
+        readonly Action<TChildHotkey> unregister;
+        readonly List<TChildHotkeyInvoker> hotkeys;
 
         public TParentHotkey(int id, TKeyEventArgs keyEventArgs, out Action<EHotkeyState> invokeHotkeyFired, Action<TChildHotkey> unregister)
         {
@@ -187,11 +198,13 @@ namespace Teronis.Windows.Hooks
         /// <param name="hotkeyState">false=down; true=up;</param>
         private void invokeHotkeyFired(EHotkeyState hotkeyState)
         {
-            foreach (var hotkey in hotkeys)
-                if (hotkeyState == EHotkeyState.Down)
+            foreach (var hotkey in hotkeys) {
+                if (hotkeyState == EHotkeyState.Down) {
                     hotkey.InvokeHotkeyDownFired();
-                else
+                } else {
                     hotkey.InvokeHotkeyUpFired();
+                }
+            }
         }
 
         protected TChildHotkey registerChildren(TParentHotkey parentHotkey)
@@ -229,8 +242,7 @@ namespace Teronis.Windows.Hooks
         public event Action HotkeyUpFired;
 
         public TParentHotkey ParentHotkey;
-
-        Action<TChildHotkey> unregister;
+        readonly Action<TChildHotkey> unregister;
 
         public TChildHotkey(Action<TChildHotkey> unregister)
         {

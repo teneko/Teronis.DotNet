@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Teronis.Data;
 
 namespace Teronis.EntityFrameworkCore.Data
@@ -61,8 +61,9 @@ namespace Teronis.EntityFrameworkCore.Data
 
         private void attachEntity(EntityType entity)
         {
-            if (DbContext.Entry(entity).State == EntityState.Detached)
+            if (DbContext.Entry(entity).State == EntityState.Detached) {
                 DbSet.Attach(entity);
+            }
         }
 
         public virtual void Remove(EntityType entity)
@@ -73,8 +74,9 @@ namespace Teronis.EntityFrameworkCore.Data
 
         public virtual void RemoveRange(params EntityType[] entities)
         {
-            foreach (var entity in entities)
+            foreach (var entity in entities) {
                 attachEntity(entity);
+            }
 
             DbSet.RemoveRange(entities);
         }

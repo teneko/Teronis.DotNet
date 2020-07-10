@@ -107,8 +107,9 @@ namespace Teronis.Extensions
                 }
 
                 // Continue if new keys are not wished to be added to left.
-                if (!addNewKeys && leftKeys.Contains(key))
+                if (!addNewKeys && leftKeys.Contains(key)) {
                     continue;
+                }
 
                 left[key] = right[key];
             }

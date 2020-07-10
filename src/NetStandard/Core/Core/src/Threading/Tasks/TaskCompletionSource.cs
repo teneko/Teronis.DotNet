@@ -9,7 +9,7 @@ namespace Teronis.Threading.Tasks
     {
         public Task Task => tcs.Task;
 
-        private TaskCompletionSource<object?> tcs;
+        private readonly TaskCompletionSource<object?> tcs;
 
         public TaskCompletionSource() => tcs = new TaskCompletionSource<object?>();
         public TaskCompletionSource(object state) => tcs = new TaskCompletionSource<object?>(state);

@@ -12,12 +12,15 @@ namespace Teronis.Windows.Templating
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
 
-            if (item is DialogFooterOkViewModel)
+            if (item is DialogFooterOkViewModel) {
                 return OkTemplate;
-            if (item is DialogFooterYesNoViewModel)
+            }
+
+            if (item is DialogFooterYesNoViewModel) {
                 return YesNoTemplate;
-            else
+            } else {
                 return base.SelectTemplate(item, container);
+            }
         }
     }
 }

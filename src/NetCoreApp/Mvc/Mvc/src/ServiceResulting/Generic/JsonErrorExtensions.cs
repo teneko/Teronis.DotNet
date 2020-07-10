@@ -20,7 +20,7 @@
         public static IServiceResultPostConfiguration<ServiceResult<ContentType>, ContentType> ToServiceResultFactory<ContentType>(this JsonError? error)
         {
             var serviceResult = ServiceResult<ContentType>.Failure(error);
-            return new ServiceResultPostConfiguration<ServiceResult<ContentType>, ContentType>(serviceResult, serviceResult);
+            return new ServiceResultPostConfiguration<ServiceResult<ContentType>, ContentType>(serviceResult);
         }
     }
 }

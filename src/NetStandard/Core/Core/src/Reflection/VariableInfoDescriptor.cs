@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.ComponentModel;
+using System.Reflection;
 
 namespace Teronis.Reflection
 {
@@ -59,11 +59,14 @@ namespace Teronis.Reflection
 
         private void throwExceptionIfSealed()
         {
-            if (IsSealed)
+            if (IsSealed) {
                 throw new Exception("This instance is already sealed");
+            }
         }
 
+#pragma warning disable IDE0051 // Nicht verwendete private Member entfernen because of Fody
         private void OnPropertyChanging(string propertyName)
+#pragma warning restore IDE0051 // Nicht verwendete private Member entfernen because of Fody
         {
             throwExceptionIfSealed();
             PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(propertyName));

@@ -30,7 +30,7 @@ namespace Teronis.Tools
         [return: MaybeNull]
         internal static ValueType GetFieldValue<ValueType>(object instance, string fieldName, BindingFlags flags = 0)
         {
-            var pi = instance.GetType().GetField(fieldName, 0);
+            var pi = instance.GetType().GetField(fieldName, flags);
             return (ValueType)pi?.GetValue(instance);
         }
     }

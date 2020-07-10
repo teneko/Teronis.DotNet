@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using CommandLine;
+﻿using CommandLine;
 
 namespace Teronis.DotNet.Build.CommandOptions
 {

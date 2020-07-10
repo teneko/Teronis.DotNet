@@ -21,10 +21,11 @@ namespace Teronis.Windows.Controls
 
                 ListViewTreeColumn.SetBinding(gridViewColumn, displayMemberBinding);
 
-                if (columnDefinition.DataTemplate != null)
+                if (columnDefinition.DataTemplate != null) {
                     gridViewColumn.CellTemplate = columnDefinition.DataTemplate;
-                else
+                } else {
                     gridViewColumn.CellTemplateSelector = columnDefinition.DataTemplateSelector;
+                }
 
                 gridView.Columns.Add(gridViewColumn);
             }

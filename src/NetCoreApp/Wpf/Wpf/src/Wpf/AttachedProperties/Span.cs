@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
-using SpanControl = System.Windows.Documents.Span;
 using RunControl = System.Windows.Documents.Run;
+using SpanControl = System.Windows.Documents.Span;
 
 namespace Teronis.Wpf.AttachedProperties
 {
@@ -30,11 +30,13 @@ namespace Teronis.Wpf.AttachedProperties
             var skipTrimEnd = Run.GetSkipTrimEnd(run);
             var text = run.Text;
 
-            if (!skipTrimStart && text.FirstOrDefault() == ' ')
+            if (!skipTrimStart && text.FirstOrDefault() == ' ') {
                 text = text.Substring(1);
+            }
 
-            if (!skipTrimEnd && text.LastOrDefault() == ' ')
-                text = text.Substring(0, text.Length - 1);
+            if (!skipTrimEnd && text.LastOrDefault() == ' ') {
+                text = text[0..^1];
+            }
 
             run.Text = text;
         }
@@ -48,8 +50,9 @@ namespace Teronis.Wpf.AttachedProperties
                 .OfType<RunControl>()
                 .ToList();
 
-            foreach (var run in runs)
+            foreach (var run in runs) {
                 TrimRunWhitespace(run);
+            }
         }
     }
 }

@@ -6,7 +6,8 @@ namespace Teronis
 {
     public static partial class ShortException
     {
-        public static ArgumentNullException ArgumentNullException(Expression<Func<object?>> propertySelector, string? message = null) {
+        public static ArgumentNullException ArgumentNullException(Expression<Func<object?>> propertySelector, string? message = null)
+        {
             var propertyName = ExpressionTools.GetReturnName(propertySelector);
             return new ArgumentNullException(propertyName, message);
         }

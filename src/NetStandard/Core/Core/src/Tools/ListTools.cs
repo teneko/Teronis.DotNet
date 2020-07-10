@@ -10,7 +10,8 @@ namespace Teronis.Tools
         /// </summary>
         public static bool SwapItem(int fromIndex, int toIndex, Action<int, object?> insertAt, Func<int, object?> getAt, Action<int> removeAt)
         {
-            Action<int, int> swap = (smallerIndex, biggerIndex) => {
+            void swap(int smallerIndex, int biggerIndex)
+            {
                 var smallerItem = getAt(smallerIndex);
                 var biggerItem = getAt(biggerIndex);
 
@@ -18,11 +19,11 @@ namespace Teronis.Tools
                 removeAt(smallerIndex);
                 insertAt(smallerIndex, biggerItem);
                 insertAt(biggerIndex, smallerItem);
-            };
+            }
 
-            if (fromIndex == toIndex)
+            if (fromIndex == toIndex) {
                 return false;
-            else {
+            } else {
                 var sortedList = new List<int> { fromIndex, toIndex };
                 sortedList.Sort();
                 swap(sortedList[0], sortedList[1]);

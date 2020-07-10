@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Teronis.Collections.DataSources.Generic
 {
     public class ParallelDataSources<DataType> : AsyncDataSource<DataType>
     {
-        private IEnumerable<IAsyncDataSource<DataType>> asyncDataSources;
+        private readonly IEnumerable<IAsyncDataSource<DataType>> asyncDataSources;
         //private CancellationTokenSource asyncDataSourcesCancellationTokenSource;
 
         public ParallelDataSources(IEnumerable<IAsyncDataSource<DataType>> asyncDataSources, ILogger? logger = null)
@@ -30,8 +30,9 @@ namespace Teronis.Collections.DataSources.Generic
 
             var dictionary = new Dictionary<Task, IAsyncEnumerator<DataType>>();
 
-            foreach (var asyncEnumerator in asyncEnumerators)
+            foreach (var asyncEnumerator in asyncEnumerators) {
                 dictionary.Add(asyncEnumerator.MoveNextAsync().AsTask(), asyncEnumerator);
+            }
 
             try {
                 //entry:

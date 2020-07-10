@@ -1,18 +1,18 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using ComponentDataValidationContext = System.ComponentModel.DataAnnotations.ValidationContext;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
-using Teronis.Identity.Extensions;
-using Teronis.ObjectModel.Annotations;
-using Teronis.Identity.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Linq;
-using Teronis.Mvc.ServiceResulting.Generic;
+using Teronis.Identity.Entities;
+using Teronis.Identity.Extensions;
 using Teronis.Mvc.ServiceResulting;
+using Teronis.Mvc.ServiceResulting.Generic;
+using Teronis.ObjectModel.Annotations;
+using ComponentDataValidationContext = System.ComponentModel.DataAnnotations.ValidationContext;
 
 namespace Teronis.Identity.AccountManaging
 {
@@ -22,7 +22,6 @@ namespace Teronis.Identity.AccountManaging
         where RoleType : class, IAccountRoleEntity
     {
         private readonly ErrorDetailsProvider errorDetailsProvider;
-        private readonly AccountManagerOptions accountManagerOptions;
         private readonly DbContextType dbContext;
         private readonly UserManager<UserType> userManager;
         private readonly RoleManager<RoleType> roleManager;
@@ -31,7 +30,6 @@ namespace Teronis.Identity.AccountManaging
         public AccountManager(IOptions<AccountManagerOptions> accountManagerOptions, DbContextType dbContext, UserManager<UserType> userManager, RoleManager<RoleType> roleManager, ILogger<AccountManager<DbContextType, UserType, RoleType>>? logger = null)
         {
             errorDetailsProvider = new ErrorDetailsProvider(() => accountManagerOptions.Value.IncludeErrorDetails, logger);
-            this.accountManagerOptions = accountManagerOptions.Value;
             // We ensure, that this instance is not tracking user or role. But it does not
             // prevent that the user manager and the role manager are tracking them. So we
             // have to try to get first the local tracked entity before we get an untracked
@@ -47,7 +45,7 @@ namespace Teronis.Identity.AccountManaging
         private async Task<IServiceResult<RoleType>> loadRoleByNameAsync(string roleName)
         {
             try {
-                var createdRoleEntity =  dbContext.Set<RoleType>().Local.SingleOrDefault(x => x.RoleName == roleName) ??
+                var createdRoleEntity = dbContext.Set<RoleType>().Local.SingleOrDefault(x => x.RoleName == roleName) ??
                     await roleManager.FindByNameAsync(roleName);
 
                 return ServiceResult<RoleType>
@@ -144,7 +142,7 @@ namespace Teronis.Identity.AccountManaging
 
                 try {
                     var userResult = await userManager.CreateAsync(userEntity, password);
-                    
+
                     if (!userResult.Succeeded) {
                         var resultJsonErrors = userResult.ToJsonErrors();
                         resultJsonErrors.Insert(0, insensitiveErrorMessage.ToJsonError());

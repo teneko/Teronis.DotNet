@@ -13,8 +13,8 @@ namespace Teronis.ObjectModel.Updates
 
         public bool IsWorking => workStatus.IsWorking;
 
-        private WorkStatus workStatus;
-        private PropertyChangedRelay propertyChangedRelay;
+        private readonly WorkStatus workStatus;
+        private readonly PropertyChangedRelay propertyChangedRelay;
 
         /// <summary>
         /// We want to assure, that when a work status is passed, that it is not null by accident.

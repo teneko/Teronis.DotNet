@@ -93,7 +93,7 @@ namespace Teronis.Identity.BearerSignInManaging
         {
             var findRefreshTokenIdResult = BearerSignInManagerTools.FindRefreshTokenId(context.Principal);
 
-            if (findRefreshTokenIdResult.Succeeded)
+            if (findRefreshTokenIdResult.Succeeded) {
                 try {
                     await TryDeleteExpiredRefreshTokensAsync(context);
 
@@ -108,7 +108,7 @@ namespace Teronis.Identity.BearerSignInManaging
                     context.SetResult(errorDetailsProvider.LogErrorThenBuildAppropiateError<object>(error, "The refresh token could not be deleted.")
                         .WithHttpStatusCode(HttpStatusCode.InternalServerError));
                 }
-            else {
+            } else {
                 context.SetResult()
                     .ToFailure(findRefreshTokenIdResult);
             }

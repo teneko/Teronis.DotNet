@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Teronis.Extensions
+﻿namespace Teronis.Extensions
 {
     public static class IntegerExtensions
     {

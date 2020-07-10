@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Linq;
-using Teronis.Collections.Specialized;
-using Teronis.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using Teronis.Collections.ObjectModel;
+using Teronis.Collections.Specialized;
 
 namespace Teronis.Collections.Generic
 {
@@ -241,8 +241,9 @@ namespace Teronis.Collections.Generic
         /// <param name="index">The index of the key-value pair to remove from the dictionary.</param>
         public void RemoveAt(int index)
         {
-            if (index < 0 || index >= keyedCollection.Count)
+            if (index < 0 || index >= keyedCollection.Count) {
                 throw new ArgumentException("The index was outside the bounds of the dictionary: " + index);
+            }
 
             keyedCollection.RemoveAt(index);
         }
@@ -254,8 +255,10 @@ namespace Teronis.Collections.Generic
         [return: MaybeNull]
         public V GetValue(K key)
         {
-            if (keyedCollection.Contains(key) == false)
+            if (keyedCollection.Contains(key) == false) {
                 throw new ArgumentException("The given key is not present in the dictionary: " + key);
+            }
+
             var kvp = keyedCollection[key];
             return kvp.Value;
         }

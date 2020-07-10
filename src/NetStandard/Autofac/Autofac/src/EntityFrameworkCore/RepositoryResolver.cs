@@ -6,7 +6,7 @@ namespace Teronis.EntityFrameworkCore
 {
     public class RepositoryResolver : IRepositoryResolver
     {
-        private ILifetimeScope lifetimeScope;
+        private readonly ILifetimeScope lifetimeScope;
 
         public RepositoryResolver(ILifetimeScope lifetimeScope)
             => this.lifetimeScope = lifetimeScope;

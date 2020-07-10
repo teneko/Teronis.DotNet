@@ -28,8 +28,8 @@ namespace Teronis.Collections.Synchronization
         public IList<ContentType> ContentList { get; private set; }
         public IEqualityComparer<ContentType> EqualityComparer { get; private set; }
 
-        private WorkStatus workStatus;
-        private PropertyChangedRelay propertyChangedRelay;
+        private readonly WorkStatus workStatus;
+        private readonly PropertyChangedRelay propertyChangedRelay;
 
         public CollectionSynchronisation(IList<ItemType> initialItemCollection, IList<ContentType> initialContentCollection, IEqualityComparer<ContentType>? equalityComparer)
         {
@@ -125,10 +125,11 @@ namespace Teronis.Collections.Synchronization
 
             void moveItem<T>(IList<T> list)
             {
-                if (list is ObservableCollection<ItemType> observableList)
+                if (list is ObservableCollection<ItemType> observableList) {
                     observableList.Move(change.OldIndex, change.NewIndex);
-                else
+                } else {
                     list.Move(change.OldIndex, change.NewIndex);
+                }
             }
 
             moveItem(ItemList);
@@ -147,15 +148,16 @@ namespace Teronis.Collections.Synchronization
             var newContentList = change.NewItems ?? throw new ArgumentNullException(nameof(change.NewItems));
             var newItemList = newContentList.Select(x => CreateItem(x));
 
-            void resetList<T>(IList<T> list, IEnumerable<T> newList)
+            static void resetList<T>(IList<T> list, IEnumerable<T> newList)
             {
                 list.Clear();
 
                 if (list is List<T> typedList) {
                     typedList.AddRange(newList);
                 } else {
-                    foreach (var item in newList)
+                    foreach (var item in newList) {
                         list.Add(item);
+                    }
                 }
             }
 
@@ -266,7 +268,7 @@ namespace Teronis.Collections.Synchronization
 
         private IEnumerable<CollectionChange<ContentType, ContentType>> getCollectionChanges(IEnumerable<ContentType> items)
         {
-            items = items ?? Enumerable.Empty<ContentType>();
+            items ??= Enumerable.Empty<ContentType>();
 
             //var cachedCollection = new List<TItem>(Collection);
             //var list = items.Take(5).ToList();
@@ -300,8 +302,8 @@ namespace Teronis.Collections.Synchronization
         public virtual void Synchronize(IEnumerable<ContentType> items) =>
             AsyncHelper.RunSynchronous(() => SynchronizeAsync(Task.FromResult(items).AsITask()));
 
-        public ParentsPicker GetParentsPicker()
-            => new ParentsPicker(this, WantParents);
+        public ParentsPicker GetParentsPicker() =>
+            new ParentsPicker(this, WantParents);
 
         protected class ApplyingCollectionChangeBundle
         {
@@ -337,13 +339,13 @@ namespace Teronis.Collections.Synchronization
         {
             public event EventHandler<object, CollectionChangeConversionAppliedEventArgs<ItemType, ContentType, OriginContentType>>? CollectionChangeConversionApplied;
 
-            private CollectionSynchronisation<ItemType, ContentType> synchronizer;
+            private readonly CollectionSynchronisation<ItemType, ContentType> synchronizer;
 
-            internal protected ConversionAdapter(CollectionSynchronisation<ItemType, ContentType> synchronizer)
-                => this.synchronizer = synchronizer;
+            internal protected ConversionAdapter(CollectionSynchronisation<ItemType, ContentType> synchronizer) =>
+                this.synchronizer = synchronizer;
 
-            protected void OnCollectionChangeConversionApplied(CollectionChangeConversionAppliedEventArgs<ItemType, ContentType, OriginContentType> args)
-                => CollectionChangeConversionApplied?.Invoke(this, args);
+            protected void OnCollectionChangeConversionApplied(CollectionChangeConversionAppliedEventArgs<ItemType, ContentType, OriginContentType> args) =>
+                CollectionChangeConversionApplied?.Invoke(this, args);
 
             private ApplyingCollectionChangeBundle createApplyingCollectionChangeConversionBundle(ICollectionChangeBundle<ContentType, OriginContentType> originBundle)
             {

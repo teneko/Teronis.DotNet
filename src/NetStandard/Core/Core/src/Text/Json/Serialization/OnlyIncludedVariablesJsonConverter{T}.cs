@@ -13,7 +13,7 @@ namespace Teronis.Text.Json.Serialization
         protected Dictionary<Type, HashSet<string>> IncludedVariablesByTypeList =>
            variablesInclusionHelper.VariablesByTypeList;
 
-        private VariablesClusionHelper variablesInclusionHelper;
+        private readonly VariablesClusionHelper variablesInclusionHelper;
 
         public OnlyIncludedVariablesJsonConverter() =>
             variablesInclusionHelper = new VariablesClusionHelper();

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Globalization;
-using Teronis.Extensions;
-using System.Windows.Data;
 using System.Security;
+using System.Windows.Data;
+using Teronis.Extensions;
 
 namespace Teronis.Windows.Data
 {
@@ -10,22 +10,24 @@ namespace Teronis.Windows.Data
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null)
+            if (value == null) {
                 return null;
-            else if (value is SecureString securedString)
+            } else if (value is SecureString securedString) {
                 return securedString.ToUnsecureString();
-            else
+            } else {
                 throw new ArgumentException($"Value is not of type {typeof(SecureString)}");
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null)
+            if (value == null) {
                 return null;
-            else if (value is string unsecuredString)
+            } else if (value is string unsecuredString) {
                 return unsecuredString.ToSecureString();
-            else
+            } else {
                 throw new ArgumentException($"Value is not of type {typeof(string)}");
+            }
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Teronis.Managment
         public event Action<Process>? ProcessCreated;
 
         ManagementEventWatcher mew;
-        string processName;
+        readonly string processName;
 
         public ProcessInvocationListener(string processName)
         {

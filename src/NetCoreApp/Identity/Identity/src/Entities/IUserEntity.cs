@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Teronis.Identity.Entities
+﻿namespace Teronis.Identity.Entities
 {
     public interface IUserEntity
     {

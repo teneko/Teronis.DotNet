@@ -1,10 +1,10 @@
-﻿using Force.Crc32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Force.Crc32;
 using Teronis.Extensions;
 using Teronis.Tools;
 
@@ -16,7 +16,7 @@ namespace Teronis.Drawing
 
         public BitmapShot(IBitmapData bitmapData) => BitmapData = bitmapData;
 
-        public delegate IEnumerable<Pixel> DelegateIteratePixelsAny([Optional]int? nX, [Optional] int? nY, [Optional] int? nWidth, [Optional] int? nHeight, [Optional] int? nYHeight, [Optional] int? nXWidth, [Optional] Rectangle? nRect, [Optional] bool nCircle, [Optional] IList<Point> nPolygon, [Optional] List<ITwoDimensionalPattern> twoDPatterns, [Optional] int? maxPixelAmount, [Optional] bool crop, [Optional] IEnumerable<RGBColor> colors, [Optional] bool negateColorResult, [Optional] IEnumerable<ColorTranslation> translateColor, [Optional] IEnumerable<Area> excludedAreas, [Optional] bool precalculated, [Optional] bool debug, [Optional] ECancelScanIteration cancelScanIteration);
+        public delegate IEnumerable<Pixel> DelegateIteratePixelsAny([Optional] int? nX, [Optional] int? nY, [Optional] int? nWidth, [Optional] int? nHeight, [Optional] int? nYHeight, [Optional] int? nXWidth, [Optional] Rectangle? nRect, [Optional] bool nCircle, [Optional] IList<Point> nPolygon, [Optional] List<ITwoDimensionalPattern> twoDPatterns, [Optional] int? maxPixelAmount, [Optional] bool crop, [Optional] IEnumerable<RGBColor> colors, [Optional] bool negateColorResult, [Optional] IEnumerable<ColorTranslation> translateColor, [Optional] IEnumerable<Area> excludedAreas, [Optional] bool precalculated, [Optional] bool debug, [Optional] ECancelScanIteration cancelScanIteration);
 
         /// <summary>Any passed points here (<paramref name="nX"/>, <paramref name="nY"/>, ...) must be passed from the top left corner of the window that has been passed by handle (<see cref="WindowHandle"/>) previously.</summary>
         /// <param name="nX">Fill one or more of <paramref name="nX"/>,<paramref name="nY"/>, <paramref name="nWidth"/> and <paramref name="nHeight"/> OR ONLY <paramref name="nRect"/>, <paramref name="nEllipse"/> or <paramref name="nPolygon"/>.</param>
@@ -38,7 +38,7 @@ namespace Teronis.Drawing
         /// <param name="debug">Not implemented right now.</param>
         /// <param name="cancelScanIteration">When set true and you ususally would get an error because you passed to big area you are getting an IndexOutOfRange excpetion you can catch. Otherwise the error is getting ignored and you receive zero pixels.</param>
         /// <returns>Returns an IEnumerable you can loop. The items are returned by yield.</returns>
-        public IEnumerable<Pixel> IteratePixelsAny([Optional]int? nX, [Optional] int? nY, [Optional] int? nWidth, [Optional] int? nHeight, [Optional] int? nYHeight, [Optional] int? nXWidth, [Optional] Rectangle? nRect, [Optional]bool nEllipse, [Optional] IList<Point> nPolygon, [Optional] List<ITwoDimensionalPattern> twoDPatterns, [Optional] int? maxPixelAmount, [Optional] bool crop, [Optional] IEnumerable<RGBColor> colors, [Optional] bool negateColorResult, [Optional] IEnumerable<ColorTranslation> translateColorList, [Optional] IEnumerable<Area> excludedAreas, [Optional] bool precalculated, [Optional] bool debug, [Optional] ECancelScanIteration cancelScanIteration)
+        public IEnumerable<Pixel> IteratePixelsAny([Optional] int? nX, [Optional] int? nY, [Optional] int? nWidth, [Optional] int? nHeight, [Optional] int? nYHeight, [Optional] int? nXWidth, [Optional] Rectangle? nRect, [Optional] bool nEllipse, [Optional] IList<Point> nPolygon, [Optional] List<ITwoDimensionalPattern> twoDPatterns, [Optional] int? maxPixelAmount, [Optional] bool crop, [Optional] IEnumerable<RGBColor> colors, [Optional] bool negateColorResult, [Optional] IEnumerable<ColorTranslation> translateColorList, [Optional] IEnumerable<Area> excludedAreas, [Optional] bool precalculated, [Optional] bool debug, [Optional] ECancelScanIteration cancelScanIteration)
         {
             try {
                 Area.VerifyValues(this, ref nX, ref nY, ref nWidth, ref nHeight, nRect, nEllipse, nPolygon, cancelScanIteration, ref precalculated, ref nYHeight, ref nXWidth);
@@ -52,35 +52,40 @@ namespace Teronis.Drawing
             var debugDict = new Dictionary<uint, string>();
             var pixelCounter = 0;
 
-            if (twoDPatterns != null && twoDPatterns.Count > 0)
+            if (twoDPatterns != null && twoDPatterns.Count > 0) {
                 twoDPatterns.Add(null);
-            else if (twoDPatterns != null && twoDPatterns.Count == 0)
+            } else if (twoDPatterns != null && twoDPatterns.Count == 0) {
                 twoDPatterns = null;
+            }
 
             for (var lineY = (int)nY; lineY < nYHeight; lineY++) {
                 for (var lineX = (int)nX; lineX < nXWidth; lineX++) {
-                    if (maxPixelAmount != null && pixelCounter == maxPixelAmount)
+                    if (maxPixelAmount != null && pixelCounter == maxPixelAmount) {
                         goto exit;
+                    }
 
                     var point = new Point(lineX, lineY);
 
                     getClrBytes(lineX, lineY, out byte r, out byte g, out byte b, out byte _);
 
-                    if (debug)
+                    if (debug) {
                         debugDict[Crc32CAlgorithm.Compute(new byte[] { r, g, b })] = $"{point.X}/{point.Y} -> {r} {g} {b}";
+                    }
 
                     if (colors != null) {
                         foreach (var color in colors) {
                             if (color.Compare(r, g, b)) {
-                                if (negateColorResult)
+                                if (negateColorResult) {
                                     goto @continue;
-                                else
+                                } else {
                                     goto success;
+                                }
                             }
                         }
 
-                        if (negateColorResult)
+                        if (negateColorResult) {
                             goto success;
+                        }
 
                         goto @continue;
 
@@ -99,16 +104,19 @@ namespace Teronis.Drawing
                     }
 
                     if (nPolygon != null && !nPolygon.IsInPolygon(point)) // sort out points that are not in polygon/ellipse
+{
                         continue;
-                    else if (nEllipse && !RectangleTools.IsRectangleInEllipse((int)nX, (int)nY, (int)nWidth, (int)nHeight, lineX, lineY))
+                    } else if (nEllipse && !RectangleTools.IsRectangleInEllipse((int)nX, (int)nY, (int)nWidth, (int)nHeight, lineX, lineY)) {
                         continue;
+                    }
 
                     if (excludedAreas != null) {
                         foreach (var area in excludedAreas) {
                             area.VerifyValues(this);
 
-                            if ((area.nPolygon != null ? area.nPolygon.IsInPolygon(point) : RectangleTools.RectangleContains((int)area.nX, (int)area.nY, (int)area.nWidth, (int)area.nHeight, lineX, lineY, area.nEllipse)))
+                            if ((area.nPolygon != null ? area.nPolygon.IsInPolygon(point) : RectangleTools.RectangleContains((int)area.nX, (int)area.nY, (int)area.nWidth, (int)area.nHeight, lineX, lineY, area.nEllipse))) {
                                 goto @continue;
+                            }
                         }
                     }
 
@@ -116,8 +124,9 @@ namespace Teronis.Drawing
                         int twoDPatternsIndex = 0;
 
                         for (twoDPatternsIndex = 0; twoDPatternsIndex < twoDPatterns.Count; twoDPatternsIndex++) {
-                            if (twoDPatternsIndex == twoDPatterns.Count - 1)
+                            if (twoDPatternsIndex == twoDPatterns.Count - 1) {
                                 goto @continue;
+                            }
 
                             var pattern = twoDPatterns[twoDPatternsIndex];
                             pattern.GetPosition(out var pos);
@@ -125,15 +134,17 @@ namespace Teronis.Drawing
                             pos.Y += lineY;
 
                             if (RectangleTools.RectangleContains((int)nX, (int)nY, (int)nWidth, (int)nHeight, pos.X, pos.Y) && doesPatternContainsColor(pattern, pos.Point)) {
-                                if (twoDPatterns[twoDPatternsIndex + 1] == null)
+                                if (twoDPatterns[twoDPatternsIndex + 1] == null) {
                                     break;
-                                else
+                                } else {
                                     continue;
+                                }
                             } else {
                                 while (twoDPatterns[twoDPatternsIndex] != null) { twoDPatternsIndex++; };
 
-                                if (twoDPatternsIndex == twoDPatterns.Count - 1)
+                                if (twoDPatternsIndex == twoDPatterns.Count - 1) {
                                     goto @continue;
+                                }
                             }
                         }
                     }
@@ -143,8 +154,9 @@ namespace Teronis.Drawing
                         point.Y -= (int)nY;
                     }
 
-                    if (maxPixelAmount != null)
+                    if (maxPixelAmount != null) {
                         pixelCounter++;
+                    }
 
                     yield return new Pixel(new RGBColor(r, g, b), new Position(IntPtr.Zero, EPointType.Client, point));
 
@@ -153,8 +165,9 @@ namespace Teronis.Drawing
                 }
             }
 
-            if (debug)
-                System.IO.File.WriteAllLines($"debug/debug file at {DateTime.Now.Ticks.ToString()}.txt", debugDict.Select(x => x.Value));
+            if (debug) {
+                System.IO.File.WriteAllLines($"debug/debug file at {DateTime.Now.Ticks}.txt", debugDict.Select(x => x.Value));
+            }
 
             exit:
             ;
@@ -177,8 +190,9 @@ namespace Teronis.Drawing
                 getClrBytes(patternPoint.X, patternPoint.Y, out byte subR, out byte subG, out byte subB, out byte _);
                 pattern.GetColor(out var color);
 
-                if (!color.Compare(subR, subG, subB))
+                if (!color.Compare(subR, subG, subB)) {
                     return false;
+                }
             }
             //
             return true;
@@ -210,9 +224,9 @@ namespace Teronis.Drawing
             return list;
         }
 
-        public delegate Bitmap DelegateBuildBitmapAny([Optional]int? nX, [Optional] int? nY, [Optional] int? nWidth, [Optional] int? nHeight, [Optional] int? nYHeight, [Optional] int? nXWidth, [Optional] Rectangle? nRect, [Optional] bool nCircle, [Optional] IList<Point> nPolygon, [Optional] List<ITwoDimensionalPattern> twoDPatterns, [Optional] int? maxPixelAmount, [Optional] bool crop, [Optional] IEnumerable<RGBColor> colors, [Optional] bool negateColorResult, [Optional] IEnumerable<ColorTranslation> translateColorList, [Optional] IEnumerable<Area> excludedAreas, [Optional] bool precalculated, [Optional] bool debug, [Optional] ECancelScanIteration cancelScanIteration);
+        public delegate Bitmap DelegateBuildBitmapAny([Optional] int? nX, [Optional] int? nY, [Optional] int? nWidth, [Optional] int? nHeight, [Optional] int? nYHeight, [Optional] int? nXWidth, [Optional] Rectangle? nRect, [Optional] bool nCircle, [Optional] IList<Point> nPolygon, [Optional] List<ITwoDimensionalPattern> twoDPatterns, [Optional] int? maxPixelAmount, [Optional] bool crop, [Optional] IEnumerable<RGBColor> colors, [Optional] bool negateColorResult, [Optional] IEnumerable<ColorTranslation> translateColorList, [Optional] IEnumerable<Area> excludedAreas, [Optional] bool precalculated, [Optional] bool debug, [Optional] ECancelScanIteration cancelScanIteration);
 
-        public Bitmap BuildBitmapAny([Optional]int? nX, [Optional] int? nY, [Optional] int? nWidth, [Optional] int? nHeight, [Optional] int? nYHeight, [Optional] int? nXWidth, [Optional] Rectangle? nRect, [Optional] bool nEllipse, [Optional] IList<Point> nPolygon, [Optional] List<ITwoDimensionalPattern> twoDPatterns, [Optional] int? maxPixelAmount, [Optional] bool crop, [Optional] IEnumerable<RGBColor> colors, [Optional] bool negateColorResult, [Optional] IEnumerable<ColorTranslation> translateColorList, [Optional] IEnumerable<Area> excludedAreas, [Optional] bool precalculated, [Optional] bool debug, [Optional] ECancelScanIteration cancelScanIteration)
+        public Bitmap BuildBitmapAny([Optional] int? nX, [Optional] int? nY, [Optional] int? nWidth, [Optional] int? nHeight, [Optional] int? nYHeight, [Optional] int? nXWidth, [Optional] Rectangle? nRect, [Optional] bool nEllipse, [Optional] IList<Point> nPolygon, [Optional] List<ITwoDimensionalPattern> twoDPatterns, [Optional] int? maxPixelAmount, [Optional] bool crop, [Optional] IEnumerable<RGBColor> colors, [Optional] bool negateColorResult, [Optional] IEnumerable<ColorTranslation> translateColorList, [Optional] IEnumerable<Area> excludedAreas, [Optional] bool precalculated, [Optional] bool debug, [Optional] ECancelScanIteration cancelScanIteration)
         {
             Area.VerifyValues(this, ref nX, ref nY, ref nWidth, ref nHeight, nRect, nEllipse, nPolygon, cancelScanIteration, ref precalculated, ref nYHeight, ref nXWidth);
 

@@ -25,8 +25,9 @@ namespace Teronis.Windows.Hooks
         {
             wasStarted = IsStarted;
             if (nCode > -1 && (MouseDown != null || MouseUp != null || MouseMove != null)) {
-                if ((bool)wasStarted)
+                if ((bool)wasStarted) {
                     Stop();
+                }
 
                 MouseLLHookStruct mouseHookStruct = (MouseLLHookStruct)Marshal.PtrToStructure(lParam, typeof(MouseLLHookStruct));
 
@@ -47,39 +48,28 @@ namespace Teronis.Windows.Hooks
 
                 switch (eventType) {
                     case MouseEventType.MouseDown:
-                        if (MouseDown != null) {
-                            MouseDown(this, e);
-                        }
+                        MouseDown?.Invoke(this, e);
                         break;
                     case MouseEventType.MouseUp:
-                        if (Click != null) {
-                            Click(this, new EventArgs());
-                        }
-                        if (MouseUp != null) {
-                            MouseUp(this, e);
-                        }
+                        Click?.Invoke(this, new EventArgs());
+                        MouseUp?.Invoke(this, e);
                         break;
                     case MouseEventType.DoubleClick:
-                        if (DoubleClick != null) {
-                            DoubleClick(this, new EventArgs());
-                        }
+                        DoubleClick?.Invoke(this, new EventArgs());
                         break;
                     case MouseEventType.MouseWheel:
-                        if (MouseWheel != null) {
-                            MouseWheel(this, e);
-                        }
+                        MouseWheel?.Invoke(this, e);
                         break;
                     case MouseEventType.MouseMove:
-                        if (MouseMove != null) {
-                            MouseMove(this, e);
-                        }
+                        MouseMove?.Invoke(this, e);
                         break;
                     default:
                         break;
                 }
 
-                if ((bool)wasStarted)
+                if ((bool)wasStarted) {
                     Start();
+                }
             }
             wasStarted = null;
             return CallNextHookEx(_handleToHook, nCode, wParam, lParam);

@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using MorseCode.ITask;
 using Teronis.Collections.Synchronization.Example1.Models;
-using Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollections;
 using Teronis.Extensions;
 using Teronis.ObjectModel.Updates;
 

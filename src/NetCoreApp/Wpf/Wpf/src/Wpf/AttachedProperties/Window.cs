@@ -10,10 +10,9 @@ namespace Teronis.Wpf.AttachedProperties
             DependencyObject d,
             DependencyPropertyChangedEventArgs e)
         {
-            var window = d as WindowControl;
-
-            if (window != null && window.IsModal())
+            if (d is WindowControl window && window.IsModal()) {
                 window.DialogResult = e.NewValue as bool?;
+            }
         }
 
         public static readonly DependencyProperty DialogResultProperty

@@ -10,7 +10,7 @@ namespace Teronis.Windows.Templating
             set => VisualTree.SetBinding(TextBlock.TextProperty, value);
         }
 
-        public BoundTextBlockTemplate() => 
+        public BoundTextBlockTemplate() =>
             VisualTree = new FrameworkElementFactory(typeof(TextBlock));
     }
 }

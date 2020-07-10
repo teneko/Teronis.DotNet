@@ -11,8 +11,7 @@ namespace Teronis.Extensions
         {
             var tcs = new TaskCompletionSource();
 
-            var registration = ThreadPool.RegisterWaitForSingleObject(handle, (state, isTimedOut) =>
-            {
+            var registration = ThreadPool.RegisterWaitForSingleObject(handle, (state, isTimedOut) => {
                 var localTcs = (TaskCompletionSource)state!;
 
                 if (isTimedOut) {
@@ -22,7 +21,7 @@ namespace Teronis.Extensions
                 }
             }, tcs, timeout, executeOnlyOnce: true);
 
-            return tcs.Task.ContinueWith((_, state) => 
+            return tcs.Task.ContinueWith((_, state) =>
                 ((RegisteredWaitHandle)state!).Unregister(null), registration, TaskScheduler.Default);
         }
 

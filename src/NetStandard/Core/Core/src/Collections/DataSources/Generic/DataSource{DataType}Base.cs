@@ -1,6 +1,38 @@
-﻿using Microsoft.Extensions.Logging;
+﻿
+/* Nicht gemergte Änderung aus Projekt "GitVersionCache.NetStandard.Core (netstandard2.0)"
+Vor:
+using Microsoft.Extensions.Logging;
 using System;
 using Teronis.Collections.DataSources;
+Nach:
+using System;
+using Microsoft.Extensions.Logging;
+using Teronis.Collections.DataSources;
+*/
+
+/* Nicht gemergte Änderung aus Projekt "Teronis.NetStandard.Core (netcoreapp3.1)"
+Vor:
+using Microsoft.Extensions.Logging;
+using System;
+using Teronis.Collections.DataSources;
+Nach:
+using System;
+using Microsoft.Extensions.Logging;
+using Teronis.Collections.DataSources;
+*/
+
+/* Nicht gemergte Änderung aus Projekt "GitVersionCache.NetStandard.Core (netcoreapp3.1)"
+Vor:
+using Microsoft.Extensions.Logging;
+using System;
+using Teronis.Collections.DataSources;
+Nach:
+using System;
+using Microsoft.Extensions.Logging;
+using Teronis.Collections.DataSources;
+*/
+using System;
+using Microsoft.Extensions.Logging;
 
 namespace Teronis.Collections.DataSources.Generic
 {
@@ -24,11 +56,13 @@ namespace Teronis.Collections.DataSources.Generic
         /// </summary>
         protected void EnsureEnumerate()
         {
-            if (IsDisposed)
+            if (IsDisposed) {
                 throw new ObjectDisposedException("The data source has been disposed and can not be enumerated again");
+            }
 
-            if (!EnumerationState.HasFlag(DataSourceEnumerationState.Enumerable))
+            if (!EnumerationState.HasFlag(DataSourceEnumerationState.Enumerable)) {
                 throw new InvalidOperationException("The data source has been already enumerated");
+            }
         }
 
         protected void LogEnumerationReachedEnd()
@@ -44,8 +78,9 @@ namespace Teronis.Collections.DataSources.Generic
 
         protected virtual void Dispose(bool disposing)
         {
-            if (IsDisposed)
+            if (IsDisposed) {
                 return;
+            }
 
             IsDisposed = true;
 

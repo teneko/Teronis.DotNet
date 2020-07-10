@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Teronis.Identity.Entities;
 using Teronis.Identity.BearerSignInManaging;
+using Teronis.Identity.Entities;
 
 namespace Teronis.Identity.Authentication.Tools
 {
@@ -32,8 +32,9 @@ namespace Teronis.Identity.Authentication.Tools
                 var identity = new ClaimsIdentity(claims);
                 // We add a user related identity to the claims principal.
                 tokenValidatedContext.Principal.AddIdentity(identity);
-            } else
+            } else {
                 tokenValidatedContext.Fail(result.ToString());
+            }
         }
 
         /// <summary>

@@ -1,8 +1,8 @@
-﻿using Microsoft.Xaml.Behaviors;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using Microsoft.Xaml.Behaviors;
 
 namespace Teronis.Xaml.Behaviors
 {
@@ -48,8 +48,9 @@ namespace Teronis.Xaml.Behaviors
 
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (!hasDragStarted)
+            if (!hasDragStarted) {
                 updateValueBindingSource();
+            }
         }
     }
 }

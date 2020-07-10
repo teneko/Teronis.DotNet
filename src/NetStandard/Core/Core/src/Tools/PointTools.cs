@@ -15,12 +15,14 @@ namespace Teronis.Tools
             var innerRadiusSquared = Math.Pow(radius - 1, 2);
 
             float yEnd = middleCenterY + radius;
-            if (yEnd > height)
+            if (yEnd > height) {
                 yEnd = height - 1;
+            }
 
             float xEnd = middleCenterX + radius;
-            if (xEnd > width)
+            if (xEnd > width) {
                 xEnd = width - 1;
+            }
 
             for (int y = 0; y <= yEnd; y++) {
                 for (int x = 0; x <= xEnd; x++) {
@@ -28,8 +30,9 @@ namespace Teronis.Tools
                     var dy = y - middleCenterY;
                     var distanceSquared = dx * dx + dy * dy;
 
-                    if (distanceSquared <= outerRadiusSquared && (border ? distanceSquared > innerRadiusSquared : true))
+                    if (distanceSquared <= outerRadiusSquared && (!border || distanceSquared > innerRadiusSquared)) {
                         yield return new Point(x, y);
+                    }
                 }
             }
         }

@@ -1,7 +1,7 @@
-﻿using System.Linq;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Teronis.Extensions;
-using System;
 
 namespace Teronis.Collections.CollectionChanging
 {
@@ -11,9 +11,9 @@ namespace Teronis.Collections.CollectionChanging
         {
             int collectionCount, takeCount;
 
-            if (nullableCollectionCount == null || nullableTakeCount == null)
+            if (nullableCollectionCount == null || nullableTakeCount == null) {
                 return null;
-            else {
+            } else {
                 collectionCount = nullableCollectionCount.Value;
                 takeCount = nullableTakeCount.Value;
             }

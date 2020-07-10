@@ -16,8 +16,9 @@ namespace Teronis.Windows
 
         public static Point ClientToScreen(IntPtr hWnd, Point point)
         {
-            if (!clientToScreen(hWnd, ref point))
+            if (!clientToScreen(hWnd, ref point)) {
                 throw new Exception(WindowsDefaults.ErrorMessageWhileImportingDll);
+            }
 
             return point;
         }
@@ -31,8 +32,9 @@ namespace Teronis.Windows
 
         public static Point ScreenToClient(IntPtr hWnd, Point point)
         {
-            if (!screenToClient(hWnd, ref point))
+            if (!screenToClient(hWnd, ref point)) {
                 throw new Exception(WindowsDefaults.ErrorMessageWhileImportingDll);
+            }
 
             return point;
         }
@@ -82,10 +84,9 @@ namespace Teronis.Windows
 
         public static Point GetCursorPoint()
         {
-            WinPoint lpPoint;
-
-            if (!getCursorPos(out lpPoint))
+            if (!getCursorPos(out WinPoint lpPoint)) {
                 throw new Win32Exception(Marshal.GetLastWin32Error());
+            }
 
             return lpPoint;
         }
@@ -105,10 +106,11 @@ namespace Teronis.Windows
         // GetWindowLongPtr directly
         public static int GetWindowLong(IntPtr hWnd, int nIndex)
         {
-            if (IntPtr.Size == 8)
+            if (IntPtr.Size == 8) {
                 return getWindowLongPtr64(hWnd, nIndex);
-            else
+            } else {
                 return getWindowLongPtr32(hWnd, nIndex);
+            }
         }
         #endregion
 
@@ -135,10 +137,11 @@ namespace Teronis.Windows
         // SetWindowLongPtr directly
         public static int SetWindowLong(IntPtr hWnd, int gwl_nIndex, int ws_dwNewLong)
         {
-            if (IntPtr.Size == 8)
+            if (IntPtr.Size == 8) {
                 return setWindowLongPtr64(hWnd, gwl_nIndex, ws_dwNewLong);
-            else
+            } else {
                 return setWindowLong32(hWnd, gwl_nIndex, ws_dwNewLong);
+            }
         }
         #endregion
 
@@ -229,8 +232,10 @@ namespace Teronis.Windows
             // sometimes it gives error.
             while (error == (IntPtr)0) {
                 counter++;
-                if (counter == 10)
+                if (counter == 10) {
                     break;
+                }
+
                 error = GetWindowRect(hWnd, ref rect);
             }
 
@@ -253,8 +258,10 @@ namespace Teronis.Windows
             // sometimes it gives error.
             while (error == (IntPtr)0) {
                 counter++;
-                if (counter == 10)
+                if (counter == 10) {
                     break;
+                }
+
                 error = getClientRect(hWnd, ref rect);
             }
 
@@ -651,10 +658,13 @@ namespace Teronis.Windows
         {
             var stringBuilder = new StringBuilder();
 
-            if (childs != null)
-                foreach (var child in childs)
-                    if (child != IntPtr.Zero && callback(child, stringBuilder, caption.Length + 1) != 0 && stringBuilder.ToString().Contains(caption))
+            if (childs != null) {
+                foreach (var child in childs) {
+                    if (child != IntPtr.Zero && callback(child, stringBuilder, caption.Length + 1) != 0 && stringBuilder.ToString().Contains(caption)) {
                         return child;
+                    }
+                }
+            }
 
             return IntPtr.Zero;
         }
@@ -667,7 +677,9 @@ namespace Teronis.Windows
         [DllImport("dwmapi.dll")]
         private static extern int DwmIsCompositionEnabled(out bool enabled);
 
-        public static bool IsAeroEnabled() => Environment.OSVersion.Version.Major >= 6 ? (DwmIsCompositionEnabled(out bool enabled) == 0 ? enabled : false) : false;
+        public static bool IsAeroEnabled() =>
+            Environment.OSVersion.Version.Major >= 6
+                && DwmIsCompositionEnabled(out bool enabled) == 0 && enabled;
 
         public delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hWnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
 
@@ -681,7 +693,7 @@ namespace Teronis.Windows
 
     public class WindowHandleInfo
     {
-        private IntPtr _MainHandle;
+        private readonly IntPtr _MainHandle;
 
         public WindowHandleInfo(IntPtr handle)
         {
@@ -1068,7 +1080,7 @@ namespace Teronis.Windows
 
         public override string ToString()
         {
-            return $"{{{Enum.GetName(typeof(ShowWindowCommands), ShowCmd)} {NormalPosition.ToString()}}}";
+            return $"{{{Enum.GetName(typeof(ShowWindowCommands), ShowCmd)} {NormalPosition}}}";
         }
     }
 

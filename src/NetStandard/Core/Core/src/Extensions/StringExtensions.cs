@@ -45,8 +45,9 @@ namespace Teronis.Extensions
         /// </summary>
         public static string ManipulateFirstLetter(this string source, ManipulateFirstLetterDelegate manipulateFirstLetter)
         {
-            if (string.IsNullOrEmpty(source))
+            if (string.IsNullOrEmpty(source)) {
                 return source;
+            }
 
             char[] a = source.ToCharArray();
             a[0] = manipulateFirstLetter(a[0]);
@@ -84,8 +85,9 @@ namespace Teronis.Extensions
         {
             var securedString = new SecureString();
 
-            foreach (var passwordChar in password)
+            foreach (var passwordChar in password) {
                 securedString.AppendChar(passwordChar);
+            }
 
             return securedString;
         }
@@ -132,10 +134,11 @@ namespace Teronis.Extensions
                     continue;
                 }
 
-                if (char.IsUpper(letter))
+                if (char.IsUpper(letter)) {
                     wasLastLetterCapitalUmlaut = true;
-                else
+                } else {
                     wasLastLetterCapitalUmlaut = false;
+                }
             }
 
             return builder.ToString();

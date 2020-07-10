@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Teronis.Windows.Hooks
+﻿namespace Teronis.Windows.Hooks
 {
     public class MouseHookManager : MouseHook
     {
@@ -16,14 +14,15 @@ namespace Teronis.Windows.Hooks
 
         public new void Stop()
         {
-            if (counter > 0)
+            if (counter > 0) {
                 counter--;
-            else if (counter == 0)
+            } else if (counter == 0) {
 #if DEBUG
                 Console.WriteLine("[ERROR] There are more Stop() than Start() calls!!");
 #endif
-            //
-            base.Stop(); // has own isStarted-property
+                //
+                base.Stop(); // has own isStarted-property
+            }
         }
     }
 }

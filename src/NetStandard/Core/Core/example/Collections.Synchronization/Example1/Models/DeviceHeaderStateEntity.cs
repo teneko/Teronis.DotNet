@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
-using Teronis.Data.TreeColumn;
 
 namespace Teronis.Collections.Synchronization.Example1.Models
 {

@@ -1,14 +1,14 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace Teronis.Collections.DataSources.Generic
 {
     public class ConsecutiveDataSources<DataType> : AsyncDataSource<DataType>
     {
-        private IEnumerable<IAsyncDataSource<DataType>> asyncDataSources;
+        private readonly IEnumerable<IAsyncDataSource<DataType>> asyncDataSources;
 
         public ConsecutiveDataSources(IEnumerable<IAsyncDataSource<DataType>> asyncDataSources, ILogger logger)
             : base(logger)
@@ -16,9 +16,11 @@ namespace Teronis.Collections.DataSources.Generic
 
         protected override async IAsyncEnumerable<DataType> EnumerateAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            foreach (var currentAsyncDataSource in asyncDataSources)
-                await foreach (var data in currentAsyncDataSource.EnumerateAsync(cancellationToken))
+            foreach (var currentAsyncDataSource in asyncDataSources) {
+                await foreach (var data in currentAsyncDataSource.EnumerateAsync(cancellationToken)) {
                     yield return data;
+                }
+            }
         }
     }
 }

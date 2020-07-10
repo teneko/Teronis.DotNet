@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using Teronis.Data;
 using Teronis.DependencyInjection;
 
@@ -7,7 +7,7 @@ namespace Teronis.EntityFrameworkCore.Data
 {
     public class DbRepositoryUnitOfWork : DbUnitOfWork, IDbRepositoryUnitOfWork
     {
-        private IRepositoryResolver repositoryResolver;
+        private readonly IRepositoryResolver repositoryResolver;
 
         public DbRepositoryUnitOfWork(DbContext dbContext, IRepositoryResolver repositoryResolver) : base(dbContext)
             => this.repositoryResolver = repositoryResolver ?? throw new ArgumentNullException(nameof(repositoryResolver));

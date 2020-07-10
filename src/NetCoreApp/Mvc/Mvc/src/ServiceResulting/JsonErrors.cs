@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Linq;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using Teronis.Identity;
 
@@ -59,24 +59,27 @@ namespace Teronis.Mvc.ServiceResulting
 
         private void fillWithErrorMessages(IEnumerable<KeyValuePair<string, string>> errors)
         {
-            foreach (var error in errors)
+            foreach (var error in errors) {
                 Add(new JsonError(error.Key, error.Value));
+            }
         }
 
         private void fillWithErrors(IEnumerable<KeyValuePair<Exception, string>> errors)
         {
-            foreach (var error in errors)
+            foreach (var error in errors) {
                 Add(new JsonError(error.Key, error.Value));
+            }
         }
 
         public override string ToString()
         {
             var errorsCount = Errors.Count;
 
-            if (errorsCount == 0)
+            if (errorsCount == 0) {
                 return StringResources.DefaultErrorMessage;
-            else if (errorsCount == 1)
+            } else if (errorsCount == 1) {
                 return Errors[0].Error.Message;
+            }
 
             return $"{StringResources.MoreThanOneExcpetionOccuredMessage} {Errors.Select(x => x.Error.Message)}";
         }

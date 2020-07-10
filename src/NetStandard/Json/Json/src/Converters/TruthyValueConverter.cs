@@ -13,8 +13,8 @@ namespace Teronis.Json.Converters
         public override bool CanConvert(Type objectType)
             => true;
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-            => reader.Value == ComparisonValue ? true : false;
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) =>
+            reader.Value == ComparisonValue;
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
             => throw new NotImplementedException();

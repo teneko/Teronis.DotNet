@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Teronis.GitVersionCache.BuildTasks.Models
+﻿namespace Teronis.GitVersionCache.BuildTasks.Models
 {
     public interface ICacheIdentification
     {

@@ -94,8 +94,9 @@ namespace Teronis.Tools
         {
             IEnumerable<PointF> getPoints()
             {
-                foreach (var point in points)
+                foreach (var point in points) {
                     yield return getPoint(point);
+                }
             }
 
             return GetAveragePoint(getPoints());
@@ -103,16 +104,20 @@ namespace Teronis.Tools
 
         public static IEnumerable<PointF> GetCirclePoints(IEnumerable<PointF> points, PointF centerMiddlePoint, int radius)
         {
-            foreach (var point in points)
-                if (GetDistanceBetweenTwoPoints(point, centerMiddlePoint) < radius)
+            foreach (var point in points) {
+                if (GetDistanceBetweenTwoPoints(point, centerMiddlePoint) < radius) {
                     yield return point;
+                }
+            }
         }
 
         public static IEnumerable<T> GetCirclePoints<T>(IEnumerable<T> points, Func<T, PointF> getPoint, PointF centerMiddlePoint, int radius)
         {
-            foreach (var point in points)
-                if (GetDistanceBetweenTwoPoints(getPoint(point), centerMiddlePoint) < radius)
+            foreach (var point in points) {
+                if (GetDistanceBetweenTwoPoints(getPoint(point), centerMiddlePoint) < radius) {
                     yield return point;
+                }
+            }
         }
     }
 }

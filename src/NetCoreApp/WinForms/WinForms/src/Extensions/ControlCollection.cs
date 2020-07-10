@@ -8,10 +8,11 @@ namespace Teronis.Extensions
         // for ControlCollection
         public static bool Swap(this Control.ControlCollection source, int fromIndex, int toIndex)
         {
-            Action<int, object> insertAtCallback = (index, item) => {
+            void insertAtCallback(int index, object item)
+            {
                 source.Add((Control)item);
                 source.SetChildIndex((Control)item, index);
-            };
+            }
 
             return source.Swap(fromIndex, toIndex, insertAtCallback);
         }
@@ -29,12 +30,13 @@ namespace Teronis.Extensions
                 var ascend = fromIndex < toIndex;
 
                 for (; ; )
+{
                     if (ascend && fromIndex < toIndex || !ascend && fromIndex > toIndex) {
                         var _toIndex = fromIndex;
 
                         next:
                         var _fromIndex = fromIndex + (ascend ? 1 : -1);
-                        Action next = () => fromIndex = ascend ? fromIndex + 1 : fromIndex - 1;
+                        void next() => fromIndex = ascend ? fromIndex + 1 : fromIndex - 1;
 
                         if (_fromIndex == toIndex || _fromIndex != toIndex && isItemMovable((T)source[_fromIndex])) {
                             source.Swap(_fromIndex, _toIndex);
@@ -45,8 +47,10 @@ namespace Teronis.Extensions
                             next();
                             goto next;
                         }
-                    } else
+                    } else {
                         break;
+                    }
+                }
             }
         }
     }

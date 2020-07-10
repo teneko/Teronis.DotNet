@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Teronis.Identity.Entities;
-
-namespace Teronis.Identity
+﻿namespace Teronis.Identity
 {
     public static class IServiceCollectionExtensions
     {

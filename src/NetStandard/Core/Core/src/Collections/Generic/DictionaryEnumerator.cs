@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis.Collections.Generic
 {
@@ -21,7 +20,7 @@ namespace Teronis.Collections.Generic
 
         readonly IEnumerator<KeyValuePair<TKey, TValue>> enumerator;
 
-        public DictionaryEnumerator(IDictionary<TKey, TValue> value) => 
+        public DictionaryEnumerator(IDictionary<TKey, TValue> value) =>
             enumerator = value.GetEnumerator() ?? throw new ArgumentException("An empty enumerator has been obtained.");
 
         public void Reset() =>

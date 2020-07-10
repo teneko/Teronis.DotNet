@@ -16,7 +16,7 @@ namespace Teronis.IO.FileLocking
     {
 #if TRACE
         internal const string TraceCategory = nameof(FileLocker);
-        private static Random random = new Random();
+        private static readonly Random random = new Random();
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static string CurrentThreadWithLockIdPrefix(string lockId) =>
@@ -62,7 +62,7 @@ namespace Teronis.IO.FileLocking
         /// </summary>
         private int locksInUse = 0;
         private FileLockContext? fileLockerState;
-        private object decreaseLockUseLocker;
+        private readonly object decreaseLockUseLocker;
         private readonly ILockFileApi lockFileApi;
 
         public FileLocker(ILockFileApi lockFileApi, string filePath, FileMode fileMode = LockFileApi.DefaultFileMode, FileAccess fileAccess = LockFileApi.DefaultFileAccess,
@@ -176,7 +176,7 @@ namespace Teronis.IO.FileLocking
         /// </summary>
         internal int DecreaseLockUse(bool decreaseToZero, string? lockId)
         {
-            lockId = lockId ?? "none";
+            lockId ??= "none";
             SpinWait spinWait = new SpinWait();
             int desiredLocksInUse;
 

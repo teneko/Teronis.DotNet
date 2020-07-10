@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using PasswordBoxControl = System.Windows.Controls.PasswordBox;
 
 namespace Teronis.Wpf.AttachedProperties
@@ -30,17 +24,17 @@ namespace Teronis.Wpf.AttachedProperties
 
         public static void PasswordChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
         {
-            var passwordBox = dependencyObject as PasswordBoxControl;
-
-            if (passwordBox == null)
+            if (!(dependencyObject is PasswordBoxControl passwordBox)) {
                 return;
+            }
 
             passwordBox.PasswordChanged -= PasswordBox_PasswordChanged;
 
             string newPassword = (string)args.NewValue;
 
-            if (!GetIsPasswordUpdating(dependencyObject))
+            if (!GetIsPasswordUpdating(dependencyObject)) {
                 passwordBox.Password = newPassword;
+            }
 
             passwordBox.PasswordChanged += PasswordBox_PasswordChanged;
         }
@@ -54,17 +48,19 @@ namespace Teronis.Wpf.AttachedProperties
         public static void SetPassword(DependencyObject dependencyObject, string password)
             => dependencyObject.SetValue(PasswordProperty, password);
 
-        public static void IsPasswordChangedObservedChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args) {
-            var passwordBox = dependencyObject as PasswordBoxControl;
-
-            if (passwordBox == null)
+        public static void IsPasswordChangedObservedChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
+        {
+            if (!(dependencyObject is PasswordBoxControl passwordBox)) {
                 return;
+            }
 
-            if ((bool)args.OldValue)
+            if ((bool)args.OldValue) {
                 passwordBox.PasswordChanged -= PasswordBox_PasswordChanged;
+            }
 
-            if ((bool)args.NewValue)
+            if ((bool)args.NewValue) {
                 passwordBox.PasswordChanged += PasswordBox_PasswordChanged;
+            }
         }
 
         public static readonly DependencyProperty IsPasswordChangedObservedProperty =

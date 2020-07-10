@@ -22,8 +22,9 @@ namespace Teronis.Collections.Synchronization
             var convertedContentContentChange = args.ConvertedCollectionChangeBundle.ContentContentChange;
             var convertedItemItemChange = args.ConvertedCollectionChangeBundle.ItemItemChange;
 
-            if (convertedContentContentChange.Action != convertedItemItemChange.Action)
+            if (convertedContentContentChange.Action != convertedItemItemChange.Action) {
                 CollectionChangeConversionThrowHelper.ThrowChangeActionMismatchException();
+            }
 
             var action = convertedContentContentChange.Action;
 

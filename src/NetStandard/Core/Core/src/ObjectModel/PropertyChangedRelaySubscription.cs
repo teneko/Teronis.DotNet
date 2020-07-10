@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using Teronis.Reflection.Caching;
 
@@ -37,12 +38,7 @@ namespace Teronis.ObjectModel
                 EqualityComparer<SingleTypePropertyCache<INotifyPropertyChanged>>.Default.Equals(cache, subscription.cache);
         }
 
-        public override int GetHashCode()
-        {
-            var hashCode = -674897417;
-            hashCode = hashCode * -1521134295 + EqualityComparer<PropertyChangedRelay>.Default.GetHashCode(relay);
-            hashCode = hashCode * -1521134295 + EqualityComparer<SingleTypePropertyCache<INotifyPropertyChanged>>.Default.GetHashCode(cache);
-            return hashCode;
-        }
+        public override int GetHashCode() =>
+            HashCode.Combine(relay, cache);
     }
 }

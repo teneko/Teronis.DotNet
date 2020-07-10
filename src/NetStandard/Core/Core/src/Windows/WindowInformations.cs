@@ -9,8 +9,7 @@ namespace Teronis.Windows
         public int Style { get; private set; }
 
         public WINDOWPLACEMENT Placement;
-
-        IntPtr hWnd;
+        readonly IntPtr hWnd;
 
         public WindowInformations(IntPtr hWnd)
         {
@@ -29,7 +28,7 @@ namespace Teronis.Windows
             Style = style;
         }
 
-        private const int MF_BYCOMMAND = 0x00000000;
+        public const int MF_BYCOMMAND = 0x00000000;
         public const int SC_CLOSE = 0xF060;
         public const int SC_MINIMIZE = 0xF020;
         public const int SC_MAXIMIZE = 0xF030;
@@ -67,6 +66,6 @@ namespace Teronis.Windows
         //		SWP.NOACTIVATE);
         //}
 
-        public override string ToString() => $"{{{InnerWinRect} {Placement.ToString()}}}";
+        public override string ToString() => $"{{{InnerWinRect} {Placement}}}";
     }
 }

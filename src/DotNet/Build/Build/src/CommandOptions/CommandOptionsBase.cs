@@ -1,6 +1,4 @@
-﻿using CommandLine;
-
-namespace Teronis.DotNet.Build.CommandOptions
+﻿namespace Teronis.DotNet.Build.CommandOptions
 {
     public abstract class CommandOptionsBase : ICommandOptions
     {

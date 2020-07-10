@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using ZNetCS.AspNetCore.Authentication.Basic.Events;
 using Teronis.Identity.Entities;
+using ZNetCS.AspNetCore.Authentication.Basic.Events;
 
 namespace Teronis.Identity.Authentication.Tools
 {

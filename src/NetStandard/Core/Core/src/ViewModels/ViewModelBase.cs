@@ -1,10 +1,10 @@
-﻿using System.ComponentModel;
-using System.Linq;
-using Teronis.Data;
-using System.Runtime.CompilerServices;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using Teronis.Data;
 using Teronis.Extensions;
 using Teronis.Reflection.Caching;
 
@@ -71,6 +71,7 @@ namespace Teronis.ViewModels
         #region INotifyDataErrorInfo
 
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
+        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsPreviewsChanged;
 
         public virtual bool HasErrors
             => validationErrors.Count > 0;
@@ -78,8 +79,8 @@ namespace Teronis.ViewModels
         public virtual bool HasErrorPreviews
             => HasErrors || validationErrorPreviews.Count > 0;
 
-        private Dictionary<string, ICollection<string>> validationErrors;
-        private Dictionary<string, ICollection<string>> validationErrorPreviews;
+        private readonly Dictionary<string, ICollection<string>> validationErrors;
+        private readonly Dictionary<string, ICollection<string>> validationErrorPreviews;
 
         public IEnumerable? GetErrors(string propertyName)
         {
@@ -97,31 +98,39 @@ namespace Teronis.ViewModels
         }
 
         private void onErrorPreviewsChanged(string propertyName)
-            => OnPropertyChanged(nameof(HasErrorPreviews));
+        {
+            ErrorsPreviewsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
+            OnPropertyChanged(nameof(HasErrorPreviews));
+        }
 
         protected void SetErrors(string propertyName, ICollection<string> errors, bool isPreview)
         {
-            if (!isPreview)
+            if (!isPreview) {
                 validationErrors[propertyName] = errors;
+            }
 
             validationErrorPreviews[propertyName] = errors;
 
-            if (!isPreview)
+            if (!isPreview) {
                 onErrorsChanged(propertyName);
+            }
 
             onErrorPreviewsChanged(propertyName);
         }
 
         protected void RemoveErrors(string propertyName, bool isPreview)
         {
-            if (!isPreview && validationErrors.ContainsKey(propertyName))
+            if (!isPreview && validationErrors.ContainsKey(propertyName)) {
                 validationErrors.Remove(propertyName);
+            }
 
-            if (validationErrorPreviews.ContainsKey(propertyName))
+            if (validationErrorPreviews.ContainsKey(propertyName)) {
                 validationErrorPreviews.Remove(propertyName);
+            }
 
-            if (!isPreview)
+            if (!isPreview) {
                 onErrorsChanged(propertyName);
+            }
 
             onErrorPreviewsChanged(propertyName);
         }

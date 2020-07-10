@@ -8,8 +8,9 @@ namespace Teronis.Extensions.tmp
         {
             var enumerator = ttbInitializedObjects.GetEnumerator();
 
-            if (!enumerator.MoveNext())
+            if (!enumerator.MoveNext()) {
                 return;
+            }
 
             do {
                 enumerator.Current.TriggerExternalObjectInitialization();

@@ -7,10 +7,11 @@ namespace Teronis.Extensions
     {
         public static void InvokeIfNeeded(this Control control, Action action)
         {
-            if (control.InvokeRequired)
+            if (control.InvokeRequired) {
                 control.Invoke(action);
-            else
+            } else {
                 action();
+            }
         }
 
         public static void Suspend(this Control control)

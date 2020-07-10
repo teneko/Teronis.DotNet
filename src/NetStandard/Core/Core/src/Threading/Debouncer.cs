@@ -49,12 +49,12 @@ namespace Teronis.Threading
         {
             public bool IsDisposed { get; private set; }
 
-            private long interval;
-            private Func<Task<T>> debouncedAction;
-            private Stopwatch stopwatch;
-            private CancellationTokenSource delayCancellationTokenSource;
-            private CancellationToken processCancellationToken;
-            private SemaphoreSlim debouncedActionInvokeLocker;
+            private readonly long interval;
+            private readonly Func<Task<T>> debouncedAction;
+            private readonly Stopwatch stopwatch;
+            private readonly CancellationTokenSource delayCancellationTokenSource;
+            private readonly CancellationToken processCancellationToken;
+            private readonly SemaphoreSlim debouncedActionInvokeLocker;
 
             public ProcessingDebounceState State { get; private set; }
 
@@ -73,8 +73,9 @@ namespace Teronis.Threading
 
             private void stop()
             {
-                if (State == ProcessingDebounceState.Stopped || State == ProcessingDebounceState.Canceled)
+                if (State == ProcessingDebounceState.Stopped || State == ProcessingDebounceState.Canceled) {
                     return;
+                }
 
                 stopwatch.Stop();
                 State = ProcessingDebounceState.Stopped;
@@ -85,8 +86,9 @@ namespace Teronis.Threading
                 try {
                     await debouncedActionInvokeLocker.WaitAsync(processCancellationToken);
 
-                    if (State != ProcessingDebounceState.NotYetStarted)
+                    if (State != ProcessingDebounceState.NotYetStarted) {
                         throw new InvalidOperationException("Debounce process has been already started");
+                    }
 
                     stopwatch.Start();
                     State = ProcessingDebounceState.Running;
@@ -110,8 +112,9 @@ namespace Teronis.Threading
                 await debouncedActionInvokeLocker.WaitAsync();
 
                 try {
-                    if (State == ProcessingDebounceState.Stopped || State == ProcessingDebounceState.Canceled)
+                    if (State == ProcessingDebounceState.Stopped || State == ProcessingDebounceState.Canceled) {
                         return;
+                    }
 
                     if (stopwatch.ElapsedMilliseconds < interval) {
                         stop();
@@ -128,8 +131,9 @@ namespace Teronis.Threading
             protected virtual void Dispose(bool disposing)
             {
                 if (!IsDisposed) {
-                    if (disposing)
+                    if (disposing) {
                         delayCancellationTokenSource.Dispose();
+                    }
 
                     IsDisposed = true;
                 }

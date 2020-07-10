@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Linq;
-using System.IO;
-using System.Text.RegularExpressions;
-using CommandLine;
-using System.Threading.Tasks;
-using Teronis.DotNet.Build.CommandOptions;
 using System.Collections.Generic;
-
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+using CommandLine;
+using Teronis.Diagnostics;
+using Teronis.DotNet.Build.CommandOptions;
 using static Bullseye.Targets;
 using static Teronis.DotNet.Build.ICommandOptions;
-using System.Xml.Linq;
-using Teronis.Diagnostics;
 
 namespace Teronis.DotNet.Build
 {

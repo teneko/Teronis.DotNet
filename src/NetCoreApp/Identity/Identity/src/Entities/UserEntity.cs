@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 
@@ -11,7 +10,7 @@ namespace Teronis.Identity.Entities
         public IReadOnlyList<BearerTokenEntity> RefreshTokens =>
             refreshTokens.AsReadOnly();
 
-        private List<BearerTokenEntity> refreshTokens;
+        private readonly List<BearerTokenEntity> refreshTokens;
 
         public UserEntity()
             : base()

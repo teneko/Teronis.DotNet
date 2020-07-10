@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Teronis.Identity.Entities;
 
 namespace Teronis.Identity.BearerSignInManaging

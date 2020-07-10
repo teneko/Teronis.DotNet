@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Teronis.Extensions;
 using Teronis.Json.PropertyEntifiers;
 using Teronis.Tools;
@@ -22,8 +22,9 @@ namespace Teronis.Json.Converters
 
         public DeserializedKeyNotifierConverter(Type jsonPropertyReaderType)
         {
-            if (!typeof(IEntitifyJsonProperty<TValue>).IsAssignableFrom(jsonPropertyReaderType))
+            if (!typeof(IEntitifyJsonProperty<TValue>).IsAssignableFrom(jsonPropertyReaderType)) {
                 throw new ArgumentException("Bad json property reader type.", nameof(jsonPropertyReaderType));
+            }
 
             JsonPropertyEntifier = (IEntitifyJsonProperty<TValue>)jsonPropertyReaderType.InstantiateUninitializedObject();
         }
@@ -32,12 +33,13 @@ namespace Teronis.Json.Converters
 
         private ECollectionType getCollectionType(Type objectType)
         {
-            if (typeof(IDictionary<TKey, TValue>).IsAssignableFrom(objectType))
+            if (typeof(IDictionary<TKey, TValue>).IsAssignableFrom(objectType)) {
                 return ECollectionType.Dictionary;
-            else if (typeof(IList<TValue>).IsAssignableFrom(objectType))
+            } else if (typeof(IList<TValue>).IsAssignableFrom(objectType)) {
                 return ECollectionType.List;
-            else
+            } else {
                 throw new NotImplementedException($"Type '{objectType}' not supported by {nameof(DeserializedKeyNotifierConverter<TKey, TValue>)}.");
+            }
         }
 
         /// <summary>
@@ -59,18 +61,20 @@ namespace Teronis.Json.Converters
                     var dictionary = new Dictionary<TKey, TValue>();
                     addCollectionItem = (key, value) => dictionary.Add(key, value);
 
-                    if (objectType == typeof(ReadOnlyDictionary<TKey, TValue>))
+                    if (objectType == typeof(ReadOnlyDictionary<TKey, TValue>)) {
                         collection = new ReadOnlyDictionary<TKey, TValue>(dictionary);
-                    else
+                    } else {
                         collection = dictionary;
+                    }
                 } else {
                     var list = new List<TValue>();
                     addCollectionItem = (key, value) => list.Add(value);
 
-                    if (objectType == typeof(ReadOnlyCollection<TValue>))
+                    if (objectType == typeof(ReadOnlyCollection<TValue>)) {
                         collection = new ReadOnlyCollection<TValue>(list);
-                    else
+                    } else {
                         collection = list;
+                    }
                 }
 
                 var keyType = typeof(TKey);
@@ -97,8 +101,9 @@ namespace Teronis.Json.Converters
                 }
 
                 return collection;
-            } else
+            } else {
                 return null;
+            }
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

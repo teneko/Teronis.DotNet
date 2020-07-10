@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using Teronis.Diagnostics;
 using Teronis.Tools;
 
 namespace Teronis.Extensions

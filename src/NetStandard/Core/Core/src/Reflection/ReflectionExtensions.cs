@@ -71,7 +71,7 @@ namespace Teronis.Extensions
         }
 
         /// <param name="memberInfo">Pass <see cref="PropertyInfo"/> or <see cref="FieldInfo"/>.</param>
-        public static bool TryGetAttributeVariableMember(this MemberInfo memberInfo, Type attributeType, [MaybeNull]out AttributeMemberInfo attrVarInfo, bool? getCustomAttributesInherit = null)
+        public static bool TryGetAttributeVariableMember(this MemberInfo memberInfo, Type attributeType, [MaybeNull] out AttributeMemberInfo attrVarInfo, bool? getCustomAttributesInherit = null)
         {
             bool _getCustomAttributesInherit = getCustomAttributesInherit ?? true; // Library.DefaultCustomAttributesInherit
 

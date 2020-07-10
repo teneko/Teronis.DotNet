@@ -15,11 +15,13 @@ namespace Teronis
         {
             var type = typeof(T);
 
-            if (type == typeof(string))
+            if (type == typeof(string)) {
                 return Expression.Lambda<Func<T>>(Expression.Constant(string.Empty)).Compile();
+            }
 
-            if (type.HasDefaultConstructor())
+            if (type.HasDefaultConstructor()) {
                 return Expression.Lambda<Func<T>>(Expression.New(type)).Compile(); // ~50 ms for classes and ~100 ms for structs
+            }
 
             return () => (T)FormatterServices.GetUninitializedObject(type); // ~2000 ms
         }

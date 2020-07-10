@@ -35,8 +35,8 @@ namespace Teronis.Collections.CollectionChanging
 
         string IDebuggerDisplay.DebuggerDisplay => $"{Action}, {nameof(OldIndex)} = {OldIndex}, {nameof(NewIndex)} = {NewIndex}";
 
-        private PartialCollectionChange<OldItemType> oldPartialCollectionChange;
-        private PartialCollectionChange<NewItemType> newPartialCollectionChange;
+        private readonly PartialCollectionChange<OldItemType> oldPartialCollectionChange;
+        private readonly PartialCollectionChange<NewItemType> newPartialCollectionChange;
 
         public CollectionChange(NotifyCollectionChangedAction changeAction, IReadOnlyList<OldItemType>? oldItems, int oldIndex, IReadOnlyList<NewItemType>? newItems, int newIndex)
         {

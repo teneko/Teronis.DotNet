@@ -7,7 +7,7 @@ namespace Teronis.Data
     {
         public object Sender { get; private set; }
 
-        private WantParentsEventHandler? eventHandler;
+        private readonly WantParentsEventHandler? eventHandler;
 
         public ParentsPicker(object sender, WantParentsEventHandler? eventHandler)
         {
@@ -23,10 +23,11 @@ namespace Teronis.Data
             var parents = GetParents(wantedParentType);
             var parentsCount = parents.Count;
 
-            if (parentsCount == 0)
+            if (parentsCount == 0) {
                 throw new Exception("No parents have been found");
-            else if (parentsCount >= 2)
+            } else if (parentsCount >= 2) {
                 throw new Exception($"There are more than 2 parents ({parentsCount}, but only one is expected.");
+            }
 
             return parents[0];
         }

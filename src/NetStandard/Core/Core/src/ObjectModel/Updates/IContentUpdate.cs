@@ -2,7 +2,7 @@
 
 namespace Teronis.ObjectModel.Updates
 {
-    public interface IContentUpdate 
+    public interface IContentUpdate
     {
         /// <summary>
         /// The source that created the update initially.

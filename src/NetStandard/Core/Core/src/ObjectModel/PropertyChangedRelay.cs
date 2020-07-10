@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Linq.Expressions;
 using System.Collections.Generic;
-using System.ComponentModel;
-using Teronis.Reflection;
-using System.Reflection;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq.Expressions;
+using System.Reflection;
+using Teronis.Reflection;
 using Teronis.Reflection.Caching;
 using Teronis.Tools;
 
@@ -22,8 +22,8 @@ namespace Teronis.ObjectModel
         public Dictionary<string, Type>? AllowedProperties { get; set; }
         public readonly ReadOnlyCollection<INotifyPropertyChanged> PropertyChangedNotifiers;
 
-        private BindingFlags propertyBindingFlags;
-        private List<INotifyPropertyChanged> propertyChangedNotifiers;
+        private readonly BindingFlags propertyBindingFlags;
+        private readonly List<INotifyPropertyChanged> propertyChangedNotifiers;
 
         public PropertyChangedRelay()
         {
@@ -102,10 +102,11 @@ namespace Teronis.ObjectModel
 
         private void ensureAllowedPropertiesInitialization()
         {
-            if (AllowedProperties != null)
+            if (AllowedProperties != null) {
                 return;
+            }
 
-            AllowedProperties = AllowedProperties ?? new Dictionary<string, Type>();
+            AllowedProperties ??= new Dictionary<string, Type>();
         }
 
         public PropertyChangedRelay AddAllowedProperty(string propertyName, Type valueType)
@@ -127,8 +128,9 @@ namespace Teronis.ObjectModel
             ensureAllowedPropertiesInitialization();
             var allowedPropertyCollection = (ICollection<KeyValuePair<string, Type>>)AllowedProperties!;
 
-            foreach (var allowedProperty in allowedProperties)
+            foreach (var allowedProperty in allowedProperties) {
                 allowedPropertyCollection.Add(allowedProperty);
+            }
 
             return this;
         }
@@ -137,8 +139,9 @@ namespace Teronis.ObjectModel
         {
             ensureAllowedPropertiesInitialization();
 
-            foreach (var propertyInfo in propertyInfos)
+            foreach (var propertyInfo in propertyInfos) {
                 AllowedProperties!.Add(propertyInfo.Name, propertyInfo.PropertyType);
+            }
 
             return this;
         }
@@ -153,8 +156,9 @@ namespace Teronis.ObjectModel
                     && (propertyType == null
                         || sender.GetType().GetProperty(e.PropertyName, propertyBindingFlags)?.PropertyType == propertyType);
 
-            if (!shouldNotifyUnknownProperty)
+            if (!shouldNotifyUnknownProperty) {
                 return;
+            }
 
             OnPropertyChanged(sender, e);
         }
@@ -175,8 +179,9 @@ namespace Teronis.ObjectModel
         public PropertyChangedRelay SubscribePropertyChangedNotifiers(params INotifyPropertyChanged[] propertyChangedNotifiers)
         {
             if (propertyChangedNotifiers != null) {
-                foreach (var propertyChangedNotifier in propertyChangedNotifiers)
+                foreach (var propertyChangedNotifier in propertyChangedNotifiers) {
                     SubscribePropertyChangedNotifier(propertyChangedNotifier);
+                }
             }
 
             return this;

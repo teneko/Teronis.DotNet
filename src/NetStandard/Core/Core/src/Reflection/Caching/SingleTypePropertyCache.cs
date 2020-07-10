@@ -44,8 +44,8 @@ namespace Teronis.Reflection.Caching
         /// </summary>
         public bool CanSkipPropertyRemovedEventInvocationWhenRetracking { get; set; }
 
-        private Dictionary<string, PropertyType> cachedPropertyValues;
-        private PropertyComparisonMode propertyComparisonMode;
+        private readonly Dictionary<string, PropertyType> cachedPropertyValues;
+        private readonly PropertyComparisonMode propertyComparisonMode;
 
         public SingleTypePropertyCache(INotifyPropertyChanged singleTypedPropertyNotifier, object singleTypedPropertiesOwner, IEqualityComparer<PropertyType>? propertyValueEqualityComparer)
         {
@@ -55,8 +55,7 @@ namespace Teronis.Reflection.Caching
             singleTypedPropertiesOwner = singleTypedPropertiesOwner
                 ?? throw new ArgumentNullException(nameof(singleTypedPropertiesOwner));
 
-            propertyValueEqualityComparer = propertyValueEqualityComparer
-                ?? EqualityComparer<PropertyType>.Default;
+            propertyValueEqualityComparer ??= EqualityComparer<PropertyType>.Default;
 
             TrackingPropertyType = typeof(PropertyType);
             var propertyTypeInfo = TrackingPropertyType.GetTypeInfo();

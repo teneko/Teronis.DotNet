@@ -11,7 +11,7 @@ namespace Teronis.Mvc.ServiceResulting.Generic.ObjectModel
         where ServiceResultType : IServiceResult<ServiceResultContentType>
     {
         new IServiceResultPostConfiguration<ServiceResultType, ServiceResultContentType> ToSuccess();
-        new IServiceResultPostConfiguration<ServiceResultType, ServiceResultContentType> ToSuccess([AllowNull]ServiceResultContentType content);
+        new IServiceResultPostConfiguration<ServiceResultType, ServiceResultContentType> ToSuccess([AllowNull] ServiceResultContentType content);
         new IServiceResultPostConfiguration<ServiceResultType, ServiceResultContentType> ToFailure();
         new IServiceResultPostConfiguration<ServiceResultType, ServiceResultContentType> ToFailure(IServiceResult? serviceResult);
         new IServiceResultPostConfiguration<ServiceResultType, ServiceResultContentType> ToFailure(JsonErrors? errors);

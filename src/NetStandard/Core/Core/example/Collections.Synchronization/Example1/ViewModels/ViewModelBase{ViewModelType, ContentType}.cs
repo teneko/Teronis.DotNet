@@ -1,8 +1,8 @@
-﻿using MorseCode.ITask;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using MorseCode.ITask;
 using Teronis.Data;
-using Teronis.ViewModels;
 using Teronis.ObjectModel.Updates;
+using Teronis.ViewModels;
 using Teronis.ViewModels.UpdatableContent;
 
 namespace Teronis.Collections.Synchronization.Example1.ViewModels

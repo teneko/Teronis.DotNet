@@ -32,7 +32,7 @@ namespace Teronis.Drawing
 
         bool ITwoDimensionalPattern.ColorSupport => false;
 
-        private IntPtr hWnd;
+        private readonly IntPtr hWnd;
 
         public Position(IntPtr hWnd, EPointType pointType, Point? point = null)
         {
@@ -52,10 +52,11 @@ namespace Teronis.Drawing
 
         public Point GetClientPoint()
         {
-            if (PointType == EPointType.Client)
+            if (PointType == EPointType.Client) {
                 return Point;
-            else
+            } else {
                 return Win32.ScreenToClient(hWnd, Point);
+            }
         }
 
         public Position GetClientPosition()
@@ -65,10 +66,11 @@ namespace Teronis.Drawing
 
         public Point GetScreenPoint()
         {
-            if (PointType == EPointType.Screen)
+            if (PointType == EPointType.Screen) {
                 return Point;
-            else
+            } else {
                 return Win32.ClientToScreen(hWnd, Point);
+            }
         }
 
         public Position GetScreenPosition()

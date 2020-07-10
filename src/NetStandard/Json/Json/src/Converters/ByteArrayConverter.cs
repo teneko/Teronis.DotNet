@@ -1,7 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace Teronis.Json.Converters
 {
@@ -52,8 +51,9 @@ namespace Teronis.Json.Converters
                 }
                 //
                 throw new Exception("Unexpected end while reading bytes.");
-            } else
+            } else {
                 throw new Exception(string.Format("Unexpected token parsing binary. Expected StartArray, got {0}.", reader.TokenType));
+            }
         }
 
         public override bool CanConvert(Type objectType)

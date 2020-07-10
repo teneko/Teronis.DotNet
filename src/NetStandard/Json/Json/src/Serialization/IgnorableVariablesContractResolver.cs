@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Teronis.Text.Json.Serialization;
 
 namespace Teronis.Json.Serialization
@@ -17,7 +17,7 @@ namespace Teronis.Json.Serialization
         protected Dictionary<Type, HashSet<string>> IgnorableVariablesByTypeList =>
             variablesExclusionHelper.VariablesByTypeList;
 
-        private VariablesClusionHelper variablesExclusionHelper;
+        private readonly VariablesClusionHelper variablesExclusionHelper;
 
         public IgnorableVariablesContractResolver() =>
             variablesExclusionHelper = new VariablesClusionHelper();
@@ -36,8 +36,9 @@ namespace Teronis.Json.Serialization
         {
             var property = base.CreateProperty(member, memberSerialization);
 
-            if (variablesExclusionHelper.IsVariableConsidered(property.DeclaringType, property.PropertyName))
+            if (variablesExclusionHelper.IsVariableConsidered(property.DeclaringType, property.PropertyName)) {
                 property.ShouldSerialize = instance => false;
+            }
 
             return property;
         }

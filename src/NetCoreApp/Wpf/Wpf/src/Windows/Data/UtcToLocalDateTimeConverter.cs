@@ -8,13 +8,14 @@ namespace Teronis.Windows.Data
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null)
+            if (value == null) {
                 return null;
-            else if (value is DateTime || value is DateTime?) {
+            } else if (value is DateTime || value is DateTime?) {
                 var dateTime = (DateTime)value;
                 return dateTime.ToLocalTime();
-            } else
+            } else {
                 return DateTime.SpecifyKind(DateTime.Parse(value.ToString()), DateTimeKind.Utc).ToLocalTime();
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

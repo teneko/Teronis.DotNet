@@ -48,7 +48,7 @@ namespace Teronis.Collections.Synchronization
                                 convertedItem.DetachKnownWantParentsHandler(this);
                                 break;
                             case NotifyCollectionChangedAction.Add:
-                                var originalItem = originalItemsEnumerator.Current ?? 
+                                var originalItem = originalItemsEnumerator.Current ??
                                     throw new ArgumentException("One item of the new converted item-item-items is null and cannot be attached as wanted parents.");
 
                                 void OriginalItem_WantParents(object s, HavingParentsEventArgs e)

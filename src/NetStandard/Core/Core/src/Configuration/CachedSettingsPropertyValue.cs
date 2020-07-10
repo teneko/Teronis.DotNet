@@ -87,14 +87,14 @@ namespace Teronis.Configuration
         [AllowNull]
         [MaybeNull]
         private PropertyType cachedProperty = default!;
-        private SettingsBase settings;
-        private SettingsPropertyValue settingsPropertyValue;
+        private readonly SettingsBase settings;
+        private readonly SettingsPropertyValue settingsPropertyValue;
         private bool isCopySynchronous;
         /// <summary>
         /// The tracked properties are restricted by the name of the 
         /// property. So effectively one property gets ever tracked.
         /// </summary>
-        private SingleTypePropertyCache<PropertyType>? propertyChangedCache;
+        private readonly SingleTypePropertyCache<PropertyType>? propertyChangedCache;
 
         public CachedSettingsPropertyValue(SettingsBase settings, string name, IEqualityComparer<PropertyType>? propertyValueEqualityComparer)
         {
@@ -106,8 +106,9 @@ namespace Teronis.Configuration
 
             var genericPropertyType = typeof(PropertyType);
 
-            if (genericPropertyType != settingsProperty.PropertyType && !typeof(PropertyType).IsAssignableFrom(settingsProperty.PropertyType))
+            if (genericPropertyType != settingsProperty.PropertyType && !typeof(PropertyType).IsAssignableFrom(settingsProperty.PropertyType)) {
                 throw new ArgumentException($"The types are not the same.");
+            }
 
             PropertyValueEqualityComparer = propertyValueEqualityComparer
                 ?? EqualityComparer<PropertyType>.Default;
@@ -126,8 +127,9 @@ namespace Teronis.Configuration
                 propertyChangedCache.PropertyRemoved += PropertyChangedCache_PropertyCacheRemoved;
                 propertyChangedCache.SingleTypePropertyNotifierPropertyChanged(PropertyName);
 
-                if (propertyChangedCache.CachedPropertyValues.Count == 0)
+                if (propertyChangedCache.CachedPropertyValues.Count == 0) {
                     throw new Exception($"The property {PropertyName} has not been found.");
+                }
             }
         }
 
@@ -139,23 +141,25 @@ namespace Teronis.Configuration
 
         private void recalculateIsCopySynchronous()
         {
-            if (PropertyValueEqualityComparer == null)
+            if (PropertyValueEqualityComparer == null) {
                 return;
+            }
 
             var isPropertyChangedCacheNotNull = !(propertyChangedCache is null);
 
             var doesCachedPropertyExist = isPropertyChangedCacheNotNull
                 && propertyChangedCache!.CachedPropertyValues.ContainsKey(PropertyName);
 
-            if (isPropertyChangedCacheNotNull && !doesCachedPropertyExist)
+            if (isPropertyChangedCacheNotNull && !doesCachedPropertyExist) {
                 IsCacheSynchronous = false;
-            else {
+            } else {
                 PropertyType cachedProperty;
 
-                if (doesCachedPropertyExist)
+                if (doesCachedPropertyExist) {
                     cachedProperty = propertyChangedCache!.CachedPropertyValues[PropertyName];
-                else
+                } else {
                     cachedProperty = PropertyValue;
+                }
 
                 IsCacheSynchronous = PropertyValueEqualityComparer.Equals(CachedPropertyValue!, cachedProperty!);
             }
@@ -169,11 +173,13 @@ namespace Teronis.Configuration
 
         private void propertyChangedCache_PropertyCacheRemoved(PropertyType settingsProperty)
         {
-            if (settingsProperty is INotifyPropertyChanged settingsPropertyNotifier)
+            if (settingsProperty is INotifyPropertyChanged settingsPropertyNotifier) {
                 settingsPropertyNotifier.PropertyChanged -= SettingsPropertyNotifier_Changed;
+            }
 
-            if (settingsProperty is INotifyCollectionChanged settingsPropertyCollectionNotifier)
+            if (settingsProperty is INotifyCollectionChanged settingsPropertyCollectionNotifier) {
                 settingsPropertyCollectionNotifier.CollectionChanged -= SettingsPropertyCollectionNotifier_CollectionChanged;
+            }
         }
 
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
@@ -193,11 +199,13 @@ namespace Teronis.Configuration
 
             var settingsProperty = args.PropertyValue;
 
-            if (settingsProperty is INotifyPropertyChanged settingsPropertyNotifier)
+            if (settingsProperty is INotifyPropertyChanged settingsPropertyNotifier) {
                 settingsPropertyNotifier.PropertyChanged += SettingsPropertyNotifier_Changed;
+            }
 
-            if (settingsProperty is INotifyCollectionChanged settingsPropertyCollectionNotifier)
+            if (settingsProperty is INotifyCollectionChanged settingsPropertyCollectionNotifier) {
                 settingsPropertyCollectionNotifier.CollectionChanged += SettingsPropertyCollectionNotifier_CollectionChanged;
+            }
 
             recalculateIsCopySynchronous();
             OnPropertyChanged(nameof(PropertyValue));
@@ -229,10 +237,11 @@ namespace Teronis.Configuration
         /// </summary>
         public void TriggerSettingsPropertyChanged()
         {
-            if (NotifySettingsAboutPropertyChange != null)
+            if (NotifySettingsAboutPropertyChange != null) {
                 NotifySettingsAboutPropertyChange?.Invoke(PropertyName);
-            else
+            } else {
                 propertyValue = propertyValue;
+            }
         }
 
         /// <summary>

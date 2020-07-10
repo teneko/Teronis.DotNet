@@ -1,13 +1,13 @@
-﻿using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace Teronis.Collections.DataSources.Generic
 {
     public abstract class AsyncDataSource<DataType> : DataSourceBase<DataType>, IAsyncDataSource<DataType>
     {
-        private CancellationTokenSource cancellationTokenSource;
+        private readonly CancellationTokenSource cancellationTokenSource;
 
         public AsyncDataSource(ILogger? logger = null)
         : base(logger)
@@ -45,8 +45,9 @@ namespace Teronis.Collections.DataSources.Generic
                 DataType data;
 
                 try {
-                    if (!await enumerator.MoveNextAsync())
+                    if (!await enumerator.MoveNextAsync()) {
                         break;
+                    }
 
                     data = enumerator.Current;
                 } catch {
@@ -62,8 +63,9 @@ namespace Teronis.Collections.DataSources.Generic
                 }
             }
 
-            if (EnumerationState == DataSourceEnumerationState.Started)
+            if (EnumerationState == DataSourceEnumerationState.Started) {
                 EnumerationState = DataSourceEnumerationState.Completed;
+            }
 
             LogEnumerationReachedEnd();
         }
@@ -72,8 +74,9 @@ namespace Teronis.Collections.DataSources.Generic
         {
             base.Dispose(disposing);
 
-            if (IsDisposed)
+            if (IsDisposed) {
                 return;
+            }
 
             // Dispose managed resources
             if (disposing) {

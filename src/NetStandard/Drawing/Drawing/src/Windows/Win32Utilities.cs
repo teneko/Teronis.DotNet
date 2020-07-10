@@ -9,8 +9,10 @@ namespace Teronis.Drawing.Windows
         public static Bitmap CaptureWindow(IntPtr hWnd)
         {
             var rctForm = Rectangle.Empty;
-            using (var grfx = Graphics.FromHdc(Win32.GetWindowDC(hWnd)))
+            using (var grfx = Graphics.FromHdc(Win32.GetWindowDC(hWnd))) {
                 rctForm = Rectangle.Round(grfx.VisibleClipBounds);
+            }
+
             var pImage = new Bitmap(rctForm.Width, rctForm.Height);
             var graphics = Graphics.FromImage(pImage);
             var hDC = graphics.GetHdc();

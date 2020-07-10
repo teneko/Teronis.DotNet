@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Teronis.Identity.Entities;
 using Teronis.Identity.BearerSignInManaging;
-using System;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using Teronis.Identity.Entities;
 
 namespace Teronis.Identity
 {
@@ -44,7 +43,7 @@ namespace Teronis.Identity
             var services = identityBuilder.Services;
             services.AddScoped<BearerTokenStore<DbContextType>>();
 
-            BearerTokenStore<DbContextType> getRequiredService(IServiceProvider serviceProvider) =>
+            static BearerTokenStore<DbContextType> getRequiredService(IServiceProvider serviceProvider) =>
                serviceProvider.GetRequiredService<BearerTokenStore<DbContextType>>();
 
             services.AddScoped<IBearerTokenStore>(getRequiredService);

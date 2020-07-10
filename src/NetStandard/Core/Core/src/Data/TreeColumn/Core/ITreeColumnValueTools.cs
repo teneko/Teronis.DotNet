@@ -27,8 +27,9 @@ namespace Teronis.Tools
 
         public static IEnumerable<object?> GetCellContent(IEnumerable<ITreeColumnValue<ITreeColumnKey>> treeColumnValues, object cellContentContainer)
         {
-            foreach (var treeColumnValue in treeColumnValues)
+            foreach (var treeColumnValue in treeColumnValues) {
                 yield return NestedPropertyTools.GetNestedValue(cellContentContainer, treeColumnValue.Path);
+            }
         }
     }
 }

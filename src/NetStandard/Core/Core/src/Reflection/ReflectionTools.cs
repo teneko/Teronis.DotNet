@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Teronis.Extensions;
@@ -74,7 +73,7 @@ namespace Teronis.Tools
             where T : notnull
         {
             ensureNonNullEntityTypes(leftEntity, rightEntity, out var leftEntityType, out var rightEntityType);
-            leftVariablesDescriptor = leftVariablesDescriptor ?? createDefaultVariableInfoSettings();
+            leftVariablesDescriptor ??= createDefaultVariableInfoSettings();
             var leftEntityVariableMembers = leftEntityType.GetVariableMembers(descriptor: leftVariablesDescriptor);
             var intersectedEntityVariableMembers = leftEntityVariableMembers.Intersect(rightEntityType, rightVariablesDescriptor);
             updateEntityVariables(leftEntity, rightEntity, intersectedEntityVariableMembers);
@@ -86,7 +85,7 @@ namespace Teronis.Tools
             where T : notnull
         {
             ensureNonNullEntityTypes(leftEntity, rightEntity, out var leftEntityType, out _);
-            variableInfoSettings = variableInfoSettings ?? createDefaultVariableInfoSettings();
+            variableInfoSettings ??= createDefaultVariableInfoSettings();
 
             var leftEntityVariableMembers = leftEntityType.GetAttributeVariableMembers(attributeType, descriptor: variableInfoSettings)
                 .Select(x => x.MemberInfo);
@@ -133,8 +132,9 @@ namespace Teronis.Tools
                     var cloningObjectMember = nameAndCloningObjectMembersPair.Value;
                     var copyingObjectMember = copyingObjectMembersByNameList[cloningObjectMembersKey];
 
-                    if (!cloningObjectMember.GetVariableType().IsAssignableFrom(copyingObjectMember.GetVariableType()))
+                    if (!cloningObjectMember.GetVariableType().IsAssignableFrom(copyingObjectMember.GetVariableType())) {
                         continue;
+                    }
 
                     var copyingObjectVariableValue = copyingObjectMember.GetValue(source);
                     cloningObjectMember.SetValue(clonedObejct, copyingObjectVariableValue);
@@ -160,13 +160,13 @@ namespace Teronis.Tools
 
             variableInfoDescriptor = variableInfoDescriptor.DefaultIfNull(true);
 
-            if (variableInfoDescriptor.Flags.HasFlag(BindingFlags.DeclaredOnly))
+            if (variableInfoDescriptor.Flags.HasFlag(BindingFlags.DeclaredOnly)) {
                 interruptingBaseType = beginningType.BaseType;
-            else {
+            } else {
                 variableInfoDescriptor = variableInfoDescriptor.ShallowCopy();
                 variableInfoDescriptor.Flags |= BindingFlags.DeclaredOnly;
                 variableInfoDescriptor.Seal();
-                interruptingBaseType = interruptingBaseType ?? typeof(object);
+                interruptingBaseType ??= typeof(object);
             }
 
             var basesTypes = beginningType.GetBaseTypes(interruptingBaseType);

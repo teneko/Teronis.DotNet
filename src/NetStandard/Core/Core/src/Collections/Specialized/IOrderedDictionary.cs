@@ -8,7 +8,7 @@ namespace Teronis.Collections.Specialized
         where TKey : notnull
     {
         new KeyValuePair<TKey, TValue> this[int index] { get; set; }
-        [MaybeNull,AllowNull]
+        [MaybeNull, AllowNull]
         new TValue this[TKey key] { get; set; }
         new int Count { get; }
         new ICollection<TKey> Keys { get; }
@@ -17,7 +17,7 @@ namespace Teronis.Collections.Specialized
         new void Clear();
         void Insert(int index, TKey key, TValue value);
         int IndexOf(TKey key);
-        bool ContainsValue([AllowNull]TValue value);
+        bool ContainsValue([AllowNull] TValue value);
         bool ContainsValue([AllowNull] TValue value, IEqualityComparer<TValue> comparer);
         new bool ContainsKey(TKey key);
         new IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator();

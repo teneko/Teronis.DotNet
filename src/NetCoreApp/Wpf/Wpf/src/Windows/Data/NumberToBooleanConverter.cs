@@ -9,19 +9,23 @@ namespace Teronis.Windows.Data
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is int number)
-                number = (int)value;
-            if (value is GridLength gridLength)
+            int number;
+
+            if (value is int valueInteger) {
+                number = valueInteger;
+            } else if (value is GridLength gridLength) {
                 number = (int)gridLength.Value;
-            else
+            } else {
                 number = 1;
+            }
 
             Visibility visibility;
 
-            if (number == 0)
+            if (number == 0) {
                 visibility = Visibility.Collapsed;
-            else
+            } else {
                 visibility = Visibility.Visible;
+            }
 
             return visibility;
         }

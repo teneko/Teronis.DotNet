@@ -8,9 +8,11 @@ namespace Teronis.Tools
         {
             var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
 
-            foreach (var culture in cultures)
-                if (culture.Name == name)
+            foreach (var culture in cultures) {
+                if (culture.Name == name) {
                     return true;
+                }
+            }
 
             return false;
         }

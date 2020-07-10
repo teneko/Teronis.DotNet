@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace Teronis.Collections.DataSources.Generic
 {
@@ -16,7 +16,7 @@ namespace Teronis.Collections.DataSources.Generic
             return dataSource;
         }
 
-        private IAsyncEnumerable<DataType> asyncEnumerable;
+        private readonly IAsyncEnumerable<DataType> asyncEnumerable;
 
         public EnumerableDataSource(IAsyncEnumerable<DataType> asyncEnumerable, ILogger logger)
             : base(logger)

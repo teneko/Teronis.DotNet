@@ -10,10 +10,11 @@ namespace Teronis.Windows.Data
         {
             var isStringNullOrEmpty = string.IsNullOrEmpty(value as string);
 
-            if (parameter is bool invert && invert)
+            if (parameter is bool invert && invert) {
                 return !isStringNullOrEmpty;
-            else
+            } else {
                 return isStringNullOrEmpty;
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

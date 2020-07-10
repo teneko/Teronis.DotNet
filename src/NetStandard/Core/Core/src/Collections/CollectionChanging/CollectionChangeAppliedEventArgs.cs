@@ -22,7 +22,7 @@ namespace Teronis.Collections.CollectionChanging
         public ICollectionChange<ContentType, ContentType> ContentContentChange
             => bundle.ContentContentChange;
 
-        private ICollectionChangeBundle<ItemType, ContentType> bundle;
+        private readonly ICollectionChangeBundle<ItemType, ContentType> bundle;
 
         public CollectionChangeAppliedEventArgs(ICollectionChangeBundle<ItemType, ContentType> bundle, AsyncEventSequence eventSequence)
         {

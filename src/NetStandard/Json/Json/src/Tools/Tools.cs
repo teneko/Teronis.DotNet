@@ -1,9 +1,9 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using Teronis.Extensions;
-using Teronis.Json.Serialization;
 using Teronis.Json.Extensions;
+using Teronis.Json.Serialization;
 
 namespace Teronis.Json.Tools
 {
@@ -35,8 +35,9 @@ namespace Teronis.Json.Tools
             if (settings != null) {
                 copiedSettings = settings.ShallowCopy();
                 copiedSettings.ContractResolver = contractResolver;
-            } else
+            } else {
                 copiedSettings = null;
+            }
 
             return deserializedDuckContainer.DeserializeJson(containerType, copiedSettings);
         }

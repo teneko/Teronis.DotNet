@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using Teronis.Windows.Media;
@@ -10,8 +10,9 @@ namespace Teronis.Windows.Controls
     {
         private static ListViewItem getListViewItem(ListBox listBox, int index)
         {
-            if (listBox.ItemContainerGenerator.Status != GeneratorStatus.ContainersGenerated)
+            if (listBox.ItemContainerGenerator.Status != GeneratorStatus.ContainersGenerated) {
                 return null;
+            }
 
             return listBox.ItemContainerGenerator.ContainerFromIndex(index) as ListViewItem;
         }
@@ -22,8 +23,9 @@ namespace Teronis.Windows.Controls
 
             if (listBox?.Items != null) {
                 for (int i = 0; i < listBox.Items.Count; ++i) {
-                    if (listBox.SelectedItems.IndexOf(listBox.Items[i]) == -1)
+                    if (listBox.SelectedItems.IndexOf(listBox.Items[i]) == -1) {
                         continue;
+                    }
 
                     var listViewItem = getListViewItem(listBox, i);
 

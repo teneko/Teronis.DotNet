@@ -9,7 +9,7 @@ namespace Teronis.Data
         public IHaveKnownParents HavingKnownParents { get; private set; }
         public ReadOnlyDictionary<object, WantParentsEventHandler> HandlerByCallerDictionary { get; private set; }
 
-        private Dictionary<object, WantParentsEventHandler> handlerByCallerDictionary;
+        private readonly Dictionary<object, WantParentsEventHandler> handlerByCallerDictionary;
 
         public KnownParentsContainer(IHaveKnownParents havingKnownParents)
         {
@@ -20,8 +20,9 @@ namespace Teronis.Data
 
         public void AttachWantParentsHandler(object caller, WantParentsEventHandler handler)
         {
-            if (handlerByCallerDictionary.ContainsKey(caller))
+            if (handlerByCallerDictionary.ContainsKey(caller)) {
                 throw new ArgumentException("The caller can only be once a parent");
+            }
 
             HavingKnownParents.AttachWantParentsHandler(handler);
             handlerByCallerDictionary.Add(caller, handler);
@@ -29,8 +30,9 @@ namespace Teronis.Data
 
         public void DetachWantParentsHandler(object caller)
         {
-            if (!handlerByCallerDictionary.ContainsKey(caller))
+            if (!handlerByCallerDictionary.ContainsKey(caller)) {
                 throw new ArgumentException("The caller has not been attached before");
+            }
 
             var handler = handlerByCallerDictionary[caller];
             HavingKnownParents.DetachWantParentsHandler(handler);

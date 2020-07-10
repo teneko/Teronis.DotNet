@@ -24,8 +24,7 @@ namespace Teronis.Data
         public override int GetHashCode(IEnumerable<T> obj)
         {
             // It will not throw an overflow exception
-            unchecked
-            {
+            unchecked {
                 return obj
                     .Select(e => e == null ? 0 : e.GetHashCode())
                     .Aggregate(17, (a, b) => 23 * a + b);

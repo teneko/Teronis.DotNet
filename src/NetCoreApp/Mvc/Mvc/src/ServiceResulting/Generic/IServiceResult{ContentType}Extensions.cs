@@ -37,8 +37,9 @@ namespace Teronis.Mvc.ServiceResulting.Generic
         {
             result = result ?? throw new ArgumentNullException(nameof(result));
 
-            if (result.Succeeded)
+            if (result.Succeeded) {
                 return result.CopyButSucceededWithContent(content);
+            }
 
             return result.copy<SourceContentType, TargetContentType>();
         }
@@ -49,8 +50,9 @@ namespace Teronis.Mvc.ServiceResulting.Generic
             IMutableServiceResult mutableServiceResult = copiedResult;
             mutableServiceResult.Succeeded = false;
 
-            if (errors != null)
+            if (errors != null) {
                 mutableServiceResult.Errors = errors;
+            }
 
             return copiedResult;
         }
@@ -59,8 +61,9 @@ namespace Teronis.Mvc.ServiceResulting.Generic
         {
             result = result ?? throw new ArgumentNullException(nameof(result));
 
-            if (!result.Succeeded)
+            if (!result.Succeeded) {
                 return result.CopyButFailed<SourceContentType, TargetContentType>(errors);
+            }
 
             return result.copy<SourceContentType, TargetContentType>();
         }

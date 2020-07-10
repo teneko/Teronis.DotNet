@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Teronis.EntityFrameworkCore.Data
 {
@@ -48,8 +48,9 @@ namespace Teronis.EntityFrameworkCore.Data
         protected virtual void Dispose(bool disposing)
         {
             if (!IsDisposed) {
-                if (disposing)
+                if (disposing) {
                     DbContext.Dispose();
+                }
 
                 IsDisposed = true;
             }

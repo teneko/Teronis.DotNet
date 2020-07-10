@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Teronis.Identity.AccountManaging
+﻿namespace Teronis.Identity.AccountManaging
 {
     public class AccountManagerOptions
     {

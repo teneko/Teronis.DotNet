@@ -9,10 +9,11 @@ namespace Teronis.Extensions
         public static V AddOrUpdate<K, V>(this IDictionary<K, V> dictionary, K key, V value)
             where K : notnull
         {
-            if (!dictionary.ContainsKey(key))
+            if (!dictionary.ContainsKey(key)) {
                 return dictionary.AddAndReturn(key, value);
-            else
+            } else {
                 return dictionary[key] = value;
+            }
         }
 
         public static V AddOrUpdate<K, V>(this IDictionary<K, V> dictionary, K key, V value, Func<V, V> repalceValue)
@@ -61,8 +62,9 @@ namespace Teronis.Extensions
             if (source.TryGetValue(key, out value)) {
                 source.Remove(key);
                 return true;
-            } else
+            } else {
                 return false;
+            }
         }
     }
 }

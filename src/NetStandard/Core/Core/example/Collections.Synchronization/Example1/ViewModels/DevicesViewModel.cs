@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
-using Teronis.ViewModels;
-using Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollections;
-using Teronis.Collections.Synchronization.Example1.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using MorseCode.ITask;
+using Teronis.Collections.Synchronization.Example1.Models;
+using Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollections;
+using Teronis.ViewModels;
 
 namespace Teronis.Collections.Synchronization.Example1.ViewModels
 {

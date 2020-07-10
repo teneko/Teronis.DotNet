@@ -19,7 +19,7 @@ namespace Teronis.Drawing.Tools
                     // Good font, return it
                     return testFont;
                 }
-            } 
+            }
 
             // If you get here there was no fontsize that worked
             // return minimumSize or original?

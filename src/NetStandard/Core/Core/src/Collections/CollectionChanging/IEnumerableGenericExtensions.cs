@@ -1,13 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using Teronis.Collections.CollectionChanging;
 using Teronis.Collections.Generic;
 using Teronis.Collections.ObjectModel;
 using Teronis.Diagnostics;
-using System.Diagnostics;
-using System.Collections;
-using Teronis.Collections.CollectionChanging;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis.Extensions
 {
@@ -24,7 +24,7 @@ namespace Teronis.Extensions
         /// <returns></returns>
         public static IEnumerable<CollectionChange<LeftItemType, RightItemType>> GetCollectionChanges<LeftItemType, RightItemType, CommonValueType>(this IEnumerable<LeftItemType> leftItems, IEnumerable<RightItemType> rigthItems, Func<LeftItemType, CommonValueType> getCommonValueFromLeftItem, Func<RightItemType, CommonValueType> getCommonValueFromRightItem, IEqualityComparer<CommonValueType> commonValueEqualityComparer)
         {
-            commonValueEqualityComparer = commonValueEqualityComparer ?? EqualityComparer<CommonValueType>.Default;
+            commonValueEqualityComparer ??= EqualityComparer<CommonValueType>.Default;
             var commonValueContainerEqualityComparer = new CommonValueContainerEqualityComparer<CommonValueType>(commonValueEqualityComparer);
             var leftItemsEnumerator = leftItems.GetEnumerator();
             var rightItemsEnumerator = rigthItems.GetEnumerator();
@@ -43,8 +43,8 @@ namespace Teronis.Extensions
             var lateRightItemContainers = new OrderedHashSet<CommonValueContainer<CommonValueType>, RightItemContainer<LeftItemType, RightItemType, CommonValueType>>(commonValueContainerEqualityComparer);
             var areEarlyIterationValuesEqual = true;
 
-            bool hasValue(ref bool hasItem, IEnumerator itemEnumerator)
-                => hasItem && (hasItem = itemEnumerator.MoveNext());
+            static bool hasValue(ref bool hasItem, IEnumerator itemEnumerator) =>
+                hasItem && (hasItem = itemEnumerator.MoveNext());
 
             while (hasValue(ref hasLeftItem, leftItemsEnumerator) | hasValue(ref hasRightItem, rightItemsEnumerator)) {
                 // Cancel if not a left and right value is available
@@ -126,11 +126,11 @@ namespace Teronis.Extensions
                 var rightValueIndex = rightItemContainer.ShiftedIndex;
                 var rightValue = rightItemContainer.CommonValue;
                 var hasCachedLeftItem = rightItemContainer.CachedLeftItem != null;
-                LeftItemContainer<LeftItemType, RightItemType, CommonValueType>? foundLeftValueIndexPair = null;
+                LeftItemContainer<LeftItemType, RightItemType, CommonValueType>? foundLeftValueIndexPair;
 
-                if (hasCachedLeftItem)
+                if (hasCachedLeftItem) {
                     foundLeftValueIndexPair = rightItemContainer.CachedLeftItem;
-                else {
+                } else {
                     if (lateLeftItemContainers.TryGetValue(CommonValueContainer<CommonValueType>.CreateEqualComparableItem(rightValue), out foundLeftValueIndexPair!)) {
                         lateLeftItemContainers.Remove(foundLeftValueIndexPair);
                     }
@@ -150,8 +150,9 @@ namespace Teronis.Extensions
                         // Here we deny the forward to backward move, so we have to process already replaced items, 
                         // and move them forward, because they could be now behind those skipped items, but need to
                         // be moved before them
-                        if (foundLeftIndex < rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount)
+                        if (foundLeftIndex < rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount) {
                             continue;
+                        }
 
                         var change = new CollectionChange<LeftItemType, RightItemType>(NotifyCollectionChangedAction.Move, foundLeftValueIndexPair.LeftItem, foundLeftIndex, rightItemContainer.RightItem, rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount);
                         // We move the old existing item
@@ -174,17 +175,15 @@ namespace Teronis.Extensions
 
         public static IEnumerable<CollectionChange<LeftItemType, RightItemType>> GetCollectionChanges<LeftItemType, RightItemType>(this IEnumerable<LeftItemType> leftItems, IEnumerable<RightItemType> rightItems, Func<LeftItemType, RightItemType> getCommonValueFromLeftItem, IEqualityComparer<RightItemType> commonValueEqualityComparer)
         {
-            RightItemType getCommonValueFromRightItem(RightItemType rightItem)
-                => rightItem;
+            static RightItemType getCommonValueFromRightItem(RightItemType rightItem) =>
+                rightItem;
 
             return GetCollectionChanges(leftItems, rightItems, getCommonValueFromLeftItem, getCommonValueFromRightItem, commonValueEqualityComparer);
         }
 
         public static IEnumerable<CollectionChange<ItemType, ItemType>> GetCollectionChanges<ItemType>(this IEnumerable<ItemType> leftItems, IEnumerable<ItemType> rightItems, IEqualityComparer<ItemType> commonValueEqualityComparer)
         {
-            ItemType getCommonValueFromItem(ItemType item)
-                => item;
-
+            static ItemType getCommonValueFromItem(ItemType item) => item;
             return GetCollectionChanges(leftItems, rightItems, getCommonValueFromItem, getCommonValueFromItem, commonValueEqualityComparer);
         }
 
@@ -217,13 +216,15 @@ namespace Teronis.Extensions
                 switch (args.ShiftCondition.Action) {
                     case NotifyCollectionChangedAction.Add:
                         // When adding a 
-                        if (ShiftedIndex >= change.NewIndex)
+                        if (ShiftedIndex >= change.NewIndex) {
                             Shifts++;
+                        }
 
                         break;
                     case NotifyCollectionChangedAction.Move:
-                        if (ShiftedIndex >= change.NewIndex && ShiftedIndex < change.OldIndex)
+                        if (ShiftedIndex >= change.NewIndex && ShiftedIndex < change.OldIndex) {
                             Shifts++;
+                        }
 
                         break;
                 }

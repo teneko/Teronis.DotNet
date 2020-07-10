@@ -1,13 +1,13 @@
-﻿using System.Linq;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using Teronis.Data.TreeColumn;
 using Teronis.Data.TreeColumn.Core;
-using Teronis.Tools;
-using System;
-using Teronis.Extensions;
-using System.Diagnostics;
 using Teronis.Diagnostics;
+using Teronis.Extensions;
 using Teronis.Reflection;
+using Teronis.Tools;
 
 namespace Teronis.Collections.Synchronization.Example1.Models
 {
@@ -25,10 +25,11 @@ namespace Teronis.Collections.Synchronization.Example1.Models
 
         string IDebuggerDisplay.DebuggerDisplay => $"{GetType()}, {nameof(Serial)} = {Serial}";
 
-        public bool DoesEachColumnContainsText(IEnumerable<ITreeColumnValue<ITreeColumnKey>> treeColumns, string searchText)
-           => treeColumns.Any(x => x == null ? false : NestedPropertyTools.GetNestedValue(this, x.Path)?.ToString().IndexOf(searchText, StringComparison.InvariantCultureIgnoreCase) >= 0);
+        public bool DoesEachColumnContainsText(IEnumerable<ITreeColumnValue<ITreeColumnKey>> treeColumns, string searchText) =>
+            treeColumns.Any(x => x != null
+                && NestedPropertyTools.GetNestedValue(this, x.Path)?.ToString().IndexOf(searchText, StringComparison.InvariantCultureIgnoreCase) >= 0);
 
-        public IEnumerable<object> GetCellContents(IEnumerable<ITreeColumnValue<ITreeColumnKey>> treeColumnValues)
-            => ITreeColumnValueTools.GetCellContent(treeColumnValues, this);
+        public IEnumerable<object> GetCellContents(IEnumerable<ITreeColumnValue<ITreeColumnKey>> treeColumnValues) =>
+            ITreeColumnValueTools.GetCellContent(treeColumnValues, this);
     }
 }

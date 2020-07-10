@@ -1,6 +1,5 @@
 ﻿using System;
 using Teronis.Data.TreeColumn.Core;
-using Teronis.Windows.Data;
 using Teronis.Windows.Templating;
 
 namespace Teronis.Windows.Data.TreeColumn
@@ -14,14 +13,15 @@ namespace Teronis.Windows.Data.TreeColumn
             var binding = key.GetBinding?.Invoke(path) ?? new CultureAwareBinding(path, key.PropertyInfo.PropertyType);
             var value = new ListViewTreeColumnValue(key, binding, index);
 
-            if (key.GetCellTemplate == null && key.GetCellTemplateSelector == null)
+            if (key.GetCellTemplate == null && key.GetCellTemplateSelector == null) {
                 value.DataTemplate = new BoundTextBlockTemplate() {
                     TextPropertyBinding = binding
                 };
-            else if (key.GetCellTemplate != null)
+            } else if (key.GetCellTemplate != null) {
                 value.DataTemplate = key.GetCellTemplate(binding);
-            else
+            } else {
                 value.DataTemplateSelector = key.GetCellTemplateSelector?.Invoke(binding);
+            }
 
             return value;
         }

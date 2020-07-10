@@ -16,8 +16,9 @@ namespace Teronis.Tools
                     // TODO: After that line all satellite assemblies are loaded
                     var resourceSet = resourceManager.GetResourceSet(culture, true, false);
 
-                    if (resourceSet != null)
+                    if (resourceSet != null) {
                         supportedCultures.Add(culture);
+                    }
                 } catch { }
             }
 

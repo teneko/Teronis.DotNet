@@ -13,7 +13,7 @@ namespace Teronis.Mvc.ServiceResulting.Generic.ObjectModel
         private IServiceResultPostConfiguration<IServiceResult<ContentType>, ContentType> setServiceResult(ServiceResult<ContentType> serviceResult)
         {
             serviceResultInjection.SetResult(serviceResult);
-            return new ServiceResultPostConfiguration<IServiceResult<ContentType>, ContentType>(serviceResult, serviceResult);
+            return new ServiceResultPostConfiguration<IServiceResult<ContentType>, ContentType>(serviceResult);
         }
 
         public IServiceResultPostConfiguration<IServiceResult<ContentType>, ContentType> ToSuccess()

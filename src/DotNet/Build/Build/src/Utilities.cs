@@ -6,11 +6,12 @@ namespace Teronis.DotNet.Build
 {
     public static class Utilities
     {
-        public static DirectoryInfo? GetRootDirectory() {
+        public static DirectoryInfo? GetRootDirectory()
+        {
             var directory = AppDomain.CurrentDomain.BaseDirectory ??
                 throw new ArgumentNullException("Current app domain directory is null.");
 
-           return DirectoryTools.GetDirectoryOfFileAbove(".msbuild", directory);
+            return DirectoryTools.GetDirectoryOfFileAbove(".msbuild", directory);
         }
     }
 }

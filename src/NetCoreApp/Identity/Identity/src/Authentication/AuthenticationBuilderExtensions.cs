@@ -4,12 +4,11 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using ZNetCS.AspNetCore.Authentication.Basic.Events;
 using Teronis.Identity.Authentication.Extensions;
 using Teronis.Identity.Authentication.Tools;
 using Teronis.Identity.Entities;
 using ZNetCS.AspNetCore.Authentication.Basic;
-using System.Threading.Tasks;
+using ZNetCS.AspNetCore.Authentication.Basic.Events;
 
 namespace Teronis.Identity.Authentication
 {

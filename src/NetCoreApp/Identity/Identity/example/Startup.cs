@@ -1,16 +1,15 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Text;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using Teronis.Identity.Authentication;
 using Teronis.Identity.Controllers;
 using Teronis.Identity.Entities;
-using Microsoft.EntityFrameworkCore;
-using Teronis.Identity.Authentication;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Teronis.Identity
 {

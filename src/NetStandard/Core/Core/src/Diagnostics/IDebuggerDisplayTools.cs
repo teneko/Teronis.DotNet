@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Teronis.Diagnostics
+﻿namespace Teronis.Diagnostics
 {
     public static class IDebuggerDisplayTools
     {

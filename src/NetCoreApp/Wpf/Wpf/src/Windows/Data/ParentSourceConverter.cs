@@ -12,10 +12,11 @@ namespace Teronis.Windows.Data
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is IHaveParents havingParents && parameter is Type wantedParentType)
+            if (value is IHaveParents havingParents && parameter is Type wantedParentType) {
                 return havingParents.GetParentsPicker().GetSingleParent(wantedParentType);
-            else
+            } else {
                 throw new Exception("Could not resolve parent");
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

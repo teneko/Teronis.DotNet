@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Teronis.Collections.Generic;
 using Teronis.Extensions;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis.Extensions
 {
@@ -16,12 +16,12 @@ namespace Teronis.Extensions
         {
             var defaultObj = default(R);
 
-            foreach (var item in collection)
-            {
+            foreach (var item in collection) {
                 var obj = getObj(item);
 
-                if (!Equals(obj, defaultObj))
+                if (!Equals(obj, defaultObj)) {
                     return obj;
+                }
             }
 
             return defaultObj;
@@ -31,10 +31,11 @@ namespace Teronis.Extensions
         {
             var obj = FirstNonDefaultOrDefault(collection, getObj);
 
-            if (obj != default)
+            if (obj != default) {
                 return obj;
-            else
+            } else {
                 throw new InvalidOperationException("The source sequence is empty.");
+            }
         }
 
         public static bool Any<T>(this IEnumerable<T> collection, Func<T, bool> predicate, out T last)
@@ -49,8 +50,7 @@ namespace Teronis.Extensions
         {
             int i = 0;
 
-            foreach (var value in sequence)
-            {
+            foreach (var value in sequence) {
                 yield return new ValueIndexPair<T>(value, i);
                 i++;
             }
@@ -61,11 +61,13 @@ namespace Teronis.Extensions
         /// </summary>
         public static IEnumerable<T> ContinueWith<T>(this IEnumerable<T> target, T item)
         {
-            if (target == null)
+            if (target == null) {
                 throw new ArgumentException(nameof(target));
+            }
 
-            foreach (var t in target)
+            foreach (var t in target) {
                 yield return t;
+            }
 
             yield return item;
         }
@@ -75,14 +77,17 @@ namespace Teronis.Extensions
         /// </summary>
         public static IEnumerable<T> ContinueWith<T>(this IEnumerable<T> target, IEnumerable<T> items)
         {
-            if (target == null)
+            if (target == null) {
                 throw new ArgumentException(nameof(target));
+            }
 
-            foreach (var t in target)
+            foreach (var t in target) {
                 yield return t;
+            }
 
-            foreach (var t in items)
+            foreach (var t in items) {
                 yield return t;
+            }
         }
     }
 }

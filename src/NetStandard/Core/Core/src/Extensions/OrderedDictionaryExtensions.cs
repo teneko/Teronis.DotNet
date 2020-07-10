@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Teronis.Collections.Generic;
 using Teronis.Tools;
 
@@ -8,13 +7,13 @@ namespace Teronis.Extensions
     public static class OrderedDictionaryExtensions
     {
         public static bool Swap<K, V>(this OrderedDictionary<K, V> source, int fromIndex, int toIndex)
-            where K: notnull
+            where K : notnull
         {
-            Action<int, object> insertAt = (index, item) => 
+            void insertAt(int index, object item) =>
                 source.Insert(index, (KeyValuePair<K, V>)item);
 
-            Func<int, object> getAt = (index) => source[index];
-            Action<int> removeAt = (index) => source.RemoveAt(index);
+            object getAt(int index) => source[index];
+            void removeAt(int index) => source.RemoveAt(index);
             return ListTools.SwapItem(fromIndex, toIndex, insertAt!, getAt, removeAt);
         }
     }

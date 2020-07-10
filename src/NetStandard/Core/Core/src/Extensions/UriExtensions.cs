@@ -17,8 +17,8 @@ namespace Teronis.Extensions
         {
             var httpValueCollection = ParseQueryString(uri);
 
-            foreach (var item in items) {
-                httpValueCollection.Add(item.name, item.value);
+            foreach (var (name, value) in items) {
+                httpValueCollection.Add(name, value);
             }
 
             var uriBuilder = new UriBuilder(uri);

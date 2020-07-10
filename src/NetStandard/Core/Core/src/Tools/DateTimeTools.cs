@@ -4,7 +4,7 @@ namespace Teronis.Tools
 {
     public static class DateTimeTools
     {
-        private static DateTime ECMAScriptTimestampAsInitialDateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        private static readonly DateTime ECMAScriptTimestampAsInitialDateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         /// <summary>
         /// Returns a .Net <see cref="DateTime"/> representation of a time value from the ECMAScript specification.

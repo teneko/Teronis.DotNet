@@ -2,8 +2,8 @@
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
-using Teronis.Threading.Tasks;
 using Teronis.Extensions;
+using Teronis.Threading.Tasks;
 
 namespace Teronis.Diagnostics
 {

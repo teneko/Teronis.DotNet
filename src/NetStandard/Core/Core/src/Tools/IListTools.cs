@@ -22,12 +22,14 @@ namespace Teronis.Tools
         public static void Bubblesort<T>(IList<T> collection, IComparer<T> comparer)
         {
             // When null, throw exception
-            if (collection == null)
+            if (collection == null) {
                 throw new ArgumentNullException(nameof(collection));
+            }
 
             // There have to be at least two items to sort them
-            if (collection.Count < 2)
+            if (collection.Count < 2) {
                 return;
+            }
 
             // -1 for zero based index and another 
             // -1 for beginning at the second last index

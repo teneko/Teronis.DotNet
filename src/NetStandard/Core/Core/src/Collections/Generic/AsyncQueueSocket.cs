@@ -26,11 +26,9 @@ namespace Teronis.Collections.Generic
             // We lock this so we only ever enumerate once at a time.
             // That way we ensure all items are returned in a continuous
             // fashion with no 'holes' in the data when two foreach compete.
-            using (enumerationSemaphore)
-            {
+            using (enumerationSemaphore) {
                 // Return new elements until cancellationToken is triggered.
-                while (true)
-                {
+                while (true) {
                     // Make sure to throw on cancellation so the Task will transfer into a canceled state
                     token.ThrowIfCancellationRequested();
                     yield return await bufferBlock.ReceiveAsync(token);
@@ -45,12 +43,12 @@ namespace Teronis.Collections.Generic
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!IsDisposed)
-            {
+            if (!IsDisposed) {
                 IsDisposed = true;
 
-                if (disposing)
+                if (disposing) {
                     enumerationSemaphore.Dispose();
+                }
             }
         }
 

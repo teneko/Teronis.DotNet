@@ -8,14 +8,15 @@ namespace Teronis.Collections.Synchronization.Example1.Models
 
         public override bool Equals(DeviceHeaderEntity x, DeviceHeaderEntity y)
         {
-            if (x == null && y == null)
+            if (x == null && y == null) {
                 return true;
-            else if (x == null || y == null)
+            } else if (x == null || y == null) {
                 return false;
-            else if (x.Serial == y.Serial)
+            } else if (x.Serial == y.Serial) {
                 return true;
-            else
+            } else {
                 return false;
+            }
         }
 
         public override int GetHashCode(DeviceHeaderEntity obj)

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Teronis.ObjectModel.Updates;
 using Teronis.Collections.Synchronization.Example1.Models;
+using Teronis.ObjectModel.Updates;
 
 namespace Teronis.Collections.Synchronization.Example1.ViewModels
 {

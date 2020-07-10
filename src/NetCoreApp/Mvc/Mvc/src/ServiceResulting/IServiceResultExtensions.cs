@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Teronis.Mvc.ServiceResulting
@@ -15,20 +14,23 @@ namespace Teronis.Mvc.ServiceResulting
             serviceResult = serviceResult ?? throw new ArgumentNullException(nameof(serviceResult));
             var errors = serviceResult.Errors;
 
-            if (serviceResult.Succeeded || errors == null || errors.Count == 0)
+            if (serviceResult.Succeeded || errors == null || errors.Count == 0) {
                 return true;
+            }
 
             int notIgnoredErrorCodesCount;
 
-            if (ignoredErrorCodes is null)
+            if (ignoredErrorCodes is null) {
                 notIgnoredErrorCodesCount = errors.Count;
-            else
+            } else {
                 notIgnoredErrorCodesCount = errors.Errors
                .Where(x => !ignoredErrorCodes.Contains(x.ErrorCode))
                .Count();
+            }
 
-            if (notIgnoredErrorCodesCount == 0)
+            if (notIgnoredErrorCodesCount == 0) {
                 return true;
+            }
 
             return false;
         }
@@ -38,8 +40,9 @@ namespace Teronis.Mvc.ServiceResulting
 
         public static void ThrowOnError(this IServiceResult serviceResult)
         {
-            if (!serviceResult.Succeeded)
+            if (!serviceResult.Succeeded) {
                 throw new NotSucceededException(serviceResult, $"Service result did not succeed. {serviceResult.Errors.ToStringOrDefaultMessage()}");
+            }
         }
     }
 }

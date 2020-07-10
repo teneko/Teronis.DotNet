@@ -10,10 +10,11 @@ namespace Teronis.Windows.Templating
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            if (item is DialogHeaderMessageViewModel)
+            if (item is DialogHeaderMessageViewModel) {
                 return DialogHeaderMessageTemplate;
-            else
+            } else {
                 return base.SelectTemplate(item, container);
+            }
         }
     }
 }

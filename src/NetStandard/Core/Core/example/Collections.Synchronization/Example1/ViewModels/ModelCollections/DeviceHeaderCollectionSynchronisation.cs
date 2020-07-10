@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
-using Teronis.Data;
 using Teronis.Collections.Synchronization.Example1.Models;
+using Teronis.Data;
 
 namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollections
 {
@@ -12,8 +12,10 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollectio
     {
         public DeviceHeaderViewModel SelectedItem { get; set; }
 
-        private CollectionItemParentsBehaviour<DeviceHeaderViewModel, DeviceHeaderEntity> itemParentsBehaviour;
-        private CollectionItemUpdateBehaviour<DeviceHeaderViewModel, DeviceHeaderEntity> itemUpdateBehaviour;
+#pragma warning disable IDE0052 // Ungelesene private Member entfernen
+        private readonly CollectionItemParentsBehaviour<DeviceHeaderViewModel, DeviceHeaderEntity> itemParentsBehaviour;
+        private readonly CollectionItemUpdateBehaviour<DeviceHeaderViewModel, DeviceHeaderEntity> itemUpdateBehaviour;
+#pragma warning restore IDE0052 // Ungelesene private Member entfernen
 
         public DeviceHeaderCollectionSynchronisation()
             : base(new ObservableCollection<DeviceHeaderViewModel>(), new ObservableCollection<DeviceHeaderEntity>(), DeviceHeaderEntityEqualityComparer.Default)

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Teronis.Identity.AccountManaging;
 using Teronis.Identity.Entities;
 
@@ -45,7 +44,7 @@ namespace Teronis.Identity
             var services = identityBuilder.Services;
             services.AddScoped<AccountManager<DbContextType>>();
 
-            AccountManager<DbContextType> getRequiredService(IServiceProvider serviceProvider) =>
+            static AccountManager<DbContextType> getRequiredService(IServiceProvider serviceProvider) =>
                 serviceProvider.GetRequiredService<AccountManager<DbContextType>>();
 
             addAccountManager(identityBuilder, getRequiredService);

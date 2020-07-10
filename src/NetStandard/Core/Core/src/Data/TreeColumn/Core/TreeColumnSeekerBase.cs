@@ -27,7 +27,7 @@ namespace Teronis.Data.TreeColumn.Core
             var treeColumnDefinitions = new OrderedDictionary<TreeColumnKeyType, TreeColumnValueType>();
 
             while (columnDefinitionsByParent.Count > 0) {
-                string combinePath(string? left, string right)
+                static string combinePath(string? left, string right)
                 {
                     string combinedPath;
 
@@ -40,9 +40,7 @@ namespace Teronis.Data.TreeColumn.Core
                     return combinedPath;
                 }
 
-                var parent = columnDefinitionsByParent[0];
-                var declaringType = parent.DeclaringType;
-                var parentPath = parent.Path;
+                var (declaringType, parentPath) = columnDefinitionsByParent[0];
 
                 // We cache declaration path children that are existing in the current declaration path
                 foreach (var varInfo in declaringType.GetAttributePropertyMembers<HasTreeColumnsAttribute>()) {
@@ -58,10 +56,11 @@ namespace Teronis.Data.TreeColumn.Core
                         string combinedPath = combinePath(parentPath, orderedTreeColumnKey.VariableName);
                         var treeColumnValue = instantiateTreeColumnValue(orderedTreeColumnKey, combinedPath, index);
 
-                        if (index < treeColumnDefinitions.Count)
+                        if (index < treeColumnDefinitions.Count) {
                             treeColumnDefinitions.Insert(index, orderedTreeColumnKey, treeColumnValue);
-                        else
+                        } else {
                             treeColumnDefinitions.Add(orderedTreeColumnKey, treeColumnValue);
+                        }
                     }
                 }
 

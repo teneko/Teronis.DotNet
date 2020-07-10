@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Teronis.Windows
 {
@@ -12,8 +8,8 @@ namespace Teronis.Windows
 
         public event WinEventDelegate? WinEventRaised;
 
-        Win32.WinEventDelegate win32EventHandler;
-        IntPtr hookId;
+        readonly Win32.WinEventDelegate win32EventHandler;
+        readonly IntPtr hookId;
 
         /// <summary>
         /// With this class you are able to listen to global window event(s).

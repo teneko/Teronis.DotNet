@@ -1,8 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using Teronis.ObjectModel;
-using Teronis.Collections.Synchronization.Example1.Models;
 using Teronis.Collections.CollectionChanging;
+using Teronis.Collections.Synchronization.Example1.Models;
+using Teronis.ObjectModel;
 
 namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollections
 {
@@ -17,10 +17,12 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollectio
             private set => deviceHeaderCollectionContainer.SelectedItem = value.HeaderContainer;
         }
 
-        private PropertyChangedRelay propertyChangedRelay;
-        private DeviceHeaderCollectionSynchronisation deviceHeaderCollectionContainer;
-        private ConversionAdapter<DeviceHeaderEntity> deviceHeaderConversionAdapter;
-        private CollectionItemParentsBehaviour<DeviceViewModel, DeviceHeaderViewModel> itemParentsBehaviour;
+        private readonly PropertyChangedRelay propertyChangedRelay;
+        private readonly DeviceHeaderCollectionSynchronisation deviceHeaderCollectionContainer;
+        private readonly ConversionAdapter<DeviceHeaderEntity> deviceHeaderConversionAdapter;
+#pragma warning disable IDE0052 // Ungelesene private Member entfernen
+        private readonly CollectionItemParentsBehaviour<DeviceViewModel, DeviceHeaderViewModel> itemParentsBehaviour;
+#pragma warning restore IDE0052 // Ungelesene private Member entfernen
 
         public DeviceCollectionSynchronisation(DeviceHeaderCollectionSynchronisation deviceHeaderCollectionContainer)
             : base(new ObservableCollection<DeviceViewModel>(), new ObservableCollection<DeviceHeaderViewModel>())

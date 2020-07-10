@@ -9,8 +9,8 @@ namespace Teronis.Drawing
         public int Stride => bitmapData.Stride;
         public Rectangle Rectangle { get; private set; }
 
-        Bitmap bmap;
-        System.Drawing.Imaging.BitmapData bitmapData;
+        readonly Bitmap bmap;
+        readonly System.Drawing.Imaging.BitmapData bitmapData;
 
         public BitmapData(Bitmap bmap)
         {
@@ -20,7 +20,7 @@ namespace Teronis.Drawing
             ScreenData = (byte*)bitmapData.Scan0.ToPointer();
         }
 
-        public BitmapData(Bitmap bmap, out BitmapShot bmapShot) : this(bmap) 
+        public BitmapData(Bitmap bmap, out BitmapShot bmapShot) : this(bmap)
             => bmapShot = new BitmapShot(this);
 
         public void Dispose() => bmap.UnlockBits(bitmapData);

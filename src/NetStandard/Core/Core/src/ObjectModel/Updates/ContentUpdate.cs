@@ -1,6 +1,6 @@
-﻿using MorseCode.ITask;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using MorseCode.ITask;
 
 namespace Teronis.ObjectModel.Updates
 {
@@ -19,7 +19,7 @@ namespace Teronis.ObjectModel.Updates
         /// <param name="content">The parameter <paramref name="content"/> will be wrapped by <see cref="Task.FromResult{TResult}(TResult)"/>.</param>
         /// <param name="originalUpdateCreationSource"></param>
         /// <param name="updateCreationSource"></param>
-        public ContentUpdate([AllowNull]ContentType content, object? originalUpdateCreationSource, object? updateCreationSource)
+        public ContentUpdate([AllowNull] ContentType content, object? originalUpdateCreationSource, object? updateCreationSource)
         {
             var contentTask = Task.FromResult(content!);
             setContentTask(contentTask);

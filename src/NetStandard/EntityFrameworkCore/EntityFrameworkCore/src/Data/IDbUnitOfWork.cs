@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Storage;
 using Teronis.Data;
 
 namespace Teronis.EntityFrameworkCore.Data

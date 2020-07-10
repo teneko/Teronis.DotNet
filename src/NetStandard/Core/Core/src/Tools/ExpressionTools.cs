@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace Teronis.Tools
 {
@@ -11,9 +9,7 @@ namespace Teronis.Tools
         {
             if ((expression.Body.NodeType == ExpressionType.Convert) ||
                 (expression.Body.NodeType == ExpressionType.ConvertChecked)) {
-                var unary = expression.Body as UnaryExpression;
-
-                if (unary != null) {
+                if (expression.Body is UnaryExpression unary) {
                     return unary.Operand.Type;
                 }
             }
@@ -27,10 +23,9 @@ namespace Teronis.Tools
         public static Type GetReturnType(Expression<Func<object?>> expression) =>
             getReturnType(expression);
 
-        public static string getReturnName(LambdaExpression expression) {
-            MemberExpression? body = expression.Body as MemberExpression;
-
-            if (body == null) {
+        public static string getReturnName(LambdaExpression expression)
+        {
+            if (!(expression.Body is MemberExpression body)) {
                 UnaryExpression ubody = (UnaryExpression)expression.Body;
 
                 body = ubody.Operand as MemberExpression ??

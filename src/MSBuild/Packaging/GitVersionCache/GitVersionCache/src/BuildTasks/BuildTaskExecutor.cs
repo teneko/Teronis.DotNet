@@ -1,15 +1,15 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
-using Teronis.GitVersionCache.BuildTasks.Models;
-using System.Reflection;
-using Teronis.Text.Json.Serialization;
-using Teronis.Extensions;
-using Teronis.Tools.GitVersion;
-using Teronis.Text.Json.Converters;
 using Microsoft.Build.Utilities;
-using System;
+using Teronis.Extensions;
+using Teronis.GitVersionCache.BuildTasks.Models;
 using Teronis.IO.FileLocking;
+using Teronis.Text.Json.Converters;
+using Teronis.Text.Json.Serialization;
+using Teronis.Tools.GitVersion;
 
 namespace Teronis.GitVersionCache.BuildTasks
 {
@@ -154,10 +154,9 @@ namespace Teronis.GitVersionCache.BuildTasks
             options.Converters.Add(variablesInclusionJsonConverter);
             var serializedData = JsonSerializer.Serialize(buildTask, buildTaskType, options);
 
-            using (var file = File.Open(CacheFile, FileMode.Create)) {
-                var serializedDataBytes = Encoding.UTF8.GetBytes(serializedData);
-                file.Write(serializedDataBytes, 0, serializedDataBytes.Length);
-            }
+            using var file = File.Open(CacheFile, FileMode.Create);
+            var serializedDataBytes = Encoding.UTF8.GetBytes(serializedData);
+            file.Write(serializedDataBytes, 0, serializedDataBytes.Length);
         }
     }
 }

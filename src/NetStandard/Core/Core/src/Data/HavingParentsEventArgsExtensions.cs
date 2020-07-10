@@ -16,15 +16,16 @@ namespace Teronis.Extensions
         /// </summary>
         public static void AttachParents(this HavingParentsEventArgs args, IEnumerable<object> parents)
         {
-            foreach (var parent in parents)
+            foreach (var parent in parents) {
                 AttachParent(args, parent);
+            }
         }
 
         /// <summary>
         /// Does only attach the parents to the parent container and does not look for <see cref="IHaveParents"/> implementation.
         /// </summary>
         public static void AttachParents(this HavingParentsEventArgs args, params object[] parents)
-            => AttachParents(args, (IEnumerable<object>) parents);
+            => AttachParents(args, (IEnumerable<object>)parents);
 
         /// <summary>
         /// Does attach the parent to the parent container and does look for <see cref="IHaveParents"/> implementation.
@@ -44,8 +45,9 @@ namespace Teronis.Extensions
         /// </summary>
         public static void AttachParentsParents(this HavingParentsEventArgs args, IEnumerable<object> parents)
         {
-            foreach (var parent in parents)
+            foreach (var parent in parents) {
                 AttachParentParents(args, parent);
+            }
         }
 
         public static ParentsContainer.ParentCollection GetParents(this HavingParentsEventArgs args, WantParentsEventHandler? eventHandler)

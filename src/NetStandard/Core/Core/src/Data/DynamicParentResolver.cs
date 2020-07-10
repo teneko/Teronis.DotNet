@@ -5,7 +5,7 @@ namespace Teronis.Data
 {
     public class DynamicParentResolver : DynamicObject
     {
-        private IHaveParents havingParents;
+        private readonly IHaveParents havingParents;
 
         public DynamicParentResolver(IHaveParents havingParents)
             => this.havingParents = havingParents;

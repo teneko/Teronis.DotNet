@@ -18,9 +18,10 @@ namespace Teronis.Extensions
             var cachedPropertyValue = propertyValue.PropertyValue;
             propertyValue.PropertyValue = value;
 
-            if (isDeserialized)
+            if (isDeserialized) {
                 // We have to reassign, otherwise PropertyValue/SerializedValue of SettingsPropertyValue may be defaulted
                 propertyValue.SerializedValue = propertyValue.SerializedValue;
+            }
 
             propertyValue.Deserialized = false;
             var valueCopy = propertyValue.PropertyValue;
@@ -32,7 +33,8 @@ namespace Teronis.Extensions
         public static PropertyType CopyValue<PropertyType>(this SettingsPropertyValue propertyValue, object value, bool isDeserialized)
             => (PropertyType)CopyValue(propertyValue, value, isDeserialized);
 
-        public static object? CopyPropertyValue(this SettingsPropertyValue settingsPropertyValue) {
+        public static object? CopyPropertyValue(this SettingsPropertyValue settingsPropertyValue)
+        {
             var propertyValue = settingsPropertyValue.PropertyValue;
             return CopyValue(settingsPropertyValue, propertyValue, false);
         }

@@ -5,17 +5,12 @@ namespace Teronis.Tools
 {
     public static class MemberInfoTools
     {
-        public static object? GetValue(MemberInfo memberInfo, object owner)
+        public static object? GetValue(MemberInfo memberInfo, object owner) => memberInfo.MemberType switch
         {
-            switch (memberInfo.MemberType) {
-                case MemberTypes.Field:
-                    return ((FieldInfo)memberInfo).GetValue(owner);
-                case MemberTypes.Property:
-                    return ((PropertyInfo)memberInfo).GetValue(owner);
-                default:
-                    throw new NotSupportedException();
-            }
-        }
+            MemberTypes.Field => ((FieldInfo)memberInfo).GetValue(owner),
+            MemberTypes.Property => ((PropertyInfo)memberInfo).GetValue(owner),
+            _ => throw new NotSupportedException(),
+        };
 
         public static void SetValue(MemberInfo memberInfo, object owner, object? value)
         {
@@ -40,8 +35,9 @@ namespace Teronis.Tools
         {
             memberInfo = memberInfo ?? throw new ArgumentNullException(nameof(memberInfo));
 
-            if (!IsFieldOrProperty(memberInfo))
+            if (!IsFieldOrProperty(memberInfo)) {
                 throw new ArgumentException("The member info is not a field or a property");
+            }
         }
 
         /// <summary>
@@ -51,42 +47,39 @@ namespace Teronis.Tools
         {
             CheckedVariable(memberInfo);
 
-            if (!memberInfo.IsDefined(attributeType, false))
+            if (!memberInfo.IsDefined(attributeType, false)) {
                 throw new ArgumentException($"The member has not defined an attribute of type {attributeType}");
+            }
         }
 
         #endregion
 
         #region Imported from extensions
 
-        public static bool IsFieldOrProperty(MemberInfo memberInfo)
-            => memberInfo.MemberType == MemberTypes.Field || memberInfo.MemberType == MemberTypes.Property;
+        public static bool IsFieldOrProperty(MemberInfo memberInfo) =>
+            memberInfo.MemberType == MemberTypes.Field || memberInfo.MemberType == MemberTypes.Property;
 
-        public static Type GetVariableType(MemberInfo memberInfo)
+        public static Type GetVariableType(MemberInfo memberInfo) => memberInfo.MemberType switch
         {
-            switch (memberInfo.MemberType) {
-                case MemberTypes.Field:
-                    return ((FieldInfo)memberInfo).FieldType;
-                case MemberTypes.Property:
-                    return ((PropertyInfo)memberInfo).PropertyType;
-                default:
-                    throw new NotImplementedException();
-            }
-        }
+            MemberTypes.Field => ((FieldInfo)memberInfo).FieldType,
+            MemberTypes.Property => ((PropertyInfo)memberInfo).PropertyType,
+            _ => throw new NotImplementedException(),
+        };
 
         public static bool IsVariable(MemberInfo memberInfo)
         {
-            if (memberInfo == null || !IsFieldOrProperty(memberInfo))
+            if (memberInfo == null || !IsFieldOrProperty(memberInfo)) {
                 return false;
+            }
 
             return true;
         }
 
-        private static bool isVariable(MemberInfo memberInfo, Type attributeType, bool getCustomAttributesInherit)
-            => memberInfo.IsDefined(attributeType, getCustomAttributesInherit);
+        private static bool isVariable(MemberInfo memberInfo, Type attributeType, bool getCustomAttributesInherit) =>
+            memberInfo.IsDefined(attributeType, getCustomAttributesInherit);
 
-        public static bool IsVariable(MemberInfo memberInfo, Type attributeType, bool getCustomAttributesInherit)
-            => IsVariable(memberInfo) && isVariable(memberInfo, attributeType, getCustomAttributesInherit);
+        public static bool IsVariable(MemberInfo memberInfo, Type attributeType, bool getCustomAttributesInherit) =>
+            IsVariable(memberInfo) && isVariable(memberInfo, attributeType, getCustomAttributesInherit);
 
         #endregion
     }

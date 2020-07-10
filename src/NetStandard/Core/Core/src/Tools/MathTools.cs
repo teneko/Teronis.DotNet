@@ -18,7 +18,7 @@ namespace Teronis.Tools
 
         public static int ShiftAndWrap(int value, int positions)
         {
-            positions = positions & 0x1F;
+            positions &= 0x1F;
             // Save the existing bit pattern, but interpret it as an unsigned integer.
             uint number = BitConverter.ToUInt32(BitConverter.GetBytes(value), 0);
             // Preserve the bits to be discarded.

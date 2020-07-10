@@ -3,7 +3,7 @@ using Teronis.Models;
 
 namespace Teronis.Services
 {
-    public interface IAsyncDialogService 
+    public interface IAsyncDialogService
     {
         Task<bool?> ShowDialogAsync(IDialogModel dialogModel);
     }

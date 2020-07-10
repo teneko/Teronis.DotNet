@@ -86,8 +86,10 @@ namespace Teronis.Windows.Hooks
                               keyboardHookStruct.flags) == 1) {
 
                         char key = (char)inBuffer[0];
-                        if ((capslock ^ shift) && Char.IsLetter(key))
+                        if ((capslock ^ shift) && Char.IsLetter(key)) {
                             key = Char.ToUpper(key);
+                        }
+
                         KeyPressEventArgs e2 = new KeyPressEventArgs(key);
                         KeyPress(this, e2);
                         handled = handled || e.Handled;

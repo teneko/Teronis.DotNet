@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Teronis.Extensions;
 using Teronis.Identity.BearerSignInManaging;
@@ -94,7 +93,7 @@ namespace Teronis.Identity
             var services = identityBuilder.Services;
             services.AddScoped<BearerSignInManager>();
 
-            IBearerSignInManager getRequiredService(IServiceProvider serviceProvider) =>
+            static IBearerSignInManager getRequiredService(IServiceProvider serviceProvider) =>
                 serviceProvider.GetRequiredService<BearerSignInManager>();
 
             AddBearerSignInManager<DbContextType, UserEntity, RoleEntity>(identityBuilder, getRequiredService, configureOptions);

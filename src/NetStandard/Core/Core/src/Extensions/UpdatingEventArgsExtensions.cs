@@ -1,5 +1,4 @@
-﻿using System;
-using Teronis.ObjectModel.Updates;
+﻿using Teronis.ObjectModel.Updates;
 
 namespace Teronis.Extensions
 {

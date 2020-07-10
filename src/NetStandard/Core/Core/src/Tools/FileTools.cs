@@ -7,9 +7,8 @@ namespace Teronis.Tools
     {
         public static async Task WriteAllBytes(string fileName, byte[] bytes)
         {
-            using (var fs = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, bytes.Length, true)) {
-                await fs.WriteAsync(bytes, 0, bytes.Length);
-            }
+            using var fs = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, bytes.Length, true);
+            await fs.WriteAsync(bytes, 0, bytes.Length);
         }
     }
 }

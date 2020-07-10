@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
-using Teronis.Windows.Data;
 
 namespace Teronis.Windows.Data
 {
@@ -27,8 +26,9 @@ namespace Teronis.Windows.Data
         {
             ConverterCulture = CultureInfo.CurrentCulture;
 
-            if (propertyType != null && (propertyType == typeof(DateTime) || propertyType == typeof(DateTime?)))
+            if (propertyType != null && (propertyType == typeof(DateTime) || propertyType == typeof(DateTime?))) {
                 Converter = new UtcToLocalDateTimeConverter();
+            }
         }
 
         private void setConverterCulture()

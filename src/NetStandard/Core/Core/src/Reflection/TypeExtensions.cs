@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using Teronis.Tools;
 using Teronis.Reflection;
+using Teronis.Tools;
 
 namespace Teronis.Extensions
 {
@@ -213,11 +213,13 @@ namespace Teronis.Extensions
         {
             descriptor = descriptor.DefaultIfNull(true);
 
-            foreach (var variable in GetAttributeFieldMembers<TAttribute>(beginningType, interruptingBaseType, descriptor, getCustomAttributesInherit))
+            foreach (var variable in GetAttributeFieldMembers<TAttribute>(beginningType, interruptingBaseType, descriptor, getCustomAttributesInherit)) {
                 yield return variable;
+            }
 
-            foreach (var variable in GetAttributePropertyMembers<TAttribute>(beginningType, interruptingBaseType, descriptor, getCustomAttributesInherit))
+            foreach (var variable in GetAttributePropertyMembers<TAttribute>(beginningType, interruptingBaseType, descriptor, getCustomAttributesInherit)) {
                 yield return variable;
+            }
         }
 
         // NON-TYPED
@@ -226,11 +228,13 @@ namespace Teronis.Extensions
         {
             descriptor = descriptor.DefaultIfNull(true);
 
-            foreach (var variable in GetAttributeFieldMembers(beginningType, attributeType, interruptingBaseType, descriptor, getCustomAttributesInherit))
+            foreach (var variable in GetAttributeFieldMembers(beginningType, attributeType, interruptingBaseType, descriptor, getCustomAttributesInherit)) {
                 yield return variable;
+            }
 
-            foreach (var variable in GetAttributePropertyMembers(beginningType, attributeType, interruptingBaseType, descriptor, getCustomAttributesInherit))
+            foreach (var variable in GetAttributePropertyMembers(beginningType, attributeType, interruptingBaseType, descriptor, getCustomAttributesInherit)) {
                 yield return variable;
+            }
         }
 
         // // // ORDERED
@@ -252,8 +256,9 @@ namespace Teronis.Extensions
             var vars = GetAttributeVariableMembers<TAttribute>(type, interruptingBaseType, descriptor, getCustomAttributesInherit).ToList();
             var array = new AttributeMemberInfo<TAttribute>[vars.Count];
 
-            foreach (var variable in vars)
+            foreach (var variable in vars) {
                 array[variable.FirstAttribute().Index] = variable;
+            }
 
             return array;
         }

@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-using System.Linq;
-using Teronis.Reflection;
+﻿using System.Linq;
+using Newtonsoft.Json;
 using Teronis.Extensions;
+using Teronis.Reflection;
 
 namespace Teronis.Json.Extensions
 {

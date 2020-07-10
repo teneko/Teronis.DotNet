@@ -9,16 +9,18 @@ namespace Teronis.Mvc.ServiceResulting
     {
         public static Exception? ToSingleOrAggregatedException(this JsonErrors? jsonErrors)
         {
-            if (jsonErrors is null)
+            if (jsonErrors is null) {
                 return null;
+            }
 
             var errors = jsonErrors.Errors;
             var errorsCount = errors.Count;
 
-            if (errorsCount == 0)
+            if (errorsCount == 0) {
                 return null;
-            else if (errorsCount == 1)
+            } else if (errorsCount == 1) {
                 return errors[0].Error;
+            }
 
             return new AggregateException(StringResources.MoreThanOneExcpetionOccuredMessage, errors.Select(x => x.Error)
                 .ToArray());
@@ -37,11 +39,13 @@ namespace Teronis.Mvc.ServiceResulting
         {
             var newJsonErrors = new JsonErrors();
 
-            if (jsonErrors?.Error is null)
+            if (jsonErrors?.Error is null) {
                 return newJsonErrors;
+            }
 
-            foreach (var error in jsonErrors.Errors)
+            foreach (var error in jsonErrors.Errors) {
                 newJsonErrors.Errors.Add(new JsonError(error.Error, error.ErrorCode));
+            }
 
             return newJsonErrors;
         }
@@ -73,7 +77,7 @@ namespace Teronis.Mvc.ServiceResulting
         public static IServiceResultPostConfiguration<ServiceResult<ContentType>, ContentType> ToServiceResultFactory<ContentType>(this JsonErrors? errors)
         {
             var serviceResult = ServiceResult<ContentType>.Failure(errors);
-            return new ServiceResultPostConfiguration<ServiceResult<ContentType>, ContentType>(serviceResult, serviceResult);
+            return new ServiceResultPostConfiguration<ServiceResult<ContentType>, ContentType>(serviceResult);
         }
     }
 }

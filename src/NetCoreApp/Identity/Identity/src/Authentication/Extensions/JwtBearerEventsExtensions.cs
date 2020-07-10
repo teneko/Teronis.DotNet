@@ -12,12 +12,14 @@ namespace Teronis.Identity.Authentication.Extensions
         {
             setEvent(async (context) => {
                 foreach (var handler in eventContextHandler) {
-                    if (handler != null)
+                    if (handler != null) {
                         await handler.Invoke(context);
+                    }
 
                     // We want to break if result has been set.
-                    if (context.Result != null)
+                    if (context.Result != null) {
                         break;
+                    }
                 }
             });
 

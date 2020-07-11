@@ -17,6 +17,7 @@
     -->
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Teronis.GitVersionCache</RootNamespace>
+    <Description>GitVersionCache is an improved implementation to GitVersionTask. It does support concurrency and nested GitVersion.yml relative to your .git folder.</Description>
     <!--<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>-->
 
     <!-- We don't build an executable package. 
@@ -81,8 +82,6 @@
     </GitVersionToolFilesIncludes>-->
 
     <FilesystemPublishmentDirectory>bin\$(Configuration)\netstandard2.0\filesystemPublish</FilesystemPublishmentDirectory>
-
-    <Description>GitVersionCache is an improved implementation to GitVersionTask. It does support concurrency and nested GitVersion.yml relative to your .git folder.</Description>
 
   </PropertyGroup>
 

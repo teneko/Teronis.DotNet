@@ -5,6 +5,10 @@
   <Import Condition="'$(IsTeronisDotNetCorePropsFileImported)' != 'true'" Project="$(RootCorePropsPath)" />
   <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackageTargetsFile)" />
   
+  <PropertyGroup>
+    <PackageDescription Condition="'$(PackageDescription)' == '' And '$(Description)' != ''">$(Description)</PackageDescription>
+  </PropertyGroup>
+
   <ItemGroup>
 	  <Compile Include="$(MSBuildThisFileDirectory)/Nullable.cs" Conditions="'$(Nullable)' == 'enable'" />
   </ItemGroup>

@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Teronis.Identity.AccountManaging.Datatransjects;
 using Teronis.Identity.Datransjects;
 using Teronis.Identity.Entities;
+using Teronis.Mvc;
 
 namespace Teronis.Identity.Controllers
 {

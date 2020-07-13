@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using Teronis.Mvc;
 
 namespace Teronis.Identity.Controllers
 {

@@ -4,10 +4,10 @@ using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Teronis.Extensions;
 
-namespace Teronis.Identity.Controllers
+namespace Teronis.Mvc
 {
     /// <summary>
-    /// Enables you to inject custom controllers to application that won't be regarded.
+    /// Enables you to inject custom controllers to application that are not regarded.
     /// </summary>
     public class TypesProvidingApplicationPart : ApplicationPart, IApplicationPartTypeProvider
     {

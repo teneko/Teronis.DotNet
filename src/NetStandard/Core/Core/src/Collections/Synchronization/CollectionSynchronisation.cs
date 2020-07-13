@@ -85,8 +85,9 @@ namespace Teronis.Collections.Synchronization
                 var removingContent = ContentList[removeIndex];
                 var oldContent = oldItems[oldItemIndex];
 
-                if (!EqualityComparer.Equals(removingContent, oldContent))
+                if (!EqualityComparer.Equals(removingContent, oldContent)) {
                     throw new Exception("Removing item is not equals old item that should be removed instead");
+                }
 #endif
                 ItemList.RemoveAt(removeIndex);
                 ContentList.RemoveAt(removeIndex);

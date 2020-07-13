@@ -1,4 +1,6 @@
-﻿namespace Teronis.Windows.Hooks
+﻿using System;
+
+namespace Teronis.Windows.Hooks
 {
     public class MouseHookManager : MouseHook
     {

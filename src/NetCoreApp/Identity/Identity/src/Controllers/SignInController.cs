@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Teronis.Identity.Authentication;
 using Teronis.Identity.BearerSignInManaging;
 
@@ -33,9 +35,5 @@ namespace Teronis.Identity.Controllers
         [Authorize(AuthenticationSchemes = AuthenticationDefaults.IdentityRefreshTokenBearerScheme)]
         public async Task<IActionResult> RefreshTokenAsync() =>
             await signInManager.CreateNextTokensAsync(HttpContext.User);
-
-        //public async Task<IActionResult> LogoutAsync() {
-        //    await signInManager.Logout(HttpContext.User);
-        //}
     }
 }

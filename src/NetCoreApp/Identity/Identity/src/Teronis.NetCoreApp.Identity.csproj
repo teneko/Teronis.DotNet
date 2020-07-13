@@ -8,16 +8,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Presenters\ObjectModel\**" />
-    <EmbeddedResource Remove="Presenters\ObjectModel\**" />
-    <None Remove="Presenters\ObjectModel\**" />
+    <Compile Remove="Presenters\**" />
+    <EmbeddedResource Remove="Presenters\**" />
+    <None Remove="Presenters\**" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.5" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.5" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.6.0" />
+    <PackageReference Include="ModuleInit.Fody" Version="2.1.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.6.0" />
     <PackageReference Include="ZNetCS.AspNetCore.Authentication.Basic" Version="4.0.0" />
   </ItemGroup>
@@ -28,10 +30,6 @@
     </ProjectReference>
     <ProjectReference Include="..\..\..\Core\Core\src\Teronis.NetCoreApp.Core.csproj" />
     <ProjectReference Include="..\..\..\Mvc\Mvc\src\Teronis.NetCoreApp.Mvc.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Presenters\" />
   </ItemGroup>
 
 </Project>

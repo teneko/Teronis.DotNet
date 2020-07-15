@@ -10,11 +10,11 @@ using Teronis.Identity.BearerSignInManaging;
 namespace Teronis.Identity.Controllers
 {
     [Route("api/sign-in")]
-    public class SignInController : Controller
+    public class BearerSignInController : Controller
     {
         private readonly IBearerSignInManager signInManager;
 
-        public SignInController(IBearerSignInManager signInManager) =>
+        public BearerSignInController(IBearerSignInManager signInManager) =>
             this.signInManager = signInManager;
 
         [HttpGet("authenticate")]

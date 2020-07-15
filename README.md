@@ -16,8 +16,12 @@ nested GitVersion.yml relative to your .git folder.
 A collection of utilities, extensions, tools and classes for the .NET Core implementation.
 - [NetCoreApp.Core](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetCoreApp/Core/Core) A collection of utilities, extensions, tools and
 classes for the .NET Core implementation.
-- [NetCoreApp.Identity](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetCoreApp/Identity/Identity) Teronis Identity provides you a bearer
-token integration for ASP.NET Core Identity.
+- [NetCoreApp.Identity](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetCoreApp/Identity/Identity) Teronis Identity provides you a
+better integration for ASP.NET Core Identity.
+- [NetCoreApp.Identity.Bearer](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetCoreApp/Identity/Bearer) Teronis Identity Bearer
+provides you a bearer token integration for ASP.NET Core Identity.
+- [NetCoreApp.Identity.EntityFrameworkCore](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetCoreApp/Identity/EntityFrameworkCore) Teronis
+Identity integration that uses ASP.NET Core Identity.
 - [NetCoreApp.Mvc](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetCoreApp/Mvc/Mvc) An extension to the native function range of
 Microsoft.AspNetCore.Mvc.Core.
 - [NetCoreApp.WinForms](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetCoreApp/WinForms/WinForms) A collection of utilities, extensions,

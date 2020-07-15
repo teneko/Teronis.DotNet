@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Teronis.Identity</RootNamespace>
+    <Nullable>enable</Nullable>
+    <Description>Teronis Identity provides you a bearer token integration for ASP.NET Core Identity.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Presenters\**" />
+    <EmbeddedResource Remove="Presenters\**" />
+    <None Remove="Presenters\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.5" />
+  </ItemGroup>
+
+</Project>

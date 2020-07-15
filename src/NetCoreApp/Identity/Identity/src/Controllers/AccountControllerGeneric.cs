@@ -11,7 +11,7 @@ namespace Teronis.Identity.Controllers
     [Route("api/account")]
     public class AccountController<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>
         where UserDescriptorType : IUserDescriptor
-        where UserType : IUserEntity
+        where UserType : IAccountUserEntity
         where RoleDescriptorType : IRoleDescriptor
     {
         private readonly IAccountManager<UserType, RoleType> accountManager;

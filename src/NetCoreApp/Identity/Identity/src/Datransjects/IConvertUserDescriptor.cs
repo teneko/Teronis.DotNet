@@ -4,7 +4,7 @@ namespace Teronis.Identity.Datransjects
 {
     public interface IConvertUserDescriptor<UserDescriptorType, UserType>
         where UserDescriptorType : IUserDescriptor
-        where UserType : IUserEntity
+        where UserType : IAccountUserEntity
     {
         UserType Convert(UserDescriptorType source);
     }

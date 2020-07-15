@@ -12,7 +12,5 @@ namespace Teronis.Identity.AccountManaging
         public AccountManager(IOptions<AccountManagerOptions> accountManagerOptions, DbContextType dbContext, UserManager<UserEntity> userManager,
             RoleManager<RoleEntity> roleManager, ILogger<AccountManager<DbContextType, UserEntity, RoleEntity>>? logger = null)
             : base(accountManagerOptions, dbContext, userManager, roleManager, logger) { }
-
-
     }
 }

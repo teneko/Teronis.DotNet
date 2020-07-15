@@ -3,7 +3,7 @@
 namespace Teronis.Identity.Entities
 {
     public interface IConvertUser<UserType, UserCreationType>
-        where UserType : IUserEntity
+        where UserType : IAccountUserEntity
     {
         UserCreationType Convert(UserType source, string[]? roles);
     }

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>Teronis.NetCoreApp.Identity</RootNamespace>
+    <RootNamespace>Teronis.Identity.Bearer</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,7 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Teronis.NetCoreApp.Identity.csproj" />
+    <ProjectReference Include="..\..\Identity\src\Teronis.NetCoreApp.Identity.csproj" />
+    <ProjectReference Include="..\src\Teronis.NetCoreApp.Identity.Bearer.csproj" />
   </ItemGroup>
 
 </Project>

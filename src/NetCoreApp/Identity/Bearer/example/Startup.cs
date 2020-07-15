@@ -26,7 +26,8 @@ namespace Teronis.Identity
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc()
-                .AddIdentityControllers();
+                .AddAccountControllers()
+                .AddSignInControllers();
 
             services.AddDbContext<BearerIdentityDbContext>(options => {
                 options.UseSqlite("Data Source=bearerIdentity.db;");

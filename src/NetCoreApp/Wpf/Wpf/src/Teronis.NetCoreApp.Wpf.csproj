@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\NetStandard\DataModel\TreeColumn\src\Teronis.NetStandard.DataModel.TreeColumn.csproj" />
     <ProjectReference Include="..\..\Wpf.Localization\src\Teronis.NetCoreApp.Wpf.Localization.csproj" PrivateAssets="all" />
   </ItemGroup>
 

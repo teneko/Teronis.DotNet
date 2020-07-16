@@ -31,8 +31,26 @@ classes for WPF.
 - [NetStandard.Abstractions](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Abstractions/Abstractions) Some abstractions.
 - [NetStandard.Autofac](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Autofac/Autofac) An extension to the native function
 range of AutoFac.
+- [NetStandard.Collections](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Collections/Collections) Provides classes that define
+generic collections.
+
+Commonly Used Types:
+NullableKeyDictionary\<KeyType, ValueType>
+CovariantKeyValuePairCollection\<KeyType, ValueType>
+- [NetStandard.Collections.CollectionChanging](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Collections/CollectionChanging)
+Provides algorithm to calculate collection differences between two collection.
+
+Commonly Used Types:
+IEnumerableGenericExtensions
+- [NetStandard.Collections.Synchronization](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Collections/Synchronization) Provides
+classes for collection synchronization.
+
+Commonly Used Types:
+CollectionSynchronisation\<ItemType, ContentType>
 - [NetStandard.Core](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Core/Core) A collection of utilities, extensions, tools and
 classes for the .NET Standard implementation.
+- [Teronis.NetStandard.DataModel.TreeColumn](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/DataModel/TreeColumn) Provides TreeColumnSeeker
+for data tree structures that implements ITreeColumnValue.
 - [NetStandard.Drawing](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Drawing/Drawing) Some simplifications for
 System.Drawing.Common.
 - [NetStandard.EntityFrameworkCore](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/EntityFrameworkCore/EntityFrameworkCore)

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <Description>Provides TreeColumnSeeker for data tree structures that implements ITreeColumnValue.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Collections\Collections\src\Teronis.NetStandard.Collections.csproj" />
+    <ProjectReference Include="..\..\..\Core\Core\src\Teronis.NetStandard.Core.csproj" />
+  </ItemGroup>
+
+</Project>

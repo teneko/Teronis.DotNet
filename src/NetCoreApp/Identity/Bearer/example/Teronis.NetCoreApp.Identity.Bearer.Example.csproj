@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <IsNullable>enable</IsNullable>
+    <Nullable>enable</Nullable>
     <RootNamespace>Teronis.Identity.Bearer</RootNamespace>
   </PropertyGroup>
 

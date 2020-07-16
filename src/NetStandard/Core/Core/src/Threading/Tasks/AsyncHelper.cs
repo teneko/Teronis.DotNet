@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Teronis.Threading.Tasks
 {
-    internal static class AsyncHelper
+    public static class AsyncHelper
     {
         private static readonly TaskFactory taskFactory =
             new TaskFactory(CancellationToken.None,

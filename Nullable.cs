@@ -17,7 +17,7 @@ namespace System.Diagnostics.CodeAnalysis
 #else
     public
 #endif
-        sealed class AllowNullAttribute : Attribute
+        sealed partial class AllowNullAttribute : Attribute
     { }
 
     /// <summary>Specifies that null is disallowed as an input even if the corresponding type allows it.</summary>

@@ -18,7 +18,7 @@ namespace Teronis
             if (type == typeof(string)) {
                 return Expression.Lambda<Func<T>>(Expression.Constant(string.Empty)).Compile();
             }
-
+            
             if (type.HasDefaultConstructor()) {
                 return Expression.Lambda<Func<T>>(Expression.New(type)).Compile(); // ~50 ms for classes and ~100 ms for structs
             }

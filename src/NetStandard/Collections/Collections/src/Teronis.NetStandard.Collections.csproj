@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!--<TargetFramework>netstandard2.0</TargetFramework>-->
+    <TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
+    <RootNamespace>Teronis</RootNamespace>
+    <AssemblyName>Teronis.Collections</AssemblyName>
+    <Nullable>enable</Nullable>
+    <Description>
+      <![CDATA[Provides classes that define generic collections.
+      
+Commonly Used Types:
+NullableKeyDictionary<KeyType, ValueType>
+CovariantKeyValuePairCollection<KeyType, ValueType>]]>
+    </Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Interactive.Async" Version="4.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.5" />
+    <PackageReference Include="System.Threading.Tasks.Dataflow" Version="4.11.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Core\Core\src\Teronis.NetStandard.Core.csproj" />
+  </ItemGroup>
+
+</Project>

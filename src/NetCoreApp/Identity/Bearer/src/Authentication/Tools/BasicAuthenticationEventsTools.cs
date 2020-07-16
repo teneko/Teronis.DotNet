@@ -12,7 +12,7 @@ namespace Teronis.Identity.Authentication.Tools
     public static class BasicAuthenticationEventsTools
     {
         public static async Task ValidatePrincipal<UserType>(ValidatePrincipalContext context)
-            where UserType : class, IUserEntity
+            where UserType : class, IBearerUserEntity
         {
             var logger = context.HttpContext.RequestServices.GetService<ILoggerFactory>()?.CreateLogger(nameof(BasicAuthenticationEventsTools));
             var userManager = (UserManager<UserType>)context.HttpContext.RequestServices.GetService(typeof(UserManager<UserEntity>));

@@ -6,7 +6,7 @@ using Teronis.Mvc.ServiceResulting.Generic.ObjectModel;
 namespace Teronis.Identity.BearerSignInManaging
 {
     public class BearerSignInManagerContext<UserEntityType, BearerTokenType> : IServiceResultInjection<object>
-        where UserEntityType : class, IUserEntity
+        where UserEntityType : class, IBearerUserEntity
         where BearerTokenType : class, IBearerTokenEntity
     {
         public ClaimsPrincipal Principal { get; }

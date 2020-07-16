@@ -14,7 +14,7 @@ using Teronis.Mvc.ServiceResulting.Generic;
 namespace Teronis.Identity.BearerSignInManaging
 {
     public abstract class BearerSignInManager<UserType, BearerTokenType> : IBearerSignInManager
-        where UserType : class, IUserEntity
+        where UserType : class, IBearerUserEntity
         where BearerTokenType : class, IBearerTokenEntity
     {
         private readonly ErrorDetailsProvider errorDetailsProvider;

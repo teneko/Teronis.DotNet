@@ -16,7 +16,7 @@ namespace Teronis.Identity.Authentication
     public static class AuthenticationBuilderExtensions
     {
         private static AuthenticationBuilder addIdentityBasic<UserType>(AuthenticationBuilder authenticationBuilder, Action<Action<BasicAuthenticationOptions>> addBasicAuthentication, Action<BasicAuthenticationOptions>? configureOptions = null)
-            where UserType : class, IUserEntity
+            where UserType : class, IBearerUserEntity
         {
             addBasicAuthentication(options => {
                 configureOptions?.Invoke(options);
@@ -32,7 +32,7 @@ namespace Teronis.Identity.Authentication
         /// Uses <see cref="AuthenticationDefaults.IdentityBasicScheme"/> as scheme.
         /// </summary>
         public static AuthenticationBuilder AddIdentityBasic<UserType>(this AuthenticationBuilder authenticationBuilder, Action<BasicAuthenticationOptions>? configureOptions = null)
-            where UserType : class, IUserEntity
+            where UserType : class, IBearerUserEntity
         {
             return addIdentityBasic<UserType>(authenticationBuilder, _configureOptions =>
                 authenticationBuilder.AddBasicAuthentication(AuthenticationDefaults.IdentityBasicScheme, _configureOptions), configureOptions);
@@ -42,7 +42,7 @@ namespace Teronis.Identity.Authentication
         /// Uses <see cref="AuthenticationDefaults.IdentityBasicScheme"/> as scheme.
         /// </summary>
         public static AuthenticationBuilder AddIdentityBasic<UserType>(this AuthenticationBuilder authenticationBuilder, string authenticationScheme, Action<BasicAuthenticationOptions>? configureOptions)
-            where UserType : class, IUserEntity
+            where UserType : class, IBearerUserEntity
         {
             return addIdentityBasic<UserType>(authenticationBuilder, _configureOptions =>
                 authenticationBuilder.AddBasicAuthentication(authenticationScheme, _configureOptions), configureOptions);

@@ -11,7 +11,7 @@ namespace Teronis.Identity
     {
         private static IdentityBuilder addBearerTokenStore<UserType, BearerTokenType, DbContextType>(this IdentityBuilder identityBuilder,
             Func<IServiceProvider, BearerTokenStore<DbContextType, BearerTokenType>>? getRequiredService)
-            where UserType : class, IUserEntity
+            where UserType : class, IBearerUserEntity
             where BearerTokenType : class, IBearerTokenEntity
             where DbContextType : DbContext
         {
@@ -28,7 +28,7 @@ namespace Teronis.Identity
         }
 
         public static IdentityBuilder AddBearerTokenStore<UserType, BearerTokenType, DbContextType>(this IdentityBuilder identityBuilder)
-            where UserType : class, IUserEntity
+            where UserType : class, IBearerUserEntity
             where BearerTokenType : class, IBearerTokenEntity
             where DbContextType : DbContext
         {

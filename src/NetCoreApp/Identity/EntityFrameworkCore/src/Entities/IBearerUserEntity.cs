@@ -1,6 +1,6 @@
 ﻿namespace Teronis.Identity.Entities
 {
-    public interface IUserEntity
+    public interface IBearerUserEntity
     {
         string Id { get; }
         string UserName { get; }

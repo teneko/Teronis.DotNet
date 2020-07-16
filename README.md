@@ -1,6 +1,6 @@
 # Teronis.DotNet
 
-Teronis.DotNet is a colletion of many subprojects. It has grown since I begun 2018 to summarize the code I use across many projects.
+Teronis.DotNet is a collection of many subprojects. It has grown since I begun 2018 to summarize the code I use across many projects.
 
 ## List of Projects
 

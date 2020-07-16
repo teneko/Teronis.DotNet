@@ -4,7 +4,6 @@
     <!--<TargetFramework>netstandard2.0</TargetFramework>-->
     <TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
     <RootNamespace>Teronis</RootNamespace>
-    <AssemblyName>Teronis.Collections</AssemblyName>
     <Nullable>enable</Nullable>
     <Description>
       <![CDATA[Provides classes that define generic collections.

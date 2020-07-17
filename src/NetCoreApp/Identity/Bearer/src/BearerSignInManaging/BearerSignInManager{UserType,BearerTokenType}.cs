@@ -125,15 +125,16 @@ namespace Teronis.Identity.BearerSignInManaging
             var accessTokenDescriptor = signInManagerOptions.CreateAccessTokenDescriptor();
 
             // Used by authentication middleware.
-            accessTokenDescriptor.Claims.Add(ClaimTypes.NameIdentifier, user.Id);
-            accessTokenDescriptor.Claims.Add(ClaimTypes.Name, user.UserName);
+            accessTokenDescriptor.Subject = accessTokenDescriptor.Subject ?? new ClaimsIdentity();
+            accessTokenDescriptor.Subject.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
+            accessTokenDescriptor.Subject.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
 
             try {
                 var roles = await userManager.GetRolesAsync(user);
 
                 if (roles != null) {
                     foreach (var role in roles) {
-                        accessTokenDescriptor.Claims.Add(ClaimTypes.Role, role);
+                        accessTokenDescriptor.Subject.AddClaim(new Claim(ClaimTypes.Role, role));
                     }
                 }
 

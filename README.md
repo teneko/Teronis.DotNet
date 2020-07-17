@@ -49,8 +49,13 @@ Commonly Used Types:
 CollectionSynchronisation\<ItemType, ContentType>
 - [NetStandard.Core](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Core/Core) A collection of utilities, extensions, tools and
 classes for the .NET Standard implementation.
-- [Teronis.NetStandard.DataModel.TreeColumn](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/DataModel/TreeColumn) Provides TreeColumnSeeker
-for data tree structures that implements ITreeColumnValue.
+- [Teronis.NetStandard.DataModel.TreeColumn](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/DataModel/TreeColumn) Provides
+TreeColumnSeeker for complex data structures.
+
+Commonly Used Types:
+HasTreeColumnsAttribute
+ITreeColumnKey
+ITreeColumnValue\<TreeColumnDefinitionKeyType>
 - [NetStandard.Drawing](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Drawing/Drawing) Some simplifications for
 System.Drawing.Common.
 - [NetStandard.EntityFrameworkCore](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/EntityFrameworkCore/EntityFrameworkCore)

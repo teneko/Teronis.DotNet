@@ -3,7 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <Description>Provides TreeColumnSeeker for data tree structures that implements ITreeColumnValue.</Description>
+    <Description><![CDATA[Provides TreeColumnSeeker for complex data structures.
+
+Commonly Used Types:
+HasTreeColumnsAttribute
+ITreeColumnKey
+ITreeColumnValue<TreeColumnDefinitionKeyType>]]></Description>
   </PropertyGroup>
 
   <ItemGroup>

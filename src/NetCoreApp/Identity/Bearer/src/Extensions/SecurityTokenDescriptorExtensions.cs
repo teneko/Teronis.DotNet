@@ -34,7 +34,7 @@ namespace Teronis.Identity.Extensions
 
             if (!ReferenceEquals(subject, null)) {
                 /// Add missing claims. (see comment in <see cref="SecurityTokenDescriptor.Claims"/>)
-                tokenDescriptor.Subject.AddClaims(subject.Claims.Where(x => !subject.HasClaim(x.Type, x.Value)));
+                tokenDescriptor.Subject.AddClaims(subject.Claims);
             }
 
             if (!ReferenceEquals(tokenDescriptor.Claims, null)) {

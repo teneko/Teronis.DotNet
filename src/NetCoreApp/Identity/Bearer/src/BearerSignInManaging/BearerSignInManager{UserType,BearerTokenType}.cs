@@ -125,7 +125,7 @@ namespace Teronis.Identity.BearerSignInManaging
             var accessTokenDescriptor = signInManagerOptions.CreateAccessTokenDescriptor();
 
             // Used by authentication middleware.
-            accessTokenDescriptor.Subject = new ClaimsIdentity();
+            accessTokenDescriptor.Subject = accessTokenDescriptor.Subject ?? new ClaimsIdentity();
             accessTokenDescriptor.Subject.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
             accessTokenDescriptor.Subject.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
 

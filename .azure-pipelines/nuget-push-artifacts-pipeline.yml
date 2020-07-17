@@ -74,8 +74,8 @@ jobs:
             % { Write-Host $_; echo "##vso[task.setvariable variable=canPush;isOutput=true]$_" }
         env:
           GIT_COMMIT_MESSAGE: '$(git.commitMessage)'
-        displayName: Set "nugetGithub.canPush" Variable
-        name: nugetGithub
+        displayName: Set "nugetGitHub.canPush" Variable
+        name: nugetGitHub
 
   ############################
   - job: NuGetOrgPushArtifacts
@@ -152,9 +152,9 @@ jobs:
         displayName: Push NuGet Symbol Packages
 
   ##############################
-  - job: NuGetGithubPushArtifacts
+  - job: NuGetGitHubPushArtifacts
     dependsOn: PrepareNuGetPush
-    condition: and(succeeded(), eq(dependencies.PrepareNuGetPush.outputs['nugetGithub.canPush'], 'TRUE'))
+    condition: and(succeeded(), eq(dependencies.PrepareNuGetPush.outputs['nugetGitHub.canPush'], 'TRUE'))
     variables:
       - name: nugetSourceName
         value: "nuget.github"

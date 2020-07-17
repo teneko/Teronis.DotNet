@@ -4,9 +4,10 @@ Teronis.DotNet is a collection of many subprojects. It has grown since I begun 2
 
 ## List of Projects
 
-All my projects are uploaded to [NuGet.org](https://www.nuget.org/packages?q=Teroneko+Teronis).
+All my projects are uploaded to [NuGet](https://www.nuget.org/packages?q=Teroneko+Teronis). You can view them here on
+[Github](https://github.com/teroneko/Teronis.DotNet/packages) too.
 
-Here a list of project folders that are currently published:
+Here a list of the project folders:
 - [MSBuild.Core](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/MSBuild/Core/Core) Some special targets and tasks. See comments in source
 code.
 - [MSBuild.GitVersionCache](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/MSBuild/Packaging/GitVersionCache/GitVersionCache)

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Microsoft.Extensions.Logging
+namespace Teronis.Extensions.Logging
 {
     public static class ILoggerExtensions
     {

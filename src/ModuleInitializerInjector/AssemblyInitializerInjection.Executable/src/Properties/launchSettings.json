@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Teronis.NetCoreApp.AssemblyInitializerInjector.Executable": {
+      "commandName": "Project",
+      "commandLineArgs": "inject-assembly-initializer Teronis.AssemblyInitializerInjection2.dl --assembly-name \"Teronis.NetCoreApp.AssemblyLoadInjection, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null\""
+    }
+  }
+}

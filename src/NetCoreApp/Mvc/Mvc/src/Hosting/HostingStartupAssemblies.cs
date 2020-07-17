@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using Teronis.Text;
@@ -13,8 +14,8 @@ namespace Teronis.Mvc.Hosting
         {
             fullAssemblyName = fullAssemblyName ?? throw new ArgumentNullException(nameof(fullAssemblyName));
             var environmentVariableName = AspNetCoreHostingStartupAssembliesEnvironmentVariableName;
-            var assembliesString = Environment.GetEnvironmentVariable(environmentVariableName) ?? string.Empty;
-            var splitedAssemblies = assembliesString.Split(';');
+            var assembliesString = Environment.GetEnvironmentVariable(environmentVariableName, EnvironmentVariableTarget.Process) ?? string.Empty;
+            var splitedAssemblies = assembliesString.Split(';').Where(x => x != null && x != string.Empty);
             var joinedAssembliesBuilder = new StringBuilder();
             var stringSeparater = new StringSeparationHelper(";");
 
@@ -30,7 +31,7 @@ namespace Teronis.Mvc.Hosting
 
             appendAssembly(fullAssemblyName);
             var newAssembliesString = joinedAssembliesBuilder.ToString();
-            Environment.SetEnvironmentVariable(environmentVariableName, newAssembliesString);
+            Environment.SetEnvironmentVariable(environmentVariableName, newAssembliesString, EnvironmentVariableTarget.Process);
         }
 
         public static void InjectHostingStartup(Assembly assembly)

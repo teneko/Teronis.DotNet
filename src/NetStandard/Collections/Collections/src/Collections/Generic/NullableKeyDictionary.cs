@@ -6,7 +6,8 @@ using System.Linq;
 
 namespace Teronis.Collections.Generic
 {
-    public class NullableKeyDictionary<KeyType, ValueType> : INullableKeyDictionary<KeyType, ValueType>, IReadOnlyNullableKeyDictionary<KeyType, ValueType>
+    public class NullableKeyDictionary<KeyType, ValueType> : INullableKeyDictionary<KeyType, ValueType>, IReadOnlyNullableKeyDictionary<KeyType, ValueType>,
+        IReadOnlyCollection<KeyValuePair<INullableKey<KeyType>, ValueType>>
         where KeyType : notnull
     {
         public ICollection<KeyType> Keys => dictionary.Keys;

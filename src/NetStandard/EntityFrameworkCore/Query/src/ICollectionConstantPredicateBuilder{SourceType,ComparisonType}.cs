@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Teronis.Linq.Expressions;
 
-namespace Teronis.Linq.Expressions
+namespace Teronis.EntityFrameworkCore.Query
 {
     public interface ICollectionConstantPredicateBuilder<SourceType, ComparisonType>
     {

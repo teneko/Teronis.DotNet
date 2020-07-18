@@ -5,7 +5,7 @@ namespace Teronis.Linq.Expressions
 {
     public static class MemberPathEvaluator
     {
-        private static MemberPathEvaluatorVisitor @default;
+        private static readonly MemberPathEvaluatorVisitor @default;
 
         static MemberPathEvaluator()
         {

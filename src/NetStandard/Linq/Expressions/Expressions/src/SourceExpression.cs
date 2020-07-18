@@ -74,7 +74,7 @@ namespace Teronis.Linq.Expressions
             ParameterExpression? sourceParameterExpression = null)
         {
             sourcePredicate = sourcePredicate ?? throw new ArgumentNullException(nameof(sourcePredicate));
-            sourceParameterExpression = sourceParameterExpression ?? Expression.Parameter(typeof(SourceType), "source");
+            sourceParameterExpression ??= Expression.Parameter(typeof(SourceType), "source");
 
             /* Replace KeyType parameter/member by constant. */
             var whereInConstantExpression = WhereInConstant(comparisonValue, sourcePredicate, out _, sourceParameterReplacement: sourceParameterExpression);
@@ -103,7 +103,7 @@ namespace Teronis.Linq.Expressions
                 throw new ArgumentException("Comparison list cannot be null and needs at least one item.");
             }
 
-            binaryExpressionFactory = binaryExpressionFactory ?? Expression.OrElse;
+            binaryExpressionFactory ??= Expression.OrElse;
 
             Expression whereInConstantExpression(ComparisonType comparisonValue, out ParameterExpression parameter,
                 ParameterExpression? parameterReplacement = null) =>

@@ -1,4 +1,4 @@
-﻿namespace Teronis.Linq.Expressions
+﻿namespace Teronis.EntityFrameworkCore.Query
 {
     public interface ICollectionConstantPredicateBuilder
     {

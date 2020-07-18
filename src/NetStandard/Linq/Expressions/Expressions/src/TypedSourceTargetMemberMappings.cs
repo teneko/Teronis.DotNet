@@ -2,11 +2,11 @@
 
 namespace Teronis.Linq.Expressions
 {
-    public sealed class SourceMemberTargetMemberMappings
+    public sealed class TypedSourceTargetMemberMappings
     {
         public IReadOnlyCollection<MemberPathMapping> MemberMappings { get; }
 
-        internal SourceMemberTargetMemberMappings(IReadOnlyCollection<MemberPathMapping> memberMappings) {
+        internal TypedSourceTargetMemberMappings(IReadOnlyCollection<MemberPathMapping> memberMappings) {
             MemberMappings = memberMappings ?? throw new System.ArgumentNullException(nameof(memberMappings));
         }
     }

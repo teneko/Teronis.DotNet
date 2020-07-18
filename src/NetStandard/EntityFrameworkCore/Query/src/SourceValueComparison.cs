@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace Teronis.Linq.Expressions
+namespace Teronis.EntityFrameworkCore.Query
 {
     internal readonly struct SourceValueComparison<ComparisonType>
     {

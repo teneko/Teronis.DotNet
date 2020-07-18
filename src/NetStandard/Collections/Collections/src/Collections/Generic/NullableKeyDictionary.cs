@@ -3,13 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Teronis.Collections.Generic;
 
 namespace Teronis.Collections.Generic
 {
-    public class NullableKeyDictionary<KeyType, ValueType> : IDictionary<KeyType, ValueType>, IReadOnlyDictionary<KeyType, ValueType>,
-        IDictionary<NullableKey<KeyType>, ValueType>, IReadOnlyDictionary<NullableKey<KeyType>, ValueType>,
-        IReadOnlyCollection<KeyValuePair<INullableKey<KeyType>, ValueType>>
+    public class NullableKeyDictionary<KeyType, ValueType> : INullableKeyDictionary<KeyType, ValueType>, IReadOnlyNullableKeyDictionary<KeyType, ValueType>
         where KeyType : notnull
     {
         public ICollection<KeyType> Keys => dictionary.Keys;
@@ -306,9 +303,7 @@ namespace Teronis.Collections.Generic
             }
         }
 
-#pragma warning disable IDE0060 // Unused parameter 'key' is intentional.
-        public void Add(NullableKey key, ValueType value) =>
-#pragma warning restore
+        public void Add(ValueType value) =>
             Add(NullableKey.Null<KeyType>(), value);
 
         public bool Remove(NullableKey<KeyType> key)

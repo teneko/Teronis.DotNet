@@ -1,9 +1,7 @@
 ﻿namespace Teronis.Collections.Generic
 {
-    public sealed class NullableKey
+    public static class NullableKey
     {
-        public static NullableKey Default = new NullableKey();
-
         public static NullableKey<KeyType> Null<KeyType>()
             where KeyType : notnull =>
             NullableKey<KeyType>.Null;

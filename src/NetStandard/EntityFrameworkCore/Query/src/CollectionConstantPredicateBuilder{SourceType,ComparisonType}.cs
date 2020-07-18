@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -152,7 +153,7 @@ namespace Teronis.Linq.Expressions
             var sourceType = typeof(SourceType);
 
             var relevantMemberMapping = memberMappings
-                .Where(x => x.FromMemberPath.HasSourceExpression 
+                .Where(x => x.FromMemberPath.HasSourceExpression
                             && x.FromMemberPath.SourceExpression is ParameterExpression parameter
                             && parameter.Type == sourceType)
                 .Select(x => {
@@ -186,8 +187,16 @@ namespace Teronis.Linq.Expressions
             public void StackBuilder(ICollectionConstantPredicateBuilder builder) =>
                 BuilderStack.Push(builder);
 
-            public bool TryPopBuilder([MaybeNullWhen(false)] out ICollectionConstantPredicateBuilder builder) =>
-                BuilderStack.TryPop(out builder);
+            public bool TryPopBuilder([MaybeNullWhen(false)] out ICollectionConstantPredicateBuilder builder)
+            {
+                if (BuilderStack.Count == 0) {
+                    builder = default;
+                    return false;
+                }
+
+                builder = BuilderStack.Pop();
+                return true;
+            }
 
             public void AppendExpression(Expression expression, Func<Expression, Expression, BinaryExpression> binaryExpression) =>
                 throw new NotImplementedException();
@@ -233,7 +242,7 @@ namespace Teronis.Linq.Expressions
             public void StackBuilder(ICollectionConstantPredicateBuilder builder) =>
                 this.builder.parentBuilder.StackBuilder(builder);
 
-            public bool TryPopBuilder([MaybeNullWhen(false)]out ICollectionConstantPredicateBuilder builder) =>
+            public bool TryPopBuilder([MaybeNullWhen(false)] out ICollectionConstantPredicateBuilder builder) =>
                 this.builder.parentBuilder.TryPopBuilder(out builder);
 
             public void AppendExpression(Expression expression, Func<Expression, Expression, BinaryExpression> binaryExpression) =>

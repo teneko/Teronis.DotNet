@@ -6,7 +6,8 @@ namespace Teronis.Linq.Expressions
     {
         public IReadOnlyCollection<MemberPathMapping> MemberMappings { get; }
 
-        internal TypedSourceTargetMemberMappings(IReadOnlyCollection<MemberPathMapping> memberMappings) {
+        internal TypedSourceTargetMemberMappings(IReadOnlyCollection<MemberPathMapping> memberMappings)
+        {
             MemberMappings = memberMappings ?? throw new System.ArgumentNullException(nameof(memberMappings));
         }
     }

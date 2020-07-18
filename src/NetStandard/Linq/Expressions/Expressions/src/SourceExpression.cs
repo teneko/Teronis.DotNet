@@ -17,7 +17,7 @@ namespace Teronis.Linq.Expressions
         /// <param name="sourcePredicate"></param>
         /// <returns></returns>
         public static Expression WhereInConstant<SourceType, ComparisonType>(
-            [AllowNull]ComparisonType comparisonValue, Expression<SourceInConstantPredicateDelegate<SourceType, ComparisonType>> sourcePredicate,
+            [AllowNull] ComparisonType comparisonValue, Expression<SourceInConstantPredicateDelegate<SourceType, ComparisonType>> sourcePredicate,
             out ParameterExpression sourceParameter, ParameterExpression? sourceParameterReplacement = null)
         {
             sourcePredicate = sourcePredicate ?? throw new ArgumentNullException(nameof(sourcePredicate));
@@ -25,7 +25,7 @@ namespace Teronis.Linq.Expressions
             /* Replace KeyType parameter/member by constant. */
             var comparisonParameter = sourcePredicate.Parameters[1];
             var comparisonConstant = Expression.Constant(comparisonValue, comparisonParameter.Type);
-            
+
             var nodeReplacer = new NodeReplacerVisitor(comparisonParameter, comparisonConstant);
             var newSourcePredicateBody = nodeReplacer.Visit(sourcePredicate.Body);
 
@@ -70,7 +70,7 @@ namespace Teronis.Linq.Expressions
         /// <param name="sourceParameterExpression">If parameter needs to be supplied from outside.</param>
         /// <returns></returns>
         public static Expression<Func<SourceType, bool>> WhereInConstantLambda<SourceType, ComparisonType>(
-            [AllowNull]ComparisonType comparisonValue, Expression<SourceInConstantPredicateDelegate<SourceType, ComparisonType>> sourcePredicate,
+            [AllowNull] ComparisonType comparisonValue, Expression<SourceInConstantPredicateDelegate<SourceType, ComparisonType>> sourcePredicate,
             ParameterExpression? sourceParameterExpression = null)
         {
             sourcePredicate = sourcePredicate ?? throw new ArgumentNullException(nameof(sourcePredicate));

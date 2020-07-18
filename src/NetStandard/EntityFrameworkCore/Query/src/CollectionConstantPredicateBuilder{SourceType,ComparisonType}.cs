@@ -127,7 +127,7 @@ namespace Teronis.EntityFrameworkCore.Query
         void ICollectionConstantPredicateBuilder.AppendConcatenatedExpressionToParent() =>
             appendConcatenatedExpressionToParent();
 
-        public Expression BuildExpression(Func<Expression, Expression>? concatenatedExpressionFactory = null)
+        public Expression BuildBody(Func<Expression, Expression>? concatenatedExpressionFactory = null)
         {
             while (parentBuilder.TryPopBuilder(out var builder)) {
                 builder.AppendConcatenatedExpressionToParent();
@@ -142,10 +142,10 @@ namespace Teronis.EntityFrameworkCore.Query
             return concatenatedExpression;
         }
 
-        private Expression buildExpression<TargetType>(Action<TypedSourceTargetMemberMappper<SourceType, TargetType>> configureMemberMappings,
+        private Expression buildBody<TargetType>(Action<TypedSourceTargetMemberMappper<SourceType, TargetType>> configureMemberMappings,
             out ParameterExpression targetParameter, Func<Expression, Expression>? concatenatedExpressionFactory = null)
         {
-            var concatenatedExpression = BuildExpression(concatenatedExpressionFactory);
+            var concatenatedExpression = BuildBody(concatenatedExpressionFactory);
             targetParameter = Expression.Parameter(typeof(SourceType), "source");
             var memberMappingBuilder = new NodeReplacingMemberMappingBuilder<SourceType, TargetType>(parentBuilder.SourceParameterExpression, targetParameter);
             configureMemberMappings(memberMappingBuilder);
@@ -160,23 +160,23 @@ namespace Teronis.EntityFrameworkCore.Query
             return concatenatedExpression;
         }
 
-        public Expression BuildExpression<TargetType>(Action<TypedSourceTargetMemberMappper<SourceType, TargetType>> configureMemberMappings,
+        public Expression BuildBody<TargetType>(Action<TypedSourceTargetMemberMappper<SourceType, TargetType>> configureMemberMappings,
             Func<Expression, Expression>? concatenatedExpressionFactory = null) =>
-            buildExpression(configureMemberMappings, out _, concatenatedExpressionFactory);
+            buildBody(configureMemberMappings, out _, concatenatedExpressionFactory);
 
         private Expression<Func<ParameterType, bool>> buildLambda<ParameterType>(Expression body, ParameterExpression parameter) =>
             Expression.Lambda<Func<ParameterType, bool>>(body, parameter);
 
         public Expression<Func<SourceType, bool>> BuildLambda(Func<Expression, Expression>? concatenatedExpressionFactory = null)
         {
-            var concatenatedExpression = BuildExpression(concatenatedExpressionFactory: concatenatedExpressionFactory);
+            var concatenatedExpression = BuildBody(concatenatedExpressionFactory: concatenatedExpressionFactory);
             return buildLambda<SourceType>(concatenatedExpression, parentBuilder.SourceParameterExpression);
         }
 
         public Expression<Func<TargetType, bool>> BuildLambda<TargetType>(Action<TypedSourceTargetMemberMappper<SourceType, TargetType>> configureMemberMappings,
             Func<Expression, Expression>? concatenatedExpressionFactory = null)
         {
-            var bodyExpression = buildExpression(configureMemberMappings, out var targetParameter, concatenatedExpressionFactory);
+            var bodyExpression = buildBody(configureMemberMappings, out var targetParameter, concatenatedExpressionFactory);
             return buildLambda<TargetType>(bodyExpression, parentBuilder.SourceParameterExpression);
         }
 

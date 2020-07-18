@@ -28,7 +28,7 @@ namespace Teronis.Linq.Expressions
             if (fromMemberPath.Equals(MemberPathEvaluation.Uninitialized)) {
                 throw new ArgumentNullException(nameof(fromMemberPath));
             }
-            
+
             FromMemberPath = fromMemberPath;
 
             if (toMemberPath.Equals(MemberPathEvaluation.Uninitialized)) {

@@ -6,7 +6,8 @@ namespace Teronis.Linq.Expressions
     {
         private readonly Expression from, to;
 
-        public NodeReplacerVisitor(Expression from, Expression to) {
+        public NodeReplacerVisitor(Expression from, Expression to)
+        {
             this.from = from;
             this.to = to;
         }

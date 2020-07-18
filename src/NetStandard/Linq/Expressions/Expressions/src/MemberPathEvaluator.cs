@@ -43,7 +43,7 @@ namespace Teronis.Linq.Expressions
         /// </summary>
         /// <param name="sourceNode"></param>
         /// <returns>False if source node is invalid.</returns>
-        public static bool TryEvaluateSourceMemberPath(Expression sourceNode, [MaybeNullWhen(false)]out MemberPathEvaluation evaluation) =>
+        public static bool TryEvaluateSourceMemberPath(Expression sourceNode, [MaybeNullWhen(false)] out MemberPathEvaluation evaluation) =>
             @default.TryEvaluateSourceMemberPath(sourceNode, out evaluation);
     }
 }

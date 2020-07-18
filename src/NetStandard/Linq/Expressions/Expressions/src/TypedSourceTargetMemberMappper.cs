@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace Teronis.Linq.Expressions
@@ -48,7 +47,7 @@ namespace Teronis.Linq.Expressions
         /// </summary>
         /// <param name="copyList"></param>
         /// <returns>New created collection of current mapped members.</returns>
-        public IEnumerable<MemberPathMapping> GetMappings() => 
+        public IEnumerable<MemberPathMapping> GetMappings() =>
             new ReadOnlyCollection<MemberPathMapping>(memberMappings);
     }
 }

@@ -30,7 +30,8 @@ namespace Teronis.Linq.Expressions
             HasHighMemberExpression = (MemberStack != null && MemberStack.Length != 0);
         }
 
-        public Expression? GetHighestExpression() {
+        public Expression? GetHighestExpression()
+        {
             if (HasHighMemberExpression) {
                 return MemberStack[0];
             }

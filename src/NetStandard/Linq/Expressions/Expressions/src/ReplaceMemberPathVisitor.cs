@@ -30,7 +30,7 @@ namespace Teronis.Linq.Expressions
             return base.VisitMember(node);
         }
 
-        private bool tryVisitSource<T>(T fromNode, [MaybeNullWhen(false)]out Expression result)
+        private bool tryVisitSource<T>(T fromNode, [MaybeNullWhen(false)] out Expression result)
         {
             foreach (var memberMapping in memberMappings) {
                 var otherFromMemberPathEvaluation = memberMapping.FromMemberPath;

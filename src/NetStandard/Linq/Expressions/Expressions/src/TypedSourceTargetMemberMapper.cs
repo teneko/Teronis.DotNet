@@ -5,38 +5,26 @@ using System.Linq.Expressions;
 
 namespace Teronis.Linq.Expressions
 {
-    public class TypedSourceTargetMemberMappper<SourceType, TargetType>
+    public class TypedSourceTargetMemberMapper<SourceType, TargetType> : IMappableTypedSourceTargetMembers<SourceType, TargetType>
     {
         private readonly List<MemberPathMapping> memberMappings;
 
-        public TypedSourceTargetMemberMappper() =>
+        public TypedSourceTargetMemberMapper() =>
             memberMappings = new List<MemberPathMapping>();
 
-        protected virtual Expression GetBody(Expression<Func<SourceType, object>> from) =>
-            from.Body;
+        protected virtual MemberExpression GetBody(Expression<Func<SourceType, object?>> from) =>
+            (MemberExpression)from.Body;
 
-        protected virtual Expression GetBody(Expression<Func<TargetType, object>> to) =>
-            to.Body;
+        protected virtual MemberExpression GetBody(Expression<Func<TargetType, object?>> to) =>
+            (MemberExpression)to.Body;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="from"></param>
-        /// <param name="to"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="from"/> or <paramref name="to"/> is invalid.</exception>
-        public TypedSourceTargetMemberMappper<SourceType, TargetType> Map(Expression<Func<SourceType, object>> from, Expression<Func<TargetType, object>> to)
+        /// <inheritdoc/>
+        public TypedSourceTargetMemberMapper<SourceType, TargetType> Map(Expression<Func<SourceType, object?>> from, Expression<Func<TargetType, object?>> to)
         {
-            if (from?.Body is null) {
-                throw new ArgumentNullException(nameof(from), $"Body or parameter is null");
-            }
-
-            if (to?.Body is null) {
-                throw new ArgumentNullException(nameof(to), $"Body or parameter is null");
-            }
-
-            var fromBody = GetBody(from) ?? throw new ArgumentNullException($"{nameof(GetBody)}({nameof(from)})", "Body is null.");
-            var toBody = GetBody(to) ?? throw new ArgumentNullException($"{nameof(GetBody)}({nameof(to)})", "Body is null.");
+            MemberPathMapping.ThrowOnNonMemberBody(from, nameof(from));
+            MemberPathMapping.ThrowOnNonMemberBody(to, nameof(to));
+            var fromBody = GetBody(from) ?? throw new ArgumentNullException($"{nameof(GetBody)}({nameof(from)})", "Member expression is null.");
+            var toBody = GetBody(to) ?? throw new ArgumentNullException($"{nameof(GetBody)}({nameof(to)})", "Member expression is null.");
             var memberMapping = MemberPathMapping.Create(fromBody, toBody);
             memberMappings.Add(memberMapping);
             return this;

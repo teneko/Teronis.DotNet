@@ -9,8 +9,6 @@ namespace Teronis.Linq.Expressions
 {
     public struct MemberPathEvaluation : IEquatable<MemberPathEvaluation>
     {
-        internal static MemberPathEvaluation Uninitialized = new MemberPathEvaluation();
-
         /// <summary>
         /// Represents a constant or parameter expression.
         /// </summary>
@@ -41,27 +39,23 @@ namespace Teronis.Linq.Expressions
 
         public bool Equals([AllowNull] MemberPathEvaluation otherEvaluation)
         {
-            if (!Equals(otherEvaluation, Uninitialized)) {
-                bool evaluationEquality;
+            bool evaluationEquality;
 
-                if (SourceExpression is ConstantExpression xConstant && otherEvaluation.SourceExpression is ConstantExpression yConstant) {
-                    evaluationEquality = EqualityComparer<ConstantExpression>.Default.Equals(xConstant, yConstant);
-                } else if (SourceExpression is ParameterExpression xParamater && otherEvaluation.SourceExpression is ParameterExpression yParameter) {
-                    evaluationEquality = EqualityComparer<ParameterExpression>.Default.Equals(xParamater, yParameter);
-                } else {
-                    evaluationEquality = false;
-                }
-
-                evaluationEquality = evaluationEquality
-                    && Enumerable.SequenceEqual(
-                        MemberStack.Select(x => x.Member),
-                        otherEvaluation.MemberStack.Select(x => x.Member),
-                        EqualityComparer<MemberInfo>.Default);
-
-                return evaluationEquality;
+            if (SourceExpression is ConstantExpression xConstant && otherEvaluation.SourceExpression is ConstantExpression yConstant) {
+                evaluationEquality = EqualityComparer<ConstantExpression>.Default.Equals(xConstant, yConstant);
+            } else if (SourceExpression is ParameterExpression xParamater && otherEvaluation.SourceExpression is ParameterExpression yParameter) {
+                evaluationEquality = EqualityComparer<ParameterExpression>.Default.Equals(xParamater, yParameter);
+            } else {
+                return false;
             }
 
-            return false;
+            evaluationEquality = evaluationEquality
+                && Enumerable.SequenceEqual(
+                    MemberStack.Select(x => x.Member),
+                    otherEvaluation.MemberStack.Select(x => x.Member),
+                    EqualityComparer<MemberInfo>.Default);
+
+            return evaluationEquality;
         }
 
         public override bool Equals(object? obj)

@@ -7,7 +7,7 @@ namespace Teronis.EntityFrameworkCore.Query
 {
     public interface ICollectionConstantPredicateBuilder<SourceType, ComparisonType>
     {
-        ICollectionConstantPredicateBuilder<SourceType, ComparisonType> ThenWhereInCollectionConstant<ThenComparisonType>(
+        ICollectionConstantPredicateBuilder<SourceType, ComparisonType> ThenInCollection<ThenComparisonType>(
             Func<Expression, Expression, BinaryExpression> parentBinaryExpressionFactory,
             Func<ComparisonType, IReadOnlyCollection<ThenComparisonType>?> getComparisonValue,
             Func<Expression, Expression, BinaryExpression> valueBinaryExpressionFactory,

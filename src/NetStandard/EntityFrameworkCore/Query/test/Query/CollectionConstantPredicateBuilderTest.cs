@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 using Teronis.EntityFrameworkCore.Query;
 using Xunit;
 
-namespace Test.NetStandard.Linq.Expressions.EntityFrameworkCore
+namespace Test.NetStandard.EntityFrameworkCore.Query
 {
     public class CollectionConstantPredicateBuilderTest
     {

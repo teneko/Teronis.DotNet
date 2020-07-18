@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Teronis.EntityFrameworkCore.Query</RootNamespace>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 

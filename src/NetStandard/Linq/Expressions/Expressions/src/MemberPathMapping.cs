@@ -19,8 +19,8 @@ namespace Teronis.Linq.Expressions
             return new MemberPathMapping(fromMemberStack, toMemberStack);
         }
 
-        public static MemberPathMapping Create<SourceType, TargetType>(Expression<Func<SourceType, object>> from,
-            Expression<Func<TargetType, object>> to)
+        public static MemberPathMapping Create<SourceType, TargetType>(Expression<Func<SourceType, object?>> from,
+            Expression<Func<TargetType, object?>> to)
         {
             ThrowOnNonMemberBody(from, nameof(from));
             ThrowOnNonMemberBody(to, nameof(to));

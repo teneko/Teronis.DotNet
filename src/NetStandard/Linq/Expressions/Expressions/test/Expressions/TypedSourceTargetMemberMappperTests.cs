@@ -1,7 +1,7 @@
 ﻿using System;
 using Xunit;
 
-namespace Test.NetStandard.Linq.Expressions.EntityFrameworkCore
+namespace Teronis.Linq.Expressions
 {
     public class TypedSourceTargetMemberMappperTests
     {

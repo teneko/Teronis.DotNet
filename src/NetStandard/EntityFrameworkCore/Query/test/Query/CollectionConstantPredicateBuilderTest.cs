@@ -50,34 +50,33 @@ namespace Test.NetStandard.EntityFrameworkCore.Query
                 Assert.Equal(targetParameter, parameter);
             });
 
-            using (var context = new PersonContext()) {
-                await context.Database.EnsureCreatedAsync();
+            using var context = new PersonContext();
+            await context.Database.EnsureCreatedAsync();
 
-                await context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
-                context.Man.AddRange(
-                    new Man() { Name = "Man 1" },
-                    new Man() { Name = "Man 2" });
+            context.Man.AddRange(
+                new Man() { Name = "Man 1" },
+                new Man() { Name = "Man 2" });
 
-                await context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
-                context.Children.AddRange(
-                    new Child() { Name = "Child 1" },
-                    new Child() { Name = secondChildName, FatherName = secondFatherName });
+            context.Children.AddRange(
+                new Child() { Name = "Child 1" },
+                new Child() { Name = secondChildName, FatherName = secondFatherName });
 
-                await context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
-                var findFatherLambdaExpression = Expression.Lambda<Func<Child, bool>>(
-                    findFatherExpression,
-                    targetParameter);
+            var findFatherLambdaExpression = Expression.Lambda<Func<Child, bool>>(
+                findFatherExpression,
+                targetParameter);
 
-                var foundChildren = await context.Children.AsQueryable()
-                    .Where(findFatherLambdaExpression).ToListAsync();
+            var foundChildren = await context.Children.AsQueryable()
+                .Where(findFatherLambdaExpression).ToListAsync();
 
-                var foundChild = Assert.Single(foundChildren);
-                Assert.Equal(secondChildName, foundChild.Name);
-                Assert.Equal(secondFatherName, foundChild.FatherName);
-            }
+            var foundChild = Assert.Single(foundChildren);
+            Assert.Equal(secondChildName, foundChild.Name);
+            Assert.Equal(secondFatherName, foundChild.FatherName);
         }
 
         private class ComparisonMan
@@ -118,7 +117,7 @@ namespace Test.NetStandard.EntityFrameworkCore.Query
 
         private class PersonContext : DbContext
         {
-            private static IServiceProvider serviceProvier;
+            private static readonly IServiceProvider serviceProvier;
 
             static PersonContext()
             {

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
-using Teronis.Linq.Expressions;
 
-namespace Teronis.EntityFrameworkCore.Query
+namespace Teronis.Linq.Expressions
 {
     internal class NodeReplacingMemberMappingBuilder<SourceType, TargetType> : TypedSourceTargetMemberMapper<SourceType, TargetType>
     {

@@ -179,17 +179,10 @@ namespace Teronis.EntityFrameworkCore.Query
             out ParameterExpression targetParameter, Func<Expression, Expression>? concatenatedExpressionFactory = null)
         {
             var concatenatedExpression = BuildBodyExpression(concatenatedExpressionFactory);
-            targetParameter = Expression.Parameter(typeof(TargetType), "targetAsSource");
-            var memberMappingBuilder = new NodeReplacingMemberMappingBuilder<SourceType, TargetType>(parentBuilder.SourceParameterExpression, targetParameter);
-            configureMemberMappings(memberMappingBuilder);
-            var memberMappings = memberMappingBuilder.GetMappings().ToList();
 
-            if (memberMappings == null || memberMappings.Count == 0) {
-                return concatenatedExpression;
-            }
+            concatenatedExpression = SourceExpression.ReplaceParameter(concatenatedExpression, parentBuilder.SourceParameterExpression,
+                configureMemberMappings, out targetParameter);
 
-            var memberPathReplacer = new SourceMemberPathReplacerVisitor(memberMappings);
-            concatenatedExpression = memberPathReplacer.Visit(concatenatedExpression);
             return concatenatedExpression;
         }
 
@@ -313,8 +306,8 @@ namespace Teronis.EntityFrameworkCore.Query
         public interface IDeferredThenCreateCollectionConstantBuilder<ThenComparisonType>
         {
             IThenInCollectionConstantPredicateBuilder<SourceType, ComparisonType> DefinePredicatePerItem(
-                Func<Expression, Expression, BinaryExpression> consecutiveItemBinaryExpressionFactory, 
-                Expression<SourceInConstantPredicateDelegate<SourceType, ThenComparisonType>> sourcePredicate, 
+                Func<Expression, Expression, BinaryExpression> consecutiveItemBinaryExpressionFactory,
+                Expression<SourceInConstantPredicateDelegate<SourceType, ThenComparisonType>> sourcePredicate,
                 Action<IThenInCollectionConstantPredicateBuilder<SourceType, ThenComparisonType>>? thenSourcePredicate = null);
         }
 

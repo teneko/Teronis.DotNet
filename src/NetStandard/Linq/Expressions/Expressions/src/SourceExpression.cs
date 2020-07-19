@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace Teronis.Linq.Expressions
@@ -59,6 +60,37 @@ namespace Teronis.Linq.Expressions
             var newSourcePredicate = Expression.Lambda<Func<SourceType, bool>>(whereInConstantExpression, sourceAndValuePredicate.Parameters[0]);
 
             return newSourcePredicate;
+        }
+
+        /// <summary>
+        /// Replaces all member accesses with <typeparamref name="SourceType"/> parameter expression as origin
+        /// by those member accesses who are defined with help of <paramref name="configureMemberMappings"/>.
+        /// </summary>
+        /// <typeparam name="SourceType">Source type.</typeparam>
+        /// <typeparam name="TargetType">Target type.</typeparam>
+        /// <param name="expression">The expression which may contain member accesses.</param>
+        /// <param name="sourceParameter">The source parameter expression who is used by those member
+        /// accesses you want to have replaced.</param>
+        /// <param name="configureMemberMappings">Lets you configures the member mappings.</param>
+        /// <param name="targetParameter">The new target expression parameter that is used in replacement of the
+        /// source target expression</param>
+        /// <returns>The expression with replaced member accesses.</returns>
+        public static Expression ReplaceParameter<SourceType, TargetType>(Expression expression, ParameterExpression sourceParameter,
+            Action<IMappableTypedSourceTargetMembers<SourceType, TargetType>> configureMemberMappings,
+            out ParameterExpression targetParameter)
+        {
+            targetParameter = Expression.Parameter(typeof(TargetType), "targetAsSource");
+            var memberMappingBuilder = new NodeReplacingMemberMappingBuilder<SourceType, TargetType>(sourceParameter, targetParameter);
+            configureMemberMappings(memberMappingBuilder);
+            var memberMappings = memberMappingBuilder.GetMappings().ToList();
+
+            if (memberMappings == null || memberMappings.Count == 0) {
+                return expression;
+            }
+
+            var memberPathReplacer = new SourceMemberPathReplacerVisitor(memberMappings);
+            expression = memberPathReplacer.Visit(expression);
+            return expression;
         }
     }
 }

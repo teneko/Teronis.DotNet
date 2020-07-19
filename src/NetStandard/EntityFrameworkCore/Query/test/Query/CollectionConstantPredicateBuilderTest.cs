@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using Teronis.EntityFrameworkCore.Query;
 using Xunit;
@@ -10,37 +11,43 @@ namespace Test.NetStandard.EntityFrameworkCore.Query
         [Fact]
         public void Replaces_source_and_target_mapping_parameters_by_instance_ones()
         {
-            var comparisonValueList = new[] { new ComparisonA() };
+            var comparisonValueList = new[] { new ComparisonA() { Properties = new string[] { "" } } };
 
             var bodyExpression = CollectionConstantPredicateBuilder<ClassB>
                 .FromComparisonList(comparisonValueList)
                 .CreateBuilder(Expression.OrElse,
-                    (source, value) => source.PropertyB1 == value.Property)
+                    (b, value) => b.PropertyB1 == value.Property)
+                .ThenInCollection(Expression.AndAlso, value => value.Properties, Expression.OrElse,
+                    (b, value) => b.PropertiesCB1.Contains(default))
                 .BuildBodyExpression<ClassA>(memberMapper => {
                     memberMapper.Map(b => b.PropertyB1, a => a.PropertyA1);
+                    memberMapper.Map(b => b.PropertiesCB1, a => a.PropertiesA1);
                 }, out var targetParameter);
 
             var parameterCollector = new ParameterExpressionCollectorVisitor();
             parameterCollector.Visit(bodyExpression);
 
-            Assert.Collection(parameterCollector.ParameterExpressions, parameter => {
+            Assert.All(parameterCollector.ParameterExpressions, parameter => {
                 Assert.Equal(targetParameter, parameter);
             });
         }
 
         public class ClassA
         {
-            public string? PropertyA1 { get; }
+            public string? PropertyA1 { get; set; }
+            public string[]? PropertiesA1 { get; set; }
         }
 
         public class ComparisonA
         {
-            public string? Property { get; }
+            public string? Property { get; set; }
+            public string[]? Properties { get; set; }
         }
 
         public class ClassB
         {
-            public string? PropertyB1 { get; }
+            public string? PropertyB1 { get; set; }
+            public string[]? PropertiesCB1 { get; set; }
         }
 
         public class ParameterExpressionCollectorVisitor : ExpressionVisitor

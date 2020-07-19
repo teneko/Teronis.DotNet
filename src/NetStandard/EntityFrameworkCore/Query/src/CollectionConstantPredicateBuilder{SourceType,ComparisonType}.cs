@@ -7,25 +7,38 @@ using Teronis.Linq.Expressions;
 
 namespace Teronis.EntityFrameworkCore.Query
 {
-    public class CollectionConstantPredicateBuilder<SourceType, ComparisonType> : IThenInCollectionConstantPredicateBuilder<SourceType, ComparisonType>, ICollectionConstantPredicateBuilder
+    public class CollectionConstantPredicateBuilder<SourceType, ComparisonType> : IThenInCollectionConstantPredicateBuilder<SourceType, ComparisonType>, IChildCollectionConstantPredicateBuilder
     {
         private readonly IParentCollectionConstantPredicateBuilder parentBuilder;
         private List<SourceValueComparison<ComparisonType>> sourceValueComparisons = null!;
         private readonly Func<Expression, Expression, BinaryExpression> consecutiveItemBinaryExpressionFactory;
         private readonly Func<Expression, Expression, BinaryExpression>? parentBinaryExpressionFactory;
 
+        /// <summary>
+        /// Creates a collection constant predicate builder from a non-null and non-empty collection.
+        /// via <paramref name="consecutiveItemBinaryExpressionFactory"/>.
+        /// </summary>
+        /// <param name="consecutiveItemBinaryExpressionFactory">The binary expression factory combines an item predicate with a previous item predicate.</param>
+        /// <param name="comparisonList">A collection of comparison values with at least one item.</param>
+        /// <param name="sourceAndItemPredicate">The expression that represents the predicate.</param>
+        /// <exception cref="ArgumentNullException">A parameter is null.</exception>
+        /// <exception cref="ArgumentException">The parameter <paramref name="comparisonList"/> is empty.</exception>
         public CollectionConstantPredicateBuilder(
             Func<Expression, Expression, BinaryExpression> consecutiveItemBinaryExpressionFactory,
             IReadOnlyCollection<ComparisonType> comparisonList,
             Expression<SourceInConstantPredicateDelegate<SourceType, ComparisonType>> sourceAndItemPredicate)
         {
-            if (comparisonList is null || comparisonList.Count == 0) {
+            if (comparisonList is null) {
                 throw new ArgumentNullException(nameof(comparisonList));
+            }
+
+            if (comparisonList.Count == 0) {
+                throw new ArgumentException("The comparison list cannot be empty.", nameof(comparisonList));
             }
 
             this.consecutiveItemBinaryExpressionFactory = consecutiveItemBinaryExpressionFactory ?? throw new ArgumentNullException(nameof(consecutiveItemBinaryExpressionFactory));
             onConstruction(comparisonList, sourceAndItemPredicate, out var sourceParameterExpression, null);
-            parentBuilder = new RootBuilder(new Stack<ICollectionConstantPredicateBuilder>(), sourceParameterExpression);
+            parentBuilder = new RootBuilder(new Stack<IChildCollectionConstantPredicateBuilder>(), sourceParameterExpression);
         }
 
         private CollectionConstantPredicateBuilder(IParentCollectionConstantPredicateBuilder parentBuilder,
@@ -63,11 +76,6 @@ namespace Teronis.EntityFrameworkCore.Query
             }
         }
 
-        public DeferredThenCreateBuilder<ThenComparisonType> ThenCreateFromCollection<ThenComparisonType>(
-            Func<Expression, Expression, BinaryExpression> parentBinaryExpressionFactory,
-            Func<ComparisonType, IReadOnlyCollection<ThenComparisonType>?> getComparisonValues) =>
-            new DeferredThenCreateBuilder<ThenComparisonType>(this, parentBinaryExpressionFactory, getComparisonValues);
-
         private CollectionConstantPredicateBuilder<SourceType, ComparisonType> thenDefinePredicatePerItemInCollection<ThenComparisonType>(
             Func<Expression, Expression, BinaryExpression> parentBinaryExpressionFactory,
             Func<ComparisonType, IReadOnlyCollection<ThenComparisonType>?> getComparisonValues,
@@ -97,7 +105,18 @@ namespace Teronis.EntityFrameworkCore.Query
             return this;
         }
 
-        IDeferredThenCreateCollectionConstantBuilder<ThenComparisonType> IThenInCollectionConstantPredicateBuilder<SourceType, ComparisonType>.ThenInCollection<ThenComparisonType>(
+        /// <summary>
+        /// Creates a deferred collection constant predicate builder from <paramref name="getComparisonValues"/> that might return a null or empty collection.
+        /// </summary>
+        /// <typeparam name="ThenComparisonType">The type of an item of the return value of <paramref name="getComparisonValues"/>.</typeparam>
+        /// <param name="getComparisonValues">A collection expression that might return a comparison value list with at least one item.</param>
+        /// <returns>A deferred collection constant predicate builder.</returns>
+        public DeferredThenCreateBuilder<ThenComparisonType> ThenCreateFromCollection<ThenComparisonType>(
+            Func<Expression, Expression, BinaryExpression> parentBinaryExpressionFactory,
+            Func<ComparisonType, IReadOnlyCollection<ThenComparisonType>?> getComparisonValues) =>
+            new DeferredThenCreateBuilder<ThenComparisonType>(this, parentBinaryExpressionFactory, getComparisonValues);
+
+        IDeferredThenCreateCollectionConstantBuilder<ThenComparisonType> IThenInCollectionConstantPredicateBuilder<SourceType, ComparisonType>.ThenCreateFromCollection<ThenComparisonType>(
             Func<Expression, Expression, BinaryExpression> parentBinaryExpressionFactory,
             Func<ComparisonType, IReadOnlyCollection<ThenComparisonType>?> getComparisonValues) =>
             ThenCreateFromCollection(parentBinaryExpressionFactory, getComparisonValues);
@@ -125,9 +144,14 @@ namespace Teronis.EntityFrameworkCore.Query
             parentBuilder.AppendExpression(concatenatedExpression, parentBinaryExpressionFactory);
         }
 
-        void ICollectionConstantPredicateBuilder.AppendConcatenatedExpressionToParent() =>
+        void IChildCollectionConstantPredicateBuilder.AppendConcatenatedExpressionToParent() =>
             appendConcatenatedExpressionToParent();
 
+        /// <summary>
+        /// Builds the body expression for a possible lambda expression.
+        /// </summary>
+        /// <param name="concatenatedExpressionFactory">Manipulates the concatenated expression result.</param>
+        /// <returns>The body expression for a possible lambda expression.</returns>
         public Expression BuildBodyExpression(Func<Expression, Expression>? concatenatedExpressionFactory = null)
         {
             while (parentBuilder.TryPopBuilder(out var builder)) {
@@ -143,6 +167,14 @@ namespace Teronis.EntityFrameworkCore.Query
             return concatenatedExpression;
         }
 
+        /// <summary>
+        /// Builds the body expression for a possible lambda expression.
+        /// </summary>
+        /// <typeparam name="TargetType">The target type you can use for mapping in <paramref name="configureMemberMappings"/>.</typeparam>
+        /// <param name="configureMemberMappings">Lets you map source type member accesses to target type member accesses.</param>
+        /// <param name="targetParameter">The parameter that served as replacement for the member mappings.</param>
+        /// <param name="concatenatedExpressionFactory">Manipulates the concatenated expression result.</param>
+        /// <returns>The body expression for a possible lambda expression.</returns>
         internal Expression BuildBodyExpression<TargetType>(Action<IMappableTypedSourceTargetMembers<SourceType, TargetType>> configureMemberMappings,
             out ParameterExpression targetParameter, Func<Expression, Expression>? concatenatedExpressionFactory = null)
         {
@@ -161,6 +193,13 @@ namespace Teronis.EntityFrameworkCore.Query
             return concatenatedExpression;
         }
 
+        /// <summary>
+        /// Builds the body expression for a possible lambda expression.
+        /// </summary>
+        /// <typeparam name="TargetType">The target type you can use for mapping in <paramref name="configureMemberMappings"/>.</typeparam>
+        /// <param name="configureMemberMappings">Lets you map source type member accesses to target type member accesses.</param>
+        /// <param name="concatenatedExpressionFactory">Manipulates the concatenated expression result.</param>
+        /// <returns>The body expression for a possible lambda expression.</returns>
         public Expression BuildBodyExpression<TargetType>(Action<IMappableTypedSourceTargetMembers<SourceType, TargetType>> configureMemberMappings,
             Func<Expression, Expression>? concatenatedExpressionFactory = null) =>
             BuildBodyExpression(configureMemberMappings, out _, concatenatedExpressionFactory);
@@ -168,12 +207,24 @@ namespace Teronis.EntityFrameworkCore.Query
         private Expression<Func<ParameterType, bool>> buildLambdaExpression<ParameterType>(Expression body, ParameterExpression parameter) =>
             Expression.Lambda<Func<ParameterType, bool>>(body, parameter);
 
+        /// <summary>
+        /// Builds the lambda expression.
+        /// </summary>
+        /// <param name="concatenatedExpressionFactory">Manipulates the concatenated expression result.</param>
+        /// <returns>The lambda expression.</returns>
         public Expression<Func<SourceType, bool>> BuildLambdaExpression(Func<Expression, Expression>? concatenatedExpressionFactory = null)
         {
             var concatenatedExpression = BuildBodyExpression(concatenatedExpressionFactory: concatenatedExpressionFactory);
             return buildLambdaExpression<SourceType>(concatenatedExpression, parentBuilder.SourceParameterExpression);
         }
 
+        /// <summary>
+        /// Builds the lambda expression.
+        /// </summary>
+        /// <typeparam name="TargetType">The target type you can use for mapping in <paramref name="configureMemberMappings"/>.</typeparam>
+        /// <param name="configureMemberMappings">Lets you map source type member accesses to target type member accesses.</param>
+        /// <param name="concatenatedExpressionFactory">Manipulates the concatenated expression result.</param>
+        /// <returns>The lambda expression.</returns>
         public Expression<Func<TargetType, bool>> BuildLambdaExpression<TargetType>(Action<IMappableTypedSourceTargetMembers<SourceType, TargetType>> configureMemberMappings,
             Func<Expression, Expression>? concatenatedExpressionFactory = null)
         {
@@ -183,21 +234,21 @@ namespace Teronis.EntityFrameworkCore.Query
 
         private readonly struct RootBuilder : IParentCollectionConstantPredicateBuilder
         {
-            public readonly Stack<ICollectionConstantPredicateBuilder> BuilderStack { get; }
+            public readonly Stack<IChildCollectionConstantPredicateBuilder> BuilderStack { get; }
             public readonly ParameterExpression SourceParameterExpression { get; }
 
             public readonly bool IsRoot => true;
 
-            public RootBuilder(Stack<ICollectionConstantPredicateBuilder> builderStack, ParameterExpression sourceParameterExpression)
+            public RootBuilder(Stack<IChildCollectionConstantPredicateBuilder> builderStack, ParameterExpression sourceParameterExpression)
             {
                 BuilderStack = builderStack ?? throw new ArgumentNullException(nameof(builderStack));
                 SourceParameterExpression = sourceParameterExpression ?? throw new ArgumentNullException(nameof(sourceParameterExpression));
             }
 
-            public void StackBuilder(ICollectionConstantPredicateBuilder builder) =>
+            public void StackBuilder(IChildCollectionConstantPredicateBuilder builder) =>
                 BuilderStack.Push(builder);
 
-            public bool TryPopBuilder([MaybeNullWhen(false)] out ICollectionConstantPredicateBuilder builder)
+            public bool TryPopBuilder([MaybeNullWhen(false)] out IChildCollectionConstantPredicateBuilder builder)
             {
                 if (BuilderStack.Count == 0) {
                     builder = default;
@@ -249,10 +300,10 @@ namespace Teronis.EntityFrameworkCore.Query
                 this.expressionAppender = expressionAppender;
             }
 
-            public void StackBuilder(ICollectionConstantPredicateBuilder builder) =>
+            public void StackBuilder(IChildCollectionConstantPredicateBuilder builder) =>
                 this.builder.parentBuilder.StackBuilder(builder);
 
-            public bool TryPopBuilder([MaybeNullWhen(false)] out ICollectionConstantPredicateBuilder builder) =>
+            public bool TryPopBuilder([MaybeNullWhen(false)] out IChildCollectionConstantPredicateBuilder builder) =>
                 this.builder.parentBuilder.TryPopBuilder(out builder);
 
             public void AppendExpression(Expression expression, Func<Expression, Expression, BinaryExpression> binaryExpression) =>

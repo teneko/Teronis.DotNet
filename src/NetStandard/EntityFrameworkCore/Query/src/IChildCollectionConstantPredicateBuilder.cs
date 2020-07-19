@@ -1,6 +1,6 @@
 ﻿namespace Teronis.EntityFrameworkCore.Query
 {
-    internal interface ICollectionConstantPredicateBuilder
+    internal interface IChildCollectionConstantPredicateBuilder
     {
         void AppendConcatenatedExpressionToParent();
     }

@@ -8,8 +8,8 @@ namespace Teronis.EntityFrameworkCore.Query
     {
         bool IsRoot { get; }
         ParameterExpression SourceParameterExpression { get; }
-        void StackBuilder(ICollectionConstantPredicateBuilder builder);
-        bool TryPopBuilder([MaybeNullWhen(false)] out ICollectionConstantPredicateBuilder builder);
+        void StackBuilder(IChildCollectionConstantPredicateBuilder builder);
+        bool TryPopBuilder([MaybeNullWhen(false)] out IChildCollectionConstantPredicateBuilder builder);
         void AppendExpression(Expression expression, Func<Expression, Expression, BinaryExpression> binaryExpression);
     }
 }

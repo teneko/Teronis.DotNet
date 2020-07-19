@@ -1,6 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Teronis.EntityFrameworkCore.Query;
 using Xunit;
 
@@ -9,49 +15,140 @@ namespace Test.NetStandard.EntityFrameworkCore.Query
     public class CollectionConstantPredicateBuilderTest
     {
         [Fact]
-        public void Replaces_source_and_target_mapping_parameters_by_instance_ones()
+        public async Task Replaces_source_and_target_mapping_parameters_by_instance_ones()
         {
-            var comparisonValueList = new[] { new ComparisonA() { Properties = new string[] { "" } } };
+            var secondChildName = "Child 2";
+            var secondFatherName = "Man 2";
 
-            var bodyExpression = CollectionConstantPredicateBuilder<ClassB>
+            var comparisonValueList = new[] { new ComparisonChild() { Fathers = new List<ComparisonMan?>() {
+                new ComparisonMan() { Name = null },
+                new ComparisonMan() { Name = "" },
+                new ComparisonMan() { Name = secondFatherName } } } };
+
+            var findFatherExpression = CollectionConstantPredicateBuilder<MockedChild>
                 .CreateFromCollection(comparisonValueList)
                 .DefinePredicatePerItem(Expression.OrElse,
-                    (b, value) => b.PropertyB1 != null && b.PropertyB1 == value.Property)
-                .ThenCreateFromCollection(Expression.AndAlso, value => value.Properties)
+                    // Select only those children who have a name and a father.
+                    (child, comparisonChild) => child.MockedName != null && child.MockedFatherName != null)
+                .ThenCreateFromCollection(Expression.AndAlso,
+                    comparisonChild => comparisonChild.Fathers)
                 .DefinePredicatePerItem(Expression.OrElse,
-                    (b, value) => b.PropertiesCB1.Contains(default))
-                .BuildBodyExpression<ClassA>(memberMapper => {
-                    memberMapper.Map(b => b.PropertyB1, a => a.PropertyA1);
-                    memberMapper.Map(b => b.PropertiesCB1, a => a.PropertiesA1);
+                    // Select the children only if the father name is equal to the comparison father name.
+                    (child, comparisonFather) => comparisonFather != null && child.MockedFatherName == comparisonFather.Name)
+                // Here begins the the member mapping from MockedChild to Child.
+                .BuildBodyExpression<Child>(memberMapper => {
+                    // We have to map each member access that are actually used above.
+                    memberMapper.Map(b => b.MockedName, a => a.Name);
+                    memberMapper.Map(b => b.MockedFatherName, a => a.FatherName);
                 }, out var targetParameter);
 
             var parameterCollector = new ParameterExpressionCollectorVisitor();
-            parameterCollector.Visit(bodyExpression);
+            parameterCollector.Visit(findFatherExpression);
 
+            // Ensure that all parameters used in body expression are targeting the same mapped Child parameter.
             Assert.All(parameterCollector.ParameterExpressions, parameter => {
                 Assert.Equal(targetParameter, parameter);
             });
+
+            using (var context = new PersonContext()) {
+                await context.Database.EnsureCreatedAsync();
+
+                await context.SaveChangesAsync();
+
+                context.Man.AddRange(
+                    new Man() { Name = "Man 1" },
+                    new Man() { Name = "Man 2" });
+
+                await context.SaveChangesAsync();
+
+                context.Children.AddRange(
+                    new Child() { Name = "Child 1" },
+                    new Child() { Name = secondChildName, FatherName = secondFatherName });
+
+                await context.SaveChangesAsync();
+
+                var findFatherLambdaExpression = Expression.Lambda<Func<Child, bool>>(
+                    findFatherExpression,
+                    targetParameter);
+
+                var foundChildren = await context.Children.AsQueryable()
+                    .Where(findFatherLambdaExpression).ToListAsync();
+
+                var foundChild = Assert.Single(foundChildren);
+                Assert.Equal(secondChildName, foundChild.Name);
+                Assert.Equal(secondFatherName, foundChild.FatherName);
+            }
         }
 
-        public class ClassA
+        private class ComparisonMan
         {
-            public string? PropertyA1 { get; set; }
-            public string[]? PropertiesA1 { get; set; }
+            public string? Name { get; set; }
         }
 
-        public class ComparisonA
+        private class ComparisonChild
         {
-            public string? Property { get; set; }
-            public string[]? Properties { get; set; }
+            public string? Name { get; set; }
+            public List<ComparisonMan?>? Fathers { get; set; }
         }
 
-        public class ClassB
+        private class MockedChild
         {
-            public string? PropertyB1 { get; set; }
-            public string[]? PropertiesCB1 { get; set; }
+            public string MockedName { get; set; } = null!;
+            public string MockedFatherName { get; set; } = null!;
         }
 
-        public class ParameterExpressionCollectorVisitor : ExpressionVisitor
+        private class Person
+        {
+            [Key]
+            public string Name { get; set; } = null!;
+        }
+
+        private class Man : Person
+        {
+            public List<Child> Children { get; } = null!;
+        }
+
+        private class Child : Person
+        {
+            public string FatherName { get; set; } = null!;
+            public string MotherName { get; set; } = null!;
+
+            public Man Father { get; set; } = null!;
+        }
+
+        private class PersonContext : DbContext
+        {
+            private static IServiceProvider serviceProvier;
+
+            static PersonContext()
+            {
+                serviceProvier = new ServiceCollection()
+                    .AddLogging(configure => configure.AddConsole())
+                    .AddEntityFrameworkInMemoryDatabase()
+                    .BuildServiceProvider();
+            }
+
+            public DbSet<Man> Man { get; set; } = null!;
+            public DbSet<Child> Children { get; set; } = null!;
+
+            protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+            {
+                optionsBuilder
+                    .UseInternalServiceProvider(serviceProvier)
+                    .UseInMemoryDatabase(nameof(PersonContext));
+            }
+
+            protected override void OnModelCreating(ModelBuilder modelBuilder)
+            {
+                modelBuilder.Entity<Child>(options => {
+                    options.HasOne(x => x.Father)
+                        .WithMany(x => x.Children)
+                        .HasForeignKey(x => x.FatherName);
+                });
+            }
+        }
+
+        private class ParameterExpressionCollectorVisitor : ExpressionVisitor
         {
             public List<ParameterExpression> ParameterExpressions { get; }
 

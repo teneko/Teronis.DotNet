@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Teronis.Linq.Expressions</RootNamespace>
-    <Descriptions>Provides expression builder, expression visitor and everything around LINQ Expressions.</Descriptions>
+    <Description>Provides expression builder, expression visitor and everything around LINQ Expressions.</Description>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Teronis.EntityFrameworkCore.Query</RootNamespace>
-    <Descriptions>Provides expression builder to increase query ability in Entity Framework Core.</Descriptions>
+    <Description>Provides expression builder to increase query ability in Entity Framework Core.</Description>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 

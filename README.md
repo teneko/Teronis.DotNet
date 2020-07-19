@@ -40,14 +40,18 @@ Provides algorithm to calculate collection differences between two collection.
 classes for collection synchronization.
 - [NetStandard.Core](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Core/Core) A collection of utilities, extensions, tools and
 classes for the .NET Standard implementation.
-- [Teronis.NetStandard.DataModel.TreeColumn](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/DataModel/TreeColumn) Provides
+- [NetStandard.DataModel.TreeColumn](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/DataModel/TreeColumn) Provides
 TreeColumnSeeker for complex data structures.
 - [NetStandard.Drawing](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Drawing/Drawing) Some simplifications for
 System.Drawing.Common.
 - [NetStandard.EntityFrameworkCore](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/EntityFrameworkCore/EntityFrameworkCore)
 An extension to the native function range of EntityFrameworkCore.
+- [NetStandard.EntityFrameworkCore.Query](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/EntityFrameworkCore/Query)
+Provides expression builder to increase query ability in Entity Framework Core.
 - [NetStandard.Json](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Json/Json) An extension to the native function range of
 Newtonsoft.Json.
+- [NetStandard.Linq.Expressions](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Linq/Expressions/Expressions) Provides expression
+builder, expression visitor and everything around LINQ Expressions.
 - [NetStandard.Tools.GitVersion](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Tools/GitVersion/GitVersion) A wrapper to use the
 executable of GitVersion (https://chocolatey.org/packages/GitVersion.Portable) in C# programmatically.
 

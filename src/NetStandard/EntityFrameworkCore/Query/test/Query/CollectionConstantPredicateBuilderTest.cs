@@ -14,10 +14,11 @@ namespace Test.NetStandard.EntityFrameworkCore.Query
             var comparisonValueList = new[] { new ComparisonA() { Properties = new string[] { "" } } };
 
             var bodyExpression = CollectionConstantPredicateBuilder<ClassB>
-                .FromComparisonList(comparisonValueList)
-                .CreateBuilder(Expression.OrElse,
-                    (b, value) => b.PropertyB1 == value.Property)
-                .ThenInCollection(Expression.AndAlso, value => value.Properties, Expression.OrElse,
+                .CreateFromCollection(comparisonValueList)
+                .DefinePredicatePerItem(Expression.OrElse,
+                    (b, value) => b.PropertyB1 != null && b.PropertyB1 == value.Property)
+                .ThenCreateFromCollection(Expression.AndAlso, value => value.Properties)
+                .DefinePredicatePerItem(Expression.OrElse,
                     (b, value) => b.PropertiesCB1.Contains(default))
                 .BuildBodyExpression<ClassA>(memberMapper => {
                     memberMapper.Map(b => b.PropertyB1, a => a.PropertyA1);

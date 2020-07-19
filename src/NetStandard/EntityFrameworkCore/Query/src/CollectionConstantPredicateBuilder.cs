@@ -7,7 +7,7 @@ namespace Teronis.EntityFrameworkCore.Query
 {
     public static class CollectionConstantPredicateBuilder<SourceType>
     {
-        public static DeferredCreateBuilder<ComparisonType> FromComparisonList<ComparisonType>(
+        public static DeferredCreateBuilder<ComparisonType> CreateFromCollection<ComparisonType>(
             IReadOnlyCollection<ComparisonType> comparisonList) =>
             new DeferredCreateBuilder<ComparisonType>(comparisonList);
 
@@ -18,11 +18,11 @@ namespace Teronis.EntityFrameworkCore.Query
             public DeferredCreateBuilder(IReadOnlyCollection<ComparisonType> collection) =>
                 this.collection = collection;
 
-            public CollectionConstantPredicateBuilder<SourceType, ComparisonType> CreateBuilder(
-                Func<Expression, Expression, BinaryExpression> valueBinaryExpressionFactory,
-                Expression<SourceInConstantPredicateDelegate<SourceType, ComparisonType>> sourceValuePredicate) =>
-                new CollectionConstantPredicateBuilder<SourceType, ComparisonType>(valueBinaryExpressionFactory,
-                    collection, sourceValuePredicate);
+            public CollectionConstantPredicateBuilder<SourceType, ComparisonType> DefinePredicatePerItem(
+                Func<Expression, Expression, BinaryExpression> consecutiveItemBinaryExpressionFactory,
+                Expression<SourceInConstantPredicateDelegate<SourceType, ComparisonType>> sourceAndItemPredicate) =>
+                new CollectionConstantPredicateBuilder<SourceType, ComparisonType>(consecutiveItemBinaryExpressionFactory,
+                    collection, sourceAndItemPredicate);
         }
     }
 }

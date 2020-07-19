@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace Teronis.EntityFrameworkCore.Query
 {
-    public interface IParentCollectionConstantPredicateBuilder
+    internal interface IParentCollectionConstantPredicateBuilder
     {
         bool IsRoot { get; }
         ParameterExpression SourceParameterExpression { get; }

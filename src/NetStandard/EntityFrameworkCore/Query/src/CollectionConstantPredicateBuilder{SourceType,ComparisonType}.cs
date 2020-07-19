@@ -7,45 +7,45 @@ using Teronis.Linq.Expressions;
 
 namespace Teronis.EntityFrameworkCore.Query
 {
-    public class CollectionConstantPredicateBuilder<SourceType, ComparisonType> : ICollectionConstantPredicateBuilder<SourceType, ComparisonType>, ICollectionConstantPredicateBuilder
+    public class CollectionConstantPredicateBuilder<SourceType, ComparisonType> : IThenInCollectionConstantPredicateBuilder<SourceType, ComparisonType>, ICollectionConstantPredicateBuilder
     {
         private readonly IParentCollectionConstantPredicateBuilder parentBuilder;
         private List<SourceValueComparison<ComparisonType>> sourceValueComparisons = null!;
-        private readonly Func<Expression, Expression, BinaryExpression> valueBinaryExpressionFactory;
+        private readonly Func<Expression, Expression, BinaryExpression> consecutiveItemBinaryExpressionFactory;
         private readonly Func<Expression, Expression, BinaryExpression>? parentBinaryExpressionFactory;
 
         public CollectionConstantPredicateBuilder(
-            Func<Expression, Expression, BinaryExpression> valueBinaryExpressionFactory,
+            Func<Expression, Expression, BinaryExpression> consecutiveItemBinaryExpressionFactory,
             IReadOnlyCollection<ComparisonType> comparisonList,
-            Expression<SourceInConstantPredicateDelegate<SourceType, ComparisonType>> sourceValuePredicate)
+            Expression<SourceInConstantPredicateDelegate<SourceType, ComparisonType>> sourceAndItemPredicate)
         {
             if (comparisonList is null || comparisonList.Count == 0) {
                 throw new ArgumentNullException(nameof(comparisonList));
             }
 
-            this.valueBinaryExpressionFactory = valueBinaryExpressionFactory ?? throw new ArgumentNullException(nameof(valueBinaryExpressionFactory));
-            onConstruction(comparisonList, sourceValuePredicate, out var sourceParameterExpression, null);
+            this.consecutiveItemBinaryExpressionFactory = consecutiveItemBinaryExpressionFactory ?? throw new ArgumentNullException(nameof(consecutiveItemBinaryExpressionFactory));
+            onConstruction(comparisonList, sourceAndItemPredicate, out var sourceParameterExpression, null);
             parentBuilder = new RootBuilder(new Stack<ICollectionConstantPredicateBuilder>(), sourceParameterExpression);
         }
 
         private CollectionConstantPredicateBuilder(IParentCollectionConstantPredicateBuilder parentBuilder,
             IReadOnlyCollection<ComparisonType> comparisonList,
-            Expression<SourceInConstantPredicateDelegate<SourceType, ComparisonType>> sourceValuePredicate,
-            Func<Expression, Expression, BinaryExpression> valueBinaryExpressionFactory,
+            Expression<SourceInConstantPredicateDelegate<SourceType, ComparisonType>> sourceAndItemPredicate,
+            Func<Expression, Expression, BinaryExpression> consecutiveItemBinaryExpressionFactory,
             Func<Expression, Expression, BinaryExpression> parentBinaryExpressionFactory)
         {
             this.parentBuilder = parentBuilder ?? throw new ArgumentNullException(nameof(parentBuilder));
             comparisonList = comparisonList ?? throw new ArgumentNullException(nameof(comparisonList));
-            sourceValuePredicate = sourceValuePredicate ?? throw new ArgumentNullException(nameof(sourceValuePredicate));
-            this.valueBinaryExpressionFactory = valueBinaryExpressionFactory ?? throw new ArgumentNullException(nameof(valueBinaryExpressionFactory));
+            sourceAndItemPredicate = sourceAndItemPredicate ?? throw new ArgumentNullException(nameof(sourceAndItemPredicate));
+            this.consecutiveItemBinaryExpressionFactory = consecutiveItemBinaryExpressionFactory ?? throw new ArgumentNullException(nameof(consecutiveItemBinaryExpressionFactory));
             this.parentBinaryExpressionFactory = parentBinaryExpressionFactory ?? throw new ArgumentNullException(nameof(parentBinaryExpressionFactory));
-            onConstruction(comparisonList, sourceValuePredicate, out _, parentBuilder.SourceParameterExpression);
+            onConstruction(comparisonList, sourceAndItemPredicate, out _, parentBuilder.SourceParameterExpression);
             // We only want to build level one and upward levels.
             parentBuilder.StackBuilder(this);
         }
 
         private void onConstruction(IReadOnlyCollection<ComparisonType> comparisonList,
-            Expression<SourceInConstantPredicateDelegate<SourceType, ComparisonType>> sourceValuePredicate,
+            Expression<SourceInConstantPredicateDelegate<SourceType, ComparisonType>> sourceAndItemPredicate,
             out ParameterExpression sourceParameterExpression, ParameterExpression? sourceParameterReplacement)
         {
             sourceParameterExpression = null!;
@@ -55,7 +55,7 @@ namespace Teronis.EntityFrameworkCore.Query
             while (comparisonValueEnumerator.MoveNext()) {
                 var comparisonValue = comparisonValueEnumerator.Current;
 
-                var whereInConstantExpression = SourceExpression.WhereInConstant(comparisonValue, sourceValuePredicate,
+                var whereInConstantExpression = SourceExpression.WhereInConstant(comparisonValue, sourceAndItemPredicate,
                     out sourceParameterExpression, sourceParameterReplacement: sourceParameterReplacement);
 
                 var sourceValueComparison = new SourceValueComparison<ComparisonType>(comparisonValue, whereInConstantExpression);
@@ -63,12 +63,17 @@ namespace Teronis.EntityFrameworkCore.Query
             }
         }
 
-        public CollectionConstantPredicateBuilder<SourceType, ComparisonType> ThenInCollection<ThenComparisonType>(
+        public DeferredThenCreateBuilder<ThenComparisonType> ThenCreateFromCollection<ThenComparisonType>(
+            Func<Expression, Expression, BinaryExpression> parentBinaryExpressionFactory,
+            Func<ComparisonType, IReadOnlyCollection<ThenComparisonType>?> getComparisonValues) =>
+            new DeferredThenCreateBuilder<ThenComparisonType>(this, parentBinaryExpressionFactory, getComparisonValues);
+
+        private CollectionConstantPredicateBuilder<SourceType, ComparisonType> thenDefinePredicatePerItemInCollection<ThenComparisonType>(
             Func<Expression, Expression, BinaryExpression> parentBinaryExpressionFactory,
             Func<ComparisonType, IReadOnlyCollection<ThenComparisonType>?> getComparisonValues,
-            Func<Expression, Expression, BinaryExpression> valueBinaryExpressionFactory,
+            Func<Expression, Expression, BinaryExpression> consecutiveItemBinaryExpressionFactory,
             Expression<SourceInConstantPredicateDelegate<SourceType, ThenComparisonType>> sourcePredicate,
-            Action<ICollectionConstantPredicateBuilder<SourceType, ThenComparisonType>>? thenSourcePredicate = null)
+            Action<IThenInCollectionConstantPredicateBuilder<SourceType, ThenComparisonType>>? thenSourcePredicate = null)
         {
             var sourceValueComparisonsCount = sourceValueComparisons.Count;
 
@@ -84,7 +89,7 @@ namespace Teronis.EntityFrameworkCore.Query
                 var parentBuilder = new ParentBuilder(this, expressionAppender);
 
                 var builder = new CollectionConstantPredicateBuilder<SourceType, ThenComparisonType>(parentBuilder, list, sourcePredicate,
-                    valueBinaryExpressionFactory, parentBinaryExpressionFactory);
+                    consecutiveItemBinaryExpressionFactory, parentBinaryExpressionFactory);
 
                 thenSourcePredicate?.Invoke(builder);
             }
@@ -92,14 +97,10 @@ namespace Teronis.EntityFrameworkCore.Query
             return this;
         }
 
-        ICollectionConstantPredicateBuilder<SourceType, ComparisonType> ICollectionConstantPredicateBuilder<SourceType, ComparisonType>.ThenInCollection<ThenComparisonType>(
+        IDeferredThenCreateCollectionConstantBuilder<ThenComparisonType> IThenInCollectionConstantPredicateBuilder<SourceType, ComparisonType>.ThenInCollection<ThenComparisonType>(
             Func<Expression, Expression, BinaryExpression> parentBinaryExpressionFactory,
-            Func<ComparisonType, IReadOnlyCollection<ThenComparisonType>?> getComparisonValue,
-            Func<Expression, Expression, BinaryExpression> valueBinaryExpressionFactory,
-            Expression<SourceInConstantPredicateDelegate<SourceType, ThenComparisonType>> sourcePredicate,
-            Action<ICollectionConstantPredicateBuilder<SourceType, ThenComparisonType>>? thenSourcePredicate) =>
-            ThenInCollection(parentBinaryExpressionFactory, getComparisonValue,
-                valueBinaryExpressionFactory, sourcePredicate, thenSourcePredicate);
+            Func<ComparisonType, IReadOnlyCollection<ThenComparisonType>?> getComparisonValues) =>
+            ThenCreateFromCollection(parentBinaryExpressionFactory, getComparisonValues);
 
         protected Expression concatenateComparisonExpressions()
         {
@@ -108,7 +109,7 @@ namespace Teronis.EntityFrameworkCore.Query
 
             for (int index = 1; index < sourceValueComparisonCount; index++) {
                 var sourceValueComparison = sourceValueComparisons[index];
-                concatenatedExpression = valueBinaryExpressionFactory(concatenatedExpression, sourceValueComparison.SourcePredicate);
+                concatenatedExpression = consecutiveItemBinaryExpressionFactory(concatenatedExpression, sourceValueComparison.SourcePredicate);
             }
 
             return concatenatedExpression;
@@ -154,7 +155,7 @@ namespace Teronis.EntityFrameworkCore.Query
             if (memberMappings == null || memberMappings.Count == 0) {
                 return concatenatedExpression;
             }
-            
+
             var memberPathReplacer = new SourceMemberPathReplacerVisitor(memberMappings);
             concatenatedExpression = memberPathReplacer.Visit(concatenatedExpression);
             return concatenatedExpression;
@@ -256,6 +257,43 @@ namespace Teronis.EntityFrameworkCore.Query
 
             public void AppendExpression(Expression expression, Func<Expression, Expression, BinaryExpression> binaryExpression) =>
                 expressionAppender.AppendExpression(expression, binaryExpression);
+        }
+
+        public interface IDeferredThenCreateCollectionConstantBuilder<ThenComparisonType>
+        {
+            IThenInCollectionConstantPredicateBuilder<SourceType, ComparisonType> DefinePredicatePerItem(
+                Func<Expression, Expression, BinaryExpression> consecutiveItemBinaryExpressionFactory, 
+                Expression<SourceInConstantPredicateDelegate<SourceType, ThenComparisonType>> sourcePredicate, 
+                Action<IThenInCollectionConstantPredicateBuilder<SourceType, ThenComparisonType>>? thenSourcePredicate = null);
+        }
+
+        public readonly struct DeferredThenCreateBuilder<ThenComparisonType> : IDeferredThenCreateCollectionConstantBuilder<ThenComparisonType>
+        {
+            private readonly CollectionConstantPredicateBuilder<SourceType, ComparisonType> currentBuilder;
+            private readonly Func<Expression, Expression, BinaryExpression> parentBinaryExpressionFactory;
+            private readonly Func<ComparisonType, IReadOnlyCollection<ThenComparisonType>?> getComparisonValues;
+
+            public DeferredThenCreateBuilder(CollectionConstantPredicateBuilder<SourceType, ComparisonType> currentBuilder,
+                Func<Expression, Expression, BinaryExpression> parentBinaryExpressionFactory,
+                Func<ComparisonType, IReadOnlyCollection<ThenComparisonType>?> getComparisonValues)
+            {
+                this.currentBuilder = currentBuilder;
+                this.parentBinaryExpressionFactory = parentBinaryExpressionFactory;
+                this.getComparisonValues = getComparisonValues;
+            }
+
+            public CollectionConstantPredicateBuilder<SourceType, ComparisonType> DefinePredicatePerItem(
+                Func<Expression, Expression, BinaryExpression> consecutiveItemBinaryExpressionFactory,
+                Expression<SourceInConstantPredicateDelegate<SourceType, ThenComparisonType>> sourcePredicate,
+                Action<IThenInCollectionConstantPredicateBuilder<SourceType, ThenComparisonType>>? thenSourcePredicate = null) =>
+                currentBuilder.thenDefinePredicatePerItemInCollection(parentBinaryExpressionFactory, getComparisonValues,
+                    consecutiveItemBinaryExpressionFactory, sourcePredicate, thenSourcePredicate);
+
+            IThenInCollectionConstantPredicateBuilder<SourceType, ComparisonType> CollectionConstantPredicateBuilder<SourceType, ComparisonType>.IDeferredThenCreateCollectionConstantBuilder<ThenComparisonType>.DefinePredicatePerItem(
+                Func<Expression, Expression, BinaryExpression> consecutiveItemBinaryExpressionFactory,
+                Expression<SourceInConstantPredicateDelegate<SourceType, ThenComparisonType>> sourcePredicate,
+                Action<IThenInCollectionConstantPredicateBuilder<SourceType, ThenComparisonType>>? thenSourcePredicate) =>
+                DefinePredicatePerItem(consecutiveItemBinaryExpressionFactory, sourcePredicate, thenSourcePredicate);
         }
     }
 }

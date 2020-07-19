@@ -6,19 +6,23 @@ namespace Teronis.Tools
 {
     public static class TypeTools
     {
-        public static bool IsNullable(Type type)
-        {
-            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
-        }
+        public static bool IsNullable(Type type) =>
+            type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
 
-        public static object? InstantiateUninitializedObject(Type type)
+        /// <summary>
+        /// Instantiates an uninitialized object of type <paramref name="type"/>.
+        /// </summary>
+        /// <param name="type">The type you want to instantiate</param>
+        /// <returns></returns>
+        public static object InstantiateUninitializedObject(Type type)
         {
+            type = type ?? throw new ArgumentNullException(nameof(type));
             var instantiatorType = typeof(Instantiator<>);
             var genericInstantiatorType = instantiatorType.MakeGenericType(type);
             var instantiateMethodName = nameof(Instantiator<object>.Instantiate);
             var instanteMethodBindingFlags = BindingFlags.Public | BindingFlags.Static;
-            var instantiateMethod = genericInstantiatorType.GetMethod(instantiateMethodName, instanteMethodBindingFlags);
-            return instantiateMethod?.Invoke(null, null);
+            var instantiateMethod = genericInstantiatorType.GetMethod(instantiateMethodName, instanteMethodBindingFlags)!;
+            return instantiateMethod.Invoke(null, null);
         }
 
         public static object? GetDefault(Type type)

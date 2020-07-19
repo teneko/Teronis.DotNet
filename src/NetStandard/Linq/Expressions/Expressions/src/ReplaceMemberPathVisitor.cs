@@ -16,14 +16,14 @@ namespace Teronis.Linq.Expressions
             var memberPath = MemberPathEvaluator.EvaluateMemberPath(node);
 
             foreach (var memberMapping in memberMappings) {
-                var otherFromMemberPath = memberMapping.FromMemberPath;
+                var otherFromMemberPath = memberMapping.FromPathEvaluation;
 
                 if (!otherFromMemberPath.HasHighMemberExpression) {
                     continue;
                 }
 
                 if (memberPath.Equals(otherFromMemberPath)) {
-                    return memberMapping.ToMemberPath.GetHighestExpressionOrException();
+                    return memberMapping.ToPathEvaluation.GetHighestExpressionOrException();
                 }
             }
 
@@ -33,7 +33,7 @@ namespace Teronis.Linq.Expressions
         private bool tryVisitSource<T>(T fromNode, [MaybeNullWhen(false)] out Expression result)
         {
             foreach (var memberMapping in memberMappings) {
-                var otherFromMemberPathEvaluation = memberMapping.FromMemberPath;
+                var otherFromMemberPathEvaluation = memberMapping.FromPathEvaluation;
 
                 if (!otherFromMemberPathEvaluation.HasOnlySource()) {
                     continue;

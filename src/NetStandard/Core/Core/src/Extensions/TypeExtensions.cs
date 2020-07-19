@@ -10,7 +10,7 @@ namespace Teronis.Extensions
         public static bool IsNullable(this Type type)
             => TypeTools.IsNullable(type);
 
-        public static object? InstantiateUninitializedObject(this Type type)
+        public static object InstantiateUninitializedObject(this Type type)
             => TypeTools.InstantiateUninitializedObject(type);
 
         [return: MaybeNull]

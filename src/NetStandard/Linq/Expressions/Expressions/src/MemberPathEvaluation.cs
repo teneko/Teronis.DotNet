@@ -28,6 +28,12 @@ namespace Teronis.Linq.Expressions
             HasHighMemberExpression = (MemberStack != null && MemberStack.Length != 0);
         }
 
+        /// <summary>
+        /// Gets the highest expression. This can be the first item of 
+        /// <see cref="MemberStack"/> or <see cref="SourceExpression"/>.
+        /// When one or the other is not there, null is returned.
+        /// </summary>
+        /// <returns>The highest expression or null.</returns>
         public Expression? GetHighestExpression()
         {
             if (HasHighMemberExpression) {

@@ -12,6 +12,13 @@ namespace Teronis.Linq.Expressions
             }
         }
 
+        /// <summary>
+        /// Creates a member path mapping between <paramref name="from"/>
+        /// and <paramref name="to"/> with containing path evaluation.
+        /// </summary>
+        /// <param name="from">A member expression you are mapping from.</param>
+        /// <param name="to">A member expression you are mapping to.</param>
+        /// <returns>Member path mapping.</returns>
         public static MemberPathMapping Create(MemberExpression from, MemberExpression to)
         {
             var fromMemberStack = MemberPathEvaluator.EvaluateMemberPath(from);
@@ -19,6 +26,13 @@ namespace Teronis.Linq.Expressions
             return new MemberPathMapping(fromMemberStack, toMemberStack);
         }
 
+        /// <summary>
+        /// Creates a member path mapping between <paramref name="from"/>
+        /// and <paramref name="to"/> with containing path evaluation.
+        /// </summary>
+        /// <param name="from">A lambda expression with member access expression (a => a.b) as body.</param>
+        /// <param name="to">A lambda expression with member access expression (a => a.b) as body.</param>
+        /// <returns>Member path mapping.</returns>
         public static MemberPathMapping Create<SourceType, TargetType>(Expression<Func<SourceType, object?>> from,
             Expression<Func<TargetType, object?>> to)
         {
@@ -29,22 +43,22 @@ namespace Teronis.Linq.Expressions
             return new MemberPathMapping(fromMemberStack, toMemberStack);
         }
 
-        public readonly MemberPathEvaluation FromMemberPath { get; }
-        public readonly MemberPathEvaluation ToMemberPath { get; }
+        public readonly MemberPathEvaluation FromPathEvaluation { get; }
+        public readonly MemberPathEvaluation ToPathEvaluation { get; }
 
-        private MemberPathMapping(MemberPathEvaluation fromMemberPath, MemberPathEvaluation toMemberPath)
+        private MemberPathMapping(MemberPathEvaluation fromPathEvaluation, MemberPathEvaluation toPathEvaluation)
         {
-            if (fromMemberPath.Equals(default)) {
-                throw new ArgumentNullException(nameof(fromMemberPath));
+            if (fromPathEvaluation.Equals(default)) {
+                throw new ArgumentNullException(nameof(fromPathEvaluation));
             }
 
-            FromMemberPath = fromMemberPath;
+            FromPathEvaluation = fromPathEvaluation;
 
-            if (toMemberPath.Equals(default)) {
-                throw new ArgumentNullException(nameof(toMemberPath));
+            if (toPathEvaluation.Equals(default)) {
+                throw new ArgumentNullException(nameof(toPathEvaluation));
             }
 
-            ToMemberPath = toMemberPath;
+            ToPathEvaluation = toPathEvaluation;
         }
     }
 }

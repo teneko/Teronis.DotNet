@@ -20,9 +20,6 @@ namespace Teronis.Linq.Expressions
         private bool isContantOrParameterType(ExpressionType nodeType) =>
             nodeType == ExpressionType.Constant || nodeType == ExpressionType.Parameter;
 
-        //private bool isContantOrParamterNode(Expression node) =>
-        //    !(node is null) && !isContantOrParameterType(node.NodeType);
-
         private void throwIfNotConstantOrParameter(Expression node)
         {
             if (node is null) {
@@ -51,44 +48,5 @@ namespace Teronis.Linq.Expressions
             throwIfNotConstantOrParameter(sourceExpression);
             return new MemberPathEvaluation(sourceExpression, evaluatedMemberStack);
         }
-
-        //private MemberExpression[] evaluateMemberPath(Expression node)
-        //{
-        //    memberStack.Clear();
-        //    Visit(node);
-        //    var evaluatedMemberStack = memberStack.ToArray();
-        //    return evaluatedMemberStack;
-        //}
-
-        ///// <summary>
-        ///// Evaluates path of member inside constant or parameter node.
-        ///// </summary>
-        ///// <param name="sourceNode"></param>
-        ///// <returns></returns>
-        ///// <exception cref="ArgumentNullException">Source node is no constant or parameter.</exception>
-        ///// <exception cref="ArgumentException">Source node is no constant or parameter.</exception>
-        //public MemberPathEvaluation SourceEvaluateMemberPath(Expression sourceNode)
-        //{
-        //    throwIfNotConstantOrParameter(sourceNode);
-        //    var memberStack = evaluateMemberPath(sourceNode);
-        //    return new MemberPathEvaluation(sourceNode, memberStack);
-        //}
-
-        ///// <summary>
-        ///// Tries to evaluate path of member inside constant or parameter node.
-        ///// </summary>
-        ///// <param name="sourceNode"></param>
-        ///// <returns>False if source node is invalid.</returns>
-        //public bool TryEvaluateSourceMemberPath(Expression sourceNode, [MaybeNullWhen(false)] out MemberPathEvaluation evaluation)
-        //{
-        //    if (!isContantOrParamterNode(sourceNode)) {
-        //        evaluation = default;
-        //        return false;
-        //    }
-
-        //    var memberStack = evaluateMemberPath(sourceNode);
-        //    evaluation = new MemberPathEvaluation(sourceNode, memberStack);
-        //    return true;
-        //}
     }
 }

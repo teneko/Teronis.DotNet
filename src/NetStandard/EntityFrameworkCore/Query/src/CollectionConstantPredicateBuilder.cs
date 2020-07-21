@@ -10,19 +10,19 @@ namespace Teronis.EntityFrameworkCore.Query
         /// <summary>
         /// Creates a deferred collection constant predicate builder from a non-null and non-empty collection.
         /// </summary>
-        /// <typeparam name="ComparisonType">The type of an item of <paramref name="comparisonList"/>.</typeparam>
-        /// <param name="comparisonList">A collection of comparison values with at least one item.</param>
+        /// <typeparam name="ComparisonType">The type of an item of <paramref name="comparisonEnumerable"/>.</typeparam>
+        /// <param name="comparisonEnumerable">A collection of comparison values with at least one item.</param>
         /// <returns>A deferred collection constant predicate builder.</returns>
         public static DeferredCreateBuilder<ComparisonType> CreateFromCollection<ComparisonType>(
-            IReadOnlyCollection<ComparisonType> comparisonList) =>
-            new DeferredCreateBuilder<ComparisonType>(comparisonList);
+            IEnumerable<ComparisonType> comparisonEnumerable) =>
+            new DeferredCreateBuilder<ComparisonType>(comparisonEnumerable);
 
         public readonly struct DeferredCreateBuilder<ComparisonType>
         {
-            private readonly IReadOnlyCollection<ComparisonType> collection;
+            private readonly IEnumerable<ComparisonType> enumerable;
 
-            public DeferredCreateBuilder(IReadOnlyCollection<ComparisonType> collection) =>
-                this.collection = collection;
+            public DeferredCreateBuilder(IEnumerable<ComparisonType> enumerable) =>
+                this.enumerable = enumerable;
 
             /// <summary>
             /// Defines a predicate per item. The predicates are combined 
@@ -37,7 +37,7 @@ namespace Teronis.EntityFrameworkCore.Query
                 Func<Expression, Expression, BinaryExpression> consecutiveItemBinaryExpressionFactory,
                 Expression<SourceInConstantPredicateDelegate<SourceType, ComparisonType>> sourceAndItemPredicate) =>
                 new CollectionConstantPredicateBuilder<SourceType, ComparisonType>(consecutiveItemBinaryExpressionFactory,
-                    collection, sourceAndItemPredicate);
+                    enumerable, sourceAndItemPredicate);
         }
     }
 }

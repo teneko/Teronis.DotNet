@@ -22,7 +22,7 @@ namespace Teronis.Tools
             var instantiateMethodName = nameof(Instantiator<object>.Instantiate);
             var instanteMethodBindingFlags = BindingFlags.Public | BindingFlags.Static;
             var instantiateMethod = genericInstantiatorType.GetMethod(instantiateMethodName, instanteMethodBindingFlags)!;
-            return instantiateMethod.Invoke(null, null);
+            return instantiateMethod.Invoke(null, null)!;
         }
 
         public static object? GetDefault(Type type)
@@ -42,7 +42,7 @@ namespace Teronis.Tools
                 yield break;
             }
 
-            var nextType = type;
+            Type? nextType = type;
             var objectType = typeof(object);
 
             for (; ; ) {

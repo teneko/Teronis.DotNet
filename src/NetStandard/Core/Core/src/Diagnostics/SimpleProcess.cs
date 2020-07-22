@@ -61,7 +61,7 @@ namespace Teronis.Diagnostics
             {
                 var isErrorMessageBuilderEmpty = errorMessageBuilder.Length == 0;
 
-                var executionInfoText = ProcessStartInfoTools.GetExecutionInfoText(processInfo, commandEchoPrefix: commandEchoPrefix) +
+                var executionInfoText = ProcessStartInfoUtils.GetExecutionInfoText(processInfo, commandEchoPrefix: commandEchoPrefix) +
                     (isErrorMessageBuilderEmpty ? "" : Environment.NewLine);
 
                 errorMessageBuilder.Insert(0, executionInfoText);

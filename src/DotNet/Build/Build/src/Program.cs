@@ -37,7 +37,7 @@ namespace Teronis.DotNet.Build
             // Marker file represents root directory
             var dotNetProgram = $"dotnet.exe";
             var gitVersionCacheIdentifier = Guid.NewGuid();
-            var rootDirectory = Utilities.GetRootDirectory() ?? throw new DirectoryNotFoundException("Root directory not found.");
+            var rootDirectory = TeronisBuildUtils.GetRootDirectory() ?? throw new DirectoryNotFoundException("Root directory not found.");
             var sourceDirectory = Path.Combine(rootDirectory.FullName, "src");
 
             var allProjects = Directory.GetFiles(sourceDirectory, "*.csproj", SearchOption.AllDirectories)

@@ -1,4 +1,4 @@
-﻿using Teronis.Identity.Authentication.Tools;
+﻿using Teronis.Identity.Authentication.Utils;
 using Teronis.Identity.Entities;
 using ZNetCS.AspNetCore.Authentication.Basic.Events;
 
@@ -12,7 +12,7 @@ namespace Teronis.Identity.Authentication.Extensions
         public static BasicAuthenticationEvents UseAuthenticateWhenValidatePrincipal<UserType>(this BasicAuthenticationEvents events)
             where UserType : class, IBearerUserEntity
         {
-            events.OnValidatePrincipal = BasicAuthenticationEventsTools.ValidatePrincipal<UserType>;
+            events.OnValidatePrincipal = BasicAuthenticationEventsUtils.ValidatePrincipal<UserType>;
             return events;
         }
     }

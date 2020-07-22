@@ -6,6 +6,6 @@ namespace Teronis.Extensions
     public static class ExceptionExtensions
     {
         public static void ShowMessageBox(this Exception error)
-            => MessageBoxTools.ShowError(error);
+            => MessageBoxUtils.ShowError(error);
     }
 }

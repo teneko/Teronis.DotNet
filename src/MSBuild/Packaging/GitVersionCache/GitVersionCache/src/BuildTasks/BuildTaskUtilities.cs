@@ -7,10 +7,10 @@ namespace Teronis.GitVersionCache.BuildTasks
     public static class BuildTaskUtilities
     {
         public static DirectoryInfo GetParentOfGitVersionYamlDirectory(string beginningDirectory) =>
-              DirectoryTools.GetDirectoryOfFileAbove(BuildTaskExecutorDefaults.GitVersionFileNameWithExtension, beginningDirectory, includeBeginningDirectory: true);
+              DirectoryUtils.GetDirectoryOfFileAbove(BuildTaskExecutorDefaults.GitVersionFileNameWithExtension, beginningDirectory, includeBeginningDirectory: true);
 
         public static DirectoryInfo GetParentOfGitDirectory(string beginningDirectory) =>
-              DirectoryTools.GetDirectoryOfDirectoryAbove(".git", beginningDirectory, includeBeginningDirectory: true);
+              DirectoryUtils.GetDirectoryOfDirectoryAbove(".git", beginningDirectory, includeBeginningDirectory: true);
 
         public static void SetUndefinedAsDefault(object instance, string propertyName)
         {

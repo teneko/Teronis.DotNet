@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Teronis.Reflection;
 using Teronis.Reflection.Caching;
-using Teronis.Tools;
+using Teronis.Utils;
 
 namespace Teronis.ObjectModel
 {
@@ -118,8 +118,8 @@ namespace Teronis.ObjectModel
 
         public PropertyChangedRelay AddAllowedProperty<T>(Expression<Func<T, object?>> expression)
         {
-            var returnName = ExpressionTools.GetReturnName(expression);
-            var returnType = ExpressionTools.GetReturnType(expression);
+            var returnName = ExpressionUtils.GetReturnName(expression);
+            var returnType = ExpressionUtils.GetReturnType(expression);
             return AddAllowedProperty(returnName, returnType);
         }
 

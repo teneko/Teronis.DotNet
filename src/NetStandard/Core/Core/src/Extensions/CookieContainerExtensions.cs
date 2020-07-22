@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
-using Teronis.Tools;
+using Teronis.Utils;
 
 namespace Teronis.Extensions
 {
@@ -71,19 +71,19 @@ namespace Teronis.Extensions
         {
             var domainTableFieldName = "m_domainTable";
             var bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-            var domainTable = ObjectTools.GetFieldValue<dynamic>(cookieContainer, domainTableFieldName, bindFlags);
+            var domainTable = ObjectUtils.GetFieldValue<dynamic>(cookieContainer, domainTableFieldName, bindFlags);
 
             if (domainTable is null) {
                 throw new ArgumentNullException($"Field {domainTableFieldName} is not existing.");
             }
 
             foreach (var entry in domainTable) {
-                string key = ObjectTools.GetPropertyValue<string>(entry, "Key");
+                string key = ObjectUtils.GetPropertyValue<string>(entry, "Key");
 
                 if (key.Contains(domain)) {
-                    var value = ObjectTools.GetPropertyValue<dynamic>(entry, "Value");
+                    var value = ObjectUtils.GetPropertyValue<dynamic>(entry, "Value");
 
-                    var internalList = ObjectTools.GetFieldValue<SortedList<string, CookieCollection>>(value, "_list", bindFlags);
+                    var internalList = ObjectUtils.GetFieldValue<SortedList<string, CookieCollection>>(value, "_list", bindFlags);
                     foreach (var li in internalList) {
                         if (li is null) {
                             continue;

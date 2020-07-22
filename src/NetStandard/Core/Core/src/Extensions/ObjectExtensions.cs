@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using Teronis.Tools;
+using Teronis.Utils;
 
 namespace Teronis.Extensions
 {
@@ -30,7 +30,7 @@ namespace Teronis.Extensions
 
         public static bool HasInterface<T>(this object obj, [MaybeNull] out T typedObj) =>
             obj.HasInterface<T>()
-            ? TeronisTools.ReturnValue((T)obj, out typedObj, true)
-            : TeronisTools.ReturnValue(default, out typedObj, false);
+            ? TeronisUtils.ReturnValue((T)obj, out typedObj, true)
+            : TeronisUtils.ReturnValue(default!, out typedObj, false);
     }
 }

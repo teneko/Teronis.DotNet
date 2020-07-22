@@ -10,6 +10,6 @@ namespace Teronis.Extensions
         /// returned, otherwise <see cref="object.ToString"/>.
         /// </summary>
         public static string? GetDebuggerDisplay(this object? obj)
-            => IDebuggerDisplayTools.GetDebuggerDisplay(obj);
+            => IDebuggerDisplayUtils.GetDebuggerDisplay(obj);
     }
 }

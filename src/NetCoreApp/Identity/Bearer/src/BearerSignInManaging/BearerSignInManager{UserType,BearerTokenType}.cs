@@ -91,7 +91,7 @@ namespace Teronis.Identity.BearerSignInManaging
         /// </summary>
         protected async Task<bool> TryDeleteUserRefreshTokenAsync(BearerSignInManagerContext<UserType, BearerTokenType> context)
         {
-            var findRefreshTokenIdResult = BearerSignInManagerTools.FindRefreshTokenId(context.Principal);
+            var findRefreshTokenIdResult = BearerSignInManagerUtils.FindRefreshTokenId(context.Principal);
 
             if (findRefreshTokenIdResult.Succeeded) {
                 try {
@@ -138,7 +138,7 @@ namespace Teronis.Identity.BearerSignInManaging
                     }
                 }
 
-                context.AccessToken = BearerSignInManagerTools.GenerateJwtToken(accessTokenDescriptor, signInManagerOptions.SetDefaultTimesOnTokenCreation);
+                context.AccessToken = BearerSignInManagerUtils.GenerateJwtToken(accessTokenDescriptor, signInManagerOptions.SetDefaultTimesOnTokenCreation);
                 return true;
             } catch (Exception error) {
                 context.SetResult(errorDetailsProvider.LogCriticalThenBuildAppropiateError<object>(error, "The access token could not be created.")
@@ -181,7 +181,7 @@ namespace Teronis.Identity.BearerSignInManaging
             if (hasStorageSucceeded) {
                 refreshTokenDescriptor.Claims.Add(identityOptions.Value.ClaimsIdentity.SecurityStampClaimType, user.SecurityStamp);
                 refreshTokenDescriptor.Claims.Add(BearerSignInManagerDefaults.SignInServiceRefreshTokenIdClaimType, refreshTokenEntity.BearerTokenId);
-                var refreshToken = BearerSignInManagerTools.GenerateJwtToken(refreshTokenDescriptor, signInManagerOptions.SetDefaultTimesOnTokenCreation);
+                var refreshToken = BearerSignInManagerUtils.GenerateJwtToken(refreshTokenDescriptor, signInManagerOptions.SetDefaultTimesOnTokenCreation);
                 context.RefreshTokenEntity = refreshTokenEntity;
                 context.RefreshToken = refreshToken;
                 return true;

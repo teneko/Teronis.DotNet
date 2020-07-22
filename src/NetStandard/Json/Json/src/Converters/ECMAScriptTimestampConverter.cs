@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 using Teronis.Extensions;
-using Teronis.Tools;
+using Teronis.Utils;
 
 namespace Teronis.Json.Converters
 {
@@ -34,7 +34,7 @@ namespace Teronis.Json.Converters
             } else {
                 try {
                     if (!isValueNull && double.TryParse(reader.Value.ToString(), out double timeOffset)) {
-                        return DateTimeTools.ECMAScriptTimestampToDateTime(timeOffset);
+                        return DateTimeUtils.ECMAScriptTimestampToDateTime(timeOffset);
                     } else {
                         throw new ArgumentException("Value is not a ECMAScript valid time value");
                     }
@@ -60,7 +60,7 @@ namespace Teronis.Json.Converters
                 ttbWrittenValue = null;
             } else {
                 var dateTime = (DateTime)value;
-                ttbWrittenValue = DateTimeTools.DateTimeToECMAScriptTimestamp(dateTime);
+                ttbWrittenValue = DateTimeUtils.DateTimeToECMAScriptTimestamp(dateTime);
             }
 
             writer.WriteValue(ttbWrittenValue);

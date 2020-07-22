@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using Teronis.Linq.Expressions.Utilities;
 
 namespace Teronis.Linq.Expressions
 {
@@ -14,13 +15,22 @@ namespace Teronis.Linq.Expressions
             this.targetParameterReplacement = targetParameterReplacement ?? throw new ArgumentNullException(nameof(targetParameterReplacement));
         }
 
+        private Exception createLambdaExpressionArgumentError(string paramName) =>
+            new ArgumentException("Lambda expression does not contain a member expression as body.", paramName);
+
         private MemberExpression replaceParameter(MemberExpression body, ParameterExpression from, ParameterExpression to) =>
             new ParameterReplacerVisitor(new[] { from }, new[] { to }).VisitAndConvert(body, nameof(replaceParameter));
 
-        protected override MemberExpression GetBody(Expression<Func<SourceType, object?>> from) =>
-            replaceParameter((MemberExpression)from.Body, from.Parameters[0], sourceParameterReplacement);
+        protected override MemberExpression GetMappingFromMember(LambdaExpression from)
+        {
+            var body = ExpressionUtils.TryGetMember(from.Body) ?? throw createLambdaExpressionArgumentError(nameof(from));
+            return replaceParameter(body, from.Parameters[0], sourceParameterReplacement);
+        }
 
-        protected override MemberExpression GetBody(Expression<Func<TargetType, object?>> to) =>
-            replaceParameter((MemberExpression)to.Body, to.Parameters[0], targetParameterReplacement);
+        protected override MemberExpression GetMappingToMember(LambdaExpression to)
+        {
+            var body = ExpressionUtils.TryGetMember(to.Body) ?? throw createLambdaExpressionArgumentError(nameof(to));
+            return replaceParameter(body, to.Parameters[0], targetParameterReplacement);
+        }
     }
 }

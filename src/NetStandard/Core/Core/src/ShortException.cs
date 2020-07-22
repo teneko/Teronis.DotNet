@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
-using Teronis.Tools;
+using Teronis.Utils;
 
 namespace Teronis
 {
@@ -8,7 +8,7 @@ namespace Teronis
     {
         public static ArgumentNullException ArgumentNullException(Expression<Func<object?>> propertySelector, string? message = null)
         {
-            var propertyName = ExpressionTools.GetReturnName(propertySelector);
+            var propertyName = ExpressionUtils.GetReturnName(propertySelector);
             return new ArgumentNullException(propertyName, message);
         }
     }

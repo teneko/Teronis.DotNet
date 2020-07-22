@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Force.Crc32;
 using Teronis.Extensions;
-using Teronis.Tools;
+using Teronis.Utils;
 
 namespace Teronis.Drawing
 {
@@ -106,7 +106,7 @@ namespace Teronis.Drawing
                     if (nPolygon != null && !nPolygon.IsInPolygon(point)) // sort out points that are not in polygon/ellipse
 {
                         continue;
-                    } else if (nEllipse && !RectangleTools.IsRectangleInEllipse((int)nX, (int)nY, (int)nWidth, (int)nHeight, lineX, lineY)) {
+                    } else if (nEllipse && !RectangleUtils.IsRectangleInEllipse((int)nX, (int)nY, (int)nWidth, (int)nHeight, lineX, lineY)) {
                         continue;
                     }
 
@@ -114,7 +114,7 @@ namespace Teronis.Drawing
                         foreach (var area in excludedAreas) {
                             area.VerifyValues(this);
 
-                            if ((area.nPolygon != null ? area.nPolygon.IsInPolygon(point) : RectangleTools.RectangleContains((int)area.nX, (int)area.nY, (int)area.nWidth, (int)area.nHeight, lineX, lineY, area.nEllipse))) {
+                            if ((area.nPolygon != null ? area.nPolygon.IsInPolygon(point) : RectangleUtils.RectangleContains((int)area.nX, (int)area.nY, (int)area.nWidth, (int)area.nHeight, lineX, lineY, area.nEllipse))) {
                                 goto @continue;
                             }
                         }
@@ -133,7 +133,7 @@ namespace Teronis.Drawing
                             pos.X += lineX;
                             pos.Y += lineY;
 
-                            if (RectangleTools.RectangleContains((int)nX, (int)nY, (int)nWidth, (int)nHeight, pos.X, pos.Y) && doesPatternContainsColor(pattern, pos.Point)) {
+                            if (RectangleUtils.RectangleContains((int)nX, (int)nY, (int)nWidth, (int)nHeight, pos.X, pos.Y) && doesPatternContainsColor(pattern, pos.Point)) {
                                 if (twoDPatterns[twoDPatternsIndex + 1] == null) {
                                     break;
                                 } else {

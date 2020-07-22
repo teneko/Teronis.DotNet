@@ -7,7 +7,7 @@ using Teronis.DataModel.TreeColumn.Core;
 using Teronis.Diagnostics;
 using Teronis.Extensions;
 using Teronis.Reflection;
-using Teronis.Tools;
+using Teronis.Utils;
 
 namespace Teronis.Collections.Synchronization.Example1.Models
 {
@@ -27,9 +27,9 @@ namespace Teronis.Collections.Synchronization.Example1.Models
 
         public bool DoesEachColumnContainsText(IEnumerable<ITreeColumnValue<ITreeColumnKey>> treeColumns, string searchText) =>
             treeColumns.Any(x => x != null
-                && NestedPropertyTools.GetNestedValue(this, x.Path)?.ToString().IndexOf(searchText, StringComparison.InvariantCultureIgnoreCase) >= 0);
+                && NestedPropertyUtils.GetNestedValue(this, x.Path)?.ToString().IndexOf(searchText, StringComparison.InvariantCultureIgnoreCase) >= 0);
 
         public IEnumerable<object> GetCellContents(IEnumerable<ITreeColumnValue<ITreeColumnKey>> treeColumnValues) =>
-            ITreeColumnValueTools.GetCellContent(treeColumnValues, this);
+            ITreeColumnValueUtils.GetCellContent(treeColumnValues, this);
     }
 }

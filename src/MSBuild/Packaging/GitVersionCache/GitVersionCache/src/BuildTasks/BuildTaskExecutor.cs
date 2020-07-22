@@ -9,7 +9,7 @@ using Teronis.GitVersionCache.BuildTasks.Models;
 using Teronis.IO.FileLocking;
 using Teronis.Text.Json.Converters;
 using Teronis.Text.Json.Serialization;
-using Teronis.Tools.GitVersion;
+using Teronis.Utils.GitVersion;
 
 namespace Teronis.GitVersionCache.BuildTasks
 {

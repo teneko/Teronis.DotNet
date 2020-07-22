@@ -13,5 +13,9 @@ namespace Teronis.Linq.Expressions
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="from"/> or <paramref name="to"/> is invalid.</exception>
         TypedSourceTargetMemberMapper<SourceType, TargetType> Map(Expression<Func<SourceType, object?>> from, Expression<Func<TargetType, object?>> to);
+
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="from"/> or <paramref name="to"/> is invalid.</exception>
+        TypedSourceTargetMemberMapper<SourceType, TargetType> Map<SourcePropertyType, TargetPropertyType>(Expression<Func<SourceType, SourcePropertyType>> from, 
+            Expression<Func<TargetType, TargetPropertyType>> to);
     }
 }

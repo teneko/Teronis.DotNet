@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using Teronis.Tools;
+using Teronis.Utils;
 
 namespace Teronis.Extensions
 {
     public static class LinkedListExtensions
     {
         public static IEnumerable<T> YieldReversedItems<T>(this LinkedList<T> list) =>
-            LinkedListTools.YieldReversedItems(list);
+            LinkedListUtils.YieldReversedItems(list);
     }
 }

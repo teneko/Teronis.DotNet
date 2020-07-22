@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Teronis.Identity.Authentication.Extensions;
-using Teronis.Identity.Authentication.Tools;
+using Teronis.Identity.Authentication.Utils;
 using Teronis.Identity.Entities;
 using ZNetCS.AspNetCore.Authentication.Basic;
 using ZNetCS.AspNetCore.Authentication.Basic.Events;
@@ -66,7 +66,7 @@ namespace Teronis.Identity.Authentication
                 jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = options.TokenSigningKey,
-                    /// Is mandatory for <see cref="TokenValidatedContextTools.ValidateRefreshTokenIdClaim"/>.
+                    /// Is mandatory for <see cref="TokenValidatedContextUtils.ValidateRefreshTokenIdClaim"/>.
                     SaveSigninToken = true,
                     ValidateIssuer = false,
                     ValidateAudience = false,
@@ -83,8 +83,8 @@ namespace Teronis.Identity.Authentication
                    .WhenTokenValidated(
                        // The order matters! When validating, the user
                        // related identity is added to the claims principal.
-                       TokenValidatedContextTools.ValidateRefreshTokenIdClaim<BearerTokenType>,
-                       TokenValidatedContextTools.ValidateSecurityStamp);
+                       TokenValidatedContextUtils.ValidateRefreshTokenIdClaim<BearerTokenType>,
+                       TokenValidatedContextUtils.ValidateSecurityStamp);
             });
 
             return authenticationBuilder;

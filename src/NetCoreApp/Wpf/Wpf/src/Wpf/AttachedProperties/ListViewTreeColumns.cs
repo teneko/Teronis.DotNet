@@ -16,7 +16,7 @@ namespace Teronis.Wpf.AttachedProperties
             if (d is ListView listView) {
                 var value = e.OldValue ?? e.NewValue;
                 var treeColumnValues = (IEnumerable<ListViewTreeColumnValue>)value;
-                ListViewTools.ApplyTreeColumnsOnListView(listView, treeColumnValues);
+                ListViewUtils.ApplyTreeColumnsOnListView(listView, treeColumnValues);
             }
         }
 

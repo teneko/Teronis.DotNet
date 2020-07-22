@@ -12,7 +12,7 @@ namespace Teronis.Extensions
             echoCommand |= commandEchoPrefix != null;
 
             if (echoCommand && process.StartInfo != null) {
-                var commandEcho = ProcessStartInfoTools.GetExecutionInfoText(process.StartInfo, commandEchoPrefix);
+                var commandEcho = ProcessStartInfoUtils.GetExecutionInfoText(process.StartInfo, commandEchoPrefix);
                 Console.Error.WriteLine(commandEcho);
             }
 

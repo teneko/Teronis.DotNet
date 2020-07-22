@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections;
-using Teronis.Tools;
+using Teronis.Utils;
 
 namespace Teronis.Extensions
 {
@@ -11,7 +11,7 @@ namespace Teronis.Extensions
         {
             object? getAt(int index) => source[index];
             void removeAt(int index) => source.RemoveAt(index);
-            return ListTools.SwapItem(fromIndex, toIndex, insertAt, getAt, removeAt);
+            return ListUtils.SwapItem(fromIndex, toIndex, insertAt, getAt, removeAt);
         }
 
         // for IList

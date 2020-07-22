@@ -19,7 +19,7 @@ namespace Teronis.Wpf.AttachedProperties
                     Source = e.Source,
                 };
 
-                var parent = VisualTreeHelperTools.GetParentObjectRecursive<UIElement>(d);
+                var parent = VisualTreeUtils.GetParentObjectRecursive<UIElement>(d);
                 parent.RaiseEvent(args);
             }
         }

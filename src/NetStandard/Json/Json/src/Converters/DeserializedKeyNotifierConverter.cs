@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Teronis.Extensions;
 using Teronis.Json.PropertyEntifiers;
-using Teronis.Tools;
+using Teronis.Utils;
 
 namespace Teronis.Json.Converters
 {
@@ -46,7 +46,7 @@ namespace Teronis.Json.Converters
         /// Returns true if not an exception is thrown before.
         /// </summary>
         public override bool CanConvert(Type objectType)
-            => TeronisTools.ReturnInValue(true, () => getCollectionType(objectType));
+            => TeronisUtils.ReturnInValue(true, () => getCollectionType(objectType));
 
         /// <returns>Return a <see cref="Dictionary{TKey, TValue}"/>.</returns>
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Teronis.Tools;
+using Teronis.Utils;
 
 namespace Teronis.Collections.Generic
 {
@@ -13,7 +13,7 @@ namespace Teronis.Collections.Generic
 
             object getAt(int index) => source[index];
             void removeAt(int index) => source.RemoveAt(index);
-            return ListTools.SwapItem(fromIndex, toIndex, insertAt!, getAt, removeAt);
+            return ListUtils.SwapItem(fromIndex, toIndex, insertAt!, getAt, removeAt);
         }
     }
 }

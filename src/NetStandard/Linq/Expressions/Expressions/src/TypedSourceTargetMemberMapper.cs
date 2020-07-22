@@ -12,19 +12,28 @@ namespace Teronis.Linq.Expressions
         public TypedSourceTargetMemberMapper() =>
             memberMappings = new List<MemberPathMapping>();
 
-        protected virtual MemberExpression GetBody(Expression<Func<SourceType, object?>> from) =>
+        protected virtual MemberExpression GetMappingFromMember(LambdaExpression from) =>
             (MemberExpression)from.Body;
 
-        protected virtual MemberExpression GetBody(Expression<Func<TargetType, object?>> to) =>
+        protected virtual MemberExpression GetMappingToMember(LambdaExpression to) =>
             (MemberExpression)to.Body;
 
         /// <inheritdoc/>
         public TypedSourceTargetMemberMapper<SourceType, TargetType> Map(Expression<Func<SourceType, object?>> from, Expression<Func<TargetType, object?>> to)
         {
-            MemberPathMapping.ThrowOnNonMemberBody(from, nameof(from));
-            MemberPathMapping.ThrowOnNonMemberBody(to, nameof(to));
-            var fromBody = GetBody(from) ?? throw new ArgumentNullException($"{nameof(GetBody)}({nameof(from)})", "Member expression is null.");
-            var toBody = GetBody(to) ?? throw new ArgumentNullException($"{nameof(GetBody)}({nameof(to)})", "Member expression is null.");
+            var fromBody = GetMappingFromMember(from) ?? throw new InvalidOperationException("Member expression is invalid (null).");
+            var toBody = GetMappingToMember(to) ?? throw new InvalidOperationException("Member expression is invalid (null).");
+            var memberMapping = MemberPathMapping.Create(fromBody, toBody);
+            memberMappings.Add(memberMapping);
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public TypedSourceTargetMemberMapper<SourceType, TargetType> Map<SourcePropertyType, TargetPropertyType>(Expression<Func<SourceType, SourcePropertyType>> from,
+            Expression<Func<TargetType, TargetPropertyType>> to)
+        {
+            var fromBody = GetMappingFromMember(from) ?? throw new InvalidOperationException("Member expression is invalid (null).");
+            var toBody = GetMappingToMember(to) ?? throw new InvalidOperationException("Member expression is invalid (null).");
             var memberMapping = MemberPathMapping.Create(fromBody, toBody);
             memberMappings.Add(memberMapping);
             return this;

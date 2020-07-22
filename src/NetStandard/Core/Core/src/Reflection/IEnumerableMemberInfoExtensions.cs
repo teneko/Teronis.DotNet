@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Teronis.Extensions;
+using Teronis.Reflection;
 
-namespace Teronis.Reflection
+namespace Teronis.Extensions
 {
-    public static class IEnumerableMemberInfoTools
+    public static class IEnumerableMemberInfoExtensions
     {
         public static IEnumerable<MemberInfo> Intersect(IEnumerable<MemberInfo> memberInfos, Type entityType, VariableInfoDescriptor? descriptor = null)
         {

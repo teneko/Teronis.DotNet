@@ -18,12 +18,12 @@ namespace Teronis.Linq.Expressions
             foreach (var memberMapping in memberMappings) {
                 var otherFromMemberPath = memberMapping.FromPathEvaluation;
 
-                if (!otherFromMemberPath.HasHighMemberExpression) {
+                if (!otherFromMemberPath.HasAscendantMemberExpression) {
                     continue;
                 }
 
                 if (memberPath.Equals(otherFromMemberPath)) {
-                    return memberMapping.ToPathEvaluation.GetHighestExpressionOrException();
+                    return memberMapping.ToPathEvaluation.GetMostAscendantMemberOrException();
                 }
             }
 
@@ -41,7 +41,7 @@ namespace Teronis.Linq.Expressions
 
                 if (otherFromMemberPathEvaluation.SourceExpression is T otherFromParamaterNode
                     && EqualityComparer<T>.Default.Equals(fromNode, otherFromParamaterNode)) {
-                    result = otherFromMemberPathEvaluation.GetHighestExpressionOrException();
+                    result = otherFromMemberPathEvaluation.GetMostAscendantMemberOrException();
                     return true;
                 }
             }

@@ -76,10 +76,10 @@ namespace Teronis.Linq.Expressions
         /// source target expression</param>
         /// <returns>The expression with replaced member accesses.</returns>
         public static Expression ReplaceParameter<SourceType, TargetType>(Expression expression, ParameterExpression sourceParameter,
-            ref ParameterExpression? targetParameter, Action<IMappableTypedSourceTargetMembers<SourceType, TargetType>> configureMemberMappings)
+            ref ParameterExpression? targetParameter, Action<ITypedSourceTargetMemberMapper<SourceType, TargetType>> configureMemberMappings)
         {
-            targetParameter = targetParameter ?? Expression.Parameter(typeof(TargetType), "targetAsSource");
-            var memberMappingBuilder = new NodeReplacingMemberMappingBuilder<SourceType, TargetType>(sourceParameter, targetParameter);
+            targetParameter ??= Expression.Parameter(typeof(TargetType), "targetAsSource");
+            var memberMappingBuilder = new ParameterReplacingMemberMapper<SourceType, TargetType>(sourceParameter, targetParameter);
             configureMemberMappings(memberMappingBuilder);
             var memberMappings = memberMappingBuilder.GetMappings().ToList();
 
@@ -93,7 +93,7 @@ namespace Teronis.Linq.Expressions
         }
 
         public static Expression ReplaceParameter<SourceType, TargetType>(Expression expression, ParameterExpression sourceParameter,
-            Action<IMappableTypedSourceTargetMembers<SourceType, TargetType>> configureMemberMappings,
+            Action<ITypedSourceTargetMemberMapper<SourceType, TargetType>> configureMemberMappings,
             out ParameterExpression targetParameter)
         {
             targetParameter = null!;
@@ -101,7 +101,7 @@ namespace Teronis.Linq.Expressions
         }
 
         public static Expression ReplaceParameter<SourceType, TargetType>(Expression expression, ParameterExpression sourceParameter,
-            ParameterExpression targetParameter, Action<IMappableTypedSourceTargetMembers<SourceType, TargetType>> configureMemberMappings)
+            ParameterExpression targetParameter, Action<ITypedSourceTargetMemberMapper<SourceType, TargetType>> configureMemberMappings)
         {
             targetParameter = targetParameter ?? throw new ArgumentNullException(nameof(targetParameter));
             return ReplaceParameter(expression, sourceParameter, ref targetParameter!, configureMemberMappings);

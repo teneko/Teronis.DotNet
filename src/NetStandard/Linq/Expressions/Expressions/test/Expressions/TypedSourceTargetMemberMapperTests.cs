@@ -23,7 +23,7 @@ namespace Teronis.Linq.Expressions.EntityExtension
             var parcelRepository = new ParcelRepository(dbContext.Parcels);
             var service = new ManagmentService(parcelRepository);
 
-            void configureMappings(IMappableTypedSourceTargetMembers<IParcel, Parcel> mapper) =>
+            static void configureMappings(ITypedSourceTargetMemberMapper<IParcel, Parcel> mapper) =>
                 mapper.Map(x => x.ParcelId, x => x.ProudParcelId);
 
             var hasParcel = service.HasParcel(2, configureMappings);
@@ -81,7 +81,7 @@ namespace Teronis.Linq.Expressions.EntityExtension
 
             // Pass mappings directly or replace it with mapping provider where 
             // you can define IParcel -> TParcel mappings for needed entities.
-            public bool HasParcel(int existingParcelId, Action<IMappableTypedSourceTargetMembers<IParcel, Parcel>> configureMappings)
+            public bool HasParcel(int existingParcelId, Action<ITypedSourceTargetMemberMapper<IParcel, Parcel>> configureMappings)
             {
                 var hasAnyParcel = ParcelRepository.Get((e, p) => p.ParcelId == existingParcelId, configureMappings).Any();
                 return hasAnyParcel;
@@ -106,7 +106,7 @@ namespace Teronis.Linq.Expressions.EntityExtension
 
     public static class IRepositoryGenericExtensions
     {
-        public static IQueryable<T> Get<T>(this IRepository<T> repository, Expression<Func<T, IParcel, bool>> query, Action<IMappableTypedSourceTargetMembers<IParcel, T>> configureMappings)
+        public static IQueryable<T> Get<T>(this IRepository<T> repository, Expression<Func<T, IParcel, bool>> query, Action<ITypedSourceTargetMemberMapper<IParcel, T>> configureMappings)
         {
             var replacedBody = SourceExpression.ReplaceParameter(query.Body, query.Parameters[1], query.Parameters[0], configureMappings);
             var newParameterizedQuery = Expression.Lambda<Func<T, bool>>(replacedBody, query.Parameters[0]);

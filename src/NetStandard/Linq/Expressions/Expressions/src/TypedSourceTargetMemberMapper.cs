@@ -2,27 +2,28 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
+using Teronis.Linq.Expressions.Utils;
 
 namespace Teronis.Linq.Expressions
 {
-    public class TypedSourceTargetMemberMapper<SourceType, TargetType> : IMappableTypedSourceTargetMembers<SourceType, TargetType>
+    public class TypedSourceTargetMemberMapper<SourceType, TargetType> : ITypedSourceTargetMemberMapper<SourceType, TargetType>
     {
         private readonly List<MemberPathMapping> memberMappings;
 
         public TypedSourceTargetMemberMapper() =>
             memberMappings = new List<MemberPathMapping>();
 
-        protected virtual MemberExpression GetMappingFromMember(LambdaExpression from) =>
-            (MemberExpression)from.Body;
+        protected virtual MemberExpression GetMemberMappingFrom(LambdaExpression from) =>
+            ExpressionUtils.TryGetMember(from.Body)!;
 
-        protected virtual MemberExpression GetMappingToMember(LambdaExpression to) =>
-            (MemberExpression)to.Body;
+        protected virtual MemberExpression GetMemberMappingTo(LambdaExpression to) =>
+            ExpressionUtils.TryGetMember(to.Body)!;
 
         /// <inheritdoc/>
         public TypedSourceTargetMemberMapper<SourceType, TargetType> Map(Expression<Func<SourceType, object?>> from, Expression<Func<TargetType, object?>> to)
         {
-            var fromBody = GetMappingFromMember(from) ?? throw new InvalidOperationException("Member expression is invalid (null).");
-            var toBody = GetMappingToMember(to) ?? throw new InvalidOperationException("Member expression is invalid (null).");
+            var fromBody = GetMemberMappingFrom(from) ?? throw new InvalidOperationException("Member expression is invalid (null).");
+            var toBody = GetMemberMappingTo(to) ?? throw new InvalidOperationException("Member expression is invalid (null).");
             var memberMapping = MemberPathMapping.Create(fromBody, toBody);
             memberMappings.Add(memberMapping);
             return this;
@@ -32,8 +33,8 @@ namespace Teronis.Linq.Expressions
         public TypedSourceTargetMemberMapper<SourceType, TargetType> Map<SourcePropertyType, TargetPropertyType>(Expression<Func<SourceType, SourcePropertyType>> from,
             Expression<Func<TargetType, TargetPropertyType>> to)
         {
-            var fromBody = GetMappingFromMember(from) ?? throw new InvalidOperationException("Member expression is invalid (null).");
-            var toBody = GetMappingToMember(to) ?? throw new InvalidOperationException("Member expression is invalid (null).");
+            var fromBody = GetMemberMappingFrom(from) ?? throw new InvalidOperationException("Member expression is invalid (null).");
+            var toBody = GetMemberMappingTo(to) ?? throw new InvalidOperationException("Member expression is invalid (null).");
             var memberMapping = MemberPathMapping.Create(fromBody, toBody);
             memberMappings.Add(memberMapping);
             return this;

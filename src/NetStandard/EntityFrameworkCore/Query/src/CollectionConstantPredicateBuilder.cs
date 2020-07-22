@@ -10,12 +10,12 @@ namespace Teronis.EntityFrameworkCore.Query
         /// <summary>
         /// Creates a deferred collection constant predicate builder from a non-null and non-empty collection.
         /// </summary>
-        /// <typeparam name="ComparisonType">The type of an item of <paramref name="comparisonEnumerable"/>.</typeparam>
-        /// <param name="comparisonEnumerable">A collection of comparison values with at least one item.</param>
+        /// <typeparam name="ComparisonType">The type of an item of <paramref name="comparisonValues"/>.</typeparam>
+        /// <param name="comparisonValues">A collection of comparison values with at least one item.</param>
         /// <returns>A deferred collection constant predicate builder.</returns>
         public static DeferredCreateBuilder<ComparisonType> CreateFromCollection<ComparisonType>(
-            IEnumerable<ComparisonType> comparisonEnumerable) =>
-            new DeferredCreateBuilder<ComparisonType>(comparisonEnumerable);
+            IEnumerable<ComparisonType> comparisonValues) =>
+            new DeferredCreateBuilder<ComparisonType>(comparisonValues);
 
         public readonly struct DeferredCreateBuilder<ComparisonType>
         {

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace Teronis.Linq.Expressions
 {
@@ -18,14 +16,14 @@ namespace Teronis.Linq.Expressions
         /// Member stack ordered from deep (right) to high (left).
         /// </summary>
         public readonly MemberExpression[] MemberStack { get; }
-        public readonly bool HasHighMemberExpression { get; }
+        public readonly bool HasAscendantMemberExpression { get; }
 
         public MemberPathEvaluation(Expression sourceExpression, MemberExpression[] memberStack)
         {
             SourceExpression = sourceExpression ?? throw new ArgumentNullException(nameof(sourceExpression));
             HasSourceExpression = true;
             MemberStack = memberStack ?? throw new ArgumentNullException(nameof(memberStack));
-            HasHighMemberExpression = (MemberStack != null && MemberStack.Length != 0);
+            HasAscendantMemberExpression = (MemberStack != null && MemberStack.Length != 0);
         }
 
         /// <summary>
@@ -34,9 +32,9 @@ namespace Teronis.Linq.Expressions
         /// When one or the other is not there, null is returned.
         /// </summary>
         /// <returns>The highest expression or null.</returns>
-        public Expression? GetHighestExpression()
+        public Expression? GetMostAscendantExpression()
         {
-            if (HasHighMemberExpression) {
+            if (HasAscendantMemberExpression) {
                 return MemberStack[0];
             }
 
@@ -45,23 +43,37 @@ namespace Teronis.Linq.Expressions
 
         public bool Equals([AllowNull] MemberPathEvaluation otherEvaluation)
         {
-            bool evaluationEquality;
+            bool areSourceExpressionEqual;
 
             if (SourceExpression is ConstantExpression xConstant && otherEvaluation.SourceExpression is ConstantExpression yConstant) {
-                evaluationEquality = EqualityComparer<ConstantExpression>.Default.Equals(xConstant, yConstant);
+                areSourceExpressionEqual = EqualityComparer<ConstantExpression>.Default.Equals(xConstant, yConstant);
             } else if (SourceExpression is ParameterExpression xParamater && otherEvaluation.SourceExpression is ParameterExpression yParameter) {
-                evaluationEquality = EqualityComparer<ParameterExpression>.Default.Equals(xParamater, yParameter);
+                areSourceExpressionEqual = EqualityComparer<ParameterExpression>.Default.Equals(xParamater, yParameter);
             } else {
                 return false;
             }
 
-            evaluationEquality = evaluationEquality
-                && Enumerable.SequenceEqual(
-                    MemberStack.Select(x => x.Member),
-                    otherEvaluation.MemberStack.Select(x => x.Member),
-                    EqualityComparer<MemberInfo>.Default);
+            if (areSourceExpressionEqual) {
+                var memberStackEnumerator = MemberStack.GetEnumerator();
+                var otherMemberStackEnumerator = otherEvaluation.MemberStack.GetEnumerator();
+                bool memberStackHasNext, otherMemberStackHasNext;
 
-            return evaluationEquality;
+                while ((memberStackHasNext = memberStackEnumerator.MoveNext())
+                        & (otherMemberStackHasNext = otherMemberStackEnumerator.MoveNext())) {
+                    var currentValue = memberStackEnumerator.Current;
+                    var otherCurrentValue = otherMemberStackEnumerator.Current;
+
+                    if (!ExpressionEqualityComparer.Default.CastableEquals(currentValue, otherCurrentValue)) {
+                        return false;
+                    }
+                }
+
+                if (!memberStackHasNext && !otherMemberStackHasNext) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public override bool Equals(object? obj)

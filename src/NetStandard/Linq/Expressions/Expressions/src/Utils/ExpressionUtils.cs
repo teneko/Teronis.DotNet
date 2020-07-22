@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace Teronis.Linq.Expressions.Utilities
+namespace Teronis.Linq.Expressions.Utils
 {
     public class ExpressionUtils
     {

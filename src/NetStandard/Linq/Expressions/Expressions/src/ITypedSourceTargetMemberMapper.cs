@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace Teronis.Linq.Expressions
 {
-    public interface IMappableTypedSourceTargetMembers<SourceType, TargetType>
+    public interface ITypedSourceTargetMemberMapper<SourceType, TargetType>
     {
         /// <summary>
         /// 

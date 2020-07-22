@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -14,31 +15,29 @@ namespace Test.NetStandard.EntityFrameworkCore.Query
 {
     public class CollectionConstantPredicateBuilderTest
     {
-        [Fact]
-        public async Task Replaces_source_and_target_mapping_parameters_by_instance_ones()
-        {
-            var secondChildName = "Child 2";
-            var secondFatherName = "Man 2";
+        public const string FirstChildName = "Child 1";
+        public const string SecondChildName = "Child 2";
+        public const string ThirdChildName = "Child 3";
+        public const string FirstManName = "Man 1";
+        public const string SecondManName = "Man 2";
 
-            var comparisonValueList = new[] { new ComparisonChild() { Fathers = new List<ComparisonMan?>() {
-                new ComparisonMan() { Name = null },
-                new ComparisonMan() { Name = "" },
-                new ComparisonMan() { Name = secondFatherName } } } };
+        [Fact]
+        public async Task Find_single_child_by_fathers_name_and_nested_collection_constant()
+        {
+            var comparisonValueList = new[] {
+                new ComparisonChild() { Fathers = new List<ComparisonMan?>() {
+                    new ComparisonMan() { Name = SecondManName } } } };
 
             var findFatherExpression = CollectionConstantPredicateBuilder<MockedChild>
                 .CreateFromCollection(comparisonValueList)
                 .DefinePredicatePerItem(Expression.OrElse,
-                    // Select only those children who have a name and a father.
-                    (child, comparisonChild) => child.MockedName != null && child.MockedFatherName != null)
+                    (child, comparisonChild) => true)
                 .ThenCreateFromCollection(Expression.AndAlso,
                     comparisonChild => comparisonChild.Fathers)
                 .DefinePredicatePerItem(Expression.OrElse,
-                    // Select the children only if the father name is equal to the comparison father name.
                     (child, comparisonFather) => comparisonFather != null && child.MockedFatherName == comparisonFather.Name)
-                // Here begins the the member mapping from MockedChild to Child.
                 .BuildBodyExpression<Child>(memberMapper => {
                     // We have to map each member access that are actually used above.
-                    memberMapper.Map(b => b.MockedName, a => a.Name);
                     memberMapper.Map(b => b.MockedFatherName, a => a.FatherName);
                 }, out var targetParameter);
 
@@ -51,19 +50,21 @@ namespace Test.NetStandard.EntityFrameworkCore.Query
             });
 
             using var context = new PersonContext();
+            await context.Database.EnsureDeletedAsync();
             await context.Database.EnsureCreatedAsync();
 
             await context.SaveChangesAsync();
 
             context.Man.AddRange(
-                new Man() { Name = "Man 1" },
-                new Man() { Name = "Man 2" });
+                new Man() { Name = FirstManName },
+                new Man() { Name = SecondManName });
 
             await context.SaveChangesAsync();
 
             context.Children.AddRange(
-                new Child() { Name = "Child 1" },
-                new Child() { Name = secondChildName, FatherName = secondFatherName });
+                new Child() { Name = FirstChildName, FatherName = null! },
+                new Child() { Name = SecondChildName, FatherName = SecondManName },
+                new Child() { Name = ThirdChildName, FatherName = "Any Father" });
 
             await context.SaveChangesAsync();
 
@@ -75,25 +76,147 @@ namespace Test.NetStandard.EntityFrameworkCore.Query
                 .Where(findFatherLambdaExpression).ToListAsync();
 
             var foundChild = Assert.Single(foundChildren);
-            Assert.Equal(secondChildName, foundChild.Name);
-            Assert.Equal(secondFatherName, foundChild.FatherName);
+            Assert.Equal(SecondChildName, foundChild.Name);
+            Assert.Equal(SecondManName, foundChild.FatherName);
         }
 
-        private class ComparisonMan
+        [Fact]
+        public async Task Find_single_child_by_friend_in_navigation_property_and_nested_collection_constant()
+        {
+            var comparisonValueList = new[] {
+                new ComparisonChild() {
+                    Friends = new List<ComparisonMan>() {
+                        new ComparisonMan() { Name = SecondManName } } } };
+
+            var findExpression = CollectionConstantPredicateBuilder<MockedChild>
+                .CreateFromCollection(comparisonValueList)
+                .DefinePredicatePerItem(Expression.OrElse,
+                    // Select only those children who have a name and at least one friend.
+                    (child, comparisonChild) => true)
+                .ThenCreateFromCollection(Expression.AndAlso,
+                    comparisonChild => comparisonChild.Friends)
+                .DefinePredicatePerItem(Expression.OrElse,
+                    /// Select the children only if it has <see cref="SecondManName"/> as friend.
+                    (child, comparisonFriend) => child.MockedFriends.Select(x => x.FriendName).Contains(comparisonFriend.Name))
+                // Here begins the the member mapping from MockedChild to Child.
+                .BuildBodyExpression<Child>(memberMapper => {
+                    // We have to map each member access that are actually used above.
+                    memberMapper.Map(b => b.MockedFriends, a => a.Friends);
+                }, out var targetParameter);
+
+            var parameterCollector = new ParameterExpressionCollectorVisitor();
+            parameterCollector.Visit(findExpression);
+
+            var collectedParameterExpressions = parameterCollector.ParameterExpressions
+                .Where(x => x.Name != "x")
+                .ToList();
+
+            // Ensure that all parameters used in body expression are targeting the same mapped Child parameter.
+            Assert.All(collectedParameterExpressions, parameter => {
+                Assert.Equal(targetParameter, parameter);
+            });
+
+            using var context = new PersonContext();
+            await context.Database.EnsureDeletedAsync();
+            await context.Database.EnsureCreatedAsync();
+
+            await context.SaveChangesAsync();
+
+            var friend1 = new Friend() { Name = FirstManName };
+            var friend2 = new Friend() { Name = SecondManName };
+            context.Friends.AddRange(friend1, friend2);
+            await context.SaveChangesAsync();
+
+
+            var child1 = new Child() { Name = FirstChildName, FatherName = null };
+            var child3 = new Child() { Name = ThirdChildName };
+
+            context.Children.AddRange(
+                child1,
+                new Child() { Name = SecondChildName, FatherName = SecondManName },
+                child3);
+
+            await context.SaveChangesAsync();
+
+            context.Friendships.AddRange(new Friendship() { Child = child1, Friend = friend2 },
+                new Friendship() { Child = child3, Friend = friend1 });
+
+            await context.SaveChangesAsync();
+
+            var findLambdaExpression = Expression.Lambda<Func<Child, bool>>(
+                findExpression,
+                targetParameter);
+
+            var foundChildren = await context.Children.AsQueryable()
+                .Where(findLambdaExpression).ToListAsync();
+
+            var foundChild = Assert.Single(foundChildren);
+            Assert.Equal(FirstChildName, foundChild.Name);
+            Assert.True(foundChild?.Friends.Where(x => x.FriendName == SecondManName).Any());
+        }
+
+        [Theory]
+        [ClassData(typeof(ComparisonChildrenWithFlagsAndResultExpectationGenerator))]
+        public async Task Find_single_child_by_nested_collection_constant(
+            ComparisonChild[] comparisonChildren,
+            ComparisonValuesBehaviourFlags comparisonValuesFalseEvaluationFlags,
+            bool resultExpectation)
+        {
+            var findLambdaExpression = CollectionConstantPredicateBuilder<MockedChild>
+                .CreateFromCollection(comparisonChildren)
+                .DefinePredicatePerItem(Expression.OrElse,
+                    (child, comparisonChild) => true)
+                .ThenCreateFromCollection(Expression.AndAlso,
+                    comparisonChild => comparisonChild.Children,
+                    comparisonValuesFalseEvaluationFlags)
+                .DefinePredicatePerItem(Expression.OrElse,
+                    (child, comparisonFather) => true)
+                // Here begins the the member mapping from MockedChild to Child.
+                .BuildLambdaExpression<Child>(mapper => { });
+
+            using var context = new PersonContext();
+            await context.Database.EnsureDeletedAsync();
+            await context.Database.EnsureCreatedAsync();
+
+            await context.SaveChangesAsync();
+
+            context.Man.AddRange(
+                new Man() { Name = FirstManName },
+                new Man() { Name = SecondManName });
+
+            await context.SaveChangesAsync();
+
+            context.Children.AddRange(new Child() { Name = FirstChildName });
+            await context.SaveChangesAsync();
+
+            var foundChildren = await context.Children.AsQueryable()
+                .Where(findLambdaExpression).ToListAsync();
+
+            if (resultExpectation) {
+                Assert.NotEmpty(foundChildren);
+            } else {
+                Assert.Empty(foundChildren);
+            }
+        }
+
+        public class ComparisonMan
         {
             public string? Name { get; set; }
         }
 
-        private class ComparisonChild
+        public class ComparisonChild
         {
             public string? Name { get; set; }
             public List<ComparisonMan?>? Fathers { get; set; }
+            public List<ComparisonMan>? Friends { get; set; }
+            public ComparisonChild[]? Children { get; set; }
         }
 
-        private class MockedChild
+        private interface MockedChild
         {
-            public string MockedName { get; set; } = null!;
-            public string MockedFatherName { get; set; } = null!;
+            string MockedName { get; set; }
+            string MockedFatherName { get; set; }
+            List<Friendship> MockedFriends { get; set; }
         }
 
         private class Person
@@ -107,12 +230,24 @@ namespace Test.NetStandard.EntityFrameworkCore.Query
             public List<Child> Children { get; } = null!;
         }
 
+        private class Friend : Person
+        { }
+
         private class Child : Person
         {
-            public string FatherName { get; set; } = null!;
+            public string? FatherName { get; set; }
             public string MotherName { get; set; } = null!;
 
             public Man Father { get; set; } = null!;
+            public List<Friendship> Friends { get; set; } = null!;
+        }
+
+        private class Friendship
+        {
+            public string ChildName { get; set; } = null!;
+            public Child Child { get; set; } = null!;
+            public string FriendName { get; set; } = null!;
+            public Friend Friend { get; set; } = null!;
         }
 
         private class PersonContext : DbContext
@@ -128,7 +263,9 @@ namespace Test.NetStandard.EntityFrameworkCore.Query
             }
 
             public DbSet<Man> Man { get; set; } = null!;
+            public DbSet<Friend> Friends { get; set; } = null!;
             public DbSet<Child> Children { get; set; } = null!;
+            public DbSet<Friendship> Friendships { get; set; } = null!;
 
             protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
             {
@@ -144,7 +281,41 @@ namespace Test.NetStandard.EntityFrameworkCore.Query
                         .WithMany(x => x.Children)
                         .HasForeignKey(x => x.FatherName);
                 });
+
+                modelBuilder.Entity<Friendship>(options => {
+                    options.HasKey(x => new { x.ChildName, x.FriendName });
+
+                    options.HasOne(x => x.Child)
+                        .WithMany(x => x.Friends);
+
+                    options.HasOne(x => x.Friend)
+                        .WithMany();
+                });
             }
+        }
+
+        public class ComparisonChildrenWithFlagsAndResultExpectationGenerator : IEnumerable<object?[]>
+        {
+            public IEnumerator<object?[]> GetEnumerator()
+            {
+                static object?[] array(params object?[] items) =>
+                    items;
+
+                var nullChildren = new ComparisonChild[] { new ComparisonChild() { Children = null } };
+                var emptyChildren = new ComparisonChild[] { new ComparisonChild() { Children = new ComparisonChild[] { } } };
+
+                yield return array(nullChildren, ComparisonValuesBehaviourFlags.NullOrEmptyLeadsToSkip, true);
+                yield return array(emptyChildren, ComparisonValuesBehaviourFlags.NullOrEmptyLeadsToSkip, true);
+
+                yield return array(nullChildren, ComparisonValuesBehaviourFlags.NullLeadsToFalse, false);
+                yield return array(emptyChildren, ComparisonValuesBehaviourFlags.NullLeadsToFalse, true);
+
+                yield return array(nullChildren, ComparisonValuesBehaviourFlags.EmptyLeadsToFalse, true);
+                yield return array(emptyChildren, ComparisonValuesBehaviourFlags.EmptyLeadsToFalse, false);
+            }
+
+            IEnumerator IEnumerable.GetEnumerator() =>
+                GetEnumerator();
         }
 
         private class ParameterExpressionCollectorVisitor : ExpressionVisitor

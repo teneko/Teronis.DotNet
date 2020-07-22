@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Teronis.Diagnostics;
 
-namespace Teronis.Utils.GitVersion
+namespace Teronis.Tools.GitVersion
 {
     public class GitVersionCommandLine
     {

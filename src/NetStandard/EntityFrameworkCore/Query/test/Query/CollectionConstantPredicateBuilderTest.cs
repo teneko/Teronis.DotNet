@@ -156,11 +156,11 @@ namespace Test.NetStandard.EntityFrameworkCore.Query
         }
 
         [Theory]
-        [ClassData(typeof(ComparisonChildrenWithFlagsAndResultExpectationGenerator))]
+        [ClassData(typeof(ComparisonChildrenWithFlagsAndNotEmptyExpectationGenerator))]
         public async Task Find_single_child_by_nested_collection_constant(
             ComparisonChild[] comparisonChildren,
             ComparisonValuesBehaviourFlags comparisonValuesFalseEvaluationFlags,
-            bool resultExpectation)
+            bool notEmptyExpectation)
         {
             var findLambdaExpression = CollectionConstantPredicateBuilder<MockedChild>
                 .CreateFromCollection(comparisonChildren)
@@ -192,7 +192,7 @@ namespace Test.NetStandard.EntityFrameworkCore.Query
             var foundChildren = await context.Children.AsQueryable()
                 .Where(findLambdaExpression).ToListAsync();
 
-            if (resultExpectation) {
+            if (notEmptyExpectation) {
                 Assert.NotEmpty(foundChildren);
             } else {
                 Assert.Empty(foundChildren);
@@ -294,7 +294,7 @@ namespace Test.NetStandard.EntityFrameworkCore.Query
             }
         }
 
-        public class ComparisonChildrenWithFlagsAndResultExpectationGenerator : IEnumerable<object?[]>
+        public class ComparisonChildrenWithFlagsAndNotEmptyExpectationGenerator : IEnumerable<object?[]>
         {
             public IEnumerator<object?[]> GetEnumerator()
             {

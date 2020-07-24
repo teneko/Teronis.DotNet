@@ -206,14 +206,19 @@ namespace Teronis.EntityFrameworkCore.Query
         /// <param name="targetParameter">The parameter that served as replacement for the member mappings.</param>
         /// <param name="concatenatedExpressionFactory">Manipulates the concatenated expression result.</param>
         /// <returns>The body expression for a possible lambda expression.</returns>
-        internal Expression BuildBodyExpression<TargetType>(Action<ITypedSourceTargetMemberMapper<SourceType, TargetType>> configureMemberMappings,
+        internal Expression BuildBodyExpression<TargetType>(Action<ICollectionConstantPredicateBuilderExpressionMapper<SourceType, TargetType>> configureMemberMappings,
             out ParameterExpression targetParameter, Func<Expression, Expression>? concatenatedExpressionFactory = null)
         {
             var concatenatedExpression = BuildBodyExpression(concatenatedExpressionFactory);
+            targetParameter = Expression.Parameter(typeof(TargetType), "sourceAsTarget");
 
-            concatenatedExpression = SourceExpression.ReplaceParameter(concatenatedExpression, parentBuilder.SourceParameterExpression,
-                configureMemberMappings, out targetParameter);
+            var expressionMapper = new CollectionConstantPredicateBuilderExpressionMapper<TargetType>(parentBuilder.SourceParameterExpression,
+                targetParameter);
 
+            configureMemberMappings(expressionMapper);
+            var expressionMappings = expressionMapper.GetMappings();
+            var expressionReplacer = new EqualityComparingExpressionReplacerVisitor(expressionMappings);
+            concatenatedExpression = expressionReplacer.Visit(concatenatedExpression);
             return concatenatedExpression;
         }
 
@@ -224,7 +229,7 @@ namespace Teronis.EntityFrameworkCore.Query
         /// <param name="configureMemberMappings">Lets you map source type member accesses to target type member accesses.</param>
         /// <param name="concatenatedExpressionFactory">Manipulates the concatenated expression result.</param>
         /// <returns>The body expression for a possible lambda expression.</returns>
-        public Expression BuildBodyExpression<TargetType>(Action<ITypedSourceTargetMemberMapper<SourceType, TargetType>> configureMemberMappings,
+        public Expression BuildBodyExpression<TargetType>(Action<ICollectionConstantPredicateBuilderExpressionMapper<SourceType, TargetType>> configureMemberMappings,
             Func<Expression, Expression>? concatenatedExpressionFactory = null) =>
             BuildBodyExpression(configureMemberMappings, out _, concatenatedExpressionFactory);
 
@@ -249,7 +254,7 @@ namespace Teronis.EntityFrameworkCore.Query
         /// <param name="configureMemberMappings">Lets you map source type member accesses to target type member accesses.</param>
         /// <param name="concatenatedExpressionFactory">Manipulates the concatenated expression result.</param>
         /// <returns>The lambda expression.</returns>
-        public Expression<Func<TargetType, bool>> BuildLambdaExpression<TargetType>(Action<ITypedSourceTargetMemberMapper<SourceType, TargetType>> configureMemberMappings,
+        public Expression<Func<TargetType, bool>> BuildLambdaExpression<TargetType>(Action<ICollectionConstantPredicateBuilderExpressionMapper<SourceType, TargetType>> configureMemberMappings,
             Func<Expression, Expression>? concatenatedExpressionFactory = null)
         {
             var bodyExpression = BuildBodyExpression(configureMemberMappings, out var targetParameter, concatenatedExpressionFactory);
@@ -398,6 +403,13 @@ namespace Teronis.EntityFrameworkCore.Query
                 Expression<SourceInConstantPredicateDelegate<SourceType, ThenComparisonType>> sourcePredicate,
                 Action<IThenInCollectionConstantPredicateBuilder<SourceType, ThenComparisonType>>? thenSourcePredicate) =>
                 DefinePredicatePerItem(consecutiveItemBinaryExpressionFactory, sourcePredicate, thenSourcePredicate);
+        }
+
+        private class CollectionConstantPredicateBuilderExpressionMapper<TargetType> : ParameterReplacingExpressionMapper<SourceType, TargetType>,
+            ICollectionConstantPredicateBuilderExpressionMapper<SourceType, TargetType>
+        {
+            public CollectionConstantPredicateBuilderExpressionMapper(ParameterExpression sourceParameterReplacement, ParameterExpression targetParameterReplacement)
+                : base(sourceParameterReplacement, targetParameterReplacement) { }
         }
     }
 }

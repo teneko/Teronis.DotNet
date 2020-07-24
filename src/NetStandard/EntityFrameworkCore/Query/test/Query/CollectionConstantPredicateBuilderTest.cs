@@ -28,7 +28,7 @@ namespace Test.NetStandard.EntityFrameworkCore.Query
                 new ComparisonChild() { Fathers = new List<ComparisonMan?>() {
                     new ComparisonMan() { Name = SecondManName } } } };
 
-            var findFatherExpression = CollectionConstantPredicateBuilder<MockedChild>
+            var findExpression = CollectionConstantPredicateBuilder<MockedChild>
                 .CreateFromCollection(comparisonValueList)
                 .DefinePredicatePerItem(Expression.OrElse,
                     (child, comparisonChild) => true)
@@ -38,11 +38,11 @@ namespace Test.NetStandard.EntityFrameworkCore.Query
                     (child, comparisonFather) => comparisonFather != null && child.MockedFatherName == comparisonFather.Name)
                 .BuildBodyExpression<Child>(memberMapper => {
                     // We have to map each member access that are actually used above.
-                    memberMapper.Map(b => b.MockedFatherName, a => a.FatherName);
+                    memberMapper.MapBodyAndParams(b => b.MockedFatherName, a => a.FatherName);
                 }, out var targetParameter);
 
             var parameterCollector = new ParameterExpressionCollectorVisitor();
-            parameterCollector.Visit(findFatherExpression);
+            parameterCollector.Visit(findExpression);
 
             // Ensure that all parameters used in body expression are targeting the same mapped Child parameter.
             Assert.All(parameterCollector.ParameterExpressions, parameter => {
@@ -68,12 +68,12 @@ namespace Test.NetStandard.EntityFrameworkCore.Query
 
             await context.SaveChangesAsync();
 
-            var findFatherLambdaExpression = Expression.Lambda<Func<Child, bool>>(
-                findFatherExpression,
+            var findLambdaExpression = Expression.Lambda<Func<Child, bool>>(
+                findExpression,
                 targetParameter);
 
             var foundChildren = await context.Children.AsQueryable()
-                .Where(findFatherLambdaExpression).ToListAsync();
+                .Where(findLambdaExpression).ToListAsync();
 
             var foundChild = Assert.Single(foundChildren);
             Assert.Equal(SecondChildName, foundChild.Name);
@@ -101,7 +101,7 @@ namespace Test.NetStandard.EntityFrameworkCore.Query
                 // Here begins the the member mapping from MockedChild to Child.
                 .BuildBodyExpression<Child>(memberMapper => {
                     // We have to map each member access that are actually used above.
-                    memberMapper.Map(b => b.MockedFriends, a => a.Friends);
+                    memberMapper.MapBodyAndParams(b => b.MockedFriends, a => a.Friends);
                 }, out var targetParameter);
 
             var parameterCollector = new ParameterExpressionCollectorVisitor();

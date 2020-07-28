@@ -155,11 +155,11 @@ namespace Teronis.EntityFrameworkCore.Query
         protected Expression concatenateComparisonExpressions()
         {
             var sourceValueComparisonCount = sourceAndValueComparisons.Count;
-            var concatenatedExpression = sourceAndValueComparisons[0].SourcePredicate;
+            var concatenatedExpression = sourceAndValueComparisons[0].SourceAndItemPredicate;
 
             for (int index = 1; index < sourceValueComparisonCount; index++) {
                 var sourceValueComparison = sourceAndValueComparisons[index];
-                concatenatedExpression = consecutiveItemBinaryExpressionFactory(concatenatedExpression, sourceValueComparison.SourcePredicate);
+                concatenatedExpression = consecutiveItemBinaryExpressionFactory(concatenatedExpression, sourceValueComparison.SourceAndItemPredicate);
             }
 
             return concatenatedExpression;
@@ -295,12 +295,12 @@ namespace Teronis.EntityFrameworkCore.Query
         private readonly struct SourceAndValueComparison
         {
             public readonly ComparisonType ComparisonValue;
-            public readonly Expression SourcePredicate;
+            public readonly Expression SourceAndItemPredicate;
 
-            public SourceAndValueComparison(ComparisonType comparisonValue, Expression sourcePredicate)
+            public SourceAndValueComparison(ComparisonType comparisonValue, Expression sourceAndItemPredicate)
             {
                 ComparisonValue = comparisonValue;
-                SourcePredicate = sourcePredicate;
+                SourceAndItemPredicate = sourceAndItemPredicate;
             }
         }
 
@@ -322,7 +322,7 @@ namespace Teronis.EntityFrameworkCore.Query
             public void AppendExpression(Expression expression, Func<Expression, Expression, BinaryExpression> binaryExpressionFactory)
             {
                 var comparison = comparisons[comparisonIndex];
-                var concatenatedExpression = binaryExpressionFactory(comparison.SourcePredicate, expression);
+                var concatenatedExpression = binaryExpressionFactory(comparison.SourceAndItemPredicate, expression);
                 comparisons[comparisonIndex] = new SourceAndValueComparison(comparison.ComparisonValue, concatenatedExpression);
             }
         }
@@ -369,7 +369,7 @@ namespace Teronis.EntityFrameworkCore.Query
         {
             IThenInCollectionConstantPredicateBuilder<SourceType, ComparisonType> DefinePredicatePerItem(
                 Func<Expression, Expression, BinaryExpression> consecutiveItemBinaryExpressionFactory,
-                Expression<SourceInConstantPredicateDelegate<SourceType, ThenComparisonType>> sourcePredicate,
+                Expression<SourceInConstantPredicateDelegate<SourceType, ThenComparisonType>> sourceAndItemPredicate,
                 Action<IThenInCollectionConstantPredicateBuilder<SourceType, ThenComparisonType>>? thenSourcePredicate = null);
         }
 
@@ -393,16 +393,16 @@ namespace Teronis.EntityFrameworkCore.Query
 
             public CollectionConstantPredicateBuilder<SourceType, ComparisonType> DefinePredicatePerItem(
                 Func<Expression, Expression, BinaryExpression> consecutiveItemBinaryExpressionFactory,
-                Expression<SourceInConstantPredicateDelegate<SourceType, ThenComparisonType>> sourcePredicate,
+                Expression<SourceInConstantPredicateDelegate<SourceType, ThenComparisonType>> sourceAndItemPredicate,
                 Action<IThenInCollectionConstantPredicateBuilder<SourceType, ThenComparisonType>>? thenSourcePredicate = null) =>
                 currentBuilder.thenDefinePredicatePerItemInCollection(parentBinaryExpressionFactory, comparisonValuesFactory,
-                    comparisonValuesBehaviourFlags, consecutiveItemBinaryExpressionFactory, sourcePredicate, thenSourcePredicate);
+                    comparisonValuesBehaviourFlags, consecutiveItemBinaryExpressionFactory, sourceAndItemPredicate, thenSourcePredicate);
 
             IThenInCollectionConstantPredicateBuilder<SourceType, ComparisonType> CollectionConstantPredicateBuilder<SourceType, ComparisonType>.IDeferredThenCreateCollectionConstantBuilder<ThenComparisonType>.DefinePredicatePerItem(
                 Func<Expression, Expression, BinaryExpression> consecutiveItemBinaryExpressionFactory,
-                Expression<SourceInConstantPredicateDelegate<SourceType, ThenComparisonType>> sourcePredicate,
+                Expression<SourceInConstantPredicateDelegate<SourceType, ThenComparisonType>> sourceAndItemPredicate,
                 Action<IThenInCollectionConstantPredicateBuilder<SourceType, ThenComparisonType>>? thenSourcePredicate) =>
-                DefinePredicatePerItem(consecutiveItemBinaryExpressionFactory, sourcePredicate, thenSourcePredicate);
+                DefinePredicatePerItem(consecutiveItemBinaryExpressionFactory, sourceAndItemPredicate, thenSourcePredicate);
         }
 
         private class CollectionConstantPredicateBuilderExpressionMapper<TargetType> : ParameterReplacingExpressionMapper<SourceType, TargetType>,

@@ -9,7 +9,7 @@ using Teronis.Mvc.ServiceResulting.Generic;
 namespace Teronis.Identity.Controllers
 {
     [Route("api/account")]
-    public class AccountController<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>
+    public class AccountController<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType> : Controller
         where UserDescriptorType : IUserDescriptor
         where UserType : IAccountUserEntity
         where RoleDescriptorType : IRoleDescriptor

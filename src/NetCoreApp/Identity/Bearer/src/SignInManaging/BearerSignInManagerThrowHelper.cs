@@ -1,7 +1,7 @@
 ﻿using System;
 using Teronis.Identity.Entities;
 
-namespace Teronis.Identity.BearerSignInManaging
+namespace Teronis.Identity.Bearer
 {
     public static class BearerSignInManagerThrowHelper
     {

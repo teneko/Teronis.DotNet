@@ -2,9 +2,10 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Teronis.Identity.AccountManaging;
 using Teronis.Identity.Entities;
 
-namespace Teronis.Identity
+namespace Teronis.Identity.Bearer
 {
     public class Program
     {
@@ -17,10 +18,10 @@ namespace Teronis.Identity
                 await dbContext.Database.EnsureDeletedAsync();
                 await dbContext.Database.EnsureCreatedAsync();
 
-                var roleEntity = new RoleEntity("Administrator");
+                var roleEntity = new RoleEntity(TeronisIdentityBearerExampleDefaults.AdministratorRoleName);
                 await accountManager.CreateRoleIfNotExistsAsync(roleEntity);
-                var userEntity = new UserEntity("Administrator");
-                await accountManager.CreateUserIfNotExistsAsync(userEntity, "aA#123");
+                var userEntity = new UserEntity(TeronisIdentityBearerExampleDefaults.AdministratorUserName);
+                await accountManager.CreateUserIfNotExistsAsync(userEntity, "aA#123", TeronisIdentityBearerExampleDefaults.AdministratorRoleName);
             });
 
             await host.RunAsync();

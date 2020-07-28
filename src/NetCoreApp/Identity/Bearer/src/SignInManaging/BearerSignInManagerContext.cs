@@ -3,7 +3,7 @@ using Teronis.Identity.Entities;
 using Teronis.Mvc.ServiceResulting.Generic;
 using Teronis.Mvc.ServiceResulting.Generic.ObjectModel;
 
-namespace Teronis.Identity.BearerSignInManaging
+namespace Teronis.Identity.Bearer
 {
     public class BearerSignInManagerContext<UserEntityType, BearerTokenType> : IServiceResultInjection<object>
         where UserEntityType : class, IBearerUserEntity

@@ -42,11 +42,11 @@ namespace Teronis.Identity.AccountManaging
             this.logger = logger;
         }
 
-        private async Task<IServiceResult<RoleType>> loadRoleByNameAsync(string roleName)
+        public async Task<IServiceResult<RoleType>> GetRoleByNameAsync(string roleName)
         {
             try {
-                var createdRoleEntity = dbContext.Set<RoleType>().Local.SingleOrDefault(x => x.RoleName == roleName) ??
-                    await roleManager.FindByNameAsync(roleName);
+                var createdRoleEntity = dbContext.Set<RoleType>().Local.SingleOrDefault(x => x.RoleName == roleName) 
+                    ?? await roleManager.FindByNameAsync(roleName);
 
                 return ServiceResult<RoleType>
                     .Success(createdRoleEntity)
@@ -89,28 +89,14 @@ namespace Teronis.Identity.AccountManaging
                     .WithHttpStatusCode(HttpStatusCode.InternalServerError);
             }
 
-            return await loadRoleByNameAsync(roleName);
+            return await GetRoleByNameAsync(roleName);
         }
 
-        public async Task<IServiceResult<RoleType>> CreateRoleIfNotExistsAsync(RoleType roleEntity)
-        {
-            var result = await CreateRoleAsync(roleEntity);
-
-            if (result.Success(AccountManagerErrorCodes.RoleAlreadyCreated.GetStringValue())) {
-                return await loadRoleByNameAsync(roleEntity.RoleName);
-            }
-
-            return result;
-        }
-
-        private async Task<IServiceResult<UserType>> loadUserByNameAsync(string userName)
+        public async Task<IServiceResult<UserType>> GetUserByNameAsync(string userName)
         {
             try {
-                var createdUserEntity = dbContext.Set<UserType>().Local.SingleOrDefault(x => x.UserName == userName) ??
-                    await userManager.FindByNameAsync(userName);
-
-                //var createdUserEntry = dbContext.Entry(createdUserEntity);
-                //createdUserEntry.State = EntityState.Detached;
+                var createdUserEntity = dbContext.Set<UserType>().Local.SingleOrDefault(x => x.UserName == userName) 
+                    ?? await userManager.FindByNameAsync(userName);
 
                 return ServiceResult<UserType>
                     .Success(createdUserEntity)
@@ -123,7 +109,7 @@ namespace Teronis.Identity.AccountManaging
             }
         }
 
-        public async Task<IServiceResult<UserType>> CreateUserAsync(UserType userEntity, string password, string[]? roles = null)
+        public async Task<IServiceResult<UserType>> CreateUserAsync(UserType userEntity, string password, params string[]? roles)
         {
             Validator.ValidateObject(userEntity, new ComponentDataValidationContext(userEntity), true);
             using var transactionScope = await dbContext.Database.BeginTransactionAsync();
@@ -157,7 +143,7 @@ namespace Teronis.Identity.AccountManaging
                 }
             }
 
-            var loadUserResult = await loadUserByNameAsync(userName);
+            var loadUserResult = await GetUserByNameAsync(userName);
 
             if (!loadUserResult.Succeeded) {
                 return loadUserResult;
@@ -225,18 +211,7 @@ namespace Teronis.Identity.AccountManaging
             }
         }
 
-        public async Task<IServiceResult<UserType>> CreateUserIfNotExistsAsync(UserType userEntity, string password, string[]? roles = null)
-        {
-            var result = await CreateUserAsync(userEntity, password, roles);
-
-            if (result.Success(AccountManagerErrorCodes.UserAlreadyCreated.GetStringValue())) {
-                return await loadUserByNameAsync(userEntity.UserName);
-            }
-
-            return result;
-        }
-
-        public async Task<IServiceResult> InvalidateRefreshTokensAsync(string userId)
+        public async Task<IServiceResult> InvalidateSecurityStampAsync(string userId)
         {
             try {
                 var userEntity = await userManager.FindByNameAsync(userId);
@@ -248,7 +223,7 @@ namespace Teronis.Identity.AccountManaging
                 var result = await userManager.UpdateSecurityStampAsync(userEntity);
 
                 if (!result.Succeeded) {
-                    throw result.ToAggregatedException("Invalidating the refresh tokens failed.");
+                    throw result.ToAggregatedException("Invalidating the security stamp failed.");
                 }
 
                 return new ServiceResult(true).WithHttpStatusCode(HttpStatusCode.OK);

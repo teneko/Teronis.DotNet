@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Teronis.Identity.BearerSignInManaging;
+using Teronis.Identity.Bearer;
+using Teronis.Identity.Bearer.Stores;
 using Teronis.Identity.Entities;
 
 namespace Teronis.Identity.Authentication.Utils
@@ -13,7 +14,7 @@ namespace Teronis.Identity.Authentication.Utils
     public static class TokenValidatedContextUtils
     {
         /// <summary>
-        /// Validates whether <see cref="BearerSignInManagerDefaults.SignInServiceRefreshTokenIdClaimType"/> does exist
+        /// Validates whether <see cref="BearerSignInManagerDefaults.BearerSignInManagerRefreshTokenIdClaimType"/> does exist
         /// and if so, it does add an user related identity to the claims principal of <paramref name="tokenValidatedContext"/>.
         /// </summary>
         public static async Task ValidateRefreshTokenIdClaim<BearerTokenType>(TokenValidatedContext tokenValidatedContext)

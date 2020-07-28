@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Teronis.Mvc.ServiceResulting.Generic;
 
-namespace Teronis.Identity.BearerSignInManaging
+namespace Teronis.Identity.Bearer
 {
     public interface IBearerSignInManager
     {

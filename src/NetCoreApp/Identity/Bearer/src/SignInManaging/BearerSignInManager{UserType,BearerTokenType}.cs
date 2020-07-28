@@ -5,13 +5,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Teronis.Identity.Bearer.Stores;
 using Teronis.Identity.Entities;
 using Teronis.Identity.Extensions;
 using Teronis.Mvc.ServiceResulting;
 using Teronis.Mvc.ServiceResulting.Extensions;
 using Teronis.Mvc.ServiceResulting.Generic;
 
-namespace Teronis.Identity.BearerSignInManaging
+namespace Teronis.Identity.Bearer
 {
     public abstract class BearerSignInManager<UserType, BearerTokenType> : IBearerSignInManager
         where UserType : class, IBearerUserEntity
@@ -180,7 +181,7 @@ namespace Teronis.Identity.BearerSignInManaging
 
             if (hasStorageSucceeded) {
                 refreshTokenDescriptor.Claims.Add(identityOptions.Value.ClaimsIdentity.SecurityStampClaimType, user.SecurityStamp);
-                refreshTokenDescriptor.Claims.Add(BearerSignInManagerDefaults.SignInServiceRefreshTokenIdClaimType, refreshTokenEntity.BearerTokenId);
+                refreshTokenDescriptor.Claims.Add(BearerSignInManagerDefaults.BearerSignInManagerRefreshTokenIdClaimType, refreshTokenEntity.BearerTokenId);
                 var refreshToken = BearerSignInManagerUtils.GenerateJwtToken(refreshTokenDescriptor, signInManagerOptions.SetDefaultTimesOnTokenCreation);
                 context.RefreshTokenEntity = refreshTokenEntity;
                 context.RefreshToken = refreshToken;
@@ -211,7 +212,7 @@ namespace Teronis.Identity.BearerSignInManaging
         public bool HasPrincipalRefreshToken(BearerSignInManagerContext<UserType, BearerTokenType> context)
         {
             var principal = context.Principal ?? throw BearerSignInManagerThrowHelper.GetContextArgumentException(nameof(BearerSignInManagerContext<UserType, BearerTokenType>.Principal));
-            var hasRefreshTokenId = Guid.TryParse(principal.FindFirstValue(BearerSignInManagerDefaults.SignInServiceRefreshTokenIdClaimType), out _);
+            var hasRefreshTokenId = Guid.TryParse(principal.FindFirstValue(BearerSignInManagerDefaults.BearerSignInManagerRefreshTokenIdClaimType), out _);
 
             if (!hasRefreshTokenId) {
                 context.SetResult()

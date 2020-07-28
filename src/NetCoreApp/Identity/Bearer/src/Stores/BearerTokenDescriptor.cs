@@ -1,6 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 
-namespace Teronis.Identity
+namespace Teronis.Identity.Bearer.Stores
 {
     public class BearerTokenDescriptor : SecurityTokenDescriptor
     {

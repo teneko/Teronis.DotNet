@@ -11,7 +11,7 @@ using Teronis.Identity.Entities;
 using ZNetCS.AspNetCore.Authentication.Basic;
 using ZNetCS.AspNetCore.Authentication.Basic.Events;
 
-namespace Teronis.Identity.Authentication
+namespace Teronis.Identity.Bearer.Authentication
 {
     public static class AuthenticationBuilderExtensions
     {
@@ -111,10 +111,10 @@ namespace Teronis.Identity.Authentication
 
 
         public static AuthenticationBuilder AddIdentityJwtRefreshToken(this AuthenticationBuilder authenticationBuilder, string authenticationScheme, JwtBearerAuthenticationOptions options) =>
-            AddIdentityJwtRefreshToken<BearerTokenEntity>(authenticationBuilder, authenticationScheme, options);
+            authenticationBuilder.AddIdentityJwtRefreshToken<BearerTokenEntity>(authenticationScheme, options);
 
         public static AuthenticationBuilder AddIdentityJwtRefreshToken(this AuthenticationBuilder authenticationBuilder, JwtBearerAuthenticationOptions options) =>
-            AddIdentityJwtRefreshToken<BearerTokenEntity>(authenticationBuilder, options);
+            authenticationBuilder.AddIdentityJwtRefreshToken<BearerTokenEntity>(options);
 
         private static AuthenticationBuilder addIdentityJwtAccessToken(AuthenticationBuilder authenticationBuilder, Action<Action<JwtBearerOptions>> addJwtBearer, JwtBearerAuthenticationOptions options)
         {

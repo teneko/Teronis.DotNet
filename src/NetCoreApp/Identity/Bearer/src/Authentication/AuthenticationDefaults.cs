@@ -1,6 +1,4 @@
-﻿
-
-namespace Teronis.Identity.Authentication
+﻿namespace Teronis.Identity.Bearer.Authentication
 {
     public static class AuthenticationDefaults
     {

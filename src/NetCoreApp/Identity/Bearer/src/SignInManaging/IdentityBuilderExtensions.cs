@@ -5,7 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Teronis.Extensions;
-using Teronis.Identity.BearerSignInManaging;
+using Teronis.Identity.Bearer.SignInManaging;
+using Teronis.Identity.Bearer.Stores;
+using Teronis.Identity.Bearer;
 using Teronis.Identity.Entities;
 
 namespace Teronis.Identity

@@ -4,7 +4,7 @@ using Teronis.Identity.Extensions;
 using Teronis.Mvc.ServiceResulting;
 using Teronis.Mvc.ServiceResulting.Generic;
 
-namespace Teronis.Identity
+namespace Teronis.Identity.Bearer
 {
     /// <summary>
     /// A class that logs sensitive errors and only provides detailed 

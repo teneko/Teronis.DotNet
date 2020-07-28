@@ -89,6 +89,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.EntityF
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.NetStandard.Collections", "src\NetStandard\Collections\Collections\test\Collections\Test.NetStandard.Collections.csproj", "{14AA09E4-71E4-4AF7-A14D-5B2443CD04F5}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.AspNetCore.Authorization.Extensions", "src\NetStandard\AspNetCore\Authorization\Extensions\src\Teronis.NetStandard.AspNetCore.Authorization.Extensions.csproj", "{104998CE-A553-4446-9F51-15A0B6360B5B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -615,6 +617,18 @@ Global
 		{14AA09E4-71E4-4AF7-A14D-5B2443CD04F5}.Release|x64.Build.0 = Release|x64
 		{14AA09E4-71E4-4AF7-A14D-5B2443CD04F5}.Release|x86.ActiveCfg = Release|x86
 		{14AA09E4-71E4-4AF7-A14D-5B2443CD04F5}.Release|x86.Build.0 = Release|x86
+		{104998CE-A553-4446-9F51-15A0B6360B5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{104998CE-A553-4446-9F51-15A0B6360B5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{104998CE-A553-4446-9F51-15A0B6360B5B}.Debug|x64.ActiveCfg = Debug|x64
+		{104998CE-A553-4446-9F51-15A0B6360B5B}.Debug|x64.Build.0 = Debug|x64
+		{104998CE-A553-4446-9F51-15A0B6360B5B}.Debug|x86.ActiveCfg = Debug|x86
+		{104998CE-A553-4446-9F51-15A0B6360B5B}.Debug|x86.Build.0 = Debug|x86
+		{104998CE-A553-4446-9F51-15A0B6360B5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{104998CE-A553-4446-9F51-15A0B6360B5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{104998CE-A553-4446-9F51-15A0B6360B5B}.Release|x64.ActiveCfg = Release|x64
+		{104998CE-A553-4446-9F51-15A0B6360B5B}.Release|x64.Build.0 = Release|x64
+		{104998CE-A553-4446-9F51-15A0B6360B5B}.Release|x86.ActiveCfg = Release|x86
+		{104998CE-A553-4446-9F51-15A0B6360B5B}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

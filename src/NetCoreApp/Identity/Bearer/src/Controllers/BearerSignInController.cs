@@ -1,11 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Controllers;
-using Teronis.Identity.Authentication;
-using Teronis.Identity.BearerSignInManaging;
+using Teronis.Identity.Bearer.Authentication;
+using Teronis.Identity.Bearer;
 
 namespace Teronis.Identity.Controllers
 {

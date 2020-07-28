@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Teronis.Identity.Entities;
 
-namespace Teronis.Identity
+namespace Teronis.Identity.Bearer
 {
     public class BearerIdentityDbContext<UserType, RoleType> : IdentityDbContext<UserType, RoleType, string>
         where UserType : IdentityUser<string>

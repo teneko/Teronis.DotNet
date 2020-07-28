@@ -1,6 +1,7 @@
 ﻿using System;
+using Teronis.Identity.Bearer.Stores;
 
-namespace Teronis.Identity.BearerSignInManaging
+namespace Teronis.Identity.Bearer
 {
     public class BearerSignInManagerOptions
     {

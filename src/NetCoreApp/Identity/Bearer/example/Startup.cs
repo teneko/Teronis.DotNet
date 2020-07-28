@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -7,11 +8,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Teronis.Identity.Authentication;
+using Teronis.Identity.Bearer.Authentication;
+using Teronis.Identity.Bearer.Stores;
 using Teronis.Identity.Controllers;
 using Teronis.Identity.Entities;
+using Teronis.AspNetCore.Authorization.Extensions;
 
-namespace Teronis.Identity
+namespace Teronis.Identity.Bearer
 {
     public class Startup
     {
@@ -57,7 +60,15 @@ namespace Teronis.Identity
                     IncludeErrorDetails = true
                 });
 
-            services.AddAuthorization();
+            services.AddAuthorization(options => {
+                options.AddPolicy(
+                    new AuthorizationPolicyBuilder(AuthenticationDefaults.AccessTokenBearerScheme)
+                    .RequireAuthenticatedUser()
+                    .RequireRole(TeronisIdentityBearerExampleDefaults.AdministratorRoleName)
+                    .Build(),
+                    AccountControllerDefaults.CanCreateRolePolicy,
+                    TeronisIdentityBearerExampleDefaults.AdministratorRoleName);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

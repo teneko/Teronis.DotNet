@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Teronis.Identity.BearerSignInManaging;
+using Teronis.Identity.Bearer.Stores;
 using Teronis.Identity.Entities;
 
-namespace Teronis.Identity
+namespace Teronis.Identity.Bearer
 {
     public static partial class IdentityBuilderExtensions
     {

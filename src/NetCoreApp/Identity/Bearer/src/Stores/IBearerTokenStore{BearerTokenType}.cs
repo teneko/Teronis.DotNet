@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Teronis.Identity.Entities;
 
-namespace Teronis.Identity.BearerSignInManaging
+namespace Teronis.Identity.Bearer.Stores
 {
     public interface IBearerTokenStore<BearerTokenType>
         where BearerTokenType : class, IBearerTokenEntity

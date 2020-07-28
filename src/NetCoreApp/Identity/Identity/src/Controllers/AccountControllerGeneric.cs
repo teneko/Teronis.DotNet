@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Teronis.Identity.AccountManaging;
@@ -8,7 +9,7 @@ using Teronis.Mvc.ServiceResulting.Generic;
 
 namespace Teronis.Identity.Controllers
 {
-    [Route("api/account")]
+    [ApiController]
     public class AccountController<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType> : Controller
         where UserDescriptorType : IUserDescriptor
         where UserType : IAccountUserEntity
@@ -32,6 +33,7 @@ namespace Teronis.Identity.Controllers
         }
 
         [HttpPost("roles/create")]
+        [Authorize(Policy = AccountControllerDefaults.CanCreateRolePolicy)]
         [Consumes("application/json")]
         [Produces("application/json")]
         [ProducesErrorResponseType(typeof(void))]
@@ -53,6 +55,7 @@ namespace Teronis.Identity.Controllers
         }
 
         [HttpPost("users/create")]
+        [Authorize(Policy = AccountControllerDefaults.CanCreateRolePolicy)]
         [Consumes("application/json")]
         [Produces("application/json")]
         [ProducesErrorResponseType(typeof(void))]

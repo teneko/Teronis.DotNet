@@ -5,21 +5,22 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Teronis.Identity.Bearer.Stores;
+using Teronis.Identity.Bearer.Utils;
 using Teronis.Identity.Entities;
 using Teronis.Identity.Extensions;
-using Teronis.Identity.Utils;
 using Teronis.Mvc.ServiceResulting.Generic;
 
-namespace Teronis.Identity.BearerSignInManaging
+namespace Teronis.Identity.Bearer
 {
     public static class BearerSignInManagerUtils
     {
         /// <summary>
-        /// It looks for claim <see cref="BearerSignInManagerDefaults.SignInServiceRefreshTokenIdClaimType"/>.
+        /// It looks for claim <see cref="BearerSignInManagerDefaults.BearerSignInManagerRefreshTokenIdClaimType"/>.
         /// </summary>
         public static ServiceResult<Guid> FindRefreshTokenId(ClaimsPrincipal principal)
         {
-            var refreshTokenIdString = principal.FindFirstValue(BearerSignInManagerDefaults.SignInServiceRefreshTokenIdClaimType);
+            var refreshTokenIdString = principal.FindFirstValue(BearerSignInManagerDefaults.BearerSignInManagerRefreshTokenIdClaimType);
 
             if (string.IsNullOrEmpty(refreshTokenIdString)) {
                 return "There has been no refresh token id been found."
@@ -38,7 +39,7 @@ namespace Teronis.Identity.BearerSignInManaging
         }
 
         /// <summary>
-        /// It tries to resolve refresh token id from claim <see cref="BearerSignInManagerDefaults.SignInServiceRefreshTokenIdClaimType"/> 
+        /// It tries to resolve refresh token id from claim <see cref="BearerSignInManagerDefaults.BearerSignInManagerRefreshTokenIdClaimType"/> 
         /// and then look in the database. If a refresh token has been found, it will be returned.
         /// </summary>
         public static async Task<ServiceResult<BearerTokenType>> FindRefreshTokenAsync<BearerTokenType>(IBearerTokenStore<BearerTokenType> refreshTokenStore, ClaimsPrincipal principal, ILogger? logger = null)

@@ -2,9 +2,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Teronis.Identity.Bearer.Stores;
 using Teronis.Identity.Entities;
 
-namespace Teronis.Identity.BearerSignInManaging
+namespace Teronis.Identity.Bearer.SignInManaging
 {
     public class BearerSignInManager : BearerSignInManager<UserEntity, BearerTokenEntity>
     {

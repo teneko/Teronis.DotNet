@@ -2,7 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using Teronis.Identity.Extensions;
 
-namespace Teronis.Identity.Utils
+namespace Teronis.Identity.Bearer.Utils
 {
     public static class JwtTokenUtils
     {

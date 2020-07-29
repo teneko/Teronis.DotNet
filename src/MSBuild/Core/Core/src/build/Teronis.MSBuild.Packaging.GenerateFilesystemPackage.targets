@@ -51,7 +51,7 @@
       <_MSBuildProjectPath>$(MSBuildProjectDirectory)\$(MSBuildProjectName).csproj</_MSBuildProjectPath>
     </PropertyGroup>
     
-    <Message Text="[$(MSBuildThisFileName)] Publish $(_MSBuildProjectPath) (Configuration=$(Configuration), TargetFramework=$(TargetFramework))" Importance="high" />
+    <Message Text="[$(MSBuildThisFileName)] Package Publish $(_MSBuildProjectPath) (Configuration=$(Configuration), TargetFramework=$(TargetFramework))" Importance="high" />
 
     <PropertyGroup>
       <!--PackageVersion=0.0.1-$(TargetFramework.ToLower().Replace('.','v'));-->

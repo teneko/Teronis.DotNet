@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
     <RootNamespace>Teronis.ModuleInitializer.AssemblyLoad</RootNamespace>
+    <PackAsExecutable>true</PackAsExecutable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,7 +13,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\AssemblyLoad\src\Teronis.ModuleInitializer.AssemblyLoad.csproj" />
+    <ProjectReference Include="..\..\0\src\Teronis.ModuleInitializer.AssemblyLoad.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="build\**\*" PackagePath="build" Pack="true">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  
 
 </Project>

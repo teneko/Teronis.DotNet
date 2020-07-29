@@ -1,0 +1,341 @@
+﻿<Project InitialTargets="_ValidatePackExecutableProperties">
+
+  <PropertyGroup>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);$(TargetsForTfmSpecificExecutableAsProjectContentInPackage);$(TargetsForTfmSpecificExecutableAsPackageContentInPackage)</TargetsForTfmSpecificContentInPackage>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(PackAsExecutable)' == 'Project'">
+    <!--<TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard1.0;netcoreapp2.1;net45</TargetFrameworks>-->
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(PackAsExecutable)' == 'Publish'">
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IsPackable>false</IsPackable>
+    <PackageOutputPath>$(MSBuildProjectDirectory)\bin\$(Configuration)\package</PackageOutputPath>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(PackAsExecutable)' == 'Package' Or '$(PackAsExecutable)' == 'Publish'">
+    <ExecutableProjectFilename>$([System.IO.Path]::GetFileNameWithoutExtension('$(ExecutableProjectReference)'))</ExecutableProjectFilename>
+    <ExecutableProjectFullName>$([System.IO.Path]::GetFileName('$(ExecutableProjectReference)'))</ExecutableProjectFullName>
+    <ExecutableProjectDirectory>$([System.IO.Path]::GetDirectoryName('$(ExecutableProjectReference)'))</ExecutableProjectDirectory>
+    <ExecutableProjectDirectory>$(MSBuildProjectDirectory)\$(ExecutableProjectDirectory)</ExecutableProjectDirectory>
+    <ExecutableProjectDirectory>$([System.IO.Path]::GetFullPath('$(ExecutableProjectDirectory)'))</ExecutableProjectDirectory>
+    <ExecutableProjectFilePath>$(ExecutableProjectDirectory)\$(ExecutableProjectFullName)</ExecutableProjectFilePath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(PackAsExecutable)' == 'Package'">
+    <!--<TargetFramework></TargetFramework>
+    <TargetFrameworks>netstandard1.0;netcoreapp2.1;net45</TargetFrameworks>-->
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(PackAsExecutable)' == 'Package'">
+    <PackageId>$(ExecutableProjectFilename)</PackageId>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);$(GenerateNuspecWhenPackingExecutableAsPackageDependsOn)</GenerateNuspecDependsOn>
+  </PropertyGroup>
+
+  <!--<ItemGroup Condition="'$(PackAsExecutable)' == 'Package'">
+    <ProjectReference Remove="@(ProjectReference)" />
+    <PackageReference Remove="@(PackageReference)" />
+    --><!--<None Remove="@(None)" />--><!--
+    --><!--<Link Remove="@(Link)" />--><!--
+    <Compile Remove="@(Compile)" />
+    <EmbeddedResource Remove="@(EmbeddedResource)" />
+  </ItemGroup>-->
+
+  <Target Name="_ValidatePackExecutableProperties">
+    <Error Text="Missing ExecutableProjectReference." Condition="('$(PackAsExecutable)' == 'Publish' And '$(ExecutableProjectReference)' == '')
+           Or ('$(PackAsExecutable)' == 'Package' And '$(ExecutableProjectReference)' == '')" />
+  </Target>
+
+  <!--
+  =====================================================
+                  TfmSpecificExecutableContentInPackage
+  
+  This target publishes the MSBuild project to 
+  $(PublishDir).
+  =====================================================
+  -->
+  <!--Or '$(PackAsExecutable)' == 'Package'-->
+  <Target Name="PublishTfmSpecificExecutableAsProjectContent" Condition="'$(PackAsExecutable)' == 'Project'">
+
+    <PropertyGroup>
+      <!-- TODO: !!!! -->
+      <_ProjectFile Condition="'$(PackAsExecutable)' == 'Project'">$(MSBuildProjectDirectory)\$(MSBuildProjectName).csproj</_ProjectFile>
+    </PropertyGroup>
+
+    <MSBuild Projects="$(_ProjectFile)" Targets="Publish" Properties="TargetFramework=$(TargetFramework)" />
+
+  </Target>
+
+  <!--
+  =====================================================
+                                         PackExecutable
+                                       
+  This target is initially called by target
+  TfmSpecificContentInPackage. This target includes the
+  published files to the nuget package.
+  =====================================================
+  -->
+  <Target Name="TfmSpecificExecutableAsProjectContentInPackage" DependsOnTargets="PublishTfmSpecificExecutableAsProjectContent" Condition="'$(PackAsExecutable)' == 'Project'">
+
+    <PropertyGroup>
+      <_PublishDir Condition="'$(PackAsExecutable)' == 'Project'">$(MSBuildProjectDir)$(PublishDir)</_PublishDir>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="$(_PublishDir)**\*">
+        <PublishDir>$(_PublishDir)</PublishDir>
+        <PackagePath>executables\$(TargetFramework)\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+
+  </Target>
+
+  <Target Name="PackExecutableAsProject" DependsOnTargets="$(GenerateNuspecDependsOn)" Condition="'$(PackAsExecutable)' == 'Project'" Outputs="@(_ExecutablePackageFiles)">
+    <ItemGroup>
+      <_ExecutablePackageFiles Include="$([System.IO.Path]::GetFullPath('%(_PackageFiles.Identity)'))">
+        <NuGetRecursiveDir>%(_PackageFiles.NuGetRecursiveDir)</NuGetRecursiveDir>
+        <BuildAction>%(_PackageFiles.BuildAction)</BuildAction>
+        <PackagePath>%(_PackageFiles.PackagePath)</PackagePath>
+      </_ExecutablePackageFiles>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="TfmSpecificExecutableAsPackageContentInPackage" Condition="'$(PackAsExecutable)' == 'Package'" />
+  
+  <Target Name="PackExecutableAsPackage" DependsOnTargets="_ReadExecutableProjectProperties" Condition="'$(PackAsExecutable)' == 'Package'">
+    <MSBuild Projects="$(ExecutableProjectFilePath)" Targets="PackExecutableAsProject">
+      <Output TaskParameter="TargetOutputs" ItemName="_ExecutablePackageFiles"/>
+    </MSBuild>
+
+    <ItemGroup>
+      <!-- Add executable project files to executable package project -->
+      <_PackageFiles Include="@(_ExecutablePackageFiles)" />
+    </ItemGroup>
+
+  </Target>
+
+  <!--
+  =====================================================
+                         CleanUnpackedExecutablePackage
+                                       
+  Unzips a project defined in ExecutableProjectFilePath
+  (ExecutableProjectReference).
+  =====================================================
+  -->
+  <Target Name="UnpackAsExecutablePackedProject" BeforeTargets="Pack" Condition="'$(PackAsExecutable)' == 'Publish'">
+
+    <PropertyGroup>
+
+      <PackageId>$([System.Guid]::NewGuid())</PackageId>
+      <PackageVersion>1.0.0</PackageVersion>
+
+      <PackAsExecutableMSBuildProperties>
+        PackAsExecutable=Project;
+        PackageId=$(PackageId);
+        PackageVersion=$(PackageVersion);
+        PackageOutputPath=$(PackageOutputPath);
+        IsPackable=true;
+        $(PackAsExecutableMSBuildProperties)
+      </PackAsExecutableMSBuildProperties>
+
+    </PropertyGroup>
+
+    <Message Text="testtest $(ExecutableProjectFilePath)" Importance="high" />
+    
+    <MSBuild Projects="$(ExecutableProjectFilePath)" Targets="Pack" Properties="$(PackAsExecutableMSBuildProperties)" />
+
+    <!--<PropertyGroup>
+      <NugetFilePath>$(PackageOutputPath)\$(PackageId).$(PackageVersion).nupkg</NugetFilePath>
+    </PropertyGroup>-->
+
+    <!--<Unzip SourceFiles="$(PackageOutputPath)\$(PackageId).$(PackageVersion).nupkg" DestinationFolder="$(PackageOutputPath)" />
+    <Delete Files="$(NugetFilePath)" />-->
+
+  </Target>
+
+  <!--
+  =====================================================
+                         CleanUnpackedExecutablePackage
+                                       
+  Cleans the unzipped and packed as executable package.
+  =====================================================
+  -->
+  <Target Name="CleanUnpackedExecutablePackage" AfterTargets="Clean" Condition="'$(PackAsExecutable)' == 'Publish'">
+    <ItemGroup>
+      <_PackageFiles Include="$(PackageOutputPath)\**\*" />
+    </ItemGroup>
+
+    <Delete Files="@(_PackageFiles)" />
+    <RemoveDir Directories="$(PackageOutputPath)" />
+  </Target>
+
+  <!--
+  =====================================================
+                               CollectProjectProperties
+  Outputs PackExecutable relevant projects properties.
+  =====================================================
+  -->
+  <Target Name="GetExecutableProjectProperties" Outputs="$(ExecutableProjectProperties)">
+    <PropertyGroup>
+      <_S>$(ExecutableProjectPropertySeparator)</_S>
+      <!-- List separator: https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-special-characters?view=vs-2019 -->
+      <!--TargetFrameworks=$(TargetFrameworks)$(_S)?-->
+      <ExecutableProjectProperties>?AssemblyName=$(AssemblyName)$(_S)?PackageId=$(PackageId)$(_S)?PackageVersion=$(PackageVersion)$(_S)?PublishDir=$(PublishDir)$(_S)?TargetFramework=$(TargetFramework)$(_S)?Description=$([MSBuild]::Escape('$(Description)'))</ExecutableProjectProperties>
+    </PropertyGroup>
+
+    <Message Text="Following executable project properties has been gathered:" Importance="high" />
+    <Message Text="$(ExecutableProjectProperties)" Importance="high" />
+  </Target>
+
+  <!-- 
+  =====================================================
+  Target gets the value of a property within comma
+  separated properties.
+  
+  Required:
+    CommaSeparatedProperties:
+      The string with key value pairs separated by 
+      semicolons.
+    PropertyName: 
+      The name of the property.
+    (Optional) PropertyNamePrefix:
+      Can be any char or string.
+    (Optional) PropertySeparator:
+      The char that separats the property value pairs.
+      It is ';' by default.
+    (Optional) GetPropertyValueDebug: 
+      If true debug information is shown.
+  =====================================================
+  -->
+  <Target Name="GetPropertyValue" Outputs="$(_PropertyValue)">
+
+    <PropertyGroup>
+      <_PropertySeparator Condition="'$(PropertySeparator)' != ''">$(PropertySeparator)</_PropertySeparator>
+      <_PropertySeparator Condition="'$(_PropertySeparator)' == ''">;</_PropertySeparator>
+    </PropertyGroup>
+
+    <Message Text="[$(MSBuildThisFile)] Received properties $(CommaSeparatedProperties)" Importance="high" Condition="'$(GetPropertyValueDebug)' == 'true'" />
+
+    <PropertyGroup>
+      <_PropertyName>$(PropertyNamePrefix)$(PropertyName)=</_PropertyName>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <_PropertyLength>$(_PropertyName.Length)</_PropertyLength>
+    </PropertyGroup>
+
+    <Message Text="[$(MSBuildThisFile)] _PropertyLength: $(_PropertyLength)" Importance="high" Condition="'$(GetPropertyValueDebug)' == 'true'" />
+
+    <PropertyGroup>
+      <_PropertyIndex>$(CommaSeparatedProperties.IndexOf('$(_PropertyName)'))</_PropertyIndex>
+    </PropertyGroup>
+
+    <Message Text="[$(MSBuildThisFile)] _PropertyIndex: $(_PropertyIndex)" Importance="high" Condition="'$(GetPropertyValueDebug)' == 'true'" />
+
+    <PropertyGroup>
+      <_PropertyValueIndex>$([MSBuild]::Add($(_PropertyIndex),$(_PropertyName.Length)))</_PropertyValueIndex>
+    </PropertyGroup>
+
+    <Message Text="[$(MSBuildThisFile)] _PropertyValueIndex: $(_PropertyValueIndex)" Importance="high" Condition="'$(GetPropertyValueDebug)' == 'true'" />
+
+    <PropertyGroup>
+      <_PropertySemicolonIndex>$(CommaSeparatedProperties.IndexOf($(_PropertySeparator),$(_PropertyValueIndex)))</_PropertySemicolonIndex>
+    </PropertyGroup>
+
+    <Message Text="[$(MSBuildThisFile)] _PropertySemicolonIndex: $(_PropertySemicolonIndex)" Importance="high" Condition="'$(GetPropertyValueDebug)' == 'true'" />
+
+    <PropertyGroup>
+      <_IsPropertySemicolonIndexNegative>false</_IsPropertySemicolonIndexNegative>
+      <_IsPropertySemicolonIndexNegative Condition="'$(_PropertySemicolonIndex)' == '-1'">true</_IsPropertySemicolonIndexNegative>
+      <_PropertySemicolonIndex Condition="$(_IsPropertySemicolonIndexNegative)">$(CommaSeparatedProperties.Length)</_PropertySemicolonIndex>
+    </PropertyGroup>
+
+    <Message Text="[$(MSBuildThisFile)] _PropertySemicolonIndex is now $(_PropertySemicolonIndex)" Importance="high" Condition="$(_IsPropertySemicolonIndexNegative) And '$(GetPropertyValueDebug)' == 'true'" />
+
+    <PropertyGroup>
+      <_PropertyValueLength>$([MSBuild]::Subtract($(_PropertySemicolonIndex),$(_PropertyValueIndex)))</_PropertyValueLength>
+    </PropertyGroup>
+
+    <Message Text="[$(MSBuildThisFile)] _PropertyValueLength: $(_PropertyValueLength)" Importance="high" Condition="'$(GetPropertyValueDebug)' == 'true'" />
+
+    <PropertyGroup>
+      <_PropertyValue>$(CommaSeparatedProperties.SubString($(_PropertyValueIndex),$(_PropertyValueLength)))</_PropertyValue>
+    </PropertyGroup>
+
+    <Message Text="[$(MSBuildThisFile)] _PropertyValue: $(_PropertyValue)" Importance="high" Condition="'$(GetPropertyValueDebug)' == 'true'" />
+
+  </Target>
+
+  <Target Name="_ApplyExecutableProjectProperties" DependsOnTargets="_ReadExecutableProjectProperties" BeforeTargets="GenerateNuspec;_GetProjectVersion" Condition="'$(PackAsExecutable)' == 'Package'">
+        
+    <PropertyGroup>
+      <PackageDescription Condition="'$(ExecutableProjectDiscription)' != ''">$(ExecutableProjectDiscription)</PackageDescription>
+    </PropertyGroup>
+    
+    <PropertyGroup>
+      <PackageVersion>$(ExecutableProjectPackageVersion)</PackageVersion>
+    </PropertyGroup>
+    
+  </Target>
+
+  <Target Name="_ReadExecutableProjectProperties" Condition="'$(PackAsExecutable)' == 'Package'">
+    
+    <PropertyGroup>
+      <_MSBuildRemoveProperties>TargetFramework;TargetFrameworks</_MSBuildRemoveProperties>
+    </PropertyGroup>
+
+    <MSBuild Projects="..\..\src\Teronis.ModuleInitializer.AssemblyLoad.Executable.csproj" Targets="GetVersionCache;GetExecutableProjectProperties" RemoveProperties="$(_MSBuildRemoveProperties)">
+      <Output TaskParameter="TargetOutputs" PropertyName="_ExecutableProjectProperties" />
+    </MSBuild>
+
+    <PropertyGroup>
+
+      <_MSBuildProperties>
+        PropertyNamePrefix=?;
+        PropertySeparator=$(ExecutableProjectPropertySeparator);
+        CommaSeparatedProperties=$(_ExecutableProjectProperties)
+      </_MSBuildProperties>
+
+    </PropertyGroup>
+
+    <MSBuild Projects="$(TeronisMSBuildPackagingPackExecutableTargetsFile)" Targets="GetPropertyValue" Properties="$(_MSBuildProperties);PropertyName=PackageVersion" RemoveProperties="$(_MSBuildRemoveProperties)">
+      <Output TaskParameter="TargetOutputs" PropertyName="ExecutableProjectPackageVersion" />
+    </MSBuild>
+
+    <MSBuild Projects="$(TeronisMSBuildPackagingPackExecutableTargetsFile)" Targets="GetPropertyValue" Properties="$(_MSBuildProperties);PropertyName=PublishDir" RemoveProperties="$(_MSBuildRemoveProperties)">
+      <Output TaskParameter="TargetOutputs" PropertyName="ExecutableProjectPublishDir" />
+    </MSBuild>
+
+    <MSBuild Projects="$(TeronisMSBuildPackagingPackExecutableTargetsFile)" Targets="GetPropertyValue" Properties="$(_MSBuildProperties);PropertyName=TargetFramework" RemoveProperties="$(_MSBuildRemoveProperties)">
+      <Output TaskParameter="TargetOutputs" PropertyName="ExecutableProjectTargetFramework" />
+    </MSBuild>
+
+    <!--<MSBuild Projects="$(TeronisMSBuildPackagingPackExecutableTargetsFile)" Targets="GetPropertyValue" Properties="$(_MSBuildProperties);PropertyName=TargetFrameworks" RemoveProperties="$(_MSBuildRemoveProperties)">
+      <Output TaskParameter="TargetOutputs" PropertyName="ExecutableProjectTargetFrameworks" />
+    </MSBuild>-->
+
+    <MSBuild Projects="$(TeronisMSBuildPackagingPackExecutableTargetsFile)" Targets="GetPropertyValue" Properties="$(_MSBuildProperties);PropertyName=Description" RemoveProperties="$(_MSBuildRemoveProperties)">
+      <Output TaskParameter="TargetOutputs" PropertyName="ExecutableProjectDiscription" />
+    </MSBuild>
+
+    <PropertyGroup>
+      <ExecutableProjectDiscription>$([MSBuild]::Unescape('$(ExecutableProjectDiscription)'))</ExecutableProjectDiscription>
+    </PropertyGroup>
+    
+  </Target>
+
+</Project>

@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.0</TargetFramework>
+  </PropertyGroup>
+
+  <!-- TODO: outsource -->
+  <PropertyGroup>
+    <!--<NoPackageAnalysis>true</NoPackageAnalysis>-->
+    <!--<IncludeBuildOutput>false</IncludeBuildOutput>-->
+    <!--<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
+    <!--<GenerateAssemblyInfo>false</GenerateAssemblyInfo>-->
+    <!--<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>-->
+    <!--<DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>-->
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\0.Executable\ref\ExecutablePackage\ExecutablePackage.ModuleInitializer.AssemblyLoad.Executable.csproj" />
+  </ItemGroup>
+
+</Project>

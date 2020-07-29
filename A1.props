@@ -1,0 +1,12 @@
+<Project>
+    <Target Name="A" Outputs="@(AAA)">
+        <ItemGroup>
+            <AAA Include="A">
+                <Value>1</Value>
+            </AAA>
+            <AAA Include="B">
+                <Value>2</Value>
+            </AAA>
+        </ItemGroup>
+    </Target>
+</Project>

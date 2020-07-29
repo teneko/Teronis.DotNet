@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace Teronis.NetCoreApp.AssemblyLoadInjection.Executable
+namespace Teronis.ModuleInitializer.AssemblyLoad
 {
     [Verb("read-assembly-name")]
     public class ReadFullAssemblyNameCommand

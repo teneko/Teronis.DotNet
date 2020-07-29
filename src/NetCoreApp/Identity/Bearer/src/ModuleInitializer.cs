@@ -1,6 +1,6 @@
 ﻿using Teronis.Mvc.Hosting;
 
-namespace Teronis.Identity
+namespace Teronis.Identity.Bearer
 {
     public static class ModuleInitializer
     {

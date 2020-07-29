@@ -1,0 +1,9 @@
+﻿<Project>
+  <PropertyGroup>
+    <TargetsForTfmSpecificExecutableAsProjectContentInPackage>TfmSpecificExecutableAsProjectContentInPackage</TargetsForTfmSpecificExecutableAsProjectContentInPackage>
+    <TargetsForTfmSpecificExecutableAsPackageContentInPackage>TfmSpecificExecutableAsPackageContentInPackage</TargetsForTfmSpecificExecutableAsPackageContentInPackage>
+    <GenerateNuspecWhenPackingExecutableAsPackageDependsOn>PackExecutableAsPackage</GenerateNuspecWhenPackingExecutableAsPackageDependsOn>
+    <ExecutableProjectType Condition="'$(ExecutableProjectType)' == ''">ExecutableProject</ExecutableProjectType>
+    <ExecutableProjectPropertySeparator Condition="'$(ExecutableProjectPropertySeparator)' == ''">+|'_'|+</ExecutableProjectPropertySeparator>
+  </PropertyGroup>
+</Project>

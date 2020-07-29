@@ -1,19 +1,17 @@
 ﻿using System;
 using System.IO;
 using CommandLine;
-using Teronis.NetCoreApp.AssemblyLoadInjection;
-using Teronis.NetCoreApp.AssemblyLoadInjection.Executable;
-using Teronis.NetCoreApp.ModuleInitializerInjector.Utils;
-using static Teronis.AssemblyInitializerInjection.Utils.ExceptionUtils;
+using Teronis.ModuleInitializer.AssemblyLoad.Utils;
+using static Teronis.ModuleInitializer.AssemblyLoad.Utils.ExceptionUtils;
 
-namespace Teronis.NetCoreApp.ModuleInitInjector
+namespace Teronis.ModuleInitializer.AssemblyLoad
 {
     internal class Program
     {
         public static int Main(string[] args)
         {
-            return Parser.Default.ParseArguments<ReadFullAssemblyNameCommand, InjectAssemblyInitializerCommandOptions>(args)
-                .MapResult<ReadFullAssemblyNameCommand, InjectAssemblyInitializerCommandOptions, int>(
+            return Parser.Default.ParseArguments<ReadFullAssemblyNameCommand, InjectAssemblyLoadCommandOptions>(args)
+                .MapResult<ReadFullAssemblyNameCommand, InjectAssemblyLoadCommandOptions, int>(
                     fullNameOptions => {
                         try {
                             var assemblyFullName = AssemblyPathUtils.ReadAssemblyFullName(fullNameOptions.AssemblyPath);
@@ -32,29 +30,14 @@ namespace Teronis.NetCoreApp.ModuleInitInjector
                         return 0;
                     },
                     injectOptions => {
-                        var assemlyNameToBeLoaded = injectOptions.AssemlyNameToBeLoaded;
-                        var assemlyNameFromPathToBeLoaded = injectOptions.AssemlyNameFromPathToBeLoaded;
-
-                        if (assemlyNameToBeLoaded == null && assemlyNameFromPathToBeLoaded == null) {
-                            Console.Error.WriteLine($"You have to set --{InjectAssemblyInitializerCommandOptions.AssemblyNameOptionLongName} " +
-                                $"or --{InjectAssemblyInitializerCommandOptions.AssemblyNameFromPathOptionLongName}.");
-
-                            return 1;
-                        } else if (assemlyNameToBeLoaded != null && assemlyNameFromPathToBeLoaded != null) {
-                            Console.Error.WriteLine($"You can only set --{InjectAssemblyInitializerCommandOptions.AssemblyNameOptionLongName} " +
-                                $"or --{InjectAssemblyInitializerCommandOptions.AssemblyNameFromPathOptionLongName}.");
-
-                            return 1;
-                        }
-
                         try {
-                            AssemblyInitializerInjector.Default.InjectAssemblyInitializer(injectOptions.InjectionTargetAssemblyPath,
-                                injectOptions.AssemlyNameToBeLoaded);
-                        } catch (ArgumentNullException) {
-                            Console.Error.WriteLine("The assembly path cannot be null.");
+                            AssemblyLoaderInjector.Default.InjectAssemblyInitializer(injectOptions.InjectionTargetAssemblyPath,
+                                injectOptions.SourceAssemblyPathToBeLoaded);
+                        } catch (ArgumentNullException error) {
+                            Console.Error.WriteLine($"The assembly path cannot be null. ({error.ParamName})");
                             return 1;
-                        } catch (FileNotFoundException) {
-                            Console.Error.WriteLine("The assembly file was not found.");
+                        } catch (FileNotFoundException error) {
+                            Console.Error.WriteLine($"The assembly file '{error.FileName}' was not found.");
                             return 1;
                         } catch (AggregateException error) {
                             foreach (var innerError in error.InnerExceptions) {

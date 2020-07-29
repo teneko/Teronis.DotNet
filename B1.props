@@ -1,0 +1,9 @@
+<Project>
+    <Target Name="B">
+        <MSBuild Projects="A1.props" Targets="A">
+            <Output TaskParameter="TargetOutputs" ItemName="BBB" />
+        </MSBuild>
+
+        <Message Text="@(BBB)" Importance="high" />
+    </Target>
+</Project>

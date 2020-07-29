@@ -4,21 +4,20 @@
   <Import Condition="'$(IsMSBuildFileImported)' != 'true'" Project="$([MSBuild]::GetPathOfFileAbove(.msbuild))" />
   <Import Condition="'$(IsTeronisDotNetCorePropsFileImported)' != 'true'" Project="$(RootCorePropsPath)" />
   <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackagePropsFile)" />
+  <Import Project="$(TeronisMSBuildPackagingPackExecutablePropsFile)" />
 
   <PropertyGroup>
-    <!-- <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies> -->
-    <DisableGitVersionTaskAutoInstall>false</DisableGitVersionTaskAutoInstall>
-    <ProjectBuildInPackageVerbosity>detailed</ProjectBuildInPackageVerbosity>
+    <AssemblyName Condition="'$(AssemblyName)' == ''">$(MSBuildProjectName)</AssemblyName>
+    <Platforms Condition="'$(Platforms)' == ''">AnyCPU;x64;x86</Platforms>
+    <DebugSymbols Condition="'$(DebugSymbols)' == ''">true</DebugSymbols>
+    <DebugType Condition="'$(DebugType)' == ''">portable</DebugType>
+    <GeneratePackageOnBuild Condition="'$(GeneratePackageOnBuild)' == ''">false</GeneratePackageOnBuild>
+    <LangVersion Condition="'$(LangVersion)' == ''">8.0</LangVersion>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
-    <Platforms>AnyCPU;x64;x86</Platforms>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <LangVersion>8.0</LangVersion>
-  </PropertyGroup>
+  <ItemGroup>
+	  <Compile Include="$(MSBuildThisFileDirectory)/Nullable.cs" />
+  </ItemGroup>
 
   <PropertyGroup>
     <Authors Condition="'$(Authors)' == ''">Teroneko</Authors>
@@ -36,17 +35,26 @@
     This is useful if you generate files during the build .
     -->
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <!-- Source Link -->
-    <DebugType>portable</DebugType>
-    <DebugSymbols>true</DebugSymbols>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <NeutralLanguage Condition="'$(NeutralLanguage)' == ''">en</NeutralLanguage>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+
+    <None Include="$(MSBuildThisFileDirectory)\icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
   <PropertyGroup>
-  <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies>
- </PropertyGroup>
+    <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies>
+  </PropertyGroup>
 
   <PropertyGroup>
 
@@ -60,13 +68,16 @@
     <IsTestProject Condition="$(MSBuildProjectName.EndsWith('.Test')) Or $(MSBuildProjectName.StartsWith('Test.'))">true</IsTestProject>
 
     <IsPackagePublishProject>false</IsPackagePublishProject>
-    <IsPackagePublishProject Condition="$(MSBuildProjectName.StartsWith('PackagePublish.'))">true</IsPackagePublishProject>
+    <IsPackagePublishProject Condition="$(MSBuildProjectName.StartsWith('PackagePublish2.'))">true</IsPackagePublishProject>
 
     <IsLocalizationProject>false</IsLocalizationProject>
     <IsLocalizationProject Condition="$(MSBuildProjectName.EndsWith('.Localization'))">true</IsLocalizationProject>
 
     <IsExampleProject>false</IsExampleProject>
     <IsExampleProject Condition="$(MSBuildProjectName.EndsWith('.Example'))">true</IsExampleProject>
+
+    <IsPackagePublish2Project>false</IsPackagePublish2Project>
+    <IsPackagePublish2Project Condition="$(MSBuildProjectName.StartsWith('ExecutablePackage.'))">true</IsPackagePublish2Project>
 
   </PropertyGroup>
 
@@ -75,14 +86,15 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="$(IsTestProject)">
+    <!-- TODO: Refactor with .Substring(..) and .IndexOf(..). -->
     <_ProjectNameWithoutTest Condition="$(MSBuildProjectName.EndsWith('.Test'))">$(MSBuildProjectName.Replace('.Test','')</_ProjectNameWithoutTest>
     <_ProjectNameWithoutTest Condition="$(MSBuildProjectName.StartsWith('Test.'))">$(MSBuildProjectName.Replace('Test.','Teronis')</_ProjectNameWithoutTest>
     <Description>Contains test cases for assembly $(_ProjectNameWithoutTest).</Description>
   </PropertyGroup>
 
   <PropertyGroup>
-    <IsGitVersionCacheRelated Condition="'$(IsGitVersionCacheRelated)' == '' 
-      And ('$(IsGitVersionCacheProject)' 
+    <IsGitVersionCacheRelated Condition="'$(IsGitVersionCacheRelated)' == ''
+      And ('$(IsGitVersionCacheProject)'
         Or '$(IsPackagePublishProject)')">true</IsGitVersionCacheRelated>
 
     <IsGitVersionCacheRelated Condition="'$(IsGitVersionCacheRelated)' == ''">false</IsGitVersionCacheRelated>
@@ -95,6 +107,8 @@
         Or $(IsExampleProject))">false</IsPackable>
 
     <IsPackable Condition="'$(IsPackable)' == ''">true</IsPackable>
+
+    <DisableGitVersionCache Condition="$(IsPackagePublish2Project)">true</DisableGitVersionCache>
 
   </PropertyGroup>
 
@@ -109,16 +123,10 @@
     <!-- <UseFullSemVerForNuGet>true</UseFullSemVerForNuGet> -->
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)\LICENSE.md">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-
-    <None Include="$(MSBuildThisFileDirectory)\icon.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
+  <PropertyGroup>
+    <!-- <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies> -->
+    <ProjectBuildInPackageVerbosity>detailed</ProjectBuildInPackageVerbosity>
+    <PackAsExecutableMSBuildProperties>DisableGitVersionCache=true</PackAsExecutableMSBuildProperties>
+  </PropertyGroup>
 
 </Project>

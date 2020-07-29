@@ -4,14 +4,15 @@
   <Import Condition="'$(IsMSBuildFileImported)' != 'true'" Project="$([MSBuild]::GetPathOfFileAbove(.msbuild))" />
   <Import Condition="'$(IsTeronisDotNetCorePropsFileImported)' != 'true'" Project="$(RootCorePropsPath)" />
   <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackageTargetsFile)" />
+  <Import Project="$(TeronisMSBuildPackagingPackExecutableTargetsFile)" />
   
+  <ItemGroup>
+    <Compile Remove="$(MSBuildThisFileDirectory)/Nullable.cs" Condition="'$(Nullable)' != 'enable' Or '$(DisallowNullableAttributes)' == 'true'" />
+  </ItemGroup>
+
   <PropertyGroup>
     <PackageDescription Condition="'$(PackageDescription)' == '' And '$(Description)' != ''">$(Description)</PackageDescription>
   </PropertyGroup>
-
-  <ItemGroup>
-	  <Compile Include="$(MSBuildThisFileDirectory)/Nullable.cs" Condition="'$(Nullable)' == 'enable' And '$(DisallowNullableAttributes)' != 'true'" />
-  </ItemGroup>
 
   <PropertyGroup>
     <!-- 
@@ -78,6 +79,18 @@
   </Target>
 
   <Target Name="_DirectoryBuildAfterClean" BeforeTargets="AfterClean">
+    <PropertyGroup>
+      <DisableGitVersionCache>false</DisableGitVersionCache>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="AfterUnpackAsExecutablePackedProject" BeforeTargets="UnpackAsExecutablePackedProject">
+    <PropertyGroup>
+      <DisableGitVersionCache>true</DisableGitVersionCache>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="AfterUnpackAsExecutablePackedProject" AfterTargets="UnpackAsExecutablePackedProject">
     <PropertyGroup>
       <DisableGitVersionCache>false</DisableGitVersionCache>
     </PropertyGroup>

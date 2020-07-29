@@ -8,18 +8,18 @@ using MethodBody = Mono.Cecil.Cil.MethodBody;
 using MethodAttributes = Mono.Cecil.MethodAttributes;
 using Mono.Cecil.Pdb;
 using Mono.Cecil.Rocks;
-using Teronis.NetCoreApp.ModuleInitializerInjector.Utils;
-using Teronis.NetCoreApp.AssemblyLoadInjection.Extensions;
 using System.IO;
+using Teronis.ModuleInitializer.AssemblyLoad.Utils;
+using Teronis.ModuleInitializer.AssemblyLoad.Extensions;
 
-namespace Teronis.NetCoreApp.AssemblyLoadInjection
+namespace Teronis.ModuleInitializer.AssemblyLoad
 {
-    public class AssemblyInitializerInjector
+    public class AssemblyLoaderInjector
     {
         private const string cctorName = ".cctor";
         private const MethodAttributes cctorAttributes = MethodAttributes.Private | MethodAttributes.HideBySig | MethodAttributes.Static | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
 
-        public static AssemblyInitializerInjector Default = new AssemblyInitializerInjector();
+        public static AssemblyLoaderInjector Default = new AssemblyLoaderInjector();
 
         private static TypeDefinition findModuleClass(ModuleDefinition moduleDefinition) =>
             moduleDefinition.Types.FirstOrDefault(x => x.Name == "<Module>")
@@ -38,7 +38,7 @@ namespace Teronis.NetCoreApp.AssemblyLoadInjection
             return cctor;
         }
 
-        private static void injectAssemblyLoad(MethodBody methodBody, Func<MethodInfo, MethodReference> importMethodReference, string assemblyNameToBeLoaded)
+        private static void injectAssemblyLoad(MethodBody methodBody, string sourceAssemblyPath, Func<MethodDefinition, MethodReference> resolveMethod)
         {
             methodBody.SimplifyMacros();
 
@@ -46,23 +46,14 @@ namespace Teronis.NetCoreApp.AssemblyLoadInjection
                 .Where(x => x.OpCode == OpCodes.Ret)
                 .ToList();
 
-            var assemblyType = typeof(Assembly);
+            using var sourceAssembly = AssemblyPathUtils.ReadAssemblyFromPath(sourceAssemblyPath, false);
+            var sourceAssemblyMainModule = sourceAssembly.MainModule;
 
-            var assemblyLoadMethodInfo = assemblyType.GetMethod("Load",
-                BindingFlags.Default | BindingFlags.Static | BindingFlags.Public,
-                binder: null,
-                types: new Type[] { typeof(string) },
-                modifiers: null);
+            var foundMethodInitializerMethods = ModuleDefinitionUtils.FindModuleInitializerMethods(sourceAssemblyMainModule)
+                .Select(resolveMethod);
 
             foreach (var instruction in returnInstructions) {
-                var callAssemblyLoadInstruction = Instruction.Create(OpCodes.Call, importMethodReference(assemblyLoadMethodInfo));
-                var loadStringInstruction = Instruction.Create(OpCodes.Ldstr, assemblyNameToBeLoaded);
-                var popInstruction = Instruction.Create(OpCodes.Pop);
-
-                var instructions = new List<Instruction> {
-                    loadStringInstruction,
-                    callAssemblyLoadInstruction,
-                    popInstruction,
+                var instructions = new List<Instruction>(foundMethodInitializerMethods.Select(x => Instruction.Create(OpCodes.Call, x))) {
                     Instruction.Create(OpCodes.Ret)
                 };
 
@@ -88,13 +79,13 @@ namespace Teronis.NetCoreApp.AssemblyLoadInjection
             assembly.Write(assemblyPath, writeParams);
         }
 
-        public void InjectAssemblyInitializer(string injectionTargetAssemblyPath, string assemblyNameToBeLoaded, string? keyFile)
+        public void InjectAssemblyInitializer(string injectionTargetAssemblyPath, string sourceAssemblyPath, string? keyFile)
         {
             injectionTargetAssemblyPath = injectionTargetAssemblyPath
                 ?? throw new ArgumentNullException(nameof(injectionTargetAssemblyPath));
 
-            assemblyNameToBeLoaded = assemblyNameToBeLoaded
-                ?? throw new ArgumentNullException(nameof(assemblyNameToBeLoaded));
+            sourceAssemblyPath = sourceAssemblyPath
+                ?? throw new ArgumentNullException(nameof(sourceAssemblyPath));
 
             var injectionTargetAssemblyCopyPath = Path.GetTempFileName();
 
@@ -116,8 +107,8 @@ namespace Teronis.NetCoreApp.AssemblyLoadInjection
                 var injectionTargetAssemblyMainModuleClassCctorBody = injectionTargetAssemblyMainModuleClassCctor.Body;
 
                 injectAssemblyLoad(injectionTargetAssemblyMainModuleClassCctorBody,
-                    injectionTargetAssemblyMainModule.ImportReference,
-                    assemblyNameToBeLoaded);
+                    sourceAssemblyPath,
+                    injectionTargetAssemblyMainModule.ImportReference);
 
                 // AssemblyDefinition.Write(..) behaviour is to overwrite path if existing.
                 writeTargetInjectionAssembly(injectionTargetAssembly, injectionTargetAssemblyPath, keyFile,

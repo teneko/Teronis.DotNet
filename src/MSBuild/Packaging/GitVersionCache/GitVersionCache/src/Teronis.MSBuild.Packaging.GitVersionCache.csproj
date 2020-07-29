@@ -86,15 +86,12 @@
     <None Include="$(MSBuildThisFileDirectory)build\**\*" Pack="true" PackagePath="build">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    
+
     <None Include="$(MSBuildThisFileDirectory)build\**\*" Pack="true" PackagePath="buildMultiTargeting">
+      <!-- Last link wins -->
+      <Link>build\%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-
-    <!--<None Include="$(PkgGitVersionTask)\tools\**\*" Pack="true" PackagePath="GitVersion\">
-      <Link>GitVersion\%(RecursiveDir)\%(Filename)%(Extension)</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>-->
 
   </ItemGroup>
 

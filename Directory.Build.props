@@ -81,17 +81,26 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <IsGitVersionCacheRelated Condition="'$(IsGitVersionCacheRelated)' == '' 
+      And ('$(IsGitVersionCacheProject)' 
+        Or '$(IsPackagePublishProject)')">true</IsGitVersionCacheRelated>
+
+    <IsGitVersionCacheRelated Condition="'$(IsGitVersionCacheRelated)' == ''">false</IsGitVersionCacheRelated>
 
     <!-- https://docs.microsoft.com/de-de/dotnet/core/tools/csproj#ispackable -->
     <IsPackable Condition="'$(IsPackable)' == ''
-      And ($(IsGitVersionCacheProject) 
-        Or $(IsTestProject) 
-        Or $(IsPackagePublishProject) 
-        Or $(IsLocalizationProject) 
+      And ($(IsGitVersionCacheRelated)
+        Or $(IsTestProject)
+        Or $(IsLocalizationProject)
         Or $(IsExampleProject))">false</IsPackable>
 
     <IsPackable Condition="'$(IsPackable)' == ''">true</IsPackable>
 
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IsGitVersionCacheRelated)' == 'true'">
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>None</DebugType>
   </PropertyGroup>
 
   <PropertyGroup>

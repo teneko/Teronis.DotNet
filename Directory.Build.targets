@@ -27,7 +27,10 @@
 
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" Conditions="'$(DisableGitVersionCache)' != 'true' And $(IsPackable)" />
 
-    <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\GitVersionCache\GitVersionCache\ref\PackagePublish\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj" Condition="'$(DisableGitVersionCache)' != 'true' And $(IsPackable)" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\GitVersionCache\GitVersionCache\ref\PackagePublish\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj"
+      Condition="'$(IsGitVersionCacheRelated)' != 'true'
+        And '$(DisableGitVersionCache)' != 'true' 
+        And '$(IsPackable)' == 'true'" />
     
   </ItemGroup>
 
@@ -36,12 +39,15 @@
     <_TeronisMSBuildPackagingGitVersionCacheTargetsFile>$(TeronisMSBuildPackagingGitVersionCacheTargetsFileTemplate.Replace('(Configuration)','$(Configuration)'))</_TeronisMSBuildPackagingGitVersionCacheTargetsFile>
   </PropertyGroup>
 
-  <Import Project="$(_TeronisMSBuildPackagingGitVersionCachePropsFile)" Condition="Exists('$(_TeronisMSBuildPackagingGitVersionCachePropsFile)') And '$(DisableGitVersionCache)' != 'true'" />
-  <Import Project="$(_TeronisMSBuildPackagingGitVersionCacheTargetsFile)" Condition="Exists('$(_TeronisMSBuildPackagingGitVersionCacheTargetsFile)') And '$(DisableGitVersionCache)' != 'true'" />
+  <Import Project="$(_TeronisMSBuildPackagingGitVersionCachePropsFile)" 
+    Condition="Exists('$(_TeronisMSBuildPackagingGitVersionCachePropsFile)')
+      And '$(IsGitVersionCacheRelated)' != 'true'
+      And '$(DisableGitVersionCache)' != 'true'" />
 
-  <!-- <PropertyGroup>
-    <DefineConstants Condition="'$(DisallowNullableAttributes)' == 'true'">$(DefineConstants);DISALLOW_NULLABLE_ATTRIBUTES</DefineConstants>
-  </PropertyGroup> -->
+  <Import Project="$(_TeronisMSBuildPackagingGitVersionCacheTargetsFile)"
+    Condition="Exists('$(_TeronisMSBuildPackagingGitVersionCacheTargetsFile)') 
+      And '$(IsGitVersionCacheRelated)' != 'true'
+      And '$(DisableGitVersionCache)' != 'true'" />
 
   <ItemGroup>
 
@@ -76,20 +82,5 @@
       <DisableGitVersionCache>false</DisableGitVersionCache>
     </PropertyGroup>
   </Target>
-
-  <!-- <Target Name="InstallGitVersionTask" >
-
-    <PropertyGroup>
-      <HasGitVersionTask Condition="'%(PackageReference.Identity)' == 'GitVersionTask'">true</HasGitVersionTask>
-    </PropertyGroup>
-
-    <ItemGroup Condition="'$(DisableGitVersionTaskAutoInstall)' != 'true' And '$(HasGitVersionTask)' != 'true'">
-      <PackageReference Include="GitVersionTask" Version="$(GitVersionTaskVersion)">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-    </ItemGroup>
-
-  </Target> -->
 
 </Project>

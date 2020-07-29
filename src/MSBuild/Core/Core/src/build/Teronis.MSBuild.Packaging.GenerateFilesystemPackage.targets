@@ -14,7 +14,7 @@
     <!-- The location where to unzip. -->
     <UnzipPackageDestinationDirectory Condition="'$(UnzipPackageDestinationDirectory)' == ''">$(_FilesystemPackageProjectBinaryDirectory)packagePublish</UnzipPackageDestinationDirectory>
     <_TargetTasksTargets Condition="'$(_TargetTasksTargets)' == ''">$(MSBuildThisFileDirectory)TargetTasks.targets</_TargetTasksTargets>
-    <_UnzipPackageId>FilesystemPackage.$(MSBuildProjectName)</_UnzipPackageId>
+    <_UnzipPackageId>FsPkg.$(MSBuildProjectName)</_UnzipPackageId>
 
     <_FilesystemPackageIntermediateOutputPath Condition="'$(_FilesystemPackageIntermediateOutputPath)' == '' And '$(IntermediateOutputPath)' != ''">$(IntermediateOutputPath.TrimEnd('\'))\</_FilesystemPackageIntermediateOutputPath>
     <_FilesystemPackageIntermediateOutputPath Condition="'$(_FilesystemPackageIntermediateOutputPath)' == ''">$(MSBuildProjectDirectory)\obj\</_FilesystemPackageIntermediateOutputPath>
@@ -47,18 +47,23 @@
   <Target Name="GenerateFilesystemPackage" DependsOnTargets="$(GenerateFilesystemPackageDependsOn)"
           Inputs="$(_GenerateFilesystemPackageInputsFile)" Outputs="$(_GenerateFilesystemPackageOutputsFile)">
 
-    <Message Text="[$(MSBuildThisFileName)] Generate filesystem package for $(MSBuildProjectName). (Configuration=$(Configuration), TargetFramework=$(TargetFramework)" Importance="high" />
+    <PropertyGroup>
+      <_MSBuildProjectPath>$(MSBuildProjectDirectory)\$(MSBuildProjectName).csproj</_MSBuildProjectPath>
+    </PropertyGroup>
+    
+    <Message Text="[$(MSBuildThisFileName)] Publish $(_MSBuildProjectPath) (Configuration=$(Configuration), TargetFramework=$(TargetFramework))" Importance="high" />
 
     <PropertyGroup>
+      <!--PackageVersion=0.0.1-$(TargetFramework.ToLower().Replace('.','v'));-->
       <ThisProjectMSBuildProperties>
         Configuration=$(Configuration);
         PackageId=$(_UnzipPackageId);
-        PackageVersion=0.0.1-$(TargetFramework.ToLower().Replace('.','v'));
+        PackageVersion=0.0.1-fs-pkg.9999;
         DisableGitVersionTask=true
       </ThisProjectMSBuildProperties>
     </PropertyGroup>
 
-    <MSBuild Projects="$(MSBuildProjectDirectory)\$(MSBuildProjectName).csproj" Targets="Pack" Properties="$(ThisProjectMSBuildProperties)" />
+    <MSBuild Projects="$(_MSBuildProjectPath)" Targets="Pack" Properties="$(ThisProjectMSBuildProperties)" />
 
     <PropertyGroup>
 

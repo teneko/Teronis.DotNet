@@ -32,8 +32,8 @@
     <TeronisMSBuildPackagingProjectBuildInPackageTargetsFile Condition="'$(TeronisMSBuildPackagingProjectBuildInPackageTargetsFile)' == ''">$(RootDirectory)\src\MSBuild\Packaging\ProjectBuildInPackage\src\build\Teronis.MSBuild.Packaging.ProjectBuildInPackage.targets</TeronisMSBuildPackagingProjectBuildInPackageTargetsFile>
 
     <!-- Teronis.MSBuild.GitVersionCache -->
-    <TeronisMSBuildPackagingGitVersionCachePropsFileTemplate>$(RootDirectory)src\MSBuild\Packaging\GitVersionCache\GitVersionCache\ref\GitVersionCache\bin\(Configuration)\netstandard2.0\packagePublish\build\Teronis.MSBuild.Packaging.GitVersionCache.props</TeronisMSBuildPackagingGitVersionCachePropsFileTemplate>
-    <TeronisMSBuildPackagingGitVersionCacheTargetsFileTemplate>$(RootDirectory)src\MSBuild\Packaging\GitVersionCache\GitVersionCache\ref\GitVersionCache\bin\(Configuration)\netstandard2.0\packagePublish\build\Teronis.MSBuild.Packaging.GitVersionCache.targets</TeronisMSBuildPackagingGitVersionCacheTargetsFileTemplate>
+    <TeronisMSBuildPackagingGitVersionCachePropsFileTemplate>$(RootDirectory)src\MSBuild\Packaging\GitVersionCache\0\ref\GitVersionCache\bin\(Configuration)\netstandard2.0\packagePublish\build\Teronis.MSBuild.Packaging.GitVersionCache.props</TeronisMSBuildPackagingGitVersionCachePropsFileTemplate>
+    <TeronisMSBuildPackagingGitVersionCacheTargetsFileTemplate>$(RootDirectory)src\MSBuild\Packaging\GitVersionCache\0\ref\GitVersionCache\bin\(Configuration)\netstandard2.0\packagePublish\build\Teronis.MSBuild.Packaging.GitVersionCache.targets</TeronisMSBuildPackagingGitVersionCacheTargetsFileTemplate>
 
   </PropertyGroup>
 

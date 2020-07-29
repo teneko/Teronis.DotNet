@@ -27,7 +27,7 @@
 
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" Conditions="'$(DisableGitVersionCache)' != 'true' And $(IsPackable)" />
 
-    <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\GitVersionCache\GitVersionCache\ref\PackagePublish\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj"
+    <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\GitVersionCache\0\ref\PackagePublish\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj"
       Condition="'$(IsGitVersionCacheRelated)' != 'true'
         And '$(DisableGitVersionCache)' != 'true' 
         And '$(IsPackable)' == 'true'" />

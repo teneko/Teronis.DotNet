@@ -33,7 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetCoreApp.Core", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.MSBuild.Packaging.ProjectBuildInPackage", "src\MSBuild\Packaging\ProjectBuildInPackage\src\Teronis.MSBuild.Packaging.ProjectBuildInPackage.csproj", "{5024D24A-526C-4D96-852D-C725169726A0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.MSBuild.Packaging.GitVersionCache", "src\MSBuild\Packaging\GitVersionCache\GitVersionCache\src\Teronis.MSBuild.Packaging.GitVersionCache.csproj", "{FCE7412B-50BB-426E-BFCC-70A33791A8EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.MSBuild.Packaging.GitVersionCache", "src\MSBuild\Packaging\GitVersionCache\0\src\Teronis.MSBuild.Packaging.GitVersionCache.csproj", "{FCE7412B-50BB-426E-BFCC-70A33791A8EC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.MSBuild.Core", "src\MSBuild\Core\Core\src\Teronis.MSBuild.Core.csproj", "{D4D94EE1-3B7E-463D-BC1B-CFC6557D936F}"
 EndProject
@@ -45,13 +45,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitVersionCache.NetStandard
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitVersionCache.NetStandard.Core", "src\NetStandard\Core\Core\ref\GitVersionCache\GitVersionCache.NetStandard.Core.csproj", "{7BA77AF3-C165-4B7A-879E-23B5B3E87CC6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PackagePublish.MSBuild.Packaging.GitVersionCache", "src\MSBuild\Packaging\GitVersionCache\GitVersionCache\ref\PackagePublish\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj", "{89041081-6F2B-40B5-836B-4958BA4A3C21}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PackagePublish.MSBuild.Packaging.GitVersionCache", "src\MSBuild\Packaging\GitVersionCache\0\ref\PackagePublish\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj", "{89041081-6F2B-40B5-836B-4958BA4A3C21}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PackagePublish.MSBuild.Core", "src\MSBuild\Core\Core\ref\PackagePublish\PackagePublish.MSBuild.Core.csproj", "{4151885B-F5D2-4417-826D-A55BCBD1FBD2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitVersionCache.NetStandard.Tools.GitVersion", "src\NetStandard\Tools\GitVersion\GitVersion\ref\GitVersionCache\GitVersionCache.NetStandard.Tools.GitVersion.csproj", "{CFB645C2-62E6-4072-8797-97D74F2258B9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitVersionCache.MSBuild.Packaging.GitVersionCache", "src\MSBuild\Packaging\GitVersionCache\GitVersionCache\ref\GitVersionCache\GitVersionCache.MSBuild.Packaging.GitVersionCache.csproj", "{FE6F23C9-1982-47E3-9C62-E93906C31E1B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitVersionCache.MSBuild.Packaging.GitVersionCache", "src\MSBuild\Packaging\GitVersionCache\0\ref\GitVersionCache\GitVersionCache.MSBuild.Packaging.GitVersionCache.csproj", "{FE6F23C9-1982-47E3-9C62-E93906C31E1B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitVersionCache.MSBuild.Core", "src\MSBuild\Core\Core\ref\GitVersionCache\GitVersionCache.MSBuild.Core.csproj", "{AB88356C-E3E5-476B-AA39-93935A4AC260}"
 EndProject

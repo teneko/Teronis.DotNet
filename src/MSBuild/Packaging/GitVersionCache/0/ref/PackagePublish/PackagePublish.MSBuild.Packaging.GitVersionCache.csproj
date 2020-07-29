@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!--<GenerateFilesystemPackageProjects Include="..\..\src\*.csproj" />-->
     <GenerateFilesystemPackageProjects Include="..\GitVersionCache\*.csproj" />
   </ItemGroup>
 

@@ -8,6 +8,7 @@
     <DisableGitVersion>true</DisableGitVersion>
     <DisableGitVersionCache>true</DisableGitVersionCache>
     <DisableSdkProps>true</DisableSdkProps>
+    <IsPackable>true</IsPackable>
 
   </PropertyGroup>
 

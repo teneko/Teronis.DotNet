@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Core", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Core.Localization", "..\..\NetStandard\Core\Core.Localization\src\Teronis.NetStandard.Core.Localization.csproj", "{DB128AC0-9950-46DC-A394-8DA4ED0CCC77}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PackagePublish.MSBuild.Packaging.GitVersionCache", "..\..\MSBuild\Packaging\GitVersionCache\GitVersionCache\ref\PackagePublish\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj", "{60212DDD-B646-4B3B-8626-597328C94534}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetCoreApp.Identity.Bearer", "Bearer\src\Teronis.NetCoreApp.Identity.Bearer.csproj", "{BFEC223B-DB1E-4DEA-BC3C-91460686A472}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetCoreApp.Identity.Bearer.Example", "Bearer\example\Teronis.NetCoreApp.Identity.Bearer.Example.csproj", "{3A594032-F0FC-4840-9082-4B428FF10179}"

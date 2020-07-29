@@ -15,9 +15,9 @@
       TargetFramework=$(TargetFramework);$(GenerateFilesystemPackageMSBuildProperties)
     </GenerateFilesystemPackageMSBuildProperties>-->
 
+    <!--TargetFramework=$(TargetFramework);-->
     <GenerateFilesystemPackageMSBuildProperties>
       Configuration=$(Configuration);
-      TargetFramework=$(TargetFramework);
       $(GenerateFilesystemPackageMSBuildProperties)
     </GenerateFilesystemPackageMSBuildProperties>
 
@@ -39,11 +39,13 @@
   </Target>-->
 
   <Target Name="_RestoreBuildAndGenerateFilesystemPackageProjects" DependsOnTargets="$(RestoreBuildAndGenerateFilesystemPackageProjectsDependsOn)" BeforeTargets="Pack" Condition="'@(GenerateFilesystemPackageProjects)' != ''">
+    <Message Text="[$(MSbuildThisFilename)] Build %(GenerateFilesystemPackageProjects.Identity)" Importance="high" />
     <Exec Command="dotnet build &quot;%(GenerateFilesystemPackageProjects.Identity)&quot; $(GenerateFilesystemPackageDotNetProperties)" />
     <!--<MSBuild Projects="%(GenerateFilesystemPackageProjects.Identity)" Targets="Restore" Properties="$(GenerateFilesystemPackageMSBuildProperties)" />-->
     <!--Targets="Build"-->
     <!--<MSBuild Projects="%(GenerateFilesystemPackageProjects.Identity)"  />-->
     <!--<Exec Command="dotnet msbuild -t:GenerateFilesystemPackage $(GenerateFilesystemPackageDotNetMSBuildProperties)" />-->
+    <Message Text="[$(MSbuildThisFilename)] Publish %(GenerateFilesystemPackageProjects.Identity)" Importance="high" />
     <MSBuild Projects="%(GenerateFilesystemPackageProjects.Identity)" Targets="GenerateFilesystemPackage" Properties="$(GenerateFilesystemPackageMSBuildProperties)"  />
   </Target>
 

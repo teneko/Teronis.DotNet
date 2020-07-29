@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\..\src\build\Teronis.MSBuild.Packaging.GenerateFilesystemPackageInProject.props" />
   
@@ -11,11 +11,11 @@
     <GenerateFilesystemPackageProjects Include="..\GitVersionCache\*.csproj" />
   </ItemGroup>
 
-  <PropertyGroup>
+  <!--<PropertyGroup>
     <MSBuildProperties>
       Configuration=$(Configuration)
     </MSBuildProperties>
-  </PropertyGroup>
+  </PropertyGroup>-->
 
   <Import Project="..\..\src\build\Teronis.MSBuild.Packaging.GenerateFilesystemPackageInProject.targets" />
 

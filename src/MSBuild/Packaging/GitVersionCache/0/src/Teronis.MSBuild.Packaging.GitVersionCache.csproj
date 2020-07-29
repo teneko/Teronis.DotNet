@@ -89,9 +89,13 @@
 
     <None Include="$(MSBuildThisFileDirectory)build\**\*" Pack="true" PackagePath="buildMultiTargeting">
       <!-- Last link wins -->
-      <Link>build\%(Filename)%(Extension)</Link>
+      <!--<Link>build\%(Filename)%(Extension)</Link>-->
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+
+    <!--<None Include="$(MSBuildThisFileDirectory)build\**\*">
+      <Link>build\%(Filename)%(Extension)</Link>
+    </None>--> 
 
   </ItemGroup>
 

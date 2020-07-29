@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
+    <RootNamespace>Teronis.ModuleInitializer.AssemblyLoad</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\AssemblyInitializerInjection\src\Teronis.AssemblyInitializerInjection.csproj" />
+    <ProjectReference Include="..\..\AssemblyLoad\src\Teronis.ModuleInitializer.AssemblyLoad.csproj" />
   </ItemGroup>
 
 </Project>

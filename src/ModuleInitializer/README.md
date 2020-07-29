@@ -1,11 +1,11 @@
-# Teronis.ModuleInitializerInjector[.[..]]
+# Teronis.ModuleInitializer[.[..]]
 
 This projects aims the problem to auto-load a third party assembly in a customer assembly at compile time.
 This happens by injecting/extending a module initializer with its content making a call to `Assembly.Load`.
 
 ## Involved Projects
 
-### AssemblyInitializerInjection.Executable
+### Teronis.ModuleInitializer.AssembyLoad.Executable
 
 Provides an executable that can be run to inject the assembly load related module initializer.
 
@@ -13,7 +13,7 @@ Provides an executable that can be run to inject the assembly load related modul
 
 TODO
 
-### Teronis.AssemblyInitializerInjection
+### Teronis.ModuleInitializer.AssembyLoad
 
 Provides the core logic to inject the assembly load related module initializer.
 

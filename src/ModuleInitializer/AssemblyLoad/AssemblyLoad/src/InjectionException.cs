@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Teronis.NetCoreApp.AssemblyLoadInjection
 {
-    public class InjectionException : Exception
+    [Serializable]
+    internal class InjectionException : Exception
     {
         public InjectionException()
         { }
@@ -13,6 +15,10 @@ namespace Teronis.NetCoreApp.AssemblyLoadInjection
 
         public InjectionException(string message, Exception innerException)
             : base(message, innerException)
+        { }
+
+        protected InjectionException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         { }
     }
 }

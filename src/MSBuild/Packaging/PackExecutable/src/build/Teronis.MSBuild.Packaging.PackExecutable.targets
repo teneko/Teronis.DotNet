@@ -158,12 +158,12 @@
     
     <MSBuild Projects="$(ExecutableProjectFilePath)" Targets="Pack" Properties="$(PackAsExecutableMSBuildProperties)" />
 
-    <!--<PropertyGroup>
+    <PropertyGroup>
       <NugetFilePath>$(PackageOutputPath)\$(PackageId).$(PackageVersion).nupkg</NugetFilePath>
-    </PropertyGroup>-->
+    </PropertyGroup>
 
-    <!--<Unzip SourceFiles="$(PackageOutputPath)\$(PackageId).$(PackageVersion).nupkg" DestinationFolder="$(PackageOutputPath)" />
-    <Delete Files="$(NugetFilePath)" />-->
+    <Unzip SourceFiles="$(PackageOutputPath)\$(PackageId).$(PackageVersion).nupkg" DestinationFolder="$(PackageOutputPath)" />
+    <Delete Files="$(NugetFilePath)" />
 
   </Target>
 

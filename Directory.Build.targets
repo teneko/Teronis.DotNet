@@ -96,4 +96,6 @@
     </PropertyGroup>
   </Target>
 
+  <Target Name="GetVersionCacheWhenGettingExecutableProjectProperties" DependsOnTargets="GetVersionCache" />
+
 </Project>

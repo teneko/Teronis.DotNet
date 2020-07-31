@@ -3,7 +3,7 @@ using System.IO;
 using Mono.Cecil;
 using Mono.Cecil.Pdb;
 
-namespace Teronis.ModuleInitializer.AssemblyLoad.Utils
+namespace Teronis.ModuleInitializer.AssemblyLoader.Utils
 {
     public static class AssemblyPathUtils
     {

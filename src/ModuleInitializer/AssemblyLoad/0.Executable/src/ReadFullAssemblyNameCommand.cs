@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace Teronis.ModuleInitializer.AssemblyLoad
+namespace Teronis.ModuleInitializer.AssemblyLoader
 {
     [Verb("read-assembly-name")]
     public class ReadFullAssemblyNameCommand

@@ -2,15 +2,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.ModuleInitializer.AssemblyLoad.Executable", "AssemblyLoad\0.Executable\src\Teronis.ModuleInitializer.AssemblyLoad.Executable.csproj", "{6AD7E700-09FC-46B5-BE30-4CFB68187BEC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.ModuleInitializer.AssemblyLoader.Executable", "AssemblyLoad\0.Executable\src\Teronis.ModuleInitializer.AssemblyLoader.Executable.csproj", "{6AD7E700-09FC-46B5-BE30-4CFB68187BEC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.ModuleInitializer.AssemblyLoad", "AssemblyLoad\0\src\Teronis.ModuleInitializer.AssemblyLoad.csproj", "{E7ACCC89-A065-47C1-9F34-AAE4E4C1784B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.ModuleInitializer.AssemblyLoader", "AssemblyLoad\0\src\Teronis.ModuleInitializer.AssemblyLoader.csproj", "{E7ACCC89-A065-47C1-9F34-AAE4E4C1784B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.ModuleInitializer.AssemblyLoad.MSBuild", "AssemblyLoad\0.MSBuild\src\Teronis.ModuleInitializer.AssemblyLoad.MSBuild.csproj", "{7346B4A0-5116-4789-8E5D-9B26949EB4AA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExecutablePackage.ModuleInitializer.AssemblyLoad.Executable", "AssemblyLoad\0.Executable\ref\ExecutablePackage\ExecutablePackage.ModuleInitializer.AssemblyLoad.Executable.csproj", "{79380465-0E59-41B7-BB6D-F02B8EFCDD5F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExecutablePackage.ModuleInitializer.AssemblyLoader.Executable", "AssemblyLoad\0.Executable\ref\ExecutablePackage\ExecutablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj", "{79380465-0E59-41B7-BB6D-F02B8EFCDD5F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublishablePackage.ModuleInitializer.AssemblyLoad.Executable", "AssemblyLoad\0.Executable\ref\PublishablePackage\PublishablePackage.ModuleInitializer.AssemblyLoad.Executable.csproj", "{45595BB5-0F83-415D-BA71-4DC819ECCB7D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublishablePackage.ModuleInitializer.AssemblyLoader.Executable", "AssemblyLoad\0.Executable\ref\PublishablePackage\PublishablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj", "{45595BB5-0F83-415D-BA71-4DC819ECCB7D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

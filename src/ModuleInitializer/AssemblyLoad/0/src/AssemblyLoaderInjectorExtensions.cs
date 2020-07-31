@@ -1,4 +1,6 @@
-﻿namespace Teronis.ModuleInitializer.AssemblyLoad
+﻿using Teronis.ModuleInitializer.AssemblyLoader;
+
+namespace Teronis.ModuleInitializer.AssemblyLoader
 {
     public static class AssemblyLoaderInjectorExtensions
     {

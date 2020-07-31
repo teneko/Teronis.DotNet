@@ -1,10 +1,11 @@
 ﻿using System;
 using System.IO;
 using CommandLine;
-using Teronis.ModuleInitializer.AssemblyLoad.Utils;
-using static Teronis.ModuleInitializer.AssemblyLoad.Utils.ExceptionUtils;
+using Teronis.ModuleInitializer.AssemblyLoader.Utils;
+using Teronis.ModuleInitializer.AssemblyLoader;
+using static Teronis.ModuleInitializer.AssemblyLoader.Utils.ExceptionUtils;
 
-namespace Teronis.ModuleInitializer.AssemblyLoad
+namespace Teronis.ModuleInitializer.AssemblyLoader
 {
     internal class Program
     {

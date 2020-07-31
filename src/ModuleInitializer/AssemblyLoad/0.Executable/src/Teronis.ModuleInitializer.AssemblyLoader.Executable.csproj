@@ -1,10 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
-    <RootNamespace>Teronis.ModuleInitializer.AssemblyLoad</RootNamespace>
+    <RootNamespace>Teronis.ModuleInitializer.AssemblyLoader</RootNamespace>
     <PackAsExecutable>Project</PackAsExecutable>
     <Description>Provides a tool that injects IL code representing calls to foreign assembly ModuleInitializer.Initialize() 
     methods in an target assembly that forces these foreign assembly to load AND initialize.</Description>
@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\0\src\Teronis.ModuleInitializer.AssemblyLoad.csproj" />
+    <ProjectReference Include="..\..\0\src\Teronis.ModuleInitializer.AssemblyLoader.csproj" />
   </ItemGroup>
 
   <ItemGroup>

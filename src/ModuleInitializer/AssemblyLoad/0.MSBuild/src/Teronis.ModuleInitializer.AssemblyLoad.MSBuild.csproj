@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard1.0</TargetFramework>
@@ -6,7 +6,7 @@
   
   <ItemGroup>
     <!-- This is only a synthetic project reference for being recognized as nuspec dependency. -->
-    <ProjectReference Include="..\..\0.Executable\ref\ExecutablePackage\ExecutablePackage.ModuleInitializer.AssemblyLoad.Executable.csproj" />
+    <ProjectReference Include="..\..\0.Executable\ref\ExecutablePackage\ExecutablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj" />
   </ItemGroup>
 
 </Project>

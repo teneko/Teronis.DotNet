@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace Teronis.ModuleInitializer.AssemblyLoad
+namespace Teronis.ModuleInitializer.AssemblyLoader
 {
     [Verb("inject-assembly-load")]
     public class InjectAssemblyLoadCommandOptions

@@ -3,6 +3,6 @@
     <TargetFramework>netstandard1.0</TargetFramework>
     <DisableGitVersionCache>true</DisableGitVersionCache>
     <PackAsExecutable>Package</PackAsExecutable>
-    <ExecutableProjectReference>..\..\src\Teronis.ModuleInitializer.AssemblyLoad.Executable.csproj</ExecutableProjectReference>
+    <ExecutableProjectReference>..\..\src\Teronis.ModuleInitializer.AssemblyLoader.Executable.csproj</ExecutableProjectReference>
   </PropertyGroup>
 </Project>

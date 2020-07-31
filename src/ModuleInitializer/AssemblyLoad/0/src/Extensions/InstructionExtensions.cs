@@ -2,7 +2,7 @@
 using Mono.Cecil.Cil;
 using Mono.Collections.Generic;
 
-namespace Teronis.ModuleInitializer.AssemblyLoad.Extensions
+namespace Teronis.ModuleInitializer.AssemblyLoader.Extensions
 {
     public static class InstructionExtensions
     {

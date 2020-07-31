@@ -129,4 +129,8 @@
     <PackAsExecutableMSBuildProperties>DisableGitVersionCache=true</PackAsExecutableMSBuildProperties>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <GetExecutableProjectPropertiesDependsOn>$(GetExecutableProjectPropertiesDependsOn);GetVersionCacheWhenGettingExecutableProjectProperties</GetExecutableProjectPropertiesDependsOn>
+  </PropertyGroup>
+
 </Project>

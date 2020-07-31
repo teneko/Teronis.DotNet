@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Teronis.ModuleInitializer.AssemblyLoad.Utils
+namespace Teronis.ModuleInitializer.AssemblyLoader.Utils
 {
     public static class ExceptionUtils
     {

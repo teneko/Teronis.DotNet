@@ -189,7 +189,7 @@
   Outputs PackExecutable relevant projects properties.
   =====================================================
   -->
-  <Target Name="GetExecutableProjectProperties" Outputs="$(ExecutableProjectProperties)">
+  <Target Name="GetExecutableProjectProperties" DependsOnTargets="$(GetExecutableProjectPropertiesDependsOn)" Outputs="$(ExecutableProjectProperties)">
     <PropertyGroup>
       <_S>$(ExecutableProjectPropertySeparator)</_S>
       <!-- List separator: https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-special-characters?view=vs-2019 -->
@@ -298,7 +298,7 @@
       <_MSBuildRemoveProperties>TargetFramework;TargetFrameworks</_MSBuildRemoveProperties>
     </PropertyGroup>
 
-    <MSBuild Projects="..\..\src\Teronis.ModuleInitializer.AssemblyLoad.Executable.csproj" Targets="GetVersionCache;GetExecutableProjectProperties" RemoveProperties="$(_MSBuildRemoveProperties)">
+    <MSBuild Projects="$(ExecutableProjectFilePath)" Targets="GetExecutableProjectProperties" RemoveProperties="$(_MSBuildRemoveProperties)">
       <Output TaskParameter="TargetOutputs" PropertyName="_ExecutableProjectProperties" />
     </MSBuild>
 

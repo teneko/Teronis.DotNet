@@ -2,7 +2,7 @@
 using System.Linq;
 using Mono.Cecil;
 
-namespace Teronis.ModuleInitializer.AssemblyLoad.Utils
+namespace Teronis.ModuleInitializer.AssemblyLoader.Utils
 {
     public static class ModuleDefinitionUtils
     {

@@ -9,10 +9,11 @@ using MethodAttributes = Mono.Cecil.MethodAttributes;
 using Mono.Cecil.Pdb;
 using Mono.Cecil.Rocks;
 using System.IO;
-using Teronis.ModuleInitializer.AssemblyLoad.Utils;
-using Teronis.ModuleInitializer.AssemblyLoad.Extensions;
+using Teronis.ModuleInitializer.AssemblyLoader.Utils;
+using Teronis.ModuleInitializer.AssemblyLoader.Extensions;
+using Teronis.ModuleInitializer.AssemblyLoader;
 
-namespace Teronis.ModuleInitializer.AssemblyLoad
+namespace Teronis.ModuleInitializer.AssemblyLoader
 {
     public class AssemblyLoaderInjector
     {

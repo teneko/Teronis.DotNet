@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Teronis.ModuleInitializer.AssemblyLoad
+namespace Teronis.ModuleInitializer.AssemblyLoader
 {
     [Serializable]
     internal class InjectionException : Exception

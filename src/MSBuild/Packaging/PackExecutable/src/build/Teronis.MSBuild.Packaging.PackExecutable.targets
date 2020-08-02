@@ -1,12 +1,12 @@
 ﻿<Project InitialTargets="_ValidatePackExecutableProperties">
 
+  <Import Project="$(MSBuildThisFileDirectory)Teronis.MSBuild.Packaging.PackExecutable.props" Condition="'$(TeronisMSBuildPackagingPackExecutableHasBeenImported)' != 'true'"/>
+
   <PropertyGroup>
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);$(TargetsForTfmSpecificExecutableAsProjectContentInPackage);$(TargetsForTfmSpecificExecutableAsPackageContentInPackage)</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(PackAsExecutable)' == 'Project'">
-    <!--<TargetFramework>netstandard2.0</TargetFramework>
-    <TargetFrameworks>netstandard1.0;netcoreapp2.1;net45</TargetFrameworks>-->
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <IncludeBuildOutput>false</IncludeBuildOutput>
   </PropertyGroup>
@@ -14,7 +14,6 @@
   <PropertyGroup Condition="'$(PackAsExecutable)' == 'Publish'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IsPackable>false</IsPackable>
-    <PackageOutputPath>$(MSBuildProjectDirectory)\bin\$(Configuration)\package</PackageOutputPath>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
@@ -31,11 +30,6 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(PackAsExecutable)' == 'Package'">
-    <!--<TargetFramework></TargetFramework>
-    <TargetFrameworks>netstandard1.0;netcoreapp2.1;net45</TargetFrameworks>-->
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(PackAsExecutable)' == 'Package'">
     <PackageId>$(ExecutableProjectFilename)</PackageId>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NoPackageAnalysis>true</NoPackageAnalysis>
@@ -45,15 +39,6 @@
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);$(GenerateNuspecWhenPackingExecutableAsPackageDependsOn)</GenerateNuspecDependsOn>
   </PropertyGroup>
-
-  <!--<ItemGroup Condition="'$(PackAsExecutable)' == 'Package'">
-    <ProjectReference Remove="@(ProjectReference)" />
-    <PackageReference Remove="@(PackageReference)" />
-    --><!--<None Remove="@(None)" />--><!--
-    --><!--<Link Remove="@(Link)" />--><!--
-    <Compile Remove="@(Compile)" />
-    <EmbeddedResource Remove="@(EmbeddedResource)" />
-  </ItemGroup>-->
 
   <Target Name="_ValidatePackExecutableProperties">
     <Error Text="Missing ExecutableProjectReference." Condition="('$(PackAsExecutable)' == 'Publish' And '$(ExecutableProjectReference)' == '')
@@ -68,12 +53,10 @@
   $(PublishDir).
   =====================================================
   -->
-  <!--Or '$(PackAsExecutable)' == 'Package'-->
   <Target Name="PublishTfmSpecificExecutableAsProjectContent" Condition="'$(PackAsExecutable)' == 'Project'">
 
     <PropertyGroup>
-      <!-- TODO: !!!! -->
-      <_ProjectFile Condition="'$(PackAsExecutable)' == 'Project'">$(MSBuildProjectDirectory)\$(MSBuildProjectName).csproj</_ProjectFile>
+      <_ProjectFile Condition="'$(PackAsExecutable)' == 'Project'">$(MSBuildProjectFullPath)</_ProjectFile>
     </PropertyGroup>
 
     <MSBuild Projects="$(_ProjectFile)" Targets="Publish" Properties="TargetFramework=$(TargetFramework)" />
@@ -115,7 +98,7 @@
   </Target>
 
   <Target Name="TfmSpecificExecutableAsPackageContentInPackage" Condition="'$(PackAsExecutable)' == 'Package'" />
-  
+
   <Target Name="PackExecutableAsPackage" DependsOnTargets="_ReadExecutableProjectProperties" Condition="'$(PackAsExecutable)' == 'Package'">
     <MSBuild Projects="$(ExecutableProjectFilePath)" Targets="PackExecutableAsProject">
       <Output TaskParameter="TargetOutputs" ItemName="_ExecutablePackageFiles"/>
@@ -128,6 +111,13 @@
 
   </Target>
 
+  <Target Name="_CalculateSettingsForExecutablePackagePublishment">
+    <PropertyGroup>
+      <_PackagePublishmentOutputPath Condition="'$(PackagePublishmentOutputPath)' != ''">$(PackagePublishmentOutputPath.TrimEnd('\'))</_PackagePublishmentOutputPath>
+      <_PackagePublishmentOutputPath Condition="'$(PackagePublishmentOutputPath)' == ''">$(MSBuildProjectDirectory)\bin\$(Configuration)\package</_PackagePublishmentOutputPath>
+    </PropertyGroup>
+  </Target>
+
   <!--
   =====================================================
                          CleanUnpackedExecutablePackage
@@ -136,7 +126,7 @@
   (ExecutableProjectReference).
   =====================================================
   -->
-  <Target Name="UnpackAsExecutablePackedProject" BeforeTargets="Pack" Condition="'$(PackAsExecutable)' == 'Publish'">
+  <Target Name="UnpackAsExecutablePackedProject" DependsOnTargets="_CalculateSettingsForExecutablePackagePublishment" BeforeTargets="Pack" Condition="'$(PackAsExecutable)' == 'Publish'">
 
     <PropertyGroup>
 
@@ -147,7 +137,7 @@
         PackAsExecutable=Project;
         PackageId=$(PackageId);
         PackageVersion=$(PackageVersion);
-        PackageOutputPath=$(PackageOutputPath);
+        PackageOutputPath=$(_PackagePublishmentOutputPath);
         IsPackable=true;
         $(PackAsExecutableMSBuildProperties)
       </PackAsExecutableMSBuildProperties>
@@ -155,14 +145,14 @@
     </PropertyGroup>
 
     <Message Text="testtest $(ExecutableProjectFilePath)" Importance="high" />
-    
+
     <MSBuild Projects="$(ExecutableProjectFilePath)" Targets="Pack" Properties="$(PackAsExecutableMSBuildProperties)" />
 
     <PropertyGroup>
-      <NugetFilePath>$(PackageOutputPath)\$(PackageId).$(PackageVersion).nupkg</NugetFilePath>
+      <_NugetFilePath>$(_PackagePublishmentOutputPath)\$(PackageId).$(PackageVersion).nupkg</_NugetFilePath>
     </PropertyGroup>
 
-    <Unzip SourceFiles="$(PackageOutputPath)\$(PackageId).$(PackageVersion).nupkg" DestinationFolder="$(PackageOutputPath)" />
+    <Unzip SourceFiles="$(_NugetFilePath)" DestinationFolder="$(_PackagePublishmentOutputPath)" />
     <Delete Files="$(NugetFilePath)" />
 
   </Target>
@@ -174,13 +164,13 @@
   Cleans the unzipped and packed as executable package.
   =====================================================
   -->
-  <Target Name="CleanUnpackedExecutablePackage" AfterTargets="Clean" Condition="'$(PackAsExecutable)' == 'Publish'">
+  <Target Name="CleanUnpackedExecutablePackage" DependsOnTargets="_CalculateSettingsForExecutablePackagePublishment" AfterTargets="Clean" Condition="'$(PackAsExecutable)' == 'Publish'">
     <ItemGroup>
-      <_PackageFiles Include="$(PackageOutputPath)\**\*" />
+      <_PackageFiles Include="$(_PackagePublishmentOutputPath)\**\*" />
     </ItemGroup>
 
     <Delete Files="@(_PackageFiles)" />
-    <RemoveDir Directories="$(PackageOutputPath)" />
+    <RemoveDir Directories="$(_PackagePublishmentOutputPath)" />
   </Target>
 
   <!--
@@ -281,19 +271,19 @@
   </Target>
 
   <Target Name="_ApplyExecutableProjectProperties" DependsOnTargets="_ReadExecutableProjectProperties" BeforeTargets="GenerateNuspec;_GetProjectVersion" Condition="'$(PackAsExecutable)' == 'Package'">
-        
+
     <PropertyGroup>
       <PackageDescription Condition="'$(ExecutableProjectDiscription)' != ''">$(ExecutableProjectDiscription)</PackageDescription>
     </PropertyGroup>
-    
+
     <PropertyGroup>
       <PackageVersion>$(ExecutableProjectPackageVersion)</PackageVersion>
     </PropertyGroup>
-    
+
   </Target>
 
   <Target Name="_ReadExecutableProjectProperties" Condition="'$(PackAsExecutable)' == 'Package'">
-    
+
     <PropertyGroup>
       <_MSBuildRemoveProperties>TargetFramework;TargetFrameworks</_MSBuildRemoveProperties>
     </PropertyGroup>
@@ -335,7 +325,7 @@
     <PropertyGroup>
       <ExecutableProjectDiscription>$([MSBuild]::Unescape('$(ExecutableProjectDiscription)'))</ExecutableProjectDiscription>
     </PropertyGroup>
-    
+
   </Target>
 
 </Project>

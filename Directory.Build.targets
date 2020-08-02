@@ -5,6 +5,9 @@
   <Import Condition="'$(IsTeronisDotNetCorePropsFileImported)' != 'true'" Project="$(RootCorePropsPath)" />
   <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackageTargetsFile)" />
   <Import Project="$(TeronisMSBuildPackagingPackExecutableTargetsFile)" />
+
+  <Import Project="$(TeronisModuleInitializerAssemblyLoaderExecutableTargetsFile)" Condition="Exists($(TeronisModuleInitializerAssemblyLoaderExecutableTargetsFile))" />
+  <Import Project="$(TeronisModuleInitializerAssemblyLoaderMSBuildTargetsFile)" />
   
   <ItemGroup>
     <Compile Remove="$(MSBuildThisFileDirectory)/Nullable.cs" Condition="'$(Nullable)' != 'enable' Or '$(DisallowNullableAttributes)' == 'true'" />
@@ -32,6 +35,9 @@
       Condition="'$(IsGitVersionCacheRelated)' != 'true'
         And '$(DisableGitVersionCache)' != 'true' 
         And '$(IsPackable)' == 'true'" />
+
+    <ProjectReference Include="$(MSBuildThisFileDirectory)src\ModuleInitializer\AssemblyLoader\0.Executable\ref\PublishablePackage\PublishablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj"
+      Condition="'$(IsPublishablePackageProject)' == 'true' And '$(MSBuildProjectFile)' != 'PublishablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj'"/>
     
   </ItemGroup>
 
@@ -54,7 +60,11 @@
 
     <_ProjectReferences Include="@(ProjectReference)">
       <!-- Prevent PackagePublish.*-projects from being tracked in *.nuspec files. -->
-      <IsPackagePublishProject Condition="'%(IsPackagePublishProject)' == ''">$([System.String]::Copy('%(Filename)').Contains('PackagePublish.'))</IsPackagePublishProject>
+      <IsPackagePublishProject>false</IsPackagePublishProject>
+
+      <IsPackagePublishProject Condition="$([System.String]::Copy('%(Filename)').Contains('PackagePublish.'))
+        Or $([System.String]::Copy('%(Filename)').Contains('PublishablePackage.'))">true</IsPackagePublishProject>
+
       <ReferenceOutputAssembly Condition="'%(IsPackagePublishProject)' == 'true'">false</ReferenceOutputAssembly>
       <SkipGetTargetFrameworkProperties Condition="'%(IsPackagePublishProject)' == 'true'">true</SkipGetTargetFrameworkProperties>
       <GlobalPropertiesToRemove Condition="'%(IsPackagePublishProject)' == 'true'">TargetFramework</GlobalPropertiesToRemove>

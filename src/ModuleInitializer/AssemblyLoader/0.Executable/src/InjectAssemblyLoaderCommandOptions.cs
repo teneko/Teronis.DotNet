@@ -2,8 +2,8 @@
 
 namespace Teronis.ModuleInitializer.AssemblyLoader
 {
-    [Verb("inject-assembly-load")]
-    public class InjectAssemblyLoadCommandOptions
+    [Verb("inject-assembly-loader")]
+    public class InjectAssemblyLoaderCommandOptions
     {
         public const string SourceAssemblyPathOptionLongName = "source-assembly-path";
 

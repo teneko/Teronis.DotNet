@@ -6,6 +6,9 @@
   <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackagePropsFile)" />
   <Import Project="$(TeronisMSBuildPackagingPackExecutablePropsFile)" />
 
+  <Import Project="$(TeronisModuleInitializerAssemblyLoaderExecutablePropsFile)" Condition="Exists($(TeronisModuleInitializerAssemblyLoaderExecutablePropsFile))" />
+  <Import Project="$(TeronisModuleInitializerAssemblyLoaderMSBuildPropsFile)" />
+
   <PropertyGroup>
     <AssemblyName Condition="'$(AssemblyName)' == ''">$(MSBuildProjectName)</AssemblyName>
     <Platforms Condition="'$(Platforms)' == ''">AnyCPU;x64;x86</Platforms>
@@ -76,8 +79,11 @@
     <IsExampleProject>false</IsExampleProject>
     <IsExampleProject Condition="$(MSBuildProjectName.EndsWith('.Example'))">true</IsExampleProject>
 
-    <IsPackagePublish2Project>false</IsPackagePublish2Project>
-    <IsPackagePublish2Project Condition="$(MSBuildProjectName.StartsWith('ExecutablePackage.'))">true</IsPackagePublish2Project>
+    <IsExecutablePackageProject>false</IsExecutablePackageProject>
+    <IsExecutablePackageProject Condition="$(MSBuildProjectName.StartsWith('ExecutablePackage.'))">true</IsExecutablePackageProject>
+
+    <IsPublishablePackageProject>false</IsPublishablePackageProject>
+    <IsPublishablePackageProject Condition="$(MSBuildProjectName.StartsWith('PublishablePackage.'))">true</IsPublishablePackageProject>
 
   </PropertyGroup>
 
@@ -108,7 +114,14 @@
 
     <IsPackable Condition="'$(IsPackable)' == ''">true</IsPackable>
 
-    <DisableGitVersionCache Condition="$(IsPackagePublish2Project)">true</DisableGitVersionCache>
+    <!--
+      IsPublishablePackageProject:
+        A executable package project does inherit package name and package
+        version from project specified in ExecutableProjectReference.
+      IsPublishablePackageProject:
+        A publishable package project is a synthetic project reference.
+      -->
+    <DisableGitVersionCache Condition="$(IsExecutablePackageProject) Or $(IsPublishablePackageProject)">true</DisableGitVersionCache>
 
   </PropertyGroup>
 
@@ -126,10 +139,15 @@
   <PropertyGroup>
     <!-- <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies> -->
     <ProjectBuildInPackageVerbosity>detailed</ProjectBuildInPackageVerbosity>
-    <PackAsExecutableMSBuildProperties>DisableGitVersionCache=true</PackAsExecutableMSBuildProperties>
+    <!-- The package name and package version are inherited from project specified in ExecutableProjectReference. -->
+    <PackAsExecutableMSBuildProperties>$(PackAsExecutableMSBuildProperties);DisableGitVersionCache=true</PackAsExecutableMSBuildProperties>
   </PropertyGroup>
 
+  <!-- 
+    Belongs to Teronis.MSBuild.Pacakging.PackExecutable
+   -->
   <PropertyGroup>
+    <PackagePublishmentOutputPath>$(PackagePublishmentsDirectory)$(MSBuildProjectName)</PackagePublishmentOutputPath>
     <GetExecutableProjectPropertiesDependsOn>$(GetExecutableProjectPropertiesDependsOn);GetVersionCacheWhenGettingExecutableProjectProperties</GetExecutableProjectPropertiesDependsOn>
   </PropertyGroup>
 

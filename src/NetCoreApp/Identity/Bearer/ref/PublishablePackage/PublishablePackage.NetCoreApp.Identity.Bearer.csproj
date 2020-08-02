@@ -2,6 +2,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.0</TargetFramework>
     <PackAsExecutable>Publish</PackAsExecutable>
-    <ExecutableProjectReference>..\..\src\Teronis.ModuleInitializer.AssemblyLoader.Executable.csproj</ExecutableProjectReference>
+    <ExecutableProjectReference>..\..\src\Teronis.NetCoreApp.Identity.Bearer.csproj</ExecutableProjectReference>
   </PropertyGroup>
 </Project>

@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="build\*.props;build\*.targets" Pack="true" PackagePath="build" />
+    <None Include="build\*.props;build\*.targets" Pack="true" PackagePath="buildMultiTargeting" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Fody" Version="6.1.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -23,12 +28,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\ModuleInitializer\AssemblyLoader\0.Executable\ref\ExecutablePackage\ExecutablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj" />
+    <ProjectReference Include="..\..\..\..\ModuleInitializer\AssemblyLoader\0.MSBuild\src\Teronis.ModuleInitializer.AssemblyLoader.MSBuild.csproj" />
     <ProjectReference Include="..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj">
       <AdditionalProperties>TargetFramework=$(TargetFramework)</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Core\Core\src\Teronis.NetCoreApp.Core.csproj" />
     <ProjectReference Include="..\..\..\Mvc\Mvc\src\Teronis.NetCoreApp.Mvc.csproj" />
     <ProjectReference Include="..\..\EntityFrameworkCore\src\Teronis.NetCoreApp.Identity.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="..\ref\PublishablePackage\PublishablePackage.NetCoreApp.Identity.Bearer.csproj" />
   </ItemGroup>
 
 </Project>

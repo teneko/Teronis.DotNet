@@ -2,15 +2,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.ModuleInitializer.AssemblyLoader.Executable", "AssemblyLoad\0.Executable\src\Teronis.ModuleInitializer.AssemblyLoader.Executable.csproj", "{6AD7E700-09FC-46B5-BE30-4CFB68187BEC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.ModuleInitializer.AssemblyLoader.Executable", "AssemblyLoader\0.Executable\src\Teronis.ModuleInitializer.AssemblyLoader.Executable.csproj", "{6AD7E700-09FC-46B5-BE30-4CFB68187BEC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.ModuleInitializer.AssemblyLoader", "AssemblyLoad\0\src\Teronis.ModuleInitializer.AssemblyLoader.csproj", "{E7ACCC89-A065-47C1-9F34-AAE4E4C1784B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.ModuleInitializer.AssemblyLoader", "AssemblyLoader\0\src\Teronis.ModuleInitializer.AssemblyLoader.csproj", "{E7ACCC89-A065-47C1-9F34-AAE4E4C1784B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.ModuleInitializer.AssemblyLoad.MSBuild", "AssemblyLoad\0.MSBuild\src\Teronis.ModuleInitializer.AssemblyLoad.MSBuild.csproj", "{7346B4A0-5116-4789-8E5D-9B26949EB4AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.ModuleInitializer.AssemblyLoader.MSBuild", "AssemblyLoader\0.MSBuild\src\Teronis.ModuleInitializer.AssemblyLoader.MSBuild.csproj", "{7346B4A0-5116-4789-8E5D-9B26949EB4AA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExecutablePackage.ModuleInitializer.AssemblyLoader.Executable", "AssemblyLoad\0.Executable\ref\ExecutablePackage\ExecutablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj", "{79380465-0E59-41B7-BB6D-F02B8EFCDD5F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExecutablePackage.ModuleInitializer.AssemblyLoader.Executable", "AssemblyLoader\0.Executable\ref\ExecutablePackage\ExecutablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj", "{79380465-0E59-41B7-BB6D-F02B8EFCDD5F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublishablePackage.ModuleInitializer.AssemblyLoader.Executable", "AssemblyLoad\0.Executable\ref\PublishablePackage\PublishablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj", "{45595BB5-0F83-415D-BA71-4DC819ECCB7D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublishablePackage.ModuleInitializer.AssemblyLoader.Executable", "AssemblyLoader\0.Executable\ref\PublishablePackage\PublishablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj", "{45595BB5-0F83-415D-BA71-4DC819ECCB7D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PackagePublish.MSBuild.Packaging.GitVersionCache", "..\MSBuild\Packaging\GitVersionCache\0\ref\PackagePublish\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj", "{8DC7081A-C4E1-4700-9F33-E2DB6CE539C8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -82,6 +84,18 @@ Global
 		{45595BB5-0F83-415D-BA71-4DC819ECCB7D}.Release|x64.Build.0 = Release|x64
 		{45595BB5-0F83-415D-BA71-4DC819ECCB7D}.Release|x86.ActiveCfg = Release|x86
 		{45595BB5-0F83-415D-BA71-4DC819ECCB7D}.Release|x86.Build.0 = Release|x86
+		{8DC7081A-C4E1-4700-9F33-E2DB6CE539C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DC7081A-C4E1-4700-9F33-E2DB6CE539C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DC7081A-C4E1-4700-9F33-E2DB6CE539C8}.Debug|x64.ActiveCfg = Debug|x64
+		{8DC7081A-C4E1-4700-9F33-E2DB6CE539C8}.Debug|x64.Build.0 = Debug|x64
+		{8DC7081A-C4E1-4700-9F33-E2DB6CE539C8}.Debug|x86.ActiveCfg = Debug|x86
+		{8DC7081A-C4E1-4700-9F33-E2DB6CE539C8}.Debug|x86.Build.0 = Debug|x86
+		{8DC7081A-C4E1-4700-9F33-E2DB6CE539C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DC7081A-C4E1-4700-9F33-E2DB6CE539C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DC7081A-C4E1-4700-9F33-E2DB6CE539C8}.Release|x64.ActiveCfg = Release|x64
+		{8DC7081A-C4E1-4700-9F33-E2DB6CE539C8}.Release|x64.Build.0 = Release|x64
+		{8DC7081A-C4E1-4700-9F33-E2DB6CE539C8}.Release|x86.ActiveCfg = Release|x86
+		{8DC7081A-C4E1-4700-9F33-E2DB6CE539C8}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

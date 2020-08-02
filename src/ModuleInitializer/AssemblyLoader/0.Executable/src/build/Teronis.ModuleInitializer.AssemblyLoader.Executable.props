@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <AssemblyLoaderInjectorPath>$(MSBuildThisFileDirectory)..\executables\netcoreapp3.1\Teronis.ModuleInitializer.AssemblyLoader.Executable.exe</AssemblyLoaderInjectorPath>
+    <AssemblyLoaderInjectorPath>$([System.IO.Path]::GetFullPath($(AssemblyLoaderInjectorPath)))</AssemblyLoaderInjectorPath>
+  </PropertyGroup>
+  
+</Project>

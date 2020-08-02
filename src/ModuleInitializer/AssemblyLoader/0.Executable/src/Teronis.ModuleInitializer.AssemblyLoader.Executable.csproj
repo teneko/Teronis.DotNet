@@ -6,8 +6,10 @@
     <Nullable>enable</Nullable>
     <RootNamespace>Teronis.ModuleInitializer.AssemblyLoader</RootNamespace>
     <PackAsExecutable>Project</PackAsExecutable>
-    <Description>Provides a tool that injects IL code representing calls to foreign assembly ModuleInitializer.Initialize() 
-    methods in an target assembly that forces these foreign assembly to load AND initialize.</Description>
+    <Description>
+      Provides a tool that injects IL code representing calls to foreign assembly ModuleInitializer.Initialize()
+      methods in an target assembly that forces these foreign assembly to load AND initialize.
+    </Description>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -23,8 +25,9 @@
     <None Include="build\**\*" PackagePath="build" Pack="true">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="build\**\*" PackagePath="buildMultiTargeting" Pack="true">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
-
-  
 
 </Project>

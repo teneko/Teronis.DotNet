@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--Props import is not mandatory. -->
+  
+  <Target Name="ValidateModuleInitializerAssemblyLoaderPath">
+    <Error Text="The assembly loader binary could not be found." Condition="!Exists($(AssemblyLoaderInjectorPath))" />
+  </Target>
+  
+  <!--Inputs="@(IntermediateAssembly)"
+  Outputs="$(IntermediateOutputPath)$(MSBuildProjectFile).ModuleInitializerAssemblyLoader.CopyLocal.cache"-->
+  <Target Name="InjectModuleInitializerAssemblyLoader"
+          AfterTargets="AfterCompile"
+          Condition="@(ModuleInitializerAssemblyLoaderInjectionTargetAssemblies->Count()) != 0
+            And Exists(@(IntermediateAssembly)) 
+            And $(DesignTimeBuild) != true 
+            And $(DisableModuleInitializerAssemblyLoaderInjection) != true"
+          DependsOnTargets="$(InjectModuleInitializerAssemblyLoaderDependsOn)">
+    <Exec Command="$(AssemblyLoaderInjectorPath) inject-assembly-loader &quot;%(ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.Identity)&quot; --source-assembly-path &quot;%(ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.SourceAssembly)&quot;" />
+  </Target>
+  
+</Project>

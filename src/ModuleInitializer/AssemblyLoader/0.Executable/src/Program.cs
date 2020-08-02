@@ -11,8 +11,8 @@ namespace Teronis.ModuleInitializer.AssemblyLoader
     {
         public static int Main(string[] args)
         {
-            return Parser.Default.ParseArguments<ReadFullAssemblyNameCommand, InjectAssemblyLoadCommandOptions>(args)
-                .MapResult<ReadFullAssemblyNameCommand, InjectAssemblyLoadCommandOptions, int>(
+            return Parser.Default.ParseArguments<ReadFullAssemblyNameCommand, InjectAssemblyLoaderCommandOptions>(args)
+                .MapResult<ReadFullAssemblyNameCommand, InjectAssemblyLoaderCommandOptions, int>(
                     fullNameOptions => {
                         try {
                             var assemblyFullName = AssemblyPathUtils.ReadAssemblyFullName(fullNameOptions.AssemblyPath);
@@ -32,7 +32,7 @@ namespace Teronis.ModuleInitializer.AssemblyLoader
                     },
                     injectOptions => {
                         try {
-                            AssemblyLoaderInjector.Default.InjectAssemblyInitializer(injectOptions.InjectionTargetAssemblyPath,
+                            AssemblyLoaderInjector.Default.InjectAssemblyLoader(injectOptions.InjectionTargetAssemblyPath,
                                 injectOptions.SourceAssemblyPathToBeLoaded);
                         } catch (ArgumentNullException error) {
                             Console.Error.WriteLine($"The assembly path cannot be null. ({error.ParamName})");

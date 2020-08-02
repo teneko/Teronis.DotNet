@@ -4,19 +4,44 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using CommandLine;
 using Teronis.Diagnostics;
 using Teronis.DotNet.Build.CommandOptions;
+using Microsoft.Build.Evaluation;
 using static Bullseye.Targets;
 using static Teronis.DotNet.Build.ICommandOptions;
+using System.Diagnostics;
 
 namespace Teronis.DotNet.Build
 {
     class Program
     {
+        private static void setMsBuildExePath()
+        {
+            try {
+                var startInfo = new ProcessStartInfo("dotnet", "--list-sdks") {
+                    RedirectStandardOutput = true
+                };
+
+                var process = Process.Start(startInfo);
+                process.WaitForExit(1000);
+
+                var output = process.StandardOutput.ReadToEnd();
+                var sdkPaths = Regex.Matches(output, "([0-9]+.[0-9]+.[0-9]+) \\[(.*)\\]")
+                    .OfType<Match>()
+                    .Select(m => System.IO.Path.Combine(m.Groups[2].Value, m.Groups[1].Value, "MSBuild.dll"));
+
+                var sdkPath = sdkPaths.Last();
+                Environment.SetEnvironmentVariable("MSBUILD_EXE_PATH", sdkPath);
+            } catch (Exception exception) {
+
+            }
+        }
+
         static async Task<int> Main(string[] args)
         {
+            setMsBuildExePath();
+
             var options = Parser.Default.ParseArguments<RestoreCommandOptions, BuildCommandOptions, PackCommandOptions, TestCommandOptions, AzureCommandOptions>(args)
                 .MapResult<ICommandOptions, ICommandOptions>((options) => options, (errors) => {
 #if DEBUG
@@ -43,15 +68,25 @@ namespace Teronis.DotNet.Build
             var allProjects = Directory.GetFiles(sourceDirectory, "*.csproj", SearchOption.AllDirectories)
                    .Select(x => new ProjectInfo(new FileInfo(x)));
 
-            var matchReferenceProjects = @"(\\Reference\.|\\ref\\)";
-            var matchTestProjects = @"(\.Test\.csproj|\\test\\)";
+            var matchPublishablePackageProjects = @"(\\PublishablePackage.|PackagePublish.)";
+            var matchGitVersionCacheProjects = @"(\\GitVersionCache.)";
+            var matchSyntheticProjects = string.Format("({0}|{1})", matchPublishablePackageProjects, matchGitVersionCacheProjects);
+            //var matchReferenceProjects = @"(\\Reference\.|\\ref\\)";
+            //var matchReferenceProjects = string.Format("{0}|{1})", matchPublishablePackageProjects, matchGitVersionCacheProjects);
+
             var matchBuildProgramProjects = Regex.Escape(Path.Combine(sourceDirectory, "DotNet", "Build", @"Build\"));
-            var matchBuildExcludedProjects = string.Format(@"({0}|{1}|{2})", matchReferenceProjects, matchTestProjects, matchBuildProgramProjects);
+
+            var matchTestProjects = @"(\.Test\.csproj|\\test\\)";
+
+            var matchBuildExcludedProjects = string.Format(@"({0}|{1}|{2})",
+                matchSyntheticProjects,
+                matchTestProjects,
+                matchBuildProgramProjects);
 
             var matchExampleProjects = @"(\\Example\.|\.Example\.csproj|\\example\\)";
             var matchPackExcludedProjects = string.Format(@"({0}|{1})", matchBuildExcludedProjects, matchExampleProjects);
 
-            var matchAzureExcludedProjects = string.Format(@"({0}|{1})", matchReferenceProjects, matchBuildProgramProjects);
+            var matchAzureExcludedProjects = string.Format(@"({0}|{1})", matchSyntheticProjects, matchBuildProgramProjects);
 
             IEnumerable<ProjectInfo> restoreProjects = null!;
             IEnumerable<ProjectInfo> buildProjects = null!;
@@ -66,14 +101,14 @@ namespace Teronis.DotNet.Build
 
                 for (var index = validProjectsLength - 1; index >= 0; index--) {
                     var projectFile = validProjects[index].Path;
-                    var projectDocument = XDocument.Load(projectFile);
 
-                    var lastIsPackableElement = projectDocument.Root
-                        .Elements("PropertyGroup")
-                        .Elements("IsPackable")
-                        .LastOrDefault();
+                    using var collection = new ProjectCollection();
+                    var project = collection.LoadProject(projectFile);
 
-                    if (lastIsPackableElement != null && lastIsPackableElement.Value == "false") {
+                    var lastIsPackableElement = project
+                        .GetProperty("IsPackable");
+
+                    if (lastIsPackableElement != null && lastIsPackableElement.EvaluatedValue == "false") {
                         validProjects.RemoveAt(index);
                     }
                 }
@@ -107,7 +142,7 @@ namespace Teronis.DotNet.Build
                 throw new ArgumentException();
             }
 
-            Task RunDotNetProject(BuildStyle buildStyle, string command, ProjectInfo project, string? additionalArguments = null)
+            Task runDotNetProject(BuildStyle buildStyle, string command, ProjectInfo project, string? additionalArguments = null)
             {
                 string commandArgs;
 
@@ -127,7 +162,7 @@ namespace Teronis.DotNet.Build
                 }
             }
 
-            async Task RunDotNetProjects(BuildStyle buildStyle, string command, IEnumerable<ProjectInfo> projects)
+            async Task runDotNetProjectsAsync(BuildStyle buildStyle, string command, IEnumerable<ProjectInfo> projects, bool enableParallelism = false)
             {
                 options = options ?? throw new ArgumentNullException(nameof(options));
                 projects = projects ?? throw new ArgumentNullException(nameof(projects));
@@ -148,11 +183,21 @@ namespace Teronis.DotNet.Build
                     Console.ResetColor();
                 }
 
-                foreach (var project in projects) {
-                    await RunDotNetProject(buildStyle, command, project, additonalArguments);
+                async Task runDotNetProjectAsync(ProjectInfo project)
+                {
+                    await runDotNetProject(buildStyle, command, project, additonalArguments);
 
-                    if (!options.DryRun) {
+                    if (!options!.DryRun) {
                         Console.WriteLine(new string(Enumerable.Range(0, 80).Select(x => '_').ToArray()));
+                    }
+                }
+
+                if (enableParallelism) {
+                    var projectTasks = projects.Select(x => runDotNetProjectAsync(x));
+                    await Task.WhenAll(projectTasks);
+                } else {
+                    foreach (var project in projects) {
+                        await runDotNetProjectAsync(project);
                     }
                 }
 
@@ -167,19 +212,19 @@ namespace Teronis.DotNet.Build
                 options.SkipDependencies ? new string[] { } : dependencies;
 
             Target(RestoreCommandOptions.RestoreCommand, async () => {
-                await RunDotNetProjects(BuildStyle.MSBuild, RestoreCommandOptions.RestoreCommand, restoreProjects);
+                await runDotNetProjectsAsync(BuildStyle.MSBuild, RestoreCommandOptions.RestoreCommand, restoreProjects, enableParallelism: true);
             });
 
             Target(BuildCommandOptions.BuildCommand, DependsOnIf(RestoreCommandOptions.RestoreCommand), async () => {
-                await RunDotNetProjects(BuildStyle.MSBuild, BuildCommandOptions.BuildCommand, buildProjects);
+                await runDotNetProjectsAsync(BuildStyle.MSBuild, BuildCommandOptions.BuildCommand, buildProjects);
             });
 
             Target(PackCommandOptions.PackCommand, DependsOnIf(BuildCommandOptions.BuildCommand), async () => {
-                await RunDotNetProjects(BuildStyle.MSBuild, PackCommandOptions.PackCommand, packProjects);
+                await runDotNetProjectsAsync(BuildStyle.MSBuild, PackCommandOptions.PackCommand, packProjects);
             });
 
             Target(TestCommandOptions.TestCommand, DependsOnIf(BuildCommandOptions.BuildCommand), async () => {
-                await RunDotNetProjects(BuildStyle.DotNet, TestCommandOptions.TestCommand, testProjects);
+                await runDotNetProjectsAsync(BuildStyle.DotNet, TestCommandOptions.TestCommand, testProjects);
             });
 
             Target(AzureCommandOptions.AzureCommand, DependsOnIf(PackCommandOptions.PackCommand, TestCommandOptions.TestCommand), () => { });

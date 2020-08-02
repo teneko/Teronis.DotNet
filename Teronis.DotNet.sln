@@ -99,8 +99,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.ModuleInitializer.A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.ModuleInitializer.AssemblyLoader.Executable", "src\ModuleInitializer\AssemblyLoader\0.Executable\src\Teronis.ModuleInitializer.AssemblyLoader.Executable.csproj", "{96F69F10-00FB-400E-AF6D-D0F48AD56724}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PackageReference.ModuleInitializer.AssemblyLoad.Executable", "src\ModuleInitializer\AssemblyLoader\0.Executable\src\PackageReference.ModuleInitializer.AssemblyLoad.Executable.csproj", "{DEFBF0FC-C2BF-4919-9158-D578909E2AD4}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublishablePackage.ModuleInitializer.AssemblyLoader.Executable", "src\ModuleInitializer\AssemblyLoader\0.Executable\ref\PublishablePackage\PublishablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj", "{3E07541A-60AC-418C-8CBB-3FCC737DA70C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExecutablePackage.ModuleInitializer.AssemblyLoader.Executable", "src\ModuleInitializer\AssemblyLoader\0.Executable\ref\ExecutablePackage\ExecutablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj", "{952CC402-6417-4924-B652-C2E30BBC3832}"
@@ -693,18 +691,6 @@ Global
 		{96F69F10-00FB-400E-AF6D-D0F48AD56724}.Release|x64.Build.0 = Release|x64
 		{96F69F10-00FB-400E-AF6D-D0F48AD56724}.Release|x86.ActiveCfg = Release|x86
 		{96F69F10-00FB-400E-AF6D-D0F48AD56724}.Release|x86.Build.0 = Release|x86
-		{DEFBF0FC-C2BF-4919-9158-D578909E2AD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DEFBF0FC-C2BF-4919-9158-D578909E2AD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DEFBF0FC-C2BF-4919-9158-D578909E2AD4}.Debug|x64.ActiveCfg = Debug|x64
-		{DEFBF0FC-C2BF-4919-9158-D578909E2AD4}.Debug|x64.Build.0 = Debug|x64
-		{DEFBF0FC-C2BF-4919-9158-D578909E2AD4}.Debug|x86.ActiveCfg = Debug|x86
-		{DEFBF0FC-C2BF-4919-9158-D578909E2AD4}.Debug|x86.Build.0 = Debug|x86
-		{DEFBF0FC-C2BF-4919-9158-D578909E2AD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DEFBF0FC-C2BF-4919-9158-D578909E2AD4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DEFBF0FC-C2BF-4919-9158-D578909E2AD4}.Release|x64.ActiveCfg = Release|x64
-		{DEFBF0FC-C2BF-4919-9158-D578909E2AD4}.Release|x64.Build.0 = Release|x64
-		{DEFBF0FC-C2BF-4919-9158-D578909E2AD4}.Release|x86.ActiveCfg = Release|x86
-		{DEFBF0FC-C2BF-4919-9158-D578909E2AD4}.Release|x86.Build.0 = Release|x86
 		{3E07541A-60AC-418C-8CBB-3FCC737DA70C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3E07541A-60AC-418C-8CBB-3FCC737DA70C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E07541A-60AC-418C-8CBB-3FCC737DA70C}.Debug|x64.ActiveCfg = Debug|x64

@@ -12,5 +12,8 @@ namespace Teronis.DotNet.Build
         {
             FileInfo = fileInfo;
         }
+
+        public override string ToString() =>
+            Name;
     }
 }

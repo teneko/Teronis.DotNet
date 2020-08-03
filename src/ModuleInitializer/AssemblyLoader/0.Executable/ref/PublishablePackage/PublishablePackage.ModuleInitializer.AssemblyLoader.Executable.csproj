@@ -1,4 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<!--
+PublishablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj
+
+This project is a synthetic project. It creates a the filesystem
+publishment for Teronis.ModuleInitializer.AssemblyLoader.Executable.
+-->
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard1.0</TargetFramework>
     <PackAsExecutable>Publish</PackAsExecutable>

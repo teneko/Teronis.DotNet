@@ -68,8 +68,8 @@ namespace Teronis.DotNet.Build
             var allProjects = Directory.GetFiles(sourceDirectory, "*.csproj", SearchOption.AllDirectories)
                    .Select(x => new ProjectInfo(new FileInfo(x)));
 
-            var matchPublishablePackageProjects = @"(\\PublishablePackage.|PackagePublish.)";
-            var matchGitVersionCacheProjects = @"(\\GitVersionCache.)";
+            var matchPublishablePackageProjects = @"(\\PublishablePackage\.|\\PackagePublish\.)";
+            var matchGitVersionCacheProjects = @"(\\GitVersionCache\.)";
             var matchSyntheticProjects = string.Format("({0}|{1})", matchPublishablePackageProjects, matchGitVersionCacheProjects);
             //var matchReferenceProjects = @"(\\Reference\.|\\ref\\)";
             //var matchReferenceProjects = string.Format("{0}|{1})", matchPublishablePackageProjects, matchGitVersionCacheProjects);
@@ -123,6 +123,7 @@ namespace Teronis.DotNet.Build
                 restoreProjects = allProjects;
             } else if (options.Command == BuildCommandOptions.BuildCommand) {
                 buildProjects = allProjects.Where(x => !Regex.IsMatch(x.Path, matchBuildExcludedProjects));
+                buildProjects = allProjects;
                 restoreProjects = buildProjects;
             } else if (options.Command == PackCommandOptions.PackCommand) {
                 packProjects = getPackProjects();

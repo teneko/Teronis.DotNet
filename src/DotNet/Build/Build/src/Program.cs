@@ -167,6 +167,7 @@ namespace Teronis.DotNet.Build
                         }
 
                         retries--;
+                        goto retry;
                     }
                 }
             }

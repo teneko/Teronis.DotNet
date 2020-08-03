@@ -21,6 +21,9 @@
     <!-- Teronis.MSBuild.Core -->
     <TeronisMSBuildCoreTargetTasksTargetsFile>$(RootDirectory)src\MSBuild\Core\Core\src\build\TargetTasks.targets</TeronisMSBuildCoreTargetTasksTargetsFile>
 
+    <!-- Teronis.MSBuild.Core -->
+    <!-- <TeronisMSBuildCoreTargetTasksTargetsFile>$(PackagePublishmentsDirectory)GitVersionCache.MSBuild.Core\build\TargetTasks.targets</TeronisMSBuildCoreTargetTasksTargetsFile> -->
+
     <TeronisMSBuildCoreProjectShadowPropsFile>$(RootDirectory)src\MSBuild\Core\Core\src\build\Teronis.MSBuild.Packaging.ProjectShadow.props</TeronisMSBuildCoreProjectShadowPropsFile>
     <TeronisMSBuildCoreProjectShadowTargetsFile>$(RootDirectory)src\MSBuild\Core\Core\src\build\Teronis.MSBuild.Packaging.ProjectShadow.targets</TeronisMSBuildCoreProjectShadowTargetsFile>
 
@@ -34,20 +37,24 @@
     <TeronisMSBuildPackagingProjectBuildInPackageTargetsFile Condition="'$(TeronisMSBuildPackagingProjectBuildInPackageTargetsFile)' == ''">$(RootDirectory)\src\MSBuild\Packaging\ProjectBuildInPackage\src\build\Teronis.MSBuild.Packaging.ProjectBuildInPackage.targets</TeronisMSBuildPackagingProjectBuildInPackageTargetsFile>
 
     <!-- Teronis.MSBuild.GitVersionCache -->
-    <TeronisMSBuildPackagingGitVersionCachePropsFileTemplate>$(RootDirectory)src\MSBuild\Packaging\GitVersionCache\0\ref\GitVersionCache\bin\(Configuration)\netstandard2.0\packagePublish\build\Teronis.MSBuild.Packaging.GitVersionCache.props</TeronisMSBuildPackagingGitVersionCachePropsFileTemplate>
-    <TeronisMSBuildPackagingGitVersionCacheTargetsFileTemplate>$(RootDirectory)src\MSBuild\Packaging\GitVersionCache\0\ref\GitVersionCache\bin\(Configuration)\netstandard2.0\packagePublish\build\Teronis.MSBuild.Packaging.GitVersionCache.targets</TeronisMSBuildPackagingGitVersionCacheTargetsFileTemplate>
+    <!-- <TeronisMSBuildPackagingGitVersionCachePropsFileTemplate>$(RootDirectory)src\MSBuild\Packaging\GitVersionCache\0\ref\GitVersionCache\bin\(Configuration)\netstandard2.0\packagePublish\build\Teronis.MSBuild.Packaging.GitVersionCache.props</TeronisMSBuildPackagingGitVersionCachePropsFileTemplate>
+    <TeronisMSBuildPackagingGitVersionCacheTargetsFileTemplate>$(RootDirectory)src\MSBuild\Packaging\GitVersionCache\0\ref\GitVersionCache\bin\(Configuration)\netstandard2.0\packagePublish\build\Teronis.MSBuild.Packaging.GitVersionCache.targets</TeronisMSBuildPackagingGitVersionCacheTargetsFileTemplate> -->
+
+    <!-- Teronis.MSBuild.GitVersionCache -->
+    <TeronisMSBuildPackagingGitVersionCachePropsFile>$(PackagePublishmentsDirectory)GitVersionCache.MSBuild.Packaging.GitVersionCache\build\Teronis.MSBuild.Packaging.GitVersionCache.props</TeronisMSBuildPackagingGitVersionCachePropsFile>
+    <TeronisMSBuildPackagingGitVersionCacheTargetsFile>$(PackagePublishmentsDirectory)GitVersionCache.MSBuild.Packaging.GitVersionCache\build\Teronis.MSBuild.Packaging.GitVersionCache.targets</TeronisMSBuildPackagingGitVersionCacheTargetsFile>
+
+    <!-- Teronis.MSBuild.Packaging.PackExecutable -->
+    <!-- <TeronisMSBuildPackagingPackExecutablePropsFile>$(RootDirectory)src\MSBuild\Packaging\PackExecutable\0\src\build\Teronis.MSBuild.Packaging.PackExecutable.props</TeronisMSBuildPackagingPackExecutablePropsFile>
+    <TeronisMSBuildPackagingPackExecutableTargetsFile>$(RootDirectory)src\MSBuild\Packaging\PackExecutable\0\src\build\Teronis.MSBuild.Packaging.PackExecutable.targets</TeronisMSBuildPackagingPackExecutableTargetsFile> -->
 
     <!-- Teronis.MSBuild.Packaging.PackExecutable -->
     <TeronisMSBuildPackagingPackExecutablePropsFile>$(RootDirectory)src\MSBuild\Packaging\PackExecutable\0\src\build\Teronis.MSBuild.Packaging.PackExecutable.props</TeronisMSBuildPackagingPackExecutablePropsFile>
     <TeronisMSBuildPackagingPackExecutableTargetsFile>$(RootDirectory)src\MSBuild\Packaging\PackExecutable\0\src\build\Teronis.MSBuild.Packaging.PackExecutable.targets</TeronisMSBuildPackagingPackExecutableTargetsFile>
 
-    <!-- Teronis.MSBuild.Packaging.PackExecutable -->
-    <!-- <TeronisMSBuildPackagingPackExecutablePropsFile>$(RootDirectory)src\MSBuild\Packaging\PackExecutable\0\src\bin\Debug\netstandard1.0\build\Teronis.MSBuild.Packaging.PackExecutable.props</TeronisMSBuildPackagingPackExecutablePropsFile>
-    <TeronisMSBuildPackagingPackExecutableTargetsFile>$(RootDirectory)src\MSBuild\Packaging\PackExecutable\0\src\bin\Debug\netstandard1.0\build\Teronis.MSBuild.Packaging.PackExecutable.targets</TeronisMSBuildPackagingPackExecutableTargetsFile> -->
-
     <!-- Teronis.ModuleInitializer.AssemblyLoader.Executable -->
-    <TeronisModuleInitializerAssemblyLoaderExecutablePropsFile>$(RootDirectory)obj\package-publishments\PublishablePackage.ModuleInitializer.AssemblyLoader.Executable\build\Teronis.ModuleInitializer.AssemblyLoader.Executable.props</TeronisModuleInitializerAssemblyLoaderExecutablePropsFile>
-    <TeronisModuleInitializerAssemblyLoaderExecutableTargetsFile>$(RootDirectory)obj\package-publishments\PublishablePackage.ModuleInitializer.AssemblyLoader.Executable\build\Teronis.ModuleInitializer.AssemblyLoader.Executable.targets</TeronisModuleInitializerAssemblyLoaderExecutableTargetsFile>
+    <TeronisModuleInitializerAssemblyLoaderExecutablePropsFile>$(PackagePublishmentsDirectory)PublishablePackage.ModuleInitializer.AssemblyLoader.Executable\build\Teronis.ModuleInitializer.AssemblyLoader.Executable.props</TeronisModuleInitializerAssemblyLoaderExecutablePropsFile>
+    <TeronisModuleInitializerAssemblyLoaderExecutableTargetsFile>$(PackagePublishmentsDirectory)PublishablePackage.ModuleInitializer.AssemblyLoader.Executable\build\Teronis.ModuleInitializer.AssemblyLoader.Executable.targets</TeronisModuleInitializerAssemblyLoaderExecutableTargetsFile>
 
     <!-- Teronis.ModuleInitializer.AssemblyLoader.MSBuild -->
     <TeronisModuleInitializerAssemblyLoaderMSBuildPropsFile>$(RootDirectory)src\ModuleInitializer\AssemblyLoader\0.MSBuild\src\build\Teronis.ModuleInitializer.AssemblyLoader.MSBuild.props</TeronisModuleInitializerAssemblyLoaderMSBuildPropsFile>

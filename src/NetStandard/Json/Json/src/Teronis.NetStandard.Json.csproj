@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Core\Core\src\Teronis.NetStandard.Core.csproj" Condition="'$(DisableNetStandardCoreProject)' != 'true'" />
+    <ProjectReference Include="..\..\..\Core\Core\src\Teronis.NetStandard.Core.csproj" />
   </ItemGroup>
 
 </Project>

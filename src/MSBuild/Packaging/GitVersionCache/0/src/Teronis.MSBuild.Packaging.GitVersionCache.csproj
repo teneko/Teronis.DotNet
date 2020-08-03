@@ -9,16 +9,14 @@
 
   <PropertyGroup>
 
-    <!--<OutputType>Exe</OutputType>-->
+    <!--<OutputType>Exe</OutputType>
+    <StartupObject>Teronis.GitVersionCache.Program</StartupObject>-->
+    <!--<TargetFramework>netcoreapp3.1</TargetFramework>-->
 
-    <!-- 
-    # REMINDER: Change specific string condition in
-    # ModuleInitializer if you change TargetFramework.
-    -->
+    <!--<TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>-->
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Teronis.GitVersionCache</RootNamespace>
     <Description>GitVersionCache is an improved implementation to GitVersionTask. It does support concurrency and nested GitVersion.yml relative to your .git folder.</Description>
-    <!--<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>-->
 
     <!-- We don't build an executable package. 
          We build an only-build-time package. -->
@@ -37,8 +35,12 @@
     <UpdateAssemblyInfo>false</UpdateAssemblyInfo>
     <GenerateGitVersionInformation>false</GenerateGitVersionInformation>
     <GetVersion>false</GetVersion>
+    
+    <!-- TODO: Make this executable package able. -->
+    <!--<IsPackable>false</IsPackable>-->
+    <PackExecutableAs Condition="'$(PackExecutableAs)' == ''">Package</PackExecutableAs>
 
-    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_PublishedProjectContentInPackage</TargetsForTfmSpecificContentInPackage>
+    <!--<TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_PublishedProjectContentInPackage</TargetsForTfmSpecificContentInPackage>-->
 
   </PropertyGroup>
 
@@ -70,51 +72,46 @@
 
   </ItemGroup>
 
-  <PropertyGroup>
-
-    <!--<GitVersionToolFilesIncludes>
+  <PropertyGroup><!--<GitVersionToolFilesIncludes>
       $(PkgGitVersionTask)\tools\**\*;
       $(PkgGitVersionTask)\tools\**\*;
       $(PkgGitVersionTask)\tools\**\*
     </GitVersionToolFilesIncludes>-->
 
-    <FilesystemPublishmentDirectory>bin\$(Configuration)\netstandard2.0\filesystemPublish</FilesystemPublishmentDirectory>
+    <!--<FilesystemPublishmentDirectory>bin\$(Configuration)\netstandard2.0\filesystemPublish</FilesystemPublishmentDirectory>-->
 
   </PropertyGroup>
 
   <ItemGroup>
 
-    <None Include="$(MSBuildThisFileDirectory)build\**\*" Pack="true" PackagePath="build">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="$(MSBuildThisFileDirectory)build\**\*.props;$(MSBuildThisFileDirectory)build\**\*.targets" Pack="true" PackagePath="build">
+      <Link>build\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
 
-    <None Include="$(MSBuildThisFileDirectory)build\**\*" Pack="true" PackagePath="buildMultiTargeting">
-      <!-- Last link wins -->
-      <!--<Link>build\%(Filename)%(Extension)</Link>-->
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="$(MSBuildThisFileDirectory)build\**\*.props;$(MSBuildThisFileDirectory)build\**\*.targets" Pack="true" PackagePath="buildMultiTargeting">
+      <Link>buildMultiTargeting\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
-
-    <!--<None Include="$(MSBuildThisFileDirectory)build\**\*">
-      <Link>build\%(Filename)%(Extension)</Link>
-    </None>--> 
 
   </ItemGroup>
 
-  <Target Name="_PublishThisProject">
+  <!--<Target Name="_PublishThisProject">-->
 
-    <PropertyGroup>
+    <!--<PropertyGroup>
       <PublishProjectMSBuildProperties>
         PublishProfile=GitVersionCachePreBuild.pubxml;
         Configuration=$(Configuration)
       </PublishProjectMSBuildProperties>
-    </PropertyGroup>
+    </PropertyGroup>-->
 
-    <MSBuild Projects="$(MSBuildPackagingGitVersionProjectFile)" Targets="Publish" Properties="$(PublishProjectMSBuildProperties)" />
+    <!--<MSBuild Projects="$(MSBuildPackagingGitVersionProjectFile)" Targets="Publish" Properties="$(PublishProjectMSBuildProperties)" />-->
 
-  </Target>
+  <!--</Target>-->
 
   <!-- We depend on creation of filesystem publishment. -->
-  <Target Name="_PublishedProjectContentInPackage" DependsOnTargets="_PublishThisProject">
+  <!--DependsOnTargets="_PublishThisProject"-->
+  <!--<Target Name="_PublishedProjectContentInPackage">-->
     <!-- 
     # We have to include those files in this way, because 
     # <None Include=".." Pack="true" PackagePath=".." />
@@ -122,18 +119,18 @@
     # the time where the target pack is called, so you
     # would have to pack twice to get desired package.
     -->
-    <ItemGroup>
+    <!--<ItemGroup>
       <TfmSpecificPackageFile Include="$(FilesystemPublishmentDirectory)\*">
-        <!-- When you change it, you have to adjust ContainerRootDirectory in ModuleInitializer. -->
+        --><!-- When you change it, you have to adjust ContainerRootDirectory in ModuleInitializer. --><!--
         <PackagePath>GitVersionCache\netstandard2.0</PackagePath>
       </TfmSpecificPackageFile>
     </ItemGroup>
-  </Target>
+  </Target>-->
 
-  <Target Name="CleanPublishToFilesystemBeforeClean" BeforeTargets="BeforeClean">
+  <!--<Target Name="CleanPublishToFilesystemBeforeClean" BeforeTargets="BeforeClean">
     <RemoveDir Directories="$(FilesystemPublishmentDirectory)" />
-  </Target>
+  </Target>-->
 
-  <Import Project="$(TeronisMSBuildCorePackagingGenerateFilesystemPackageTargetsFile)" />
+  <!--<Import Project="$(TeronisMSBuildCorePackagingGenerateFilesystemPackageTargetsFile)" />-->
 
 </Project>

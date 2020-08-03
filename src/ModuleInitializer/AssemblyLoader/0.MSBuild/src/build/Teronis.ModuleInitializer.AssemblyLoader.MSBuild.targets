@@ -7,7 +7,7 @@
     <FodyDependsOnTargets>$(InjectModuleInitializerAssemblyLoaderDependsOn);InjectModuleInitializerAssemblyLoader</FodyDependsOnTargets>
     <CanInjectModuleInitializerAssemblyLoader>false</CanInjectModuleInitializerAssemblyLoader>
   </PropertyGroup>
-  
+
   <Target Name="BeforeInjectModuleInitializerAssemblyLoader" />
 
   <!--Inputs="@(IntermediateAssembly)"

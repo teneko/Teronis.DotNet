@@ -1,4 +1,7 @@
 ﻿<Project>
+
+  <Import Project="$(MSBuildThisFileDirectory)Teronis.MSBuild.Packaging.ShadowProject.props" Condition="'$(TeronisMSBuildPackagingPackExecutableShadowProjectPropsHasBeenImported)' != 'true'" />
+  
   <PropertyGroup>
     <TeronisMSBuildPackagingPackExecutableHasBeenImported>true</TeronisMSBuildPackagingPackExecutableHasBeenImported>
     <TeronisMSBuildPackagingPackExecutableTasksBinary Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\executables\any\netcoreapp2.1\Teronis.MSBuild.Packaging.PackExecutable.Tasks.dll</TeronisMSBuildPackagingPackExecutableTasksBinary>
@@ -8,14 +11,8 @@
     <GenerateNuspecWhenPackingExecutablePackageProjectDependsOn>IncludeExecutableSourceProjectPackageFiles;$(GenerateNuspecWhenPackingExecutablePackageProjectDependsOn)</GenerateNuspecWhenPackingExecutablePackageProjectDependsOn>
     <GetExecutableProjectPropertiesDependsOn>$(GetExecutableProjectPropertiesDependsOn)</GetExecutableProjectPropertiesDependsOn>
     <ExecutableProjectPropertySeparator Condition="'$(ExecutableProjectPropertySeparator)' == ''">+|'_'|+</ExecutableProjectPropertySeparator>
+    <!-- Comma separated name=value pairs. -->
+    <ExecutableProjectReferenceMSBuildProperties>$(ExecutableProjectReferenceMSBuildProperties)</ExecutableProjectReferenceMSBuildProperties>
   </PropertyGroup>
 
-  <ItemGroup>
-    <!--
-    Required metadata properties:
-      Identity - The property
-      Value - the property value
-    -->
-    <ExecutableProjectReferenceMSBuildProperties Include="@(ExecutableProjectReferenceMSBuildProperties)" />
-  </ItemGroup>
 </Project>

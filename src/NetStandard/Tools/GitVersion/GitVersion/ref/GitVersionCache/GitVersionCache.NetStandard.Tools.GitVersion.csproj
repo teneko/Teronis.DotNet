@@ -1,20 +1,24 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<!--
+This project has only the purpose to mirror 
+the source project and disable GitVersionCache
+in "outer" build.
+-->
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
 
-    <SourceProjectDirectory>$(MSBuildThisFileDirectory)..\..\src\</SourceProjectDirectory>
-
     <DisableGitVersion>true</DisableGitVersion>
     <DisableGitVersionCache>true</DisableGitVersionCache>
-    <DisableNetStandardCoreProject>true</DisableNetStandardCoreProject>
     <DisableSdkProps>true</DisableSdkProps>
+
+    <ShadowProjectReference>$(MSBuildThisFileDirectory)..\..\src\Teronis.NetStandard.Tools.GitVersion.csproj</ShadowProjectReference>
 
   </PropertyGroup>
 
-  <Import Project="$(TeronisMSBuildCoreProjectShadowTargetsFile)" />
-  <Import Project="$(SourceProjectDirectory)Teronis.NetStandard.Tools.GitVersion.csproj" />
+  <Import Project="$(ShadowProjectReference)" />
   
   <ItemGroup>
+    <ProjectReference Remove="@(ProjectReference)" />
     <ProjectReference Include="..\..\..\..\..\Core\Core\ref\GitVersionCache\GitVersionCache.NetStandard.Core.csproj" />
   </ItemGroup>
 

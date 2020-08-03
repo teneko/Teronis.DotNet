@@ -6,8 +6,26 @@
   <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackageTargetsFile)" />
   <Import Project="$(TeronisMSBuildPackagingPackExecutableTargetsFile)" Condition="Exists($(TeronisMSBuildPackagingPackExecutableTargetsFile))" />
 
+  <!--
+  ModuleInitializerAssemblyLoader
+  -->
+
   <Import Project="$(TeronisModuleInitializerAssemblyLoaderExecutableTargetsFile)" Condition="Exists($(TeronisModuleInitializerAssemblyLoaderExecutableTargetsFile))" />
   <Import Project="$(TeronisModuleInitializerAssemblyLoaderMSBuildTargetsFile)" />
+
+  <!--
+  GitVersionCache
+  -->
+
+  <Import Project="$(TeronisMSBuildPackagingGitVersionCachePropsFile)" 
+    Condition="Exists('$(TeronisMSBuildPackagingGitVersionCachePropsFile)')
+      And '$(IsGitVersionCacheRelated)' != 'true'
+      And '$(DisableGitVersionCache)' != 'true'" />
+
+  <Import Project="$(TeronisMSBuildPackagingGitVersionCacheTargetsFile)"
+    Condition="Exists('$(TeronisMSBuildPackagingGitVersionCacheTargetsFile)') 
+      And '$(IsGitVersionCacheRelated)' != 'true'
+      And '$(DisableGitVersionCache)' != 'true'" />
   
   <ItemGroup>
     <Compile Remove="$(MSBuildThisFileDirectory)/Nullable.cs" Condition="'$(Nullable)' != 'enable' Or '$(DisallowNullableAttributes)' == 'true'" />
@@ -40,10 +58,19 @@
 
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" Conditions="'$(DisableGitVersionCache)' != 'true' And $(IsPackable)" />
 
-    <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\GitVersionCache\0\ref\PackagePublish\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj"
+    <!-- <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\GitVersionCache\0\ref\PackagePublish\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj"
       Condition="'$(IsGitVersionCacheRelated)' != 'true'
         And '$(DisableGitVersionCache)' != 'true' 
-        And '$(IsPackable)' == 'true'" />
+        And '$(IsPackable)' == 'true'" /> -->
+
+    <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\GitVersionCache\0\ref\GitVersionCache\GitVersionCache.MSBuild.Packaging.GitVersionCache.csproj"
+      Condition="'$(IsGitVersionCacheRelated)' != 'true'
+        And '$(DisableGitVersionCache)' != 'true' 
+        And '$(IsPackable)' == 'true'">
+        <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+        <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+        <SetTargetFramework>TargetFramework=netstandard2.0</SetTargetFramework>
+      </ProjectReference>
     
   </ItemGroup>
 
@@ -57,24 +84,10 @@
                         Condition="'%(ProjectReference.Filename)' == 'Teronis.ModuleInitializer.AssemblyLoader.MSBuild'" /> -->
   </ItemGroup>
 
-  <ItemGroup>
-
-  </ItemGroup>
-
-  <PropertyGroup>
+  <!-- <PropertyGroup>
     <_TeronisMSBuildPackagingGitVersionCachePropsFile>$(TeronisMSBuildPackagingGitVersionCachePropsFileTemplate.Replace('(Configuration)','$(Configuration)'))</_TeronisMSBuildPackagingGitVersionCachePropsFile>
     <_TeronisMSBuildPackagingGitVersionCacheTargetsFile>$(TeronisMSBuildPackagingGitVersionCacheTargetsFileTemplate.Replace('(Configuration)','$(Configuration)'))</_TeronisMSBuildPackagingGitVersionCacheTargetsFile>
-  </PropertyGroup>
-
-  <Import Project="$(_TeronisMSBuildPackagingGitVersionCachePropsFile)" 
-    Condition="Exists('$(_TeronisMSBuildPackagingGitVersionCachePropsFile)')
-      And '$(IsGitVersionCacheRelated)' != 'true'
-      And '$(DisableGitVersionCache)' != 'true'" />
-
-  <Import Project="$(_TeronisMSBuildPackagingGitVersionCacheTargetsFile)"
-    Condition="Exists('$(_TeronisMSBuildPackagingGitVersionCacheTargetsFile)') 
-      And '$(IsGitVersionCacheRelated)' != 'true'
-      And '$(DisableGitVersionCache)' != 'true'" />
+  </PropertyGroup> -->
 
   <ItemGroup>
 
@@ -126,6 +139,6 @@
     </PropertyGroup>
   </Target>
 
-  <Target Name="GetVersionCacheWhenGettingExecutableProjectProperties" DependsOnTargets="GetVersionCache" />
+  <!-- <Target Name="GetVersionCacheWhenGettingExecutableProjectProperties" DependsOnTargets="GetVersionCache" /> -->
 
 </Project>

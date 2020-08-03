@@ -8,8 +8,8 @@
     
     <TeronisMSBuildPackagingGitVersionCacheHasBeenLoaded>true</TeronisMSBuildPackagingGitVersionCacheHasBeenLoaded>
 
-    <GitVersionCacheAssemblyFile Condition="$(GitVersionCacheAssemblyFile) == ''">$(MSBuildThisFileDirectory)..\GitVersionCache\netstandard2.0\Teronis.MSBuild.Packaging.GitVersionCache.dll</GitVersionCacheAssemblyFile>
-    <MSBuildCoreAssemblyFile Condition="$(MSBuildCoreAssemblyFile) == ''">$(MSBuildThisFileDirectory)..\GitVersionCache\netstandard2.0\Teronis.MSBuild.Core.dll</MSBuildCoreAssemblyFile>
+    <GitVersionCacheAssemblyFile Condition="$(GitVersionCacheAssemblyFile) == ''">$(MSBuildThisFileDirectory)..\executables\netstandard2.0\Teronis.MSBuild.Packaging.GitVersionCache.dll</GitVersionCacheAssemblyFile>
+    <MSBuildCoreAssemblyFile Condition="$(MSBuildCoreAssemblyFile) == ''">$(MSBuildThisFileDirectory)..\executables\netstandard2.0\Teronis.MSBuild.Core.dll</MSBuildCoreAssemblyFile>
     
     <DisableGitVersionCache Condition="'$(DisableGitVersionCache)' == ''">false</DisableGitVersionCache>
     

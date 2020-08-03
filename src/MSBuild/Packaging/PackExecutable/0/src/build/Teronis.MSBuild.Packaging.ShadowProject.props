@@ -1,0 +1,11 @@
+﻿<Project>
+
+  <PropertyGroup>    
+    <TeronisMSBuildPackagingPackExecutableShadowProjectPropsHasBeenImported>true</TeronisMSBuildPackagingPackExecutableShadowProjectPropsHasBeenImported>
+    <ShadowProjectReference>$(ShadowProjectReference)</ShadowProjectReference>
+    <CopyShadowSourceProjectFilesDependsOn>$(CopyShadowSourceProjectFilesDependsOn)</CopyShadowSourceProjectFilesDependsOn>
+    <ProjectShadowGitIgnoreFile Condition="'$(ProjectShadowGitIgnoreFile)' == ''">$(MSBuildThisFileDirectory)$(MSBuildThisFileName).gitignore</ProjectShadowGitIgnoreFile>
+    <DisableProjectShadowGitIgnoreCopy Condition="'$(DisableProjectShadowGitIgnore)' == ''">false</DisableProjectShadowGitIgnoreCopy>
+  </PropertyGroup>
+  
+</Project>

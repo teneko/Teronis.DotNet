@@ -1,26 +1,31 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<!--
+This project has only the purpose to mirror 
+the source project and disable GitVersionCache
+in "outer" build.
+-->
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
 
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Teronis.MSBuild.Packaging.GitVersionCache</AssemblyName>
-    <SourceProjectDirectory>$(MSBuildThisFileDirectory)..\..\src\</SourceProjectDirectory>
+    <RootNamespace>Teronis.GitVersion</RootNamespace>
 
     <DisableGitVersion>true</DisableGitVersion>
     <DisableGitVersionCache>true</DisableGitVersionCache>
     <DisableSdkProps>true</DisableSdkProps>
-    <MSBuildPackagingGitVersionProjectFile>$(MSBuildThisFileDirectory)$(MSBuildProjectName).csproj</MSBuildPackagingGitVersionProjectFile>
-    <IsPackable>true</IsPackable>
+
+    <PackExecutableAs>Publish</PackExecutableAs>
+    <!--
+    This does work in VS but not with msbuild.exe because of ring dependency 
+    in target _GenerateRestoreProjectPathWalk (NuGet.targets(1055,5))
+    -->
+    <!--<ExecutableProjectReference>..\..\src\$(AssemblyName).csproj</ExecutableProjectReference>-->
+    <ExecutableProjectReference>$(MSBuildProjectFullPath)</ExecutableProjectReference>
+    <ShadowProjectReference>..\..\src\$(AssemblyName).csproj</ShadowProjectReference>
 
   </PropertyGroup>
 
-  <Import Project="$(TeronisMSBuildCoreProjectShadowTargetsFile)" />
-  <Import Project="$(SourceProjectDirectory)$(AssemblyName).csproj" />
-
-  <ItemGroup>
-    <PackageReference Update="Microsoft.Build.Utilities.Core" Version="16.6.0" />
-    <PackageReference Update="Microsoft.Extensions.DependencyInjection" Version="3.1.5" />
-    <PackageReference Update="Microsoft.Extensions.Options" Version="3.1.5" />
-    <PackageReference Update="System.Text.Json" Version="4.7.2" />
-  </ItemGroup>
+  <Import Project="$(ShadowProjectReference)" />
 
 </Project>

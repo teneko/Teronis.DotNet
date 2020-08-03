@@ -4,7 +4,7 @@
   <ItemGroup>
     
     <None Include="$(MSBuildThisFileDirectory)..\GitVersion\GitVersion.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
     
   </ItemGroup>

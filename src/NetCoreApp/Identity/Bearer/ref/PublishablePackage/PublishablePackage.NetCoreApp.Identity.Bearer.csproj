@@ -10,7 +10,7 @@ properties otherwise we would have to separate path logic.
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard1.0</TargetFramework>
-    <PackAsExecutable>Publish</PackAsExecutable>
+    <PackExecutableAs>Publish</PackExecutableAs>
     <ExecutableProjectReference>..\..\src\Teronis.NetCoreApp.Identity.Bearer.csproj</ExecutableProjectReference>
   </PropertyGroup>
 </Project>

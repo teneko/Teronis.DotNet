@@ -1,21 +1,22 @@
+﻿<!--
+This project has only the purpose to mirror 
+the source project and disable GitVersionCache
+in "outer" build.
+-->
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-
     <AssemblyName>Teronis.MSBuild.Core</AssemblyName>
-    <SourceProjectDirectory>$(MSBuildThisFileDirectory)..\..\src\</SourceProjectDirectory>
 
     <DisableGitVersion>true</DisableGitVersion>
     <DisableGitVersionCache>true</DisableGitVersionCache>
     <DisableSdkProps>true</DisableSdkProps>
     <IsPackable>true</IsPackable>
 
-  </PropertyGroup>
+    <ShadowProjectReference>..\..\src\$(AssemblyName).csproj</ShadowProjectReference>
 
-  <Import Project="$(TeronisMSBuildCoreProjectShadowTargetsFile)" />
-  <Import Project="$(SourceProjectDirectory)$(AssemblyName).csproj" />
-  <ItemGroup>
-    <PackageReference Update="Microsoft.Build.Utilities.Core" Version="16.6.0" />
-  </ItemGroup>
+  </PropertyGroup>
+  
+  <Import Project="$(ShadowProjectReference)" />
 
 </Project>

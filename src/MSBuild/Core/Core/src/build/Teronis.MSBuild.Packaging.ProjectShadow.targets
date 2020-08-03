@@ -12,8 +12,13 @@
 
   <ItemGroup Condition="'$(_SourceProjectDirectory)' != ''">
 
-    <Compile Include="$(_SourceProjectDirectory)**\*.cs" Exclude="$(_SourceProjectDirectory)bin\**\*;$(_SourceProjectDirectory)obj\**\*" />
-    <EmbeddedResource Include="$(_SourceProjectDirectory)\**\*.resx" />
+    <Compile Include="$(_SourceProjectDirectory)**\*.cs" Exclude="$(_SourceProjectDirectory)bin\**\*;$(_SourceProjectDirectory)obj\**\*">
+      <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
+    </Compile>
+    
+    <EmbeddedResource Include="$(_SourceProjectDirectory)\**\*.resx">
+      <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
+    </EmbeddedResource>
 
     <None Include="$(_SourceProjectDirectory)**\*.props;$(_SourceProjectDirectory)**\*.targets">
       <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>

@@ -45,10 +45,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitVersionCache.NetStandard
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitVersionCache.NetStandard.Core", "src\NetStandard\Core\Core\ref\GitVersionCache\GitVersionCache.NetStandard.Core.csproj", "{7BA77AF3-C165-4B7A-879E-23B5B3E87CC6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PackagePublish.MSBuild.Packaging.GitVersionCache", "src\MSBuild\Packaging\GitVersionCache\0\ref\PackagePublish\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj", "{89041081-6F2B-40B5-836B-4958BA4A3C21}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PackagePublish.MSBuild.Core", "src\MSBuild\Core\Core\ref\PackagePublish\PackagePublish.MSBuild.Core.csproj", "{4151885B-F5D2-4417-826D-A55BCBD1FBD2}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitVersionCache.NetStandard.Tools.GitVersion", "src\NetStandard\Tools\GitVersion\GitVersion\ref\GitVersionCache\GitVersionCache.NetStandard.Tools.GitVersion.csproj", "{CFB645C2-62E6-4072-8797-97D74F2258B9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitVersionCache.MSBuild.Packaging.GitVersionCache", "src\MSBuild\Packaging\GitVersionCache\0\ref\GitVersionCache\GitVersionCache.MSBuild.Packaging.GitVersionCache.csproj", "{FE6F23C9-1982-47E3-9C62-E93906C31E1B}"
@@ -104,8 +100,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.ModuleInitializer.AssemblyLoader", "src\ModuleInitializer\AssemblyLoader\0\src\Teronis.ModuleInitializer.AssemblyLoader.csproj", "{BC6A99A6-514D-49AC-8280-EC9477A48BBB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.MSBuild.Packaging.PackExecutable", "src\MSBuild\Packaging\PackExecutable\0\src\Teronis.MSBuild.Packaging.PackExecutable.csproj", "{57B0BBA3-14FF-4549-921D-04AAD721E55F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.MSBuild.Packaging.PackExecutable.Tasks", "src\MSBuild\Packaging\PackExecutable\0.Tasks\src\Teronis.MSBuild.Packaging.PackExecutable.Tasks.csproj", "{193CC1C0-CD4E-4E98-B005-B04489796176}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -369,30 +363,6 @@ Global
 		{7BA77AF3-C165-4B7A-879E-23B5B3E87CC6}.Release|x64.Build.0 = Release|x64
 		{7BA77AF3-C165-4B7A-879E-23B5B3E87CC6}.Release|x86.ActiveCfg = Release|x86
 		{7BA77AF3-C165-4B7A-879E-23B5B3E87CC6}.Release|x86.Build.0 = Release|x86
-		{89041081-6F2B-40B5-836B-4958BA4A3C21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{89041081-6F2B-40B5-836B-4958BA4A3C21}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{89041081-6F2B-40B5-836B-4958BA4A3C21}.Debug|x64.ActiveCfg = Debug|x64
-		{89041081-6F2B-40B5-836B-4958BA4A3C21}.Debug|x64.Build.0 = Debug|x64
-		{89041081-6F2B-40B5-836B-4958BA4A3C21}.Debug|x86.ActiveCfg = Debug|x86
-		{89041081-6F2B-40B5-836B-4958BA4A3C21}.Debug|x86.Build.0 = Debug|x86
-		{89041081-6F2B-40B5-836B-4958BA4A3C21}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{89041081-6F2B-40B5-836B-4958BA4A3C21}.Release|Any CPU.Build.0 = Release|Any CPU
-		{89041081-6F2B-40B5-836B-4958BA4A3C21}.Release|x64.ActiveCfg = Release|x64
-		{89041081-6F2B-40B5-836B-4958BA4A3C21}.Release|x64.Build.0 = Release|x64
-		{89041081-6F2B-40B5-836B-4958BA4A3C21}.Release|x86.ActiveCfg = Release|x86
-		{89041081-6F2B-40B5-836B-4958BA4A3C21}.Release|x86.Build.0 = Release|x86
-		{4151885B-F5D2-4417-826D-A55BCBD1FBD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4151885B-F5D2-4417-826D-A55BCBD1FBD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4151885B-F5D2-4417-826D-A55BCBD1FBD2}.Debug|x64.ActiveCfg = Debug|x64
-		{4151885B-F5D2-4417-826D-A55BCBD1FBD2}.Debug|x64.Build.0 = Debug|x64
-		{4151885B-F5D2-4417-826D-A55BCBD1FBD2}.Debug|x86.ActiveCfg = Debug|x86
-		{4151885B-F5D2-4417-826D-A55BCBD1FBD2}.Debug|x86.Build.0 = Debug|x86
-		{4151885B-F5D2-4417-826D-A55BCBD1FBD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4151885B-F5D2-4417-826D-A55BCBD1FBD2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4151885B-F5D2-4417-826D-A55BCBD1FBD2}.Release|x64.ActiveCfg = Release|x64
-		{4151885B-F5D2-4417-826D-A55BCBD1FBD2}.Release|x64.Build.0 = Release|x64
-		{4151885B-F5D2-4417-826D-A55BCBD1FBD2}.Release|x86.ActiveCfg = Release|x86
-		{4151885B-F5D2-4417-826D-A55BCBD1FBD2}.Release|x86.Build.0 = Release|x86
 		{CFB645C2-62E6-4072-8797-97D74F2258B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CFB645C2-62E6-4072-8797-97D74F2258B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CFB645C2-62E6-4072-8797-97D74F2258B9}.Debug|x64.ActiveCfg = Debug|x64
@@ -729,18 +699,6 @@ Global
 		{57B0BBA3-14FF-4549-921D-04AAD721E55F}.Release|x64.Build.0 = Release|x64
 		{57B0BBA3-14FF-4549-921D-04AAD721E55F}.Release|x86.ActiveCfg = Release|x86
 		{57B0BBA3-14FF-4549-921D-04AAD721E55F}.Release|x86.Build.0 = Release|x86
-		{193CC1C0-CD4E-4E98-B005-B04489796176}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{193CC1C0-CD4E-4E98-B005-B04489796176}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{193CC1C0-CD4E-4E98-B005-B04489796176}.Debug|x64.ActiveCfg = Debug|x64
-		{193CC1C0-CD4E-4E98-B005-B04489796176}.Debug|x64.Build.0 = Debug|x64
-		{193CC1C0-CD4E-4E98-B005-B04489796176}.Debug|x86.ActiveCfg = Debug|x86
-		{193CC1C0-CD4E-4E98-B005-B04489796176}.Debug|x86.Build.0 = Debug|x86
-		{193CC1C0-CD4E-4E98-B005-B04489796176}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{193CC1C0-CD4E-4E98-B005-B04489796176}.Release|Any CPU.Build.0 = Release|Any CPU
-		{193CC1C0-CD4E-4E98-B005-B04489796176}.Release|x64.ActiveCfg = Release|x64
-		{193CC1C0-CD4E-4E98-B005-B04489796176}.Release|x64.Build.0 = Release|x64
-		{193CC1C0-CD4E-4E98-B005-B04489796176}.Release|x86.ActiveCfg = Release|x86
-		{193CC1C0-CD4E-4E98-B005-B04489796176}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -31,14 +31,8 @@
     <PackageReference Include="System.Threading.Tasks.Dataflow" Version="4.11.1" />
   </ItemGroup>
 
-  <Target Name="test" BeforeTargets="BeforeTarget">
-    <PropertyGroup>
-      <EnableSomething>true</EnableSomething>
-    </PropertyGroup>
-  </Target>
-
   <ItemGroup>
-    <ProjectReference Include="..\..\Core.Localization\src\Teronis.NetStandard.Core.Localization.csproj" PrivateAssets="all" Condition="'$(DisableLocalizationProject)' != 'true'" />
+    <ProjectReference Include="..\..\Core.Localization\src\Teronis.NetStandard.Core.Localization.csproj" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>

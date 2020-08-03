@@ -12,7 +12,7 @@ from referenced project.
   
   <PropertyGroup>
     <TargetFramework>netstandard1.0</TargetFramework>
-    <PackAsExecutable>Package</PackAsExecutable>
+    <PackExecutableAs>Package</PackExecutableAs>
     <ExecutableProjectReference>..\..\src\Teronis.ModuleInitializer.AssemblyLoader.Executable.csproj</ExecutableProjectReference>
   </PropertyGroup>
 

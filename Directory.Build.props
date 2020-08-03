@@ -148,13 +148,17 @@
    -->
   <PropertyGroup>
     <PackagePublishmentOutputPath>$(PackagePublishmentsDirectory)$(MSBuildProjectName)</PackagePublishmentOutputPath>
-    <GetExecutableProjectPropertiesDependsOn>$(GetExecutableProjectPropertiesDependsOn);GetVersionCacheWhenGettingExecutableProjectProperties</GetExecutableProjectPropertiesDependsOn>
+    <!-- <GetExecutableProjectPropertiesDependsOn>$(GetExecutableProjectPropertiesDependsOn);GetVersionCacheWhenGettingExecutableProjectProperties</GetExecutableProjectPropertiesDependsOn> -->
   </PropertyGroup>
 
-  <ItemGroup>
+  <!-- <ItemGroup>
     <ExecutableProjectReferenceMSBuildProperties Include="DisableGitVersionCache">
       <Value>true</Value>
     </ExecutableProjectReferenceMSBuildProperties>
-  </ItemGroup>
+  </ItemGroup> -->
+
+  <PropertyGroup>
+    <ExecutableProjectReferenceMSBuildProperties>$(ExecutableProjectReferenceMSBuildProperties);DisableGitVersionCache=true</ExecutableProjectReferenceMSBuildProperties>
+  </PropertyGroup>
 
 </Project>

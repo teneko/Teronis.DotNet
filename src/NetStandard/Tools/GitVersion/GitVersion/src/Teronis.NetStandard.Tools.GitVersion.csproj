@@ -25,12 +25,12 @@
 
   <ItemGroup>
     <None Include="$(PkgGitVersion_CommandLine)\tools\GitVersion.exe" Pack="true" PackagePath="GitVersion"> 
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Core\Core\src\Teronis.NetStandard.Core.csproj" Condition="'$(DisableNetStandardCoreProject)' != 'true'" />
+    <ProjectReference Include="..\..\..\..\Core\Core\src\Teronis.NetStandard.Core.csproj" />
   </ItemGroup>
 
 </Project>

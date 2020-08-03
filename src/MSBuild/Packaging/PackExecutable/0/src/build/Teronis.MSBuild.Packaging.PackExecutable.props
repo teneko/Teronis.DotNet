@@ -1,0 +1,22 @@
+﻿<Project>
+  <PropertyGroup>
+    <TeronisMSBuildPackagingPackExecutableTasksBinary Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\executables\any\netcoreapp2.1\Teronis.MSBuild.Packaging.PackExecutable.Tasks.dll</TeronisMSBuildPackagingPackExecutableTasksBinary>
+    <TeronisMSBuildPackagingPackExecutableTasksBinary Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\executables\any\net472\Teronis.MSBuild.Packaging.PackExecutable.Tasks.dll</TeronisMSBuildPackagingPackExecutableTasksBinary>
+    <TeronisMSBuildPackagingPackExecutableHasBeenImported>true</TeronisMSBuildPackagingPackExecutableHasBeenImported>
+    <TargetsForTfmSpecificExecutableAsProjectContentInPackage>TfmSpecificExecutableAsProjectContentInPackage;$(TargetsForTfmSpecificExecutableAsProjectContentInPackage)</TargetsForTfmSpecificExecutableAsProjectContentInPackage>
+    <TargetsForTfmSpecificExecutableAsPackageContentInPackage>TfmSpecificExecutableAsPackageContentInPackage;$(TargetsForTfmSpecificExecutableAsPackageContentInPackage)</TargetsForTfmSpecificExecutableAsPackageContentInPackage>
+    <GenerateNuspecWhenPackingExecutableAsPackageDependsOn>PackExecutableAsPackage;$(GenerateNuspecWhenPackingExecutableAsPackageDependsOn)</GenerateNuspecWhenPackingExecutableAsPackageDependsOn>
+    <GetExecutableProjectPropertiesDependsOn>$(GetExecutableProjectPropertiesDependsOn)</GetExecutableProjectPropertiesDependsOn>
+    <ExecutableProjectType Condition="'$(ExecutableProjectType)' == ''">ExecutableProject</ExecutableProjectType>
+    <ExecutableProjectPropertySeparator Condition="'$(ExecutableProjectPropertySeparator)' == ''">+|'_'|+</ExecutableProjectPropertySeparator>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+    Required metadata properties:
+      Identity - The property
+      Value - the property value
+    -->
+    <ExecutableProjectReferenceMSBuildProperties Include="@(ExecutableProjectReferenceMSBuildProperties)" />
+  </ItemGroup>
+</Project>

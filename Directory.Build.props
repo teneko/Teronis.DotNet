@@ -4,7 +4,7 @@
   <Import Condition="'$(IsMSBuildFileImported)' != 'true'" Project="$([MSBuild]::GetPathOfFileAbove(.msbuild))" />
   <Import Condition="'$(IsTeronisDotNetCorePropsFileImported)' != 'true'" Project="$(RootCorePropsPath)" />
   <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackagePropsFile)" />
-  <Import Project="$(TeronisMSBuildPackagingPackExecutablePropsFile)" />
+  <Import Project="$(TeronisMSBuildPackagingPackExecutablePropsFile)" Condition="Exists($(TeronisMSBuildPackagingPackExecutablePropsFile))" />
 
   <Import Project="$(TeronisModuleInitializerAssemblyLoaderExecutablePropsFile)" Condition="Exists($(TeronisModuleInitializerAssemblyLoaderExecutablePropsFile))" />
   <Import Project="$(TeronisModuleInitializerAssemblyLoaderMSBuildPropsFile)" />
@@ -150,5 +150,11 @@
     <PackagePublishmentOutputPath>$(PackagePublishmentsDirectory)$(MSBuildProjectName)</PackagePublishmentOutputPath>
     <GetExecutableProjectPropertiesDependsOn>$(GetExecutableProjectPropertiesDependsOn);GetVersionCacheWhenGettingExecutableProjectProperties</GetExecutableProjectPropertiesDependsOn>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ExecutableProjectReferenceMSBuildProperties Include="DisableGitVersionCache">
+      <Value>true</Value>
+    </ExecutableProjectReferenceMSBuildProperties>
+  </ItemGroup>
 
 </Project>

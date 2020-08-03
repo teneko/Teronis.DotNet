@@ -4,7 +4,7 @@
   <Import Condition="'$(IsMSBuildFileImported)' != 'true'" Project="$([MSBuild]::GetPathOfFileAbove(.msbuild))" />
   <Import Condition="'$(IsTeronisDotNetCorePropsFileImported)' != 'true'" Project="$(RootCorePropsPath)" />
   <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackageTargetsFile)" />
-  <Import Project="$(TeronisMSBuildPackagingPackExecutableTargetsFile)" />
+  <Import Project="$(TeronisMSBuildPackagingPackExecutableTargetsFile)" Condition="Exists($(TeronisMSBuildPackagingPackExecutableTargetsFile))" />
 
   <Import Project="$(TeronisModuleInitializerAssemblyLoaderExecutableTargetsFile)" Condition="Exists($(TeronisModuleInitializerAssemblyLoaderExecutableTargetsFile))" />
   <Import Project="$(TeronisModuleInitializerAssemblyLoaderMSBuildTargetsFile)" />
@@ -26,6 +26,15 @@
     <!-- Warning	CS8769	Nullability of reference types in type of parameter '..' doesn't match implemented member '..' (possibly because of nullability attributes). -->
     <NoWarn Condition="'$(TargetFramework)' == 'netstandard2.0'">$(NoWarn);8769;8767</NoWarn>
   </PropertyGroup>
+
+  <!-- <ItemGroup>
+    <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\PackExecutable\0\src\Teronis.MSBuild.Packaging.PackExecutable.csproj" Condition="'$(DisablePackExecutableProjectInclude)' != 'true'">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+      <GlobalPropertiesToRemove>TargetFramework;TargetFrameworks</GlobalPropertiesToRemove>
+      <BuildProjectReferences>false</BuildProjectReferences>
+    </ProjectReference>
+  </ItemGroup> -->
 
   <ItemGroup>
 

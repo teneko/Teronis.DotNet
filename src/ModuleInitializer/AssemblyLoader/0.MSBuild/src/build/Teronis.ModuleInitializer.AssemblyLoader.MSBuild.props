@@ -3,7 +3,10 @@
 
   <PropertyGroup>
     <DisableModuleInitializerAssemblyLoaderInjection>$(DisableModuleInitializerAssemblyLoaderInjection)</DisableModuleInitializerAssemblyLoaderInjection>
-    <InjectModuleInitializerAssemblyLoaderDependsOn>ValidateModuleInitializerAssemblyLoaderPath;$(InjectModuleInitializerAssemblyLoaderDependsOn)</InjectModuleInitializerAssemblyLoaderDependsOn>
+    
+    <InjectModuleInitializerAssemblyLoaderDependsOn>
+      $(InjectModuleInitializerAssemblyLoaderDependsOn)
+    </InjectModuleInitializerAssemblyLoaderDependsOn>
   </PropertyGroup>
 
   <ItemGroup>

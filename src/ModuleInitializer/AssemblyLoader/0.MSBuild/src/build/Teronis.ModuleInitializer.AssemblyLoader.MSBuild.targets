@@ -2,21 +2,35 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <!--Props import is not mandatory. -->
-  
-  <Target Name="ValidateModuleInitializerAssemblyLoaderPath">
-    <Error Text="The assembly loader binary could not be found." Condition="!Exists($(AssemblyLoaderInjectorPath))" />
-  </Target>
-  
+
+  <PropertyGroup>
+    <FodyDependsOnTargets>$(InjectModuleInitializerAssemblyLoaderDependsOn);InjectModuleInitializerAssemblyLoader</FodyDependsOnTargets>
+    <CanInjectModuleInitializerAssemblyLoader>false</CanInjectModuleInitializerAssemblyLoader>
+  </PropertyGroup>
+
   <!--Inputs="@(IntermediateAssembly)"
   Outputs="$(IntermediateOutputPath)$(MSBuildProjectFile).ModuleInitializerAssemblyLoader.CopyLocal.cache"-->
   <Target Name="InjectModuleInitializerAssemblyLoader"
           AfterTargets="AfterCompile"
+          DependsOnTargets="$(InjectModuleInitializerAssemblyLoaderDependsOn)"
           Condition="@(ModuleInitializerAssemblyLoaderInjectionTargetAssemblies->Count()) != 0
             And Exists(@(IntermediateAssembly)) 
             And $(DesignTimeBuild) != true 
-            And $(DisableModuleInitializerAssemblyLoaderInjection) != true"
-          DependsOnTargets="$(InjectModuleInitializerAssemblyLoaderDependsOn)">
-    <Exec Command="$(AssemblyLoaderInjectorPath) inject-assembly-loader &quot;%(ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.Identity)&quot; --source-assembly-path &quot;%(ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.SourceAssembly)&quot;" />
+            And $(DisableModuleInitializerAssemblyLoaderInjection) != true">
+
+    <ItemGroup>
+      <_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies Include="@(ModuleInitializerAssemblyLoaderInjectionTargetAssemblies)">
+        <FullName>%(Filename)%(Extension)</FullName>
+        <SourceAssemblyFullName>$([System.IO.Path]::GetFilename(%(SourceAssembly)))</SourceAssemblyFullName>
+        <Description>[$(MSBuildThisFileName)] %(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.FullName) &lt;- %(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.SourceAssemblyFullName)</Description>
+      </_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies>
+    </ItemGroup>
+
+    <Error Text="The project '$(MSBuildProjectName)' requested an assembly loader injection but the tool binary could not be found." Condition="!Exists($(AssemblyLoaderInjectorPath))" ContinueOnError="true" />
+    <Error Text="%(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.Description)" Condition="!Exists($(AssemblyLoaderInjectorPath))" />
+    <Message Text="[$(MSBuildThisFileName)] %(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.Description)" Importance="high" />
+    <Exec Command="$(AssemblyLoaderInjectorPath) inject-assembly-loader &quot;%(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.Identity)&quot; --source-assembly-path &quot;%(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.SourceAssembly)&quot;" />
+
   </Target>
-  
+
 </Project>

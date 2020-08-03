@@ -36,7 +36,6 @@
     <ProjectReference Include="..\..\..\Core\Core\src\Teronis.NetCoreApp.Core.csproj" />
     <ProjectReference Include="..\..\..\Mvc\Mvc\src\Teronis.NetCoreApp.Mvc.csproj" />
     <ProjectReference Include="..\..\EntityFrameworkCore\src\Teronis.NetCoreApp.Identity.EntityFrameworkCore.csproj" />
-    <ProjectReference Include="..\ref\PublishablePackage\PublishablePackage.NetCoreApp.Identity.Bearer.csproj" />
   </ItemGroup>
 
 </Project>

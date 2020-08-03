@@ -4,11 +4,12 @@
     <TargetFramework>netstandard1.0</TargetFramework>
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <IncludeBuildOutput>false</IncludeBuildOutput>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <DisablePackExecutableProjectInclude>true</DisablePackExecutableProjectInclude>
+    <TasksProjectFullPath>..\..\0.Tasks\src\Teronis.MSBuild.Packaging.PackExecutable.Tasks.csproj</TasksProjectFullPath>
   </PropertyGroup>
 
   <ItemGroup>

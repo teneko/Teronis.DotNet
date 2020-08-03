@@ -141,7 +141,7 @@ namespace Teronis.DotNet.Build
                 throw new ArgumentException();
             }
 
-            Task runDotNetProject(BuildStyle buildStyle, string command, ProjectInfo project, string? additionalArguments = null)
+            async Task runDotNetProject(BuildStyle buildStyle, string command, ProjectInfo project, string? additionalArguments = null, int retries = 0)
             {
                 string commandArgs;
 
@@ -155,13 +155,23 @@ namespace Teronis.DotNet.Build
 
                 if (options.DryRun) {
                     Console.WriteLine($"{project.Name}");
-                    return Task.CompletedTask;
+                    await Task.CompletedTask;
                 } else {
-                    return SimpleProcess.RunAsync(dotNetProgram!, args: commandArgs, outputReceived: Console.Out.WriteLine, errorReceived: Console.Error.WriteLine);
+                    retry:
+
+                    try {
+                        await SimpleProcess.RunAsync(dotNetProgram!, args: commandArgs, outputReceived: Console.Out.WriteLine, errorReceived: Console.Error.WriteLine);
+                    } catch {
+                        if (retries <= 0) {
+                            throw;
+                        }
+
+                        retries--;
+                    }
                 }
             }
 
-            async Task runDotNetProjectsAsync(BuildStyle buildStyle, string command, IEnumerable<ProjectInfo> projects, bool enableParallelism = false)
+            async Task runDotNetProjectsAsync(BuildStyle buildStyle, string command, IEnumerable<ProjectInfo> projects, bool enableParallelism = false, int retries = 0)
             {
                 options = options ?? throw new ArgumentNullException(nameof(options));
                 projects = projects ?? throw new ArgumentNullException(nameof(projects));
@@ -184,7 +194,7 @@ namespace Teronis.DotNet.Build
 
                 async Task runDotNetProjectAsync(ProjectInfo project)
                 {
-                    await runDotNetProject(buildStyle, command, project, additonalArguments);
+                    await runDotNetProject(buildStyle, command, project, additionalArguments: additonalArguments, retries: retries);
 
                     if (!options!.DryRun) {
                         Console.WriteLine(new string(Enumerable.Range(0, 80).Select(x => '_').ToArray()));
@@ -211,7 +221,7 @@ namespace Teronis.DotNet.Build
                 options.SkipDependencies ? new string[] { } : dependencies;
 
             Target(RestoreCommandOptions.RestoreCommand, async () => {
-                await runDotNetProjectsAsync(BuildStyle.MSBuild, RestoreCommandOptions.RestoreCommand, restoreProjects, enableParallelism: true);
+                await runDotNetProjectsAsync(BuildStyle.MSBuild, RestoreCommandOptions.RestoreCommand, restoreProjects, enableParallelism: true, retries: 3);
             });
 
             Target(BuildCommandOptions.BuildCommand, DependsOnIf(RestoreCommandOptions.RestoreCommand), async () => {

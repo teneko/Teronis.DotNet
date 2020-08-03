@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\ModuleInitializer\AssemblyLoader\0.Executable\ref\ExecutablePackage\ExecutablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj" />
+    <!--<ProjectReference Include="..\..\..\..\ModuleInitializer\AssemblyLoader\0.Executable\ref\ExecutablePackage\ExecutablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj" />-->
     <ProjectReference Include="..\..\..\..\ModuleInitializer\AssemblyLoader\0.MSBuild\src\Teronis.ModuleInitializer.AssemblyLoader.MSBuild.csproj" />
     <ProjectReference Include="..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj">
       <AdditionalProperties>TargetFramework=$(TargetFramework)</AdditionalProperties>

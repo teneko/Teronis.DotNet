@@ -7,6 +7,7 @@
   <ItemGroup>
     <!-- This is only a synthetic project reference for being recognized as nuspec dependency. -->
     <ProjectReference Include="..\..\0.Executable\ref\ExecutablePackage\ExecutablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj" />
+    <ProjectReference Include="..\..\0.Executable\ref\PublishablePackage\PublishablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj" />
   </ItemGroup>
 
 </Project>

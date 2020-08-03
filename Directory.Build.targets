@@ -44,10 +44,21 @@
       Condition="'$(IsGitVersionCacheRelated)' != 'true'
         And '$(DisableGitVersionCache)' != 'true' 
         And '$(IsPackable)' == 'true'" />
-
-    <ProjectReference Include="$(MSBuildThisFileDirectory)src\ModuleInitializer\AssemblyLoader\0.Executable\ref\PublishablePackage\PublishablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj"
-      Condition="'$(IsPublishablePackageProject)' == 'true' And '$(MSBuildProjectFile)' != 'PublishablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj'"/>
     
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- <ProjectReference Include="$(MSBuildThisFileDirectory)src\ModuleInitializer\AssemblyLoader\0.Executable\ref\PublishablePackage\PublishablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj"
+      Condition="'$(IsPublishablePackageProject)' == 'true' And '$(MSBuildProjectFile)' != 'PublishablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj'"/> -->
+
+      <!-- <_ProjectReference Include="@(ProjectReference)" Condition="'%(Identity)' == 'Teronis.ModuleInitializer.AssemblyLoader.MSBuild'" /> -->
+
+      <!-- <ProjectReference Include="$(MSBuildThisFileDirectory)src\ModuleInitializer\AssemblyLoader\0.Executable\ref\PublishablePackage\PublishablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj"
+                        Condition="'%(ProjectReference.Filename)' == 'Teronis.ModuleInitializer.AssemblyLoader.MSBuild'" /> -->
+  </ItemGroup>
+
+  <ItemGroup>
+
   </ItemGroup>
 
   <PropertyGroup>
@@ -103,13 +114,13 @@
     </PropertyGroup>
   </Target>
 
-  <Target Name="AfterUnpackAsExecutablePackedProject" BeforeTargets="UnpackAsExecutablePackedProject">
+  <Target Name="AfterUnpackAsExecutablePackedProject" BeforeTargets="BuildExecutablePublishProject">
     <PropertyGroup>
       <DisableGitVersionCache>true</DisableGitVersionCache>
     </PropertyGroup>
   </Target>
 
-  <Target Name="AfterUnpackAsExecutablePackedProject" AfterTargets="UnpackAsExecutablePackedProject">
+  <Target Name="AfterUnpackAsExecutablePackedProject" AfterTargets="BuildExecutablePublishProject">
     <PropertyGroup>
       <DisableGitVersionCache>false</DisableGitVersionCache>
     </PropertyGroup>

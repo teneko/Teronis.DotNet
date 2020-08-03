@@ -27,14 +27,14 @@ namespace Teronis.DotNet.Build
                 process.WaitForExit(1000);
 
                 var output = process.StandardOutput.ReadToEnd();
-                var sdkPaths = Regex.Matches(output, "([0-9]+.[0-9]+.[0-9]+) \\[(.*)\\]")
+                var sdkPaths = Regex.Matches(output, "([0-9]+.[0-9]+.[0-9]+(-[a-z]+.[0-9]+.[0-9]+.[0-9]+)?) \\[(.*)\\]")
                     .OfType<Match>()
-                    .Select(m => System.IO.Path.Combine(m.Groups[2].Value, m.Groups[1].Value, "MSBuild.dll"));
+                    .Select(m => Path.Combine(m.Groups[3].Value, m.Groups[1].Value, "MSBuild.dll"));
 
                 var sdkPath = sdkPaths.Last();
                 Environment.SetEnvironmentVariable("MSBUILD_EXE_PATH", sdkPath);
-            } catch (Exception exception) {
-
+            } catch (Exception) {
+                ;
             }
         }
 
@@ -71,8 +71,6 @@ namespace Teronis.DotNet.Build
             var matchPublishablePackageProjects = @"(\\PublishablePackage\.|\\PackagePublish\.)";
             var matchGitVersionCacheProjects = @"(\\GitVersionCache\.)";
             var matchSyntheticProjects = string.Format("({0}|{1})", matchPublishablePackageProjects, matchGitVersionCacheProjects);
-            //var matchReferenceProjects = @"(\\Reference\.|\\ref\\)";
-            //var matchReferenceProjects = string.Format("{0}|{1})", matchPublishablePackageProjects, matchGitVersionCacheProjects);
 
             var matchBuildProgramProjects = Regex.Escape(Path.Combine(sourceDirectory, "DotNet", "Build", @"Build\"));
 

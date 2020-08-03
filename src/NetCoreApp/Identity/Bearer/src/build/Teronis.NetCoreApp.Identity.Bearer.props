@@ -1,11 +1,11 @@
-﻿<Project>
+﻿<Project InitialTargets="_SetIdentityBearerModuleInitializerAssemblyLoaderInjectionTargetAssembly">
 
-  <Target Name="_SetIdentityBearerModuleInitializerAssemblyLoaderInjectionTargetAssembly" BeforeTargets="BeforeCompile">    
+  <Target Name="_SetIdentityBearerModuleInitializerAssemblyLoaderInjectionTargetAssembly">
     <ItemGroup>
       <ModuleInitializerAssemblyLoaderInjectionTargetAssemblies Include="@(IntermediateAssembly->'%(FullPath)')">
         <SourceAssembly>$(MSBuildThisFileDirectory)..\executables\netcoreapp3.1\Teronis.NetCoreApp.Identity.Bearer.dll</SourceAssembly>
       </ModuleInitializerAssemblyLoaderInjectionTargetAssemblies>
     </ItemGroup>
   </Target>
-  
+
 </Project>

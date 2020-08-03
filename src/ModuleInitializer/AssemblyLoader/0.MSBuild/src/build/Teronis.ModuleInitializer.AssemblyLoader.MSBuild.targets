@@ -7,18 +7,22 @@
     <FodyDependsOnTargets>$(InjectModuleInitializerAssemblyLoaderDependsOn);InjectModuleInitializerAssemblyLoader</FodyDependsOnTargets>
     <CanInjectModuleInitializerAssemblyLoader>false</CanInjectModuleInitializerAssemblyLoader>
   </PropertyGroup>
+  
+  <Target Name="BeforeInjectModuleInitializerAssemblyLoader" />
 
   <!--Inputs="@(IntermediateAssembly)"
   Outputs="$(IntermediateOutputPath)$(MSBuildProjectFile).ModuleInitializerAssemblyLoader.CopyLocal.cache"-->
   <Target Name="InjectModuleInitializerAssemblyLoader"
           AfterTargets="AfterCompile"
-          DependsOnTargets="$(InjectModuleInitializerAssemblyLoaderDependsOn)"
+          DependsOnTargets="BeforeInjectModuleInitializerAssemblyLoader;$(InjectModuleInitializerAssemblyLoaderDependsOn)"
           Condition="@(ModuleInitializerAssemblyLoaderInjectionTargetAssemblies->Count()) != 0
             And Exists(@(IntermediateAssembly)) 
             And $(DesignTimeBuild) != true 
             And $(DisableModuleInitializerAssemblyLoaderInjection) != true">
 
     <ItemGroup>
+      <_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies Remove="@(ModuleInitializerAssemblyLoaderInjectionTargetAssemblies)" />
+
       <_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies Include="@(ModuleInitializerAssemblyLoaderInjectionTargetAssemblies)">
         <FullName>%(Filename)%(Extension)</FullName>
         <SourceAssemblyFullName>$([System.IO.Path]::GetFilename(%(SourceAssembly)))</SourceAssemblyFullName>

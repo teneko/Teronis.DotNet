@@ -115,10 +115,13 @@
   <Target Name="PublishTfmSpecificExecutableAsProjectContent" Condition="'$(IsExecutableSourceTyped)' == 'true'">
 
     <PropertyGroup>
-      <_ProjectFile>$(MSBuildProjectFullPath)</_ProjectFile>
+      <_MSBuildProperties>
+        PackExecutableAs=Project;
+        TargetFramework=$(TargetFramework)
+      </_MSBuildProperties>
     </PropertyGroup>
-
-    <MSBuild Projects="$(_ProjectFile)" Targets="Publish" Properties="TargetFramework=$(TargetFramework)" />
+    
+    <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="Publish" Properties="$(_MSBuildProperties)" />
 
   </Target>
 
@@ -149,7 +152,13 @@
   <Target Name="IncludeExecutableSourceProjectPackageFiles" DependsOnTargets="_ReadExecutableSourceProjectProperties"
           Condition="'$(IsExecutablePackageTyped)' == 'true' And !$(ExecutableProjectIsCircularDependency)">
 
-    <MSBuild Projects="$(ExecutableSourceProjectFullPath)" Targets="CollectExecutableSourceProjectPackageFiles">
+    <PropertyGroup>
+      <_MSBuildProperties>
+        PackExecutableAs=Project
+      </_MSBuildProperties>
+    </PropertyGroup>
+    
+    <MSBuild Projects="$(ExecutableSourceProjectFullPath)" Targets="CollectExecutableSourceProjectPackageFiles" Properties="$(_MSBuildProperties)">
       <Output TaskParameter="TargetOutputs" ItemName="_ExecutablePackageFiles"/>
     </MSBuild>
     

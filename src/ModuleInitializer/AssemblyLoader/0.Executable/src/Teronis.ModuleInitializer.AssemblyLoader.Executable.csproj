@@ -5,12 +5,11 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
     <RootNamespace>Teronis.ModuleInitializer.AssemblyLoader</RootNamespace>
-    <PackExecutableAs>Project</PackExecutableAs>
     <Description>
       Provides a tool that injects IL code representing calls to foreign assembly ModuleInitializer.Initialize()
       methods in an target assembly that forces these foreign assembly to load AND initialize.
     </Description>
-    <PackExecutableAs>Package</PackExecutableAs>
+    <!--<PackExecutableAs>Project</PackExecutableAs>-->
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 

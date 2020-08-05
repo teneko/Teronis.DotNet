@@ -4,8 +4,14 @@
   <Import Project="$(MSBuildThisFileDirectory)Teronis.MSBuild.Packaging.ShadowProject.targets" Condition="'$(TeronisMSBuildPackagingPackExecutableShadowProjectTargetsHasBeenImported)' != 'true'"/>
 
   <PropertyGroup>
+    <GenerateNuspecWhenPackingExecutablePackageProjectDependsOn>$(BeforeGenerateNuspecWhenPackingExecutablePackageProject);IncludeExecutableSourceProjectPackageFiles;$(GenerateNuspecWhenPackingExecutablePackageProjectDependsOn)</GenerateNuspecWhenPackingExecutablePackageProjectDependsOn>
+    <GetAnyTypedExecutableProjectPropertiesDependsOn>$(BeforeGetAnyTypedExecutableProjectProperties);$(GetAnyTypedExecutableProjectPropertiesDependsOn)</GetAnyTypedExecutableProjectPropertiesDependsOn>
+    <GetPackageTypedExecutableProjectPropertiesDependsOn>$(BeforeGetPackageTypedExecutableProjectProperties);CollectAnyTypedExecutableProjectProperties;$(GetPackageTypedExecutableProjectPropertiesDependsOn)</GetPackageTypedExecutableProjectPropertiesDependsOn>
+  </PropertyGroup>
+  
+  <PropertyGroup>
     
-    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);$(TargetsForTfmSpecificExecutableSourceProjectContentInPackage);$(TargetsForTfmSpecificExecutablePackageProjectContentInPackage)</TargetsForTfmSpecificContentInPackage>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);$(TargetsForTfmSpecificSourceTypedExecutableProjectContentInPackage);$(TargetsForTfmSpecificPackageTypedExecutableProjectContentInPackage)</TargetsForTfmSpecificContentInPackage>
 
     <IsExecutablePublishTyped>false</IsExecutablePublishTyped>
     <IsExecutablePublishTyped Condition="'$(PackExecutableAs)' == 'Publish'">true</IsExecutablePublishTyped>
@@ -149,7 +155,7 @@
   itself to prevent circular target dependency.
   =====================================================
    -->
-  <Target Name="IncludeExecutableSourceProjectPackageFiles" DependsOnTargets="_ReadExecutableSourceProjectProperties"
+  <Target Name="IncludeExecutableSourceProjectPackageFiles" DependsOnTargets="PropertifyLoadedPackageTypedExecutableProjectProperties"
           Condition="'$(IsExecutablePackageTyped)' == 'true' And !$(ExecutableProjectIsCircularDependency)">
 
     <PropertyGroup>
@@ -261,12 +267,14 @@
   -->
   <Target Name="CleanExecutablePublishProject" DependsOnTargets="_CalculateSettingsForExecutablePackageProjectPublishment" BeforeTargets="Clean"
           Condition="'$(IsExecutableTargetTyped)' == 'true'">
+    
     <ItemGroup>
-      <_PackageFiles Include="$(_ExecutablePublishProjectOutputPath)\**\*" />
+      <_PackageFilesToBeDeleted Include="$(_ExecutablePublishProjectOutputPath)\**\*" />
     </ItemGroup>
 
-    <Delete Files="@(_PackageFiles)" />
+    <Delete Files="@(_PackageFilesToBeDeleted)" />
     <RemoveDir Directories="$(_ExecutablePublishProjectOutputPath)" />
+    
   </Target>
 
   <Target Name="CleanExecutableSourceProject" BeforeTargets="Clean"
@@ -274,7 +282,19 @@
     <MSBuild Projects="$(ExecutableSourceProjectFullPath)" Targets="Clean" />
   </Target>
 
-  <Target Name="_ApplyExecutableSourceProjectProperties" DependsOnTargets="_ReadExecutableSourceProjectProperties" BeforeTargets="GenerateNuspec;_GetProjectVersion"
+  <Target Name="CleanNativePublishDir" DependsOnTargets="PropertifyLoadedAnyTypedExecutableProjectProperties" BeforeTargets="Clean" Condition="'$(IsExecutablePackageTyped)' == 'true'">
+    
+    <ItemGroup>
+      <_DeletablePublishFiles Include="$(ExecutableProjectPublishDir)\**\*" />
+    </ItemGroup>
+
+    <Delete Files="@(_DeletablePublishFiles)" />
+    <RemoveDir Directories="$(ExecutableProjectPublishDir)" />
+    
+  </Target>
+
+  <Target Name="_ApplyLoadedPropertiesToExecutablePackageProject" DependsOnTargets="PropertifyLoadedPackageTypedExecutableProjectProperties"
+          BeforeTargets="GenerateNuspec;_GetProjectVersion"
           Condition="'$(IsExecutablePackageTyped)' == 'true'">
 
     <PropertyGroup>
@@ -287,24 +307,16 @@
 
   </Target>
 
-  <Target Name="_ReadExecutableSourceProjectProperties" Condition="'$(IsExecutablePackageTyped)' == 'true'">
-
-    <PropertyGroup>
-      <_MSBuildRemoveProperties>TargetFramework;TargetFrameworks</_MSBuildRemoveProperties>
-    </PropertyGroup>
-
-    <MSBuild Projects="$(ExecutableSourceProjectFullPath)" Targets="GetExecutableSourceProjectProperties"
-             Properties="$(PackExecutableMSBuildProperties)"
-             RemoveProperties="$(_MSBuildRemoveProperties)">
-      <Output TaskParameter="TargetOutputs" PropertyName="_ExecutableProjectProperties" />
-    </MSBuild>
+  <Target Name="PropertifyLoadedPackageTypedExecutableProjectProperties" DependsOnTargets="_LoadPackageTypedExecutableProjectProperties;PropertifyLoadedAnyTypedExecutableProjectProperties" />
+  
+  <Target Name="PropertifyLoadedAnyTypedExecutableProjectProperties" DependsOnTargets="_LoadAnyPacakgeTypedExecutableProjectProperties">
 
     <PropertyGroup>
 
       <_MSBuildProperties>
         PropertyNamePrefix=?;
         PropertySeparator=$(ExecutableProjectPropertySeparator);
-        CommaSeparatedProperties=$(_ExecutableProjectProperties)
+        CommaSeparatedProperties=$(_CommaSeparatedExecutableProjectProperties)
       </_MSBuildProperties>
 
     </PropertyGroup>
@@ -335,22 +347,32 @@
 
   </Target>
 
-  <!--
-  =====================================================
-                               CollectProjectProperties
-  Outputs PackExecutable relevant projects properties.
-  =====================================================
-  -->
-  <Target Name="GetExecutableSourceProjectProperties" DependsOnTargets="$(GetExecutableSourceProjectPropertiesDependsOn)" Outputs="$(ExecutableProjectProperties)">
+  <Target Name="_LoadPackageTypedExecutableProjectProperties" Condition="'$(_CommaSeparatedExecutableProjectProperties)' == ''">
     <PropertyGroup>
-      <_S>$(ExecutableProjectPropertySeparator)</_S>
-      <!-- List separator: https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-special-characters?view=vs-2019 -->
-      <!--TargetFrameworks=$(TargetFrameworks)$(_S)?-->
-      <ExecutableProjectProperties>?AssemblyName=$(AssemblyName)$(_S)?PackageId=$(PackageId)$(_S)?PackageVersion=$(PackageVersion)$(_S)?PublishDir=$(PublishDir)$(_S)?TargetFramework=$(TargetFramework)$(_S)?Description=$([MSBuild]::Escape('$(Description)'))</ExecutableProjectProperties>
+      <_MSBuildProperties>$(PackExecutableMSBuildProperties)</_MSBuildProperties>
+      <_MSBuildRemoveProperties>TargetFramework;TargetFrameworks</_MSBuildRemoveProperties>
     </PropertyGroup>
 
-    <Message Text="Following executable project properties has been gathered:" Importance="high" />
-    <Message Text="$(ExecutableProjectProperties)" Importance="high" />
+    <MSBuild Projects="$(ExecutableSourceProjectFullPath)" Targets="CollectPackageTypedExecutableProjectProperties"
+             Properties="$(_MSBuildProperties)"
+             RemoveProperties="$(_MSBuildRemoveProperties)">
+      <Output TaskParameter="TargetOutputs" PropertyName="_CommaSeparatedExecutableProjectProperties" />
+    </MSBuild>
+  </Target>
+
+  <Target Name="_LoadAnyPacakgeTypedExecutableProjectProperties" Condition="'$(_CommaSeparatedExecutableProjectProperties)' == ''">
+
+    <PropertyGroup>
+      <_MSBuildProperties>$(PackExecutableMSBuildProperties)</_MSBuildProperties>
+      <_MSBuildRemoveProperties>TargetFramework;TargetFrameworks</_MSBuildRemoveProperties>
+    </PropertyGroup>
+
+    <MSBuild Projects="$(ExecutableSourceProjectFullPath)" Targets="CollectAnyTypedExecutableProjectProperties"
+             Properties="$(_MSBuildProperties)"
+             RemoveProperties="$(_MSBuildRemoveProperties)">
+      <Output TaskParameter="TargetOutputs" PropertyName="_CommaSeparatedExecutableProjectProperties" />
+    </MSBuild>
+
   </Target>
 
   <!-- 
@@ -416,7 +438,8 @@
       <_PropertySemicolonIndex Condition="$(_IsPropertySemicolonIndexNegative)">$(CommaSeparatedProperties.Length)</_PropertySemicolonIndex>
     </PropertyGroup>
 
-    <Message Text="[$(MSBuildThisFile)] _PropertySemicolonIndex is now $(_PropertySemicolonIndex)" Importance="high" Condition="$(_IsPropertySemicolonIndexNegative) And '$(GetPropertyValueDebug)' == 'true'" />
+    <Message Text="[$(MSBuildThisFile)] _PropertySemicolonIndex is now $(_PropertySemicolonIndex)" Importance="high"
+             Condition="$(_IsPropertySemicolonIndexNegative) And '$(GetPropertyValueDebug)' == 'true'" />
 
     <PropertyGroup>
       <_PropertyValueLength>$([MSBuild]::Subtract($(_PropertySemicolonIndex),$(_PropertyValueIndex)))</_PropertyValueLength>
@@ -430,6 +453,37 @@
 
     <Message Text="[$(MSBuildThisFile)] _PropertyValue: $(_PropertyValue)" Importance="high" Condition="'$(GetPropertyValueDebug)' == 'true'" />
 
+  </Target>
+
+  <Target Name="CollectPackageTypedExecutableProjectProperties" DependsOnTargets="$(GetPackageTypedExecutableProjectPropertiesDependsOn)"
+          Outputs="$(_GatheredPackageTypedExecutableProjectProperties)">
+    
+    <PropertyGroup>
+      <_GatheredPackageTypedExecutableProjectProperties>$(_GatheredAnyTypedExecutableProjectProperties)</_GatheredPackageTypedExecutableProjectProperties>
+    </PropertyGroup>
+
+    <Message Text="Collected package typed executable project properties: $(_GatheredAnyTypedExecutableProjectProperties)" Importance="high" />
+    
+  </Target>
+
+    <!--
+  =====================================================
+                               CollectProjectProperties
+  Outputs PackExecutable relevant projects properties.
+  =====================================================
+  -->
+  <Target Name="CollectAnyTypedExecutableProjectProperties" DependsOnTargets="$(GetAnyTypedExecutableProjectPropertiesDependsOn)"
+          Outputs="$(_GatheredAnyTypedExecutableProjectProperties)">
+    
+    <PropertyGroup>
+      <_S>$(ExecutableProjectPropertySeparator)</_S>
+      <!-- List separator: https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-special-characters?view=vs-2019 -->
+      <!--TargetFrameworks=$(TargetFrameworks)$(_S)?-->
+      <_GatheredAnyTypedExecutableProjectProperties>?AssemblyName=$(AssemblyName)$(_S)?PackageId=$(PackageId)$(_S)?PackageVersion=$(PackageVersion)$(_S)?PublishDir=$(MSBuildProjectDirectory)\$(PublishDir)$(_S)?TargetFramework=$(TargetFramework)$(_S)?Description=$([MSBuild]::Escape('$(Description)'))</_GatheredAnyTypedExecutableProjectProperties>
+    </PropertyGroup>
+
+    <Message Text="Collected any typed executable project properties: $(_GatheredAnyTypedExecutableProjectProperties)" Importance="high" />
+    
   </Target>
 
 </Project>

@@ -22,6 +22,9 @@
       And '$(IsGitVersionCacheRelated)' != 'true'
       And '$(DisableGitVersionCache)' != 'true'" />
 
+  <!-- This gets overriden if below import exists. -->
+  <Target Name="GetVersionCache" />
+
   <Import Project="$(TeronisMSBuildPackagingGitVersionCacheTargetsFile)"
     Condition="Exists('$(TeronisMSBuildPackagingGitVersionCacheTargetsFile)') 
       And '$(IsGitVersionCacheRelated)' != 'true'

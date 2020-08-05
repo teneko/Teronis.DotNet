@@ -148,7 +148,7 @@
    -->
   <PropertyGroup>
     <PackagePublishmentOutputPath>$(PackagePublishmentsDirectory)$(MSBuildProjectName)</PackagePublishmentOutputPath>
-    <GetExecutableSourceProjectPropertiesDependsOn>$(GetExecutableSourceProjectPropertiesDependsOn);GetVersionCacheWhenGettingExecutableSourceProjectProperties</GetExecutableSourceProjectPropertiesDependsOn>
+    <BeforeGetPackageTypedExecutableProjectProperties>GetVersionCacheWhenGettingExecutableSourceProjectProperties;$(BeforeGetPackageTypedExecutableProjectProperties)</BeforeGetPackageTypedExecutableProjectProperties>
   </PropertyGroup>
 
   <!-- <ItemGroup>

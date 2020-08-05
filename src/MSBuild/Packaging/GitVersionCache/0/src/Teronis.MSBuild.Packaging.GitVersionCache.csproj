@@ -86,12 +86,12 @@
 
     <None Include="$(MSBuildThisFileDirectory)build\**\*.props;$(MSBuildThisFileDirectory)build\**\*.targets" Pack="true" PackagePath="build">
       <Link>build\%(RecursiveDir)%(Filename)%(Extension)</Link>
-      <!-- <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory> -->
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
 
     <None Include="$(MSBuildThisFileDirectory)build\**\*.props;$(MSBuildThisFileDirectory)build\**\*.targets" Pack="true" PackagePath="buildMultiTargeting">
       <Link>buildMultiTargeting\%(RecursiveDir)%(Filename)%(Extension)</Link>
-      <!-- <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory> -->
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
 
   </ItemGroup>

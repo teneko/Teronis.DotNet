@@ -2,10 +2,18 @@
 
   <Target Name="_SetIdentityBearerModuleInitializerAssemblyLoaderInjectionTargetAssembly">
     <ItemGroup>
-      <ModuleInitializerAssemblyLoaderInjectionTargetAssemblies Include="@(IntermediateAssembly->'%(FullPath)')">
+      
+      <_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies Include="@(IntermediateAssembly->'%(FullPath)')">
         <SourceAssembly>$(MSBuildThisFileDirectory)..\executables\netcoreapp3.1\Teronis.NetCoreApp.Identity.Bearer.dll</SourceAssembly>
-      </ModuleInitializerAssemblyLoaderInjectionTargetAssemblies>
+      </_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies>
+
+      <ModuleInitializerAssemblyLoaderInjectionTargetAssemblies Include="@(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies)" />
+      
     </ItemGroup>
+
+    <Message Text="Intermediate assemblies have been marked as candiate for being injected with assembly loader:" Importance="high" />
+    <Message Text="- %(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.Identity) &lt;- %(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.SourceAssembly)" Importance="high" />
+    
   </Target>
 
 </Project>

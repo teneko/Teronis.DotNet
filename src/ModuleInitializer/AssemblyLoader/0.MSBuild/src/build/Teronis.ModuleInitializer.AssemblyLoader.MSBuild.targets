@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
+  
   <!--Props import is not mandatory. -->
 
   <PropertyGroup>
@@ -10,15 +10,30 @@
 
   <Target Name="BeforeInjectModuleInitializerAssemblyLoader" />
 
-  <!--Inputs="@(IntermediateAssembly)"
+  <Target Name="_PrintModuleInitializerAssemblyLoaderRelatedInformations" AfterTargets="AfterCompile"
+          Condition="Exists(@(IntermediateAssembly)) 
+            And '$(DesignTimeBuild)' != 'true'
+            And '$(DisableModuleInitializerAssemblyLoaderInjection)' != 'true'">
+    
+    <PropertyGroup>
+      <_InjectionTargetAssembliesCount>@(ModuleInitializerAssemblyLoaderInjectionTargetAssemblies->Count())</_InjectionTargetAssembliesCount>
+      <_InjectionTargetAssembliesCount Condition="'$(_InjectionTargetAssembliesCount)' == ''">0</_InjectionTargetAssembliesCount>
+    </PropertyGroup>
+
+    <Message Text="There have been found $(_InjectionTargetAssembliesCount) candiates for being injected with assembly loader:" Importance="normal" />
+    <Message Text="- %(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.Identity) &lt;- %(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.SourceAssembly)" Importance="normal" />
+    
+  </Target>
+
+    <!--Inputs="@(IntermediateAssembly)"
   Outputs="$(IntermediateOutputPath)$(MSBuildProjectFile).ModuleInitializerAssemblyLoader.CopyLocal.cache"-->
   <Target Name="InjectModuleInitializerAssemblyLoader"
           AfterTargets="AfterCompile"
           DependsOnTargets="BeforeInjectModuleInitializerAssemblyLoader;$(InjectModuleInitializerAssemblyLoaderDependsOn)"
           Condition="@(ModuleInitializerAssemblyLoaderInjectionTargetAssemblies->Count()) != 0
             And Exists(@(IntermediateAssembly)) 
-            And $(DesignTimeBuild) != true 
-            And $(DisableModuleInitializerAssemblyLoaderInjection) != true">
+            And '$(DesignTimeBuild)' != 'true'
+            And '$(DisableModuleInitializerAssemblyLoaderInjection)' != 'true'">
 
     <ItemGroup>
       <_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies Remove="@(ModuleInitializerAssemblyLoaderInjectionTargetAssemblies)" />
@@ -32,7 +47,6 @@
 
     <Error Text="The project '$(MSBuildProjectName)' requested an assembly loader injection but the tool binary could not be found." Condition="!Exists($(AssemblyLoaderInjectorPath))" ContinueOnError="true" />
     <Error Text="%(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.Description)" Condition="!Exists($(AssemblyLoaderInjectorPath))" />
-    <Message Text="[$(MSBuildThisFileName)] %(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.Description)" Importance="high" />
     <Exec Command="$(AssemblyLoaderInjectorPath) inject-assembly-loader &quot;%(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.Identity)&quot; --source-assembly-path &quot;%(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.SourceAssembly)&quot;" />
 
   </Target>

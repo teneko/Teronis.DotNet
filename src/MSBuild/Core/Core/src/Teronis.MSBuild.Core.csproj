@@ -29,7 +29,7 @@
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)build\*" Pack="true" PackagePath="build">
       <Link>build\%(Filename)%(Extension)</Link>
-      <!-- <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory> -->
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
   </ItemGroup>
 

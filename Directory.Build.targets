@@ -144,11 +144,11 @@
 
   <!--
   ============================================================
-   GetVersionCacheWhenGettingExecutableSourceProjectProperties
+  GetVersionCacheWhenGettingPackageTypedExecutableProjectProperties
   
   Invokes GetVersionCache, so
   ============================================================
   -->
-  <Target Name="GetVersionCacheWhenGettingExecutableSourceProjectProperties" DependsOnTargets="GetVersionCache" Condition="'$(ParentIsExecutablePackageTyped)' == 'true'" />
+  <Target Name="GetVersionCacheWhenGettingPackageTypedExecutableProjectProperties" DependsOnTargets="GetVersionCache" Condition="'$(ParentIsExecutablePackageTyped)' == 'true'" />
 
 </Project>

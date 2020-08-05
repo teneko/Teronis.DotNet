@@ -4,13 +4,13 @@
     <TeronisNetCoreAppIdentityBearerPropsPath>$(PackagePublishmentsDirectory)PublishablePackage.NetCoreApp.Identity.Bearer\build\Teronis.NetCoreApp.Identity.Bearer.props</TeronisNetCoreAppIdentityBearerPropsPath>
   </PropertyGroup>
 
-  <Import Project="$(TeronisNetCoreAppIdentityBearerPropsPath)" Condition="Exists($(TeronisNetCoreAppIdentityBearerPropsPath))" />
+  <Import Project="$(TeronisNetCoreAppIdentityBearerPropsPath)" />
+  <!-- Condition="Exists($(TeronisNetCoreAppIdentityBearerPropsPath))" -->
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
     <RootNamespace>Teronis.Identity.Bearer</RootNamespace>
-    <BuildPassReferences>true</BuildPassReferences>
   </PropertyGroup>
 
   <ItemGroup>

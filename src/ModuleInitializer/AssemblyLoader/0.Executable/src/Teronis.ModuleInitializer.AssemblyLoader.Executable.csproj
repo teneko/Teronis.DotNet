@@ -23,10 +23,10 @@
 
   <ItemGroup>
     <None Include="build\**\*" PackagePath="build" Pack="true">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <!-- <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory> -->
     </None>
     <None Include="build\**\*" PackagePath="buildMultiTargeting" Pack="true">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <!-- <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory> -->
     </None>
   </ItemGroup>
   

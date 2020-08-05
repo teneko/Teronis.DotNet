@@ -25,7 +25,7 @@
 
   <ItemGroup>
     <None Include="$(PkgGitVersion_CommandLine)\tools\GitVersion.exe" Pack="true" PackagePath="GitVersion"> 
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <!-- <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory> -->
     </None>
   </ItemGroup>
 

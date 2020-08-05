@@ -11,7 +11,7 @@
       methods in an target assembly that forces these foreign assembly to load AND initialize.
     </Description>
     <PackExecutableAs>Package</PackExecutableAs>
-    <!--<IsPackable>false</IsPackable>-->
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>

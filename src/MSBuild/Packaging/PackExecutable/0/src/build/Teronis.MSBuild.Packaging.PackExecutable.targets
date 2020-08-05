@@ -92,6 +92,18 @@
     </ProjectReference>
   </ItemGroup>
 
+  <PropertyGroup>
+    <PackExecutableMSBuildProperties>
+      ParentPacksExecutableAs=$(PackExecutableAs);
+      ParentIsExecutablePublishTyped=$(IsExecutablePublishTyped);
+      ParentIsExecutablePackageTyped=$(IsExecutablePackageTyped);
+      ParentIsExecutableTargetTyped=$(IsExecutableTargetTyped);
+      ParentIsExecutableSourceTyped=$(IsExecutableSourceTyped);
+      ParentHasAnyExecutableProjectType=$(HasAnyExecutableProjectType);
+      ParentExecutableProjectReference=$(ParentExecutableProjectReference)
+    </PackExecutableMSBuildProperties>
+</PropertyGroup>
+
   <!--
   =====================================================
                   TfmSpecificExecutableContentInPackage
@@ -157,13 +169,14 @@
 
   <!--
   =====================================================
-                         BuildExecutablePublishProject
+              PackSourceWhenPackingPublishTypedProject
                                        
-  Unzips a project defined in ExecutableSourceProjectFullPath
-  (calulcated from ExecutableProjectReference).
+  Unzips a project defined in
+  ExecutableSourceProjectFullPath (calulcated from
+  ExecutableProjectReference).
   =====================================================
   -->
-  <Target Name="BuildExecutablePublishProject" DependsOnTargets="_CalculateSettingsForExecutablePackageProjectPublishment" BeforeTargets="Pack"
+  <Target Name="PackSourceWhenPackingPublishTypedProject" DependsOnTargets="_CalculateSettingsForExecutablePackageProjectPublishment" BeforeTargets="Pack"
           Condition="'$(IsExecutablePublishTyped)' == 'true'">
 
     <PropertyGroup>
@@ -171,20 +184,19 @@
       <PackageId>$([System.Guid]::NewGuid())</PackageId>
       <PackageVersion>1.0.0</PackageVersion>
 
-      <PackAsExecutableMSBuildProperties>
+      <PackSourceWhenPackingPublishTypedProjectMSBuildProperties>
+        $(PackExecutableMSBuildProperties);
         PackExecutableAs=Project;
         PackageId=$(PackageId);
         PackageVersion=$(PackageVersion);
         PackageOutputPath=$(_ExecutablePublishProjectOutputPath);
         IsPackable=true;
-        $(PackAsExecutableMSBuildProperties)
-      </PackAsExecutableMSBuildProperties>
+        $(PackSourceWhenPackingPublishTypedProjectMSBuildProperties)
+      </PackSourceWhenPackingPublishTypedProjectMSBuildProperties>
 
     </PropertyGroup>
 
-    <!-- TODO: -->
-    <MSBuild Projects="$(ExecutableSourceProjectFullPath)" Targets="Pack" Properties="$(PackAsExecutableMSBuildProperties)" />
-    <!--<MSBuild Projects="$(ExecutableSourceProjectFullPath)" Targets="GenerateNuspec" Properties="$(PackAsExecutableMSBuildProperties)" />-->
+    <MSBuild Projects="$(ExecutableSourceProjectFullPath)" Targets="Pack" Properties="$(PackSourceWhenPackingPublishTypedProjectMSBuildProperties)" />
 
     <PropertyGroup>
       <_NugetFilePath>$(_ExecutablePublishProjectOutputPath)\$(PackageId).$(PackageVersion).nupkg</_NugetFilePath>
@@ -225,7 +237,7 @@
 
     </ItemGroup>
 
-    <!--<Message Text="- FN: %(TfmSpecificPackageFile.Filename)%(TfmSpecificPackageFile.Extension) RD: %(TfmSpecificPackageFile.RecursiveDir)" Importance="high" />-->
+    <Message Text="- FN: %(TfmSpecificPackageFileWithRecursiveDir.Filename)%(TfmSpecificPackageFileWithRecursiveDir.Extension) RD: %(TfmSpecificPackageFileWithRecursiveDir.RecursiveDir)" Importance="high" />
 
   </Target>
 
@@ -272,7 +284,9 @@
       <_MSBuildRemoveProperties>TargetFramework;TargetFrameworks</_MSBuildRemoveProperties>
     </PropertyGroup>
 
-    <MSBuild Projects="$(ExecutableSourceProjectFullPath)" Targets="GetExecutableProjectProperties" RemoveProperties="$(_MSBuildRemoveProperties)">
+    <MSBuild Projects="$(ExecutableSourceProjectFullPath)" Targets="GetExecutableSourceProjectProperties"
+             Properties="$(PackExecutableMSBuildProperties)"
+             RemoveProperties="$(_MSBuildRemoveProperties)">
       <Output TaskParameter="TargetOutputs" PropertyName="_ExecutableProjectProperties" />
     </MSBuild>
 
@@ -318,7 +332,7 @@
   Outputs PackExecutable relevant projects properties.
   =====================================================
   -->
-  <Target Name="GetExecutableProjectProperties" DependsOnTargets="$(GetExecutableProjectPropertiesDependsOn)" Outputs="$(ExecutableProjectProperties)">
+  <Target Name="GetExecutableSourceProjectProperties" DependsOnTargets="$(GetExecutableSourceProjectPropertiesDependsOn)" Outputs="$(ExecutableProjectProperties)">
     <PropertyGroup>
       <_S>$(ExecutableProjectPropertySeparator)</_S>
       <!-- List separator: https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-special-characters?view=vs-2019 -->

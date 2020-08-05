@@ -140,7 +140,7 @@
     <!-- <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies> -->
     <ProjectBuildInPackageVerbosity>detailed</ProjectBuildInPackageVerbosity>
     <!-- The package name and package version are inherited from project specified in ExecutableProjectReference. -->
-    <PackAsExecutableMSBuildProperties>$(PackAsExecutableMSBuildProperties);DisableGitVersionCache=true</PackAsExecutableMSBuildProperties>
+    <PackSourceWhenPackingPublishTypedProjectMSBuildProperties>$(PackSourceWhenPackingPublishTypedProjectMSBuildProperties);DisableGitVersionCache=true</PackSourceWhenPackingPublishTypedProjectMSBuildProperties>
   </PropertyGroup>
 
   <!-- 
@@ -148,7 +148,7 @@
    -->
   <PropertyGroup>
     <PackagePublishmentOutputPath>$(PackagePublishmentsDirectory)$(MSBuildProjectName)</PackagePublishmentOutputPath>
-    <!-- <GetExecutableProjectPropertiesDependsOn>$(GetExecutableProjectPropertiesDependsOn);GetVersionCacheWhenGettingExecutableProjectProperties</GetExecutableProjectPropertiesDependsOn> -->
+    <GetExecutableSourceProjectPropertiesDependsOn>$(GetExecutableSourceProjectPropertiesDependsOn);GetVersionCacheWhenGettingExecutableSourceProjectProperties</GetExecutableSourceProjectPropertiesDependsOn>
   </PropertyGroup>
 
   <!-- <ItemGroup>

@@ -127,18 +127,25 @@
     </PropertyGroup>
   </Target>
 
-  <Target Name="AfterUnpackAsExecutablePackedProject" BeforeTargets="BuildExecutablePublishProject">
+  <Target Name="AfterUnpackAsExecutablePackedProject" BeforeTargets="PackSourceWhenPackingPublishTypedProject">
     <PropertyGroup>
       <DisableGitVersionCache>true</DisableGitVersionCache>
     </PropertyGroup>
   </Target>
 
-  <Target Name="AfterUnpackAsExecutablePackedProject" AfterTargets="BuildExecutablePublishProject">
+  <Target Name="AfterUnpackAsExecutablePackedProject" AfterTargets="PackSourceWhenPackingPublishTypedProject">
     <PropertyGroup>
       <DisableGitVersionCache>false</DisableGitVersionCache>
     </PropertyGroup>
   </Target>
 
-  <!-- <Target Name="GetVersionCacheWhenGettingExecutableProjectProperties" DependsOnTargets="GetVersionCache" /> -->
+  <!--
+  ============================================================
+   GetVersionCacheWhenGettingExecutableSourceProjectProperties
+  
+  Invokes GetVersionCache, so
+  ============================================================
+  -->
+  <Target Name="GetVersionCacheWhenGettingExecutableSourceProjectProperties" DependsOnTargets="GetVersionCache" Condition="'$(ParentIsExecutablePackageTyped)' == 'true'" />
 
 </Project>

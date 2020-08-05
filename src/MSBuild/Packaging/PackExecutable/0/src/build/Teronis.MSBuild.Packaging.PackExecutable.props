@@ -9,7 +9,7 @@
     <TargetsForTfmSpecificExecutableSourceProjectContentInPackage>TfmSpecificExecutableSourceProjectContentInPackage;$(TargetsForTfmSpecificExecutableSourceProjectContentInPackage)</TargetsForTfmSpecificExecutableSourceProjectContentInPackage>
     <TargetsForTfmSpecificExecutablePackageProjectContentInPackage>TfmSpecificExecutablePackageProjectContentInPackage;$(TargetsForTfmSpecificExecutablePackageProjectContentInPackage)</TargetsForTfmSpecificExecutablePackageProjectContentInPackage>
     <GenerateNuspecWhenPackingExecutablePackageProjectDependsOn>IncludeExecutableSourceProjectPackageFiles;$(GenerateNuspecWhenPackingExecutablePackageProjectDependsOn)</GenerateNuspecWhenPackingExecutablePackageProjectDependsOn>
-    <GetExecutableProjectPropertiesDependsOn>$(GetExecutableProjectPropertiesDependsOn)</GetExecutableProjectPropertiesDependsOn>
+    <GetExecutableSourceProjectPropertiesDependsOn>$(GetExecutableSourceProjectPropertiesDependsOn)</GetExecutableSourceProjectPropertiesDependsOn>
     <ExecutableProjectPropertySeparator Condition="'$(ExecutableProjectPropertySeparator)' == ''">+|'_'|+</ExecutableProjectPropertySeparator>
     <!-- Comma separated name=value pairs. -->
     <ExecutableProjectReferenceMSBuildProperties>$(ExecutableProjectReferenceMSBuildProperties)</ExecutableProjectReferenceMSBuildProperties>

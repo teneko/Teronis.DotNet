@@ -49,8 +49,12 @@
     <TeronisMSBuildPackagingPackExecutableTargetsFile>$(RootDirectory)src\MSBuild\Packaging\PackExecutable\0\src\build\Teronis.MSBuild.Packaging.PackExecutable.targets</TeronisMSBuildPackagingPackExecutableTargetsFile> -->
 
     <!-- Teronis.MSBuild.Packaging.PackExecutable -->
-    <TeronisMSBuildPackagingPackExecutablePropsFile>$(RootDirectory)src\MSBuild\Packaging\PackExecutable\0\src\build\Teronis.MSBuild.Packaging.PackExecutable.props</TeronisMSBuildPackagingPackExecutablePropsFile>
-    <TeronisMSBuildPackagingPackExecutableTargetsFile>$(RootDirectory)src\MSBuild\Packaging\PackExecutable\0\src\build\Teronis.MSBuild.Packaging.PackExecutable.targets</TeronisMSBuildPackagingPackExecutableTargetsFile>
+    <!-- <TeronisMSBuildPackagingPackExecutablePropsFile>$(RootDirectory)src\MSBuild\Packaging\PackExecutable\0\src\build\Teronis.MSBuild.Packaging.PackExecutable.props</TeronisMSBuildPackagingPackExecutablePropsFile>
+    <TeronisMSBuildPackagingPackExecutableTargetsFile>$(RootDirectory)src\MSBuild\Packaging\PackExecutable\0\src\build\Teronis.MSBuild.Packaging.PackExecutable.targets</TeronisMSBuildPackagingPackExecutableTargetsFile> -->
+
+    <!-- Teronis.MSBuild.Packaging.Pack -->
+    <TeronisMSBuildPackagingPackExecutablePropsFile>$(RootDirectory)src\MSBuild\Packaging\PackExecutable\0\src\build\Teronis.MSBuild.Packaging.Pack.props</TeronisMSBuildPackagingPackExecutablePropsFile>
+    <TeronisMSBuildPackagingPackExecutableTargetsFile>$(RootDirectory)src\MSBuild\Packaging\PackExecutable\0\src\build\Teronis.MSBuild.Packaging.Pack.targets</TeronisMSBuildPackagingPackExecutableTargetsFile>
 
     <!-- Teronis.ModuleInitializer.AssemblyLoader.Executable -->
     <TeronisModuleInitializerAssemblyLoaderExecutablePropsFile>$(PackagePublishmentsDirectory)PublishablePackage.ModuleInitializer.AssemblyLoader.Executable\build\Teronis.ModuleInitializer.AssemblyLoader.Executable.props</TeronisModuleInitializerAssemblyLoaderExecutablePropsFile>

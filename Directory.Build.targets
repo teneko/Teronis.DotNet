@@ -49,7 +49,7 @@
   </PropertyGroup>
 
   <!-- <ItemGroup>
-    <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\PackExecutable\0\src\Teronis.MSBuild.Packaging.PackExecutable.csproj" Condition="'$(DisablePackExecutableProjectInclude)' != 'true'">
+    <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\PackExecutable\0\src\Teronis.MSBuild.Packaging.PackExecutable.csproj" Condition="'$(DisablePackExecutableSourceInclude)' != 'true'">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
       <GlobalPropertiesToRemove>TargetFramework;TargetFrameworks</GlobalPropertiesToRemove>
@@ -144,11 +144,11 @@
 
   <!--
   ============================================================
-  GetVersionCacheWhenGettingPackageTypedExecutableProjectProperties
+  GetVersionCacheWhenGettingPackageTypedExecutableSourceProperties
   
   Invokes GetVersionCache, so
   ============================================================
   -->
-  <Target Name="GetVersionCacheWhenGettingPackageTypedExecutableProjectProperties" DependsOnTargets="GetVersionCache" Condition="'$(ParentIsExecutablePackageTyped)' == 'true'" />
+  <Target Name="GetVersionCacheWhenGettingPackageTypedExecutableSourceProperties" DependsOnTargets="GetVersionCache" Condition="'$(ParentIsExecutablePackageTyped)' == 'true'" />
 
 </Project>

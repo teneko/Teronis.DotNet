@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <TeronisNetCoreAppIdentityBearerPropsPath>$(PackagePublishmentsDirectory)PublishablePackage.NetCoreApp.Identity.Bearer\build\Teronis.NetCoreApp.Identity.Bearer.props</TeronisNetCoreAppIdentityBearerPropsPath>
+    <!--<TeronisNetCoreAppIdentityBearerPropsPath>$(RootDirectory)src\NetCoreApp\Identity\Bearer\src\build\Teronis.NetCoreApp.Identity.Bearer.props</TeronisNetCoreAppIdentityBearerPropsPath>-->
   </PropertyGroup>
 
-  <Import Project="$(TeronisNetCoreAppIdentityBearerPropsPath)" />
-  <!-- Condition="Exists($(TeronisNetCoreAppIdentityBearerPropsPath))" -->
+  <!--<Import Project="$(TeronisNetCoreAppIdentityBearerPropsPath)" Condition="Exists($(TeronisNetCoreAppIdentityBearerPropsPath))" />-->
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -24,5 +24,11 @@
     <ProjectReference Include="..\src\Teronis.NetCoreApp.Identity.Bearer.csproj" />
     <ProjectReference Include="..\ref\PublishablePackage\PublishablePackage.NetCoreApp.Identity.Bearer.csproj" />
   </ItemGroup>
+  
+  <Target Name="CallSetTeronisIdentityBearerModuleInitializerAssemblyLoaderInjectionTargetAssembly" BeforeTargets="BeforeCompile">
+    <MSBuild Projects="$(TeronisNetCoreAppIdentityBearerPropsPath)" Targets="SetTeronisIdentityBearerModuleInitializerAssemblyLoaderInjectionTargetAssembly">
+      <Output TaskParameter="TargetOutputs" ItemName="ModuleInitializerAssemblyLoaderInjectionTargetAssemblies" />
+    </MSBuild>
+  </Target>
 
 </Project>

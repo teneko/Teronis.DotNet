@@ -1,0 +1,22 @@
+﻿<Project>
+
+  <PropertyGroup>
+    <TeronisMSBuildPackagingPackPackCommonPropsHasBeenImported>true</TeronisMSBuildPackagingPackPackCommonPropsHasBeenImported>
+  </PropertyGroup>
+
+  <PropertyGroup>
+
+    <BeforeCollectPackageSourceContextualProperties>$(BeforeCollectPackageSourceContextualProperties)</BeforeCollectPackageSourceContextualProperties>
+    <CollectPackageSourceContextualPropertiesDependsOn>$(CollectPackageSourceContextualPropertiesDependsOn)</CollectPackageSourceContextualPropertiesDependsOn>
+
+    <BeforeCollectPackageSourceContextualPackagePackRelatedProperties>$(BeforeCollectPackageSourceContextualPackagePackRelatedProperties)</BeforeCollectPackageSourceContextualPackagePackRelatedProperties>
+    <CollectPackageSourceContextualPackagePackRelatedPropertiesDependsOn>$(CollectPackageSourceContextualPackagePackRelatedPropertiesDependsOn)</CollectPackageSourceContextualPackagePackRelatedPropertiesDependsOn>
+
+    <PackageSourcePropertySeparator Condition="'$(PackageSourcePropertySeparator)' == ''">+|'_'|+</PackageSourcePropertySeparator>
+
+    <!-- Comma separated name=value pairs. -->
+    <PackageSourceSyntheticProjectMSBuildProperties>$(PackageSourceSyntheticProjectMSBuildProperties)</PackageSourceSyntheticProjectMSBuildProperties>
+
+  </PropertyGroup>
+
+</Project>

@@ -1,28 +1,21 @@
 ﻿<Project>
 
-  <Import Project="$(MSBuildThisFileDirectory)Teronis.MSBuild.Packaging.ShadowProject.props" Condition="'$(TeronisMSBuildPackagingPackExecutableShadowProjectPropsHasBeenImported)' != 'true'" />
+  <PropertyGroup>
+    <TeronisMSBuildPackagingPackExecutablePropsHasBeenImported>true</TeronisMSBuildPackagingPackExecutablePropsHasBeenImported>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)Teronis.MSBuild.Packaging.Pack.Common.props" Condition="'$(TeronisMSBuildPackagingPackPackCommonPropsHasBeenImported)' != 'true'" />
   
   <PropertyGroup>
     
-    <TeronisMSBuildPackagingPackExecutableHasBeenImported>true</TeronisMSBuildPackagingPackExecutableHasBeenImported>
     <TeronisMSBuildPackagingPackExecutableTasksBinary Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\executables\any\netcoreapp2.1\Teronis.MSBuild.Packaging.PackExecutable.Tasks.dll</TeronisMSBuildPackagingPackExecutableTasksBinary>
     <TeronisMSBuildPackagingPackExecutableTasksBinary Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\executables\any\net472\Teronis.MSBuild.Packaging.PackExecutable.Tasks.dll</TeronisMSBuildPackagingPackExecutableTasksBinary>
     
-    <TargetsForTfmSpecificSourceTypedExecutableProjectContentInPackage>TfmSpecificExecutableSourceProjectContentInPackage;$(TargetsForTfmSpecificSourceTypedExecutableProjectContentInPackage)</TargetsForTfmSpecificSourceTypedExecutableProjectContentInPackage>
-    <TargetsForTfmSpecificPackageTypedExecutableProjectContentInPackage>TfmSpecificExecutablePackageProjectContentInPackage;$(TargetsForTfmSpecificPackageTypedExecutableProjectContentInPackage)</TargetsForTfmSpecificPackageTypedExecutableProjectContentInPackage>
+    <TargetsForTfmSpecificSourceTypedExecutableSourceContentInPackage>TfmSpecificExecutableSourceProjectContentInPackage;$(TargetsForTfmSpecificSourceTypedExecutableSourceContentInPackage)</TargetsForTfmSpecificSourceTypedExecutableSourceContentInPackage>
+    <TargetsForTfmSpecificPackageTypedExecutableSourceContentInPackage>TfmSpecificExecutablePackageProjectContentInPackage;$(TargetsForTfmSpecificPackageTypedExecutableSourceContentInPackage)</TargetsForTfmSpecificPackageTypedExecutableSourceContentInPackage>
 
     <BeforeGenerateNuspecWhenPackingExecutablePackageProject>$(BeforeGenerateNuspecWhenPackingExecutablePackageProject)</BeforeGenerateNuspecWhenPackingExecutablePackageProject>
     <GenerateNuspecWhenPackingExecutablePackageProjectDependsOn>$(GenerateNuspecWhenPackingExecutablePackageProjectDependsOn)</GenerateNuspecWhenPackingExecutablePackageProjectDependsOn>
-
-    <BeforeGetAnyTypedExecutableProjectProperties>$(BeforeGetAnyTypedExecutableProjectProperties)</BeforeGetAnyTypedExecutableProjectProperties>
-    <GetAnyTypedExecutableProjectPropertiesDependsOn>$(GetAnyTypedExecutableProjectPropertiesDependsOn)</GetAnyTypedExecutableProjectPropertiesDependsOn>
-    
-    <BeforeGetPackageTypedExecutableProjectProperties>$(BeforeGetPackageTypedExecutableProjectProperties)</BeforeGetPackageTypedExecutableProjectProperties>
-    <GetPackageTypedExecutableProjectPropertiesDependsOn>$(GetPackageTypedExecutableProjectPropertiesDependsOn)</GetPackageTypedExecutableProjectPropertiesDependsOn>
-    
-    <ExecutableProjectPropertySeparator Condition="'$(ExecutableProjectPropertySeparator)' == ''">+|'_'|+</ExecutableProjectPropertySeparator>
-    <!-- Comma separated name=value pairs. -->
-    <ExecutableProjectReferenceMSBuildProperties>$(ExecutableProjectReferenceMSBuildProperties)</ExecutableProjectReferenceMSBuildProperties>
     
   </PropertyGroup>
 

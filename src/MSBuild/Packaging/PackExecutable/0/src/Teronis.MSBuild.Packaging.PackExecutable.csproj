@@ -8,7 +8,7 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
-    <DisablePackExecutableProjectInclude>true</DisablePackExecutableProjectInclude>
+    <DisablePackExecutableSourceInclude>true</DisablePackExecutableSourceInclude>
     <TasksProjectFullPath>..\..\0.Tasks\src\Teronis.MSBuild.Packaging.PackExecutable.Tasks.csproj</TasksProjectFullPath>
   </PropertyGroup>
 

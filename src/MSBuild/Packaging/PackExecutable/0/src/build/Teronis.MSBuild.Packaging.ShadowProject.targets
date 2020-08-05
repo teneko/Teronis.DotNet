@@ -1,9 +1,12 @@
 ﻿<Project InitialTargets="CopyShadowSourceProjectFiles">
 
-  <Import Project="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).props" Condition="'$(TeronisMSBuildPackagingPackExecutableShadowProjectPropsHasBeenImported)' != 'true'" />
+  <PropertyGroup>
+    <TeronisMSBuildPackagingPackShadowProjectTargetsHasBeenImported>true</TeronisMSBuildPackagingPackShadowProjectTargetsHasBeenImported>
+  </PropertyGroup>
+  
+  <Import Project="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).props" Condition="'$(TeronisMSBuildPackagingPackShadowProjectPropsHasBeenImported)' != 'true'" />
 
   <PropertyGroup>
-    <TeronisMSBuildPackagingPackExecutableShadowProjectTargetsHasBeenImported>true</TeronisMSBuildPackagingPackExecutableShadowProjectTargetsHasBeenImported>
     <ShadowProjectIsEnabled Condition="'$(ShadowProjectIsEnabled)' == ''">false</ShadowProjectIsEnabled>
     <ShadowProjectIsEnabled Condition="'$(ShadowProjectReference)' != ''">true</ShadowProjectIsEnabled>
   </PropertyGroup>

@@ -9,7 +9,7 @@
       Provides a tool that injects IL code representing calls to foreign assembly ModuleInitializer.Initialize()
       methods in an target assembly that forces these foreign assembly to load AND initialize.
     </Description>
-    <!--<PackExecutableAs>Project</PackExecutableAs>-->
+    <!--<PackSourceAs>ExecutableSource</PackSourceAs>-->
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 

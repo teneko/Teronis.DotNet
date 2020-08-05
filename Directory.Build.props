@@ -117,7 +117,7 @@
     <!--
       IsPublishablePackageProject:
         A executable package project does inherit package name and package
-        version from project specified in ExecutableProjectReference.
+        version from project specified in PackageSourceReference.
       IsPublishablePackageProject:
         A publishable package project is a synthetic project reference.
       -->
@@ -139,7 +139,7 @@
   <PropertyGroup>
     <!-- <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies> -->
     <ProjectBuildInPackageVerbosity>detailed</ProjectBuildInPackageVerbosity>
-    <!-- The package name and package version are inherited from project specified in ExecutableProjectReference. -->
+    <!-- The package name and package version are inherited from project specified in PackageSourceReference. -->
     <PackSourceWhenPackingPublishTypedProjectMSBuildProperties>$(PackSourceWhenPackingPublishTypedProjectMSBuildProperties);DisableGitVersionCache=true</PackSourceWhenPackingPublishTypedProjectMSBuildProperties>
   </PropertyGroup>
 
@@ -147,18 +147,12 @@
     Belongs to Teronis.MSBuild.Pacakging.PackExecutable
    -->
   <PropertyGroup>
-    <PackagePublishmentOutputPath>$(PackagePublishmentsDirectory)$(MSBuildProjectName)</PackagePublishmentOutputPath>
-    <BeforeGetPackageTypedExecutableProjectProperties>GetVersionCacheWhenGettingPackageTypedExecutableProjectProperties;$(BeforeGetPackageTypedExecutableProjectProperties)</BeforeGetPackageTypedExecutableProjectProperties>
+    <PublishPackOutputPath>$(PackagePublishmentsDirectory)$(MSBuildProjectName)</PublishPackOutputPath>
+    <BeforeCollectPackageSourceContextualPackagePackRelatedProperties>GetVersionCacheWhenGettingPackageTypedExecutableSourceProperties;$(BeforeCollectPackageSourceContextualPackagePackRelatedProperties)</BeforeCollectPackageSourceContextualPackagePackRelatedProperties>
   </PropertyGroup>
 
-  <!-- <ItemGroup>
-    <ExecutableProjectReferenceMSBuildProperties Include="DisableGitVersionCache">
-      <Value>true</Value>
-    </ExecutableProjectReferenceMSBuildProperties>
-  </ItemGroup> -->
-
   <PropertyGroup>
-    <ExecutableProjectReferenceMSBuildProperties>$(ExecutableProjectReferenceMSBuildProperties);DisableGitVersionCache=true</ExecutableProjectReferenceMSBuildProperties>
+    <PackageSourceSyntheticProjectMSBuildProperties>$(PackageSourceSyntheticProjectMSBuildProperties);DisableGitVersionCache=true</PackageSourceSyntheticProjectMSBuildProperties>
   </PropertyGroup>
 
 </Project>

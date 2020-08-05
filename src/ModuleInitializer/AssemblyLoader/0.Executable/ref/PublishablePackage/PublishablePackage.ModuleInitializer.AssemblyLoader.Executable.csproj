@@ -7,7 +7,7 @@ publishment for Teronis.ModuleInitializer.AssemblyLoader.Executable.
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard1.0</TargetFramework>
-    <PackExecutableAs>Publish</PackExecutableAs>
-    <ExecutableProjectReference>..\..\src\Teronis.ModuleInitializer.AssemblyLoader.Executable.csproj</ExecutableProjectReference>
+    <PackSourceAs>ExecutablePublish</PackSourceAs>
+    <PackageSourceReference>..\..\src\Teronis.ModuleInitializer.AssemblyLoader.Executable.csproj</PackageSourceReference>
   </PropertyGroup>
 </Project>

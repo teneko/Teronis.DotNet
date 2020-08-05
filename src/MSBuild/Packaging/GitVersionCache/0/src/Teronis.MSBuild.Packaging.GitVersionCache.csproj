@@ -38,7 +38,7 @@
     
     <!-- TODO: Make this executable package able. -->
     <!--<IsPackable>false</IsPackable>-->
-    <PackExecutableAs Condition="'$(PackExecutableAs)' == ''">Package</PackExecutableAs>
+    <PackSourceAs Condition="'$(PackSourceAs)' == ''">ExecutablePackage</PackSourceAs>
 
     <!--<TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_PublishedProjectContentInPackage</TargetsForTfmSpecificContentInPackage>-->
 

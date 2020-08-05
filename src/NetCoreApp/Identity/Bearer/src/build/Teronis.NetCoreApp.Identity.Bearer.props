@@ -1,6 +1,6 @@
-﻿<Project InitialTargets="_SetIdentityBearerModuleInitializerAssemblyLoaderInjectionTargetAssembly">
+﻿<Project InitialTargets="SetTeronisIdentityBearerModuleInitializerAssemblyLoaderInjectionTargetAssembly">
 
-  <Target Name="_SetIdentityBearerModuleInitializerAssemblyLoaderInjectionTargetAssembly">
+  <Target Name="SetTeronisIdentityBearerModuleInitializerAssemblyLoaderInjectionTargetAssembly" Returns="@(ModuleInitializerAssemblyLoaderInjectionTargetAssemblies)">
     <ItemGroup>
       
       <_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies Include="@(IntermediateAssembly->'%(FullPath)')">

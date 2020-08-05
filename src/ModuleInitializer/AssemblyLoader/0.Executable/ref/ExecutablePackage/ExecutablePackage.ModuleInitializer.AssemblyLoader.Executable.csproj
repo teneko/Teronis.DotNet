@@ -12,8 +12,8 @@ from referenced project.
   
   <PropertyGroup>
     <TargetFramework>netstandard1.0</TargetFramework>
-    <PackExecutableAs>Package</PackExecutableAs>
-    <ExecutableProjectReference>..\..\src\Teronis.ModuleInitializer.AssemblyLoader.Executable.csproj</ExecutableProjectReference>
+    <PackSourceAs>ExecutablePackage</PackSourceAs>
+    <PackageSourceReference>..\..\src\Teronis.ModuleInitializer.AssemblyLoader.Executable.csproj</PackageSourceReference>
   </PropertyGroup>
 
 </Project>

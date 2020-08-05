@@ -15,13 +15,13 @@ in "outer" build.
     <DisableGitVersionCache>true</DisableGitVersionCache>
     <DisableSdkProps>true</DisableSdkProps>
 
-    <PackExecutableAs>Publish</PackExecutableAs>
+    <PackSourceAs>ExecutablePublish</PackSourceAs>
     <!--
     This does work in VS but not with msbuild.exe because of ring dependency 
     in target _GenerateRestoreProjectPathWalk (NuGet.targets(1055,5))
     -->
-    <!--<ExecutableProjectReference>..\..\src\$(AssemblyName).csproj</ExecutableProjectReference>-->
-    <ExecutableProjectReference>$(MSBuildProjectFullPath)</ExecutableProjectReference>
+    <!--<PackageSourceReference>..\..\src\$(AssemblyName).csproj</PackageSourceReference>-->
+    <PackageSourceReference>$(MSBuildProjectFullPath)</PackageSourceReference>
     <ShadowProjectReference>..\..\src\$(AssemblyName).csproj</ShadowProjectReference>
 
   </PropertyGroup>

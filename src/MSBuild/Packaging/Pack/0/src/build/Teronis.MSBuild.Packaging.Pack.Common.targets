@@ -234,23 +234,23 @@
 
     </PropertyGroup>
 
-    <MSBuild Projects="$(TeronisMSBuildPackagingPackExecutableTargetsFile)" Targets="GetPropertyValue" Properties="$(_MSBuildProperties);PropertyName=PackageVersion" RemoveProperties="$(_MSBuildRemoveProperties)">
+    <MSBuild Projects="$(MSBuildThisFileFullPath)" Targets="GetPropertyValue" Properties="$(_MSBuildProperties);PropertyName=PackageVersion" RemoveProperties="$(_MSBuildRemoveProperties)">
       <Output TaskParameter="TargetOutputs" PropertyName="ExecutableSourcePackageVersion" />
     </MSBuild>
 
-    <MSBuild Projects="$(TeronisMSBuildPackagingPackExecutableTargetsFile)" Targets="GetPropertyValue" Properties="$(_MSBuildProperties);PropertyName=PublishDir" RemoveProperties="$(_MSBuildRemoveProperties)">
+    <MSBuild Projects="$(MSBuildThisFileFullPath)" Targets="GetPropertyValue" Properties="$(_MSBuildProperties);PropertyName=PublishDir" RemoveProperties="$(_MSBuildRemoveProperties)">
       <Output TaskParameter="TargetOutputs" PropertyName="ExecutableSourcePublishDir" />
     </MSBuild>
 
-    <MSBuild Projects="$(TeronisMSBuildPackagingPackExecutableTargetsFile)" Targets="GetPropertyValue" Properties="$(_MSBuildProperties);PropertyName=TargetFramework" RemoveProperties="$(_MSBuildRemoveProperties)">
+    <MSBuild Projects="$(MSBuildThisFileFullPath)" Targets="GetPropertyValue" Properties="$(_MSBuildProperties);PropertyName=TargetFramework" RemoveProperties="$(_MSBuildRemoveProperties)">
       <Output TaskParameter="TargetOutputs" PropertyName="ExecutableSourceTargetFramework" />
     </MSBuild>
 
-    <!--<MSBuild Projects="$(TeronisMSBuildPackagingPackExecutableTargetsFile)" Targets="GetPropertyValue" Properties="$(_MSBuildProperties);PropertyName=TargetFrameworks" RemoveProperties="$(_MSBuildRemoveProperties)">
+    <!--<MSBuild Projects="$(MSBuildThisFileFullPath)" Targets="GetPropertyValue" Properties="$(_MSBuildProperties);PropertyName=TargetFrameworks" RemoveProperties="$(_MSBuildRemoveProperties)">
       <Output TaskParameter="TargetOutputs" PropertyName="ExecutableSourceTargetFrameworks" />
     </MSBuild>-->
 
-    <MSBuild Projects="$(TeronisMSBuildPackagingPackExecutableTargetsFile)" Targets="GetPropertyValue" Properties="$(_MSBuildProperties);PropertyName=Description" RemoveProperties="$(_MSBuildRemoveProperties)">
+    <MSBuild Projects="$(MSBuildThisFileFullPath)" Targets="GetPropertyValue" Properties="$(_MSBuildProperties);PropertyName=Description" RemoveProperties="$(_MSBuildRemoveProperties)">
       <Output TaskParameter="TargetOutputs" PropertyName="ExecutableSourceDiscription" />
     </MSBuild>
 

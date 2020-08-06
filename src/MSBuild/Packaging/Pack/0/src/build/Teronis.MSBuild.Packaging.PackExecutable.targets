@@ -96,7 +96,7 @@
 
     </ItemGroup>
 
-    <Message Text="- FN: %(TfmSpecificPackageFileWithRecursiveDir.Filename)%(TfmSpecificPackageFileWithRecursiveDir.Extension) RD: %(TfmSpecificPackageFileWithRecursiveDir.RecursiveDir)" Importance="high" />
+    <Message Text="- Filename: %(TfmSpecificPackageFileWithRecursiveDir.Filename)%(TfmSpecificPackageFileWithRecursiveDir.Extension) RecursiveDir: %(TfmSpecificPackageFileWithRecursiveDir.RecursiveDir)" Importance="normal" />
 
   </Target>
 

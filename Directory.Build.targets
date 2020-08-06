@@ -4,7 +4,7 @@
   <Import Condition="'$(IsMSBuildFileImported)' != 'true'" Project="$([MSBuild]::GetPathOfFileAbove(.msbuild))" />
   <Import Condition="'$(IsTeronisDotNetCorePropsFileImported)' != 'true'" Project="$(RootCorePropsPath)" />
   <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackageTargetsFile)" />
-  <Import Project="$(TeronisMSBuildPackagingPackExecutableTargetsFile)" Condition="Exists($(TeronisMSBuildPackagingPackExecutableTargetsFile))" />
+  <Import Project="$(TeronisMSBuildPackagingPackTargetsFile)" Condition="Exists($(TeronisMSBuildPackagingPackTargetsFile))" />
 
   <!--
   ModuleInitializerAssemblyLoader

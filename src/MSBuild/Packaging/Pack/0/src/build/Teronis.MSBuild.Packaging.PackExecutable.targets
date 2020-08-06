@@ -51,7 +51,7 @@
 
     <PropertyGroup>
       <_MSBuildProperties>
-        PackSourceAs=ExecutableSource
+        PackSourceAs=$(InferredPackageSourceType)
       </_MSBuildProperties>
     </PropertyGroup>
 
@@ -79,7 +79,7 @@
           Condition="'$(IsExecutableSourceTyped)' == 'true'">
     
     <PropertyGroup>
-      <_PublishDir Condition="'$(IsExecutableSourceTyped)' == 'true'">$(MSBuildProjectDir)$(PublishDir)</_PublishDir>
+      <_PublishDir Condition="'$(IsExecutableSourceTyped)' == 'true'">$(MSBuildProjectDirectory)$(PublishDir)</_PublishDir>
     </PropertyGroup>
 
     <ItemGroup>

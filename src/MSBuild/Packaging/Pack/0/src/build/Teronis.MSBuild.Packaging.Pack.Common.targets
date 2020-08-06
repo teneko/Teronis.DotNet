@@ -80,10 +80,10 @@
       <PropertyGroup>
 
         <PackageSourceProjectPathIsRooted>$([System.IO.Path]::IsPathRooted('$(_PackageSourceProjectReference)'))</PackageSourceProjectPathIsRooted>
-        <PackageSourceProjectFullPath Condition="$(PackageSourceProjectPathIsRooted)" >$(_PackageSourceProjectReference)</PackageSourceProjectFullPath>
+        <PackageSourceProjectFullPath Condition="$(PackageSourceProjectPathIsRooted)">$(_PackageSourceProjectReference)</PackageSourceProjectFullPath>
 
-        <PackageSourceProjectFullPath Condition="!$(PackageSourceProjectPathIsRooted)" >$(MSBuildProjectDirectory)\$(_PackageSourceProjectReference)</PackageSourceProjectFullPath>
-        <PackageSourceProjectFullPath Condition="!$(PackageSourceProjectPathIsRooted)" >$([System.IO.Path]::GetFullPath('$(PackageSourceProjectFullPath)'))</PackageSourceProjectFullPath>
+        <PackageSourceProjectFullPath Condition="!$(PackageSourceProjectPathIsRooted)">$(MSBuildProjectDirectory)\$(_PackageSourceProjectReference)</PackageSourceProjectFullPath>
+        <PackageSourceProjectFullPath Condition="!$(PackageSourceProjectPathIsRooted)">$([System.IO.Path]::GetFullPath('$(PackageSourceProjectFullPath)'))</PackageSourceProjectFullPath>
 
         <PackageSourceProjectFilename>$([System.IO.Path]::GetFileNameWithoutExtension('$(PackageSourceProjectFullPath)'))</PackageSourceProjectFilename>
         <PackageSourceProjectFullName>$([System.IO.Path]::GetFileName('$(PackageSourceProjectFullPath)'))</PackageSourceProjectFullName>
@@ -134,17 +134,17 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(HasAnyPublishPackType)' == 'true'">
-    
+
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IsPackable>false</IsPackable>
-    
+
     <_PublishPackageOutputPath Condition="'$(PublishPackOutputPath)' != ''">$(PublishPackOutputPath.TrimEnd('\'))</_PublishPackageOutputPath>
     <_PublishPackageOutputPath Condition="'$(PublishPackOutputPath)' == ''">$(MSBuildProjectDirectory)\bin\$(Configuration)\PackExecutable\publish</_PublishPackageOutputPath>
-    
+
     <!-- There is a bug that msbuild is still generating the assembly info. -->
     <!--<GenerateAssemblyInfo>false</GenerateAssemblyInfo>-->
     <!--<DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>-->
-    
+
   </PropertyGroup>
 
   <ItemGroup>
@@ -155,23 +155,28 @@
       <Private>false</Private>
     </ProjectReference>
   </ItemGroup>
-  
-  <PropertyGroup Condition="'$(HasAnyPackType)' == 'true'">
+
+  <!--
+  We cannot check for conditional '$(HasAnyPackType)' == 'true'
+  because it is evaluated to false when this file gets imported
+  in Directory.Build.props. I think it has to do with inner/outer
+  build mechanism.
+  -->
+  <PropertyGroup>
     <CollectPackageSourceContextualPropertiesDependsOn>$(BeforeCollectPackageSourceContextualProperties);$(CollectPackageSourceContextualPropertiesDependsOn)</CollectPackageSourceContextualPropertiesDependsOn>
     <CollectPackageSourceContextualPackagePackRelatedPropertiesDependsOn>$(BeforeCollectPackageSourceContextualPackagePackRelatedProperties);CollectPackageSourceContextualProperties;$(CollectPackageSourceContextualPackagePackRelatedPropertiesDependsOn)</CollectPackageSourceContextualPackagePackRelatedPropertiesDependsOn>
   </PropertyGroup>
 
   <!--
   =====================================================
-              PackSourceWhenPackingPublishTypedProject
+               PackSourceWhenPackingPublishTypedProject
                                        
   Unzips a project defined in
   PackageSourceProjectFullPath (calulcated from
   PackageSourceReference).
   =====================================================
   -->
-  <Target Name="PackSourceWhenPackingPublishTypedProject" BeforeTargets="Pack"
-          Condition="'$(HasAnyPublishPackType)' == 'true'">
+  <Target Name="PackSourceWhenPackingPublishTypedProject" BeforeTargets="Pack" Condition="'$(HasAnyPublishPackType)' == 'true'">
 
     <PropertyGroup>
 
@@ -202,15 +207,14 @@
   </Target>
   <!--
   =====================================================
-                         CleanExecutablePublishProject
+                          CleanExecutablePublishProject
                                        
   Cleans unzipped content created by publish
   package typed project.
   =====================================================
   -->
-  <Target Name="CleanExecutablePublishProject" BeforeTargets="Clean"
-          Condition="'$(HasAnyPublishPackType)' == 'true'">
-  
+  <Target Name="CleanExecutablePublishProject" BeforeTargets="Clean" Condition="'$(HasAnyPublishPackType)' == 'true'">
+
     <ItemGroup>
       <_PackageFilesToBeDeleted Include="$(_PublishPackageOutputPath)\**\*" />
     </ItemGroup>
@@ -267,9 +271,7 @@
       <_MSBuildRemoveProperties>TargetFramework;TargetFrameworks</_MSBuildRemoveProperties>
     </PropertyGroup>
 
-    <MSBuild Projects="$(PackageSourceProjectFullPath)" Targets="CollectPackageSourceContextualProperties"
-             Properties="$(_MSBuildProperties)"
-             RemoveProperties="$(_MSBuildRemoveProperties)">
+    <MSBuild Projects="$(PackageSourceProjectFullPath)" Targets="CollectPackageSourceContextualProperties" Properties="$(_MSBuildProperties)" RemoveProperties="$(_MSBuildRemoveProperties)">
       <Output TaskParameter="TargetOutputs" PropertyName="_CommaSeparatedPackageSourceProperties" />
     </MSBuild>
 
@@ -281,15 +283,15 @@
       <_MSBuildRemoveProperties>TargetFramework;TargetFrameworks</_MSBuildRemoveProperties>
     </PropertyGroup>
 
-    <MSBuild Projects="$(PackageSourceProjectFullPath)" Targets="CollectPackageSourceContextualPackagePackRelatedProperties"
-             Properties="$(_MSBuildProperties)"
-             RemoveProperties="$(_MSBuildRemoveProperties)">
+    <MSBuild Projects="$(PackageSourceProjectFullPath)" Targets="CollectPackageSourceContextualPackagePackRelatedProperties" Properties="$(_MSBuildProperties)" RemoveProperties="$(_MSBuildRemoveProperties)">
       <Output TaskParameter="TargetOutputs" PropertyName="_CommaSeparatedPackageSourceProperties" />
     </MSBuild>
   </Target>
 
   <!-- 
   =====================================================
+                                       GetPropertyValue
+  
   Target gets the value of a property within comma
   separated properties.
   
@@ -315,7 +317,7 @@
       <_PropertySeparator Condition="'$(_PropertySeparator)' == ''">;</_PropertySeparator>
     </PropertyGroup>
 
-    <Message Text="[$(MSBuildThisFile)] Received properties $(CommaSeparatedProperties)" Importance="high" Condition="'$(GetPropertyValueDebug)' == 'true'" />
+    <Message Text="[$(MSBuildThisFile)] Received properties $(CommaSeparatedProperties)" Importance="normal" Condition="'$(GetPropertyValueDebug)' == 'true'" />
 
     <PropertyGroup>
       <_PropertyName>$(PropertyNamePrefix)$(PropertyName)=</_PropertyName>
@@ -325,25 +327,25 @@
       <_PropertyLength>$(_PropertyName.Length)</_PropertyLength>
     </PropertyGroup>
 
-    <Message Text="[$(MSBuildThisFile)] _PropertyLength: $(_PropertyLength)" Importance="high" Condition="'$(GetPropertyValueDebug)' == 'true'" />
+    <Message Text="[$(MSBuildThisFile)] _PropertyLength: $(_PropertyLength)" Importance="normal" Condition="'$(GetPropertyValueDebug)' == 'true'" />
 
     <PropertyGroup>
       <_PropertyIndex>$(CommaSeparatedProperties.IndexOf('$(_PropertyName)'))</_PropertyIndex>
     </PropertyGroup>
 
-    <Message Text="[$(MSBuildThisFile)] _PropertyIndex: $(_PropertyIndex)" Importance="high" Condition="'$(GetPropertyValueDebug)' == 'true'" />
+    <Message Text="[$(MSBuildThisFile)] _PropertyIndex: $(_PropertyIndex)" Importance="normal" Condition="'$(GetPropertyValueDebug)' == 'true'" />
 
     <PropertyGroup>
       <_PropertyValueIndex>$([MSBuild]::Add($(_PropertyIndex),$(_PropertyName.Length)))</_PropertyValueIndex>
     </PropertyGroup>
 
-    <Message Text="[$(MSBuildThisFile)] _PropertyValueIndex: $(_PropertyValueIndex)" Importance="high" Condition="'$(GetPropertyValueDebug)' == 'true'" />
+    <Message Text="[$(MSBuildThisFile)] _PropertyValueIndex: $(_PropertyValueIndex)" Importance="normal" Condition="'$(GetPropertyValueDebug)' == 'true'" />
 
     <PropertyGroup>
       <_PropertySemicolonIndex>$(CommaSeparatedProperties.IndexOf($(_PropertySeparator),$(_PropertyValueIndex)))</_PropertySemicolonIndex>
     </PropertyGroup>
 
-    <Message Text="[$(MSBuildThisFile)] _PropertySemicolonIndex: $(_PropertySemicolonIndex)" Importance="high" Condition="'$(GetPropertyValueDebug)' == 'true'" />
+    <Message Text="[$(MSBuildThisFile)] _PropertySemicolonIndex: $(_PropertySemicolonIndex)" Importance="normal" Condition="'$(GetPropertyValueDebug)' == 'true'" />
 
     <PropertyGroup>
       <_IsPropertySemicolonIndexNegative>false</_IsPropertySemicolonIndexNegative>
@@ -351,58 +353,57 @@
       <_PropertySemicolonIndex Condition="$(_IsPropertySemicolonIndexNegative)">$(CommaSeparatedProperties.Length)</_PropertySemicolonIndex>
     </PropertyGroup>
 
-    <Message Text="[$(MSBuildThisFile)] _PropertySemicolonIndex is now $(_PropertySemicolonIndex)" Importance="high"
-             Condition="$(_IsPropertySemicolonIndexNegative) And '$(GetPropertyValueDebug)' == 'true'" />
+    <Message Text="[$(MSBuildThisFile)] _PropertySemicolonIndex is now $(_PropertySemicolonIndex)" Importance="normal" Condition="$(_IsPropertySemicolonIndexNegative) And '$(GetPropertyValueDebug)' == 'true'" />
 
     <PropertyGroup>
       <_PropertyValueLength>$([MSBuild]::Subtract($(_PropertySemicolonIndex),$(_PropertyValueIndex)))</_PropertyValueLength>
     </PropertyGroup>
 
-    <Message Text="[$(MSBuildThisFile)] _PropertyValueLength: $(_PropertyValueLength)" Importance="high" Condition="'$(GetPropertyValueDebug)' == 'true'" />
+    <Message Text="[$(MSBuildThisFile)] _PropertyValueLength: $(_PropertyValueLength)" Importance="normal" Condition="'$(GetPropertyValueDebug)' == 'true'" />
 
     <PropertyGroup>
       <_PropertyValue>$(CommaSeparatedProperties.SubString($(_PropertyValueIndex),$(_PropertyValueLength)))</_PropertyValue>
     </PropertyGroup>
 
-    <Message Text="[$(MSBuildThisFile)] _PropertyValue: $(_PropertyValue)" Importance="high" Condition="'$(GetPropertyValueDebug)' == 'true'" />
+    <Message Text="[$(MSBuildThisFile)] _PropertyValue: $(_PropertyValue)" Importance="normal" Condition="'$(GetPropertyValueDebug)' == 'true'" />
 
   </Target>
 
   <!--
   =====================================================
-                               CollectProjectProperties
+  CollectPackageSourceContextualPackagePackRelatedProperties
+
   Collects PackageSource properties with package pack
   related properties.
   =====================================================
   -->
-  <Target Name="CollectPackageSourceContextualPackagePackRelatedProperties" DependsOnTargets="$(CollectPackageSourceContextualPackagePackRelatedPropertiesDependsOn)"
-          Outputs="$(_GatheredPackageTypedExecutableSourceProperties)">
+  <Target Name="CollectPackageSourceContextualPackagePackRelatedProperties" DependsOnTargets="$(CollectPackageSourceContextualPackagePackRelatedPropertiesDependsOn)" Outputs="$(_PackageSourceContextualProperties)">
 
     <PropertyGroup>
-      <_GatheredPackageTypedExecutableSourceProperties>$(_GatheredAnyTypedExecutableSourceProperties)</_GatheredPackageTypedExecutableSourceProperties>
+      <_PackageSourceContextualProperties>$(_PackageSourceContextualProperties)</_PackageSourceContextualProperties>
     </PropertyGroup>
 
-    <Message Text="Collected package typed executable project properties: $(_GatheredAnyTypedExecutableSourceProperties)" Importance="high" />
+    <Message Text="Collected package source properties with package typed project related properties:%0a$(_PackageSourceContextualProperties)" Importance="normal" />
 
   </Target>
 
   <!--
   =====================================================
-                               CollectProjectProperties
+               CollectPackageSourceContextualProperties
+
   Collects PackageSource properties.
   =====================================================
   -->
-  <Target Name="CollectPackageSourceContextualProperties" DependsOnTargets="$(CollectPackageSourceContextualPropertiesDependsOn)"
-          Outputs="$(_GatheredAnyTypedExecutableSourceProperties)">
+  <Target Name="CollectPackageSourceContextualProperties" DependsOnTargets="$(CollectPackageSourceContextualPropertiesDependsOn)" Outputs="$(_PackageSourceContextualProperties)">
 
     <PropertyGroup>
       <_S>$(PackageSourcePropertySeparator)</_S>
       <!-- List separator: https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-special-characters?view=vs-2019 -->
       <!--TargetFrameworks=$(TargetFrameworks)$(_S)?-->
-      <_GatheredAnyTypedExecutableSourceProperties>?AssemblyName=$(AssemblyName)$(_S)?PackageId=$(PackageId)$(_S)?PackageVersion=$(PackageVersion)$(_S)?PublishDir=$(MSBuildProjectDirectory)\$(PublishDir)$(_S)?TargetFramework=$(TargetFramework)$(_S)?Description=$([MSBuild]::Escape('$(Description)'))</_GatheredAnyTypedExecutableSourceProperties>
+      <_PackageSourceContextualProperties>$(_PackageSourceContextualProperties)$(_S)?AssemblyName=$(AssemblyName)$(_S)?PackageId=$(PackageId)$(_S)?PackageVersion=$(PackageVersion)$(_S)?PublishDir=$(MSBuildProjectDirectory)\$(PublishDir)$(_S)?TargetFramework=$(TargetFramework)$(_S)?Description=$([MSBuild]::Escape('$(Description)'))</_PackageSourceContextualProperties>
     </PropertyGroup>
 
-    <Message Text="Collected any typed executable project properties: $(_GatheredAnyTypedExecutableSourceProperties)" Importance="high" />
+    <Message Text="Collected package source properties:%0a$(_PackageSourceContextualProperties)" Importance="normal" />
 
   </Target>
 

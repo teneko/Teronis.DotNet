@@ -146,7 +146,8 @@
   ============================================================
   GetVersionCacheWhenGettingPackageTypedExecutableSourceProperties
   
-  Invokes GetVersionCache, so
+  Invokes GetVersionCache, so its evaluation is regarded when
+  packing executable source project.
   ============================================================
   -->
   <Target Name="GetVersionCacheWhenGettingPackageTypedExecutableSourceProperties" DependsOnTargets="GetVersionCache" Condition="'$(ParentIsExecutablePackageTyped)' == 'true'" />

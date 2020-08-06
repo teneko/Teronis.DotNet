@@ -7,10 +7,4 @@
   <Import Project="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).props" Condition="'$(TeronisMSBuildPackagingPackPackDependencyPropsHasBeenImported)' != 'true'" />
   <Import Project="$(MSBuildThisFileDirectory)Teronis.MSBuild.Packaging.Pack.Common.targets" Condition="'$(TeronisMSBuildPackagingPackPackCommonTargetsHasBeenImported)' != 'true'" />
 
-  <PropertyGroup>
-    
-    
-    
-  </PropertyGroup>
-
 </Project>

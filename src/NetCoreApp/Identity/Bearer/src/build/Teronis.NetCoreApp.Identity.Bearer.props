@@ -1,10 +1,13 @@
 ﻿<Project InitialTargets="SetTeronisIdentityBearerModuleInitializerAssemblyLoaderInjectionTargetAssembly">
 
   <Target Name="SetTeronisIdentityBearerModuleInitializerAssemblyLoaderInjectionTargetAssembly" Returns="@(ModuleInitializerAssemblyLoaderInjectionTargetAssemblies)">
+    
     <ItemGroup>
+
+      <IntermediateAssembly Include="$(IntermediateAssembly.Split(';'))" Condition="'$(IntermediateAssembly)' != ''" />
       
-      <_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies Include="@(IntermediateAssembly->'%(FullPath)')">
-        <SourceAssembly>$(MSBuildThisFileDirectory)..\executables\netcoreapp3.1\Teronis.NetCoreApp.Identity.Bearer.dll</SourceAssembly>
+      <_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies Include="%(IntermediateAssembly.FullPath)">
+        <SourceAssembly>$(MSBuildThisFileDirectory)..\lib\netcoreapp3.1\Teronis.NetCoreApp.Identity.Bearer.dll</SourceAssembly>
       </_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies>
 
       <ModuleInitializerAssemblyLoaderInjectionTargetAssemblies Include="@(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies)" />

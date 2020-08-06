@@ -1,4 +1,4 @@
-﻿<Project InitialTargets="_PrintAnyPackTypeInformations">
+﻿<Project>
 
   <PropertyGroup>
     <TeronisMSBuildPackagingPackPackCommonTargetsHasBeenImported>true</TeronisMSBuildPackagingPackPackCommonTargetsHasBeenImported>
@@ -160,10 +160,6 @@
     <CollectPackageSourceContextualPropertiesDependsOn>$(BeforeCollectPackageSourceContextualProperties);$(CollectPackageSourceContextualPropertiesDependsOn)</CollectPackageSourceContextualPropertiesDependsOn>
     <CollectPackageSourceContextualPackagePackRelatedPropertiesDependsOn>$(BeforeCollectPackageSourceContextualPackagePackRelatedProperties);CollectPackageSourceContextualProperties;$(CollectPackageSourceContextualPackagePackRelatedPropertiesDependsOn)</CollectPackageSourceContextualPackagePackRelatedPropertiesDependsOn>
   </PropertyGroup>
-
-  <Target Name="_PrintAnyPackTypeInformations" Condition="'$(HasAnyPackType)' == 'true'">
-    <Message Text="$(PackExecutableMSBuildProperties)" Importance="high" />
-  </Target>
 
   <!--
   =====================================================

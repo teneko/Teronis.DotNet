@@ -79,8 +79,10 @@
           Condition="'$(IsExecutableSourceTyped)' == 'true'">
     
     <PropertyGroup>
-      <_PublishDir Condition="'$(IsExecutableSourceTyped)' == 'true'">$(MSBuildProjectDirectory)$(PublishDir)</_PublishDir>
+      <_PublishDir>$(MSBuildProjectDirectory)\$(PublishDir)</_PublishDir>
     </PropertyGroup>
+
+    <Message Text="Publish directory has been resolved to $(_PublishDir)" Importance="normal" />
 
     <ItemGroup>
 

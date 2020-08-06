@@ -3,6 +3,11 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <Description>
+      Provides the assembly loader injector.
+
+      Commonly Used Types: AssemblyLoaderInjector
+    </Description>
   </PropertyGroup>
 
   <ItemGroup>

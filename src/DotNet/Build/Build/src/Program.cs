@@ -160,6 +160,7 @@ namespace Teronis.DotNet.Build
                     retry:
 
                     try {
+                        Console.WriteLine($"\u001b[35;1m{dotNetProgram} {commandArgs}\u001b[0m");
                         await SimpleProcess.RunAsync(dotNetProgram!, args: commandArgs, outputReceived: Console.Out.WriteLine, errorReceived: Console.Error.WriteLine);
                     } catch {
                         if (retries <= 0) {

@@ -5,10 +5,10 @@
     <RootNamespace>Teronis.Collections.CollectionChanging</RootNamespace>
     <Nullable>enable</Nullable>
     <Description>
-      <![CDATA[Provides algorithm to calculate collection differences between two collection.
+      Provides algorithm to calculate collection differences between two collection.
 
-Commonly Used Types:
-IEnumerableGenericExtensions]]>
+      Commonly Used Types:
+      IEnumerableGenericExtensions
     </Description>
   </PropertyGroup>
 

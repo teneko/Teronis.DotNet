@@ -3,6 +3,9 @@ PublishablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj
 
 This project is a synthetic project. It creates a the filesystem
 publishment for Teronis.ModuleInitializer.AssemblyLoader.Executable.
+
+We want to have access to .props with nuget package designed
+properties otherwise we would have to separate path logic.
 -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>

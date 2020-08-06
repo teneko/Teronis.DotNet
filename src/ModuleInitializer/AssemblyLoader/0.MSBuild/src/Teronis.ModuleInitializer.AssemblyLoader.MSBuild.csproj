@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.0</TargetFramework>
+    <Description>Provides the MSBuild interface for using the assembly loader injector exectuable.</Description>
   </PropertyGroup>
   
   <ItemGroup>

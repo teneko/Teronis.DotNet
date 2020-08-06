@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Nullable>enable</Nullable>
     <Description>
-      Provides the assembly loader injector.
+      Provides an assembly loader injector that injects IL code representing calls to foreign assembly ModuleInitializer.Initialize() methods in an target assembly that forces these foreign assembly to load AND initialize.
 
       Commonly Used Types: AssemblyLoaderInjector
     </Description>

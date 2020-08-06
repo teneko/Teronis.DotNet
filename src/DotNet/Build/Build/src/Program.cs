@@ -183,7 +183,7 @@ namespace Teronis.DotNet.Build
                 if (buildStyle == BuildStyle.DotNet) {
                     additonalArguments = $"--{ConfigurationLongName} {options.Configuration} --{VerbosityLongName} {options.Verbosity} {additionalArgumentProperties}";
                 } else if (buildStyle == BuildStyle.MSBuild) {
-                    additonalArguments = $"-p:{ConfigurationLongName}={options.Configuration} -p:{VerbosityLongName}={options.Verbosity} {additionalArgumentProperties}";
+                    additonalArguments = $"-p:{ConfigurationLongName}={options.Configuration} -{VerbosityLongName}:{options.Verbosity} {additionalArgumentProperties}";
                 } else {
                     throw new ArgumentException("Bad build style.");
                 }

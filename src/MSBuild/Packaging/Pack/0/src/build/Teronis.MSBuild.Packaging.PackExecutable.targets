@@ -115,7 +115,8 @@
     <PropertyGroup>
       <_MSBuildProperties>
         PackSourceAs=$(InferredPackageSourceType);
-        TargetFramework=$(TargetFramework)
+        TargetFramework=$(TargetFramework);
+        _GetChildProjectCopyToPublishDirectoryItems=false
       </_MSBuildProperties>
     </PropertyGroup>
 

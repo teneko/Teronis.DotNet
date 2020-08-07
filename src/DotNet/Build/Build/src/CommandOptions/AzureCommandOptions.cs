@@ -2,7 +2,7 @@
 
 namespace Teronis.DotNet.Build.CommandOptions
 {
-    [Verb(AzureCommand)]
+    [Verb(AzureCommand, HelpText = "Restores, builds, tests and packs projects")]
     public class AzureCommandOptions : CommandOptionsBase
     {
         public const string AzureCommand = "azure";

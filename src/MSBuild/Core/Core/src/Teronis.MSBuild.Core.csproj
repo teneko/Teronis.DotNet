@@ -1,7 +1,6 @@
 ﻿<Project>
 
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" Condition="'$(DisableSdkProps)' != 'true'" />
-  <Import Project="build\Teronis.MSBuild.Packaging.GenerateFilesystemPackage.props" />
 
   <PropertyGroup>
 
@@ -16,7 +15,6 @@
     <IncludeSymbols>false</IncludeSymbols>
     <RootNamespace>Teronis.MSBuild</RootNamespace>
     <Description>Some special targets and tasks. See comments in source code.</Description>
-    <!--<DisableGitVersionCache>true</DisableGitVersionCache>-->
 
   </PropertyGroup>
 
@@ -34,7 +32,5 @@
   </ItemGroup>
 
   <Target Name="GetTargetPath" />
-
-  <Import Project="build\Teronis.MSBuild.Packaging.GenerateFilesystemPackage.targets" />
 
 </Project>

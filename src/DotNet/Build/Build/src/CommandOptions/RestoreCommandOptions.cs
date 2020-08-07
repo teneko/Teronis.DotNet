@@ -2,7 +2,7 @@
 
 namespace Teronis.DotNet.Build.CommandOptions
 {
-    [Verb(RestoreCommand)]
+    [Verb(RestoreCommand, HelpText = "Restores projects")]
     public class RestoreCommandOptions : CommandOptionsBase
     {
         public const string RestoreCommand = "restore";

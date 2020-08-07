@@ -2,7 +2,7 @@
 
 namespace Teronis.DotNet.Build.CommandOptions
 {
-    [Verb(BuildCommand)]
+    [Verb(BuildCommand, HelpText = "Builds projects")]
     public class BuildCommandOptions : CommandOptionsBase
     {
         public const string BuildCommand = "build";

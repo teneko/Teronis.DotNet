@@ -2,7 +2,7 @@
 
 namespace Teronis.DotNet.Build.CommandOptions
 {
-    [Verb(PackCommand)]
+    [Verb(PackCommand, HelpText = "Packs projects")]
     public class PackCommandOptions : CommandOptionsBase
     {
         public const string PackCommand = "pack";

@@ -9,7 +9,7 @@
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
     <Description>
-      An additional to NuGet.Build.Tasks.Pack that adds more package types beside of existing ones like DotNetCli and Dependency.
+      An addition to NuGet.Build.Tasks.Pack that adds more package types beside of existing ones like DotNetCli and Dependency.
       You just need to set-up PackSourceAs and PackageSourceReference and depending on scenario creating a synthetic project.
 
       Commonly Used Package Types: Executable(Publish,Package), DependencyPublish

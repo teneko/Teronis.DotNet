@@ -11,18 +11,25 @@ namespace Teronis.Mvc
     /// </summary>
     public class TypesProvidingApplicationPart : ApplicationPart, IApplicationPartTypeProvider
     {
-        public static TypesProvidingApplicationPart Create(params TypeInfo[] typeInfos) =>
-            new TypesProvidingApplicationPart(typeInfos);
+        public static TypesProvidingApplicationPart Create(params TypeInfo[] types) =>
+            new TypesProvidingApplicationPart(types);
+
+        public static TypesProvidingApplicationPart Create(string? name, params TypeInfo[] types) =>
+            new TypesProvidingApplicationPart(types, name);
 
         public IEnumerable<TypeInfo> Types { get; }
 
-        public override string? Name =>
-            nameof(TypesProvidingApplicationPart).TrimEnd(nameof(ApplicationPart));
+        public override string? Name => name ?? nameof(TypesProvidingApplicationPart);
 
-        public TypesProvidingApplicationPart(IEnumerable<TypeInfo> typeInfos)
+        private string? name;
+
+        public TypesProvidingApplicationPart(IEnumerable<TypeInfo> types, string? name)
         {
-            typeInfos = typeInfos ?? throw new ArgumentNullException(nameof(typeInfos));
-            Types = typeInfos;
+            Types = types ?? throw new ArgumentNullException(nameof(types));
+            this.name = name;
         }
+
+        public TypesProvidingApplicationPart(IEnumerable<TypeInfo> types)
+            : this(types, null) { }
     }
 }

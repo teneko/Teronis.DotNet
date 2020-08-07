@@ -28,14 +28,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    
     <!--<ProjectReference Include="..\..\..\..\ModuleInitializer\AssemblyLoader\0.Executable\ref\ExecutablePackage\ExecutablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj" />-->
-    <ProjectReference Include="..\..\..\..\ModuleInitializer\AssemblyLoader\0.MSBuild\src\Teronis.ModuleInitializer.AssemblyLoader.MSBuild.csproj" />
+    <ProjectReference Include="..\..\..\..\ModuleInitializer\AssemblyLoader\0.MSBuild\src\Teronis.ModuleInitializer.AssemblyLoader.MSBuild.csproj">
+      <PrivateAssets>contentfiles;analyzers</PrivateAssets>
+    </ProjectReference>
+    
     <ProjectReference Include="..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj">
       <AdditionalProperties>TargetFramework=$(TargetFramework)</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Core\Core\src\Teronis.NetCoreApp.Core.csproj" />
     <ProjectReference Include="..\..\..\Mvc\Mvc\src\Teronis.NetCoreApp.Mvc.csproj" />
     <ProjectReference Include="..\..\EntityFrameworkCore\src\Teronis.NetCoreApp.Identity.EntityFrameworkCore.csproj" />
+    
   </ItemGroup>
 
 </Project>

@@ -30,7 +30,7 @@ namespace Teronis.Identity.Controllers
             });
 
             mvcBuilder.Services.PostConfigure<MvcOptions>(options => {
-                options.Conventions.Add(new ControllerRouteConvention(accountControllerTypeInfo, "api/account", null));
+                options.Conventions.Add(new ControllerRouteConvention(accountControllerTypeInfo, "api/account"));
             });
 
             return new AccountManagerBuilder<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>(mvcBuilder);

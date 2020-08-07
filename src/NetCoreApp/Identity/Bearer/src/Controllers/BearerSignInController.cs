@@ -25,7 +25,7 @@ namespace Teronis.Identity.Controllers
         public async Task<IActionResult> AuthenticateAsync() =>
             await signInManager.CreateTokensAsync(HttpContext.User);
 
-        [HttpGet("refreshToken")]
+        [HttpGet("refresh-token")]
         [Produces("application/json")]
         [ProducesErrorResponseType(typeof(void))]
         [ProducesResponseType(typeof(SignInTokens), StatusCodes.Status200OK)]

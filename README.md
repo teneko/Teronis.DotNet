@@ -45,18 +45,18 @@ Here a list of the project folders:
 The build script `./build.cmd` is a small application to assist in restoring, building, testing and packaging all projects that can be found in this repository.
 
 ```
-Teronis.DotNet.Build 1.0.0+804563cb11be6bf1aaf1337fadcfe21310401eeb
+Teronis.DotNet.Build 1.0.0+9e43e3dee9c14e083f9abc72ed59918200116e21
 Teroneko
 
-  restore
+  restore    Restores projects
 
-  build
+  build      Builds projects
 
-  pack
+  pack       Packs projects
 
-  test
+  test       Tests projects
 
-  azure
+  azure      Restores, builds, tests and packs projects
 
   help       Display more information on a specific command.
 

@@ -8,7 +8,7 @@
     <!-- The shadow directory. -->
     <ShadowProjectDirectory Condition="'$(ShadowProjectDirectory)' == ''">$(MSBuildProjectDirectory)</ShadowProjectDirectory>
     <ProjectShadowGitIgnoreFile Condition="'$(ProjectShadowGitIgnoreFile)' == ''">$(MSBuildThisFileDirectory)$(MSBuildThisFileName).gitignore</ProjectShadowGitIgnoreFile>
-    <DisableProjectShadowGitIgnoreCopy Condition="'$(DisableProjectShadowGitIgnore)' == ''">false</DisableProjectShadowGitIgnoreCopy>
+    <DisableProjectShadowGitIgnoreFile Condition="'$(DisableProjectShadowGitIgnore)' == ''">false</DisableProjectShadowGitIgnoreFile>
   </PropertyGroup>
 
 </Project>

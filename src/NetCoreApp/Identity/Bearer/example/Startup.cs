@@ -13,6 +13,8 @@ using Teronis.Identity.Bearer.Stores;
 using Teronis.Identity.Controllers;
 using Teronis.Identity.Entities;
 using Teronis.AspNetCore.Authorization.Extensions;
+using Teronis.Mvc.ApplicationModels;
+using Teronis.Mvc.Case;
 
 namespace Teronis.Identity.Bearer
 {
@@ -29,9 +31,10 @@ namespace Teronis.Identity.Bearer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc()
-                //.AddAccountControllers()
-                //.AddBearerSignInControllers()
-                ;
+                .AddAccountControllers()
+                .AddBearerSignInControllers(configuration => {
+                    configuration.AddControllerActionRouteTemplateConvention(CaseType.PascalCase);
+                });
 
             services.AddDbContext<BearerIdentityDbContext>(options => {
                 options.UseSqlite("Data Source=bearerIdentity.db;");

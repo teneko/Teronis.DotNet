@@ -7,5 +7,6 @@
         public string? Verbosity { get; set; }
         public bool DryRun { get; set; }
         public bool SkipDependencies { get; set; }
+        //public string? MSBuildProperties { get; set; }
     }
 }

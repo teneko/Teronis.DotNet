@@ -8,10 +8,11 @@ namespace Teronis.DotNet.Build
         public const string VerbosityLongName = "verbosity";
         public const string DryRunLongName = "dry-run";
         public const string SkipDependenciesLongName = "skip-dependencies";
+        //public const string MSBuildPropertiesLongName = "msbuild-properties";
 
         string Command { get; }
 
-        [Option(ConfigurationLongName, Default = "Release")]
+        [Option('c', ConfigurationLongName, Default = "Release")]
         string? Configuration { get; set; }
 
         [Option(VerbosityLongName, Default = "normal")]
@@ -25,5 +26,8 @@ namespace Teronis.DotNet.Build
 
         [Option(SkipDependenciesLongName, Default = false)]
         bool SkipDependencies { get; set; }
+
+        //[Option('p', MSBuildPropertiesLongName)]
+        //string? MSBuildProperties { get; set; }
     }
 }

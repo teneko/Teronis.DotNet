@@ -73,6 +73,7 @@
         <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
         <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
         <SetTargetFramework>TargetFramework=netstandard2.0</SetTargetFramework>
+        <Private>false</Private>
       </ProjectReference>
     
   </ItemGroup>

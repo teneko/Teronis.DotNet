@@ -12,6 +12,9 @@
 
   <PropertyGroup>
 
+    <!-- Add condition for only executable type pack projects -->
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);$(TargetsForTfmSpecificSourceTypedExecutableSourceContentInPackage);$(TargetsForTfmSpecificPackageTypedExecutableSourceContentInPackage)</TargetsForTfmSpecificContentInPackage>
+
     <IsDependencyPublishTyped>false</IsDependencyPublishTyped>
     <IsDependencyPublishTyped Condition="'$(PackSourceAs)' == 'DependencyPublish'">true</IsDependencyPublishTyped>
 
@@ -31,8 +34,6 @@
    -->
 
   <PropertyGroup>
-
-    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);$(TargetsForTfmSpecificSourceTypedExecutableSourceContentInPackage);$(TargetsForTfmSpecificPackageTypedExecutableSourceContentInPackage)</TargetsForTfmSpecificContentInPackage>
 
     <IsExecutablePublishTyped>false</IsExecutablePublishTyped>
     <IsExecutablePublishTyped Condition="'$(PackSourceAs)' == 'ExecutablePublish'">true</IsExecutablePublishTyped>
@@ -94,20 +95,36 @@
 
       </PropertyGroup>
 
-      <PropertyGroup>
-        <PackExecutableMSBuildProperties>
-          ParentPackSourceAs=$(PackSourceAs);
-          ParentIsExecutablePublishTyped=$(IsExecutablePublishTyped);
-          ParentIsExecutablePackageTyped=$(IsExecutablePackageTyped);
-          ParentIsExecutableTargetTyped=$(IsExecutableTargetTyped);
-          ParentIsExecutableSourceTyped=$(IsExecutableSourceTyped);
-          ParentHasAnyExecutablePackType=$(HasAnyExecutablePackType);
-          ParentExecutableSourceReference=$(_PackageSourceProjectReference)
-        </PackExecutableMSBuildProperties>
-      </PropertyGroup>
-
     </When>
   </Choose>
+
+  <PropertyGroup Condition="'$(HasAnyTargetPackType)' == 'true' Or '$(ParentPackageSourceIsSelfReferenced)' == 'true'">
+    <PackageTargetProjectDirectory>$(MSBuildProjectDirectory)\</PackageTargetProjectDirectory>
+    <PackageTargetProjectReference>$(PackageTargetProjectDirectory)$(MSBuildProjectFile)</PackageTargetProjectReference>
+    <PackageTargetOutputPath>$(PackageTargetProjectDirectory)$(OutputPath)</PackageTargetOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(HasAnyPackType)' == 'true'">
+    <TypeSpecificPackageProjectMSBuildProperties>
+      ParentPackSourceAs=$(PackSourceAs);
+      ParentIsExecutablePublishTyped=$(IsExecutablePublishTyped);
+      ParentIsExecutablePackageTyped=$(IsExecutablePackageTyped);
+      ParentIsExecutableTargetTyped=$(IsExecutableTargetTyped);
+      ParentIsExecutableSourceTyped=$(IsExecutableSourceTyped);
+      ParentHasAnyExecutablePackType=$(HasAnyExecutablePackType);
+      ParentPackageSourceProjectReference=$(_PackageSourceProjectReference);
+      ParentPackageSourceIsSelfReferenced=$(PackageSourceIsSelfReferenced)
+    </TypeSpecificPackageProjectMSBuildProperties>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(HasAnyTargetPackType)' == 'true'">
+    <TypeSpecificPackageProjectMSBuildProperties>
+      $(TypeSpecificPackageProjectMSBuildProperties);
+      PackageTargetProjectDirectory=$(PackageTargetProjectDirectory);
+      PackageTargetProjectReference=$(PackageTargetProjectReference);
+      PackageTargetOutputPath=$(PackageTargetOutputPath);
+    </TypeSpecificPackageProjectMSBuildProperties>
+  </PropertyGroup>
 
   <Choose>
     <When Condition="'$(HasAnyExecutablePackType)' == 'true'">
@@ -135,11 +152,15 @@
 
   <PropertyGroup Condition="'$(HasAnyPublishPackType)' == 'true'">
 
+    <!-- 
+    When building a published typed package project the
+    project should be packed too.
+    -->
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IsPackable>false</IsPackable>
 
     <_PublishPackageOutputPath Condition="'$(PublishPackOutputPath)' != ''">$(PublishPackOutputPath.TrimEnd('\'))</_PublishPackageOutputPath>
-    <_PublishPackageOutputPath Condition="'$(PublishPackOutputPath)' == ''">$(MSBuildProjectDirectory)\bin\$(Configuration)\PackExecutable\publish</_PublishPackageOutputPath>
+    <_PublishPackageOutputPath Condition="'$(PublishPackOutputPath)' == ''">$(PackageTargetProjectDirectory)bin\$(Configuration)\PackExecutable\publish</_PublishPackageOutputPath>
 
     <!-- There is a bug that msbuild is still generating the assembly info. -->
     <!--<GenerateAssemblyInfo>false</GenerateAssemblyInfo>-->
@@ -171,9 +192,12 @@
   =====================================================
                PackSourceWhenPackingPublishTypedProject
                                        
-  Unzips a project defined in
-  PackageSourceProjectFullPath (calulcated from
-  PackageSourceReference).
+  Packs source project and unzips it. Packing the
+  synthetic project will pack the source project too.
+  That implies that each tfm of source project gets
+  published. When finished publishing the source
+  project TargetsForTfmSpecificContentInPackage related
+  targets may be called.
   =====================================================
   -->
   <Target Name="PackSourceWhenPackingPublishTypedProject" BeforeTargets="Pack" Condition="'$(HasAnyPublishPackType)' == 'true'">
@@ -184,7 +208,7 @@
       <PackageVersion>1.0.0</PackageVersion>
 
       <PackSourceWhenPackingPublishTypedProjectMSBuildProperties>
-        $(PackExecutableMSBuildProperties);
+        $(TypeSpecificPackageProjectMSBuildProperties);
         PackSourceAs=$(InferredPackageSourceType);
         PackageId=$(PackageId);
         PackageVersion=$(PackageVersion);
@@ -267,7 +291,7 @@
   <Target Name="_LoadPackageSourceConcatenatedProperties" Condition="'$(_CommaSeparatedPackageSourceProperties)' == ''">
 
     <PropertyGroup>
-      <_MSBuildProperties>$(PackExecutableMSBuildProperties)</_MSBuildProperties>
+      <_MSBuildProperties>$(TypeSpecificPackageProjectMSBuildProperties)</_MSBuildProperties>
       <_MSBuildRemoveProperties>TargetFramework;TargetFrameworks</_MSBuildRemoveProperties>
     </PropertyGroup>
 
@@ -279,7 +303,7 @@
 
   <Target Name="_LoadPackageSourceAndPackagePackRelatedConcatenatedProperties" Condition="'$(_CommaSeparatedPackageSourceProperties)' == ''">
     <PropertyGroup>
-      <_MSBuildProperties>$(PackExecutableMSBuildProperties)</_MSBuildProperties>
+      <_MSBuildProperties>$(TypeSpecificPackageProjectMSBuildProperties)</_MSBuildProperties>
       <_MSBuildRemoveProperties>TargetFramework;TargetFrameworks</_MSBuildRemoveProperties>
     </PropertyGroup>
 

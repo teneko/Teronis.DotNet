@@ -8,22 +8,54 @@
   <Import Project="$(MSBuildThisFileDirectory)Teronis.MSBuild.Packaging.Pack.Common.targets" Condition="'$(TeronisMSBuildPackagingPackPackCommonTargetsHasBeenImported)' != 'true'" />
 
   <PropertyGroup Condition="'$(IsExecutablePackageTyped)' == 'true'">
-    
+
     <!-- Mark as executable source project if target project is source project. -->
     <IsExecutableSourceTyped Condition="'$(PackageSourceIsSelfReferenced)' == 'true'">true</IsExecutableSourceTyped>
     <PackageId>$(PackageSourceProjectFilename)</PackageId>
-    
+
     <!-- See Teronis.MSBuild.Packaging.Pack.Common.targets -->
     <!--<GenerateAssemblyInfo>false</GenerateAssemblyInfo>-->
     <!--<DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>-->
-    
+
     <GenerateNuspecWhenPackingExecutablePackageProjectDependsOn>$(BeforeGenerateNuspecWhenPackingExecutablePackageProject);IncludeExecutableSourceProjectPackageFiles;$(GenerateNuspecWhenPackingExecutablePackageProjectDependsOn)</GenerateNuspecWhenPackingExecutablePackageProjectDependsOn>
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);$(GenerateNuspecWhenPackingExecutablePackageProjectDependsOn)</GenerateNuspecDependsOn>
-  
+
   </PropertyGroup>
 
-  <!--<Target Name=""-->
+  <Choose>
+    <When Condition="'$(IsExecutableSourceTyped)' == 'true'">
+      <Choose>
 
+        <When Condition="'$(ParentPackageSourceIsSelfReferenced)' == 'true'">
+          <PropertyGroup>
+            <TfmSpecificPublishDir>$(PackageTargetOutputPath)exepub\</TfmSpecificPublishDir>
+          </PropertyGroup>
+        </When>
+
+        <Otherwise>
+          <PropertyGroup>
+            <TfmSpecificPublishDir>$(PackageTargetOutputPath)pkgsrcpub\$(TargetFramework)\</TfmSpecificPublishDir>
+          </PropertyGroup>
+        </Otherwise>
+
+      </Choose>
+    </When>
+  </Choose>
+
+  <!--<Target Name="AfterGetCopyToPublishDirectoryItems" BeforeTargets="_ComputeCopyToPublishDirectoryItems">
+    <Message Text="TEST äääääää %(AllPublishItemsFullPathWithTargetPath.Identity)" Importance="high" />
+  </Target>-->
+
+  <!--
+  =====================================================
+             CollectExecutableSourceProjectPackageFiles
+  
+  Collects packages files from source project. It
+  therefore has to walk through target
+  TargetsForTfmSpecificContentInPackage which implies
+  that each tfm gets published.
+  =====================================================
+  -->
   <Target Name="CollectExecutableSourceProjectPackageFiles" DependsOnTargets="$(GenerateNuspecDependsOn)" Condition="'$(IsExecutableSourceTyped)' == 'true'"
           Outputs="@(_ExecutablePackageFiles)">
     <ItemGroup>
@@ -47,14 +79,17 @@
   =====================================================
    -->
   <Target Name="IncludeExecutableSourceProjectPackageFiles" DependsOnTargets="DefineLoadedPackageSourceAndPackagePackRelatedProperties"
-          Condition="'$(IsExecutablePackageTyped)' == 'true' And !$(PackageSourceIsSelfReferenced)">
+          Condition="'$(IsExecutablePackageTyped)' == 'true' And '$(PackageSourceIsSelfReferenced)' != 'true'">
 
     <PropertyGroup>
+
       <_MSBuildProperties>
+        $(TypeSpecificPackageProjectMSBuildProperties);
         PackSourceAs=$(InferredPackageSourceType)
       </_MSBuildProperties>
     </PropertyGroup>
 
+    <!-- This target call forces source project to publish each tfm. -->
     <MSBuild Projects="$(PackageSourceProjectFullPath)" Targets="CollectExecutableSourceProjectPackageFiles" Properties="$(_MSBuildProperties)">
       <Output TaskParameter="TargetOutputs" ItemName="_ExecutablePackageFiles"/>
     </MSBuild>
@@ -75,24 +110,19 @@
   published files to the nuget package.
   =====================================================
   -->
-  <Target Name="TfmSpecificExecutableSourceProjectContentInPackage" DependsOnTargets="PublishTfmSpecificExecutableAsProjectContent"
+  <Target Name="TfmSpecificExecutableSourceProjectContentInPackage" DependsOnTargets="PublishTfmSpecificPackageSource"
           Condition="'$(IsExecutableSourceTyped)' == 'true'">
-    
-    <PropertyGroup>
-      <_PublishDir>$(MSBuildProjectDirectory)\$(PublishDir)</_PublishDir>
-    </PropertyGroup>
-
-    <Message Text="Publish directory has been resolved to $(_PublishDir)" Importance="normal" />
 
     <ItemGroup>
 
-      <_PublishedFiles Include="$(_PublishDir)**\*" />
+      <_TfmSpecificPublishFiles Include="$(TfmSpecificPublishDir)**\*" />
 
       <!--https://github.com/NuGet/NuGet.Client/blob/ad08bc710b3c4e142040f4efc860c003502aee3e/src/NuGet.Core/NuGet.Build.Tasks.Pack/NuGet.Build.Tasks.Pack.targets#L427-->
-      <!--<NuGetRecursiveDir>%(_PublishedFiles.RecursiveDir)</NuGetRecursiveDir>-->
-      <TfmSpecificPackageFileWithRecursiveDir Include="@(_PublishedFiles)">
-        <PublishDir>$(_PublishDir)</PublishDir>
-        <PackagePath>executables\$(TargetFramework)\%(_PublishedFiles.RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      <!--<NuGetRecursiveDir>%(_TfmSpecificPublishFiles.RecursiveDir)</NuGetRecursiveDir>-->
+      <!-- For future references. -->
+      <!--<PublishDir>$(TfmSpecificPublishDir)</PublishDir>-->
+      <TfmSpecificPackageFileWithRecursiveDir Include="@(_TfmSpecificPublishFiles)">
+        <PackagePath>executables\$(TargetFramework)\%(_TfmSpecificPublishFiles.RecursiveDir)%(Filename)%(Extension)</PackagePath>
         <BuildAction></BuildAction>
       </TfmSpecificPackageFileWithRecursiveDir>
 
@@ -106,20 +136,24 @@
   =====================================================
                   TfmSpecificExecutableContentInPackage
   
-  This target publishes the MSBuild project to 
-  $(PublishDir).
+  This target publishes a tfm specified MSBuild
+  project.
   =====================================================
   -->
-  <Target Name="PublishTfmSpecificExecutableAsProjectContent" Condition="'$(IsExecutableSourceTyped)' == 'true'">
+  <Target Name="PublishTfmSpecificPackageSource" Condition="'$(IsExecutableSourceTyped)' == 'true'">
 
+    <Error Condition="$(TfmSpecificPublishDir) == ''" Text="TargetFramework specific publish directory is not configured." />
+    
     <PropertyGroup>
+      <!--_GetChildProjectCopyToPublishDirectoryItems=false-->
       <_MSBuildProperties>
         PackSourceAs=$(InferredPackageSourceType);
         TargetFramework=$(TargetFramework);
-        _GetChildProjectCopyToPublishDirectoryItems=false
+        PublishDir=$(TfmSpecificPublishDir);
       </_MSBuildProperties>
     </PropertyGroup>
 
+    <Message Text="Resolved publish directory is $(TfmSpecificPublishDir)" Importance="normal" />
     <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="Publish" Properties="$(_MSBuildProperties)" />
 
   </Target>

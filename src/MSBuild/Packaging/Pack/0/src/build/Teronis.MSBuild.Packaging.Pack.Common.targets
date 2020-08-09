@@ -154,10 +154,14 @@
 
     <!-- 
     When building a published typed package project the
-    project should be packed too.
+    source project should be packed too.
     -->
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IsPackable>false</IsPackable>
+    
+    <!--<PackageId>$([System.Guid]::NewGuid())</PackageId>-->
+    <PackageId>c1d9d487-7c92-475c-9784-7a07dbb078e3</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
 
     <_PublishPackageOutputPath Condition="'$(PublishPackOutputPath)' != ''">$(PublishPackOutputPath.TrimEnd('\'))</_PublishPackageOutputPath>
     <_PublishPackageOutputPath Condition="'$(PublishPackOutputPath)' == ''">$(PackageTargetProjectDirectory)bin\$(Configuration)\PackExecutable\publish</_PublishPackageOutputPath>
@@ -200,14 +204,10 @@
   targets may be called.
   =====================================================
   -->
-  <Target Name="PackSourceWhenPackingPublishTypedProject" BeforeTargets="Pack" Condition="'$(HasAnyPublishPackType)' == 'true'">
+  <Target Name="PackSourceWhenPackingPublishTypedProject" DependsOnTargets="_CalculateInputsOutputsForPack" BeforeTargets="Pack"
+          Inputs="@(NuGetPackInput)" Outputs="@(NuGetPackOutput)" Condition="'$(HasAnyPublishPackType)' == 'true'">
 
     <PropertyGroup>
-
-      <!--<PackageId>$([System.Guid]::NewGuid())</PackageId>-->
-      <PackageId>c1d9d487-7c92-475c-9784-7a07dbb078e3</PackageId>
-      <PackageVersion>1.0.0</PackageVersion>
-
       <PackSourceWhenPackingPublishTypedProjectMSBuildProperties>
         $(TypeSpecificPackageProjectMSBuildProperties);
         PackSourceAs=$(InferredPackageSourceType);
@@ -217,7 +217,6 @@
         IsPackable=true;
         $(PackSourceWhenPackingPublishTypedProjectMSBuildProperties)
       </PackSourceWhenPackingPublishTypedProjectMSBuildProperties>
-
     </PropertyGroup>
 
     <MSBuild Projects="$(PackageSourceProjectFullPath)" Targets="Pack" Properties="$(PackSourceWhenPackingPublishTypedProjectMSBuildProperties)" />
@@ -227,7 +226,7 @@
     </PropertyGroup>
 
     <Unzip SourceFiles="$(_NugetFilePath)" DestinationFolder="$(_PublishPackageOutputPath)" />
-    <Delete Files="$(_NugetFilePath)" />
+    <!--<Delete Files="$(_NugetFilePath)" />-->
 
   </Target>
   <!--

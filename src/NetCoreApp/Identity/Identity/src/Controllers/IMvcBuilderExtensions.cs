@@ -31,7 +31,7 @@ namespace Teronis.Identity.Controllers
 
             var controllerModelConfiguration = new ControllerModelConfiguration(accountControllerTypeInfo);
 
-            controllerModelConfiguration.AddScopedSelectorsRouteConvention("api/account", 
+            controllerModelConfiguration.AddScopedRouteConvention("api/account", 
                 (configuration, convention) => configuration.AddControllerConvention(convention));
 
             mvcBuilder.Services.ConfigureControllerModel(controllerModelConfiguration);

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  
-  <!--Props import is not mandatory. -->
+
+  <Import Project="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).props" Condition="'$(TeronisModuleInitializerAssemblyLoaderMSBuildPropsHasBeenLoaded)' != 'true'" />
 
   <PropertyGroup>
     <FodyDependsOnTargets>$(InjectModuleInitializerAssemblyLoaderDependsOn);InjectModuleInitializerAssemblyLoader</FodyDependsOnTargets>
@@ -10,22 +10,23 @@
 
   <Target Name="BeforeInjectModuleInitializerAssemblyLoader" />
 
-  <Target Name="_PrintModuleInitializerAssemblyLoaderRelatedInformations" AfterTargets="AfterCompile"
+  <Target Name="_PrintModuleInitializerAssemblyLoaderRelatedInformations" BeforeTargets="InjectModuleInitializerAssemblyLoader"
           Condition="Exists(@(IntermediateAssembly)) 
             And '$(DesignTimeBuild)' != 'true'
             And '$(DisableModuleInitializerAssemblyLoaderInjection)' != 'true'">
-    
+
     <PropertyGroup>
       <_InjectionTargetAssembliesCount>@(ModuleInitializerAssemblyLoaderInjectionTargetAssemblies->Count())</_InjectionTargetAssembliesCount>
-      <_InjectionTargetAssembliesCount Condition="'$(_InjectionTargetAssembliesCount)' == ''">0</_InjectionTargetAssembliesCount>
+      <_InjectionTargetAssembliesEmpty Condition="'$(_InjectionTargetAssembliesCount)' == '0'">true</_InjectionTargetAssembliesEmpty>
     </PropertyGroup>
 
-    <Message Text="There have been found $(_InjectionTargetAssembliesCount) candiates for being injected with assembly loader:" Importance="normal" />
-    <Message Text="- %(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.Identity) &lt;- %(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.SourceAssembly)" Importance="normal" />
-    
+    <Message Text="There have been found $(_InjectionTargetAssembliesCount) candidates for being injected with assembly loader." Importance="normal" />
+    <Message Text="- %(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.Identity) &lt;- %(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.SourceAssembly)"
+             Importance="normal" Condition="'$(_InjectionTargetAssembliesEmpty)' != 'true'" />
+
   </Target>
 
-    <!--Inputs="@(IntermediateAssembly)"
+  <!--Inputs="@(IntermediateAssembly)"
   Outputs="$(IntermediateOutputPath)$(MSBuildProjectFile).ModuleInitializerAssemblyLoader.CopyLocal.cache"-->
   <Target Name="InjectModuleInitializerAssemblyLoader"
           AfterTargets="AfterCompile"

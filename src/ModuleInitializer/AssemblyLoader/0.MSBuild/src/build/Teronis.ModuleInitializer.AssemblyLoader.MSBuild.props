@@ -2,11 +2,17 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
+    <TeronisModuleInitializerAssemblyLoaderMSBuildPropsHasBeenLoaded>true</TeronisModuleInitializerAssemblyLoaderMSBuildPropsHasBeenLoaded>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    
     <DisableModuleInitializerAssemblyLoaderInjection>$(DisableModuleInitializerAssemblyLoaderInjection)</DisableModuleInitializerAssemblyLoaderInjection>
     
     <InjectModuleInitializerAssemblyLoaderDependsOn>
       $(InjectModuleInitializerAssemblyLoaderDependsOn)
     </InjectModuleInitializerAssemblyLoaderDependsOn>
+    
   </PropertyGroup>
 
   <ItemGroup>

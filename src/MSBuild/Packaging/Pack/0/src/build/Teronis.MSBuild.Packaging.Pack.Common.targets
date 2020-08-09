@@ -204,7 +204,8 @@
 
     <PropertyGroup>
 
-      <PackageId>$([System.Guid]::NewGuid())</PackageId>
+      <!--<PackageId>$([System.Guid]::NewGuid())</PackageId>-->
+      <PackageId>c1d9d487-7c92-475c-9784-7a07dbb078e3</PackageId>
       <PackageVersion>1.0.0</PackageVersion>
 
       <PackSourceWhenPackingPublishTypedProjectMSBuildProperties>

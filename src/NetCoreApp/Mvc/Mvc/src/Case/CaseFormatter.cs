@@ -17,6 +17,5 @@ namespace Teronis.Mvc.Case
 
         public virtual string Format(string source) =>
             source.ToCase(CaseType);
-
     }
 }

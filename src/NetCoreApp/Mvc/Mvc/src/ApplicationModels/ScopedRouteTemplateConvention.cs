@@ -5,9 +5,9 @@ using Teronis.Mvc.ApplicationModels.Filters;
 
 namespace Teronis.Mvc.ApplicationModels
 {
-    public class ScopedSelectorsRouteTemplateConvention : IControllerModelConvention, IActionModelConvention
+    public class ScopedRouteTemplateConvention : IControllerModelConvention, IActionModelConvention
     {
-        public IStringFormatter SelectorRouteTemplateFormatter { get; }
+        public IStringFormatter RouteTemplateFormatter { get; }
         public IControllerModelFilter? ControllerFilter { get; }
         public IApplicationModelFilter? ApplicationFilter { get; }
         public IActionModelFilter? ActionFilter { get; }
@@ -15,13 +15,13 @@ namespace Teronis.Mvc.ApplicationModels
         /// <summary>
         /// Creates an action route template convention that formats route names.
         /// </summary>
-        /// <param name="selectorRouteTemplateFormatter">Formats route template.</param>
+        /// <param name="routeTemplateFormatter">Formats route template.</param>
         /// <param name="controllerFilter">Filters on controller type.</param>
-        public ScopedSelectorsRouteTemplateConvention(IStringFormatter selectorRouteTemplateFormatter,
+        public ScopedRouteTemplateConvention(IStringFormatter routeTemplateFormatter,
             IApplicationModelFilter? applicationFilter = null, IControllerModelFilter? controllerFilter = null,
             IActionModelFilter? actionFilter = null)
         {
-            SelectorRouteTemplateFormatter = selectorRouteTemplateFormatter ?? throw new ArgumentNullException(nameof(selectorRouteTemplateFormatter));
+            RouteTemplateFormatter = routeTemplateFormatter ?? throw new ArgumentNullException(nameof(routeTemplateFormatter));
             ControllerFilter = controllerFilter;
             ApplicationFilter = applicationFilter;
             ActionFilter = actionFilter;
@@ -34,7 +34,7 @@ namespace Teronis.Mvc.ApplicationModels
             ControllerFilter?.IsAllowed(controller) ?? true;
 
         internal bool IsActionAllowed(ActionModel action) =>
-            IsControllerAllowed(action.Controller) && (ActionFilter?.IsAllowed(action) ?? true);
+            ActionFilter?.IsAllowed(action) ?? true;
 
         internal void FormatRouteTemplates(IEnumerable<SelectorModel> selectors)
         {
@@ -49,7 +49,7 @@ namespace Teronis.Mvc.ApplicationModels
                     continue;
                 }
 
-                attributeRouteModel.Template = SelectorRouteTemplateFormatter.Format(attributeRouteModel.Template);
+                attributeRouteModel.Template = RouteTemplateFormatter.Format(attributeRouteModel.Template);
             }
         }
 

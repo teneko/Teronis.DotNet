@@ -4,18 +4,18 @@ using Teronis.Mvc.ApplicationModels.Filters;
 
 namespace Teronis.Mvc.ApplicationModels
 {
-    public class SelectorsRouteTemplateConvention : IApplicationModelConvention, IControllerModelConvention
+    public class RouteTemplateConvention : IApplicationModelConvention, IControllerModelConvention
     {
-        private readonly ScopedSelectorsRouteTemplateConvention scopedConvention;
+        private readonly ScopedRouteTemplateConvention scopedConvention;
 
         /// <summary>
         /// Creates an action route template convention that formats route names.
         /// </summary>
-        /// <param name="selectorRouteTemplateFormatter">Formats route template.</param>
+        /// <param name="urlComponentTemplateFormatter">Formats route template.</param>
         /// <param name="controllerFilter">Filters on controller type.</param>
-        public SelectorsRouteTemplateConvention(IStringFormatter selectorRouteTemplateFormatter, IApplicationModelFilter? applicationFilter = null,
+        public RouteTemplateConvention(IStringFormatter urlComponentTemplateFormatter, IApplicationModelFilter? applicationFilter = null,
             IControllerModelFilter? controllerFilter = null, IActionModelFilter? actionFilter = null) =>
-            scopedConvention = new ScopedSelectorsRouteTemplateConvention(selectorRouteTemplateFormatter, applicationFilter, controllerFilter, actionFilter);
+            scopedConvention = new ScopedRouteTemplateConvention(urlComponentTemplateFormatter, applicationFilter, controllerFilter, actionFilter);
 
         private void formatControllerActionsRouteTemplate(IEnumerable<ActionModel> actions)
         {

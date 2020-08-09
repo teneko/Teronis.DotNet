@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Teronis.Mvc.ApplicationModels.Filters;
 
 namespace Teronis.Mvc.ApplicationModels
 {
-    public class ScopedSelectorsRouteConvention : IControllerModelConvention, IActionModelConvention
+    public class ScopedRouteConvention : IControllerModelConvention, IActionModelConvention
     {
         public string? DefaultRouteTemplate { get; }
         public bool ForceDefaultRoute { get; }
@@ -22,7 +21,7 @@ namespace Teronis.Mvc.ApplicationModels
         /// <param name="controllerType">The type of the controller.</param>
         /// <param name="defaultRouteTemplate">Used for empty routes.</param>
         /// <param name="prefixRouteTemplate">The prefix is prepend to each route.</param>
-        public ScopedSelectorsRouteConvention(string? defaultRouteTemplate, bool forceDefaultRoute, string? prefixRouteTemplate,
+        public ScopedRouteConvention(string? defaultRouteTemplate, bool forceDefaultRoute, string? prefixRouteTemplate,
              IApplicationModelFilter? applicationFilter = null, IControllerModelFilter? controllerFilter = null,
              IActionModelFilter? actionFilter = null)
         {
@@ -34,16 +33,16 @@ namespace Teronis.Mvc.ApplicationModels
             this.actionFilter = actionFilter;
         }
 
-        public ScopedSelectorsRouteConvention(string? defaultRouteTemplate, bool forceDefaultRoute,
+        public ScopedRouteConvention(string? defaultRouteTemplate, bool forceDefaultRoute,
             IApplicationModelFilter? applicationFilter = null, IControllerModelFilter? controllerFilter = null,
             IActionModelFilter? actionFilter = null)
             : this(defaultRouteTemplate, forceDefaultRoute, null, applicationFilter, controllerFilter, actionFilter) { }
 
-        public ScopedSelectorsRouteConvention(string? defaultRouteTemplate, IApplicationModelFilter? applicationFilter = null,
+        public ScopedRouteConvention(string? defaultRouteTemplate, IApplicationModelFilter? applicationFilter = null,
             IControllerModelFilter? controllerFilter = null, IActionModelFilter? actionFilter = null)
             : this(defaultRouteTemplate, false, null, applicationFilter, controllerFilter, actionFilter) { }
 
-        public ScopedSelectorsRouteConvention(string? defaultRouteTemplate, string? prefixRouteTemplate,
+        public ScopedRouteConvention(string? defaultRouteTemplate, string? prefixRouteTemplate,
             IApplicationModelFilter? applicationFilter = null, IControllerModelFilter? controllerFilter = null,
             IActionModelFilter? actionFilter = null)
             : this(defaultRouteTemplate, false, prefixRouteTemplate, applicationFilter, controllerFilter, actionFilter) { }

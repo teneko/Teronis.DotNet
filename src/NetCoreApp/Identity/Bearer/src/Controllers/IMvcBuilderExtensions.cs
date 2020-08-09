@@ -2,7 +2,6 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using Teronis.Identity.Bearer.Controllers;
 using Teronis.Mvc;
 using Teronis.Mvc.ApplicationModels;
 
@@ -17,7 +16,7 @@ namespace Teronis.Identity.Controllers
         /// <param name="applicationPartName">Sets <see cref="ApplicationPart.Name". If null the name is <see cref="TypesProvidingApplicationPart"/>.</param>
         /// <param name="configureControllerModel"></param>
         /// <returns></returns>
-        public static IMvcBuilder AddBearerSignInControllers(this IMvcBuilder mvcBuilder, string? applicationPartName, Action<IControllerModelConfiguration>? configureControllerModel = null)
+        public static IMvcBuilder AddBearerSignInControllers(this IMvcBuilder mvcBuilder, string? applicationPartName, Action<ISelectedControllerModelConfiguration>? configureControllerModel = null)
         {
             mvcBuilder.ConfigureApplicationPartManager(setup => {
                 var controllerType = typeof(BearerSignInController).GetTypeInfo();
@@ -40,7 +39,7 @@ namespace Teronis.Identity.Controllers
         /// <param name="mvcBuilder"></param>
         /// <param name="configureControllerModel"></param>
         /// <returns></returns>
-        public static IMvcBuilder AddBearerSignInControllers(this IMvcBuilder mvcBuilder, Action<IControllerModelConfiguration>? configureControllerModel = null) =>
+        public static IMvcBuilder AddBearerSignInControllers(this IMvcBuilder mvcBuilder, Action<ISelectedControllerModelConfiguration>? configureControllerModel = null) =>
             AddBearerSignInControllers(mvcBuilder, null, configureControllerModel);
     }
 }

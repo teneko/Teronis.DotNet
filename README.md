@@ -18,7 +18,7 @@ Here a list of the project folders:
 - [MSBuild.GitVersionCache](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/MSBuild/Packaging/GitVersionCache/0) GitVersionCache is an improved implementation to GitVersionTask. It does support concurrency and nested GitVersion.yml relative to your .git folder.
 - [MSBuild.Packaging.Pack](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/MSBuild/Packaging/Pack) An addition to NuGet.Build.Tasks.Pack that adds more package types beside of existing ones like DotNetCli and Dependency.
       You just need to set-up PackSourceAs and PackageSourceReference and depending on scenario creating a synthetic project.
-- [MSBuild.ProjectBuildInPackage](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/MSBuild/Packaging/ProjectBuildInPackage) A collection of utilities, extensions, tools and classes for the .NET Core implementation.
+- [MSBuild.ProjectBuildInPackage](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/MSBuild/Packaging/ProjectBuildInPackage) Allows project reference content to be added to the NuGet-package during pack process.
 - [NetCoreApp.Core](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetCoreApp/Core/Core) A collection of utilities, extensions, tools and classes for the .NET Core implementation.
 - [NetCoreApp.Identity](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetCoreApp/Identity/Identity) Teronis Identity provides you a better integration for ASP.NET Core Identity.
 - [NetCoreApp.Identity.Bearer](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetCoreApp/Identity/Bearer) Teronis Identity Bearer provides you a bearer token integration for ASP.NET Core Identity.
@@ -42,7 +42,7 @@ Here a list of the project folders:
 
 ## Build Script
 
-The build script `./build.cmd` is a small application to assist in restoring, building, testing and packaging all projects that can be found in this repository.
+The build script `./build.cmd` is a small application to assist in restoring, building, testing and packing all projects that can be found in this repository.
 
 ```
 Teronis.DotNet.Build 1.0.0+9e43e3dee9c14e083f9abc72ed59918200116e21
@@ -77,4 +77,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Icons
 
-<div>Warning icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+<div>Warning icon made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>

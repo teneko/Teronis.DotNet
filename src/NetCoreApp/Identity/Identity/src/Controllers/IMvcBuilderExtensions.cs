@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Teronis.Identity.AccountManaging.Datatransjects;
 using Teronis.Identity.Datransjects;
@@ -11,7 +10,8 @@ namespace Teronis.Identity.Controllers
 {
     public static partial class IMvcBuilderExtensions
     {
-        public static AccountManagerBuilder<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType> AddAccountControllers<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>(this IMvcBuilder mvcBuilder)
+        public static AccountManagerBuilder<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType> AddAccountControllers<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>(
+            this IMvcBuilder mvcBuilder)
             where UserDescriptorType : IUserDescriptor
             where UserType : IAccountUserEntity
             where RoleDescriptorType : IRoleDescriptor
@@ -29,14 +29,18 @@ namespace Teronis.Identity.Controllers
                 setup.ApplicationParts.Add(constrainedTypesProvider);
             });
 
-            mvcBuilder.Services.PostConfigure<MvcOptions>(options => {
-                options.Conventions.Add(new ControllerRouteConvention(accountControllerTypeInfo, "api/account"));
-            });
+            var controllerModelConfiguration = new ControllerModelConfiguration(accountControllerTypeInfo);
+
+            controllerModelConfiguration.AddScopedSelectorsRouteConvention("api/account", 
+                (configuration, convention) => configuration.AddControllerConvention(convention));
+
+            mvcBuilder.Services.ConfigureControllerModel(controllerModelConfiguration);
 
             return new AccountManagerBuilder<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>(mvcBuilder);
         }
 
-        public static AccountManagerBuilder<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType> AddAccountControllersWithConverters<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>(this IMvcBuilder mvcBuilder,
+        public static AccountManagerBuilder<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType> AddAccountControllersWithConverters<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>(
+            this IMvcBuilder mvcBuilder,
             IConvertUserDescriptor<UserDescriptorType, UserType> userDescriptorUserConverter, IConvertUser<UserType, UserCreationType> userUserCreationConverter,
             IConvertRoleDescriptor<RoleDescriptorType, RoleType> roleDescriptorRoleConverter, IConvertRole<RoleType, RoleCreationType> roleRoleCreationConverter)
             where UserDescriptorType : IUserDescriptor

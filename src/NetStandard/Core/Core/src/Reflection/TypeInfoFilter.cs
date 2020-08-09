@@ -18,7 +18,7 @@ namespace Teronis.Reflection
         public TypeInfoFilter(params TypeInfo[] typeInfoAllowList)
             : this(typeInfoAllowList, default) { }
 
-        public virtual bool IsAllowed(TypeInfo typeInfo) =>
+        public virtual bool IsAllowed(TypeInfo? typeInfo) =>
             (typeInfoAllowList == null || typeInfoAllowList.Contains(typeInfo))
             && (typeInfoBlockList == null || !typeInfoBlockList.Contains(typeInfo));
     }

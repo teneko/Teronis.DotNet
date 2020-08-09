@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TeronisNetCoreAppIdentityBearerPropsPath>$(PackagePublishmentsDirectory)PublishablePackage.NetCoreApp.Identity.Bearer\build\Teronis.NetCoreApp.Identity.Bearer.props</TeronisNetCoreAppIdentityBearerPropsPath>
+    <!-- Identity.Bearer import relies on this. -->
+    <TeronisNetCoreAppIdentityBearerRootDirectory>$(PackagePublishmentsDirectory)PublishablePackage.NetCoreApp.Identity.Bearer\</TeronisNetCoreAppIdentityBearerRootDirectory>
+    <TeronisNetCoreAppIdentityBearerPropsFile>$(RootDirectory)src\NetCoreApp\Identity\Bearer\src\build\Teronis.NetCoreApp.Identity.Bearer.props</TeronisNetCoreAppIdentityBearerPropsFile>
   </PropertyGroup>
-
-  <!-- Intentionally commented. (see below) -->
-  <!--<Import Project="$(TeronisNetCoreAppIdentityBearerPropsPath)" Condition="Exists($(TeronisNetCoreAppIdentityBearerPropsPath))" />-->
+  
+  <Import Project="$(TeronisNetCoreAppIdentityBearerPropsFile)" />
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -24,26 +25,5 @@
     <ProjectReference Include="..\src\Teronis.NetCoreApp.Identity.Bearer.csproj" />
     <ProjectReference Include="..\ref\PublishablePackage\PublishablePackage.NetCoreApp.Identity.Bearer.csproj" />
   </ItemGroup>
-
-  <!-- Because the dependency graph will be built once and therefore the import get -->
-  <Target Name="CallSetTeronisIdentityBearerModuleInitializerAssemblyLoaderInjectionTargetAssembly" BeforeTargets="BeforeCompile">
-
-    <PropertyGroup>
-
-      <InlinedIntermediateAssembly>@(IntermediateAssembly->'%(FullPath)',';')</InlinedIntermediateAssembly>
-      <InlinedIntermediateAssembly>$([MSBuild]::Escape('$(InlinedIntermediateAssembly)'))</InlinedIntermediateAssembly>
-
-      <_MSBuildProperties>
-        IntermediateAssembly=$(InlinedIntermediateAssembly)
-      </_MSBuildProperties>
-
-    </PropertyGroup>
-
-    <MSBuild Projects="$(TeronisNetCoreAppIdentityBearerPropsPath)" Targets="SetTeronisIdentityBearerModuleInitializerAssemblyLoaderInjectionTargetAssembly"
-             Properties="$(_MSBuildProperties)">
-      <Output TaskParameter="TargetOutputs" ItemName="ModuleInitializerAssemblyLoaderInjectionTargetAssemblies" />
-    </MSBuild>
-
-  </Target>
 
 </Project>

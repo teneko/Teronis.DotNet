@@ -32,9 +32,7 @@ namespace Teronis.Identity.Bearer
         {
             services.AddMvc()
                 .AddAccountControllers()
-                .AddBearerSignInControllers(configuration => {
-                    configuration.AddControllerActionRouteTemplateConvention(CaseType.PascalCase);
-                });
+                .AddBearerSignInControllers();
 
             services.AddDbContext<BearerIdentityDbContext>(options => {
                 options.UseSqlite("Data Source=bearerIdentity.db;");

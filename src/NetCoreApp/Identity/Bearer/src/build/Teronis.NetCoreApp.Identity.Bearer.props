@@ -1,22 +1,26 @@
 ﻿<Project InitialTargets="SetTeronisIdentityBearerModuleInitializerAssemblyLoaderInjectionTargetAssembly">
 
+  <PropertyGroup>
+    <TeronisNetCoreAppIdentityBearerRootDirectory Condition="'$(TeronisNetCoreAppIdentityBearerRootDirectory)' == ''">$(MSBuildThisFileDirectory)..\</TeronisNetCoreAppIdentityBearerRootDirectory>
+  </PropertyGroup>
+  
   <Target Name="SetTeronisIdentityBearerModuleInitializerAssemblyLoaderInjectionTargetAssembly" Returns="@(ModuleInitializerAssemblyLoaderInjectionTargetAssemblies)">
-    
+
     <ItemGroup>
 
       <IntermediateAssembly Include="$(IntermediateAssembly.Split(';'))" Condition="'$(IntermediateAssembly)' != ''" />
-      
+
       <_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies Include="%(IntermediateAssembly.FullPath)">
-        <SourceAssembly>$(MSBuildThisFileDirectory)..\lib\netcoreapp3.1\Teronis.NetCoreApp.Identity.Bearer.dll</SourceAssembly>
+        <SourceAssembly>$(TeronisNetCoreAppIdentityBearerRootDirectory)lib\netcoreapp3.1\Teronis.NetCoreApp.Identity.Bearer.dll</SourceAssembly>
       </_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies>
 
       <ModuleInitializerAssemblyLoaderInjectionTargetAssemblies Include="@(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies)" />
-      
+
     </ItemGroup>
 
-    <Message Text="Intermediate assemblies have been marked as candiate for being injected with assembly loader:" Importance="high" />
-    <Message Text="- %(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.Identity) &lt;- %(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.SourceAssembly)" Importance="high" />
-    
+    <Message Text="Intermediate assemblies have been marked as candiate for being injected with assembly loader:" Importance="normal" />
+    <Message Text="- %(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.Identity) &lt;- %(_ModuleInitializerAssemblyLoaderInjectionTargetAssemblies.SourceAssembly)" Importance="normal" />
+
   </Target>
 
 </Project>

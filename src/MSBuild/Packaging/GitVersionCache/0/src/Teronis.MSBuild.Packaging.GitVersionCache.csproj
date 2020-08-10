@@ -40,8 +40,6 @@
     <!--<IsPackable>false</IsPackable>-->
     <PackSourceAs Condition="'$(PackSourceAs)' == ''">ExecutablePackage</PackSourceAs>
 
-    <!--<TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_PublishedProjectContentInPackage</TargetsForTfmSpecificContentInPackage>-->
-
   </PropertyGroup>
 
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" Condition="'$(DisableSdkProps)' != 'true'" />
@@ -72,13 +70,7 @@
 
   </ItemGroup>
 
-  <PropertyGroup><!--<GitVersionToolFilesIncludes>
-      $(PkgGitVersionTask)\tools\**\*;
-      $(PkgGitVersionTask)\tools\**\*;
-      $(PkgGitVersionTask)\tools\**\*
-    </GitVersionToolFilesIncludes>-->
-
-    <!--<FilesystemPublishmentDirectory>bin\$(Configuration)\netstandard2.0\filesystemPublish</FilesystemPublishmentDirectory>-->
+  <PropertyGroup>
 
   </PropertyGroup>
 
@@ -95,42 +87,5 @@
     </None>
 
   </ItemGroup>
-
-  <!--<Target Name="_PublishThisProject">-->
-
-    <!--<PropertyGroup>
-      <PublishProjectMSBuildProperties>
-        PublishProfile=GitVersionCachePreBuild.pubxml;
-        Configuration=$(Configuration)
-      </PublishProjectMSBuildProperties>
-    </PropertyGroup>-->
-
-    <!--<MSBuild Projects="$(MSBuildPackagingGitVersionProjectFile)" Targets="Publish" Properties="$(PublishProjectMSBuildProperties)" />-->
-
-  <!--</Target>-->
-
-  <!-- We depend on creation of filesystem publishment. -->
-  <!--DependsOnTargets="_PublishThisProject"-->
-  <!--<Target Name="_PublishedProjectContentInPackage">-->
-    <!-- 
-    # We have to include those files in this way, because 
-    # <None Include=".." Pack="true" PackagePath=".." />
-    # does only work if publish folder already exists at
-    # the time where the target pack is called, so you
-    # would have to pack twice to get desired package.
-    -->
-    <!--<ItemGroup>
-      <TfmSpecificPackageFile Include="$(FilesystemPublishmentDirectory)\*">
-        --><!-- When you change it, you have to adjust ContainerRootDirectory in ModuleInitializer. --><!--
-        <PackagePath>GitVersionCache\netstandard2.0</PackagePath>
-      </TfmSpecificPackageFile>
-    </ItemGroup>
-  </Target>-->
-
-  <!--<Target Name="CleanPublishToFilesystemBeforeClean" BeforeTargets="BeforeClean">
-    <RemoveDir Directories="$(FilesystemPublishmentDirectory)" />
-  </Target>-->
-
-  <!--<Import Project="$(TeronisMSBuildCorePackagingGenerateFilesystemPackageTargetsFile)" />-->
 
 </Project>

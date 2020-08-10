@@ -24,6 +24,4 @@
     <None Include="buildMultiTargeting\**" Pack="true" PackagePath="buildMultiTargeting\" />
   </ItemGroup>
 
-  <Import Project="$(TeronisMSBuildCorePackagingGenerateFilesystemPackageTargetsFile)" />
-
 </Project>

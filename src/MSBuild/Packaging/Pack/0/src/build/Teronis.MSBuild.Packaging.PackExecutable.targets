@@ -122,7 +122,7 @@
       <!-- For future references. -->
       <!--<PublishDir>$(TfmSpecificPublishDir)</PublishDir>-->
       <TfmSpecificPackageFileWithRecursiveDir Include="@(_TfmSpecificPublishFiles)">
-        <PackagePath>executables\$(TargetFramework)\%(_TfmSpecificPublishFiles.RecursiveDir)%(Filename)%(Extension)</PackagePath>
+        <PackagePath>exe\any\$(TargetFramework)\%(_TfmSpecificPublishFiles.RecursiveDir)%(Filename)%(Extension)</PackagePath>
         <BuildAction></BuildAction>
       </TfmSpecificPackageFileWithRecursiveDir>
 

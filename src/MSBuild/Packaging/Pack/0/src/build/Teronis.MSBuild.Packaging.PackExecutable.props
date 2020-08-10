@@ -8,8 +8,8 @@
   
   <PropertyGroup>
     
-    <TeronisMSBuildPackagingPackExecutableTasksBinary Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\executables\any\netcoreapp2.1\Teronis.MSBuild.Packaging.PackExecutable.Tasks.dll</TeronisMSBuildPackagingPackExecutableTasksBinary>
-    <TeronisMSBuildPackagingPackExecutableTasksBinary Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\executables\any\net472\Teronis.MSBuild.Packaging.PackExecutable.Tasks.dll</TeronisMSBuildPackagingPackExecutableTasksBinary>
+    <TeronisMSBuildPackagingPackExecutableTasksBinary Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\exe\any\netcoreapp2.1\Teronis.MSBuild.Packaging.PackExecutable.Tasks.dll</TeronisMSBuildPackagingPackExecutableTasksBinary>
+    <TeronisMSBuildPackagingPackExecutableTasksBinary Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\exe\any\net472\Teronis.MSBuild.Packaging.PackExecutable.Tasks.dll</TeronisMSBuildPackagingPackExecutableTasksBinary>
     
     <TargetsForTfmSpecificSourceTypedExecutableSourceContentInPackage>TfmSpecificExecutableSourceProjectContentInPackage;$(TargetsForTfmSpecificSourceTypedExecutableSourceContentInPackage)</TargetsForTfmSpecificSourceTypedExecutableSourceContentInPackage>
     <TargetsForTfmSpecificPackageTypedExecutableSourceContentInPackage>TfmSpecificExecutablePackageProjectContentInPackage;$(TargetsForTfmSpecificPackageTypedExecutableSourceContentInPackage)</TargetsForTfmSpecificPackageTypedExecutableSourceContentInPackage>

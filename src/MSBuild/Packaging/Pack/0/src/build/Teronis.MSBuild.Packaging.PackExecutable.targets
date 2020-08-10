@@ -28,13 +28,13 @@
 
         <When Condition="'$(ParentPackageSourceIsSelfReferenced)' == 'true'">
           <PropertyGroup>
-            <TfmSpecificPublishDir>$(PackageTargetOutputPath)exepub\</TfmSpecificPublishDir>
+            <TfmSpecificPublishDir>$(PackageTargetOutputPath)exepkgpub\</TfmSpecificPublishDir>
           </PropertyGroup>
         </When>
 
         <Otherwise>
           <PropertyGroup>
-            <TfmSpecificPublishDir>$(PackageTargetOutputPath)pkgsrcpub\$(TargetFramework)\</TfmSpecificPublishDir>
+            <TfmSpecificPublishDir>$(PackageTargetOutputPath)exepkgpub\$(TargetFramework)\</TfmSpecificPublishDir>
           </PropertyGroup>
         </Otherwise>
 

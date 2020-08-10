@@ -147,7 +147,7 @@
     Belongs to Teronis.MSBuild.Pacakging.PackExecutable
    -->
   <PropertyGroup>
-    <PublishPackOutputPath>$(PackagePublishmentsDirectory)$(MSBuildProjectName)</PublishPackOutputPath>
+    <PublishPackageOutputPath>$(PackagePublishmentsDirectory)$(MSBuildProjectName)</PublishPackageOutputPath>
     <BeforeCollectPackageSourceContextualPackagePackRelatedProperties>GetVersionCacheWhenGettingPackageTypedExecutableSourceProperties;$(BeforeCollectPackageSourceContextualPackagePackRelatedProperties)</BeforeCollectPackageSourceContextualPackagePackRelatedProperties>
   </PropertyGroup>
 

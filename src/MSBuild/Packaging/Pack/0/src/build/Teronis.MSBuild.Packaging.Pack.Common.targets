@@ -162,9 +162,10 @@
     <!--<PackageId>$([System.Guid]::NewGuid())</PackageId>-->
     <PackageId>c1d9d487-7c92-475c-9784-7a07dbb078e3</PackageId>
     <PackageVersion>1.0.0</PackageVersion>
-
-    <_PublishPackageOutputPath Condition="'$(PublishPackOutputPath)' != ''">$(PublishPackOutputPath.TrimEnd('\'))</_PublishPackageOutputPath>
-    <_PublishPackageOutputPath Condition="'$(PublishPackOutputPath)' == ''">$(PackageTargetProjectDirectory)bin\$(Configuration)\PackExecutable\publish</_PublishPackageOutputPath>
+  
+    <!-- This PackageOutputPath for publish package projects is automatically the publish directory. -->
+    <PackageOutputPath Condition="'$(PublishPackageOutputPath)' != ''">$(PublishPackageOutputPath.TrimEnd('\'))</PackageOutputPath>
+    <PackageOutputPath Condition="'$(PublishPackageOutputPath)' == ''">$(PackageTargetProjectDirectory)bin\$(Configuration)\pubpkgpub</PackageOutputPath>
 
     <!-- There is a bug that msbuild is still generating the assembly info. -->
     <!--<GenerateAssemblyInfo>false</GenerateAssemblyInfo>-->
@@ -213,7 +214,7 @@
         PackSourceAs=$(InferredPackageSourceType);
         PackageId=$(PackageId);
         PackageVersion=$(PackageVersion);
-        PackageOutputPath=$(_PublishPackageOutputPath);
+        PackageOutputPath=$(PackageOutputPath);
         IsPackable=true;
         $(PackSourceWhenPackingPublishTypedProjectMSBuildProperties)
       </PackSourceWhenPackingPublishTypedProjectMSBuildProperties>
@@ -222,10 +223,10 @@
     <MSBuild Projects="$(PackageSourceProjectFullPath)" Targets="Pack" Properties="$(PackSourceWhenPackingPublishTypedProjectMSBuildProperties)" />
 
     <PropertyGroup>
-      <_NugetFilePath>$(_PublishPackageOutputPath)\$(PackageId).$(PackageVersion).nupkg</_NugetFilePath>
+      <_NugetFilePath>$(PackageOutputPath)\$(PackageId).$(PackageVersion).nupkg</_NugetFilePath>
     </PropertyGroup>
 
-    <Unzip SourceFiles="$(_NugetFilePath)" DestinationFolder="$(_PublishPackageOutputPath)" />
+    <Unzip SourceFiles="$(_NugetFilePath)" DestinationFolder="$(PackageOutputPath)" />
     <!--<Delete Files="$(_NugetFilePath)" />-->
 
   </Target>
@@ -240,11 +241,11 @@
   <Target Name="CleanExecutablePublishProject" BeforeTargets="Clean" Condition="'$(HasAnyPublishPackType)' == 'true'">
 
     <ItemGroup>
-      <_PackageFilesToBeDeleted Include="$(_PublishPackageOutputPath)\**\*" />
+      <_PackageFilesToBeDeleted Include="$(PackageOutputPath)\**\*" />
     </ItemGroup>
 
     <Delete Files="@(_PackageFilesToBeDeleted)" />
-    <RemoveDir Directories="$(_PublishPackageOutputPath)" />
+    <RemoveDir Directories="$(PackageOutputPath)" />
 
   </Target>
 

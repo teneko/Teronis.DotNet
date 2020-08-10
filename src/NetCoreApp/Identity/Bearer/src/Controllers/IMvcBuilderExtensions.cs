@@ -19,7 +19,7 @@ namespace Teronis.Identity.Controllers
         public static IMvcBuilder AddBearerSignInControllers(this IMvcBuilder mvcBuilder, string? applicationPartName, Action<ISelectedControllerModelConfiguration>? configureControllerModel = null)
         {
             mvcBuilder.ConfigureApplicationPartManager(setup => {
-                var controllerType = typeof(BearerSignInController).GetTypeInfo();
+                var controllerType = typeof(BearerSignInController<Singleton>).GetTypeInfo();
                 var typesProvider = TypesProvidingApplicationPart.Create(applicationPartName, controllerType);
                 setup.ApplicationParts.Add(typesProvider);
 

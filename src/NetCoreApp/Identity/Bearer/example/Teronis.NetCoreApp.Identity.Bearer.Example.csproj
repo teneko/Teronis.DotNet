@@ -1,14 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <!-- Identity.Bearer import relies on this. -->
-    <TeronisNetCoreAppIdentityBearerRootDirectory>$(PackagePublishmentsDirectory)PublishablePackage.NetCoreApp.Identity.Bearer\</TeronisNetCoreAppIdentityBearerRootDirectory>
-    <TeronisNetCoreAppIdentityBearerPropsFile>$(RootDirectory)src\NetCoreApp\Identity\Bearer\src\build\Teronis.NetCoreApp.Identity.Bearer.props</TeronisNetCoreAppIdentityBearerPropsFile>
-  </PropertyGroup>
-  
-  <Import Project="$(TeronisNetCoreAppIdentityBearerPropsFile)" />
-
-  <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
     <RootNamespace>Teronis.Identity.Bearer</RootNamespace>

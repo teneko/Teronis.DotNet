@@ -8,7 +8,8 @@ using Teronis.Identity.Bearer;
 namespace Teronis.Identity.Controllers
 {
     [Route("api/sign-in")]
-    public class BearerSignInController : Controller
+    public class BearerSignInController<TSingleton> : Controller
+        where TSingleton : ISingleton
     {
         private readonly IBearerSignInManager signInManager;
 

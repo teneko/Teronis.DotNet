@@ -223,7 +223,7 @@ namespace Teronis.DotNet.Build
                 options.SkipDependencies ? new string[] { } : dependencies;
 
             Target(RestoreCommandOptions.RestoreCommand, async () => {
-                await runDotNetProjectsAsync(BuildStyle.MSBuild, RestoreCommandOptions.RestoreCommand, restoreProjects, enableParallelism: true, retries: 3);
+                await runDotNetProjectsAsync(BuildStyle.MSBuild, RestoreCommandOptions.RestoreCommand, restoreProjects, retries: 3);
             });
 
             Target(BuildCommandOptions.BuildCommand, DependsOnIf(RestoreCommandOptions.RestoreCommand), async () => {

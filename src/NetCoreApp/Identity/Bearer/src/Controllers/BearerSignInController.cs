@@ -7,6 +7,7 @@ using Teronis.Identity.Bearer;
 
 namespace Teronis.Identity.Controllers
 {
+    [ApiController]
     [Route("api/sign-in")]
     public class BearerSignInController<TSingleton> : Controller
         where TSingleton : ISingleton

@@ -244,7 +244,7 @@ namespace Teronis.Extensions
 
         /// <returns>Returns null if passed attribute allows multiple declarations.</returns>
         public static AttributeMemberInfo<TAttribute>[]? TryGetOrderedAttributeMemberInfos<TAttribute>(this Type type, Type? interruptingBaseType = null, VariableInfoDescriptor? descriptor = null, bool? getCustomAttributesInherit = null)
-            where TAttribute : Attribute, IZeroBasedIndex
+            where TAttribute : Attribute, IZeroBasedNumbered
         {
             var customAttribute = typeof(TAttribute).GetCustomAttribute<AttributeUsageAttribute>();
 

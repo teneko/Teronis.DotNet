@@ -5,9 +5,11 @@ using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using Teronis.Extensions;
 using Teronis.Reflection.Caching;
+using Teronis.Utils;
 
 namespace Teronis.Configuration
 {
@@ -279,6 +281,15 @@ namespace Teronis.Configuration
             settings.Save();
             RefreshCachedValue();
             TriggerSettingsPropertyChanged();
+        }
+
+        internal static partial class ShortException
+        {
+            public static ArgumentNullException ArgumentNullException(Expression<Func<object?>> propertySelector, string? message = null)
+            {
+                var propertyName = ExpressionUtils.GetReturnName(propertySelector);
+                return new ArgumentNullException(propertyName, message);
+            }
         }
     }
 }

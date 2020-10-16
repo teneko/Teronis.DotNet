@@ -1,8 +1,7 @@
-﻿
-
-namespace Teronis
+﻿namespace Teronis
 {
-    public interface IZeroBasedIndex
+    public interface IZeroBasedNumbered
+
     {
         int Index { get; }
     }

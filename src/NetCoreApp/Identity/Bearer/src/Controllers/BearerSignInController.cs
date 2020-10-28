@@ -8,7 +8,7 @@ using Teronis.Identity.Bearer;
 namespace Teronis.Identity.Controllers
 {
     [ApiController]
-    [Route("api/sign-in")]
+    [Route()]
     public class BearerSignInController<TSingleton> : Controller
         where TSingleton : ISingleton
     {
@@ -25,7 +25,7 @@ namespace Teronis.Identity.Controllers
         // Very important, otherwise the user entity cannot be resolved.
         [Authorize(AuthenticationSchemes = AuthenticationDefaults.IdentityBasicScheme)]
         public async Task<IActionResult> AuthenticateAsync() =>
-            await signInManager.CreateTokensAsync(HttpContext.User);
+            Json(await signInManager.CreateTokensAsync(HttpContext.User));
 
         [HttpGet("refresh-token")]
         [Produces("application/json")]
@@ -34,6 +34,6 @@ namespace Teronis.Identity.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Authorize(AuthenticationSchemes = AuthenticationDefaults.IdentityRefreshTokenBearerScheme)]
         public async Task<IActionResult> RefreshTokenAsync() =>
-            await signInManager.CreateNextTokensAsync(HttpContext.User);
+            Json(await signInManager.CreateNextTokensAsync(HttpContext.User));
     }
 }

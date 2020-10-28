@@ -16,18 +16,21 @@ namespace Teronis.Identity.Controllers
         /// <param name="applicationPartName">Sets <see cref="ApplicationPart.Name". If null the name is <see cref="TypesProvidingApplicationPart"/>.</param>
         /// <param name="configureControllerModel"></param>
         /// <returns></returns>
-        public static IMvcBuilder AddBearerSignInControllers(this IMvcBuilder mvcBuilder, string? applicationPartName, Action<ISelectedControllerModelConfiguration>? configureControllerModel = null)
+        public static IMvcBuilder AddBearerSignInControllers(this IMvcBuilder mvcBuilder, string? applicationPartName, 
+            Action<ISelectedControllerModelConfiguration>? configureControllerModel = null)
         {
             mvcBuilder.ConfigureApplicationPartManager(setup => {
                 var controllerType = typeof(BearerSignInController<Singleton>).GetTypeInfo();
                 var typesProvider = TypesProvidingApplicationPart.Create(applicationPartName, controllerType);
                 setup.ApplicationParts.Add(typesProvider);
 
-                if (configureControllerModel != null) {
-                    var controllerModelConfiguration = new ControllerModelConfiguration(controllerType);
-                    configureControllerModel(controllerModelConfiguration);
-                    mvcBuilder.Services.ConfigureControllerModel(controllerModelConfiguration);
-                }
+                var controllerModelConfiguration = new ControllerModelConfiguration(controllerType);
+
+                controllerModelConfiguration.AddScopedRouteConvention("api/sign-in",
+                    (configuration, convention) => configuration.AddControllerConvention(convention));
+
+                configureControllerModel?.Invoke(controllerModelConfiguration);
+                mvcBuilder.Services.ApplyControllerModelConfiguration(controllerModelConfiguration);
             });
 
             return mvcBuilder;
@@ -40,6 +43,6 @@ namespace Teronis.Identity.Controllers
         /// <param name="configureControllerModel"></param>
         /// <returns></returns>
         public static IMvcBuilder AddBearerSignInControllers(this IMvcBuilder mvcBuilder, Action<ISelectedControllerModelConfiguration>? configureControllerModel = null) =>
-            AddBearerSignInControllers(mvcBuilder, null, configureControllerModel);
+            AddBearerSignInControllers(mvcBuilder, null, configureControllerModel: configureControllerModel);
     }
 }

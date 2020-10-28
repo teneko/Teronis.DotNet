@@ -5,10 +5,10 @@ namespace Teronis.Identity.AccountManaging
 {
     public interface IAccountManager<UserType, RoleType>
     {
-        Task<IServiceResult<RoleType>> CreateRoleAsync(RoleType roleEntity);
-        Task<IServiceResult<RoleType>> GetRoleByNameAsync(string roleName);
+        Task<RoleType> CreateRoleAsync(RoleType roleEntity);
+        Task<RoleType> GetRoleByNameAsync(string roleName);
 
-        Task<IServiceResult<UserType>> CreateUserAsync(UserType userEntity, string password, params string[]? roles);
-        Task<IServiceResult<UserType>> GetUserByNameAsync(string userName);
+        Task<UserType> CreateUserAsync(UserType userEntity, string password, params string[]? roles);
+        Task<UserType> GetUserByNameAsync(string userName);
     }
 }

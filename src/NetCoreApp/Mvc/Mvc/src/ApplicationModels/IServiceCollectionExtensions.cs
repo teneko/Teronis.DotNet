@@ -6,63 +6,16 @@ namespace Teronis.Mvc.ApplicationModels
 {
     public static class IServiceCollectionExtensions
     {
-        private static void configureControllerModel(ControllerModelConfiguration controllerModelConfiguration,
+        public static void ApplyControllerModelConfiguration(this IServiceCollection services, IControllerModelConfiguration controllerModelConfiguration,
+            Action<IServiceCollection, Action<MvcOptions>> configureOptions) =>
+            configureOptions(services, new MvcOptionsConfigurator(controllerModelConfiguration).ConfigureMvcOptions);
+
+        public static void ApplyControllerModelConfiguration(this IServiceCollection _, IControllerModelConfiguration controllerModelConfiguration,
             Action<Action<MvcOptions>> configureOptions) =>
             configureOptions(new MvcOptionsConfigurator(controllerModelConfiguration).ConfigureMvcOptions);
 
-        public static IServiceCollection ConfigureControllerModel(this IServiceCollection services,
-            ControllerModelConfiguration controllerModelConfiguration)
-        {
-            configureControllerModel(controllerModelConfiguration,
-                configurator => services.Configure(configurator));
-
-            return services;
-        }
-
-        public static IServiceCollection ConfigureControllerModel(this IServiceCollection services,
-            string name, ControllerModelConfiguration controllerModelConfiguration)
-        {
-            configureControllerModel(controllerModelConfiguration,
-                configurator => services.Configure(name, configurator));
-
-            return services;
-        }
-
-        public static IServiceCollection ConfigureAllControllerModel(this IServiceCollection services,
-            ControllerModelConfiguration controllerModelConfiguration)
-        {
-            configureControllerModel(controllerModelConfiguration,
-                configurator => services.ConfigureAll(configurator));
-
-            return services;
-        }
-
-        public static IServiceCollection PostConfigureControllerModel(this IServiceCollection services,
-            ControllerModelConfiguration controllerModelConfiguration)
-        {
-            configureControllerModel(controllerModelConfiguration,
-                configurator => services.PostConfigure(configurator));
-
-            return services;
-        }
-
-        public static IServiceCollection PostConfigureControllerModel(this IServiceCollection services,
-            string name, ControllerModelConfiguration controllerModelConfiguration)
-        {
-            configureControllerModel(controllerModelConfiguration,
-                configurator => services.PostConfigure(name, configurator));
-
-            return services;
-        }
-
-        public static IServiceCollection PostConfigureAllControllerModel(this IServiceCollection services,
-            ControllerModelConfiguration controllerModelConfiguration)
-        {
-            configureControllerModel(controllerModelConfiguration,
-                configurator => services.PostConfigureAll(configurator));
-
-            return services;
-        }
+        public static void ApplyControllerModelConfiguration(this IServiceCollection services, ControllerModelConfiguration controllerModelConfiguration) =>
+            ApplyControllerModelConfiguration(services, controllerModelConfiguration, configurator => services.Configure(configurator));
 
         private class MvcOptionsConfigurator
         {

@@ -24,17 +24,17 @@ namespace Teronis.Identity.Authentication.Utils
             var identityOptions = tokenValidatedContext.HttpContext.RequestServices.GetService<IOptions<IdentityOptions>>();
 
             var principal = tokenValidatedContext.Principal;
-            var result = await BearerSignInManagerUtils.FindRefreshTokenAsync(bearerTokenStore, principal);
 
-            if (result.Succeeded) {
-                // When succeeded, we can assure that refresh token entity is not null.
-                var refreshTokenEntity = result.Content ?? throw new ArgumentException($"The member '{nameof(result.Content)}' is null.");
+            try {
+                var refreshTokenEntity = await BearerSignInManagerUtils.FindRefreshTokenAsync(bearerTokenStore, principal)
+                    ?? throw new ArgumentException($"The refresh token identifier is not deposited.");
+
                 var claims = new[] { new Claim(identityOptions.Value.ClaimsIdentity.UserIdClaimType, refreshTokenEntity.UserId.ToString()) };
                 var identity = new ClaimsIdentity(claims);
                 // We add a user related identity to the claims principal.
                 tokenValidatedContext.Principal.AddIdentity(identity);
-            } else {
-                tokenValidatedContext.Fail(result.ToString());
+            } catch (Exception error) {
+                tokenValidatedContext.Fail(error);
             }
         }
 

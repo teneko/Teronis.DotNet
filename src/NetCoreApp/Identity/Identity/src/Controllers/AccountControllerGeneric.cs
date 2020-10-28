@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Teronis.Identity.AccountManaging;
 using Teronis.Identity.Datransjects;
 using Teronis.Identity.Entities;
-using Teronis.Mvc.ServiceResulting.Generic;
 
 namespace Teronis.Identity.Controllers
 {
@@ -41,17 +40,12 @@ namespace Teronis.Identity.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IServiceResult<RoleCreationType>> Create(RoleDescriptorType roleDescriptor)
+        public async Task<ActionResult<RoleCreationType>> Create(RoleDescriptorType roleDescriptor)
         {
             var roleEntity = roleDescriptorRoleConverter.Convert(roleDescriptor);
-            var createRoleResult = await accountManager.CreateRoleAsync(roleEntity);
-
-            if (createRoleResult.Succeeded) {
-                var createdRole = roleRoleCreationConverter.Convert(createRoleResult.Content());
-                return createRoleResult.CopyButSucceededWithContent(createdRole);
-            }
-
-            return createRoleResult.CopyButFailed<RoleType, RoleCreationType>();
+            var createdRoleEntity = await accountManager.CreateRoleAsync(roleEntity);
+            var createdRoleDatransject = roleRoleCreationConverter.Convert(createdRoleEntity);
+            return Json(createdRoleDatransject);
         }
 
         [HttpPost("users/create")]
@@ -63,17 +57,12 @@ namespace Teronis.Identity.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IServiceResult<UserCreationType>> Create(UserDescriptorType userDescriptor)
+        public async Task<ActionResult<UserCreationType>> Create(UserDescriptorType userDescriptor)
         {
             var userEntity = userDescriptorUserConverter.Convert(userDescriptor);
-            var createUserResult = await accountManager.CreateUserAsync(userEntity, userDescriptor.Password, roles: userDescriptor.Roles);
-
-            if (createUserResult.Succeeded) {
-                var createdUser = userUserCreationConverter.Convert(createUserResult.Content(), userDescriptor.Roles);
-                return createUserResult.CopyButSucceededWithContent(createdUser);
-            }
-
-            return createUserResult.CopyButFailed<UserType, UserCreationType>();
+            var createdUserEntity = await accountManager.CreateUserAsync(userEntity, userDescriptor.Password, roles: userDescriptor.Roles);
+            var createdUserDatransject = userUserCreationConverter.Convert(createdUserEntity, userDescriptor.Roles);
+            return Json(createdUserDatransject);
         }
     }
 }

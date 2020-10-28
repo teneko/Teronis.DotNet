@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Teronis.Identity.AccountManaging.Datatransjects;
 using Teronis.Identity.Datransjects;
@@ -11,7 +12,7 @@ namespace Teronis.Identity.Controllers
     public static partial class IMvcBuilderExtensions
     {
         public static AccountManagerBuilder<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType> AddAccountControllers<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>(
-            this IMvcBuilder mvcBuilder)
+            this IMvcBuilder mvcBuilder, Action<ISelectedControllerModelConfiguration>? configureControllerModel = null)
             where UserDescriptorType : IUserDescriptor
             where UserType : IAccountUserEntity
             where RoleDescriptorType : IRoleDescriptor
@@ -19,8 +20,6 @@ namespace Teronis.Identity.Controllers
             var accountControllerTypeInfo = typeof(AccountController<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>).GetTypeInfo();
 
             mvcBuilder.ConfigureApplicationPartManager(setup => {
-
-
                 var applicationTypes = new[] {
                     accountControllerTypeInfo
                 };
@@ -34,8 +33,8 @@ namespace Teronis.Identity.Controllers
             controllerModelConfiguration.AddScopedRouteConvention("api/account", 
                 (configuration, convention) => configuration.AddControllerConvention(convention));
 
-            mvcBuilder.Services.ConfigureControllerModel(controllerModelConfiguration);
-
+            configureControllerModel?.Invoke(controllerModelConfiguration);
+            mvcBuilder.Services.ApplyControllerModelConfiguration(controllerModelConfiguration);
             return new AccountManagerBuilder<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>(mvcBuilder);
         }
 
@@ -56,14 +55,14 @@ namespace Teronis.Identity.Controllers
             return builder;
         }
 
-        public static IMvcBuilder AddAccountControllers(this IMvcBuilder mvcBuilder)
+        public static IMvcBuilder AddAccountControllers(this IMvcBuilder mvcBuilder, Action<ISelectedControllerModelConfiguration>? configureControllerModel = null)
         {
             var services = mvcBuilder.Services;
             services.AddSingleton<IConvertUserDescriptor<UserDescriptorDatatransject, UserEntity>, UserDescriptorUserConverter>();
             services.AddSingleton<IConvertUser<UserEntity, UserCreationDatatransject>, UserUserCreationConverter>();
             services.AddSingleton<IConvertRoleDescriptor<RoleDescriptorDatatransject, RoleEntity>, RoleDescriptorRoleConverter>();
             services.AddSingleton<IConvertRole<RoleEntity, RoleCreationDatatransject>, RoleRoleCreationConverter>();
-            AddAccountControllers<UserDescriptorDatatransject, UserEntity, UserCreationDatatransject, RoleDescriptorDatatransject, RoleEntity, RoleCreationDatatransject>(mvcBuilder);
+            AddAccountControllers<UserDescriptorDatatransject, UserEntity, UserCreationDatatransject, RoleDescriptorDatatransject, RoleEntity, RoleCreationDatatransject>(mvcBuilder, configureControllerModel: configureControllerModel);
             return mvcBuilder;
         }
     }

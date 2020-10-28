@@ -18,7 +18,7 @@ namespace Teronis.Identity.Bearer
         /// you changed the security stamp of the user the token is invalid.
         /// </param>
         /// <returns>The sign-in tokens: the refresh and the access token</returns>
-        Task<IServiceResult<SignInTokens>> CreateTokensAsync(ClaimsPrincipal principal);
+        Task<SignInTokens> CreateTokensAsync(ClaimsPrincipal principal);
         /// <summary>
         /// Creates sign-in tokens: 1. Search for user by claim <see cref="ClaimTypes.NameIdentifier"/>
         /// 2. Find stored refresh token and delete it
@@ -31,6 +31,6 @@ namespace Teronis.Identity.Bearer
         /// you changed the security stamp of the user the token is invalid.
         /// </param>
         /// <returns>The sign-in tokens: the refresh and the access token</returns>
-        Task<IServiceResult<SignInTokens>> CreateNextTokensAsync(ClaimsPrincipal principal);
+        Task<SignInTokens> CreateNextTokensAsync(ClaimsPrincipal principal);
     }
 }

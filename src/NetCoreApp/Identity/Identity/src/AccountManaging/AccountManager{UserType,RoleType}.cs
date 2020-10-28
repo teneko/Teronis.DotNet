@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,9 +8,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Teronis.Identity.Entities;
 using Teronis.Identity.Extensions;
-using Teronis.Mvc.ServiceResulting;
-using Teronis.Mvc.ServiceResulting.Generic;
-using Teronis.ObjectModel.Annotations;
 using ComponentDataValidationContext = System.ComponentModel.DataAnnotations.ValidationContext;
 
 namespace Teronis.Identity.AccountManaging
@@ -42,22 +38,15 @@ namespace Teronis.Identity.AccountManaging
             this.logger = logger;
         }
 
-        public async Task<IServiceResult<RoleType>> GetRoleByNameAsync(string roleName)
+        public async Task<RoleType> GetRoleByNameAsync(string roleName)
         {
-            try {
-                var createdRoleEntity = dbContext.Set<RoleType>().Local.SingleOrDefault(x => x.RoleName == roleName) 
-                    ?? await roleManager.FindByNameAsync(roleName);
+            var createdRoleEntity = dbContext.Set<RoleType>().Local.SingleOrDefault(x => x.RoleName == roleName)
+                ?? await roleManager.FindByNameAsync(roleName);
 
-                return ServiceResult<RoleType>
-                    .Success(createdRoleEntity)
-                    .WithHttpStatusCode(HttpStatusCode.OK);
-            } catch (Exception error) {
-                return errorDetailsProvider.LogCriticalThenBuildAppropiateError<RoleType>(error.ToJsonErrors(), $"The role '{roleName}' could not be loaded from the database.".ToJsonErrors())
-                    .WithHttpStatusCode(HttpStatusCode.InternalServerError);
-            }
+            return createdRoleEntity;
         }
 
-        public async Task<IServiceResult<RoleType>> CreateRoleAsync(RoleType roleEntity)
+        public async Task<RoleType> CreateRoleAsync(RoleType roleEntity)
         {
             Validator.ValidateObject(roleEntity, new ComponentDataValidationContext(roleEntity), true);
             var roleName = roleEntity.RoleName;
@@ -67,60 +56,44 @@ namespace Teronis.Identity.AccountManaging
                 existingRoleEntity = await roleManager.FindByNameAsync(roleName);
             } catch (Exception error) {
                 var errorMessage = $"The role '{roleName}' could not be reconciled against database.";
-
-                return errorDetailsProvider.LogCriticalThenBuildAppropiateError<RoleType>(error.ToJsonErrors(), errorMessage.ToJsonErrors())
-                    .WithHttpStatusCode(HttpStatusCode.InternalServerError);
+                logger.LogCritical(error, errorMessage);
+                throw;
             }
 
             if (existingRoleEntity != null) {
-                return $"The role '{roleName}' has been already created."
-                    .ToJsonError(AccountManagerErrorCodes.RoleAlreadyCreated.GetStringValue())
-                    .ToServiceResult<RoleType>()
-                    .WithHttpStatusCode(HttpStatusCode.BadRequest);
+                var insensitiveErrorMessage = $"The role '{roleName}' has been already created.";
+                throw new RoleAlreadyCreatedException(roleName, insensitiveErrorMessage);
             }
             // TODO: Integrate IdentityResult.Errors in detailed errors
             var result = await roleManager.CreateAsync(roleEntity);
 
             if (!result.Succeeded) {
-                var sensitiveJsonErrors = result.ToJsonErrors();
-                var insensitiveJsonErrors = $"The role '{roleName}' could not be created.".ToJsonErrors();
-
-                return errorDetailsProvider.LogCriticalThenBuildAppropiateError<RoleType>(sensitiveJsonErrors, insensitiveJsonErrors)
-                    .WithHttpStatusCode(HttpStatusCode.InternalServerError);
+                var insensitiveErrorMessage = $"The role '{roleName}' could not be created.";
+                var aggregatedError = result.ToAggregatedException(insensitiveErrorMessage);
+                logger.LogCritical(aggregatedError, insensitiveErrorMessage);
+                throw aggregatedError;
             }
 
             return await GetRoleByNameAsync(roleName);
         }
 
-        public async Task<IServiceResult<UserType>> GetUserByNameAsync(string userName)
+        public async Task<UserType> GetUserByNameAsync(string userName)
         {
-            try {
-                var createdUserEntity = dbContext.Set<UserType>().Local.SingleOrDefault(x => x.UserName == userName) 
-                    ?? await userManager.FindByNameAsync(userName);
+            var createdUserEntity = dbContext.Set<UserType>().Local.SingleOrDefault(x => x.UserName == userName)
+                ?? await userManager.FindByNameAsync(userName);
 
-                return ServiceResult<UserType>
-                    .Success(createdUserEntity)
-                    .WithHttpStatusCode(HttpStatusCode.OK);
-            } catch (Exception sensitiveError) {
-                var insensitiveErrorMessage = $"The user '{userName}' could not be loaded from the database.";
-
-                return errorDetailsProvider.LogErrorThenBuildAppropiateError<UserType>(sensitiveError, insensitiveErrorMessage)
-                    .WithHttpStatusCode(HttpStatusCode.InternalServerError);
-            }
+            return createdUserEntity;
         }
 
-        public async Task<IServiceResult<UserType>> CreateUserAsync(UserType userEntity, string password, params string[]? roles)
+        public async Task<UserType> CreateUserAsync(UserType userEntity, string password, params string[]? roles)
         {
             Validator.ValidateObject(userEntity, new ComponentDataValidationContext(userEntity), true);
             using var transactionScope = await dbContext.Database.BeginTransactionAsync();
             var userName = userEntity.UserName;
             UserType existingUser = await userManager.FindByNameAsync(userName);
 
-            if (!ReferenceEquals(existingUser, null)) {
-                return $"The user '{userName}' has been already created."
-                    .ToJsonError(AccountManagerErrorCodes.UserAlreadyCreated.GetStringValue())
-                    .ToServiceResult<UserType>()
-                    .WithHttpStatusCode(HttpStatusCode.BadRequest);
+            if (!(existingUser is null)) {
+                throw new UserAlreadyCreatedException(userName, $"The user '{userName}' has been already created.");
             }
             // User does not exist, we continue user creation.
             else {
@@ -130,28 +103,17 @@ namespace Teronis.Identity.AccountManaging
                     var userResult = await userManager.CreateAsync(userEntity, password);
 
                     if (!userResult.Succeeded) {
-                        var resultJsonErrors = userResult.ToJsonErrors();
-                        resultJsonErrors.Insert(0, insensitiveErrorMessage.ToJsonError());
-
-                        return resultJsonErrors
-                            .ToServiceResult<UserType>()
-                            .WithHttpStatusCode(HttpStatusCode.BadRequest);
+                        var aggreagtedError = userResult.ToAggregatedException(insensitiveErrorMessage);
+                        throw aggreagtedError;
                     }
                 } catch (Exception error) {
-                    return errorDetailsProvider.LogCriticalThenBuildAppropiateError<UserType>(error, insensitiveErrorMessage)
-                        .WithHttpStatusCode(HttpStatusCode.InternalServerError);
+                    logger.LogCritical(error, insensitiveErrorMessage);
+                    throw;
                 }
             }
 
-            var loadUserResult = await GetUserByNameAsync(userName);
-
-            if (!loadUserResult.Succeeded) {
-                return loadUserResult;
-            }
-
-            var loadedUser = loadUserResult.Content!;
+            var loadedUser = await GetUserByNameAsync(userName);
             //dbContext.Entrie(loadedUser).State = EntityState.Detached;
-            IServiceResult<UserType>? userRoleAssignmentResult = null;
 
             if (roles != null) {
                 foreach (var roleName in roles) {
@@ -159,59 +121,30 @@ namespace Teronis.Identity.AccountManaging
 
                     try {
                         if (string.IsNullOrWhiteSpace(roleName)) {
-                            var errorMessage = $"The role '{userName}' is null or empty.";
-
-                            userRoleAssignmentResult = errorMessage
-                                .ToJsonError()
-                                .ToServiceResult<UserType>()
-                                .WithHttpStatusCode(HttpStatusCode.InternalServerError);
-
-                            break;
+                            var errorMessage = $"The role '{userName}' must not be null or empty.";
+                            throw new ArgumentException(errorMessage);
                         }
 
                         if (!await userManager.IsInRoleAsync(loadedUser, roleName)) {
                             var result = await userManager.AddToRoleAsync(loadedUser, roleName);
 
                             if (!result.Succeeded) {
-                                var resultJsonErrors = result.ToJsonErrors();
-                                resultJsonErrors.Insert(0, roleAssignmentErrorMessage);
-
-                                userRoleAssignmentResult = resultJsonErrors
-                                    .ToServiceResult<UserType>()
-                                    .WithHttpStatusCode(HttpStatusCode.BadRequest);
-
-                                break;
+                                var aggregatedError = result.ToAggregatedException(roleAssignmentErrorMessage);
+                                throw aggregatedError;
                             }
                         }
                     } catch (Exception error) {
-                        userRoleAssignmentResult = errorDetailsProvider.LogCriticalThenBuildAppropiateError<UserType>(error, roleAssignmentErrorMessage)
-                            .WithHttpStatusCode(HttpStatusCode.InternalServerError);
+                        logger.LogCritical(error, roleAssignmentErrorMessage);
+                        throw;
                     }
                 }
             }
 
-            var shouldAbortUserCreation = !(userRoleAssignmentResult?.Success() ?? true);
-
-            if (shouldAbortUserCreation) {
-                try {
-                    // TODO: Check if it works.
-                    await transactionScope.RollbackAsync();
-                } catch (Exception error) {
-                    var errorMessage = $"The abortion of the user creation failed. The user '{userName}' could not be deleted from the database.";
-                    logger?.LogCritical(error, errorMessage);
-                }
-
-                return userRoleAssignmentResult!;
-            } else {
-                await transactionScope.CommitAsync();
-
-                return ServiceResult<UserType>
-                    .Success(loadedUser)
-                    .WithHttpStatusCode(HttpStatusCode.OK);
-            }
+            await transactionScope.CommitAsync();
+            return loadedUser;
         }
 
-        public async Task<IServiceResult> InvalidateSecurityStampAsync(string userId)
+        public async Task InvalidateSecurityStampAsync(string userId)
         {
             try {
                 var userEntity = await userManager.FindByNameAsync(userId);
@@ -225,11 +158,10 @@ namespace Teronis.Identity.AccountManaging
                 if (!result.Succeeded) {
                     throw result.ToAggregatedException("Invalidating the security stamp failed.");
                 }
-
-                return new ServiceResult(true).WithHttpStatusCode(HttpStatusCode.OK);
             } catch (Exception error) {
-                return errorDetailsProvider.LogErrorThenBuildAppropiateError<object>(error)
-                    .WithHttpStatusCode(HttpStatusCode.InternalServerError);
+                var insensitiveErrorMessage = "Invalidating the security stamp failed.";
+                logger.LogError(error, insensitiveErrorMessage);
+                throw;
             }
         }
     }

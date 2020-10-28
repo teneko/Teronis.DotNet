@@ -30,12 +30,14 @@ namespace Teronis.Identity.Bearer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc()
-                //.AddAccountControllers()
-                //.AddBearerSignInControllers(conf => {
-                //    conf.AddRouteTemplateConvention(CaseType.TrainCase);
-                //})
-                ;
+            services
+                .AddControllers(options => {
+                    options.Filters.Add(new CustomExceptionFilter());
+                })
+                .AddAccountControllers()
+                .AddBearerSignInControllers(conf => {
+                    conf.AddRouteTemplateConvention(CaseType.TrainCase);
+                });
 
             services.AddDbContext<BearerIdentityDbContext>(options => {
                 options.UseSqlite("Data Source=bearerIdentity.db;");

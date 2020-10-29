@@ -14,7 +14,7 @@ namespace Teronis.Identity.Bearer
             var error = context.Exception;
 
             context.Result = new ContentResult() {
-                StatusCode = (int)(error is ArgumentException ? HttpStatusCode.BadRequest : HttpStatusCode.InternalServerError),
+                StatusCode = (int)(error is ArgumentException ? HttpStatusCode.UnprocessableEntity : HttpStatusCode.InternalServerError),
                 Content = error.Message,
                 ContentType = "text/plain"
             };

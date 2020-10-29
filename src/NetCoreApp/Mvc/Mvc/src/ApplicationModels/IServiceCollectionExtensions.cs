@@ -6,11 +6,11 @@ namespace Teronis.Mvc.ApplicationModels
 {
     public static class IServiceCollectionExtensions
     {
-        public static void ApplyControllerModelConfiguration(this IServiceCollection services, IControllerModelConfiguration controllerModelConfiguration,
+        public static void ApplyControllerModelConfiguration(this IServiceCollection services, ControllerModelConfiguration controllerModelConfiguration,
             Action<IServiceCollection, Action<MvcOptions>> configureOptions) =>
             configureOptions(services, new MvcOptionsConfigurator(controllerModelConfiguration).ConfigureMvcOptions);
 
-        public static void ApplyControllerModelConfiguration(this IServiceCollection _, IControllerModelConfiguration controllerModelConfiguration,
+        public static void ApplyControllerModelConfiguration(this IServiceCollection _, ControllerModelConfiguration controllerModelConfiguration,
             Action<Action<MvcOptions>> configureOptions) =>
             configureOptions(new MvcOptionsConfigurator(controllerModelConfiguration).ConfigureMvcOptions);
 

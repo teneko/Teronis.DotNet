@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Teronis.Identity.Bearer.SignInManaging;
 using Teronis.Identity.Bearer.Stores;
 using Teronis.Identity.Entities;
 

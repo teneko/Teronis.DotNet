@@ -42,7 +42,11 @@ namespace Teronis.Extensions
             TeronisUtils.ReturnValue(inValue, out outInValue, getValue);
 
         [return: MaybeNull]
-        public static V ReturnValue<I, V>(this I inValue, Func<I, V> getValue) => 
+        public static V ReturnValue<I, V>(this I inValue, Func<I, V> getValue) =>
+            TeronisUtils.ReturnValue(inValue, getValue);
+
+        [return: MaybeNull]
+        public static V ReturnValue<I, V>(this I inValue, Func<V> getValue) =>
             TeronisUtils.ReturnValue(inValue, getValue);
 
         public static TargetType ShallowCopy<SourceType, TargetType>(this SourceType source)

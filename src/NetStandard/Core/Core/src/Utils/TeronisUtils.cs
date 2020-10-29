@@ -11,8 +11,22 @@ namespace Teronis.Utils
         public static bool CompareEquality<T>([AllowNull] T one, [AllowNull] T two) =>
             EqualityComparer<T>.Default.Equals(one!, two!);
 
-        public static bool ReturnNonDefault<T>(T inValue, [MaybeNull] out T outValue, Func<T>? getNonDefaultIfDefault = null)
-            => !CompareEquality(outValue = inValue, default) || (FuncGenericUtils.ReturnIsInvocable(getNonDefaultIfDefault, out outValue) && !CompareEquality(outValue, default));
+        public static bool ReturnNonDefault<T>(T inValue, [MaybeNull] out T outValue, Func<T>? getNonDefaultWhenDefault = null)
+        //=> !CompareEquality(outValue = inValue, default) || (FuncGenericUtils.ReturnIsInvocable(getNonDefaultIfDefault, out outValue) && !CompareEquality(outValue, default));
+        {
+            outValue = inValue;
+            var isValueNotEqualsDefault = !CompareEquality(outValue, default);
+
+            if (isValueNotEqualsDefault) {
+                return true;
+            } else {
+                if (FuncGenericUtils.IsInvocable(getNonDefaultWhenDefault, out outValue)) {
+                    return !CompareEquality(outValue, default);
+                } else {
+                    return false;
+                }
+            }
+        }
 
         public static I ReturnInValue<I>(I inValue) =>
             inValue;
@@ -44,10 +58,10 @@ namespace Teronis.Utils
             return inValue!;
         }
 
-        public static V ReturnValue<I, V>(I inValue, out I outInValue, V value)
+        public static V ReturnValue<I, V>(I inValue, out I outInValue, V returnBoolean)
         {
             outInValue = inValue;
-            return value;
+            return returnBoolean;
         }
 
         public static V ReturnValue<I, V>(I inValue, out I outInValue, Func<V> getValue)
@@ -65,6 +79,9 @@ namespace Teronis.Utils
 
         public static V ReturnValue<I, V>(I inValue, Func<I, V> getValue)
             => getValue(inValue);
+
+        public static V ReturnValue<I, V>(I inValue, Func<V> getValue)
+            => getValue();
 
         /// <summary>
         /// Useful for unsubscribing inline event handlers.

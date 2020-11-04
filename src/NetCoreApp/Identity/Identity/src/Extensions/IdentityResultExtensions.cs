@@ -27,6 +27,17 @@ namespace Teronis.Identity.Extensions
                                                         select new Exception($"{error.Description} ({error.Code})"));
         }
 
+        public static KeyedAggregateException ToKeyAggregatedException(this IdentityResult identityResult, string? errorMessage = null)
+        {
+            var identityErrors = getIdentityResultErrorsOrThrow(identityResult);
+
+            var keyedExceptions = identityResult.Errors.ToDictionary(
+                x => x.Code,
+                x => new Exception(x.Description));
+
+            return new KeyedAggregateException(errorMessage, keyedExceptions);
+        }
+
         public static JsonErrors ToJsonErrors(this IdentityResult identityResult)
         {
             var identityErrors = getIdentityResultErrorsOrThrow(identityResult);

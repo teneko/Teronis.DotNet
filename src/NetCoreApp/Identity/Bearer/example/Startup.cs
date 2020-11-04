@@ -15,6 +15,8 @@ using Teronis.Identity.Entities;
 using Teronis.AspNetCore.Authorization.Extensions;
 using Teronis.Mvc.ApplicationModels;
 using Teronis.Mvc.Case;
+using Teronis.Mvc.JsonProblemDetails;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Teronis.Identity.Bearer
 {
@@ -30,14 +32,22 @@ namespace Teronis.Identity.Bearer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddApiVersioning(options => {
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.AssumeDefaultVersionWhenUnspecified = true;
+            });
+
             services
-                .AddControllers(options => {
-                    options.Filters.Add(new CustomExceptionFilter());
-                })
+                .AddControllers()
                 .AddAccountControllers()
                 .AddBearerSignInControllers(conf => {
                     conf.AddRouteTemplateConvention(CaseType.TrainCase);
                 });
+
+            services.CreateJsonProblemDetailsBuilder()
+                .AddJsonProblemDetails(options => options.AddDefaultMappers())
+                .ConfigureApiBehaviourOptions()
+                .ConfigureApiVersioningOptions();
 
             services.AddDbContext<BearerIdentityDbContext>(options => {
                 options.UseSqlite("Data Source=bearerIdentity.db;");
@@ -74,7 +84,7 @@ namespace Teronis.Identity.Bearer
                     .RequireRole(TeronisIdentityBearerExampleDefaults.AdministratorRoleName)
                     .Build(),
                     AccountControllerDefaults.CanCreateRolePolicy,
-                    TeronisIdentityBearerExampleDefaults.AdministratorRoleName);
+                    AccountControllerDefaults.CanCreateUserPolicy);
             });
         }
 
@@ -88,6 +98,10 @@ namespace Teronis.Identity.Bearer
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            // Outputs exceptions as RFC 7807 defined problem details.
+            app.UseProblemDetails();
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

@@ -7,6 +7,7 @@ namespace Teronis.Mvc.JsonProblemDetails.Middleware
         public ProblemDetailsMiddlewareContext MiddlewareContext {
             get => middlewareContext 
                 ?? throw new InvalidOperationException($"The scoped service ({nameof(ProblemDetailsMiddlewareContext)}) has been not set during middleware pipeline.");
+
             set => middlewareContext = value;
         }
 

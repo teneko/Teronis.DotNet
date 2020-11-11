@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Net.Http.Headers;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Teronis.Mvc.JsonProblemDetails
 {
+    // Compare https://github.com/aspnet/Mvc/blob/master/src/Microsoft.AspNetCore.Mvc.Core/ObjectResult.cs
     public class ProblemDetailsResult : ObjectResult
     {
         /// <summary>
@@ -21,8 +24,12 @@ namespace Teronis.Mvc.JsonProblemDetails
             : base(problemDetails)
         {
             onValueChanged();
-            ContentTypes.Add(new MediaTypeHeaderValue("application/problem+json"));
-            ContentTypes.Add(new MediaTypeHeaderValue("application/problem+xml"));
+            // Not needed because the ObjectResultExecutor (used by 
+            // ProblemDetailsResultExecutor) does this on execution.
+            // Either way this should be implemented in action executor.
+            // Compare https://github.com/dotnet/aspnetcore/blob/master/src/Mvc/Mvc.Core/src/Infrastructure/ObjectResultExecutor.cs
+            //ContentTypes.Add(new MediaTypeHeaderValue("application/problem+json"));
+            //ContentTypes.Add(new MediaTypeHeaderValue("application/problem+xml"));
         }
 
         private void onValueChanged()
@@ -30,6 +37,12 @@ namespace Teronis.Mvc.JsonProblemDetails
             var problemDetails = Value;
             StatusCode = problemDetails.Status;
             DeclaredType = problemDetails.GetType();
+        }
+
+        public override Task ExecuteResultAsync(ActionContext context)
+        {
+            var executor = context.HttpContext.RequestServices.GetRequiredService<IActionResultExecutor<ProblemDetailsResult>>();
+            return executor.ExecuteAsync(context, this);
         }
     }
 }

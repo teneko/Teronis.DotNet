@@ -8,21 +8,20 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using Microsoft.Net.Http.Headers;
 using Teronis.Extensions;
 using Teronis.Mvc.JsonProblemDetails.Mappers;
-using Teronis.Mvc.JsonProblemDetails.ObjectResolvers;
+using Teronis.Mvc.JsonProblemDetails.MappableObjectResolvers;
 using Teronis.Mvc.JsonProblemDetails.Reflection;
 
 namespace Teronis.Mvc.JsonProblemDetails
 {
-    public class ProblemDetailsResponseProvider
+    public class ProblemDetailsResultProvider
     {
         private readonly ProblemDetailsOptions options;
         private readonly ProblemDetailsMapperProvider mapperProvider;
         private readonly ProblemDetailsFactory problemDetailsFactory;
 
-        public ProblemDetailsResponseProvider(ProblemDetailsMapperProvider mapperProvider,
+        public ProblemDetailsResultProvider(ProblemDetailsMapperProvider mapperProvider,
             ProblemDetailsFactory problemDetailsFactory, IOptions<ProblemDetailsOptions> options)
         {
             this.options = options.Value ?? throw new ArgumentNullException(nameof(options));
@@ -39,7 +38,7 @@ namespace Teronis.Mvc.JsonProblemDetails
             return alternativeStatusCode;
         }
 
-        private bool tryCreateResponse(MapperConstructorArea area, HttpContext httpContext, IEnumerable<ServiceDescriptor>? serviceDescriptors, object? mappableObject,
+        private bool tryCreateResult(MapperConstructorArea area, HttpContext httpContext, IEnumerable<ServiceDescriptor>? serviceDescriptors, object? mappableObject,
             [MaybeNullWhen(false)] out ProblemDetailsResult result, int? comparableStatusCode = null)
         {
             var mappableObjectType = mappableObject?.GetType();
@@ -84,24 +83,24 @@ namespace Teronis.Mvc.JsonProblemDetails
             return false;
         }
 
-        public bool TryCreateResponse(ActionExecutedContext actionExecutedContext, [MaybeNullWhen(false)] out ProblemDetailsResult result)
+        public bool TryCreateResult(ActionExecutedContext actionExecutedContext, [MaybeNullWhen(false)] out ProblemDetailsResult result)
         {
             object? mappableObject = null;
             var actionExecutedContextResult = actionExecutedContext.Result;
             int? comparableStatusCode = null;
 
             if (!(actionExecutedContextResult is null)) {
-                var actionResultObjectResolvers = options.ActionResultObjectResolvers.ToList();
-                var actionResultObjectResolversCount = actionResultObjectResolvers.Count;
+                var mappableObjectResolvers = options.MappableObjectResolvers.ToList();
+                var mappableObjectResolversCount = mappableObjectResolvers.Count;
 
-                if (actionResultObjectResolversCount == 0) {
-                    actionResultObjectResolvers.Add(new DefaultActionResultObjectResolver());
+                if (mappableObjectResolversCount == 0) {
+                    mappableObjectResolvers.Add(new DefaultActionResultObjectResolver());
                 }
 
-                var actionResultObjectResolversEnumerator = actionResultObjectResolvers.GetEnumerator();
+                var mappableObjectResolversEnumerator = mappableObjectResolvers.GetEnumerator();
 
-                while (actionResultObjectResolversEnumerator.MoveNext()) {
-                    if (actionResultObjectResolversEnumerator.Current.TryResolveObject(actionExecutedContextResult, out var resolvedObject)) {
+                while (mappableObjectResolversEnumerator.MoveNext()) {
+                    if (mappableObjectResolversEnumerator.Current.TryResolveObject(actionExecutedContextResult, out var resolvedObject)) {
                         mappableObject = resolvedObject ?? throw new NotSupportedException("Action result object resolvers disallow resolving null values.");
                     }
                 }
@@ -118,7 +117,7 @@ namespace Teronis.Mvc.JsonProblemDetails
             var serviceDescriptors = new[] { new ServiceDescriptor(actionExecutedContext.GetType(), actionExecutedContext) };
             var httpContext = actionExecutedContext.HttpContext;
 
-            if (tryCreateResponse(MapperConstructorArea.ActionFilter, httpContext, serviceDescriptors, mappableObject, out result,
+            if (tryCreateResult(MapperConstructorArea.ActionFilter, httpContext, serviceDescriptors, mappableObject, out result,
                 comparableStatusCode: comparableStatusCode)) {
                 return true;
             }
@@ -128,13 +127,13 @@ namespace Teronis.Mvc.JsonProblemDetails
             return false;
         }
 
-        public bool TryCreateResponse(ExceptionContext exceptionContext, [MaybeNullWhen(false)] out ProblemDetailsResult result)
+        public bool TryCreateResult(ExceptionContext exceptionContext, [MaybeNullWhen(false)] out ProblemDetailsResult result)
         {
             var exception = exceptionContext.Exception;
             var serviceDescriptors = new[] { new ServiceDescriptor(typeof(ExceptionContext), exceptionContext) };
             var httpContext = exceptionContext.HttpContext;
 
-            if (tryCreateResponse(MapperConstructorArea.ExceptionFilter, httpContext, serviceDescriptors, exception, out var innerResult)) {
+            if (tryCreateResult(MapperConstructorArea.ExceptionFilter, httpContext, serviceDescriptors, exception, out var innerResult)) {
                 result = innerResult;
                 return true;
             }
@@ -143,28 +142,17 @@ namespace Teronis.Mvc.JsonProblemDetails
             return false;
         }
 
-        public bool TryCreateResponse(HttpContext httpContext, object? mappableObject, [MaybeNullWhen(false)] out ProblemDetailsResult result)
+        public bool TryCreateResult(HttpContext httpContext, object? mappableObject, [MaybeNullWhen(false)] out ProblemDetailsResult result)
         {
             var serviceDescriptors = new[] { new ServiceDescriptor(typeof(HttpContext), httpContext) };
 
-            if (tryCreateResponse(MapperConstructorArea.Middleware, httpContext, serviceDescriptors, mappableObject, out var innerResult)) {
+            if (tryCreateResult(MapperConstructorArea.Middleware, httpContext, serviceDescriptors, mappableObject, out var innerResult)) {
                 result = innerResult;
                 return true;
             }
 
             result = null;
             return false;
-        }
-
-        public void PrepareHttpResponse(HttpResponse response, ProblemDetailsResult result)
-        {
-            response.Headers.AddOrUpdate(HeaderNames.CacheControl, "no-cache, no-store, must-revalidate");
-            response.Headers.AddOrUpdate(HeaderNames.Pragma, "no-cache");
-            response.Headers.AddOrUpdate(HeaderNames.Expires, "0");
-
-            if (result.StatusCode is int statusCode) {
-                response.StatusCode = statusCode;
-            }
         }
     }
 }

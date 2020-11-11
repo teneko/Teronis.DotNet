@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Teronis.Mvc.JsonProblemDetails.Descriptor
+namespace Teronis.Mvc.JsonProblemDetails.Mappers.Description
 {
     public class ProblemDetailsMapperDescriptorOptions
     {

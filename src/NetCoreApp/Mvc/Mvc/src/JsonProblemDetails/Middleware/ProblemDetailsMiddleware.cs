@@ -31,8 +31,37 @@ namespace Teronis.Mvc.JsonProblemDetails.Middleware
             return false;
         }
 
-        static async Task<bool> tryHandleResponse(HttpContext httpContext, object? mappableObject, ProblemDetailsMiddlewareContext middlewareContext,
-               ProblemDetailsResponseProvider problemDetailsResponseProvider, IActionResultExecutor<ProblemDetailsResult> resultExecutor)
+        static void logResponseAlreadyStarted(ILogger? logger, Exception? error)
+        {
+            if (logger is null) {
+                return;
+            }
+
+            var errorMessage = "A map result has been created but couldn't be written to response because it was already started.";
+
+            if (error is null) {
+                logger.LogError(errorMessage, errorMessage);
+            } else {
+                logger.LogError(errorMessage);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="httpContext"></param>
+        /// <param name="mappableObject"></param>
+        /// <param name="middlewareContext"></param>
+        /// <param name="problemDetailsResponseProvider"></param>
+        /// <param name="resultExecutor"></param>
+        /// <param name="logger"></param>
+        /// <returns>
+        /// Value <see cref="true"/> if map result could be created. 
+        /// Value <see cref="false"/> if mapper couldn't be found. 
+        /// Value <see cref="null"/> if response has been started.
+        /// </returns>
+        static async Task<bool?> tryStartResponse(HttpContext httpContext, object? mappableObject, ProblemDetailsMiddlewareContext middlewareContext,
+               ProblemDetailsResultProvider problemDetailsResponseProvider, IActionResultExecutor<ProblemDetailsResult> resultExecutor, ILogger? logger)
         {
             if (middlewareContext.Handled) {
                 goto exit;
@@ -45,13 +74,17 @@ namespace Teronis.Mvc.JsonProblemDetails.Middleware
                 return actionContext;
             });
 
-            if (problemDetailsResponseProvider.TryCreateResponse(httpContext, mappableObject, out var result) 
+            if (problemDetailsResponseProvider.TryCreateResult(httpContext, mappableObject, out var result)
                 || tryGetFaultyConditionalResult(middlewareContext, out result)) {
-                problemDetailsResponseProvider.PrepareHttpResponse(httpContext.Response, result);
+                if (httpContext.Response.HasStarted) {
+                    // Here we now that we could output our custom result but cannot.
+                    return null;
+                }
+
                 await resultExecutor.ExecuteAsync(lazyActionContext.Value, result);
                 middlewareContext.Handled = true;
                 return true;
-            } 
+            }
 
             exit:
             return false;
@@ -60,58 +93,51 @@ namespace Teronis.Mvc.JsonProblemDetails.Middleware
         private readonly RequestDelegate nextRequestDelegate;
         private readonly ProblemDetailsMiddlewareContextProxy problemDetailsMiddlewareContextProxy;
         private readonly ILogger? logger;
-        private readonly ProblemDetailsResponseProvider problemDetailsResponseProvider;
+        private readonly ProblemDetailsResultProvider problemDetailsResponseProvider;
 
         public ProblemDetailsMiddleware(RequestDelegate nextRequestDelegate, ProblemDetailsMiddlewareContextProxy problemDetailsMiddlewareContextProxy,
-            ProblemDetailsResponseProvider problemDetailsResponseProvider, ILogger<ProblemDetailsMiddleware>? logger)
+            ProblemDetailsResultProvider problemDetailsResponseProvider, ILogger<ProblemDetailsMiddleware>? logger)
         {
             this.nextRequestDelegate = nextRequestDelegate ?? throw new ArgumentNullException(nameof(nextRequestDelegate));
-            this.problemDetailsMiddlewareContextProxy = problemDetailsMiddlewareContextProxy ?? throw new ArgumentNullException(nameof(problemDetailsMiddlewareContextProxy));
+
+            this.problemDetailsMiddlewareContextProxy = problemDetailsMiddlewareContextProxy
+                ?? throw new ArgumentNullException(nameof(problemDetailsMiddlewareContextProxy));
+
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this.problemDetailsResponseProvider = problemDetailsResponseProvider ?? throw new ArgumentNullException(nameof(problemDetailsResponseProvider));
+
+            this.problemDetailsResponseProvider = problemDetailsResponseProvider 
+                ?? throw new ArgumentNullException(nameof(problemDetailsResponseProvider));
         }
 
         protected virtual Task StartResponseAsync(HttpContext context) =>
             Task.CompletedTask;
 
-        public async Task Invoke(HttpContext httpContext, ProblemDetailsMiddlewareContext middlewareContext, IActionResultExecutor<ProblemDetailsResult> resultExecutor)
+        public async Task Invoke(HttpContext httpContext, ProblemDetailsMiddlewareContext middlewareContext, 
+            IActionResultExecutor<ProblemDetailsResult> resultExecutor)
         {
             var response = httpContext.Response;
             middlewareContext = middlewareContext ?? throw new ArgumentNullException(nameof(middlewareContext));
             problemDetailsMiddlewareContextProxy.MiddlewareContext = middlewareContext;
 
-            static void logResponseAlreadyStarted(ILogger? logger, Exception? error)
-            {
-                if (logger is null) {
-                    return;
-                }
-
-                var errorMessage = "The response has been already started.";
-
-                if (error is null) {
-                    logger.LogError(errorMessage, errorMessage);
-                } else {
-                    logger.LogError(errorMessage);
-                }
-            }
-
             try {
                 await nextRequestDelegate(httpContext);
+                object? mappableObject = middlewareContext.MappableObject;
 
-                if (response.HasStarted) {
+                var result = await tryStartResponse(httpContext, mappableObject, middlewareContext, problemDetailsResponseProvider, resultExecutor, logger);
+
+                if (result == null) {
                     logResponseAlreadyStarted(logger, null);
                     return;
+                } else if (!result.Value) {
+                    return;
                 }
-
-                object? mappableObject = middlewareContext.MappableObject;
-                await tryHandleResponse(httpContext, mappableObject, middlewareContext, problemDetailsResponseProvider, resultExecutor);
             } catch (Exception error) {
-                if (response.HasStarted) {
-                    logResponseAlreadyStarted(logger, error);
-                    throw;
-                }
+                var result = await tryStartResponse(httpContext, error, middlewareContext, problemDetailsResponseProvider, resultExecutor, logger);
 
-                if (!await tryHandleResponse(httpContext, error, middlewareContext, problemDetailsResponseProvider, resultExecutor)) {
+                if (result == null) {
+                    logResponseAlreadyStarted(logger, error);
+                    return;
+                } else if (!result.Value) {
                     throw;
                 }
             }

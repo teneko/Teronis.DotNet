@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Teronis.Mvc.JsonProblemDetails.Descriptor;
+using Teronis.Mvc.JsonProblemDetails.Mappers.Description;
 
 namespace Teronis.Mvc.JsonProblemDetails.Mappers
 {

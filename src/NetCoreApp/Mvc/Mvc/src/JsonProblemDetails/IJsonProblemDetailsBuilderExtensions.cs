@@ -36,7 +36,7 @@ namespace Teronis.Mvc.JsonProblemDetails
             services.AddSingleton<ProblemDetailsMiddlewareContextProxy>();
             services.AddScoped<ProblemDetailsMiddlewareContext>();
             services.AddSingleton<ProblemDetailsMapperProvider>();
-            services.AddSingleton<ProblemDetailsResponseProvider>();
+            services.AddSingleton<ProblemDetailsResultProvider>();
             services.AddSingleton<IActionResultExecutor<ProblemDetailsResult>, ProblemDetailsResultExecutor>();
             return builder;
         }

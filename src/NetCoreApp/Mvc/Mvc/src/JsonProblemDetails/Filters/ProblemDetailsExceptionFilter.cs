@@ -8,11 +8,11 @@ namespace Teronis.Mvc.JsonProblemDetails.Filters
     public class ProblemDetailsExceptionFilter : IExceptionFilter, IOrderedFilter
     {
         private readonly ProblemDetailsOptions options;
-        private readonly ProblemDetailsResponseProvider problemDetailsResponseProvider;
+        private readonly ProblemDetailsResultProvider problemDetailsResponseProvider;
         private readonly ProblemDetailsMiddlewareContext problemDetailsMiddlewareContext;
 
         public ProblemDetailsExceptionFilter(ProblemDetailsMiddlewareContext problemDetailsMiddlewareContext,
-            ProblemDetailsResponseProvider problemDetailsResponseProvider, IOptions<ProblemDetailsOptions> options)
+            ProblemDetailsResultProvider problemDetailsResponseProvider, IOptions<ProblemDetailsOptions> options)
         {
             this.options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             this.problemDetailsResponseProvider = problemDetailsResponseProvider ?? throw new ArgumentNullException(nameof(problemDetailsResponseProvider));
@@ -27,8 +27,7 @@ namespace Teronis.Mvc.JsonProblemDetails.Filters
                 return;
             }
 
-            if (problemDetailsResponseProvider.TryCreateResponse(exceptionContext, out var result)) {
-                problemDetailsResponseProvider.PrepareHttpResponse(exceptionContext.HttpContext.Response, result);
+            if (problemDetailsResponseProvider.TryCreateResult(exceptionContext, out var result)) {
                 exceptionContext.Result = result;
                 exceptionContext.ExceptionHandled = true;
                 problemDetailsMiddlewareContext.Handled = true;

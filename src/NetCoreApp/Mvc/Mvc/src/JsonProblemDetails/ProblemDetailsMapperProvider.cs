@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Teronis.Mvc.JsonProblemDetails.Descriptor;
+using Teronis.Mvc.JsonProblemDetails.Mappers.Description;
 using Teronis.Mvc.JsonProblemDetails.Mappers;
 using Teronis.Mvc.JsonProblemDetails.Reflection;
 
@@ -16,6 +16,19 @@ namespace Teronis.Mvc.JsonProblemDetails
         public ProblemDetailsMapperProvider(IServiceProvider applicationServiceProvider) =>
             this.applicationServiceProvider = applicationServiceProvider ?? throw new ArgumentNullException(nameof(applicationServiceProvider));
 
+        /// <summary>
+        /// Tries to create a mapper.
+        /// </summary>
+        /// <param name="descriptor">A mapper descriptor.</param>
+        /// <param name="mapperConstructor">One mapper constructor from <paramref name="descriptor"/>.</param>
+        /// <param name="problemDetailsServiceProvider">
+        /// A custom built service provider that can resolve the following 
+        /// services: <see cref="IMapperContext"/> and one of the following:
+        /// <see cref="ActionExecutedContext"/>, <see cref="ExceptionContext"/>
+        /// or <see cref="HttpContext"/>.
+        /// </param>
+        /// <param name="mapper">The created mapper.</param>
+        /// <returns><see cref="true"/> if mapper could be created otherwise <see cref="false"/>.</returns>
         public bool TryCreateMapper(ProblemDetailsMapperDescriptor descriptor, MapperConstructorEvaluation mapperConstructor, IServiceProvider problemDetailsServiceProvider,
             [MaybeNullWhen(false)] out IProblemDetailsMapper mapper)
         {

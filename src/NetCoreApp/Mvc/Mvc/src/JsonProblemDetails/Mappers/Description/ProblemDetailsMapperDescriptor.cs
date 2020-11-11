@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using Teronis.Mvc.JsonProblemDetails.Mappers;
 using Teronis.Mvc.JsonProblemDetails.Reflection;
 
-namespace Teronis.Mvc.JsonProblemDetails.Descriptor
+namespace Teronis.Mvc.JsonProblemDetails.Mappers.Description
 {
     public class ProblemDetailsMapperDescriptor
     {

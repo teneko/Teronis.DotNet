@@ -1,4 +1,4 @@
-﻿using Teronis.Mvc.JsonProblemDetails.Descriptor;
+﻿using Teronis.Mvc.JsonProblemDetails.Mappers.Description;
 using Teronis.Mvc.JsonProblemDetails.Mappers;
 
 namespace Teronis.Mvc.JsonProblemDetails

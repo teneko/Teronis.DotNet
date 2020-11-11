@@ -6,10 +6,9 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Teronis.Mvc.JsonProblemDetails.Mappers;
 using Teronis.Mvc.JsonProblemDetails.Reflection;
 
-namespace Teronis.Mvc.JsonProblemDetails.Descriptor
+namespace Teronis.Mvc.JsonProblemDetails.Mappers.Description
 {
     public static class ProblemDetailsMapperDescriptorUtils
     {

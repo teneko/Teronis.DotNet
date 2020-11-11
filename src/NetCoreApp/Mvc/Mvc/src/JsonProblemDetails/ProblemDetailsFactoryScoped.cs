@@ -7,9 +7,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Teronis.Extensions;
+using Teronis.Mvc.JsonProblemDetails.Mappers;
 
 namespace Teronis.Mvc.JsonProblemDetails
 {
+    /// <summary>
+    /// Wraps the original <see cref="ProblemDetailsFactory"/> and
+    /// extends it.
+    /// It is now <see cref="HttpContext"/> dependent on creation.
+    /// Accessible through <see cref="IMapperContext.ProblemDetailsFactory"/>.
+    /// </summary>
     public class ProblemDetailsFactoryScoped
     {
         private readonly ProblemDetailsFactory problemDetailsFactory;

@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
-using Teronis.Mvc.JsonProblemDetails.Descriptor;
+using Teronis.Mvc.JsonProblemDetails.Mappers.Description;
 using Teronis.Mvc.JsonProblemDetails.Filters;
 using Teronis.Mvc.JsonProblemDetails.Mappers;
-using Teronis.Mvc.JsonProblemDetails.ObjectResolvers;
+using Teronis.Mvc.JsonProblemDetails.MappableObjectResolvers;
 
 namespace Teronis.Mvc.JsonProblemDetails
 {
@@ -27,7 +27,7 @@ namespace Teronis.Mvc.JsonProblemDetails
         /// Collection of <see cref="IActionResult"/>s object resolver which enables you to find
         /// mappable objects.
         /// </summary>
-        public List<IMappableObjectResolver> ActionResultObjectResolvers { get; }
+        public List<IMappableObjectResolver> MappableObjectResolvers { get; }
 
         public ProblemDetailsOptions()
         {
@@ -35,7 +35,7 @@ namespace Teronis.Mvc.JsonProblemDetails
             var filterOrder = int.MaxValue - 10;
             ActionResultFilterOrder = filterOrder;
             ExceptionFilterOrder = filterOrder;
-            ActionResultObjectResolvers = new List<IMappableObjectResolver>();
+            MappableObjectResolvers = new List<IMappableObjectResolver>();
         }
 
         public class ProblemDetailsMapperDescriptorCollection : IReadOnlyCollection<ProblemDetailsMapperDescriptor>

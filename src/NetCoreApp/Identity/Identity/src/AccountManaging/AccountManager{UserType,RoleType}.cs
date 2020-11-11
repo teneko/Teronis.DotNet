@@ -69,7 +69,7 @@ namespace Teronis.Identity.AccountManaging
 
             if (!result.Succeeded) {
                 var insensitiveErrorMessage = $"The role '{roleName}' could not be created.";
-                var aggregatedError = result.ToKeyAggregatedException(insensitiveErrorMessage);
+                var aggregatedError = result.ToKeyAggregateException(insensitiveErrorMessage);
                 logger.LogCritical(aggregatedError, insensitiveErrorMessage);
                 throw aggregatedError;
             }
@@ -103,7 +103,7 @@ namespace Teronis.Identity.AccountManaging
                     var userResult = await userManager.CreateAsync(userEntity, password);
 
                     if (!userResult.Succeeded) {
-                        var aggregatedError = userResult.ToKeyAggregatedException(insensitiveErrorMessage);
+                        var aggregatedError = userResult.ToKeyAggregateException(insensitiveErrorMessage);
                         throw aggregatedError;
                     }
                 } catch (Exception error) {
@@ -129,7 +129,7 @@ namespace Teronis.Identity.AccountManaging
                             var result = await userManager.AddToRoleAsync(loadedUser, roleName);
 
                             if (!result.Succeeded) {
-                                var aggregatedError = result.ToKeyAggregatedException(roleAssignmentErrorMessage);
+                                var aggregatedError = result.ToKeyAggregateException(roleAssignmentErrorMessage);
                                 throw aggregatedError;
                             }
                         }
@@ -156,7 +156,7 @@ namespace Teronis.Identity.AccountManaging
                 var result = await userManager.UpdateSecurityStampAsync(userEntity);
 
                 if (!result.Succeeded) {
-                    throw result.ToKeyAggregatedException("Invalidating the security stamp failed.");
+                    throw result.ToKeyAggregateException("Invalidating the security stamp failed.");
                 }
             } catch (Exception error) {
                 var insensitiveErrorMessage = "Invalidating the security stamp failed.";

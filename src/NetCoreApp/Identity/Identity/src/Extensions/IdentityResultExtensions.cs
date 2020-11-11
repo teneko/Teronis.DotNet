@@ -19,7 +19,7 @@ namespace Teronis.Identity.Extensions
             return identityResult.Errors;
         }
 
-        public static AggregateException ToAggregatedException(this IdentityResult identityResult, string? errorMessage = null)
+        public static AggregateException ToAggregateException(this IdentityResult identityResult, string? errorMessage = null)
         {
             var identityErrors = getIdentityResultErrorsOrThrow(identityResult);
 
@@ -27,7 +27,7 @@ namespace Teronis.Identity.Extensions
                                                         select new Exception($"{error.Description} ({error.Code})"));
         }
 
-        public static KeyedAggregateException ToKeyAggregatedException(this IdentityResult identityResult, string? errorMessage = null)
+        public static KeyedAggregateException ToKeyAggregateException(this IdentityResult identityResult, string? errorMessage = null)
         {
             var identityErrors = getIdentityResultErrorsOrThrow(identityResult);
 

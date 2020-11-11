@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 
-namespace Teronis.Mvc.JsonProblemDetails.Descriptor
+namespace Teronis.Mvc.JsonProblemDetails.Mappers.Description
 {
     public static class ProblemDetailsMapperDescriptorOptionsExtensions
     {

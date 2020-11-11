@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Teronis.Identity.AccountManaging.Extensions;
 using Teronis.Identity.Entities;
-using Teronis.Identity.Extensions;
 using ComponentDataValidationContext = System.ComponentModel.DataAnnotations.ValidationContext;
 
 namespace Teronis.Identity.AccountManaging
@@ -17,15 +17,13 @@ namespace Teronis.Identity.AccountManaging
         where UserType : class, IAccountUserEntity
         where RoleType : class, IAccountRoleEntity
     {
-        private readonly ErrorDetailsProvider errorDetailsProvider;
         private readonly DbContextType dbContext;
         private readonly UserManager<UserType> userManager;
         private readonly RoleManager<RoleType> roleManager;
         private readonly ILogger<AccountManager<DbContextType, UserType, RoleType>>? logger;
 
-        public AccountManager(IOptions<AccountManagerOptions> accountManagerOptions, DbContextType dbContext, UserManager<UserType> userManager, RoleManager<RoleType> roleManager, ILogger<AccountManager<DbContextType, UserType, RoleType>>? logger = null)
+        public AccountManager(IOptions<AccountManagerOptions> _, DbContextType dbContext, UserManager<UserType> userManager, RoleManager<RoleType> roleManager, ILogger<AccountManager<DbContextType, UserType, RoleType>>? logger = null)
         {
-            errorDetailsProvider = new ErrorDetailsProvider(() => accountManagerOptions.Value.IncludeErrorDetails, logger);
             // We ensure, that this instance is not tracking user or role. But it does not
             // prevent that the user manager and the role manager are tracking them. So we
             // have to try to get first the local tracked entity before we get an untracked

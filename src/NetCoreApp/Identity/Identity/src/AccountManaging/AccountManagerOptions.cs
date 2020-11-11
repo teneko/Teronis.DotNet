@@ -2,6 +2,6 @@
 {
     public class AccountManagerOptions
     {
-        public bool IncludeErrorDetails { get; set; }
+        //public bool IncludeErrorDetails { get; set; }
     }
 }

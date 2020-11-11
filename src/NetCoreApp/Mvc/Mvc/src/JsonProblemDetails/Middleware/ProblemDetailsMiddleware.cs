@@ -37,7 +37,7 @@ namespace Teronis.Mvc.JsonProblemDetails.Middleware
                 return;
             }
 
-            var errorMessage = "A map result has been created but couldn't be written to response because it was already started.";
+            var errorMessage = "The response has been already started.";
 
             if (error is null) {
                 logger.LogError(errorMessage, errorMessage);
@@ -77,12 +77,11 @@ namespace Teronis.Mvc.JsonProblemDetails.Middleware
             if (problemDetailsResponseProvider.TryCreateResult(httpContext, mappableObject, out var result)
                 || tryGetFaultyConditionalResult(middlewareContext, out result)) {
                 if (httpContext.Response.HasStarted) {
-                    // Here we now that we could output our custom result but cannot.
                     return null;
                 }
 
                 await resultExecutor.ExecuteAsync(lazyActionContext.Value, result);
-                middlewareContext.Handled = true;
+                middlewareContext.SetHandled(result);
                 return true;
             }
 
@@ -105,14 +104,14 @@ namespace Teronis.Mvc.JsonProblemDetails.Middleware
 
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-            this.problemDetailsResponseProvider = problemDetailsResponseProvider 
+            this.problemDetailsResponseProvider = problemDetailsResponseProvider
                 ?? throw new ArgumentNullException(nameof(problemDetailsResponseProvider));
         }
 
         protected virtual Task StartResponseAsync(HttpContext context) =>
             Task.CompletedTask;
 
-        public async Task Invoke(HttpContext httpContext, ProblemDetailsMiddlewareContext middlewareContext, 
+        public async Task Invoke(HttpContext httpContext, ProblemDetailsMiddlewareContext middlewareContext,
             IActionResultExecutor<ProblemDetailsResult> resultExecutor)
         {
             var response = httpContext.Response;
@@ -123,21 +122,24 @@ namespace Teronis.Mvc.JsonProblemDetails.Middleware
                 await nextRequestDelegate(httpContext);
                 object? mappableObject = middlewareContext.MappableObject;
 
-                var result = await tryStartResponse(httpContext, mappableObject, middlewareContext, problemDetailsResponseProvider, resultExecutor, logger);
-
-                if (result == null) {
+                if (response.HasStarted && !(mappableObject is null)) {
                     logResponseAlreadyStarted(logger, null);
-                    return;
-                } else if (!result.Value) {
+                } else if (response.HasStarted) {
                     return;
                 }
+
+                var responseHasStarted = response.HasStarted;
+                var isMappableObjectNull = mappableObject is null;
+
+                // The result does not matter us.
+                await tryStartResponse(httpContext, mappableObject, middlewareContext, problemDetailsResponseProvider, resultExecutor, logger);
             } catch (Exception error) {
                 var result = await tryStartResponse(httpContext, error, middlewareContext, problemDetailsResponseProvider, resultExecutor, logger);
 
                 if (result == null) {
                     logResponseAlreadyStarted(logger, error);
-                    return;
                 } else if (!result.Value) {
+                    // If the exception is not being able to be mapped we rethrow.
                     throw;
                 }
             }

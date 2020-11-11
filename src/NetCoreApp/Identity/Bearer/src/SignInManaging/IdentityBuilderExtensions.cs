@@ -6,9 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Teronis.Extensions;
 using Teronis.Identity.Bearer.SignInManaging;
-using Teronis.Identity.Bearer.Stores;
 using Teronis.Identity.Bearer;
 using Teronis.Identity.Entities;
+using Teronis.Identity.Bearer.Stores;
 
 namespace Teronis.Identity
 {

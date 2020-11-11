@@ -9,14 +9,18 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Teronis.Identity.Bearer.Authentication;
-using Teronis.Identity.Bearer.Stores;
-using Teronis.Identity.Controllers;
 using Teronis.Identity.Entities;
 using Teronis.AspNetCore.Authorization.Extensions;
 using Teronis.Mvc.ApplicationModels;
 using Teronis.Mvc.Case;
 using Teronis.Mvc.JsonProblemDetails;
 using Microsoft.AspNetCore.Mvc;
+using NSwag.Generation.Processors.Security;
+using NSwag;
+using Teronis.Identity.Bearer.NSwag;
+using Teronis.Identity.AccountManaging.Controllers;
+using Teronis.Identity.Bearer.SignInManaging.Controllers;
+using Teronis.Identity.Bearer.Stores;
 
 namespace Teronis.Identity.Bearer
 {
@@ -40,9 +44,7 @@ namespace Teronis.Identity.Bearer
             services
                 .AddControllers()
                 .AddAccountControllers()
-                .AddBearerSignInControllers(conf => {
-                    conf.AddRouteTemplateConvention(CaseType.TrainCase);
-                });
+                .AddBearerSignInControllers();
 
             services.CreateJsonProblemDetailsBuilder()
                 .AddJsonProblemDetails(options => options.AddDefaultMappers())
@@ -86,6 +88,36 @@ namespace Teronis.Identity.Bearer
                     AccountControllerDefaults.CanCreateRolePolicy,
                     AccountControllerDefaults.CanCreateUserPolicy);
             });
+
+            services.AddOpenApiDocument(document => {
+                document.DocumentName = "v1";
+                document.Version = "v1";
+                //document.ApiGroupNames = new[] { "", "1.0" };
+                document.Title = "A bearer token project example.";
+
+                document.OperationProcessors.Add(new OperationSecurityScopeProcessor("Basic"));
+
+                document.AddSecurity("Basic", new OpenApiSecurityScheme() {
+                    Description = "Basic",
+                    Name = "Authorization",
+                    In = OpenApiSecurityApiKeyLocation.Header,
+                    Type = OpenApiSecuritySchemeType.Http,
+                    Scheme = "basic"
+                });
+
+                document.OperationProcessors.Add(new OperationSecurityScopeProcessor("Bearer"));
+
+                document.AddSecurity("Bearer", new OpenApiSecurityScheme() {
+                    Description = "Bearer",
+                    Name = "Authorization",
+                    In = OpenApiSecurityApiKeyLocation.Header,
+                    Type = OpenApiSecuritySchemeType.Http,
+                    Scheme = "bearer"
+                });
+
+                //document.OperationProcessors.Add(new OpenApiExamplesAppender());
+                document.OperationProcessors.Add(new FlattenOperationsProcessor());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -104,6 +136,9 @@ namespace Teronis.Identity.Bearer
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
 
             app.UseRouting();
 

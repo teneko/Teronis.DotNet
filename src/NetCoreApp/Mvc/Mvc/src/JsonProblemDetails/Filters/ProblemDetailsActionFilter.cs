@@ -29,13 +29,13 @@ namespace Teronis.Mvc.JsonProblemDetails.Filters
 
         public void OnActionExecuted(ActionExecutedContext actionExecutedContext)
         {
-            if (problemDetailsMiddlewareContext.CanSkipFilter()) {
+            if (problemDetailsMiddlewareContext.IsFilterSkippable()) {
                 return;
             }
 
             if (problemDetailsResponseProvider.TryCreateResult(actionExecutedContext, out var result)) {
                 actionExecutedContext.Result = result;
-                problemDetailsMiddlewareContext.Handled = true;
+                problemDetailsMiddlewareContext.SetHandled(result);
             }
         }
     }

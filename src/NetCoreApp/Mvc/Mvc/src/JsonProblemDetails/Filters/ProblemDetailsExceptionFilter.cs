@@ -23,14 +23,14 @@ namespace Teronis.Mvc.JsonProblemDetails.Filters
 
         public void OnException(ExceptionContext exceptionContext)
         {
-            if (problemDetailsMiddlewareContext.CanSkipFilter()) {
+            if (problemDetailsMiddlewareContext.IsFilterSkippable()) {
                 return;
             }
 
             if (problemDetailsResponseProvider.TryCreateResult(exceptionContext, out var result)) {
                 exceptionContext.Result = result;
                 exceptionContext.ExceptionHandled = true;
-                problemDetailsMiddlewareContext.Handled = true;
+                problemDetailsMiddlewareContext.SetHandled(result);
             }
         }
     }

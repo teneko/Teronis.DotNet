@@ -132,8 +132,11 @@ namespace Teronis.Mvc.JsonProblemDetails
             var exception = exceptionContext.Exception;
             var serviceDescriptors = new[] { new ServiceDescriptor(typeof(ExceptionContext), exceptionContext) };
             var httpContext = exceptionContext.HttpContext;
+            // We expect an exception without any http response manipualtion done so far.
+            var comparableStatusCode = default(int?);
 
-            if (tryCreateResult(MapperConstructorArea.ExceptionFilter, httpContext, serviceDescriptors, exception, out var innerResult)) {
+            if (tryCreateResult(MapperConstructorArea.ExceptionFilter, httpContext, serviceDescriptors, exception, out var innerResult,
+                comparableStatusCode: comparableStatusCode)) {
                 result = innerResult;
                 return true;
             }
@@ -145,8 +148,12 @@ namespace Teronis.Mvc.JsonProblemDetails
         public bool TryCreateResult(HttpContext httpContext, object? mappableObject, [MaybeNullWhen(false)] out ProblemDetailsResult result)
         {
             var serviceDescriptors = new[] { new ServiceDescriptor(typeof(HttpContext), httpContext) };
+            // Http response can have a status code set by any middleware, filter or action 
+            // executor without starting the response actually.
+            var comparableStatusCode = httpContext.Response.StatusCode;
 
-            if (tryCreateResult(MapperConstructorArea.Middleware, httpContext, serviceDescriptors, mappableObject, out var innerResult)) {
+            if (tryCreateResult(MapperConstructorArea.Middleware, httpContext, serviceDescriptors, mappableObject, out var innerResult,
+                comparableStatusCode: comparableStatusCode)) {
                 result = innerResult;
                 return true;
             }

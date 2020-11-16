@@ -2,7 +2,7 @@
   "profiles": {
     "Teronis.DotNet.Build": {
       "commandName": "Project",
-      "commandLineArgs": "azure --dry-run"
+      "commandLineArgs": "pack"
     }
   }
 }

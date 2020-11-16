@@ -27,8 +27,10 @@ namespace Teronis.DotNet.Build
                 process.WaitForExit(1000);
 
                 var output = process.StandardOutput.ReadToEnd();
+
                 var sdkPaths = Regex.Matches(output, "([0-9]+.[0-9]+.[0-9]+(-[a-z]+.[0-9]+.[0-9]+.[0-9]+)?) \\[(.*)\\]")
                     .OfType<Match>()
+                    .Where(m => m.Groups[1].Value.StartsWith("3.")) // The runtime you actually use for Teronis.Build.
                     .Select(m => Path.Combine(m.Groups[3].Value, m.Groups[1].Value, "MSBuild.dll"));
 
                 var sdkPath = sdkPaths.Last();

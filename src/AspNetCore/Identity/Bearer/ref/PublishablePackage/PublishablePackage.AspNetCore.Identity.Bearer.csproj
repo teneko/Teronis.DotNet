@@ -1,0 +1,16 @@
+<!--
+PublishablePackage.NetCoreApp.Identity.Bearer.csproj
+
+This project is a synthetic project. It creates a the filesystem
+publishment for Teronis.NetCoreApp.Identity.Bearer.
+
+We want to have access to .props with nuget package designed
+properties otherwise we would have to separate path logic.
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard1.0</TargetFramework>
+    <PackSourceAs>DependencyPublish</PackSourceAs>
+    <PackageSourceReference>..\..\src\Teronis.AspNetCore.Identity.Bearer.csproj</PackageSourceReference>
+  </PropertyGroup>
+</Project>

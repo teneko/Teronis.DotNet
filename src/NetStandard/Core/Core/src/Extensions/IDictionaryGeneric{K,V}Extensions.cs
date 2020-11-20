@@ -41,6 +41,14 @@ namespace Teronis.Extensions
             where K : notnull =>
             dictionary.TryGetValue(key, out V value) ? value : value;
 
+        /// <summary>
+        /// Does not throw an exception when key does not exist, instead the default nullable value will be returned.
+        /// </summary>
+        public static V? GetNullableStructureValue<K, V>(this IDictionary<K, V> dictionary, K key)
+            where K : notnull
+            where V : struct =>
+            dictionary.TryGetValue(key, out V value) ? (V?)value : default(V?);
+
         public static V AddAndReturn<K, V>(this IDictionary<K, V> source, K key, V value)
             where K : notnull
         {

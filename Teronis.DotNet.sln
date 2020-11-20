@@ -74,8 +74,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.EntityF
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.NetStandard.Collections", "src\NetStandard\Collections\Collections\test\Collections\Test.NetStandard.Collections.csproj", "{14AA09E4-71E4-4AF7-A14D-5B2443CD04F5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.AspNetCore.Authorization.Extensions", "src\NetStandard\AspNetCore\Authorization\Extensions\src\Teronis.NetStandard.AspNetCore.Authorization.Extensions.csproj", "{104998CE-A553-4446-9F51-15A0B6360B5B}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.ModuleInitializer.AssemblyLoader.MSBuild", "src\ModuleInitializer\AssemblyLoader\0.MSBuild\src\Teronis.ModuleInitializer.AssemblyLoader.MSBuild.csproj", "{03D82C50-BD40-4BEB-A027-7C2795B5E109}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.ModuleInitializer.AssemblyLoader.Executable", "src\ModuleInitializer\AssemblyLoader\0.Executable\src\Teronis.ModuleInitializer.AssemblyLoader.Executable.csproj", "{96F69F10-00FB-400E-AF6D-D0F48AD56724}"
@@ -100,7 +98,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublishablePackage.AspNetCo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Identity.Bearer.Example", "src\AspNetCore\Identity\Bearer\example\Teronis.AspNetCore.Identity.Bearer.Example.csproj", "{0D97861F-2F56-415E-843B-C6207D0E3C9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Teronis.AspNetCore.Core", "src\AspNetCore\Core\Core\src\Teronis.AspNetCore.Core\Teronis.AspNetCore.Core.csproj", "{D523E587-B282-4DD3-A40F-0D3219389EBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Core", "src\AspNetCore\Core\Core\src\Teronis.AspNetCore.Core\Teronis.AspNetCore.Core.csproj", "{D523E587-B282-4DD3-A40F-0D3219389EBD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Authorization.Extensions", "src\AspNetCore\Authorization\Extensions\src\Teronis.AspNetCore.Authorization.Extensions.csproj", "{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -544,18 +544,6 @@ Global
 		{14AA09E4-71E4-4AF7-A14D-5B2443CD04F5}.Release|x64.Build.0 = Release|x64
 		{14AA09E4-71E4-4AF7-A14D-5B2443CD04F5}.Release|x86.ActiveCfg = Release|x86
 		{14AA09E4-71E4-4AF7-A14D-5B2443CD04F5}.Release|x86.Build.0 = Release|x86
-		{104998CE-A553-4446-9F51-15A0B6360B5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{104998CE-A553-4446-9F51-15A0B6360B5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{104998CE-A553-4446-9F51-15A0B6360B5B}.Debug|x64.ActiveCfg = Debug|x64
-		{104998CE-A553-4446-9F51-15A0B6360B5B}.Debug|x64.Build.0 = Debug|x64
-		{104998CE-A553-4446-9F51-15A0B6360B5B}.Debug|x86.ActiveCfg = Debug|x86
-		{104998CE-A553-4446-9F51-15A0B6360B5B}.Debug|x86.Build.0 = Debug|x86
-		{104998CE-A553-4446-9F51-15A0B6360B5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{104998CE-A553-4446-9F51-15A0B6360B5B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{104998CE-A553-4446-9F51-15A0B6360B5B}.Release|x64.ActiveCfg = Release|x64
-		{104998CE-A553-4446-9F51-15A0B6360B5B}.Release|x64.Build.0 = Release|x64
-		{104998CE-A553-4446-9F51-15A0B6360B5B}.Release|x86.ActiveCfg = Release|x86
-		{104998CE-A553-4446-9F51-15A0B6360B5B}.Release|x86.Build.0 = Release|x86
 		{03D82C50-BD40-4BEB-A027-7C2795B5E109}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{03D82C50-BD40-4BEB-A027-7C2795B5E109}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03D82C50-BD40-4BEB-A027-7C2795B5E109}.Debug|x64.ActiveCfg = Debug|x64
@@ -712,6 +700,18 @@ Global
 		{D523E587-B282-4DD3-A40F-0D3219389EBD}.Release|x64.Build.0 = Release|x64
 		{D523E587-B282-4DD3-A40F-0D3219389EBD}.Release|x86.ActiveCfg = Release|x86
 		{D523E587-B282-4DD3-A40F-0D3219389EBD}.Release|x86.Build.0 = Release|x86
+		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Debug|x64.ActiveCfg = Debug|x64
+		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Debug|x64.Build.0 = Debug|x64
+		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Debug|x86.ActiveCfg = Debug|x86
+		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Debug|x86.Build.0 = Debug|x86
+		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Release|x64.ActiveCfg = Release|x64
+		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Release|x64.Build.0 = Release|x64
+		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Release|x86.ActiveCfg = Release|x86
+		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

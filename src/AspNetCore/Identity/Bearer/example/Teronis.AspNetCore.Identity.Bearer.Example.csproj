@@ -15,7 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\NetStandard\AspNetCore\Authorization\Extensions\src\Teronis.NetStandard.AspNetCore.Authorization.Extensions.csproj" />
+    <ProjectReference Include="..\..\..\..\NetStandard\AspNetCore\Authorization\Extensions\src\Teronis.AspNetCore.Authorization.Extensions.csproj" />
+    <ProjectReference Include="..\..\..\Authorization\Extensions\src\Teronis.AspNetCore.Authorization.Extensions.csproj" />
     <ProjectReference Include="..\..\Identity\src\Teronis.AspNetCore.Identity.csproj" />
     <ProjectReference Include="..\src\Teronis.AspNetCore.Identity.Bearer.csproj" />
     <ProjectReference Include="..\ref\PublishablePackage\PublishablePackage.AspNetCore.Identity.Bearer.csproj" />

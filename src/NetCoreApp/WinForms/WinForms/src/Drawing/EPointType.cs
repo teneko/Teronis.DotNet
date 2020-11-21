@@ -1,4 +1,5 @@
 ﻿
+
 namespace Teronis.Drawing
 {
     public enum EPointType

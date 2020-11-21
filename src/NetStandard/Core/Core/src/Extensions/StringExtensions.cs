@@ -6,8 +6,6 @@ namespace Teronis.Extensions
 {
     public static class StringExtensions
     {
-        public static void ToConsole(this string str) => Console.WriteLine(str);
-
         public static bool Contains(this string source, string search, StringComparison comparison)
             => source.IndexOf(search, comparison) >= 0;
 

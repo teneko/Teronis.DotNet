@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Teronis.Extensions.Collections;
+using Teronis.Extensions;
 
 namespace Teronis.Collections.Generic
 {

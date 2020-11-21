@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <RootNamespace>Teronis.Localization</RootNamespace>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <PropertyGroup>

@@ -1,4 +1,6 @@
-﻿
+﻿#if NET5_0
+using TaskCompletionSource = System.Threading.Tasks.TaskCompletionSource;
+#endif
 
 namespace Teronis.Threading.Tasks
 {

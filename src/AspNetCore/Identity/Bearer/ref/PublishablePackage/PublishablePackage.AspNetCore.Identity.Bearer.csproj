@@ -1,7 +1,7 @@
 <!--
 PublishablePackage.NetCoreApp.Identity.Bearer.csproj
 
-This project is a synthetic project. It creates a the filesystem
+This project is a synthetic project. It creates the filesystem
 publishment for Teronis.NetCoreApp.Identity.Bearer.
 
 We want to have access to .props with nuget package designed
@@ -12,5 +12,6 @@ properties otherwise we would have to separate path logic.
     <TargetFramework>netstandard1.0</TargetFramework>
     <PackSourceAs>DependencyPublish</PackSourceAs>
     <PackageSourceReference>..\..\src\Teronis.AspNetCore.Identity.Bearer.csproj</PackageSourceReference>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 </Project>

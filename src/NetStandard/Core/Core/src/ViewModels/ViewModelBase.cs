@@ -12,9 +12,7 @@ namespace Teronis.ViewModels
 {
     public abstract class ViewModelBase : INotifyPropertyChanged, IHaveParents, IHaveKnownParents, IWorking, INotifyDataErrorInfo
     {
-#pragma warning disable 0067
         public event PropertyChangedEventHandler? PropertyChanged;
-#pragma warning restore 0067
         public event WantParentsEventHandler? WantParents;
 
         public DynamicParentResolver DynamicParentResolver { get; private set; }

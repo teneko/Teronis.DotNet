@@ -16,33 +16,33 @@ namespace Teronis.DotNet.Build
 {
     class Program
     {
-        private static void setMsBuildExePath()
-        {
-            try {
-                var startInfo = new ProcessStartInfo("dotnet", "--list-sdks") {
-                    RedirectStandardOutput = true
-                };
+        //private static void setMsBuildExePath()
+        //{
+        //    try {
+        //        var startInfo = new ProcessStartInfo("dotnet", "--list-sdks") {
+        //            RedirectStandardOutput = true
+        //        };
 
-                var process = Process.Start(startInfo);
-                process.WaitForExit(1000);
+        //        var process = Process.Start(startInfo);
+        //        process.WaitForExit(1000);
 
-                var output = process.StandardOutput.ReadToEnd();
+        //        var output = process.StandardOutput.ReadToEnd();
 
-                var sdkPaths = Regex.Matches(output, "([0-9]+.[0-9]+.[0-9]+(-[a-z]+.[0-9]+.[0-9]+.[0-9]+)?) \\[(.*)\\]")
-                    .OfType<Match>()
-                    .Where(m => m.Groups[1].Value.StartsWith("3.")) // The runtime you actually use for Teronis.Build.
-                    .Select(m => Path.Combine(m.Groups[3].Value, m.Groups[1].Value, "MSBuild.dll"));
+        //        var sdkPaths = Regex.Matches(output, "([0-9]+.[0-9]+.[0-9]+(-[a-z]+.[0-9]+.[0-9]+.[0-9]+)?) \\[(.*)\\]")
+        //            .OfType<Match>()
+        //            //.Where(m => m.Groups[1].Value.StartsWith("3.")) // The runtime you actually use for Teronis.Build.
+        //            .Select(m => Path.Combine(m.Groups[3].Value, m.Groups[1].Value, "MSBuild.dll"));
 
-                var sdkPath = sdkPaths.Last();
-                Environment.SetEnvironmentVariable("MSBUILD_EXE_PATH", sdkPath);
-            } catch (Exception) {
-                ;
-            }
-        }
+        //        var sdkPath = sdkPaths.Last();
+        //        Environment.SetEnvironmentVariable("MSBUILD_EXE_PATH", sdkPath);
+        //    } catch (Exception) {
+        //        ;
+        //    }
+        //}
 
         static async Task<int> Main(string[] args)
         {
-            setMsBuildExePath();
+            //setMsBuildExePath();
 
             var options = Parser.Default.ParseArguments<RestoreCommandOptions, BuildCommandOptions, PackCommandOptions, TestCommandOptions, AzureCommandOptions>(args)
                 .MapResult<ICommandOptions, ICommandOptions>((options) => options, (errors) => {
@@ -102,15 +102,15 @@ namespace Teronis.DotNet.Build
                 for (var index = validProjectsLength - 1; index >= 0; index--) {
                     var projectFile = validProjects[index].Path;
 
-                    using var collection = new ProjectCollection();
-                    var project = collection.LoadProject(projectFile);
+                    //using var collection = new ProjectCollection();
+                    //var project = collection.LoadProject(projectFile);
 
-                    var lastIsPackableElement = project
-                        .GetProperty("IsPackable");
+                    //var lastIsPackableElement = project
+                    //    .GetProperty("IsPackable");
 
-                    if (lastIsPackableElement != null && lastIsPackableElement.EvaluatedValue == "false") {
-                        validProjects.RemoveAt(index);
-                    }
+                    //if (lastIsPackableElement != null && lastIsPackableElement.EvaluatedValue == "false") {
+                    //    validProjects.RemoveAt(index);
+                    //}
                 }
 
                 return validProjects;

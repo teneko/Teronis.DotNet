@@ -8,7 +8,16 @@ namespace Teronis.ViewModels.UpdatableContent
     public abstract class ViewModelBase<ViewModelType, ContentType> : ViewModelBase, IApplyContentUpdate<ContentType>
         where ViewModelType : ViewModelBase<ViewModelType, ContentType>
     {
-        protected ContentUpdater Updater { get; set; }
+        protected ContentUpdater Updater {
+            get => updater;
+
+            set {
+                updater = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private ContentUpdater updater = null!;
 
         public ViewModelBase()
             => Updater = new ContentUpdater(WorkStatus, (ViewModelType)this);

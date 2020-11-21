@@ -10,7 +10,7 @@ namespace Teronis.Mvc.JsonProblemDetails.Reflection
         public ConstructorInfo SourceInfo { get; }
         public MapperConstructorArea MapperConstructorArea { get; }
         public IReadOnlyCollection<ParameterEvaluation> ParameterEvaluations { get; }
-        public ParameterEvaluation FirstParameterEvaluation => ParameterEvaluations.FirstOrDefault();
+        public ParameterEvaluation? FirstParameterEvaluation => ParameterEvaluations.FirstOrDefault();
 
         public MapperConstructorEvaluation(MapperConstructorArea area, ConstructorInfo sourceInfo,
             IReadOnlyCollection<ParameterEvaluation> parameterInfos)

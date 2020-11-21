@@ -44,7 +44,7 @@ namespace Teronis.Drawing
                 Area.VerifyValues(this, ref nX, ref nY, ref nWidth, ref nHeight, nRect, nEllipse, nPolygon, cancelScanIteration, ref precalculated, ref nYHeight, ref nXWidth);
             } catch (IndexOutOfRangeException) {
 #if DEBUG
-                "Wanted exception by argument 'cancelScanIteration'!".ToConsole();
+                Console.WriteLine("Wanted exception by argument 'cancelScanIteration'!");
 #endif
                 goto exit;
             }

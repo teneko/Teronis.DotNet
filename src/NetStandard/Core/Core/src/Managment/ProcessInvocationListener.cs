@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace Teronis.Managment
 {
+#if NET5_0
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+#endif
     public class ProcessInvocationListener : IDisposable
     {
         public event Action<Process>? ProcessCreated;

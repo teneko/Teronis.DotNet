@@ -11,7 +11,7 @@ in "outer" build.
     <DisableGitVersion>true</DisableGitVersion>
     <DisableGitVersionCache>true</DisableGitVersionCache>
     <DisableSdkProps>true</DisableSdkProps>
-    <!--<IsPackable>true</IsPackable>-->
+    <IsPackable>false</IsPackable>
 
     <ShadowProjectReference>..\..\src\$(AssemblyName).csproj</ShadowProjectReference>
 

@@ -3,7 +3,8 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" Condition="'$(DisableSdkProps)' != 'true'" />
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
+    <!--<TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>-->
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <RootNamespace>Teronis.Localization</RootNamespace>
     <IsPackable>false</IsPackable>
     <DisableGitVersionCache>true</DisableGitVersionCache>

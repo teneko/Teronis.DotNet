@@ -17,7 +17,7 @@ namespace Teronis.Configuration
     /// This class creates a shallow copy of a property value from a settings instance.
     /// </summary>
     /// <typeparam name="PropertyType"></typeparam>
-    public class CachedSettingsPropertyValue<PropertyType> : ICachedSettingsPropertyValue, INotifyPropertyChanged
+    public class CachedSettingsPropertyValue<PropertyType> : ICachedSettingsPropertyValue
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -26,7 +26,9 @@ namespace Teronis.Configuration
 
         private object? propertyValue {
             get => settings[PropertyName];
-            set => settings[PropertyName] = value;
+            set {
+                settings[PropertyName] = value;
+            }
         }
 
         /// <summary>

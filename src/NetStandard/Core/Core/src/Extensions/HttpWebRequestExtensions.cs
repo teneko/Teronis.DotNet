@@ -15,6 +15,7 @@ namespace Teronis.Extensions
                 nullableCancellationTokenRegistration = cancellationToken.Register(() => request.Abort(), useSynchronizationContext: false);
             } else {
                 nullableCancellationTokenRegistration = null;
+                cancellationToken = default;
             }
 
             try {
@@ -23,7 +24,7 @@ namespace Teronis.Extensions
                 if (nullableCancellationToken != null && cancellationToken.IsCancellationRequested) {
                     throw new OperationCanceledException(error.Message, error, cancellationToken);
                 } else {
-                    throw error;
+                    throw;
                 }
             } finally {
                 if (nullableCancellationTokenRegistration is CancellationTokenRegistration cancellationTokenRegistration) {

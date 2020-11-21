@@ -21,7 +21,7 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" Condition="'$(DisableSdkProps)' != 'true'" />
 
   <ItemGroup> 
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.6.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.8.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

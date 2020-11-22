@@ -7,7 +7,7 @@
     <IncludeSymbols>false</IncludeSymbols>
     <!-- To generate a package is part of the test. -->
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <IsPackable>false</IsPackable>
+    <!--<IsPackable>false</IsPackable>-->
   </PropertyGroup>
 
   <ItemGroup>

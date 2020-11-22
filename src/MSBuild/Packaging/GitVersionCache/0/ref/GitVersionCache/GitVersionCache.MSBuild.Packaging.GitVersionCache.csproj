@@ -10,7 +10,6 @@ in "outer" build.
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Teronis.MSBuild.Packaging.GitVersionCache</AssemblyName>
     <RootNamespace>Teronis.GitVersion</RootNamespace>
-    <IsPackable>false</IsPackable>
 
     <DisableGitVersion>true</DisableGitVersion>
     <DisableGitVersionCache>true</DisableGitVersionCache>

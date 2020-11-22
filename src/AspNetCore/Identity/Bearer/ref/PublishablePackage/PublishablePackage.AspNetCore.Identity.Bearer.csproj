@@ -12,6 +12,5 @@ properties otherwise we would have to separate path logic.
     <TargetFramework>netstandard1.0</TargetFramework>
     <PackSourceAs>DependencyPublish</PackSourceAs>
     <PackageSourceReference>..\..\src\Teronis.AspNetCore.Identity.Bearer.csproj</PackageSourceReference>
-    <IsPackable>false</IsPackable>
   </PropertyGroup>
 </Project>

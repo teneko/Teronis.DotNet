@@ -12,6 +12,5 @@ properties otherwise we would have to separate path logic.
     <TargetFramework>netstandard1.0</TargetFramework>
     <PackSourceAs>ExecutablePublish</PackSourceAs>
     <PackageSourceReference>..\..\src\Teronis.ModuleInitializer.AssemblyLoader.Executable.csproj</PackageSourceReference>
-    <IsPackable>false</IsPackable>
   </PropertyGroup>
 </Project>

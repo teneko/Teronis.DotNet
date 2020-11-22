@@ -10,7 +10,6 @@ in "outer" build.
     <DisableGitVersion>true</DisableGitVersion>
     <DisableGitVersionCache>true</DisableGitVersionCache>
     <DisableSdkProps>true</DisableSdkProps>
-    <IsPackable>false</IsPackable>
 
     <ShadowProjectReference>$(MSBuildThisFileDirectory)..\..\src\Teronis.NetStandard.Core.Localization.csproj</ShadowProjectReference>
 

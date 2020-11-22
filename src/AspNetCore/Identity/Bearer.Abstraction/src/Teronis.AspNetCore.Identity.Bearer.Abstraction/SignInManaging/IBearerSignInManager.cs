@@ -1,7 +1,5 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
-using Teronis.Mvc.ServiceResulting.Generic;
 
 namespace Teronis.AspNetCore.Identity.Bearer
 {

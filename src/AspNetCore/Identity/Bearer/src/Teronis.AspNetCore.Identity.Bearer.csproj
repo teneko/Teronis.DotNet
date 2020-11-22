@@ -23,9 +23,9 @@
       <AdditionalProperties>TargetFramework=$(TargetFramework)</AdditionalProperties>
     </ProjectReference>
     
-    <ProjectReference Include="..\..\..\..\NetCoreApp\Core\Core\src\Teronis.NetCoreApp.Core.csproj" />
     <ProjectReference Include="..\..\..\Mvc\Mvc\src\Teronis.AspNetCore.Mvc.csproj" />
-    <ProjectReference Include="..\..\EntityFrameworkCore\src\Teronis.AspNetCore.Identity.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="..\..\Bearer.Abstraction\src\Teronis.AspNetCore.Identity.Bearer.Abstraction\Teronis.AspNetCore.Identity.Bearer.Abstraction.csproj" />
+    <ProjectReference Include="..\..\Identity.Abstraction\src\Teronis.AspNetCore.Identity.Abstraction.csproj" />
 
   </ItemGroup>
 

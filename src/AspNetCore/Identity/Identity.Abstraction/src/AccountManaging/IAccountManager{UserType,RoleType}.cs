@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Teronis.Mvc.ServiceResulting.Generic;
 
 namespace Teronis.AspNetCore.Identity.AccountManaging
 {

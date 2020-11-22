@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -18,7 +18,7 @@
     <ProjectReference Include="..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj" />
     <ProjectReference Include="..\..\..\..\NetCoreApp\Core\Core\src\Teronis.NetCoreApp.Core.csproj" />
     <ProjectReference Include="..\..\..\Mvc\Mvc\src\Teronis.AspNetCore.Mvc.csproj" />
-    <ProjectReference Include="..\..\EntityFrameworkCore\src\Teronis.AspNetCore.Identity.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="..\..\Identity.Abstraction\src\Teronis.AspNetCore.Identity.Abstraction.csproj" />
   </ItemGroup>
 
 </Project>

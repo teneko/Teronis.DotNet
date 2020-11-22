@@ -11,6 +11,7 @@ using Microsoft.Build.Evaluation;
 using static Bullseye.Targets;
 using static Teronis.DotNet.Build.ICommandOptions;
 using System.Diagnostics;
+using System.Xml.Linq;
 
 namespace Teronis.DotNet.Build
 {
@@ -101,16 +102,16 @@ namespace Teronis.DotNet.Build
 
                 for (var index = validProjectsLength - 1; index >= 0; index--) {
                     var projectFile = validProjects[index].Path;
+                    var projectDocument = XDocument.Load(projectFile);
 
-                    //using var collection = new ProjectCollection();
-                    //var project = collection.LoadProject(projectFile);
+                    var lastIsPackableElement = projectDocument.Root
+                        .Elements("PropertyGroup")
+                        .Elements("IsPackable")
+                        .LastOrDefault();
 
-                    //var lastIsPackableElement = project
-                    //    .GetProperty("IsPackable");
-
-                    //if (lastIsPackableElement != null && lastIsPackableElement.EvaluatedValue == "false") {
-                    //    validProjects.RemoveAt(index);
-                    //}
+                    if (lastIsPackableElement != null && lastIsPackableElement.Value == "false") {
+                        validProjects.RemoveAt(index);
+                    }
                 }
 
                 return validProjects;

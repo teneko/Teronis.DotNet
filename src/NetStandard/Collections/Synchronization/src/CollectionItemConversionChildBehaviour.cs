@@ -9,15 +9,15 @@ namespace Teronis.Collections.Synchronization
     public class CollectionItemConversionChildBehaviour<OriginalItemType, OriginalContentType, ConvertedItemType>
         where ConvertedItemType : IHaveKnownParents
     {
-        public INotifyCollectionChangeConversionApplied<ConvertedItemType, OriginalItemType, OriginalContentType> CollectionChangeConversionNotifer { get; private set; }
+        public INotifyCollectionChangeConversionApplied<ConvertedItemType, OriginalItemType> CollectionChangeConversionNotifer { get; private set; }
 
-        public CollectionItemConversionChildBehaviour(INotifyCollectionChangeConversionApplied<ConvertedItemType, OriginalItemType, OriginalContentType> collectionChangeConversionNotifer)
+        public CollectionItemConversionChildBehaviour(INotifyCollectionChangeConversionApplied<ConvertedItemType, OriginalItemType> collectionChangeConversionNotifer)
         {
             CollectionChangeConversionNotifer = collectionChangeConversionNotifer;
             CollectionChangeConversionNotifer.CollectionChangeConversionApplied += ConvertedCollectionChangeNotifer_CollectionChangeConversionApplied;
         }
 
-        private void ConvertedCollectionChangeNotifer_CollectionChangeConversionApplied(object sender, CollectionChangeConversionAppliedEventArgs<ConvertedItemType, OriginalItemType, OriginalContentType> args)
+        private void ConvertedCollectionChangeNotifer_CollectionChangeConversionApplied(object sender, CollectionChangeConversionAppliedEventArgs<ConvertedItemType, OriginalItemType> args)
         {
             var convertedContentContentChange = args.ConvertedCollectionChangeBundle.ContentContentChange;
             var convertedItemItemChange = args.ConvertedCollectionChangeBundle.ItemItemChange;

@@ -2,7 +2,7 @@
 
 namespace Teronis.Collections.CollectionChanging
 {
-    public interface ICollectionChangeBundle<ItemType, ContentType>
+    public interface ICollectionChangeBundle<out ItemType, out ContentType>
     {
         ICollectionChange<ItemType, ItemType> ItemItemChange { get; }
         ICollectionChange<ItemType, ContentType> ItemContentChange { get; }

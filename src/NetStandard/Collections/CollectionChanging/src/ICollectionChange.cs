@@ -3,7 +3,7 @@ using System.Collections.Specialized;
 
 namespace Teronis.Collections.CollectionChanging
 {
-    public interface ICollectionChange<OldItemType, NewItemType>
+    public interface ICollectionChange<out OldItemType, out NewItemType>
     {
         NotifyCollectionChangedAction Action { get; }
         IReadOnlyList<OldItemType>? OldItems { get; }

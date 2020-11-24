@@ -58,8 +58,8 @@ namespace Teronis.Collections.Synchronization
 
         protected abstract ItemType CreateItem(ContentType content);
 
-        public ConversionAdapter<OriginContentType> CreateConversionAdapter<OriginContentType>()
-            => new ConversionAdapter<OriginContentType>(this);
+        public ConversionAdapter CreateConversionAdapter()
+            => new ConversionAdapter(this);
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
             => PropertyChanged?.Invoke(this, e);
@@ -336,19 +336,19 @@ namespace Teronis.Collections.Synchronization
             { }
         }
 
-        public class ConversionAdapter<OriginContentType> : INotifyCollectionChangeConversionApplied<ItemType, ContentType, OriginContentType>
+        public class ConversionAdapter : INotifyCollectionChangeConversionApplied<ItemType, ContentType>
         {
-            public event EventHandler<object, CollectionChangeConversionAppliedEventArgs<ItemType, ContentType, OriginContentType>>? CollectionChangeConversionApplied;
+            public event EventHandler<object, CollectionChangeConversionAppliedEventArgs<ItemType, ContentType>>? CollectionChangeConversionApplied;
 
             private readonly CollectionSynchronisation<ItemType, ContentType> synchronizer;
 
             internal protected ConversionAdapter(CollectionSynchronisation<ItemType, ContentType> synchronizer) =>
                 this.synchronizer = synchronizer;
 
-            protected void OnCollectionChangeConversionApplied(CollectionChangeConversionAppliedEventArgs<ItemType, ContentType, OriginContentType> args) =>
+            protected void OnCollectionChangeConversionApplied(CollectionChangeConversionAppliedEventArgs<ItemType, ContentType> args) =>
                 CollectionChangeConversionApplied?.Invoke(this, args);
 
-            private ApplyingCollectionChangeBundle createApplyingCollectionChangeConversionBundle(ICollectionChangeBundle<ContentType, OriginContentType> originBundle)
+            private ApplyingCollectionChangeBundle createApplyingCollectionChangeConversionBundle(ICollectionChangeBundle<ContentType, object> originBundle)
             {
 
                 var originContentContentChange = originBundle.ItemItemChange;
@@ -356,7 +356,7 @@ namespace Teronis.Collections.Synchronization
                 return new ApplyingCollectionChangeBundle(convertedItemContentChange, originContentContentChange);
             }
 
-            public async Task RelayCollectionChangeAsync(ICollectionChangeBundle<ContentType, OriginContentType> originBundle)
+            public async Task RelayCollectionChangeAsync(ICollectionChangeBundle<ContentType, object> originBundle)
             {
                 var convertedApplyingBundle = createApplyingCollectionChangeConversionBundle(originBundle);
                 synchronizer.ApplyCollectionChangeBundle(convertedApplyingBundle);
@@ -368,21 +368,21 @@ namespace Teronis.Collections.Synchronization
 
                 var conversionBundles = new ConversionCollectionChangeBundles(convertedAppliedBundle, originBundle);
                 var changeConversionAppliedEventSequence = new AsyncEventSequence();
-                var changeConversionAppliedArgs = CollectionChangeConversionAppliedEventArgs<ItemType, ContentType, OriginContentType>.CreateAsynchronous(conversionBundles, changeConversionAppliedEventSequence);
+                var changeConversionAppliedArgs = CollectionChangeConversionAppliedEventArgs<ItemType, ContentType>.CreateAsynchronous(conversionBundles, changeConversionAppliedEventSequence);
                 OnCollectionChangeConversionApplied(changeConversionAppliedArgs);
                 await convertedChangeAppliedEventSequence.FinishDependenciesAsync();
             }
 
-            public void RelayCollectionChange(ICollectionChangeBundle<ContentType, OriginContentType> originBundle) =>
+            public void RelayCollectionChange(ICollectionChangeBundle<ContentType, object> originBundle) =>
                 AsyncHelper.RunSynchronous(() => RelayCollectionChangeAsync(originBundle));
 
-            protected class ConversionCollectionChangeBundles : IConversionCollectionChangeBundles<ItemType, ContentType, OriginContentType>
+            protected class ConversionCollectionChangeBundles : IConversionCollectionChangeBundles<ItemType, ContentType, object>
             {
                 public ICollectionChangeBundle<ItemType, ContentType> ConvertedBundle { get; private set; }
-                public ICollectionChangeBundle<ContentType, OriginContentType> OriginBundle { get; private set; }
+                public ICollectionChangeBundle<ContentType, object> OriginBundle { get; private set; }
 
                 public ConversionCollectionChangeBundles(ICollectionChangeBundle<ItemType, ContentType> convertedBundle,
-                    ICollectionChangeBundle<ContentType, OriginContentType> originBundle)
+                    ICollectionChangeBundle<ContentType, object> originBundle)
                 {
                     ConvertedBundle = convertedBundle;
                     OriginBundle = originBundle;

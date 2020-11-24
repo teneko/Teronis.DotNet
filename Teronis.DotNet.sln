@@ -54,7 +54,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.MSBuild.Packaging.Proj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.NetStandard.Core", "src\NetStandard\Core\Core\test\Core\Test.NetStandard.Core.csproj", "{23D2F491-8FAA-4E15-9E3B-355CDAEE9693}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.DataModel.TreeColumn", "src\NetStandard\DataModel\TreeColumn\src\Teronis.NetStandard.DataModel.TreeColumn.csproj", "{BD1B9AA3-E929-4520-AE25-E5014C8E5D06}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.DataModeling.TreeColumn", "src\NetStandard\DataModeling\TreeColumn\src\Teronis.NetStandard.DataModeling.TreeColumn.csproj", "{BD1B9AA3-E929-4520-AE25-E5014C8E5D06}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections.Synchronization", "src\NetStandard\Collections\Synchronization\src\Teronis.NetStandard.Collections.Synchronization.csproj", "{E5704D8B-1C44-4C2E-BB5C-EB042D0763B9}"
 EndProject
@@ -90,7 +90,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Mvc", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Identity", "src\AspNetCore\Identity\Identity\src\Teronis.AspNetCore.Identity.csproj", "{2C568190-39A9-459A-8F4C-AFC865435F02}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Identity.Abstraction", "src\AspNetCore\Identity\Identity.Abstraction\src\Teronis.AspNetCore.Identity.Abstraction.csproj", "{817C055F-58EE-4E9F-82FE-A831342071AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Identity.Abstractions", "src\AspNetCore\Identity\Identity.Abstractions\src\Teronis.AspNetCore.Identity.Abstractions.csproj", "{817C055F-58EE-4E9F-82FE-A831342071AA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Identity.Bearer", "src\AspNetCore\Identity\Bearer\src\Teronis.AspNetCore.Identity.Bearer.csproj", "{2579F066-D395-4288-B1F3-4DED0C0A98F4}"
 EndProject
@@ -102,7 +102,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Core", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Authorization.Extensions", "src\AspNetCore\Authorization\Extensions\src\Teronis.AspNetCore.Authorization.Extensions.csproj", "{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Teronis.AspNetCore.Identity.Bearer.Abstraction", "src\AspNetCore\Identity\Bearer.Abstraction\src\Teronis.AspNetCore.Identity.Bearer.Abstraction\Teronis.AspNetCore.Identity.Bearer.Abstraction.csproj", "{258279A1-6C92-486C-B819-57F953DCD27A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Teronis.AspNetCore.Identity.Bearer.Abstractions", "src\AspNetCore\Identity\Bearer.Abstractions\src\Teronis.AspNetCore.Identity.Bearer.Abstractions.csproj", "{258279A1-6C92-486C-B819-57F953DCD27A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

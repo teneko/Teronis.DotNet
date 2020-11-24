@@ -34,4 +34,8 @@
     <ProjectReference Include="..\..\Core.Localization\src\Teronis.NetStandard.Core.Localization.csproj" PrivateAssets="all" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DataModelling\" />
+  </ItemGroup>
+
 </Project>

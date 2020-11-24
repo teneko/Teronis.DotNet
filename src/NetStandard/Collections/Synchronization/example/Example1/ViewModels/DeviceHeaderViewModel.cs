@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Teronis.Collections.Synchronization.Example1.Models;
-using Teronis.DataModel.TreeColumn;
+using Teronis.DataModeling.TreeColumn;
 using Teronis.Extensions;
 using Teronis.ObjectModel.Updates;
 

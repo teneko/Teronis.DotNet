@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collect
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Core", "..\..\..\Core\Core\src\Teronis.NetStandard.Core.csproj", "{1F8F82E5-F2FA-4B94-B73D-243C31989A72}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.DataModel.TreeColumn", "..\..\..\DataModel\TreeColumn\src\Teronis.NetStandard.DataModel.TreeColumn.csproj", "{B3F34A29-4913-4A79-BB72-D702F6AECB85}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.DataModeling.TreeColumn", "..\..\..\DataModeling\TreeColumn\src\Teronis.NetStandard.DataModeling.TreeColumn.csproj", "{B3F34A29-4913-4A79-BB72-D702F6AECB85}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections.CollectionChanging", "..\..\CollectionChanging\src\Teronis.NetStandard.Collections.CollectionChanging.csproj", "{725CA5F0-B2D2-4D8A-AF7C-A25F5A51DF6F}"
 EndProject

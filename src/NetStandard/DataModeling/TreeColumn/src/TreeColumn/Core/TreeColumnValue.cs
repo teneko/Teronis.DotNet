@@ -1,6 +1,6 @@
 ﻿
 
-namespace Teronis.DataModel.TreeColumn.Core
+namespace Teronis.DataModeling.TreeColumn.Core
 {
     public class TreeColumnValue<TreeColumnDefinitionKeyType> : ITreeColumnValue<TreeColumnDefinitionKeyType>
         where TreeColumnDefinitionKeyType : ITreeColumnKey

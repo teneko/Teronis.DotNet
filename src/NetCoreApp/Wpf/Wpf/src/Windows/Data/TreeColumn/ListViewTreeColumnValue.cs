@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using Teronis.DataModel.TreeColumn.Core;
+using Teronis.DataModeling.TreeColumn.Core;
 
 namespace Teronis.Windows.Data.TreeColumn
 {

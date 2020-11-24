@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Teronis.DataModel.TreeColumn
+namespace Teronis.DataModeling.TreeColumn
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class HasTreeColumnsAttribute : Attribute { }

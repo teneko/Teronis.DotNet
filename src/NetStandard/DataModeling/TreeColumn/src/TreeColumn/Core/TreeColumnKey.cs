@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Teronis.DataModel.TreeColumn.Core
+namespace Teronis.DataModeling.TreeColumn.Core
 {
     public class TreeColumnKey : ITreeColumnKey
     {

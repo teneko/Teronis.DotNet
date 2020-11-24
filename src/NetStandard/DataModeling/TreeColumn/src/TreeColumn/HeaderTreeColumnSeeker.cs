@@ -1,7 +1,7 @@
 ﻿using System;
-using Teronis.DataModel.TreeColumn.Core;
+using Teronis.DataModeling.TreeColumn.Core;
 
-namespace Teronis.DataModel.TreeColumn
+namespace Teronis.DataModeling.TreeColumn
 {
     public class HeaderTreeColumnSeeker : TreeColumnSeekerBase<HeaderTreeColumnKey, HeaderTreeColumnValue>
     {

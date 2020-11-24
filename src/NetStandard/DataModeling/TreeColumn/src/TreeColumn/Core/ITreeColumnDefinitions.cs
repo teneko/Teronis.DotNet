@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Teronis.DataModel.TreeColumn.Core
+namespace Teronis.DataModeling.TreeColumn.Core
 {
     public interface ITreeColumnDefinitions<TreeColumnDefinitionKeyType, TreeColumnDefinitionType>
         where TreeColumnDefinitionKeyType : ITreeColumnKey

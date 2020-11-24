@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Core\Core\src\Teronis.NetStandard.Core.csproj" />
-    <ProjectReference Include="..\..\..\DataModel\TreeColumn\src\Teronis.NetStandard.DataModel.TreeColumn.csproj" />
+    <ProjectReference Include="..\..\..\DataModeling\TreeColumn\src\Teronis.NetStandard.DataModeling.TreeColumn.csproj" />
     <ProjectReference Include="..\..\CollectionChanging\src\Teronis.NetStandard.Collections.CollectionChanging.csproj" />
     <ProjectReference Include="..\src\Teronis.NetStandard.Collections.Synchronization.csproj" />
   </ItemGroup>

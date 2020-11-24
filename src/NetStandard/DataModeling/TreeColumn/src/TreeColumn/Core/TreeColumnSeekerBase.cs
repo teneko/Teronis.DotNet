@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Teronis.Collections.Generic;
 using Teronis.Extensions;
 
-namespace Teronis.DataModel.TreeColumn.Core
+namespace Teronis.DataModeling.TreeColumn.Core
 {
     public abstract class TreeColumnSeekerBase<TreeColumnKeyType, TreeColumnValueType>
         where TreeColumnKeyType : ITreeColumnKey

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Teronis.DataModel.TreeColumn;
-using Teronis.DataModel.TreeColumn.Core;
+using Teronis.DataModeling.TreeColumn;
+using Teronis.DataModeling.TreeColumn.Core;
 using Teronis.Diagnostics;
 using Teronis.Extensions;
 using Teronis.Reflection;

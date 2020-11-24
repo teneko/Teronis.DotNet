@@ -32,7 +32,7 @@ Here a list of the project folders:
 - [NetStandard.Collections.CollectionChanging](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Collections/CollectionChanging) Provides algorithm to calculate collection differences between two collection.
 - [NetStandard.Collections.Synchronization](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Collections/Synchronization) Provides classes for collection synchronization.
 - [NetStandard.Core](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Core/Core) A collection of utilities, extensions, tools and classes for the .NET Standard implementation.
-- [NetStandard.DataModel.TreeColumn](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/DataModel/TreeColumn) Provides TreeColumnSeeker for complex data structures.
+- [NetStandard.DataModeling.TreeColumn](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/DataModeling/TreeColumn) Provides TreeColumnSeeker for complex data structures.
 - [NetStandard.Drawing](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Drawing/Drawing) Some simplifications for System.Drawing.Common.
 - [NetStandard.EntityFrameworkCore](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/EntityFrameworkCore/EntityFrameworkCore) An extension to the native function range of EntityFrameworkCore.
 - [NetStandard.EntityFrameworkCore.Query](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/EntityFrameworkCore/Query) Provides expression builder to increase query ability in Entity Framework Core.

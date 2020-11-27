@@ -19,7 +19,7 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollectio
 
         private readonly PropertyChangedRelay propertyChangedRelay;
         private readonly DeviceHeaderCollectionSynchronisation deviceHeaderCollectionContainer;
-        private readonly ConversionAdapter<DeviceHeaderEntity> deviceHeaderConversionAdapter;
+        private readonly ConversionAdapter deviceHeaderConversionAdapter;
 #pragma warning disable IDE0052 // Ungelesene private Member entfernen
         private readonly CollectionItemParentsBehaviour<DeviceViewModel, DeviceHeaderViewModel> itemParentsBehaviour;
 #pragma warning restore IDE0052 // Ungelesene private Member entfernen
@@ -32,7 +32,7 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollectio
                 .AddAllowedProperty(nameof(SelectedItem), null);
 
             propertyChangedRelay.NotifiersPropertyChanged += PropertyChangedRelay_NotifiersPropertyChanged;
-            deviceHeaderConversionAdapter = CreateConversionAdapter<DeviceHeaderEntity>();
+            deviceHeaderConversionAdapter = CreateConversionAdapter();
             itemParentsBehaviour = new CollectionItemParentsBehaviour<DeviceViewModel, DeviceHeaderViewModel>(this);
             this.deviceHeaderCollectionContainer = deviceHeaderCollectionContainer;
             this.deviceHeaderCollectionContainer.CollectionChangeApplied += DeviceHeaderCollectionContainer_CollectionChangeApplied;

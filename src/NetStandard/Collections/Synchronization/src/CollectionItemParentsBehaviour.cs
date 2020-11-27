@@ -35,31 +35,31 @@ namespace Teronis.Collections.Synchronization
         {
             var change = args.ItemItemChange;
 
-            var oldItemItemItems = change.OldItems ??
-                throw new ArgumentException("The old item-item-items were not given that can be processed as collection change");
+            var oldItemItemItems = new Lazy<IReadOnlyList<ItemType>>(() => change.OldItems ??
+                throw new ArgumentException("The old item-item-items were not given that can be processed as collection change"));
 
-            var newItemItemItems = change.NewItems ??
-                throw new ArgumentException("The new item-item-items were not given that can be processed as collection change");
+            var newItemItemItems = new Lazy<IReadOnlyList<ItemType>>(() => change.NewItems ??
+                throw new ArgumentException("The new item-item-items were not given that can be processed as collection change"));
 
             switch (change.Action) {
                 case NotifyCollectionChangedAction.Remove:
-                    foreach (var item in oldItemItemItems) {
+                    foreach (var item in oldItemItemItems.Value) {
                         detachWantParentsHandler(item);
                     }
 
                     break;
                 case NotifyCollectionChangedAction.Add:
-                    foreach (var item in newItemItemItems) {
+                    foreach (var item in newItemItemItems.Value) {
                         attachWantParentsHandler(item);
                     }
 
                     break;
                 case NotifyCollectionChangedAction.Reset:
-                    foreach (var oldItem in oldItemItemItems) {
+                    foreach (var oldItem in oldItemItemItems.Value) {
                         detachWantParentsHandler(oldItem);
                     }
 
-                    foreach (var newItem in newItemItemItems) {
+                    foreach (var newItem in newItemItemItems.Value) {
                         attachWantParentsHandler(newItem);
                     }
 

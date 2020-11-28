@@ -29,7 +29,7 @@ Here a list of the project folders:
 - [NetStandard.Abstractions](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Abstractions/Abstractions) Some abstractions.
 - [NetStandard.Autofac](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Autofac/Autofac) An extension to the native function range of AutoFac.
 - [NetStandard.Collections](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Collections/Collections) Provides classes that define generic collections.
-- [NetStandard.Collections.CollectionChanging](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Collections/CollectionChanging) Provides algorithm to calculate collection differences between two collection.
+- [NetStandard.Collections.Changes](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Collections/Changes) Provides algorithm to calculate collection differences between two collection.
 - [NetStandard.Collections.Synchronization](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Collections/Synchronization) Provides classes for collection synchronization.
 - [NetStandard.Core](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Core/Core) A collection of utilities, extensions, tools and classes for the .NET Standard implementation.
 - [NetStandard.DataModeling.TreeColumn](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/DataModeling/TreeColumn) Provides TreeColumnSeeker for complex data structures.

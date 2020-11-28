@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Specialized;
 
-namespace Teronis.Collections.CollectionChanging
+namespace Teronis.Collections.Changes
 {
     public interface ICollectionChange<out OldItemType, out NewItemType>
     {

@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Teronis.Diagnostics;
 
-namespace Teronis.Collections.CollectionChanging
+namespace Teronis.Collections.Changes
 {
     [DebuggerDisplay(IDebuggerDisplayLibrary.FullGetDebuggerDisplayMethodPathWithParameterizedThis)]
     public class CollectionChange<OldItemType, NewItemType> : ICollectionChange<OldItemType, NewItemType>, IDebuggerDisplay

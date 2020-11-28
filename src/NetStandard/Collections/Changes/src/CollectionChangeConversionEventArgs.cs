@@ -1,7 +1,7 @@
 ﻿using System;
 using Teronis.Threading.Tasks;
 
-namespace Teronis.Collections.CollectionChanging
+namespace Teronis.Collections.Changes
 {
     public class CollectionChangeConversionAppliedEventArgs<ConvertedItemType, CommonValueType> : EventArgs
     {

@@ -1,4 +1,4 @@
-﻿namespace Teronis.Collections.CollectionChanging
+﻿namespace Teronis.Collections.Changes
 {
     public interface INotifyCollectionChangeConversionApplied<ConvertedItemType, CommonValueType>
     {

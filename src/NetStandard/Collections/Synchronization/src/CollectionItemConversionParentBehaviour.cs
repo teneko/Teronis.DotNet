@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
-using Teronis.Collections.CollectionChanging;
+using Teronis.Collections.Changes;
 using Teronis.Data;
 using Teronis.Extensions;
 

@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using MorseCode.ITask;
-using Teronis.Collections.CollectionChanging;
+using Teronis.Collections.Changes;
 using Teronis.Data;
 using Teronis.Extensions;
 using Teronis.ObjectModel;

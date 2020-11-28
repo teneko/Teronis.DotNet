@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.1;net5.0</TargetFrameworks>
     <RootNamespace>Teronis.Collections.Synchronization</RootNamespace>
     <Nullable>enable</Nullable>
     <Description>
@@ -20,7 +20,12 @@ CollectionSynchronisation<ItemType, ContentType>]]>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Core\Core\src\Teronis.NetStandard.Core.csproj" />
-    <ProjectReference Include="..\..\CollectionChanging\src\Teronis.NetStandard.Collections.CollectionChanging.csproj" />
+    <ProjectReference Include="..\..\Changes\src\Teronis.NetStandard.Collections.Changes.csproj">
+      <SetTargetFramework Condition="'%(Filename)' == 'Teronis.NetStandard.Core'
+          Or '%(Filename)' == 'Teronis.NetStandard.Collections'
+          Or '%(Filename)' == 'Teronis.NetStandard.Collections.Changes'
+          Or '%(Filename)' == 'Teronis.NetStandard.Collections.Synchronization'">TargetFramework=$(TargetFramework)</SetTargetFramework>
+    </ProjectReference>
     <ProjectReference Include="..\..\Collections\src\Teronis.NetStandard.Collections.csproj" />
   </ItemGroup>
 

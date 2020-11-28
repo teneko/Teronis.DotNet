@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Teronis.Extensions;
 
-namespace Teronis.Collections.CollectionChanging
+namespace Teronis.Collections.Changes
 {
     public static class CollectionChangeGenericExtensions
     {

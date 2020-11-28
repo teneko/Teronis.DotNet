@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using Teronis.Collections.CollectionChanging;
+using Teronis.Collections.Changes;
 using Teronis.ObjectModel.Updates;
 
 namespace Teronis.Collections.Synchronization

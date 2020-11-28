@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using Teronis.Collections.CollectionChanging;
+using Teronis.Collections.Changes;
 using Teronis.Collections.Synchronization.Example1.Models;
 using Teronis.ObjectModel;
 

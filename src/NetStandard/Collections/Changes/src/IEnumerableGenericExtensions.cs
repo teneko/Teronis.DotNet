@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Teronis.Collections.CollectionChanging;
+using Teronis.Collections.Changes;
 using Teronis.Collections.Generic;
 using Teronis.Collections.ObjectModel;
 using Teronis.Diagnostics;

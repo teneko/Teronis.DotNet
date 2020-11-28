@@ -40,8 +40,8 @@
     <TeronisMSBuildPackagingPackTargetsFile>$(RootDirectory)src\MSBuild\Packaging\Pack\0\src\build\Teronis.MSBuild.Packaging.Pack.targets</TeronisMSBuildPackagingPackTargetsFile>
 
     <!-- Teronis.ModuleInitializer.AssemblyLoader.Executable -->
-    <TeronisModuleInitializerAssemblyLoaderExecutablePropsFile>$(PackagePublishmentsDirectory)PublishablePackage.ModuleInitializer.AssemblyLoader.Executable\build\Teronis.ModuleInitializer.AssemblyLoader.Executable.props</TeronisModuleInitializerAssemblyLoaderExecutablePropsFile>
-    <TeronisModuleInitializerAssemblyLoaderExecutableTargetsFile>$(PackagePublishmentsDirectory)PublishablePackage.ModuleInitializer.AssemblyLoader.Executable\build\Teronis.ModuleInitializer.AssemblyLoader.Executable.targets</TeronisModuleInitializerAssemblyLoaderExecutableTargetsFile>
+    <TeronisModuleInitializerAssemblyLoaderExecutablePropsFile>$(PackagePublishmentsDirectory)ExecutablePublish.ModuleInitializer.AssemblyLoader.Executable\build\Teronis.ModuleInitializer.AssemblyLoader.Executable.props</TeronisModuleInitializerAssemblyLoaderExecutablePropsFile>
+    <TeronisModuleInitializerAssemblyLoaderExecutableTargetsFile>$(PackagePublishmentsDirectory)ExecutablePublish.ModuleInitializer.AssemblyLoader.Executable\build\Teronis.ModuleInitializer.AssemblyLoader.Executable.targets</TeronisModuleInitializerAssemblyLoaderExecutableTargetsFile>
 
     <!-- Teronis.ModuleInitializer.AssemblyLoader.MSBuild -->
     <TeronisModuleInitializerAssemblyLoaderMSBuildPropsFile>$(RootDirectory)src\ModuleInitializer\AssemblyLoader\0.MSBuild\src\build\Teronis.ModuleInitializer.AssemblyLoader.MSBuild.props</TeronisModuleInitializerAssemblyLoaderMSBuildPropsFile>

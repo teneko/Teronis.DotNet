@@ -15,7 +15,7 @@
       <PrivateAssets>contentfiles;analyzers</PrivateAssets>
     </ProjectReference>
     
-    <ProjectReference Include="..\..\0.Executable\ref\PublishablePackage\PublishablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj" />
+    <ProjectReference Include="..\..\0.Executable\ref\ExecutablePublish\ExecutablePublish.ModuleInitializer.AssemblyLoader.Executable.csproj" />
     
   </ItemGroup>
 

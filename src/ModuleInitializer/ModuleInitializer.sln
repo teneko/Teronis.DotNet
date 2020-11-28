@@ -10,7 +10,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.ModuleInitializer.A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExecutablePackage.ModuleInitializer.AssemblyLoader.Executable", "AssemblyLoader\0.Executable\ref\ExecutablePackage\ExecutablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj", "{79380465-0E59-41B7-BB6D-F02B8EFCDD5F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublishablePackage.ModuleInitializer.AssemblyLoader.Executable", "AssemblyLoader\0.Executable\ref\PublishablePackage\PublishablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj", "{45595BB5-0F83-415D-BA71-4DC819ECCB7D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExecutablePublish.ModuleInitializer.AssemblyLoader.Executable", "AssemblyLoader\0.Executable\ref\ExecutablePublish\ExecutablePublish.ModuleInitializer.AssemblyLoader.Executable.csproj", "{45595BB5-0F83-415D-BA71-4DC819ECCB7D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PackagePublish.MSBuild.Packaging.GitVersionCache", "..\MSBuild\Packaging\GitVersionCache\0\ref\PackagePublish\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj", "{8DC7081A-C4E1-4700-9F33-E2DB6CE539C8}"
 EndProject

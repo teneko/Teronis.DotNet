@@ -4,9 +4,9 @@ ExecutablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj
 This project is a synthetic project. It is the package creation
 replacement for Teronis.ModuleInitializer.AssemblyLoader.Executable.
 
-First the referenced project is published to filesystem, then it
-gets packed. The package inherits package name and package version
-from referenced project.
+Firstly, the project specified by PackageSourceReference is published
+to filesystem, then it gets special packed as executable. The package
+inherits package name and package version from referenced project.
 -->
 <Project Sdk="Microsoft.NET.Sdk">
   

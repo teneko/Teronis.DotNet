@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -19,7 +19,7 @@
     <ProjectReference Include="..\..\..\Authorization\Extensions\src\Teronis.AspNetCore.Authorization.Extensions.csproj" />
     <ProjectReference Include="..\..\Identity\src\Teronis.AspNetCore.Identity.csproj" />
     <ProjectReference Include="..\src\Teronis.AspNetCore.Identity.Bearer.csproj" />
-    <ProjectReference Include="..\ref\PublishablePackage\PublishablePackage.AspNetCore.Identity.Bearer.csproj" />
+    <ProjectReference Include="..\ref\DependencyPublish\DependencyPublish.AspNetCore.Identity.Bearer.csproj" />
   </ItemGroup>
 
 </Project>

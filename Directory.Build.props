@@ -82,8 +82,8 @@
     <IsExecutablePackageProject>false</IsExecutablePackageProject>
     <IsExecutablePackageProject Condition="$(MSBuildProjectName.StartsWith('ExecutablePackage.'))">true</IsExecutablePackageProject>
 
-    <IsPublishablePackageProject>false</IsPublishablePackageProject>
-    <IsPublishablePackageProject Condition="$(MSBuildProjectName.StartsWith('PublishablePackage.'))">true</IsPublishablePackageProject>
+    <IsDependencyPublishProject>false</IsDependencyPublishProject>
+    <IsDependencyPublishProject Condition="$(MSBuildProjectName.StartsWith('DependencyPublish.'))">true</IsDependencyPublishProject>
 
   </PropertyGroup>
 
@@ -115,13 +115,13 @@
     <IsPackable Condition="'$(IsPackable)' == ''">true</IsPackable>
 
     <!--
-      IsPublishablePackageProject:
+      IsDependencyPublishProject:
         A executable package project does inherit package name and package
         version from project specified in PackageSourceReference.
-      IsPublishablePackageProject:
+      IsDependencyPublishProject:
         A publishable package project is a synthetic project reference.
       -->
-    <DisableGitVersionCache Condition="$(IsExecutablePackageProject) Or $(IsPublishablePackageProject)">true</DisableGitVersionCache>
+    <DisableGitVersionCache Condition="$(IsExecutablePackageProject) Or $(IsDependencyPublishProject)">true</DisableGitVersionCache>
 
   </PropertyGroup>
 

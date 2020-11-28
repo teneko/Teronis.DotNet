@@ -71,9 +71,9 @@ namespace Teronis.DotNet.Build
             var allProjects = Directory.GetFiles(sourceDirectory, "*.csproj", SearchOption.AllDirectories)
                    .Select(x => new ProjectInfo(new FileInfo(x)));
 
-            var matchPublishablePackageProjects = @"(\\PublishablePackage\.|\\PackagePublish\.)";
+            var matchDependencyPublishProjects = @"(\\DependencyPublish\.|\\PackagePublish\.)";
             var matchGitVersionCacheProjects = @"(\\GitVersionCache\.)";
-            var matchSyntheticProjects = string.Format("({0}|{1})", matchPublishablePackageProjects, matchGitVersionCacheProjects);
+            var matchSyntheticProjects = string.Format("({0}|{1})", matchDependencyPublishProjects, matchGitVersionCacheProjects);
 
             var matchBuildProgramProjects = Regex.Escape(Path.Combine(sourceDirectory, "DotNet", "Build", @"Build\"));
 

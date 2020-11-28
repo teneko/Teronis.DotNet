@@ -78,7 +78,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.ModuleInitializer.A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.ModuleInitializer.AssemblyLoader.Executable", "src\ModuleInitializer\AssemblyLoader\0.Executable\src\Teronis.ModuleInitializer.AssemblyLoader.Executable.csproj", "{96F69F10-00FB-400E-AF6D-D0F48AD56724}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublishablePackage.ModuleInitializer.AssemblyLoader.Executable", "src\ModuleInitializer\AssemblyLoader\0.Executable\ref\PublishablePackage\PublishablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj", "{3E07541A-60AC-418C-8CBB-3FCC737DA70C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExecutablePublish.ModuleInitializer.AssemblyLoader.Executable", "src\ModuleInitializer\AssemblyLoader\0.Executable\ref\ExecutablePublish\ExecutablePublish.ModuleInitializer.AssemblyLoader.Executable.csproj", "{3E07541A-60AC-418C-8CBB-3FCC737DA70C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExecutablePackage.ModuleInitializer.AssemblyLoader.Executable", "src\ModuleInitializer\AssemblyLoader\0.Executable\ref\ExecutablePackage\ExecutablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj", "{952CC402-6417-4924-B652-C2E30BBC3832}"
 EndProject
@@ -94,7 +94,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Identity
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Identity.Bearer", "src\AspNetCore\Identity\Bearer\src\Teronis.AspNetCore.Identity.Bearer.csproj", "{2579F066-D395-4288-B1F3-4DED0C0A98F4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublishablePackage.AspNetCore.Identity.Bearer", "src\AspNetCore\Identity\Bearer\ref\PublishablePackage\PublishablePackage.AspNetCore.Identity.Bearer.csproj", "{9D463F46-D222-423A-9EA5-4A99FFC36C05}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyPublish.AspNetCore.Identity.Bearer", "src\AspNetCore\Identity\Bearer\ref\DependencyPublish\DependencyPublish.AspNetCore.Identity.Bearer.csproj", "{9D463F46-D222-423A-9EA5-4A99FFC36C05}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Identity.Bearer.Example", "src\AspNetCore\Identity\Bearer\example\Teronis.AspNetCore.Identity.Bearer.Example.csproj", "{0D97861F-2F56-415E-843B-C6207D0E3C9E}"
 EndProject

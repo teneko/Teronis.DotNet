@@ -18,18 +18,18 @@ namespace Teronis.IO.FileLocking
         internal const string TraceCategory = nameof(FileLocker);
         private static readonly Random random = new Random();
 
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static string CurrentThreadWithLockIdPrefix(string lockId) =>
-            $"Thread {Thread.CurrentThread.Name ?? "none"}: Lock {lockId}:";
-
-        private static string fileStreamHasBeenLockedString(FileStream fileStream) =>
+        private static string getFileStreamHasBeenLockedString(FileStream fileStream) =>
             "(locked=" + (fileStream != null && (fileStream.CanRead || fileStream.CanWrite)).ToString().ToLower() + ")";
 
-        private static string unlockSourceString(bool decreaseToZero) =>
+        private static string getUnlockSourceString(bool decreaseToZero) =>
             $"{(decreaseToZero ? "(manual unlock)" : "(dispose unlock)")}";
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static string GetCurrentThreadWithLockIdPrefixString(string lockId) =>
+            $"Thread {Thread.CurrentThread.Name ?? "none"}: Lock {lockId}:";
 #endif
 
-        private static string getLockId()
+        private static string getLockIdString()
         {
 #if TRACE
             return random.Next(0, 999).ToString().PadLeft(3, '0');
@@ -63,10 +63,10 @@ namespace Teronis.IO.FileLocking
         private int locksInUse = 0;
         private FileLockContext? fileLockerState;
         private readonly object decreaseLockUseLocker;
-        private readonly ILockFileApi lockFileApi;
+        private readonly IFileStreamLocker lockFileApi;
 
-        public FileLocker(ILockFileApi lockFileApi, string filePath, FileMode fileMode = LockFileApi.DefaultFileMode, FileAccess fileAccess = LockFileApi.DefaultFileAccess,
-            FileShare fileShare = LockFileApi.DefaultFileShare)
+        public FileLocker(IFileStreamLocker lockFileApi, string filePath, FileMode fileMode = FileStreamLocker.DefaultFileMode, FileAccess fileAccess = FileStreamLocker.DefaultFileAccess,
+            FileShare fileShare = FileStreamLocker.DefaultFileShare)
         {
             decreaseLockUseLocker = new object();
             this.lockFileApi = lockFileApi;
@@ -74,23 +74,23 @@ namespace Teronis.IO.FileLocking
             FileMode = fileMode;
             FileAccess = fileAccess;
             FileShare = fileShare;
-            TimeoutInMilliseconds = LockFileApi.DefaultTimeoutInMilliseconds;
+            TimeoutInMilliseconds = FileStreamLocker.DefaultTimeoutInMilliseconds;
         }
 
-        public FileLocker(string filePath, FileMode fileMode = LockFileApi.DefaultFileMode, FileAccess fileAccess = LockFileApi.DefaultFileAccess,
-           FileShare fileShare = LockFileApi.DefaultFileShare)
-            : this(LockFileApi.Default, filePath, fileMode, fileAccess, fileShare)
+        public FileLocker(string filePath, FileMode fileMode = FileStreamLocker.DefaultFileMode, FileAccess fileAccess = FileStreamLocker.DefaultFileAccess,
+           FileShare fileShare = FileStreamLocker.DefaultFileShare)
+            : this(FileStreamLocker.Default, filePath, fileMode, fileAccess, fileShare)
         { }
 
-        public FileLocker(string filePath, int timeoutInMilliseconds, FileMode fileMode = LockFileApi.DefaultFileMode, FileAccess fileAccess = LockFileApi.DefaultFileAccess,
-            FileShare fileShare = LockFileApi.DefaultFileShare)
+        public FileLocker(string filePath, int timeoutInMilliseconds, FileMode fileMode = FileStreamLocker.DefaultFileMode, FileAccess fileAccess = FileStreamLocker.DefaultFileAccess,
+            FileShare fileShare = FileStreamLocker.DefaultFileShare)
             : this(filePath, fileMode, fileAccess, fileShare)
         {
             TimeoutInMilliseconds = timeoutInMilliseconds;
         }
 
-        public FileLocker(string filePath, TimeSpan timeout, FileMode fileMode = LockFileApi.DefaultFileMode, FileAccess fileAccess = LockFileApi.DefaultFileAccess,
-            FileShare fileShare = LockFileApi.DefaultFileShare)
+        public FileLocker(string filePath, TimeSpan timeout, FileMode fileMode = FileStreamLocker.DefaultFileMode, FileAccess fileAccess = FileStreamLocker.DefaultFileAccess,
+            FileShare fileShare = FileStreamLocker.DefaultFileShare)
             : this(filePath, fileMode, fileAccess, fileShare)
         {
             TimeoutInMilliseconds = Convert.ToInt32(timeout.TotalMilliseconds);
@@ -102,8 +102,8 @@ namespace Teronis.IO.FileLocking
         /// <returns>The file lock use that can be revoked by disposing it.</returns>
         public FileLockUse WaitUntilAcquired()
         {
-            var lockId = getLockId();
-            Trace.WriteLine($"{CurrentThreadWithLockIdPrefix(lockId)} Begin locking file {FilePath}.", TraceCategory);
+            var lockId = getLockIdString();
+            Trace.WriteLine($"{GetCurrentThreadWithLockIdPrefixString(lockId)} Begin locking file {FilePath}.", TraceCategory);
             SpinWait spinWait = new SpinWait();
 
             while (true) {
@@ -113,7 +113,7 @@ namespace Teronis.IO.FileLocking
 
                 if (currentFileLockerState.IsErroneous()) {
                     if (EnableConcurrentRethrow) {
-                        Trace.WriteLine($"{CurrentThreadWithLockIdPrefix(lockId)} Error from previous lock will be rethrown.", TraceCategory);
+                        Trace.WriteLine($"{GetCurrentThreadWithLockIdPrefixString(lockId)} Error from previous lock will be rethrown.", TraceCategory);
                         throw currentFileLockerState!.Error!;
                     }
 
@@ -126,7 +126,7 @@ namespace Teronis.IO.FileLocking
                     //  Thread #1 Lock #1 -> Incremented to 2. Lock was successful.
                     //   Thread #2 Lock #2 -> Incremented to 3. Lock was successful.
                     currentFileLockerState!.ErrorUnlockDone!.WaitOne();
-                    Trace.WriteLine($"{CurrentThreadWithLockIdPrefix(lockId)} Retry lock due to previously failed lock.", TraceCategory);
+                    Trace.WriteLine($"{GetCurrentThreadWithLockIdPrefixString(lockId)} Retry lock due to previously failed lock.", TraceCategory);
                     continue;
                 }
                 // If it is the initial lock, then we expect file stream being null.
@@ -144,13 +144,13 @@ namespace Teronis.IO.FileLocking
                     // to acquire the lock.
                     if (desiredLocksInUse == 1) {
                         try {
-                            var fileStream = LockFileApi.Default.WaitUntilAcquired(FilePath, TimeoutInMilliseconds, fileMode: FileMode,
+                            var fileStream = FileStreamLocker.Default.WaitUntilAcquired(FilePath, TimeoutInMilliseconds, fileMode: FileMode,
                                     fileAccess: FileAccess, fileShare: FileShare)!;
 
                             currentFileLockerState = new FileLockContext(this, decreaseLockUseLocker, fileStream);
 
                             fileLockerState = currentFileLockerState;
-                            Trace.WriteLine($"{CurrentThreadWithLockIdPrefix(lockId)} File {FilePath} locked by file locker.", TraceCategory);
+                            Trace.WriteLine($"{GetCurrentThreadWithLockIdPrefixString(lockId)} File {FilePath} locked by file locker.", TraceCategory);
                         } catch (Exception error) {
                             var errorUnlockDone = new ManualResetEvent(false);
                             currentFileLockerState = new FileLockContext(this, decreaseLockUseLocker, error, errorUnlockDone);
@@ -162,7 +162,7 @@ namespace Teronis.IO.FileLocking
                             throw;
                         }
                     } else {
-                        Trace.WriteLine($"{CurrentThreadWithLockIdPrefix(lockId)} File {FilePath} locked {desiredLocksInUse} time(s) concurrently by file locker. {fileStreamHasBeenLockedString(currentFileLockerState!.FileStream!)}", TraceCategory);
+                        Trace.WriteLine($"{GetCurrentThreadWithLockIdPrefixString(lockId)} File {FilePath} locked {desiredLocksInUse} time(s) concurrently by file locker. {getFileStreamHasBeenLockedString(currentFileLockerState!.FileStream!)}", TraceCategory);
                     }
                 }
 
@@ -184,7 +184,7 @@ namespace Teronis.IO.FileLocking
                 var currentLocksInUse = locksInUse;
 
                 if (0 >= currentLocksInUse) {
-                    Trace.WriteLine($"{CurrentThreadWithLockIdPrefix(lockId)} Number of lock remains at 0 because file has been unlocked before. {unlockSourceString(decreaseToZero)}", TraceCategory);
+                    Trace.WriteLine($"{GetCurrentThreadWithLockIdPrefixString(lockId)} Number of lock remains at 0 because file has been unlocked before. {getUnlockSourceString(decreaseToZero)}", TraceCategory);
                     return 0;
                 }
 
@@ -204,7 +204,7 @@ namespace Teronis.IO.FileLocking
             } while (true);
 
             string decreasedNumberOfLocksInUseMessage() =>
-                $"{CurrentThreadWithLockIdPrefix(lockId)} Number of lock uses is decreased to {desiredLocksInUse}. {unlockSourceString(decreaseToZero)}";
+                $"{GetCurrentThreadWithLockIdPrefixString(lockId)} Number of lock uses is decreased to {desiredLocksInUse}. {getUnlockSourceString(decreaseToZero)}";
 
             // When no locks are registered, we have to ..
             if (0 == desiredLocksInUse) {
@@ -238,7 +238,7 @@ namespace Teronis.IO.FileLocking
                 // 2. invalidate the file stream.
                 nonNullState.FileStream?.Close();
                 nonNullState.FileStream?.Dispose();
-                Trace.WriteLine($"{decreasedNumberOfLocksInUseMessage()}{Environment.NewLine}{CurrentThreadWithLockIdPrefix(lockId)} File {FilePath} unlocked by file locker. {unlockSourceString(decreaseToZero)}", TraceCategory);
+                Trace.WriteLine($"{decreasedNumberOfLocksInUseMessage()}{Environment.NewLine}{GetCurrentThreadWithLockIdPrefixString(lockId)} File {FilePath} unlocked by file locker. {getUnlockSourceString(decreaseToZero)}", TraceCategory);
             } else {
                 Trace.WriteLine($"{decreasedNumberOfLocksInUseMessage()}");
             }

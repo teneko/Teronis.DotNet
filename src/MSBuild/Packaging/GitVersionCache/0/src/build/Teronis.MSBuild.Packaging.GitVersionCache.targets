@@ -26,9 +26,8 @@
     # Always generate version informations before the following targets are going
     # to be called:
     # - GenerateNuspec: When packing, this target creates nuspec file for package.
-    # - _GetProjectVersion: 
-    # Before nuspec can be built it has to collect the 
-    # versions of project references the package depends on. 
+    # - _GetProjectVersion: Before nuspec can be built it has to collect the 
+    #     versions of project references the package depends on. 
     -->
     <GetVersionBeforeTargets>
       _GetProjectVersion;

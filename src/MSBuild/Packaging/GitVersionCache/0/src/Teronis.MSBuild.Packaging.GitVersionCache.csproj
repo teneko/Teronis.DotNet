@@ -8,12 +8,7 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" Condition="'$(DisableSdkProps)' != 'true'" />
 
   <PropertyGroup>
-
-    <!--<OutputType>Exe</OutputType>
-    <StartupObject>Teronis.GitVersionCache.Program</StartupObject>-->
-    <!--<TargetFramework>netcoreapp3.1</TargetFramework>-->
-
-    <!--<TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>-->
+    
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Teronis.GitVersionCache</RootNamespace>
     <Description>GitVersionCache is an improved implementation to GitVersionTask. It does support concurrency and nested GitVersion.yml relative to your .git folder.</Description>

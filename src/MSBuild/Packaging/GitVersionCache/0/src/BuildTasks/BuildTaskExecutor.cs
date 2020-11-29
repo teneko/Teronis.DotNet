@@ -80,7 +80,7 @@ namespace Teronis.GitVersionCache.BuildTasks
             var gitFolderScopedCacheDirectory = getCacheDirectory(ParentOfGitDirectoryInfo);
             ensureDirectoryExistence(gitFolderScopedCacheDirectory);
             var lockFile = Path.Combine(gitFolderScopedCacheDirectory, "GitVersionCache.lock");
-            return LockFileApi.Default.WaitUntilAcquired(lockFile);
+            return FileStreamLocker.Default.WaitUntilAcquired(lockFile);
         }
 
         /// <summary>

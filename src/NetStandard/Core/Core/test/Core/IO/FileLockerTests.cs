@@ -83,7 +83,7 @@ namespace Teronis.NetStandard.IO
                             FileStream threadWideLockUse = null;
 
                             if (x == 0 && index % 3 == 0) {
-                                threadWideLockUse = LockFileApi.Default.WaitUntilAcquired(LockFilePath);
+                                threadWideLockUse = FileStreamLocker.Default.WaitUntilAcquired(LockFilePath);
                             }
 
                             try {

@@ -7,18 +7,18 @@ namespace Teronis.IO.FileLocking
     /// <summary>
     /// This helper api can lock files.
     /// </summary>
-    public readonly struct LockFileApi : ILockFileApi
+    public readonly struct FileStreamLocker : IFileStreamLocker
     {
-        public static LockFileApi Default = new LockFileApi(new LockFileFileSystem());
+        public static FileStreamLocker Default = new FileStreamLocker(new LockFileSystem());
 
         public const FileMode DefaultFileMode = FileMode.OpenOrCreate;
         public const FileAccess DefaultFileAccess = FileAccess.ReadWrite;
         public const FileShare DefaultFileShare = FileShare.None;
         public const int DefaultTimeoutInMilliseconds = Timeout.Infinite;
 
-        private readonly ILockFileFileSystem fileSystem;
+        private readonly ILockFileSystem fileSystem;
 
-        public LockFileApi(ILockFileFileSystem fileSystem) =>
+        public FileStreamLocker(ILockFileSystem fileSystem) =>
             this.fileSystem = fileSystem;
 
         /// <summary>

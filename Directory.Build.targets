@@ -96,16 +96,16 @@
   <ItemGroup>
 
     <_ProjectReferences Include="@(ProjectReference)">
-      <!-- Prevent PackagePublish.*-projects from being tracked in *.nuspec files. -->
-      <IsPackagePublishProject>false</IsPackagePublishProject>
+      <!-- Prevent *Publish.*-projects from being tracked in *.nuspec files. -->
+      <IsPublishProject>false</IsPublishProject>
 
-      <IsPackagePublishProject Condition="$([System.String]::Copy('%(Filename)').Contains('PackagePublish.'))
-        Or $([System.String]::Copy('%(Filename)').Contains('DependencyPublish.'))">true</IsPackagePublishProject>
+      <IsPublishProject Condition="$([System.String]::Copy('%(Filename)').Contains('ExecutablePublish.'))
+        Or $([System.String]::Copy('%(Filename)').Contains('DependencyPublish.'))">true</IsPublishProject>
 
-      <ReferenceOutputAssembly Condition="'%(IsPackagePublishProject)' == 'true'">false</ReferenceOutputAssembly>
-      <SkipGetTargetFrameworkProperties Condition="'%(IsPackagePublishProject)' == 'true'">true</SkipGetTargetFrameworkProperties>
-      <GlobalPropertiesToRemove Condition="'%(IsPackagePublishProject)' == 'true'">TargetFramework</GlobalPropertiesToRemove>
-      <BuildProjectReferences Condition="'%(IsPackagePublishProject)' == 'true'">false</BuildProjectReferences>
+      <ReferenceOutputAssembly Condition="'%(IsPublishProject)' == 'true'">false</ReferenceOutputAssembly>
+      <SkipGetTargetFrameworkProperties Condition="'%(IsPublishProject)' == 'true'">true</SkipGetTargetFrameworkProperties>
+      <GlobalPropertiesToRemove Condition="'%(IsPublishProject)' == 'true'">TargetFramework</GlobalPropertiesToRemove>
+      <BuildProjectReferences Condition="'%(IsPublishProject)' == 'true'">false</BuildProjectReferences>
 
       <!-- <AdditionalProperties Condition="'%(Filename)' == 'Teronis.NetStandard.Core'">%(AdditionalProperties);TargetFramework=netstandard2.0</AdditionalProperties> -->
       <!-- <AdditionalProperties >%(AdditionalProperties);TargetFramework=$(TargetFramework)</AdditionalProperties> -->

@@ -70,9 +70,6 @@
     <IsTestProject>false</IsTestProject>
     <IsTestProject Condition="$(MSBuildProjectName.EndsWith('.Test')) Or $(MSBuildProjectName.StartsWith('Test.'))">true</IsTestProject>
 
-    <IsPackagePublishProject>false</IsPackagePublishProject>
-    <IsPackagePublishProject Condition="$(MSBuildProjectName.StartsWith('PackagePublish2.'))">true</IsPackagePublishProject>
-
     <IsLocalizationProject>false</IsLocalizationProject>
     <IsLocalizationProject Condition="$(MSBuildProjectName.EndsWith('.Localization'))">true</IsLocalizationProject>
 
@@ -80,10 +77,41 @@
     <IsExampleProject Condition="$(MSBuildProjectName.EndsWith('.Example'))">true</IsExampleProject>
 
     <IsExecutablePackageProject>false</IsExecutablePackageProject>
+    <!--
+      If true, the project is a synthetic project. It is the package creation
+      replacement for the project specified by PackageSourceReference.
+
+      Firstly, the project specified by PackageSourceReference is published
+      to filesystem, then it gets special packed as executable. The package
+      inherits package name and package version from referenced project.
+    -->
     <IsExecutablePackageProject Condition="$(MSBuildProjectName.StartsWith('ExecutablePackage.'))">true</IsExecutablePackageProject>
 
     <IsDependencyPublishProject>false</IsDependencyPublishProject>
+    <!--
+      If true, the project is a synthetic project. It creates the filesystem
+      publishment for the project specified by PackageSourceReference.
+
+      We want to use the .props and .targets inside the project like
+      it would be when you installed the nuget packge, otherwise we
+      would have to separate path logic for local use in projects.
+    -->
     <IsDependencyPublishProject Condition="$(MSBuildProjectName.StartsWith('DependencyPublish.'))">true</IsDependencyPublishProject>
+
+    <IsExecutablePublishProject>false</IsExecutablePublishProject>
+    <!--
+      If true, the project is a synthetic project. It creates the filesystem
+      publishment for the project specified by PackageSourceReference.
+
+      Firstly, the project specified by PackageSourceReference is published
+      to filesystem, then it gets special packed as executable. Finally the
+      package gets unzipped.
+
+      We want to use the .props and .targets inside the project like
+      it would be when you installed the nuget packge, otherwise we
+      would have to separate path logic for local use in projects.
+     -->
+    <IsExecutablePublishProject Condition="$(MSBuildProjectName.StartsWith('ExecutablePublish.'))">true</IsExecutablePublishProject>
 
   </PropertyGroup>
 
@@ -100,8 +128,7 @@
 
   <PropertyGroup>
     <IsGitVersionCacheRelated Condition="'$(IsGitVersionCacheRelated)' == ''
-      And ('$(IsGitVersionCacheProject)'
-        Or '$(IsPackagePublishProject)')">true</IsGitVersionCacheRelated>
+      And ('$(IsGitVersionCacheProject)')">true</IsGitVersionCacheRelated>
 
     <IsGitVersionCacheRelated Condition="'$(IsGitVersionCacheRelated)' == ''">false</IsGitVersionCacheRelated>
 
@@ -114,14 +141,9 @@
 
     <IsPackable Condition="'$(IsPackable)' == ''">true</IsPackable>
 
-    <!--
-      IsDependencyPublishProject:
-        A executable package project does inherit package name and package
-        version from project specified in PackageSourceReference.
-      IsDependencyPublishProject:
-        A publishable package project is a synthetic project reference.
-      -->
-    <DisableGitVersionCache Condition="$(IsExecutablePackageProject) Or $(IsDependencyPublishProject)">true</DisableGitVersionCache>
+    <DisableGitVersionCache Condition="$(IsExecutablePackageProject)
+      Or $(IsDependencyPublishProject)
+      Or $(IsExecutablePublishProject)">true</DisableGitVersionCache>
 
   </PropertyGroup>
 
@@ -131,13 +153,13 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- GitVersionTask: NuGet does support SemVer 2.0 -->
+    <!-- GitVersionTask: NuGet does support SemVer 2.0. -->
+
     <!-- Disabled because we use GitVersionCache. -->
     <!-- <UseFullSemVerForNuGet>true</UseFullSemVerForNuGet> -->
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies> -->
     <ProjectBuildInPackageVerbosity>detailed</ProjectBuildInPackageVerbosity>
     <!-- The package name and package version are inherited from project specified in PackageSourceReference. -->
     <PackSourceWhenPackingPublishTypedProjectMSBuildProperties>$(PackSourceWhenPackingPublishTypedProjectMSBuildProperties);DisableGitVersionCache=true</PackSourceWhenPackingPublishTypedProjectMSBuildProperties>

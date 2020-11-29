@@ -2,7 +2,7 @@
 ExecutablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj
 
 This project is a synthetic project. It is the package creation
-replacement for Teronis.ModuleInitializer.AssemblyLoader.Executable.
+replacement for the project specified by PackageSourceReference.
 
 Firstly, the project specified by PackageSourceReference is published
 to filesystem, then it gets special packed as executable. The package

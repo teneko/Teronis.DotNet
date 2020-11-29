@@ -2,7 +2,7 @@
 ExecutablePublish.ModuleInitializer.AssemblyLoader.Executable.csproj
 
 This project is a synthetic project. It creates the filesystem
-publishment for Teronis.ModuleInitializer.AssemblyLoader.Executable.
+publishment for the project specified by PackageSourceReference.
 
 Firstly, the project specified by PackageSourceReference is published
 to filesystem, then it gets special packed as executable. Finally the

@@ -2,7 +2,7 @@
 DependencyPublish.NetCoreApp.Identity.Bearer.csproj
 
 This project is a synthetic project. It creates the filesystem
-publishment for Teronis.NetCoreApp.Identity.Bearer.
+publishment for the project specified by PackageSourceReference.
 
 We want to use the .props and .targets inside the project like
 it would be when you installed the nuget packge, otherwise we

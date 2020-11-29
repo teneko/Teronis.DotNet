@@ -9,7 +9,6 @@ in "outer" build.
 
     <DisableGitVersion>true</DisableGitVersion>
     <DisableGitVersionCache>true</DisableGitVersionCache>
-    <DisableSdkProps>true</DisableSdkProps>
 
     <ShadowProjectReference>$(MSBuildThisFileDirectory)..\..\src\Teronis.NetStandard.Tools.GitVersion.csproj</ShadowProjectReference>
 

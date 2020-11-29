@@ -1,16 +1,10 @@
-﻿<Project>
-
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" Condition="'$(DisableSdkProps)' != 'true'" />
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netcoreapp3.1;net5.0</TargetFrameworks>
     <RootNamespace>Teronis.Json</RootNamespace>
     <Description>An extension to the native function range of Newtonsoft.Json.</Description>
   </PropertyGroup>
-  
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" Condition="'$(DisableSdkProps)' != 'true'" />
-
-  <!--<Import Project="Teronis.MSBuild.Packaging.GitVersionCache.Sdk.props" Condition="'$(DisableSdk)' != 'true'" />-->
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />

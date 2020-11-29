@@ -1,6 +1,4 @@
-﻿<Project>
-
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" Condition="'$(DisableSdkProps)' != 'true'" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
 
@@ -17,8 +15,6 @@
     <Description>Some special targets and tasks. See comments in source code.</Description>
 
   </PropertyGroup>
-
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" Condition="'$(DisableSdkProps)' != 'true'" />
 
   <ItemGroup> 
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.8.0" PrivateAssets="all" />

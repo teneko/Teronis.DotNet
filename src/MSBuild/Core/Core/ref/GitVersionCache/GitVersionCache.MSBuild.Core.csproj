@@ -10,7 +10,6 @@ in "outer" build.
 
     <DisableGitVersion>true</DisableGitVersion>
     <DisableGitVersionCache>true</DisableGitVersionCache>
-    <DisableSdkProps>true</DisableSdkProps>
 
     <ShadowProjectReference>..\..\src\$(AssemblyName).csproj</ShadowProjectReference>
 

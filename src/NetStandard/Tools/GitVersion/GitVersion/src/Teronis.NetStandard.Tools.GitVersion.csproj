@@ -1,6 +1,4 @@
-﻿<Project>
-
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" Condition="'$(DisableSdkProps)' != 'true'" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -8,8 +6,6 @@
     <Nullable>Enable</Nullable>
     <Description>A wrapper to use the executable of GitVersion (https://chocolatey.org/packages/GitVersion.Portable) in C# programmatically.</Description>
   </PropertyGroup>
-
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" Condition="'$(DisableSdkProps)' != 'true'" />
 
   <ItemGroup>
     <PackageReference Include="GitVersion.CommandLine" Version="5.3.5" GeneratePathProperty="true">

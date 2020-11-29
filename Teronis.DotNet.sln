@@ -6,17 +6,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Tools.G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Json", "src\NetStandard\Json\Json\src\Teronis.NetStandard.Json.csproj", "{E2B942F5-F171-4D48-9A58-37E4952647AE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.EntityFrameworkCore", "src\NetStandard\EntityFrameworkCore\EntityFrameworkCore\src\Teronis.NetStandard.EntityFrameworkCore.csproj", "{FD5E8CD4-4A62-4397-B842-DA927BAB3FB0}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Drawing", "src\NetStandard\Drawing\Drawing\src\Teronis.NetStandard.Drawing.csproj", "{18752436-125A-4307-8F5D-959E991866AC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Core.Localization", "src\NetStandard\Core\Core.Localization\src\Teronis.NetStandard.Core.Localization.csproj", "{2593AA34-1F2B-4B1B-893A-EBD099DE77B1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Core", "src\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj", "{84EDDB96-DD93-4B39-B92F-ED6FA6B2E77D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Autofac", "src\NetStandard\Autofac\Autofac\src\Teronis.NetStandard.Autofac.csproj", "{9D20C0B1-582F-443F-A059-401B7345E0E9}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Abstractions", "src\NetStandard\Abstractions\Abstractions\src\Teronis.NetStandard.Abstractions.csproj", "{BCD0799B-FC8F-4A59-AD7B-4B674B7D6C6E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetCoreApp.Wpf.Localization", "src\NetCoreApp\Wpf\Wpf.Localization\src\Teronis.NetCoreApp.Wpf.Localization.csproj", "{0ABA4D70-0D42-46B4-A030-B5232610C37D}"
 EndProject
@@ -100,9 +94,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Identity
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Core", "src\AspNetCore\Core\Core\src\Teronis.AspNetCore.Core\Teronis.AspNetCore.Core.csproj", "{D523E587-B282-4DD3-A40F-0D3219389EBD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Authorization.Extensions", "src\AspNetCore\Authorization\Extensions\src\Teronis.AspNetCore.Authorization.Extensions.csproj", "{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.Authorization.Teronis", "src\AspNetCore\Authorization\Microsoft\src\Microsoft.AspNetCore.Authorization.Teronis.csproj", "{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Teronis.AspNetCore.Identity.Bearer.Abstractions", "src\AspNetCore\Identity\Bearer.Abstractions\src\Teronis.AspNetCore.Identity.Bearer.Abstractions.csproj", "{258279A1-6C92-486C-B819-57F953DCD27A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Identity.Bearer.Abstractions", "src\AspNetCore\Identity\Bearer.Abstractions\src\Teronis.AspNetCore.Identity.Bearer.Abstractions.csproj", "{258279A1-6C92-486C-B819-57F953DCD27A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -138,18 +132,6 @@ Global
 		{E2B942F5-F171-4D48-9A58-37E4952647AE}.Release|x64.Build.0 = Release|x64
 		{E2B942F5-F171-4D48-9A58-37E4952647AE}.Release|x86.ActiveCfg = Release|x86
 		{E2B942F5-F171-4D48-9A58-37E4952647AE}.Release|x86.Build.0 = Release|x86
-		{FD5E8CD4-4A62-4397-B842-DA927BAB3FB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FD5E8CD4-4A62-4397-B842-DA927BAB3FB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FD5E8CD4-4A62-4397-B842-DA927BAB3FB0}.Debug|x64.ActiveCfg = Debug|x64
-		{FD5E8CD4-4A62-4397-B842-DA927BAB3FB0}.Debug|x64.Build.0 = Debug|x64
-		{FD5E8CD4-4A62-4397-B842-DA927BAB3FB0}.Debug|x86.ActiveCfg = Debug|x86
-		{FD5E8CD4-4A62-4397-B842-DA927BAB3FB0}.Debug|x86.Build.0 = Debug|x86
-		{FD5E8CD4-4A62-4397-B842-DA927BAB3FB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FD5E8CD4-4A62-4397-B842-DA927BAB3FB0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FD5E8CD4-4A62-4397-B842-DA927BAB3FB0}.Release|x64.ActiveCfg = Release|x64
-		{FD5E8CD4-4A62-4397-B842-DA927BAB3FB0}.Release|x64.Build.0 = Release|x64
-		{FD5E8CD4-4A62-4397-B842-DA927BAB3FB0}.Release|x86.ActiveCfg = Release|x86
-		{FD5E8CD4-4A62-4397-B842-DA927BAB3FB0}.Release|x86.Build.0 = Release|x86
 		{18752436-125A-4307-8F5D-959E991866AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{18752436-125A-4307-8F5D-959E991866AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18752436-125A-4307-8F5D-959E991866AC}.Debug|x64.ActiveCfg = Debug|x64
@@ -186,30 +168,6 @@ Global
 		{84EDDB96-DD93-4B39-B92F-ED6FA6B2E77D}.Release|x64.Build.0 = Release|x64
 		{84EDDB96-DD93-4B39-B92F-ED6FA6B2E77D}.Release|x86.ActiveCfg = Release|x86
 		{84EDDB96-DD93-4B39-B92F-ED6FA6B2E77D}.Release|x86.Build.0 = Release|x86
-		{9D20C0B1-582F-443F-A059-401B7345E0E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9D20C0B1-582F-443F-A059-401B7345E0E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9D20C0B1-582F-443F-A059-401B7345E0E9}.Debug|x64.ActiveCfg = Debug|x64
-		{9D20C0B1-582F-443F-A059-401B7345E0E9}.Debug|x64.Build.0 = Debug|x64
-		{9D20C0B1-582F-443F-A059-401B7345E0E9}.Debug|x86.ActiveCfg = Debug|x86
-		{9D20C0B1-582F-443F-A059-401B7345E0E9}.Debug|x86.Build.0 = Debug|x86
-		{9D20C0B1-582F-443F-A059-401B7345E0E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9D20C0B1-582F-443F-A059-401B7345E0E9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9D20C0B1-582F-443F-A059-401B7345E0E9}.Release|x64.ActiveCfg = Release|x64
-		{9D20C0B1-582F-443F-A059-401B7345E0E9}.Release|x64.Build.0 = Release|x64
-		{9D20C0B1-582F-443F-A059-401B7345E0E9}.Release|x86.ActiveCfg = Release|x86
-		{9D20C0B1-582F-443F-A059-401B7345E0E9}.Release|x86.Build.0 = Release|x86
-		{BCD0799B-FC8F-4A59-AD7B-4B674B7D6C6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BCD0799B-FC8F-4A59-AD7B-4B674B7D6C6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BCD0799B-FC8F-4A59-AD7B-4B674B7D6C6E}.Debug|x64.ActiveCfg = Debug|x64
-		{BCD0799B-FC8F-4A59-AD7B-4B674B7D6C6E}.Debug|x64.Build.0 = Debug|x64
-		{BCD0799B-FC8F-4A59-AD7B-4B674B7D6C6E}.Debug|x86.ActiveCfg = Debug|x86
-		{BCD0799B-FC8F-4A59-AD7B-4B674B7D6C6E}.Debug|x86.Build.0 = Debug|x86
-		{BCD0799B-FC8F-4A59-AD7B-4B674B7D6C6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BCD0799B-FC8F-4A59-AD7B-4B674B7D6C6E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BCD0799B-FC8F-4A59-AD7B-4B674B7D6C6E}.Release|x64.ActiveCfg = Release|x64
-		{BCD0799B-FC8F-4A59-AD7B-4B674B7D6C6E}.Release|x64.Build.0 = Release|x64
-		{BCD0799B-FC8F-4A59-AD7B-4B674B7D6C6E}.Release|x86.ActiveCfg = Release|x86
-		{BCD0799B-FC8F-4A59-AD7B-4B674B7D6C6E}.Release|x86.Build.0 = Release|x86
 		{0ABA4D70-0D42-46B4-A030-B5232610C37D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0ABA4D70-0D42-46B4-A030-B5232610C37D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0ABA4D70-0D42-46B4-A030-B5232610C37D}.Debug|x64.ActiveCfg = Debug|x64

@@ -3,8 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Teronis.AspNetCore</RootNamespace>
+    <Description>A collection of utilities, extensions and classes for the ASP.NET Core implementation.</Description>
     <!-- Is no dependency of any project and has no functions implemented. -->
-    <IsPackable>true</IsPackable>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>

@@ -113,8 +113,10 @@
       <!-- <Properties>%(Properties);DisallowNullableAttributes=true</Properties> -->
       <!-- <AdditionalProperties Condition="'%(Filename)' == 'Teronis.NetStandard.Core'">%(AdditionalProperties);TargetFramework=$(TargetFramework)</AdditionalProperties> -->
       <!-- <SetTargetFramework Condition="'%(Filename)' == 'Teronis.NetStandard.Core'">TargetFramework=$(TargetFramework)</SetTargetFramework> -->
-      <SetTargetFramework Condition="'%(Filename)' == 'Teronis.NetStandard.Core' 
-        Or '%(Filename)' == 'Teronis.NetStandard.Collections'">TargetFramework=$(TargetFramework)</SetTargetFramework>
+      <SetTargetFramework Condition="'%(SetTargetFramework)' == '' And (
+        '%(Filename)' == 'Teronis.NetStandard.Core'
+        Or '%(Filename)' == 'Teronis.NetStandard.Collections'
+        Or '%(Filename)' == 'Teronis.NetStandard.Changes')">TargetFramework=$(TargetFramework)</SetTargetFramework>
     </_ProjectReferences>
 
     <ProjectReference Remove="@(ProjectReference)" />

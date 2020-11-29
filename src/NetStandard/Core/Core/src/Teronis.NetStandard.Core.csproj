@@ -4,12 +4,9 @@
   <!--<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" Condition="'$(DisableSdkProps)' != 'true'" />-->
 
   <PropertyGroup>
-    <!--<TargetFrameworks>netstandard2.0;netcoreapp3.1;net5.0;net5.0-windows</TargetFrameworks>-->
-    <TargetFrameworks>netstandard2.0;netcoreapp3.1;net5.0;net5.0-windows</TargetFrameworks>
-    <!--<TargetFramework>netstandard2.0</TargetFramework>-->
-    <!--<TargetFramework>netstandard2.0</TargetFramework>-->
+    <TargetFrameworks>netstandard2.0;netcoreapp3.1;net5.0</TargetFrameworks>
     <RootNamespace>Teronis</RootNamespace>
-    <Description>A collection of utilities, extensions, tools and classes for the .NET Standard implementation.</Description>
+    <Description>A collection of utilities, extensions and classes for the .NET Standard implementation.</Description>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Nullable>enable</Nullable>
   </PropertyGroup>

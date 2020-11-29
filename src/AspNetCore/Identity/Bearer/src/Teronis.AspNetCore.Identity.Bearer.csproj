@@ -4,7 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Teronis.AspNetCore.Identity.Bearer</RootNamespace>
     <Nullable>enable</Nullable>
-    <Description>Teronis Identity Bearer provides you a bearer token integration for ASP.NET Core Identity.</Description>
+    <Description>Teronis ASP.Net Core Identity Bearer provides you a bearer token integration for ASP.NET Core Identity.</Description>
   </PropertyGroup>
 
   <ItemGroup>

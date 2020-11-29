@@ -10,7 +10,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Teronis.AspNetCore.Identity.Bearer.Authentication;
 using Teronis.AspNetCore.Identity.Entities;
-using Teronis.AspNetCore.Authorization.Extensions;
 using Teronis.Mvc.JsonProblemDetails;
 using Microsoft.AspNetCore.Mvc;
 using NSwag.Generation.Processors.Security;
@@ -21,6 +20,7 @@ using Teronis.AspNetCore.Identity.Bearer.SignInManaging.Controllers;
 using Teronis.AspNetCore.Identity.Bearer.Stores;
 using Teronis.AspNetCore.Identity.AccountManaging;
 using Teronis.AspNetCore.Identity.Bearer.SignInManaging;
+using Microsoft.AspNetCore.Authorization.Teronis;
 
 namespace Teronis.AspNetCore.Identity.Bearer
 {

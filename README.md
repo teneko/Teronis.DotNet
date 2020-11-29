@@ -11,6 +11,12 @@ Teronis.DotNet is a collection of many subprojects. It has grown since I begun 2
 All my projects are uploaded to [NuGet](https://www.nuget.org/packages?q=Teroneko+Teronis). You can view them here on [GitHub](https://github.com/teroneko/Teronis.DotNet/packages) too.
 
 Here a list of the project folders:
+- [Microsoft.AspNetCore.Authorization.Teronis](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/AspNetCore/Authorization/Microsoft) Provides extension methods for Microsoft.AspNetCore.Authorization.
+- [AspNetCore.Identity](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/AspNetCore/Identity/Identity) Teronis ASP.NET Core Identity provides you a better integration for ASP.NET Core Identity.
+- [AspNetCore.Identity.Abstractions](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/AspNetCore/Identity/Identity.Abstractions) Teronis ASP.NET Core Identity provides you a better integration for ASP.NET Core Identity.
+- [AspNetCore.Identity.Bearer](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/AspNetCore/Identity/Bearer) Teronis ASP.Net Core Identity Bearer provides you a bearer token integration for ASP.NET Core Identity.
+- [AspNetCore.Identity.Bearer.Abstractions](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/AspNetCore/Identity/Bearer.Abstractions) Teronis ASP.Net Core Identity Bearer provides you a bearer token integration for ASP.NET Core Identity.
+- [Teronis.AspNetCore.Mvc](https://github.com/teroneko/Teronis.DotNet/tree/develop/src\AspNetCore\Mvc\Mvc) An extension to the native function range of Microsoft.AspNetCore.Mvc.Core.
 - [ModuleInitializer.AssemblyLoader](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/ModuleInitializer/AssemblyLoader/0) Provides an assembly loader injector that injects IL code representing calls to foreign assembly ModuleInitializer.Initialize() methods in an target assembly that forces these foreign assembly to load AND initialize.
 - [ModuleInitializer.AssemblyLoader.Executable](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/ModuleInitializer/AssemblyLoader/0.Executable) Provides an assembly loader injector executable that can inject IL code representing calls to foreign assembly ModuleInitializer.Initialize() methods in an target assembly that forces these foreign assembly to load AND initialize.
 - [ModuleInitializer.AssemblyLoader.MSBuild](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/ModuleInitializer/AssemblyLoader/0.MSBuild) Provides the MSBuild interface for using the assembly loader injector exectuable.
@@ -19,22 +25,15 @@ Here a list of the project folders:
 - [MSBuild.Packaging.Pack](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/MSBuild/Packaging/Pack) An addition to NuGet.Build.Tasks.Pack that adds more package types beside of existing ones like DotNetCli and Dependency.
       You just need to set-up PackSourceAs and PackageSourceReference and depending on scenario creating a synthetic project.
 - [MSBuild.ProjectBuildInPackage](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/MSBuild/Packaging/ProjectBuildInPackage) Allows project reference content to be added to the NuGet-package during pack process.
-- [NetCoreApp.Core](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetCoreApp/Core/Core) A collection of utilities, extensions, tools and classes for the .NET Core implementation.
-- [NetCoreApp.Identity](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetCoreApp/Identity/Identity) Teronis Identity provides you a better integration for ASP.NET Core Identity.
-- [NetCoreApp.Identity.Bearer](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetCoreApp/Identity/Bearer) Teronis Identity Bearer provides you a bearer token integration for ASP.NET Core Identity.
-- [NetCoreApp.Identity.EntityFrameworkCore](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetCoreApp/Identity/EntityFrameworkCore) Teronis Identity integration that uses ASP.NET Core Identity.
-- [NetCoreApp.Mvc](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetCoreApp/Mvc/Mvc) An extension to the native function range of Microsoft.AspNetCore.Mvc.Core.
-- [NetCoreApp.WinForms](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetCoreApp/WinForms/WinForms) A collection of utilities, extensions, tools and classes for WinForms.
-- [NetCoreApp.Wpf](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetCoreApp/Wpf/Wpf) A collection of utilities, extensions, tools and classes for WPF.
-- [NetStandard.Abstractions](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Abstractions/Abstractions) Some abstractions.
-- [NetStandard.Autofac](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Autofac/Autofac) An extension to the native function range of AutoFac.
+- [NetCoreApp.Core](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetCoreApp/Core/Core) A collection of utilities, extensions and classes for the .NET Core implementation.
+- [NetCoreApp.WinForms](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetCoreApp/WinForms/WinForms) A collection of utilities, extensions and classes for WinForms.
+- [NetCoreApp.Wpf](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetCoreApp/Wpf/Wpf) A collection of utilities, extensions and classes for WPF.
 - [NetStandard.Collections](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Collections/Collections) Provides classes that define generic collections.
 - [NetStandard.Collections.Changes](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Collections/Changes) Provides algorithm to calculate collection differences between two collection.
 - [NetStandard.Collections.Synchronization](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Collections/Synchronization) Provides classes for collection synchronization.
-- [NetStandard.Core](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Core/Core) A collection of utilities, extensions, tools and classes for the .NET Standard implementation.
+- [NetStandard.Core](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Core/Core) A collection of utilities, extensions and classes for the .NET Standard implementation.
 - [NetStandard.DataModeling.TreeColumn](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/DataModeling/TreeColumn) Provides TreeColumnSeeker for complex data structures.
 - [NetStandard.Drawing](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Drawing/Drawing) Some simplifications for System.Drawing.Common.
-- [NetStandard.EntityFrameworkCore](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/EntityFrameworkCore/EntityFrameworkCore) An extension to the native function range of EntityFrameworkCore.
 - [NetStandard.EntityFrameworkCore.Query](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/EntityFrameworkCore/Query) Provides expression builder to increase query ability in Entity Framework Core.
 - [NetStandard.Json](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Json/Json) An extension to the native function range of Newtonsoft.Json.
 - [NetStandard.Linq.Expressions](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Linq/Expressions/Expressions) Provides expression builder, expression visitor and everything around LINQ Expressions.

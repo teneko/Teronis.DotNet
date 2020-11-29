@@ -4,7 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Teronis.AspNetCore.Identity</RootNamespace>
     <Nullable>enable</Nullable>
-    <Description>Teronis Identity provides you a better integration for ASP.NET Core Identity.</Description>
+    <Description>Teronis ASP.NET Core Identity provides you a better integration for ASP.NET Core Identity.</Description>
   </PropertyGroup>
 
   <ItemGroup>

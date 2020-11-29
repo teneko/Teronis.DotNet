@@ -1,12 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0-windows</TargetFramework>
-    <!--<TargetFrameworks Condition="$(NETCoreSdkRuntimeIdentifier.StartsWith('win'))">$(TargetFrameworks);net5.0-windows</TargetFrameworks>-->
+    <TargetFrameworks>netcoreapp3.1;net5.0-windows</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>Teronis</RootNamespace>
     <Nullable>enable</Nullable>
-    <Description>A collection of utilities, extensions, tools and classes for WinForms.</Description>
+    <Description>A collection of utilities, extensions and classes for WinForms.</Description>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -18,19 +17,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!--<ProjectReference Include="..\..\..\..\NetStandard\Collections\Collections\src\Teronis.NetStandard.Collections.csproj" />-->
-    <!--<SetTargetFramework>TargetFramework=netcoreapp3.1</SetTargetFramework>
-      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
-    </ProjectReference>-->
-    <!--<ProjectReference Include="..\..\..\Core\Core\src\Teronis.NetCoreApp.Core.csproj" />-->
     <ProjectReference Include="..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj">
-      <!--<AdditionalProperties>TargetFramework=netstandard2.0</AdditionalProperties>-->
-      <!--<AdditionalProperties>TargetFramework=netcoreapp3.1</AdditionalProperties>-->
-      <!--<SetTargetFramework>TargetFramework=netstandard2.0</SetTargetFramework>-->
-      <!--<SetTargetFramework>TargetFramework=netcoreapp3.1</SetTargetFramework>-->
-      <!--<SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>-->
+      <SetTargetFramework Condition="'$(TargetFramework)' == 'net5.0-windows'">TargetFramework=net5.0</SetTargetFramework>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\NetStandard\Json\Json\src\Teronis.NetStandard.Json.csproj" />
+    <ProjectReference Include="..\..\..\..\NetStandard\Json\Json\src\Teronis.NetStandard.Json.csproj">
+      <SetTargetFramework Condition="'$(TargetFramework)' == 'net5.0-windows'">TargetFramework=net5.0</SetTargetFramework>
+    </ProjectReference>
     <ProjectReference Include="..\..\WinForms.Localization\src\Teronis.NetCoreApp.WinForms.Localization.csproj" PrivateAssets="all" />
   </ItemGroup>
 

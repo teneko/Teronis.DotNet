@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>Microsoft.AspNetCore.Authorization.Teronis</RootNamespace>
+    <RootNamespace>Teronis.Microsoft.AspNetCore.Authorization</RootNamespace>
     <Description>Provides extension methods for Microsoft.AspNetCore.Authorization.</Description>
   </PropertyGroup>
 

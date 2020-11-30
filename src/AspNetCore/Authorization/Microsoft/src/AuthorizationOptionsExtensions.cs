@@ -1,6 +1,7 @@
 ﻿using System;
+using Microsoft.AspNetCore.Authorization;
 
-namespace Microsoft.AspNetCore.Authorization.Teronis
+namespace Teronis.Microsoft.AspNetCore.Authorization
 {
     public static class AuthorizationOptionsExtensions
     {

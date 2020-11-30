@@ -20,7 +20,7 @@ using Teronis.AspNetCore.Identity.Bearer.SignInManaging.Controllers;
 using Teronis.AspNetCore.Identity.Bearer.Stores;
 using Teronis.AspNetCore.Identity.AccountManaging;
 using Teronis.AspNetCore.Identity.Bearer.SignInManaging;
-using Microsoft.AspNetCore.Authorization.Teronis;
+using Teronis.Microsoft.AspNetCore.Authorization;
 
 namespace Teronis.AspNetCore.Identity.Bearer
 {

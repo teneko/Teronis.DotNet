@@ -10,7 +10,7 @@ would have to separate path logic for local use in projects.
 -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard1.0</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
     <PackSourceAs>DependencyPublish</PackSourceAs>
     <PackageSourceReference>..\..\src\Teronis.AspNetCore.Identity.Bearer.csproj</PackageSourceReference>
   </PropertyGroup>

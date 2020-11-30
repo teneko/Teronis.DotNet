@@ -1,14 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
     <RootNamespace>Teronis.AspNetCore.Identity.Bearer</RootNamespace>
     <Nullable>enable</Nullable>
-    <Description>Teronis ASP.Net Core Identity Bearer provides you a bearer token integration for ASP.NET Core Identity.</Description>
+    <Description>Teronis ASP.NET Core Identity Bearer provides you a bearer token integration for ASP.NET Core Identity.</Description>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer">
+      <Version Condition="'$(TargetFramework)' == 'netcoreapp3.1'">3.1.10</Version>
+      <Version Condition="'$(TargetFramework)' == 'net5.0'">5.0.0</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
@@ -18,11 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
-
     <ProjectReference Include="..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj">
-      <AdditionalProperties>TargetFramework=$(TargetFramework)</AdditionalProperties>
+      <SetTargetFramework>TargetFramework=$(TargetFramework)</SetTargetFramework>
     </ProjectReference>
-    
     <ProjectReference Include="..\..\..\Mvc\Mvc\src\Teronis.AspNetCore.Mvc.csproj" />
     <ProjectReference Include="..\..\Bearer.Abstractions\src\Teronis.AspNetCore.Identity.Bearer.Abstractions.csproj" />
     <ProjectReference Include="..\..\Identity.Abstractions\src\Teronis.AspNetCore.Identity.Abstractions.csproj" />

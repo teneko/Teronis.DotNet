@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Teronis.NetCoreApp.AssemblyInitializerInjector.Executable": {
-      "commandName": "Project",
-      "commandLineArgs": "inject-assembly-load \"C:\\Users\\christoph\\source\\repos\\Teronis.DotNet\\src\\NetCoreApp\\Identity\\Bearer\\example\\bin\\Debug\\netcoreapp3.1\\Teronis.NetCoreApp.Identity.Bearer.Example.dll\" --source-assembly-path \"C:\\Users\\christoph\\source\\repos\\Teronis.DotNet\\src\\NetCoreApp\\Identity\\Bearer\\example\\bin\\Debug\\netcoreapp3.1\\Teronis.NetCoreApp.Identity.Bearer.dll\""
-    }
-  }
-}

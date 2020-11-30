@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.1;net5.0-windows</TargetFrameworks>
+    <RootNamespace>Teronis.Windows</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Crc32.NET" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj">
+      <SetTargetFramework Condition="'$(TargetFramework)' == 'net5.0-windows'">TargetFramework=net5.0</SetTargetFramework>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\NetStandard\Json\Json\src\Teronis.NetStandard.Json.csproj">
+      <SetTargetFramework Condition="'$(TargetFramework)' == 'net5.0-windows'">TargetFramework=net5.0</SetTargetFramework>
+    </ProjectReference>
+  </ItemGroup>
+
+</Project>

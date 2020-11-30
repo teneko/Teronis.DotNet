@@ -16,7 +16,7 @@ Here a list of the project folders:
 - [Teronis.AspNetCore.Identity.Abstractions](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/AspNetCore/Identity/Identity.Abstractions) Teronis ASP.NET Core Identity provides you a better integration for ASP.NET Core Identity.
 - [Teronis.AspNetCore.Identity.Bearer](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/AspNetCore/Identity/Bearer) Teronis ASP.Net Core Identity Bearer provides you a bearer token integration for ASP.NET Core Identity.
 - [Teronis.AspNetCore.Identity.Bearer.Abstractions](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/AspNetCore/Identity/Bearer.Abstractions) Teronis ASP.Net Core Identity Bearer provides you a bearer token integration for ASP.NET Core Identity.
-- [Teronis.AspNetCore.Mvc](https://github.com/teroneko/Teronis.DotNet/tree/develop/src\AspNetCore\Mvc\Mvc) An extension to the native function range of Microsoft.AspNetCore.Mvc.Core.
+- [Teronis.AspNetCore.Mvc](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/AspNetCore/Mvc/Mvc) An extension to the native function range of Microsoft.AspNetCore.Mvc.Core.
 - [Teronis.ModuleInitializer.AssemblyLoader](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/ModuleInitializer/AssemblyLoader/0) Provides an assembly loader injector that injects IL code representing calls to foreign assembly ModuleInitializer.Initialize() methods in an target assembly that forces these foreign assembly to load AND initialize.
 - [Teronis.ModuleInitializer.AssemblyLoader.Executable](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/ModuleInitializer/AssemblyLoader/0.Executable) Provides an assembly loader injector executable that can inject IL code representing calls to foreign assembly ModuleInitializer.Initialize() methods in an target assembly that forces these foreign assembly to load AND initialize.
 - [Teronis.ModuleInitializer.AssemblyLoader.MSBuild](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/ModuleInitializer/AssemblyLoader/0.MSBuild) Provides the MSBuild interface for using the assembly loader injector exectuable.
@@ -35,9 +35,9 @@ Here a list of the project folders:
 - [Teronis.NetStandard.Json](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Json/Json) An extension to the native function range of Newtonsoft.Json.
 - [Teronis.NetStandard.Linq.Expressions](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Linq/Expressions/Expressions) Provides expression builder, expression visitor and everything around LINQ Expressions.
 - [Teronis.NetStandard.Tools.GitVersion](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Tools/GitVersion/GitVersion) A wrapper to use the executable of GitVersion (https://chocolatey.org/packages/GitVersion.Portable) in C# programmatically.
-- [Teronis.Windows.Core](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetCoreApp/Core/Core) A collection of utilities, extensions, classes and platform invokes for the Windows platform.
-- [Teronis.Windows.Forms](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetCoreApp/WinForms/WinForms) A collection of utilities, extensions and classes for WinForms.
-- [Teronis.Windows.PresentationFoundation](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetCoreApp/Wpf/Wpf) A collection of utilities, extensions and classes for WPF.
+- [Teronis.Windows.Core](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/Windows/Core) A collection of utilities, extensions, classes and platform invokes for the Windows platform.
+- [Teronis.Windows.Forms](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/Windows/Forms) A collection of utilities, extensions and classes for Windows Forms.
+- [Teronis.Windows.PresentationFoundation](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/Windows/PresentationFoundation) A collection of utilities, extensions and classes for Windows Presentation Foundation.
 
 ## Build Script
 

@@ -5,7 +5,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>Teronis.Windows.Forms</RootNamespace>
     <Nullable>enable</Nullable>
-    <Description>A collection of utilities, extensions and classes for WinForms.</Description>
+    <Description>A collection of utilities, extensions and classes for Windows Forms.</Description>
   </PropertyGroup>
 
   <ItemGroup>

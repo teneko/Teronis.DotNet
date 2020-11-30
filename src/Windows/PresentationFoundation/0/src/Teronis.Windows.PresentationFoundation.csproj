@@ -4,7 +4,7 @@
     <TargetFrameworks>netcoreapp3.1;net5.0-windows</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <RootNamespace>Teronis.Windows.PresentationFoundation</RootNamespace>
-    <Description>A collection of utilities, extensions and classes for WPF.</Description>
+    <Description>A collection of utilities, extensions and classes for Windows Presentation Foundation.</Description>
   </PropertyGroup>
 
   <ItemGroup>

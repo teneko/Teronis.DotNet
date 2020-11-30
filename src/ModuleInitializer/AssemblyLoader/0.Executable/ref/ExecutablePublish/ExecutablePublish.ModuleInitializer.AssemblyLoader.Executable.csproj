@@ -12,7 +12,7 @@ We want to use the .props and .targets inside the project like
 it would be when you installed the nuget packge, otherwise we
 would have to separate path logic for local use in projects.
 -->
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk"> 
   <PropertyGroup>
     <TargetFramework>netstandard1.0</TargetFramework>
     <PackSourceAs>ExecutablePublish</PackSourceAs>

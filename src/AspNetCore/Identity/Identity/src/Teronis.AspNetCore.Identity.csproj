@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj" />
-    <ProjectReference Include="..\..\..\..\NetCoreApp\Core\Core\src\Teronis.NetCoreApp.Core.csproj" />
     <ProjectReference Include="..\..\..\Mvc\Mvc\src\Teronis.AspNetCore.Mvc.csproj" />
     <ProjectReference Include="..\..\Identity.Abstractions\src\Teronis.AspNetCore.Identity.Abstractions.csproj" />
   </ItemGroup>

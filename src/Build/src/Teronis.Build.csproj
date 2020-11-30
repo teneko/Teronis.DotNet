@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <StartupObject>Teronis.DotNet.Build.Program</StartupObject>
+    <StartupObject>Teronis.Build.Program</StartupObject>
     <Nullable>enable</Nullable>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <IsPackable>false</IsPackable>
@@ -17,8 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj">
-      <Properties>CustomProperty=CESAAA;DisableGitVersionCache=true</Properties>
+    <ProjectReference Include="..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj">
+      <Properties>DisableGitVersionCache=true</Properties>
       <AdditionalProperties>TargetFramework=netstandard2.0;DisableGitVersionCache=true</AdditionalProperties>
       <BuildProjectReferences>false</BuildProjectReferences>
     </ProjectReference>

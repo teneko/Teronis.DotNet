@@ -1,4 +1,4 @@
-﻿namespace Teronis.DotNet.Build.CommandOptions
+﻿namespace Teronis.Build.CommandOptions
 {
     public abstract class CommandOptionsBase : ICommandOptions
     {

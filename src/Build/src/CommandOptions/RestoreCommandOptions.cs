@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace Teronis.DotNet.Build.CommandOptions
+namespace Teronis.Build.CommandOptions
 {
     [Verb(RestoreCommand, HelpText = "Restores projects")]
     public class RestoreCommandOptions : CommandOptionsBase

@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace Teronis.DotNet.Build
+namespace Teronis.Build
 {
     interface ICommandOptions
     {

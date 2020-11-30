@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace Teronis.DotNet.Build.CommandOptions
+namespace Teronis.Build.CommandOptions
 {
     [Verb(AzureCommand, HelpText = "Restores, builds, tests and packs projects")]
     public class AzureCommandOptions : CommandOptionsBase

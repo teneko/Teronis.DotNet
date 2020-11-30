@@ -6,14 +6,14 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CommandLine;
 using Teronis.Diagnostics;
-using Teronis.DotNet.Build.CommandOptions;
+using Teronis.Build.CommandOptions;
 using Microsoft.Build.Evaluation;
 using static Bullseye.Targets;
-using static Teronis.DotNet.Build.ICommandOptions;
+using static Teronis.Build.ICommandOptions;
 using System.Diagnostics;
 using System.Xml.Linq;
 
-namespace Teronis.DotNet.Build
+namespace Teronis.Build
 {
     class Program
     {

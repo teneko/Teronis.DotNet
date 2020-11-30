@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Teronis.DotNet.Build
+namespace Teronis.Build
 {
     public class ProjectInfo
     {

@@ -2,7 +2,7 @@
 using System.IO;
 using Teronis.IO;
 
-namespace Teronis.DotNet.Build
+namespace Teronis.Build
 {
     public static class TeronisBuildUtils
     {

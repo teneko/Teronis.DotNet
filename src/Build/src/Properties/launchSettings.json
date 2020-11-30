@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Teronis.DotNet.Build": {
+    "Teronis.Build": {
       "commandName": "Project",
       "commandLineArgs": "pack"
     }

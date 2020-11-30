@@ -22,7 +22,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PackagePublish.MSBuild.Core
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PackagePublish.MSBuild.Packaging.GitVersionCache", "GitVersionCache\ref\PackagePublish\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj", "{5BF4F544-2DF3-47AD-AA6C-7A0609FABBD3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.DotNet.Build", "..\..\..\DotNet\Build\Build\src\Teronis.DotNet.Build.csproj", "{375EC8F8-9827-48CA-AE16-DBB308D0457F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Build", "..\..\..\Build\src\Teronis.Build.csproj", "{375EC8F8-9827-48CA-AE16-DBB308D0457F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitVersionCache.NetStandard.Core", "..\..\..\NetStandard\Core\Core\ref\GitVersionCache\GitVersionCache.NetStandard.Core.csproj", "{CCA45765-5A3E-4C1F-BD23-B39157469F07}"
 EndProject

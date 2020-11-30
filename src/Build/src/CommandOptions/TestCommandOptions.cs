@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace Teronis.DotNet.Build.CommandOptions
+namespace Teronis.Build.CommandOptions
 {
     [Verb(TestCommand, HelpText = "Tests projects")]
     public class TestCommandOptions : CommandOptionsBase

@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace Teronis.DotNet.Build.CommandOptions
+namespace Teronis.Build.CommandOptions
 {
     [Verb(PackCommand, HelpText = "Packs projects")]
     public class PackCommandOptions : CommandOptionsBase

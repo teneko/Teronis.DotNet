@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitVersion.CommandLine" Version="5.3.5" GeneratePathProperty="true">
+    <PackageReference Include="GitVersion.CommandLine" Version="5.5.1" GeneratePathProperty="true">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

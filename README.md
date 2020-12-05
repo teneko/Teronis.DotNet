@@ -1,5 +1,5 @@
 [![Build Status](https://dev.azure.com/teroneko/Teronis.DotNet/_apis/build/status/NuGetPushArtifacts?branchName=develop)](https://dev.azure.com/teroneko/Teronis.DotNet/_build/latest?definitionId=5&branchName=master)
-[![Custom badge](https://buildstats.info/nuget/Teronis.MSBuild.Packaging.ProjectBuildInPackage?includePreReleases=false)](https://www.nuget.org/packages?q=Teroneko+Teronis)
+[![Custom badge](https://buildstats.info/nuget/Teronis.MSBuild.Packaging.ProjectBuildInPackage?includePreReleases=true)](https://www.nuget.org/packages?q=Teroneko+Teronis)
 ![Custom badge](https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Fteroneko%2Fa807e920ca2ee8d3e5749366d3528486%2Fraw%2F05805ebd5a26fb58cabb26a42bd6baf467822fd7%2Fpreview-badge.json)
 
 # Teronis.DotNet

@@ -10,7 +10,7 @@ in "outer" build.
     <DisableGitVersion>true</DisableGitVersion>
     <DisableGitVersionCache>true</DisableGitVersionCache>
 
-    <ShadowProjectReference>$(MSBuildThisFileDirectory)..\..\src\Teronis.NetStandard.Tools.GitVersion.csproj</ShadowProjectReference>
+    <ShadowProjectReference>$(MSBuildThisFileDirectory)..\..\src\Teronis.GitVersion.CommandLine.Library.csproj</ShadowProjectReference>
 
   </PropertyGroup>
 
@@ -18,7 +18,7 @@ in "outer" build.
   
   <ItemGroup>
     <ProjectReference Remove="@(ProjectReference)" />
-    <ProjectReference Include="..\..\..\..\..\Core\Core\ref\GitVersionCache\GitVersionCache.NetStandard.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\..\NetStandard\Core\Core\ref\GitVersionCache\GitVersionCache.NetStandard.Core.csproj" />
   </ItemGroup>
 
 </Project>

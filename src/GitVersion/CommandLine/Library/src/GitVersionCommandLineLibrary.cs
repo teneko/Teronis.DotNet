@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Teronis.Diagnostics;
 
-namespace Teronis.Tools.GitVersion
+namespace Teronis.GitVersion.CommandLine
 {
-    public class GitVersionCommandLine
+    public class GitVersionCommandLineLibrary
     {
         private const string GitVersionExecutableName = "GitVersion.exe";
 

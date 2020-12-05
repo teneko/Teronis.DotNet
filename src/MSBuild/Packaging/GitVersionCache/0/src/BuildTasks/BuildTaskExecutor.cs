@@ -9,7 +9,7 @@ using Teronis.GitVersionCache.BuildTasks.Models;
 using Teronis.IO.FileLocking;
 using Teronis.Text.Json.Converters;
 using Teronis.Text.Json.Serialization;
-using Teronis.Tools.GitVersion;
+using Teronis.GitVersion.CommandLine;
 
 namespace Teronis.GitVersionCache.BuildTasks
 {
@@ -51,7 +51,7 @@ namespace Teronis.GitVersionCache.BuildTasks
                     throw new FileNotFoundException($"The config file {configFile} does not exist.");
                 }
             } else {
-                var parentOfGitVersionYamlDirectoryInfo = BuildTaskUtilities.GetParentOfGitVersionYamlDirectory(cacheIdentification.ProjectDirectory) ??
+                var parentOfGitVersionYamlDirectoryInfo = BuildTaskUtilities.GetParentDirectoryOfGitVersionYamlFile(cacheIdentification.ProjectDirectory) ??
                     throw new FileNotFoundException($"Could not find parent GitVersion.yml file upwards {cacheIdentification.ProjectDirectory}.");
 
                 configFile = Path.Combine(parentOfGitVersionYamlDirectoryInfo.FullName, BuildTaskExecutorDefaults.GitVersionFileNameWithExtension);
@@ -59,7 +59,7 @@ namespace Teronis.GitVersionCache.BuildTasks
 
             GitVersionYamlFileInfo = new FileInfo(configFile);
 
-            ParentOfGitDirectoryInfo = BuildTaskUtilities.GetParentOfGitDirectory(cacheIdentification.ProjectDirectory) ??
+            ParentOfGitDirectoryInfo = BuildTaskUtilities.GetParentDirectoryOfGitDirectory(cacheIdentification.ProjectDirectory) ??
                 throw new FileNotFoundException($"Could not find parent .git directory upwards {cacheIdentification.ProjectDirectory}.");
 
             CacheDirectoryName = BuildTaskExecutorDefaults.CacheDirectoryName;
@@ -84,7 +84,7 @@ namespace Teronis.GitVersionCache.BuildTasks
         }
 
         /// <summary>
-        /// Gets the cached, or not existing, the new calculated git version variables.
+        /// Gets the cached, or if not existing, the new calculated git version variables.
         /// </summary>
         /// <returns>If true the cache could be retrieved.</returns>
         public bool LoadCacheOrGetVersion(GetVersionCacheTask buildTask)
@@ -99,7 +99,7 @@ namespace Teronis.GitVersionCache.BuildTasks
                 var arguments = $"{gitDirectory} /config {configFile}";
 
                 try {
-                    serializedGitVariables = GitVersionCommandLine.ExecuteGitVersion(arguments);
+                    serializedGitVariables = GitVersionCommandLineLibrary.ExecuteGitVersion(arguments);
                     isCache = false;
                 } catch (Diagnostics.NonZeroExitCodeException error) {
                     var errorMessage = error.Message + $"(arguments: {arguments})" +

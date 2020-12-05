@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Tools.GitVersion", "src\NetStandard\Tools\GitVersion\GitVersion\src\Teronis.NetStandard.Tools.GitVersion.csproj", "{53BD5696-FB21-4F93-B621-517772DF4D0B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.GitVersion.CommandLine.Library", "src\GitVersion\CommandLine\Library\src\Teronis.GitVersion.CommandLine.Library.csproj", "{53BD5696-FB21-4F93-B621-517772DF4D0B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Json", "src\NetStandard\Json\Json\src\Teronis.NetStandard.Json.csproj", "{E2B942F5-F171-4D48-9A58-37E4952647AE}"
 EndProject
@@ -26,7 +26,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitVersionCache.NetStandard
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitVersionCache.NetStandard.Core", "src\NetStandard\Core\Core\ref\GitVersionCache\GitVersionCache.NetStandard.Core.csproj", "{7BA77AF3-C165-4B7A-879E-23B5B3E87CC6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitVersionCache.NetStandard.Tools.GitVersion", "src\NetStandard\Tools\GitVersion\GitVersion\ref\GitVersionCache\GitVersionCache.NetStandard.Tools.GitVersion.csproj", "{CFB645C2-62E6-4072-8797-97D74F2258B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitVersionCache.GitVersion.CommandLine.Library", "src\GitVersion\CommandLine\Library\ref\GitVersionCache\GitVersionCache.GitVersion.CommandLine.Library.csproj", "{CFB645C2-62E6-4072-8797-97D74F2258B9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitVersionCache.MSBuild.Packaging.GitVersionCache", "src\MSBuild\Packaging\GitVersionCache\0\ref\GitVersionCache\GitVersionCache.MSBuild.Packaging.GitVersionCache.csproj", "{FE6F23C9-1982-47E3-9C62-E93906C31E1B}"
 EndProject

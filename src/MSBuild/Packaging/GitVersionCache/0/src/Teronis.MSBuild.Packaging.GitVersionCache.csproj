@@ -46,7 +46,7 @@
     </ProjectReference>
 
     <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\..\..\NetStandard\Json\Json\ref\GitVersionCache\GitVersionCache.NetStandard.Json.csproj" />
-    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\..\..\NetStandard\Tools\GitVersion\GitVersion\ref\GitVersionCache\GitVersionCache.NetStandard.Tools.GitVersion.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\..\..\GitVersion\CommandLine\Library\ref\GitVersionCache\GitVersionCache.GitVersion.CommandLine.Library.csproj" />
     <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\..\Core\Core\ref\GitVersionCache\GitVersionCache.MSBuild.Core.csproj" />
 
   </ItemGroup>

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>Teronis.Tools.GitVersion</RootNamespace>
+    <RootNamespace>Teronis.GitVersion.CommandLine</RootNamespace>
     <Nullable>Enable</Nullable>
     <Description>A wrapper to use the executable of GitVersion (https://chocolatey.org/packages/GitVersion.Portable) in C# programmatically.</Description>
   </PropertyGroup>
@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Core\Core\src\Teronis.NetStandard.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj" />
   </ItemGroup>
 
 </Project>

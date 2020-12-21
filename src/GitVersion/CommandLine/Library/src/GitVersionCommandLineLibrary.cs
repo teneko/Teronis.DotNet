@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 using Teronis.Diagnostics;
 
@@ -8,10 +10,16 @@ namespace Teronis.GitVersion.CommandLine
     {
         private const string GitVersionExecutableName = "GitVersion.exe";
 
+        private static string evaluateGitVersionExecutablePath() {
+            var executingAssemblyDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var gitVersionExecutablePath = Path.Combine(executingAssemblyDirectory, GitVersionExecutableName);
+            return gitVersionExecutablePath;
+        }
+
         public static string ExecuteGitVersion(string? args = null, bool echoCommand = false, string? commandEchoPrefix = null, Action<string>? errorReceived = null) =>
-            SimpleProcess.Read(GitVersionExecutableName, args);
+            SimpleProcess.Read(evaluateGitVersionExecutablePath(), args);
 
         public static ValueTask<string> ExecuteGitVersionAsync(string? args = null, bool echoCommand = false, string? commandEchoPrefix = null, Action<string>? errorReceived = null) =>
-            SimpleProcess.ReadAsync(GitVersionExecutableName, args);
+            SimpleProcess.ReadAsync(evaluateGitVersionExecutablePath(), args);
     }
 }

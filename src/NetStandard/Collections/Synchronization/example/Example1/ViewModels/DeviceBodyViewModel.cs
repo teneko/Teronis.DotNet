@@ -1,24 +1,25 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Teronis.Collections.Synchronization.Example1.Models;
 using Teronis.Extensions;
-using Teronis.ObjectModel.Updates;
+using Teronis.ViewModels;
 
 namespace Teronis.Collections.Synchronization.Example1.ViewModels
 {
-    public class DeviceBodyViewModel : ViewModelBase<DeviceBodyViewModel, DeviceBodyEntity>
+    public class DeviceBodyViewModel : ViewModelBase
     {
-        public DeviceBodyEntity Body { get; set; }
+        public DeviceBodyEntity Body {
+            get => body;
 
-        public DeviceBodyViewModel(DeviceBodyEntity deviceBody)
-        {
+            set {
+                OnPropertyChanging();
+                body = value ?? typeof(DeviceBodyEntity).CreateInstanceUninitialized<DeviceBodyEntity>();
+                OnPropertyChanged();
+            }
+        }
+
+        private DeviceBodyEntity body;
+
+        public DeviceBodyViewModel(DeviceBodyEntity deviceBody) =>
             Body = deviceBody ?? throw new ArgumentNullException(nameof(deviceBody));
-        }
-
-        protected override async Task UpdateContentByAsync(IContentUpdate<DeviceBodyEntity> update)
-        {
-            var updateContent = await update.ContentTask ?? typeof(DeviceBodyEntity).InstantiateUninitializedObject<DeviceBodyEntity>();
-            Body = updateContent;
-        }
     }
 }

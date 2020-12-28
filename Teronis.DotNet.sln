@@ -38,7 +38,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.MSBuild.Packaging.Proj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.NetStandard.Core", "src\NetStandard\Core\Core\test\Core\Test.NetStandard.Core.csproj", "{23D2F491-8FAA-4E15-9E3B-355CDAEE9693}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.DataModeling.TreeColumn", "src\NetStandard\DataModeling\TreeColumn\src\Teronis.NetStandard.DataModeling.TreeColumn.csproj", "{BD1B9AA3-E929-4520-AE25-E5014C8E5D06}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.ObjectModel.TreeColumn", "src\NetStandard\ObjectModel\TreeColumn\src\Teronis.NetStandard.ObjectModel.TreeColumn.csproj", "{BD1B9AA3-E929-4520-AE25-E5014C8E5D06}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections.Synchronization", "src\NetStandard\Collections\Synchronization\src\Teronis.NetStandard.Collections.Synchronization.csproj", "{E5704D8B-1C44-4C2E-BB5C-EB042D0763B9}"
 EndProject

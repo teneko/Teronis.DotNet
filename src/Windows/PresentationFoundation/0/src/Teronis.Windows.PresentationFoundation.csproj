@@ -24,7 +24,7 @@
     <ProjectReference Include="..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj">
       <SetTargetFramework Condition="'$(TargetFramework)' == 'net5.0-windows'">TargetFramework=net5.0</SetTargetFramework>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\NetStandard\DataModeling\TreeColumn\src\Teronis.NetStandard.DataModeling.TreeColumn.csproj">
+    <ProjectReference Include="..\..\..\..\NetStandard\ObjectModel\TreeColumn\src\Teronis.NetStandard.ObjectModel.TreeColumn.csproj">
       <SetTargetFramework Condition="'$(TargetFramework)' == 'net5.0-windows'">TargetFramework=net5.0</SetTargetFramework>
     </ProjectReference>
     <ProjectReference Include="..\..\0.Localization\src\Teronis.Windows.PresentationFoundation.Localization.csproj" PrivateAssets="all" />

@@ -1,24 +1,16 @@
-﻿using System.Threading.Tasks;
-using Teronis.Collections.Synchronization.Example1.Models;
-using Teronis.ObjectModel.Updates;
+﻿using Teronis.Collections.Synchronization.Example1.Models;
+using Teronis.ViewModels;
 
 namespace Teronis.Collections.Synchronization.Example1.ViewModels
 {
-    public class DeviceHeaderStateViewModel : ViewModelBase<DeviceHeaderStateViewModel, DeviceHeaderStateEntity>
+    public class DeviceHeaderStateViewModel : ViewModelBase
     {
-        public DeviceHeaderStateEntity State { get; private set; }
+        public DeviceHeaderStateEntity State { get; set; }
 
-        public DeviceHeaderStateViewModel(DeviceHeaderStateEntity headerState)
-        {
+        public DeviceHeaderStateViewModel(DeviceHeaderStateEntity headerState) =>
             State = headerState ?? new DeviceHeaderStateEntity();
-        }
 
         public DeviceHeaderStateViewModel()
             : this(null) { }
-
-        protected override async Task UpdateContentByAsync(IContentUpdate<DeviceHeaderStateEntity> update)
-        {
-            State = await update.ContentTask;
-        }
     }
 }

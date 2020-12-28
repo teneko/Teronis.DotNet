@@ -4,7 +4,7 @@ using Teronis.Collections.Synchronization.Example1.ViewModels;
 
 namespace Teronis.Collections.Synchronization
 {
-    class Program
+    public class Program
     {
         static async Task Main()
         {
@@ -22,9 +22,9 @@ namespace Teronis.Collections.Synchronization
                 new DeviceHeaderEntity() { Serial = "5", State = new DeviceHeaderStateEntity() }
             };
 
-            await devicesViewModel.UpdateDevicesAsync(initialDeviceHeaders);
-            await devicesViewModel.UpdateDevicesAsync(deviceHeaders);
-
+            devicesViewModel.UpdateDevices(initialDeviceHeaders);
+            devicesViewModel.UpdateDevices(deviceHeaders);
+            devicesViewModel.DeviceHeaderCollectionSynchronisation.SelectedItem = devicesViewModel.DeviceHeaderCollectionSynchronisation.SubItems[0];
             ;
         }
     }

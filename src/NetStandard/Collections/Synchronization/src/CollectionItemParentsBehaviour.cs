@@ -3,37 +3,39 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Teronis.Collections.Changes;
-using Teronis.Data;
-using Teronis.Extensions;
+using Teronis.ObjectModel.Parenting;
 
 namespace Teronis.Collections.Synchronization
 {
-    public class CollectionItemParentsBehaviour<ItemType, ContentType>
+    public class AddRemoveResetBehaviourForCollectionItemByAddRemoveParents<ItemType, ContentType>
         where ItemType : IHaveParents
     {
-        public INotifyCollectionChangeApplied<ItemType, ContentType> CollectionChangeAppliedNotifier { get; private set; }
+        public INotifyCollectionModified<ItemType, ContentType> CollectionModifiedNotifier { get; private set; }
         public ReadOnlyCollection<object> Parents { get; private set; }
 
-        public CollectionItemParentsBehaviour(INotifyCollectionChangeApplied<ItemType, ContentType> collectionChangeAppliedNotifier, params object[] parents)
+        public AddRemoveResetBehaviourForCollectionItemByAddRemoveParents(INotifyCollectionModified<ItemType, ContentType> collectionModifiedNotifier, params object[] parents)
         {
-            CollectionChangeAppliedNotifier = collectionChangeAppliedNotifier;
-            CollectionChangeAppliedNotifier.CollectionChangeApplied += NotifiableCollectionContainer_CollectionChanged;
-            var parentCollection = new List<object>(parents) { collectionChangeAppliedNotifier };
-            Parents = new ReadOnlyCollection<object>(parentCollection);
+            CollectionModifiedNotifier = collectionModifiedNotifier;
+            CollectionModifiedNotifier.CollectionModified += CollectionModifiedNotifier_CollectionModified;
+            var parentList = new List<object>(parents);
+            Parents = new ReadOnlyCollection<object>(parentList);
         }
 
+        public AddRemoveResetBehaviourForCollectionItemByAddRemoveParents(INotifyCollectionModified<ItemType, ContentType> collectionModifiedNotifier, bool collectionModifiedNotifierIsParent)
+            : this(collectionModifiedNotifier, collectionModifiedNotifierIsParent ? new object[] { collectionModifiedNotifier } : new object[] { }) { }
+
         private void Item_WantParent(object sender, HavingParentsEventArgs e)
-            => e.AttachParentsParents(Parents);
+            => e.AddParentsAndTheirParents(Parents);
 
-        private void attachWantParentsHandler(ItemType item)
-            => item.WantParents += Item_WantParent;
+        private void addParentWhenRequestedHandler(ItemType item)
+            => item.ParentsRequested += Item_WantParent;
 
-        private void detachWantParentsHandler(ItemType item)
-            => item.WantParents -= Item_WantParent;
+        private void removeParentWhenRequestedHandler(ItemType item)
+            => item.ParentsRequested -= Item_WantParent;
 
-        private void NotifiableCollectionContainer_CollectionChanged(object sender, CollectionChangeAppliedEventArgs<ItemType, ContentType> args)
+        private void CollectionModifiedNotifier_CollectionModified(object sender, CollectionModifiedEventArgs<ItemType, ContentType> args)
         {
-            var change = args.ItemItemChange;
+            var change = args.OldSubItemsNewSubItemsModification;
 
             var oldItemItemItems = new Lazy<IReadOnlyList<ItemType>>(() => change.OldItems ??
                 throw new ArgumentException("The old item-item-items were not given that can be processed as collection change"));
@@ -44,23 +46,23 @@ namespace Teronis.Collections.Synchronization
             switch (change.Action) {
                 case NotifyCollectionChangedAction.Remove:
                     foreach (var item in oldItemItemItems.Value) {
-                        detachWantParentsHandler(item);
+                        removeParentWhenRequestedHandler(item);
                     }
 
                     break;
                 case NotifyCollectionChangedAction.Add:
                     foreach (var item in newItemItemItems.Value) {
-                        attachWantParentsHandler(item);
+                        addParentWhenRequestedHandler(item);
                     }
 
                     break;
                 case NotifyCollectionChangedAction.Reset:
                     foreach (var oldItem in oldItemItemItems.Value) {
-                        detachWantParentsHandler(oldItem);
+                        removeParentWhenRequestedHandler(oldItem);
                     }
 
                     foreach (var newItem in newItemItemItems.Value) {
-                        attachWantParentsHandler(newItem);
+                        addParentWhenRequestedHandler(newItem);
                     }
 
                     break;

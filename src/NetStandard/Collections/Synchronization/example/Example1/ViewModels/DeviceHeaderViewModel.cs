@@ -1,34 +1,36 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Teronis.Collections.Synchronization.Example1.Models;
-using Teronis.DataModeling.TreeColumn;
-using Teronis.Extensions;
-using Teronis.ObjectModel.Updates;
+using Teronis.ObjectModel.TreeColumn;
+using Teronis.ViewModels;
 
 namespace Teronis.Collections.Synchronization.Example1.ViewModels
 {
-    public class DeviceHeaderViewModel : ViewModelBase<DeviceHeaderViewModel, DeviceHeaderEntity>
+    public class DeviceHeaderViewModel : ViewModelBase
     {
         [HasTreeColumns]
-        public DeviceHeaderEntity Header { get; private set; }
+        public DeviceHeaderEntity Header {
+            get => header;
+
+            set {
+                OnPropertyChanging();
+                header = value;
+                StateContainer.State = header.State;
+                OnPropertyChanged();
+            }
+        }
 
         [HasTreeColumns]
         public DeviceHeaderStateViewModel StateContainer { get; private set; }
 
+        private DeviceHeaderEntity header;
+
         public DeviceHeaderViewModel(DeviceHeaderEntity header)
         {
-            Header = header ?? throw new ArgumentNullException(nameof(header));
             StateContainer = new DeviceHeaderStateViewModel(header.State);
+            Header = header ?? throw new ArgumentNullException(nameof(header));
         }
 
         public DeviceHeaderViewModel()
             : this(new DeviceHeaderEntity()) { }
-
-        protected override async Task UpdateContentByAsync(IContentUpdate<DeviceHeaderEntity> update)
-        {
-            Header = await update.ContentTask;
-            var stateUpdate = update.CreateUpdateFromContent(_ => Header.State, this);
-            await StateContainer.ApplyContentUpdateByAsync(stateUpdate);
-        }
     }
 }

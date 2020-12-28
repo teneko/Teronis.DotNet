@@ -14,7 +14,7 @@ namespace Teronis.Extensions
             => TypeUtils.InstantiateUninitializedObject(type);
 
         [return: MaybeNull]
-        public static T InstantiateUninitializedObject<T>(this Type type)
+        public static T CreateInstanceUninitialized<T>(this Type type)
             => (T)TypeUtils.InstantiateUninitializedObject(type);
 
         public static object? GetDefault(this Type type)

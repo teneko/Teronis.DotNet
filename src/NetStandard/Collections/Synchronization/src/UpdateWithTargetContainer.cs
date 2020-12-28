@@ -1,15 +1,13 @@
-﻿using Teronis.ObjectModel.Updates;
-
-namespace Teronis.Collections.Synchronization
+﻿namespace Teronis.Collections.Synchronization
 {
-    internal class UpdateWithTargetContainer<UpdateContentType, TargetType>
+    internal class ContentUpdateWithTargetContainer<ContentType, TargetType>
     {
-        public ContentUpdate<UpdateContentType> Update { get; private set; }
+        public ContentType ContentUpdate { get; private set; }
         public TargetType Target { get; private set; }
 
-        public UpdateWithTargetContainer(ContentUpdate<UpdateContentType> update, TargetType target)
+        public ContentUpdateWithTargetContainer(ContentType contentUpdate, TargetType target)
         {
-            Update = update;
+            ContentUpdate = contentUpdate;
             Target = target;
         }
     }

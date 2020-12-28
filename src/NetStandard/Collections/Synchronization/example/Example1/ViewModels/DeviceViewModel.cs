@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Teronis.Collections.Synchronization.Example1.Models;
-using Teronis.ObjectModel.Updates;
+using Teronis.ViewModels;
 
 namespace Teronis.Collections.Synchronization.Example1.ViewModels
 {
-    public class DeviceViewModel : ViewModelBase<DeviceViewModel, DeviceHeaderViewModel>
+    public class DeviceViewModel : ViewModelBase
     {
         public DeviceHeaderViewModel HeaderContainer { get; private set; }
         /// <summary>
@@ -18,8 +17,5 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels
             BodyContainer = new DeviceBodyViewModel(new DeviceBodyEntity());
             HeaderContainer = headerContainer ?? throw new ArgumentNullException(nameof(headerContainer));
         }
-
-        protected override Task UpdateContentByAsync(IContentUpdate<DeviceHeaderViewModel> update)
-            => throw new NotImplementedException();
     }
 }

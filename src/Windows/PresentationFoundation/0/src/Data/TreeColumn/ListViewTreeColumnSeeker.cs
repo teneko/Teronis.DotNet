@@ -1,5 +1,5 @@
 ﻿using System;
-using Teronis.DataModeling.TreeColumn.Core;
+using Teronis.ObjectModel.TreeColumn.Core;
 using Teronis.Windows.PresentationFoundation.Templating;
 
 namespace Teronis.Windows.PresentationFoundation.Data.TreeColumn

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Specialized;
 using Teronis.Collections.Changes;
-using Teronis.Data;
-using Teronis.Extensions;
+using Teronis.ObjectModel.Parenting;
 
 namespace Teronis.Collections.Synchronization
 {
     public class CollectionItemConversionParentBehaviour<OriginalItemType, OriginalContentType, ConvertedItemType>
-        where OriginalItemType : IHaveKnownParents
+        where OriginalItemType : IHaveRegisteredParents
     {
         public INotifyCollectionChangeConversionApplied<ConvertedItemType, OriginalItemType> CollectionChangeConversionNotifer { get; private set; }
 
@@ -19,8 +18,8 @@ namespace Teronis.Collections.Synchronization
 
         private void ConvertedCollectionChangeNotifer_CollectionChangeConversionApplied(object sender, CollectionChangeConversionAppliedEventArgs<ConvertedItemType, OriginalItemType> args)
         {
-            var convertedContentContentChange = args.ConvertedCollectionChangeBundle.ContentContentChange;
-            var convertedItemItemChange = args.ConvertedCollectionChangeBundle.ItemItemChange;
+            var convertedContentContentChange = args.ConvertedCollectionChangeBundle.OldSuperItemsNewSuperItemsModification;
+            var convertedItemItemChange = args.ConvertedCollectionChangeBundle.OldSubItemsNewSubItemsModification;
 
             if (convertedContentContentChange.Action != convertedItemItemChange.Action) {
                 CollectionChangeConversionThrowHelper.ThrowChangeActionMismatchException();
@@ -45,16 +44,16 @@ namespace Teronis.Collections.Synchronization
 
                         switch (action) {
                             case NotifyCollectionChangedAction.Remove:
-                                originalItem.DetachKnownWantParentsHandler(this);
+                                originalItem.UnregisterParent(this);
                                 break;
                             case NotifyCollectionChangedAction.Add:
                                 var convertedItem = convertedItemsEnumerator.Current ??
                                     throw new ArgumentException("One item of the new converted item-item-items is null and cannot be attached as wanted parent.");
 
                                 void OriginalItem_WantParents(object s, HavingParentsEventArgs e)
-                                    => e.AttachParentParents(convertedItem);
+                                    => e.AddParentAndItsParents(convertedItem);
 
-                                originalItem.AttachKnownWantParentsHandler(this, OriginalItem_WantParents);
+                                originalItem.RegisterParent(this, OriginalItem_WantParents);
                                 break;
                         }
                     }

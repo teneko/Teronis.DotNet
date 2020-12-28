@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using MorseCode.ITask;
 using Teronis.Collections.Synchronization.Example1.Models;
 using Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollections;
 using Teronis.ViewModels;
@@ -18,7 +16,7 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels
             DeviceCollectionSynchronisation = new DeviceCollectionSynchronisation(DeviceHeaderCollectionSynchronisation);
         }
 
-        public Task UpdateDevicesAsync(IEnumerable<DeviceHeaderEntity> deviceHeaders)
-            => DeviceHeaderCollectionSynchronisation.SynchronizeAsync(Task.FromResult(deviceHeaders).AsITask());
+        public void UpdateDevices(IEnumerable<DeviceHeaderEntity> deviceHeaders) => 
+            DeviceHeaderCollectionSynchronisation.SynchronizeCollection(deviceHeaders);
     }
 }

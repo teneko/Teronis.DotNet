@@ -2,83 +2,73 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using Teronis.Data;
-using Teronis.Extensions;
+using Teronis.ObjectModel.Parenting;
 using Teronis.Reflection.Caching;
 
 namespace Teronis.ViewModels
 {
-    public abstract class ViewModelBase : INotifyPropertyChanged, IHaveParents, IHaveKnownParents, IWorking, INotifyDataErrorInfo
+    public abstract class ViewModelBase : INotifyPropertyChanging, INotifyPropertyChanged, IHaveParents, IHaveRegisteredParents, INotifyDataErrorInfo
     {
         public event PropertyChangedEventHandler? PropertyChanged;
-        public event WantParentsEventHandler? WantParents;
+        public event PropertyChangingEventHandler? PropertyChanging;
 
-        public DynamicParentResolver DynamicParentResolver { get; private set; }
-        public bool IsWorking => workStatusPropertyChangedCache.CachedPropertyValues.Values.Any(x => x.IsWorking);
-
-        protected WorkStatus WorkStatus { get; private set; }
-
-        private readonly KnownParentsContainer knownParentsContainer;
+        private readonly RegisteredRequestParentHandlerDictionary registeredRequestParentHandlerDictionary;
         private readonly SingleTypePropertyCache<IHaveParents> havingParentsPropertyChangedCache;
-        private readonly SingleTypePropertyCache<IWorking> workStatusPropertyChangedCache;
 
         public ViewModelBase()
         {
-            DynamicParentResolver = new DynamicParentResolver(this);
-            knownParentsContainer = new KnownParentsContainer(this);
+            registeredRequestParentHandlerDictionary = new RegisteredRequestParentHandlerDictionary(this);
             havingParentsPropertyChangedCache = new SingleTypePropertyCache<IHaveParents>(this);
             havingParentsPropertyChangedCache.PropertyAdded += HavingParentsPropertyChangedCache_PropertyCacheAdded;
             havingParentsPropertyChangedCache.PropertyRemoved -= HavingParentsPropertyChangedCache_PropertyCacheRemoved;
-            /// We only subscribe to <see cref="IWorking"/>-container, so that we can on calculate
-            /// <see cref="IsWorking"/> properly.
-            workStatusPropertyChangedCache = new SingleTypePropertyCache<IWorking>(this);
-            WorkStatus = new WorkStatus();
             validationErrors = new Dictionary<string, ICollection<string>>();
-            validationErrorPreviews = new Dictionary<string, ICollection<string>>();
         }
 
-        private void Property_WantParents(object sender, HavingParentsEventArgs havingParents)
-            => havingParents.AttachParentParents(this);
+        protected void OnPropertyChanging([CallerMemberName] string? propertyName = null)
+        {
+            var args = new PropertyChangingEventArgs(propertyName);
+            PropertyChanging?.Invoke(this, args);
+        }
+
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            var args = new PropertyChangedEventArgs(propertyName);
+            PropertyChanged?.Invoke(this, args);
+        }
+
+        private void Property_RequestParents(object sender, HavingParentsEventArgs havingParents)
+            => havingParents.AddParentAndItsParents(this);
 
         private void HavingParentsPropertyChangedCache_PropertyCacheAdded(object sender, PropertyCachedEventArgs<IHaveParents> args)
         {
             var propertyValue = args.PropertyValue ?? throw new ArgumentNullException("Property value is null.");
-            propertyValue.WantParents += Property_WantParents;
+            propertyValue.ParentsRequested += Property_RequestParents;
         }
 
         private void HavingParentsPropertyChangedCache_PropertyCacheRemoved(object sender, PropertyCacheRemovedEventArgs<IHaveParents> args)
         {
             var propertyValue = args.PropertyValue ?? throw new ArgumentNullException("Property value is null.");
-            propertyValue.WantParents -= Property_WantParents;
+            propertyValue.ParentsRequested -= Property_RequestParents;
         }
 
-        protected void OnPropertyChanged(PropertyChangedEventArgs args)
-            => PropertyChanged?.Invoke(this, args);
+        #region IHaveParents
 
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            var args = new PropertyChangedEventArgs(propertyName);
-            OnPropertyChanged(args);
-        }
+        public event ParentsRequestedEventHandler? ParentsRequested;
 
-        public ParentsPicker GetParentsPicker()
-            => new ParentsPicker(this, WantParents);
+        public ParentsCollector CreateParentsCollector()
+            => new ParentsCollector(this, ParentsRequested);
+
+        #endregion
 
         #region INotifyDataErrorInfo
 
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
-        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsPreviewsChanged;
 
         public virtual bool HasErrors
             => validationErrors.Count > 0;
 
-        public virtual bool HasErrorPreviews
-            => HasErrors || validationErrorPreviews.Count > 0;
-
         private readonly Dictionary<string, ICollection<string>> validationErrors;
-        private readonly Dictionary<string, ICollection<string>> validationErrorPreviews;
 
         public IEnumerable? GetErrors(string propertyName)
         {
@@ -95,69 +85,35 @@ namespace Teronis.ViewModels
             OnPropertyChanged(nameof(HasErrors));
         }
 
-        private void onErrorPreviewsChanged(string propertyName)
+        protected void SetErrors(string propertyName, ICollection<string> errors)
         {
-            ErrorsPreviewsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
-            OnPropertyChanged(nameof(HasErrorPreviews));
+            validationErrors[propertyName] = errors;
+            onErrorsChanged(propertyName);
         }
 
-        protected void SetErrors(string propertyName, ICollection<string> errors, bool isPreview)
+        protected void RemoveErrors(string propertyName)
         {
-            if (!isPreview) {
-                validationErrors[propertyName] = errors;
-            }
-
-            validationErrorPreviews[propertyName] = errors;
-
-            if (!isPreview) {
-                onErrorsChanged(propertyName);
-            }
-
-            onErrorPreviewsChanged(propertyName);
-        }
-
-        protected void RemoveErrors(string propertyName, bool isPreview)
-        {
-            if (!isPreview && validationErrors.ContainsKey(propertyName)) {
+            if (validationErrors.ContainsKey(propertyName)) {
                 validationErrors.Remove(propertyName);
-            }
-
-            if (validationErrorPreviews.ContainsKey(propertyName)) {
-                validationErrorPreviews.Remove(propertyName);
-            }
-
-            if (!isPreview) {
                 onErrorsChanged(propertyName);
             }
-
-            onErrorPreviewsChanged(propertyName);
         }
 
         #endregion
 
-        #region IHaveKnownParents
+        #region IHaveRegisteredParents
 
-        public void AttachKnownWantParentsHandler(object caller, WantParentsEventHandler handler)
-            => knownParentsContainer.AttachWantParentsHandler(caller, handler);
+        void IHaveRegisteredParents.RegisterParent(ParentsRequestedEventHandler handler)
+            => ParentsRequested += handler;
 
-        public void AttachWantParentsHandler(WantParentsEventHandler handler)
-            => WantParents += handler;
+        public void RegisterParent(object caller, ParentsRequestedEventHandler handler)
+            => registeredRequestParentHandlerDictionary.RegisterParent(caller, handler);
 
-        public void DetachKnownWantParentsHandler(object caller)
-            => knownParentsContainer.DetachWantParentsHandler(caller);
+        void IHaveRegisteredParents.UnregisterParent(ParentsRequestedEventHandler handler)
+            => ParentsRequested -= handler;
 
-        public void DetachWantParentsHandler(WantParentsEventHandler handler)
-            => WantParents -= handler;
-
-        #endregion
-
-        #region IWorking
-
-        public virtual void BeginWork()
-            => WorkStatus.BeginWork();
-
-        public virtual void EndWork()
-            => WorkStatus.EndWork();
+        public void UnregisterParent(object caller)
+            => registeredRequestParentHandlerDictionary.UnregisterParent(caller);
 
         #endregion
     }

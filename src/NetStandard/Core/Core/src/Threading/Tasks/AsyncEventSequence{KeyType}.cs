@@ -38,9 +38,10 @@ namespace Teronis.Threading.Tasks
             : this(EqualityComparer<KeyType>.Default) { }
 
         /// <summary>
-        /// Checks the dispose status by checking the <see cref="IsDisposed"/> object, if it is true means that object
-        /// has been disposed and throw ObjectDisposedException
+        /// Checks if this instance is disposed. If true an exception
+        /// of type <see cref="ObjectDisposedException"/> will be thrown.
         /// </summary>
+        /// <exception cref="ObjectDisposedException">Instance has been already disposed.</exception>
         private void checkDispose()
         {
             if (IsDisposed) {

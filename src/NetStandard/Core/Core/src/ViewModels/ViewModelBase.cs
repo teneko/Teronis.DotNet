@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Teronis.ObjectModel;
 using Teronis.ObjectModel.Parenting;
 using Teronis.Reflection.Caching;
 
 namespace Teronis.ViewModels
 {
-    public abstract class ViewModelBase : INotifyPropertyChanging, INotifyPropertyChanged, IHaveParents, IHaveRegisteredParents, INotifyDataErrorInfo
+    public abstract class ViewModelBase : INotifyPropertyChanging, INotifyPropertyChanged, IHaveParents, IHaveRegisteredParents
     {
         public event PropertyChangedEventHandler? PropertyChanged;
         public event PropertyChangingEventHandler? PropertyChanging;
@@ -22,7 +21,6 @@ namespace Teronis.ViewModels
             havingParentsPropertyChangedCache = new SingleTypePropertyCache<IHaveParents>(this);
             havingParentsPropertyChangedCache.PropertyAdded += HavingParentsPropertyChangedCache_PropertyCacheAdded;
             havingParentsPropertyChangedCache.PropertyRemoved -= HavingParentsPropertyChangedCache_PropertyCacheRemoved;
-            validationErrors = new Dictionary<string, ICollection<string>>();
         }
 
         protected void OnPropertyChanging([CallerMemberName] string? propertyName = null)
@@ -61,46 +59,6 @@ namespace Teronis.ViewModels
 
         #endregion
 
-        #region INotifyDataErrorInfo
-
-        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
-
-        public virtual bool HasErrors
-            => validationErrors.Count > 0;
-
-        private readonly Dictionary<string, ICollection<string>> validationErrors;
-
-        public IEnumerable? GetErrors(string propertyName)
-        {
-            if (string.IsNullOrEmpty(propertyName) || !validationErrors.ContainsKey(propertyName)) {
-                return null;
-            }
-
-            return validationErrors[propertyName];
-        }
-
-        private void onErrorsChanged(string propertyName)
-        {
-            ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
-            OnPropertyChanged(nameof(HasErrors));
-        }
-
-        protected void SetErrors(string propertyName, ICollection<string> errors)
-        {
-            validationErrors[propertyName] = errors;
-            onErrorsChanged(propertyName);
-        }
-
-        protected void RemoveErrors(string propertyName)
-        {
-            if (validationErrors.ContainsKey(propertyName)) {
-                validationErrors.Remove(propertyName);
-                onErrorsChanged(propertyName);
-            }
-        }
-
-        #endregion
-
         #region IHaveRegisteredParents
 
         void IHaveRegisteredParents.RegisterParent(ParentsRequestedEventHandler handler)
@@ -116,5 +74,7 @@ namespace Teronis.ViewModels
             => registeredRequestParentHandlerDictionary.UnregisterParent(caller);
 
         #endregion
+
+        public class DefaultDataErrorInfos : DataErrorInfosBase { }
     }
 }

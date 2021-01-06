@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis.Collections.Generic
 {
-    public static class SuccesssivKeys
+    public static class SuccessivKeys
     {
         [return: MaybeNull]
         public static KeyType Retype<KeyType>(object? key)

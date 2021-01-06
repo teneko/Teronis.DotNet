@@ -102,6 +102,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Windows.Presentatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Windows.PresentationFoundation", "src\Windows\PresentationFoundation\0\src\Teronis.Windows.PresentationFoundation.csproj", "{DB8040EA-71AE-4B4F-BBC1-A8B73FA139FE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{46D55981-C725-48D2-BCC1-7B93D8BB6902}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

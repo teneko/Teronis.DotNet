@@ -14,7 +14,7 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels
             set {
                 OnPropertyChanging();
                 header = value;
-                StateContainer.State = header.State;
+                StateContainer.State = value.State;
                 OnPropertyChanged();
             }
         }

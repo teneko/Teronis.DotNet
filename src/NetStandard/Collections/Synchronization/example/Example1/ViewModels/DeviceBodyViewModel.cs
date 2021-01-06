@@ -1,6 +1,7 @@
 ﻿using System;
 using Teronis.Collections.Synchronization.Example1.Models;
 using Teronis.Extensions;
+using Teronis.Reflection;
 using Teronis.ViewModels;
 
 namespace Teronis.Collections.Synchronization.Example1.ViewModels
@@ -12,7 +13,7 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels
 
             set {
                 OnPropertyChanging();
-                body = value ?? typeof(DeviceBodyEntity).CreateInstanceUninitialized<DeviceBodyEntity>();
+                body = value ?? Instantiator.Instantiate<DeviceBodyEntity>();
                 OnPropertyChanged();
             }
         }

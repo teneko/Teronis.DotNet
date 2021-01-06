@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Teronis.Extensions;
+using Teronis.Utils;
 
 namespace Teronis.Reflection
 {
@@ -122,7 +123,7 @@ namespace Teronis.Reflection
                 .GetVariableMembers(descriptor: copyingObjectMembersSettings)
                 .ToDictionary(x => x.Name);
 
-            var clonedObejct = (TargetType)declaredType.InstantiateUninitializedObject()!;
+            var clonedObejct = Instantiator.Instantiate<TargetType>(declaredType);
 
             foreach (var nameAndCloningObjectMembersPair in cloningObjectMembersByNameList) {
                 var cloningObjectMembersKey = nameAndCloningObjectMembersPair.Key;
@@ -168,7 +169,7 @@ namespace Teronis.Reflection
                 interruptingBaseType ??= typeof(object);
             }
 
-            var basesTypes = beginningType.GetBaseTypes(interruptingBaseType);
+            var basesTypes = TypeUtils.GetBaseTypes(beginningType, interruptingBaseType: interruptingBaseType);
 
             foreach (var type in basesTypes) {
                 foreach (var varInfo in getMembers(type, variableInfoDescriptor)) {
@@ -186,7 +187,7 @@ namespace Teronis.Reflection
         public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeMembers<TAttribute>(Func<Type, VariableInfoDescriptor, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type? interruptingBaseType = null, VariableInfoDescriptor? variableInfoDescriptor = null, bool? getCustomAttributesInherit = null)
             where TAttribute : Attribute
         {
-            foreach (var type in beginningType.GetBaseTypes(interruptingBaseType)) {
+            foreach (var type in TypeUtils.GetBaseTypes(beginningType, interruptingBaseType: interruptingBaseType)) {
                 foreach (var propertyInfo in GetMembers(getMembers, beginningType, interruptingBaseType, variableInfoDescriptor)) {
                     if (propertyInfo.TryGetAttributeVariableMember(out AttributeMemberInfo<TAttribute>? varAttrInfo, getCustomAttributesInherit) && !(varAttrInfo is null)) {
                         yield return varAttrInfo;
@@ -199,7 +200,7 @@ namespace Teronis.Reflection
 
         public static IEnumerable<AttributeMemberInfo> GetAttributeMembers(Type attributeType, Func<Type, VariableInfoDescriptor, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type? interruptingBaseType = null, VariableInfoDescriptor? variableInfoDescriptor = null, bool? getCustomAttributesInherit = null)
         {
-            foreach (var type in beginningType.GetBaseTypes(interruptingBaseType)) {
+            foreach (var type in TypeUtils.GetBaseTypes(beginningType, interruptingBaseType: interruptingBaseType)) {
                 foreach (var propertyInfo in GetMembers(getMembers, beginningType, interruptingBaseType, variableInfoDescriptor)) {
                     if (propertyInfo.TryGetAttributeVariableMember(attributeType, out var varAttrInfo, getCustomAttributesInherit) && !(varAttrInfo is null)) {
                         yield return varAttrInfo;

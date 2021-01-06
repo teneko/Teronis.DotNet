@@ -15,7 +15,7 @@ namespace Teronis.Collections.Changes
 
         private readonly ICollectionModificationBundle<SubItemType, SuperItemType> modificationBundle;
 
-        public CollectionModifiedEventArgs(ICollectionModificationBundle<SubItemType, SuperItemType> modificationBundle) =>
+        public CollectionModifiedEventArgs(CollectionModificationBundle<SubItemType, SuperItemType> modificationBundle) =>
             this.modificationBundle = modificationBundle ?? throw new ArgumentNullException(nameof(modificationBundle));
     }
 }

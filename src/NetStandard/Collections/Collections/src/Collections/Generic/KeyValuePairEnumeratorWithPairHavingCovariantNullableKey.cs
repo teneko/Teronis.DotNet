@@ -2,14 +2,14 @@
 
 namespace Teronis.Collections.Generic
 {
-    public class KeyValuePairEnumeratorWithPairHavingCovariantNullableKey<KeyType, ValueType> : KeyValuePairEnumeratorWithConversionBase<KeyValuePair<INullableKey<KeyType>, ValueType>, NullableKey<KeyType>, ValueType>
+    public class KeyValuePairEnumeratorWithPairHavingCovariantNullableKey<KeyType, ValueType> : KeyValuePairEnumeratorWithConversionBase<KeyValuePair<IStillNullable<KeyType>, ValueType>, StillNullable<KeyType>, ValueType>
         where KeyType : notnull
     {
-        public KeyValuePairEnumeratorWithPairHavingCovariantNullableKey(IEnumerator<KeyValuePair<NullableKey<KeyType>, ValueType>> enumerator)
+        public KeyValuePairEnumeratorWithPairHavingCovariantNullableKey(IEnumerator<KeyValuePair<StillNullable<KeyType>, ValueType>> enumerator)
             : base(enumerator)
         { }
 
-        protected override KeyValuePair<INullableKey<KeyType>, ValueType> CreateCurrent(KeyValuePair<NullableKey<KeyType>, ValueType> currentPair) =>
-            new KeyValuePair<INullableKey<KeyType>, ValueType>(currentPair.Key, currentPair.Value);
+        protected override KeyValuePair<IStillNullable<KeyType>, ValueType> CreateCurrent(KeyValuePair<StillNullable<KeyType>, ValueType> currentPair) =>
+            new KeyValuePair<IStillNullable<KeyType>, ValueType>(currentPair.Key, currentPair.Value);
     }
 }

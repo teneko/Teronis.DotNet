@@ -7,16 +7,17 @@ namespace Teronis.Collections.ObjectModel
     public class SortableKeyCollection<KeyType, ItemType> : KeyedCollection<KeyType, ItemType>
     {
         private const string DelegateIsNullErrorMessage = "Delegate passed cannot be null.";
-        private readonly Func<ItemType, KeyType> _getKeyForItemFunction;
+
+        private readonly Func<ItemType, KeyType> getKeyForItemFunction;
 
         public SortableKeyCollection(Func<ItemType, KeyType> getKeyForItemFunction) : base()
-            => _getKeyForItemFunction = getKeyForItemFunction ?? throw new ArgumentNullException(DelegateIsNullErrorMessage);
+            => this.getKeyForItemFunction = getKeyForItemFunction ?? throw new ArgumentNullException(SortableKeyCollection<KeyType, ItemType>.DelegateIsNullErrorMessage);
 
         public SortableKeyCollection(Func<ItemType, KeyType> getKeyForItemDelegate, IEqualityComparer<KeyType> comparer) : base(comparer)
-            => _getKeyForItemFunction = getKeyForItemDelegate ?? throw new ArgumentNullException(DelegateIsNullErrorMessage);
+            => getKeyForItemFunction = getKeyForItemDelegate ?? throw new ArgumentNullException(DelegateIsNullErrorMessage);
 
         protected override KeyType GetKeyForItem(ItemType item) =>
-            _getKeyForItemFunction(item);
+            getKeyForItemFunction(item);
 
         public void SortByKeys() =>
             SortByKeys(Comparer<KeyType>.Default);

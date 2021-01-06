@@ -6,19 +6,19 @@ using Teronis.Collections.Generic;
 
 namespace Teronis.Collections.Generic
 {
-    public class NullableKeyEnumuerator<KeyType, ValueType> : IEnumerator<KeyValuePair<NullableKey<KeyType>, ValueType>>
+    public class NullableKeyEnumuerator<KeyType, ValueType> : IEnumerator<KeyValuePair<StillNullable<KeyType>, ValueType>>
         where KeyType : notnull
     {
         [MaybeNull]
-        public KeyValuePair<NullableKey<KeyType>, ValueType> Current { get; private set; }
+        public KeyValuePair<StillNullable<KeyType>, ValueType> Current { get; private set; }
 
         private bool movedOverNull;
         private readonly IEnumerator<KeyValuePair<KeyType, ValueType>> enumerator;
-        private readonly KeyValuePair<NullableKey<KeyType>, ValueType>? nullableKeyValuePair;
+        private readonly KeyValuePair<StillNullable<KeyType>, ValueType>? nullableKeyValuePair;
 
         object? IEnumerator.Current => Current;
 
-        public NullableKeyEnumuerator(IEnumerator<KeyValuePair<KeyType, ValueType>> enumerator, KeyValuePair<NullableKey<KeyType>, ValueType>? nullableKeyValuePair)
+        public NullableKeyEnumuerator(IEnumerator<KeyValuePair<KeyType, ValueType>> enumerator, KeyValuePair<StillNullable<KeyType>, ValueType>? nullableKeyValuePair)
         {
             this.enumerator = enumerator ?? throw new ArgumentNullException(nameof(enumerator));
             movedOverNull = nullableKeyValuePair is null;
@@ -38,8 +38,8 @@ namespace Teronis.Collections.Generic
 
             if (enumerator.MoveNext()) {
                 var (key, value) = enumerator.Current;
-                var nullableKey = new NullableKey<KeyType>(key, false);
-                Current = new KeyValuePair<NullableKey<KeyType>, ValueType>(nullableKey, value);
+                var nullableKey = new StillNullable<KeyType>(key, false);
+                Current = new KeyValuePair<StillNullable<KeyType>, ValueType>(nullableKey, value);
                 return true;
             }
 

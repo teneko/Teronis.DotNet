@@ -19,7 +19,7 @@ namespace Test.NetStandard.Collections
             // Assert.
             dictionary.Add("value");
             /// Assert.Empty does cast to IEnumerable, but our implementation of IEnumerable 
-            /// returns an enumerator of type <see cref="KeyValuePair{NullableKey, TValue}"/>.
+            /// returns an enumerator of type <see cref="KeyValuePair{StillNullable, TValue}"/>.
             /// So we test on correct enumerator implementation wether it can move or not.
             Assert.False(nonNullableDictionary.GetEnumerator().MoveNext());
             Assert.NotEmpty(nullableDictionary);

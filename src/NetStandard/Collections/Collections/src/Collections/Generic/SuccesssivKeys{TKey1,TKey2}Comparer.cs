@@ -3,14 +3,14 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis.Collections.Generic
 {
-    public class SuccesssivKeysComparer<TKey1, TKey2> : Comparer<SuccesssivKeys<TKey1, TKey2>>, IComparer<SuccesssivKeys<TKey1, TKey2>?>
+    public class SuccessivKeysComparer<TKey1, TKey2> : Comparer<SuccessivKeys<TKey1, TKey2>>, IComparer<SuccessivKeys<TKey1, TKey2>?>
     {
-        public new static SuccesssivKeysComparer<TKey1, TKey2> Default = new SuccesssivKeysComparer<TKey1, TKey2>();
+        public new static SuccessivKeysComparer<TKey1, TKey2> Default = new SuccessivKeysComparer<TKey1, TKey2>();
 
-        public override int Compare([AllowNull] SuccesssivKeys<TKey1, TKey2> x, [AllowNull] SuccesssivKeys<TKey1, TKey2> y) =>
+        public override int Compare([AllowNull] SuccessivKeys<TKey1, TKey2> x, [AllowNull] SuccessivKeys<TKey1, TKey2> y) =>
             new IOrderedKeysProviderComparer().Compare(x, y);
 
-        public int Compare([AllowNull] SuccesssivKeys<TKey1, TKey2>? x, [AllowNull] SuccesssivKeys<TKey1, TKey2>? y) =>
+        public int Compare([AllowNull] SuccessivKeys<TKey1, TKey2>? x, [AllowNull] SuccessivKeys<TKey1, TKey2>? y) =>
             new IOrderedKeysProviderComparer().Compare(x, y);
     }
 }

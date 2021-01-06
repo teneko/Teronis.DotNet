@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using Teronis.Collections.Specialized;
+using Teronis.Collections.ObjectModel;
 using Teronis.Extensions;
 using Teronis.Utils;
 
@@ -87,6 +87,21 @@ namespace Teronis.Collections.Changes
         {
             modification = modification ?? throw new ArgumentNullException(nameof(modification));
             return new CollectionModification<TargetOldItemType, TargetNewItemType>(modification.Action, otherOldItems, modification.OldIndex, otherNewItems, modification.NewIndex);
+        }
+
+        public static CollectionModification<OldItemType, NewItemType> CopyWithOtherValues<OldItemType, NewItemType>(
+            this ICollectionModification<OldItemType, NewItemType> modification,
+            StillNullable<IReadOnlyList<OldItemType>>? oldItems = null,
+            int? oldIndex = null,
+            StillNullable<IReadOnlyList<NewItemType>>? newItems = null,
+            int? newIndex = null)
+        {
+            modification = modification ?? throw new ArgumentNullException(nameof(modification));
+            var _oldItems = oldItems.HasValue ? oldItems.Value.Value : modification.OldItems;
+            var _oldIndex = oldIndex ?? modification.OldIndex;
+            var _newItems = newItems.HasValue ? newItems.Value.Value : modification.NewItems;
+            var _newIndex = newIndex ?? modification.NewIndex;
+            return new CollectionModification<OldItemType, NewItemType>(modification.Action, _oldItems, _oldIndex, _newItems, _newIndex);
         }
 
         public static NotifyCollectionChangedEventArgs ToNotifyCollectionChangedEventArgs<ItemType>(this ICollectionModification<ItemType, ItemType> modification)

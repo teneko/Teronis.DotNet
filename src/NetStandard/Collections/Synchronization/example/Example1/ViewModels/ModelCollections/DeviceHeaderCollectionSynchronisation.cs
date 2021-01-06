@@ -1,4 +1,5 @@
 ﻿using Teronis.Collections.Synchronization.Example1.Models;
+using Teronis.Collections.Synchronization.Extensions;
 
 namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollections
 {
@@ -25,8 +26,12 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollectio
 
         protected override void ApplyCollectionItemReplace(in ApplyingCollectionModificationBundle modificationBundle)
         {
-            foreach (var replaceItem in modificationBundle.OldSubItemsNewSuperItemsModification.GetReplaceItemsIterator()) {
-                replaceItem.OldItem.Header = replaceItem.NewItem;
+            foreach (var tuple in modificationBundle.OldSubItemsNewSuperItemsModification.YieldTuplesForOldItemNewItemReplace()) {
+                tuple.OldItem.Header = tuple.NewItem;
+            }
+
+            foreach (var tuple in modificationBundle.OldSuperItemsNewSuperItemsModification.YieldTuplesForOldIndexNewItemReplace()) {
+                SuperItems[tuple.OldIndex] = tuple.NewItem;
             }
         }
     }

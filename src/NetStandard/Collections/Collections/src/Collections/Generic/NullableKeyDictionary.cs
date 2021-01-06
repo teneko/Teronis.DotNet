@@ -8,20 +8,20 @@ using Teronis.Extensions;
 namespace Teronis.Collections.Generic
 {
     public class NullableKeyDictionary<KeyType, ValueType> : INullableKeyDictionary<KeyType, ValueType>, IReadOnlyNullableKeyDictionary<KeyType, ValueType>,
-        IReadOnlyCollection<KeyValuePair<INullableKey<KeyType>, ValueType>>
+        IReadOnlyCollection<KeyValuePair<IStillNullable<KeyType>, ValueType>>, ICovariantReadOnlyNullabkeKeyDictionary<KeyType, ValueType>
         where KeyType : notnull
     {
-        public ICollection<NullableKey<KeyType>> Keys {
+        public ICollection<StillNullable<KeyType>> Keys {
             get {
-                var readOnlyDictionary = (IReadOnlyDictionary<NullableKey<KeyType>, ValueType>)this;
-                var keyList = new List<NullableKey<KeyType>>(readOnlyDictionary.Keys);
+                var readOnlyDictionary = (IReadOnlyDictionary<StillNullable<KeyType>, ValueType>)this;
+                var keyList = new List<StillNullable<KeyType>>(readOnlyDictionary.Keys);
                 return keyList.AsReadOnly();
             }
         }
 
         public ICollection<ValueType> Values {
             get {
-                var readOnlyDictionary = (IReadOnlyDictionary<NullableKey<KeyType>, ValueType>)this;
+                var readOnlyDictionary = (IReadOnlyDictionary<StillNullable<KeyType>, ValueType>)this;
                 var valueList = new List<ValueType>(readOnlyDictionary.Values);
                 return valueList.AsReadOnly();
             }
@@ -42,7 +42,7 @@ namespace Teronis.Collections.Generic
         public bool IsReadOnly => dictionary.AsCollectionWithPairs().IsReadOnly;
 
         private readonly Dictionary<KeyType, ValueType> dictionary;
-        private KeyValuePair<NullableKey<KeyType>, ValueType>? nullableKeyValuePair;
+        private KeyValuePair<StillNullable<KeyType>, ValueType>? nullableKeyValuePair;
 
         public NullableKeyDictionary() =>
             dictionary = new Dictionary<KeyType, ValueType>();
@@ -87,16 +87,16 @@ namespace Teronis.Collections.Generic
                 }
 
                 if (key is null) {
-                    nullableKeyValuePair = new KeyValuePair<NullableKey<KeyType>, ValueType>(NullableKey<KeyType>.Null, value);
+                    nullableKeyValuePair = new KeyValuePair<StillNullable<KeyType>, ValueType>(StillNullable<KeyType>.Null, value);
                 } else {
                     dictionary[key] = value;
                 }
             }
         }
 
-        public ValueType this[NullableKey<KeyType> key] {
+        public ValueType this[StillNullable<KeyType> key] {
             get {
-                if (key.IsNull) {
+                if (!key.HasValue) {
                     if (!nullableKeyValuePair.HasValue) {
                         throw new KeyNotFoundException();
                     }
@@ -104,7 +104,7 @@ namespace Teronis.Collections.Generic
                     return nullableKeyValuePair.Value.Value;
                 }
 
-                return dictionary[key];
+                return dictionary[key.value];
             }
 
             set {
@@ -112,10 +112,10 @@ namespace Teronis.Collections.Generic
                     throw NullableKeyDictionaryExceptionHelper.CreateNotSupportedException();
                 }
 
-                if (key.IsNull) {
-                    nullableKeyValuePair = new KeyValuePair<NullableKey<KeyType>, ValueType>(key, value);
+                if (!key.HasValue) {
+                    nullableKeyValuePair = new KeyValuePair<StillNullable<KeyType>, ValueType>(key, value);
                 } else {
-                    dictionary[key] = value;
+                    dictionary[key.value] = value;
                 }
             }
         }
@@ -131,7 +131,7 @@ namespace Teronis.Collections.Generic
                     throw new ArgumentException();
                 }
 
-                nullableKeyValuePair = new KeyValuePair<NullableKey<KeyType>, ValueType>(NullableKey<KeyType>.Null, value);
+                nullableKeyValuePair = new KeyValuePair<StillNullable<KeyType>, ValueType>(StillNullable<KeyType>.Null, value);
             } else {
                 dictionary.Add(key, value);
             }
@@ -142,25 +142,25 @@ namespace Teronis.Collections.Generic
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        public void Add(NullableKey<KeyType> key, [AllowNull] ValueType value)
+        public void Add(StillNullable<KeyType> key, [AllowNull] ValueType value)
         {
             if (IsReadOnly) {
                 throw new NotSupportedException("");
             }
 
-            if (key.IsNull) {
+            if (!key.HasValue) {
                 if (nullableKeyValuePair.HasValue) {
                     throw new ArgumentException();
                 }
 
-                nullableKeyValuePair = new KeyValuePair<NullableKey<KeyType>, ValueType>(key, value!);
+                nullableKeyValuePair = new KeyValuePair<StillNullable<KeyType>, ValueType>(key, value!);
             } else {
-                dictionary.Add(key, value!);
+                dictionary.Add(key.value, value!);
             }
         }
 
         public void Add([AllowNull] ValueType value) =>
-            Add(NullableKey.Null<KeyType>(), value);
+            Add(StillNullable.Null<KeyType>(), value);
 
         bool ICollection<KeyValuePair<KeyType, ValueType>>.Contains(KeyValuePair<KeyType, ValueType> item) =>
             dictionary.AsCollectionWithPairs().Contains(item);
@@ -174,13 +174,13 @@ namespace Teronis.Collections.Generic
             return dictionary.ContainsKey(key);
         }
 
-        public bool ContainsKey(NullableKey<KeyType> key)
+        public bool ContainsKey(StillNullable<KeyType> key)
         {
-            if (key.IsNull) {
+            if (!key.HasValue) {
                 return nullableKeyValuePair.HasValue;
             }
 
-            return dictionary.ContainsKey(key);
+            return dictionary.ContainsKey(key.value);
         }
 
         public bool TryGetValue([AllowNull] KeyType key, [MaybeNullWhen(false)] out ValueType value)
@@ -198,19 +198,37 @@ namespace Teronis.Collections.Generic
             }
         }
 
-        public bool TryGetValue(NullableKey<KeyType> key, [MaybeNullWhen(false)] out ValueType value)
+        public bool TryGetValue(StillNullable<KeyType> key, [MaybeNullWhen(false)] out ValueType value)
         {
-            if (key.IsNull) {
+            if (!key.HasValue) {
                 if (nullableKeyValuePair.HasValue) {
                     value = nullableKeyValuePair.Value.Value;
                     return true;
                 }
             } else {
-                return dictionary.TryGetValue(key, out value);
+                return dictionary.TryGetValue(key.value, out value);
             }
 
             value = default;
             return false;
+        }
+
+        public CovariantTuple<bool, ValueType> FindValue(KeyType key)
+        {
+            if (TryGetValue(key, out ValueType value)) {
+                return new CovariantTuple<bool, ValueType>(true, value);
+            }
+
+            return new CovariantTuple<bool, ValueType>(default, default!);
+        }
+
+        public CovariantTuple<bool, ValueType> FindValue(StillNullable<KeyType> key)
+        {
+            if (TryGetValue(key, out ValueType value)) {
+                return new CovariantTuple<bool, ValueType>(true, value);
+            }
+
+            return new CovariantTuple<bool, ValueType>(default, default!);
         }
 
         public bool Remove([AllowNull] KeyType key)
@@ -231,13 +249,13 @@ namespace Teronis.Collections.Generic
             return dictionary.Remove(key);
         }
 
-        public bool Remove(NullableKey<KeyType> key)
+        public bool Remove(StillNullable<KeyType> key)
         {
             if (IsReadOnly) {
                 throw NullableKeyDictionaryExceptionHelper.CreateNotSupportedException();
             }
 
-            if (key.IsNull) {
+            if (!key.HasValue) {
                 if (nullableKeyValuePair.HasValue) {
                     nullableKeyValuePair = null;
                     return true;
@@ -246,11 +264,11 @@ namespace Teronis.Collections.Generic
                 return false;
             }
 
-            return dictionary.Remove(key);
+            return dictionary.Remove(key.value);
         }
 
         public bool Remove() =>
-            Remove(NullableKey<KeyType>.Null);
+            Remove(StillNullable<KeyType>.Null);
 
         public void Clear()
         {
@@ -262,7 +280,7 @@ namespace Teronis.Collections.Generic
             dictionary.Clear();
         }
 
-        public IEnumerator<KeyValuePair<NullableKey<KeyType>, ValueType>> GetEnumerator() =>
+        public IEnumerator<KeyValuePair<StillNullable<KeyType>, ValueType>> GetEnumerator() =>
             new NullableKeyEnumuerator<KeyType, ValueType>(dictionary.AsCollectionWithPairs().GetEnumerator(), nullableKeyValuePair);
 
         public void CopyTo(KeyValuePair<KeyType, ValueType>[] array, int arrayIndex)
@@ -274,13 +292,13 @@ namespace Teronis.Collections.Generic
             dictionary.AsCollectionWithPairs().CopyTo(array, arrayIndex);
         }
 
-        public void CopyTo(KeyValuePair<NullableKey<KeyType>, ValueType>[] array, int arrayIndex)
+        public void CopyTo(KeyValuePair<StillNullable<KeyType>, ValueType>[] array, int arrayIndex)
         {
             if (nullableKeyValuePair.HasValue) {
                 array[arrayIndex++] = nullableKeyValuePair.Value;
             }
 
-            var readOnlyDictionary = (IReadOnlyDictionary<NullableKey<KeyType>, ValueType>)this;
+            var readOnlyDictionary = (IReadOnlyDictionary<StillNullable<KeyType>, ValueType>)this;
 
             foreach (var pair in readOnlyDictionary) {
                 array[arrayIndex++] = pair;
@@ -348,16 +366,16 @@ namespace Teronis.Collections.Generic
 
         #endregion
 
-        #region IDictionary<NullableKey<KeyType>, ValueType>
+        #region IDictionary<StillNullable<KeyType>, ValueType>
 
-        void ICollection<KeyValuePair<NullableKey<KeyType>, ValueType>>.Add(KeyValuePair<NullableKey<KeyType>, ValueType> item) =>
+        void ICollection<KeyValuePair<StillNullable<KeyType>, ValueType>>.Add(KeyValuePair<StillNullable<KeyType>, ValueType> item) =>
             Add(item.Key, item.Value);
 
-        bool ICollection<KeyValuePair<NullableKey<KeyType>, ValueType>>.Contains(KeyValuePair<NullableKey<KeyType>, ValueType> item)
+        bool ICollection<KeyValuePair<StillNullable<KeyType>, ValueType>>.Contains(KeyValuePair<StillNullable<KeyType>, ValueType> item)
         {
             var (nullableKey, value) = item;
 
-            if (nullableKey.IsNull) {
+            if (!nullableKey.HasValue) {
                 if (nullableKeyValuePair.HasValue) {
                     return EqualityComparer<ValueType>.Default.Equals(item.Value, nullableKeyValuePair.Value.Value);
                 }
@@ -365,10 +383,10 @@ namespace Teronis.Collections.Generic
                 return false;
             }
 
-            return dictionary.AsCollectionWithPairs().Contains(new KeyValuePair<KeyType, ValueType>(nullableKey, value));
+            return dictionary.AsCollectionWithPairs().Contains(new KeyValuePair<KeyType, ValueType>(nullableKey.value, value));
         }
 
-        bool ICollection<KeyValuePair<NullableKey<KeyType>, ValueType>>.Remove(KeyValuePair<NullableKey<KeyType>, ValueType> item)
+        bool ICollection<KeyValuePair<StillNullable<KeyType>, ValueType>>.Remove(KeyValuePair<StillNullable<KeyType>, ValueType> item)
         {
             if (IsReadOnly) {
                 throw NullableKeyDictionaryExceptionHelper.CreateNotSupportedException();
@@ -390,9 +408,9 @@ namespace Teronis.Collections.Generic
 
         #endregion
 
-        #region IReadOnlyDictionary<NullableKey<KeyType>, ValueType>
+        #region IReadOnlyDictionary<StillNullable<KeyType>, ValueType>
 
-        IEnumerable<NullableKey<KeyType>> IReadOnlyDictionary<NullableKey<KeyType>, ValueType>.Keys {
+        IEnumerable<StillNullable<KeyType>> IReadOnlyDictionary<StillNullable<KeyType>, ValueType>.Keys {
             get {
                 var nullableKeyValuePair = this.nullableKeyValuePair;
 
@@ -401,12 +419,12 @@ namespace Teronis.Collections.Generic
                 }
 
                 foreach (var key in dictionary.Keys) {
-                    yield return new NullableKey<KeyType>(key, false);
+                    yield return new StillNullable<KeyType>(key, false);
                 }
             }
         }
 
-        IEnumerable<ValueType> IReadOnlyDictionary<NullableKey<KeyType>, ValueType>.Values {
+        IEnumerable<ValueType> IReadOnlyDictionary<StillNullable<KeyType>, ValueType>.Values {
             get {
                 var nullableKeyValuePair = this.nullableKeyValuePair;
 
@@ -420,9 +438,9 @@ namespace Teronis.Collections.Generic
             }
         }
 
-        ValueType IReadOnlyDictionary<NullableKey<KeyType>, ValueType>.this[NullableKey<KeyType> key] {
+        ValueType IReadOnlyDictionary<StillNullable<KeyType>, ValueType>.this[StillNullable<KeyType> key] {
             get {
-                if (key.IsNull) {
+                if (!key.HasValue) {
                     if (!nullableKeyValuePair.HasValue) {
                         throw new KeyNotFoundException("The key does not exist in the collection.");
                     }
@@ -430,16 +448,57 @@ namespace Teronis.Collections.Generic
                     return nullableKeyValuePair.Value.Value;
                 }
 
-                return dictionary[key];
+                return dictionary[key.value];
             }
         }
 
         #endregion
 
-        #region IReadOnlyCollection<KeyValuePair<INullableKey<KeyType>,ValueType>>
+        #region IReadOnlyCollection<KeyValuePair<IStillNullable<KeyType>,ValueType>>
 
-        IEnumerator<KeyValuePair<INullableKey<KeyType>, ValueType>> IEnumerable<KeyValuePair<INullableKey<KeyType>, ValueType>>.GetEnumerator() =>
+        IEnumerator<KeyValuePair<IStillNullable<KeyType>, ValueType>> IEnumerable<KeyValuePair<IStillNullable<KeyType>, ValueType>>.GetEnumerator() =>
             new KeyValuePairEnumeratorWithPairHavingCovariantNullableKey<KeyType, ValueType>(GetEnumerator());
+
+        #endregion
+
+        #region ICovariantReadOnlyNullabkeKeyDictionary<KeyType, ValueType>
+
+        IEnumerable<KeyType> ICovariantReadOnlyNullabkeKeyDictionary<KeyType, ValueType>.Keys => dictionary.Keys;
+        IEnumerable<ValueType> ICovariantReadOnlyNullabkeKeyDictionary<KeyType, ValueType>.Values => dictionary.Values;
+
+        #region ICovariantReadOnlyDictionary<KeyType, ValueType>
+
+        IEnumerable<KeyType> ICovariantReadOnlyDictionary<KeyType, ValueType>.Keys => dictionary.Keys;
+        IEnumerable<ValueType> ICovariantReadOnlyDictionary<KeyType, ValueType>.Values => dictionary.Values;
+
+        ICovariantTuple<bool, ValueType> ICovariantReadOnlyDictionary<KeyType, ValueType>.TryGetValue(KeyType key) =>
+            FindValue(key);
+
+        #endregion
+
+        #region IEnumerable<ICovariantKeyValuePair<KeyType, ValueType>>
+
+        IEnumerator<ICovariantKeyValuePair<KeyType, ValueType>> IEnumerable<ICovariantKeyValuePair<KeyType, ValueType>>.GetEnumerator() =>
+            this.AsReadOnlyDictionary().ToCovariantKeyValuePairCollection().GetEnumerator();
+
+        #endregion
+
+        #region ICovariantReadOnlyDictionary<StillNullable<KeyType>, ValueType>
+
+        IEnumerable<StillNullable<KeyType>> ICovariantReadOnlyDictionary<StillNullable<KeyType>, ValueType>.Keys => Keys;
+        IEnumerable<ValueType> ICovariantReadOnlyDictionary<StillNullable<KeyType>, ValueType>.Values => Values;
+
+        ICovariantTuple<bool, ValueType> ICovariantReadOnlyDictionary<StillNullable<KeyType>, ValueType>.TryGetValue(StillNullable<KeyType> key) =>
+            FindValue(key);
+
+        #endregion
+
+        #region IEnumerable<ICovariantKeyValuePair<StillNullable<KeyType>, ValueType>>
+
+        IEnumerator<ICovariantKeyValuePair<StillNullable<KeyType>, ValueType>> IEnumerable<ICovariantKeyValuePair<StillNullable<KeyType>, ValueType>>.GetEnumerator() =>
+            this.AsReadOnlyDictionaryWithNullableKeys().ToCovariantKeyValuePairCollection().GetEnumerator();
+
+        #endregion
 
         #endregion
 

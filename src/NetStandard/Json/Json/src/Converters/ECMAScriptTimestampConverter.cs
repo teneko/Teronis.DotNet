@@ -1,6 +1,5 @@
 ﻿using System;
 using Newtonsoft.Json;
-using Teronis.Extensions;
 using Teronis.Utils;
 
 namespace Teronis.Json.Converters
@@ -16,7 +15,7 @@ namespace Teronis.Json.Converters
 
         public override bool CanConvert(Type objectType)
         {
-            if (objectType.IsNullable()) {
+            if (TypeUtils.IsNullable(objectType)) {
                 objectType = Nullable.GetUnderlyingType(objectType);
             }
 
@@ -27,7 +26,7 @@ namespace Teronis.Json.Converters
         {
             var value = reader.Value;
             var isValueNull = value == null;
-            var isObjectTypeNullable = objectType.IsNullable();
+            var isObjectTypeNullable = TypeUtils.IsNullable(objectType);
 
             if (isValueNull && isObjectTypeNullable) {
                 return null;

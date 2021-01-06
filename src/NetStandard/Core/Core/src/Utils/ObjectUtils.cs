@@ -33,5 +33,24 @@ namespace Teronis.Utils
             var pi = instance.GetType().GetField(fieldName, flags);
             return (ValueType)pi?.GetValue(instance);
         }
+
+        public static bool IsNullable(object obj)
+        {
+            if (obj == null) {
+                return true; // obvious
+            }
+
+            var type = obj.GetType();
+
+            if (!type.IsValueType) {
+                return true; // ref-type
+            }
+
+            if (Nullable.GetUnderlyingType(type) != null) {
+                return true; // Nullable<T>
+            }
+
+            return false; // value-type
+        }
     }
 }

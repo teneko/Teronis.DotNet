@@ -19,7 +19,7 @@ namespace Teronis.Json.Utils
         {
             var dummyDictionary = new Dictionary<string, object>();
             var dummyCollection = (ICollection<KeyValuePair<string, object>>)dummyDictionary;
-            var contractResolver = new OnlyIncludedVariablesContractResolver();
+            var contractResolver = new IncludedVariablesContractResolver();
 
             foreach (var variableNameAndContentPair in variableNameAndContentPairs) {
                 // Here we attach the hole key value pair to the dictionary

@@ -19,7 +19,7 @@ namespace Teronis.Collections.Generic
         IEnumerator<KeyValuePair<KeyType, ValueType>> IEnumerable<KeyValuePair<KeyType, ValueType>>.GetEnumerator() =>
             collection.GetEnumerator();
 
-        IEnumerator<ICovariantKeyValuePair<KeyType, ValueType>> IEnumerable<ICovariantKeyValuePair<KeyType, ValueType>>.GetEnumerator() =>
+        public IEnumerator<ICovariantKeyValuePair<KeyType, ValueType>> GetEnumerator() =>
             new KeyValuePairEnumeratorWithPairAsCovariant<KeyType, ValueType>(collection.GetEnumerator());
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using Teronis.Diagnostics;
 
 namespace Teronis.Collections.Changes
@@ -28,21 +29,23 @@ namespace Teronis.Collections.Changes
         }
 
         public NotifyCollectionChangedAction Action { get; private set; }
-        public IReadOnlyList<OldItemType>? OldItems => oldPartialCollectionChange.Values;
-        public int OldIndex => oldPartialCollectionChange.Index;
-        public IReadOnlyList<NewItemType>? NewItems => newPartialCollectionChange.Values;
-        public int NewIndex => newPartialCollectionChange.Index;
+        public ICollectionModificationPart<OldItemType, NewItemType, OldItemType, NewItemType> OldPart => oldPart;
+        public IReadOnlyList<OldItemType>? OldItems => oldPart.Items;
+        public int OldIndex => oldPart.Index;
+        public ICollectionModificationPart<OldItemType, NewItemType, NewItemType, OldItemType> NewPart => newPart;
+        public IReadOnlyList<NewItemType>? NewItems => newPart.Items;
+        public int NewIndex => newPart.Index;
 
         string IDebuggerDisplay.DebuggerDisplay => $"{Action}, {nameof(OldIndex)} = {OldIndex}, {nameof(NewIndex)} = {NewIndex}";
 
-        private readonly PartialCollectionChange<OldItemType> oldPartialCollectionChange;
-        private readonly PartialCollectionChange<NewItemType> newPartialCollectionChange;
+        private readonly CollectionModificationPart<OldItemType, NewItemType> oldPart;
+        private readonly CollectionModificationPart<NewItemType, OldItemType> newPart;
 
         public CollectionModification(NotifyCollectionChangedAction changeAction, IReadOnlyList<OldItemType>? oldItems, int oldIndex, IReadOnlyList<NewItemType>? newItems, int newIndex)
         {
             Action = changeAction;
-            oldPartialCollectionChange = new PartialCollectionChange<OldItemType>(PartialCollectionChangeItemState.OldItem, oldItems, oldIndex);
-            newPartialCollectionChange = new PartialCollectionChange<NewItemType>(PartialCollectionChangeItemState.NewItem, newItems, newIndex);
+            oldPart = new CollectionModificationPart<OldItemType, NewItemType>(this, PartialCollectionChangeItemState.OldItem, oldItems, oldIndex);
+            newPart = new CollectionModificationPart<NewItemType, OldItemType>(this, PartialCollectionChangeItemState.NewItem, newItems, newIndex);
         }
 
         public CollectionModification(NotifyCollectionChangedAction changeAction, IReadOnlyList<OldItemType> oldValues, int oldIndex, NewItemType newItem, int newIndex)
@@ -60,16 +63,35 @@ namespace Teronis.Collections.Changes
             NewItem
         }
 
-        private class PartialCollectionChange<ItemType>
+        
+        public abstract class CollectionModificationPartBase<ItemType, OtherItemType> : ICollectionModificationPart<OldItemType, NewItemType, ItemType, OtherItemType>
+        {
+            public ICollectionModification<OldItemType, NewItemType> Owner { get; }
+
+            public ICollectionModificationPart<OldItemType, NewItemType, OtherItemType, ItemType> OtherPart => 
+                ReferenceEquals(this, Owner.OldPart) ? (ICollectionModificationPart<OldItemType, NewItemType, OtherItemType, ItemType>)Owner.NewPart : 
+                (ICollectionModificationPart<OldItemType, NewItemType, OtherItemType, ItemType>)Owner.OldPart;
+
+            public abstract IReadOnlyList<ItemType>? Items { get; }
+            public abstract int Index { get; }
+
+            public CollectionModificationPartBase(ICollectionModification<OldItemType, NewItemType> modification) {
+                Owner = modification;
+            }
+        }
+
+        private class CollectionModificationPart<ItemType, OtherItemType> : CollectionModificationPartBase<ItemType, OtherItemType>
         {
             public PartialCollectionChangeItemState ItemState { get; private set; }
-            public IReadOnlyList<ItemType>? Values { get; private set; }
-            public int Index { get; private set; }
+            public override IReadOnlyList<ItemType>? Items { get; }
+            public override int Index { get; }
 
-            public PartialCollectionChange(PartialCollectionChangeItemState itemState, IReadOnlyList<ItemType>? values, int index)
+            public CollectionModificationPart(CollectionModification<OldItemType, NewItemType> modification, 
+                PartialCollectionChangeItemState itemState, IReadOnlyList<ItemType>? items, int index)
+                : base(modification)
             {
                 ItemState = itemState;
-                Values = values;
+                Items = items;
                 Index = index;
             }
         }

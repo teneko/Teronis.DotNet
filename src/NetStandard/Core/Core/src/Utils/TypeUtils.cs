@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
+using Teronis.Reflection;
 
 namespace Teronis.Utils
 {
@@ -9,28 +9,12 @@ namespace Teronis.Utils
         public static bool IsNullable(Type type) =>
             type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
 
-        /// <summary>
-        /// Instantiates an uninitialized object of type <paramref name="type"/>.
-        /// </summary>
-        /// <param name="type">The type you want to instantiate</param>
-        /// <returns></returns>
-        public static object InstantiateUninitializedObject(Type type)
-        {
-            type = type ?? throw new ArgumentNullException(nameof(type));
-            var instantiatorType = typeof(Instantiator<>);
-            var genericInstantiatorType = instantiatorType.MakeGenericType(type);
-            var instantiateMethodName = nameof(Instantiator<object>.Instantiate);
-            var instanteMethodBindingFlags = BindingFlags.Public | BindingFlags.Static;
-            var instantiateMethod = genericInstantiatorType.GetMethod(instantiateMethodName, instanteMethodBindingFlags)!;
-            return instantiateMethod.Invoke(null, null)!;
-        }
-
-        public static object? GetDefault(Type type)
+        public static object? GetDefaultOfValueOrReferenceType(Type type)
         {
             type = type ?? throw new ArgumentNullException(nameof(type));
 
             if (type.IsValueType) {
-                return InstantiateUninitializedObject(type);
+                return Instantiator.Instantiate(type);
             }
 
             return null;
@@ -54,5 +38,8 @@ namespace Teronis.Utils
                 }
             }
         }
+
+        public static bool HasDefaultConstructor(Type type)
+            => type.IsValueType || type.GetConstructor(Type.EmptyTypes) != null;
     }
 }

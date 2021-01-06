@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
-using Teronis.Extensions;
 using Teronis.Json.Extensions;
+using Teronis.Utils;
 
 namespace Teronis.Json.Converters
 {
@@ -15,7 +15,7 @@ namespace Teronis.Json.Converters
                 var serializerSettings = serializer.GetSettings();
                 return reader.Value.ToString().DeserializeJson(objectType, serializerSettings);
             } catch {
-                return objectType.GetDefault();
+                return TypeUtils.GetDefaultOfValueOrReferenceType(objectType);
             }
         }
 

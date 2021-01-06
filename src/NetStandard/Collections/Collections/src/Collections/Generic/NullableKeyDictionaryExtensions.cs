@@ -11,12 +11,12 @@ namespace Teronis.Collections.Generic
             dictionary;
 
         [return: NotNullIfNotNull("dictionary")]
-        public static IReadOnlyDictionary<NullableKey<KeyType>, ValueType>? AsReadOnlyDictionaryWithNullableKeys<KeyType, ValueType>(this IReadOnlyNullableKeyDictionary<KeyType, ValueType>? dictionary)
+        public static IReadOnlyDictionary<StillNullable<KeyType>, ValueType>? AsReadOnlyDictionaryWithNullableKeys<KeyType, ValueType>(this IReadOnlyNullableKeyDictionary<KeyType, ValueType>? dictionary)
             where KeyType : notnull =>
             dictionary;
 
         [return: NotNullIfNotNull("dictionary")]
-        public static IReadOnlyCollection<KeyValuePair<INullableKey<KeyType>, ValueType>>? AsReadOnlyCollectionWithPairsHavingCovariantNullableKey<KeyType, ValueType>(this NullableKeyDictionary<KeyType, ValueType>? dictionary)
+        public static IReadOnlyCollection<KeyValuePair<IStillNullable<KeyType>, ValueType>>? AsReadOnlyCollectionWithPairsHavingCovariantNullableKey<KeyType, ValueType>(this NullableKeyDictionary<KeyType, ValueType>? dictionary)
             where KeyType : notnull =>
             dictionary;
     }

@@ -5,7 +5,7 @@ using System.Threading;
 namespace Teronis.IO.FileLocking
 {
     /// <summary>
-    /// This helper api can lock files.
+    /// This Windows and Linux compliant API offers to lock files via <see cref="FileStream"/>.
     /// </summary>
     public readonly struct FileStreamLocker : IFileStreamLocker
     {

@@ -1,14 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Teronis.Collections.Changes;
 
 namespace Teronis.Collections.Synchronization
 {
-    public abstract partial class SynchronizingCollection<SubItemType, SuperItemType> where SubItemType : notnull
-        where SuperItemType : notnull
+    public abstract partial class SynchronizingCollection<SubItemType, SuperItemType>
     {
-        public abstract class ItemCollection<ItemType> : Collection<ItemType>, INotifyCollectionSynchronizing<ItemType>, INotifyCollectionModified<ItemType>, INotifyCollectionChanged, INotifyCollectionSynchronized<ItemType>
+        public abstract partial class ItemCollection<ItemType> : Collection<ItemType>, ISynchronizableItemCollection<ItemType>
         {
             public event EventHandler? CollectionSynchronizing;
 
@@ -33,10 +33,16 @@ namespace Teronis.Collections.Synchronization
                 synchronizingCollection.CollectionSynchronized += SynchronizingCollection_CollectionSynchronized;
             }
 
+            public KeyedItemIndexTracker<ItemType, KeyType> CreateKeyedItemIndexTracker<KeyType>(Func<ItemType, KeyType> getItemKey, IEqualityComparer<KeyType> keyEqualityComparer) =>
+                new KeyedItemIndexTracker<ItemType, KeyType>(this, getItemKey, keyEqualityComparer);
+
+            public KeyedItemIndexTracker<ItemType, KeyType> CreateKeyedItemIndexTracker<KeyType>(Func<ItemType, KeyType> getItemKey) =>
+                new KeyedItemIndexTracker<ItemType, KeyType>(this, getItemKey);
+
             private void SynchronizingCollection_CollectionSynchronizing(object sender, EventArgs e) =>
                 CollectionSynchronizing?.Invoke(this, e);
 
-            protected abstract NotifyCollectionModifiedEventArgs<ItemType> CreateNotifyCollectionModifiedEventArgs(CollectionModifiedEventArgs<SubItemType, SuperItemType> args);
+            protected abstract CollectionModifiedEventArgs<ItemType> CreateCollectionModifiedEventArgs(CollectionModifiedEventArgs<SubItemType, SuperItemType> args);
 
             private void CollectionModificationNotifier_CollectionModified(object sender, CollectionModifiedEventArgs<SubItemType, SuperItemType> args)
             {
@@ -44,7 +50,7 @@ namespace Teronis.Collections.Synchronization
                     return;
                 }
 
-                var collectionChangedEventArgs = CreateNotifyCollectionModifiedEventArgs(args);
+                var collectionChangedEventArgs = CreateCollectionModifiedEventArgs(args);
                 CollectionModified?.Invoke(this, collectionChangedEventArgs);
                 collectionChanged?.Invoke(this, collectionChangedEventArgs);
             }
@@ -69,6 +75,24 @@ namespace Teronis.Collections.Synchronization
 
                 base.RemoveItem(index);
             }
+        }
+
+        public class SubItemCollection : ItemCollection<SubItemType>
+        {
+            public SubItemCollection(SynchronizingCollection<SubItemType, SuperItemType> synchronizingCollection)
+                : base(synchronizingCollection) { }
+
+            protected override CollectionModifiedEventArgs<SubItemType> CreateCollectionModifiedEventArgs(CollectionModifiedEventArgs<SubItemType, SuperItemType> args) =>
+                new CollectionModifiedEventArgs<SubItemType>(args.OldSubItemsNewSubItemsModification);
+        }
+
+        public class SuperItemCollection : ItemCollection<SuperItemType>
+        {
+            public SuperItemCollection(SynchronizingCollection<SubItemType, SuperItemType> synchronizingCollection)
+                : base(synchronizingCollection) { }
+
+            protected override CollectionModifiedEventArgs<SuperItemType> CreateCollectionModifiedEventArgs(CollectionModifiedEventArgs<SubItemType, SuperItemType> args) =>
+                new CollectionModifiedEventArgs<SuperItemType>(args.OldSuperItemsNewSuperItemsModification);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollectio
 
         private readonly PropertyChangedForwarder propertyChangedRelay;
         private readonly DeviceHeaderCollectionSynchronisation deviceHeaderCollectionContainer;
-        private readonly CollectionModifiedImitator<DeviceHeaderCollectionSynchronisation.SubItemCollection> collectionModifiedImitator;
+        private readonly CollectionSynchronisationMirror<DeviceHeaderCollectionSynchronisation.SubItemCollection> collectionModifiedImitator;
 #pragma warning disable IDE0052 // Ungelesene private Member entfernen
         private readonly AddRemoveResetBehaviourForCollectionItemByAddRemoveParents<DeviceViewModel, DeviceHeaderViewModel> itemParentsBehaviour;
 #pragma warning restore IDE0052 // Ungelesene private Member entfernen
@@ -25,7 +25,7 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollectio
         {
             propertyChangedRelay = new PropertyChangedForwarder(deviceHeaderCollectionContainer, notifyPropertyChange: OnPropertyChanged);
             propertyChangedRelay.AddPropertyChangeForwarding(nameof(DeviceHeaderCollectionSynchronisation.SelectedItem));
-            collectionModifiedImitator = CreateCollectionModifiedImitator(deviceHeaderCollectionContainer.SubItems);
+            collectionModifiedImitator = CreateCollectionSynchronisationMirror(deviceHeaderCollectionContainer.SubItems);
             itemParentsBehaviour = new AddRemoveResetBehaviourForCollectionItemByAddRemoveParents<DeviceViewModel, DeviceHeaderViewModel>(this);
             this.deviceHeaderCollectionContainer = deviceHeaderCollectionContainer;
         }

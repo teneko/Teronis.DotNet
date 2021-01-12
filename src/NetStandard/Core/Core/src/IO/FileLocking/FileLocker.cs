@@ -14,6 +14,9 @@ namespace Teronis.IO.FileLocking
     /// </summary>
     public sealed class FileLocker : IFileLocker
     {
+
+        #region Trace Methods
+
 #if TRACE
         internal const string TraceCategory = nameof(FileLocker);
         private static readonly Random random = new Random();
@@ -38,10 +41,12 @@ namespace Teronis.IO.FileLocking
 #endif
         }
 
+        #endregion
+
         public string FilePath { get; }
 
         public FileStream? FileStream =>
-            fileLockerState?.FileStream;
+            fileLockContext?.FileStream;
 
         /// <summary>
         /// If true, the lock attempts are going to throw the exception which occured in the lock before.
@@ -61,15 +66,15 @@ namespace Teronis.IO.FileLocking
         /// Zero represents the number where no lock is in place.
         /// </summary>
         private int locksInUse = 0;
-        private FileLockContext? fileLockerState;
+        private FileLockContext? fileLockContext;
         private readonly object decreaseLockUseLocker;
-        private readonly IFileStreamLocker lockFileApi;
+        private readonly IFileStreamLocker fileStreamLocker;
 
-        public FileLocker(IFileStreamLocker lockFileApi, string filePath, FileMode fileMode = FileStreamLocker.DefaultFileMode, FileAccess fileAccess = FileStreamLocker.DefaultFileAccess,
+        public FileLocker(IFileStreamLocker fileStreamLocker, string filePath, FileMode fileMode = FileStreamLocker.DefaultFileMode, FileAccess fileAccess = FileStreamLocker.DefaultFileAccess,
             FileShare fileShare = FileStreamLocker.DefaultFileShare)
         {
             decreaseLockUseLocker = new object();
-            this.lockFileApi = lockFileApi;
+            this.fileStreamLocker = fileStreamLocker;
             FilePath = filePath;
             FileMode = fileMode;
             FileAccess = fileAccess;
@@ -109,12 +114,12 @@ namespace Teronis.IO.FileLocking
             while (true) {
                 var currentLocksInUse = locksInUse;
                 var desiredLocksInUse = currentLocksInUse + 1;
-                var currentFileLockerState = fileLockerState;
+                var currentFileLockContext = fileLockContext;
 
-                if (currentFileLockerState.IsErroneous()) {
+                if (currentFileLockContext.IsErroneous()) {
                     if (EnableConcurrentRethrow) {
                         Trace.WriteLine($"{GetCurrentThreadWithLockIdPrefixString(lockId)} Error from previous lock will be rethrown.", TraceCategory);
-                        throw currentFileLockerState!.Error!;
+                        throw currentFileLockContext!.Error!;
                     }
 
                     // Imagine stair steps where each stair step is Lock():
@@ -125,14 +130,14 @@ namespace Teronis.IO.FileLocking
                     // We want Lock #1 and Lock #2 to retry their Lock():
                     //  Thread #1 Lock #1 -> Incremented to 2. Lock was successful.
                     //   Thread #2 Lock #2 -> Incremented to 3. Lock was successful.
-                    currentFileLockerState!.ErrorUnlockDone!.WaitOne();
+                    currentFileLockContext!.ErrorUnlockDone!.WaitOne();
                     Trace.WriteLine($"{GetCurrentThreadWithLockIdPrefixString(lockId)} Retry lock due to previously failed lock.", TraceCategory);
                     continue;
                 }
                 // If it is the initial lock, then we expect file stream being null.
                 // If it is not the initial lock, we expect the stream being not null.
-                else if ((currentLocksInUse == 0 && currentFileLockerState != null) ||
-                    (currentLocksInUse != 0 && currentFileLockerState == null)) {
+                else if ((currentLocksInUse == 0 && currentFileLockContext != null) ||
+                    (currentLocksInUse != 0 && currentFileLockContext == null)) {
                     spinWait.SpinOnce();
                     continue;
                 } else {
@@ -147,26 +152,26 @@ namespace Teronis.IO.FileLocking
                             var fileStream = FileStreamLocker.Default.WaitUntilAcquired(FilePath, TimeoutInMilliseconds, fileMode: FileMode,
                                     fileAccess: FileAccess, fileShare: FileShare)!;
 
-                            currentFileLockerState = new FileLockContext(this, decreaseLockUseLocker, fileStream);
+                            currentFileLockContext = new FileLockContext(this, decreaseLockUseLocker, fileStream);
 
-                            fileLockerState = currentFileLockerState;
+                            fileLockContext = currentFileLockContext;
                             Trace.WriteLine($"{GetCurrentThreadWithLockIdPrefixString(lockId)} File {FilePath} locked by file locker.", TraceCategory);
                         } catch (Exception error) {
                             var errorUnlockDone = new ManualResetEvent(false);
-                            currentFileLockerState = new FileLockContext(this, decreaseLockUseLocker, error, errorUnlockDone);
-                            fileLockerState = currentFileLockerState;
+                            currentFileLockContext = new FileLockContext(this, decreaseLockUseLocker, error, errorUnlockDone);
+                            fileLockContext = currentFileLockContext;
                             Unlock(lockId);
                             // After we processed Unlock(), we can surpass these locks 
                             // who could be dependent on state assigment of this Lock().
-                            currentFileLockerState.ErrorUnlockDone!.Set();
+                            currentFileLockContext.ErrorUnlockDone!.Set();
                             throw;
                         }
                     } else {
-                        Trace.WriteLine($"{GetCurrentThreadWithLockIdPrefixString(lockId)} File {FilePath} locked {desiredLocksInUse} time(s) concurrently by file locker. {getFileStreamHasBeenLockedString(currentFileLockerState!.FileStream!)}", TraceCategory);
+                        Trace.WriteLine($"{GetCurrentThreadWithLockIdPrefixString(lockId)} File {FilePath} locked {desiredLocksInUse} time(s) concurrently by file locker. {getFileStreamHasBeenLockedString(currentFileLockContext!.FileStream!)}", TraceCategory);
                     }
                 }
 
-                var fileLockContract = new FileLockUse(currentFileLockerState, lockId);
+                var fileLockContract = new FileLockUse(currentFileLockContext, lockId);
                 return fileLockContract;
             }
         }
@@ -213,7 +218,7 @@ namespace Teronis.IO.FileLocking
                 FileLockContext nonNullState = null!;
 
                 while (true) {
-                    nullState = Interlocked.CompareExchange(ref fileLockerState, null, nullState);
+                    nullState = Interlocked.CompareExchange(ref fileLockContext, null, nullState);
 
                     /* When class scoped file stream is null local file stream will be null too.
                      * => If so, spin once and continue loop.

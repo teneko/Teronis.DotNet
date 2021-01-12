@@ -67,7 +67,7 @@ namespace Teronis.Collections.Synchronization
 
             var initialDeviceHeaders = new DeviceHeaderEntity[] {
                 new DeviceHeaderEntity() { Serial = "3", State = new DeviceHeaderStateEntity() { IsFactory = false } },
-                new DeviceHeaderEntity() { Serial = "3", State = new DeviceHeaderStateEntity() { IsFactory = false } },
+                //new DeviceHeaderEntity() { Serial = "3", State = new DeviceHeaderStateEntity() { IsFactory = false } },
                 new DeviceHeaderEntity() { Serial = "2", State = new DeviceHeaderStateEntity() { IsFactory = false } },
                 new DeviceHeaderEntity() { Serial = "1", State = new DeviceHeaderStateEntity() { IsFactory = false } },
             };
@@ -76,8 +76,10 @@ namespace Teronis.Collections.Synchronization
                 new DeviceHeaderEntity() { Serial = "1", State = new DeviceHeaderStateEntity() },
                 new DeviceHeaderEntity() { Serial = "2", State = new DeviceHeaderStateEntity() { IsFactory = false } },
                 new DeviceHeaderEntity() { Serial = "3", State = new DeviceHeaderStateEntity() { IsFactory = true  } },
-                new DeviceHeaderEntity() { Serial = "3", State = new DeviceHeaderStateEntity() { IsFactory = true } },
+                //new DeviceHeaderEntity() { Serial = "3", State = new DeviceHeaderStateEntity() { IsFactory = true } },
             };
+
+            var test = devicesViewModel.DeviceHeaderCollectionSynchronisation.SubItems.CreateKeyedItemIndexTracker(item => item.Header.Serial);
 
             devicesViewModel.UpdateDevices(initialDeviceHeaders);
             devicesViewModel.UpdateDevices(deviceHeaders);
@@ -88,6 +90,7 @@ namespace Teronis.Collections.Synchronization
             devicesViewModel.DeviceHeaderCollectionSynchronisation.SelectedItem = devicesViewModel.DeviceHeaderCollectionSynchronisation.SubItems[0];
 
             ;
+
         }
     }
 }

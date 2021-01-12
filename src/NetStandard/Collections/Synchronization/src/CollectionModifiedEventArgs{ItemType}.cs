@@ -6,7 +6,7 @@ using Teronis.Utils;
 
 namespace Teronis.Collections.Synchronization
 {
-    public class NotifyCollectionModifiedEventArgs<ItemType> : NotifyCollectionChangedEventArgs, ICollectionModification<ItemType, ItemType>
+    public class CollectionModifiedEventArgs<ItemType> : NotifyCollectionChangedEventArgs, ICollectionModification<ItemType, ItemType>
     {
         public ICollectionModificationPart<ItemType, ItemType, ItemType, ItemType> OldPart { get; }
         public ICollectionModificationPart<ItemType, ItemType, ItemType, ItemType> NewPart { get; }
@@ -25,7 +25,7 @@ namespace Teronis.Collections.Synchronization
         int ICollectionModification<ItemType, ItemType>.NewIndex =>
             collectionModification.NewIndex;
 
-        public NotifyCollectionModifiedEventArgs(ICollectionModification<ItemType, ItemType> collectionModification)
+        public CollectionModifiedEventArgs(ICollectionModification<ItemType, ItemType> collectionModification)
             : base(NotifyCollectionChangedAction.Reset)
         {
             OldPart = new CollectionModificationOldPart(this);

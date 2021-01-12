@@ -38,10 +38,10 @@ namespace Teronis.Collections.Synchronization
             var change = args.OldSubItemsNewSubItemsModification;
 
             var oldItemItemItems = new Lazy<IReadOnlyList<ItemType>>(() => change.OldItems ??
-                throw new ArgumentException("The old item-item-items were not given that can be processed as collection change"));
+                throw CollectionModificationThrowHelper.OldItemsWereNullException());
 
             var newItemItemItems = new Lazy<IReadOnlyList<ItemType>>(() => change.NewItems ??
-                throw new ArgumentException("The new item-item-items were not given that can be processed as collection change"));
+                throw CollectionModificationThrowHelper.NewItemsWereNullException());
 
             switch (change.Action) {
                 case NotifyCollectionChangedAction.Remove:

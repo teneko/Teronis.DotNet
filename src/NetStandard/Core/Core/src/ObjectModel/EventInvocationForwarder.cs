@@ -4,9 +4,10 @@ namespace Teronis.ObjectModel
 {
     public abstract class EventInvocationForwarder<ForwardingEventContainerType, EventArgumentType>
     {
+        protected event Action<object, EventArgumentType>? EventInvocationForward;
+
         public ForwardingEventContainerType ForwardingEventContainer { get; }
 
-        protected event Action<object, EventArgumentType>? EventInvocationForward;
         protected abstract Action<object, EventArgumentType>? ForwardEventInvocation { get; }
 
         protected readonly object? AlternativeEventSender;

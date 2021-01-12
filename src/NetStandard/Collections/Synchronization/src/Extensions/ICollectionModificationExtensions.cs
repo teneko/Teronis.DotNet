@@ -41,7 +41,7 @@ namespace Teronis.Collections.Synchronization.Extensions
             var newItems = modification.NewItems;
 
             if (newItems is null) {
-                throw new ArgumentException("The new items were null.");
+                throw CollectionModificationThrowHelper.NewItemsWereNullException();
             }
 
             int oldItemIndex = modification.OldIndex;

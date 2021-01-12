@@ -48,7 +48,7 @@ namespace Teronis.Collections.Synchronization
         public event NotifyCollectionModifiedEventHandler<SubItemType, SuperItemType>? CollectionModified;
 
         public SubItemCollection SubItems => subItems;
-        public IList<SuperItemType> SuperItems => superItems;
+        public SuperItemCollection SuperItems => superItems;
         public IEqualityComparer<SuperItemType> SuperItemEqualityComparer { get; private set; }
         /// <summary>
         /// The replace strategy is used in <see cref="ApplyCollectionItemReplace(in ApplyingCollectionModificationBundle)"/>.
@@ -56,23 +56,31 @@ namespace Teronis.Collections.Synchronization
         public CollectionItemReplaceStrategyBase? ItemReplaceStrategy { get; set; }
 
         private readonly SubItemCollection subItems;
-        private readonly List<SuperItemType> superItems;
+        private readonly SuperItemCollection superItems;
 
         public SynchronizingCollection(IEqualityComparer<SuperItemType>? superItemEqualityComparer)
         {
             SuperItemEqualityComparer = superItemEqualityComparer ?? EqualityComparer<SuperItemType>.Default;
             /* Initialize collections. */
             subItems = new SubItemCollection(this);
-            superItems = new List<SuperItemType>();
+            superItems = new SuperItemCollection(this);
         }
 
         public SynchronizingCollection() : this(default) { }
 
         protected abstract SubItemType CreateSubItem(SuperItemType superItem);
 
-        public CollectionModifiedImitator<ToBeImitatedCollectionType> CreateCollectionModifiedImitator<ToBeImitatedCollectionType>(ToBeImitatedCollectionType toBeImitatedCollection)
+        /// <summary>
+        /// Creates for this instance a collection synchronisation mirror. The collection modifications from <paramref name="toBeImitatedCollection"/> are 
+        /// forwarded to <see cref="ApplyCollectionModification(ICollectionModification{SuperItemType, SuperItemType}, NotifyCollectionChangedAction[])"/>
+        /// of this instance.
+        /// </summary>
+        /// <typeparam name="ToBeImitatedCollectionType">The generic constraint that represents the to be imitated collection.</typeparam>
+        /// <param name="toBeImitatedCollection">The foreign collection that is about to be imitated related to its modifications.</param>
+        /// <returns>A collection synchronisation mirror.</returns>
+        public CollectionSynchronisationMirror<ToBeImitatedCollectionType> CreateCollectionSynchronisationMirror<ToBeImitatedCollectionType>(ToBeImitatedCollectionType toBeImitatedCollection)
             where ToBeImitatedCollectionType : INotifyCollectionSynchronizing<SuperItemType>, INotifyCollectionModified<SuperItemType>, INotifyCollectionSynchronized<SuperItemType> =>
-            new CollectionModifiedImitator<ToBeImitatedCollectionType>(this, toBeImitatedCollection);
+            new CollectionSynchronisationMirror<ToBeImitatedCollectionType>(this, toBeImitatedCollection);
 
         protected virtual void ApplyCollectionItemRemove(in ApplyingCollectionModificationBundle modificationBundle)
         {
@@ -300,6 +308,7 @@ namespace Teronis.Collections.Synchronization
             var modifications = superItems.GetCollectionModifications(items, SuperItemEqualityComparer);
 
             foreach (var modification in modifications) {
+                // This is algorithm dependent. The remove modification are coming at last.
                 if (modification.Action == NotifyCollectionChangedAction.Remove) {
                     break;
                 }
@@ -320,56 +329,6 @@ namespace Teronis.Collections.Synchronization
             {
                 OldSubItemsNewSuperItemsModification = oldSubItemsNewSuperItemsModification;
                 OldSuperItemsNewSuperItemsModification = oldSuperItemsNewSuperItemsModification;
-            }
-        }
-
-        public class SubItemCollection : ItemCollection<SubItemType>
-        {
-            public SubItemCollection(SynchronizingCollection<SubItemType, SuperItemType> synchronizingCollection)
-                : base(synchronizingCollection) { }
-
-            protected override NotifyCollectionModifiedEventArgs<SubItemType> CreateNotifyCollectionModifiedEventArgs(CollectionModifiedEventArgs<SubItemType, SuperItemType> args) =>
-                new NotifyCollectionModifiedEventArgs<SubItemType>(args.OldSubItemsNewSubItemsModification);
-        }
-
-        public class SuperItemCollection : ItemCollection<SuperItemType>
-        {
-            public SuperItemCollection(SynchronizingCollection<SubItemType, SuperItemType> synchronizingCollection)
-                : base(synchronizingCollection) { }
-
-            protected override NotifyCollectionModifiedEventArgs<SuperItemType> CreateNotifyCollectionModifiedEventArgs(CollectionModifiedEventArgs<SubItemType, SuperItemType> args) =>
-                new NotifyCollectionModifiedEventArgs<SuperItemType>(args.OldSuperItemsNewSuperItemsModification);
-        }
-
-        protected class ItemIndexShiftSimulation : OrderedDictionary<int, int>
-        {
-            public ItemIndexShiftSimulation(IList list)
-            {
-                var listCount = list.Count;
-
-                for (var itemIndex = 0; itemIndex < listCount; itemIndex++) {
-                    Add(itemIndex, itemIndex);
-                }
-            }
-
-            public void SynchronizeKeys(IEnumerable<ICollectionModification<object, object>> modifications)
-            {
-                foreach (var modification in modifications) {
-                    switch (modification.Action) {
-                        case NotifyCollectionChangedAction.Add:
-                            //foreach (modifi
-                            break;
-                        case NotifyCollectionChangedAction.Remove:
-                            break;
-                        case NotifyCollectionChangedAction.Replace:
-                            break;
-                        case NotifyCollectionChangedAction.Move:
-                            break;
-                        case NotifyCollectionChangedAction.Reset:
-                            Clear();
-                            break;
-                    }
-                }
             }
         }
     }

@@ -61,8 +61,8 @@
 
   <PropertyGroup>
 
-    <IsTeronisProject>false</IsTeronisProject>
-    <IsTeronisProject Condition="$(MSBuildProjectName.StartsWith('Teronis.'))">true</IsTeronisProject>
+    <!-- <IsTeronisProject>false</IsTeronisProject>
+    <IsTeronisProject Condition="$(MSBuildProjectName.StartsWith('Teronis.'))">true</IsTeronisProject> -->
 
     <IsGitVersionCacheProject>false</IsGitVersionCacheProject>
     <IsGitVersionCacheProject Condition="$(MSBuildProjectName.StartsWith('GitVersionCache.'))">true</IsGitVersionCacheProject>
@@ -75,6 +75,9 @@
 
     <IsExampleProject>false</IsExampleProject>
     <IsExampleProject Condition="$(MSBuildProjectName.EndsWith('.Example'))">true</IsExampleProject>
+
+    <IsBenchmarkProject>false</IsBenchmarkProject>
+    <IsBenchmarkProject Condition="$(MSBuildProjectName.EndsWith('.Benchmark'))">true</IsBenchmarkProject>
 
     <IsExecutablePackageProject>false</IsExecutablePackageProject>
     <!--

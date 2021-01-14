@@ -16,7 +16,7 @@ namespace Teronis.Collections.Synchronization
 
             private bool itemTypeImplementsDisposable;
 
-            event NotifyCollectionChangedEventHandler INotifyCollectionChanged.CollectionChanged {
+            event NotifyCollectionChangedEventHandler? INotifyCollectionChanged.CollectionChanged {
                 add => collectionChanged += value;
                 remove => collectionChanged -= value;
             }
@@ -24,6 +24,8 @@ namespace Teronis.Collections.Synchronization
             public event EventHandler? CollectionSynchronized;
 
             private event NotifyCollectionChangedEventHandler? collectionChanged;
+
+            new internal IList<ItemType> Items => base.Items;
 
             public ItemCollection(SynchronizingCollection<SubItemType, SuperItemType> synchronizingCollection)
             {
@@ -39,12 +41,12 @@ namespace Teronis.Collections.Synchronization
             public KeyedItemIndexTracker<ItemType, KeyType> CreateKeyedItemIndexTracker<KeyType>(Func<ItemType, KeyType> getItemKey) =>
                 new KeyedItemIndexTracker<ItemType, KeyType>(this, getItemKey);
 
-            private void SynchronizingCollection_CollectionSynchronizing(object sender, EventArgs e) =>
+            private void SynchronizingCollection_CollectionSynchronizing(object? sender, EventArgs e) =>
                 CollectionSynchronizing?.Invoke(this, e);
 
             protected abstract CollectionModifiedEventArgs<ItemType> CreateCollectionModifiedEventArgs(CollectionModifiedEventArgs<SubItemType, SuperItemType> args);
 
-            private void CollectionModificationNotifier_CollectionModified(object sender, CollectionModifiedEventArgs<SubItemType, SuperItemType> args)
+            private void CollectionModificationNotifier_CollectionModified(object? sender, CollectionModifiedEventArgs<SubItemType, SuperItemType> args)
             {
                 if (collectionChanged is null && CollectionModified is null) {
                     return;
@@ -55,7 +57,7 @@ namespace Teronis.Collections.Synchronization
                 collectionChanged?.Invoke(this, collectionChangedEventArgs);
             }
 
-            private void SynchronizingCollection_CollectionSynchronized(object sender, EventArgs e) =>
+            private void SynchronizingCollection_CollectionSynchronized(object? sender, EventArgs e) =>
                 CollectionSynchronized?.Invoke(this, e);
 
             protected virtual void DisposeItem(int index)

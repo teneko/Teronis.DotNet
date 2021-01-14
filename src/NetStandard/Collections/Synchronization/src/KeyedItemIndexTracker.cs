@@ -1,48 +1,52 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Teronis.Collections.Changes;
+using Teronis.Tools;
 
 namespace Teronis.Collections.Synchronization
 {
     public class KeyedItemIndexTracker<ItemType, KeyType>
     {
-        private readonly ISynchronizableItemCollection<ItemType> itemCollection;
-        private readonly Func<ItemType, KeyType> getItemKey;
-        private readonly Dictionary<KeyType, int> itemIndexByKeyDictionary;
+        public IReadOnlyDictionary<KeyType, int> KeyedItemIndexes { get; }
+
+        internal readonly ISynchronizableItemCollection<ItemType> ItemCollection;
+        internal readonly Func<ItemType, KeyType> GetItemKeyDelegate;
+
+        private readonly Dictionary<KeyType, int> keyedItemIndexes;
 
         public KeyedItemIndexTracker(ISynchronizableItemCollection<ItemType> itemCollection, Func<ItemType, KeyType> getItemKey,
             IEqualityComparer<KeyType>? keyEqualityComparer)
         {
             keyEqualityComparer = keyEqualityComparer ?? EqualityComparer<KeyType>.Default;
-            itemIndexByKeyDictionary = new Dictionary<KeyType, int>(keyEqualityComparer);
-            this.itemCollection = itemCollection;
-            this.getItemKey = getItemKey ?? throw new ArgumentNullException(nameof(getItemKey));
+            keyedItemIndexes = new Dictionary<KeyType, int>(keyEqualityComparer);
+            KeyedItemIndexes = new ReadOnlyDictionary<KeyType, int>(keyedItemIndexes);
+            ItemCollection = itemCollection;
+            GetItemKeyDelegate = getItemKey ?? throw new ArgumentNullException(nameof(getItemKey));
             itemCollection.CollectionModified += ModificationNotifier_CollectionModified;
             recalculateItemKeys();
         }
 
         private void recalculateItemKeys()
         {
-            if (itemIndexByKeyDictionary.Count != 0) {
-                itemIndexByKeyDictionary.Clear();
+            if (keyedItemIndexes.Count != 0) {
+                keyedItemIndexes.Clear();
             }
 
-            var itemCollectionCount = itemCollection.Count;
+            var itemCollectionCount = ItemCollection.Count;
 
             for (var index = 0; index < itemCollectionCount; index++) {
-                var item = itemCollection[index];
-                var itemKey = getItemKey(item);
-                itemIndexByKeyDictionary[itemKey] = index;
+                var item = ItemCollection[index];
+                var itemKey = GetItemKeyDelegate(item);
+                keyedItemIndexes[itemKey] = index;
             }
         }
 
         public KeyedItemIndexTracker(ISynchronizableItemCollection<ItemType> itemCollection, Func<ItemType, KeyType> getItemKey)
             : this(itemCollection, getItemKey, default(IEqualityComparer<KeyType>)) { }
-
-        protected virtual KeyType GetItemKey(ItemType item) =>
-            getItemKey(item);
 
         private void ModificationNotifier_CollectionModified(object sender, ICollectionModification<ItemType, ItemType> modification)
         {
@@ -52,8 +56,8 @@ namespace Teronis.Collections.Synchronization
                 var index = 0;
 
                 while (itemsEnumerator.MoveNext()) {
-                    var itemKey = GetItemKey(itemsEnumerator.Current);
-                    itemIndexByKeyDictionary[itemKey] = offset + index;
+                    var itemKey = GetItemKeyDelegate(itemsEnumerator.Current);
+                    keyedItemIndexes[itemKey] = offset + index;
                     index++;
                 }
             }
@@ -74,8 +78,8 @@ namespace Teronis.Collections.Synchronization
                         var oldItemsCount = modification.OldItems.Count;
 
                         for (var index = 0; index < oldItemsCount; index++) {
-                            var itemKey = GetItemKey(modification.OldItems[index]);
-                            itemIndexByKeyDictionary.Remove(itemKey);
+                            var itemKey = GetItemKeyDelegate(modification.OldItems[index]);
+                            keyedItemIndexes.Remove(itemKey);
                         }
                     }
                     break;
@@ -87,15 +91,36 @@ namespace Teronis.Collections.Synchronization
                         throw CollectionModificationThrowHelper.NewItemsWereNullException();
                     }
 
-                    var amountOfAffectedItems = Math.Abs(modification.OldIndex - modification.NewIndex) + modification.NewItems.Count;
-                    var startIndexOfAffectedItems = Math.Min(modification.OldIndex, modification.NewIndex);
-                    var affectedItems = itemCollection.Skip(startIndexOfAffectedItems).Take(amountOfAffectedItems);
-                    replaceItemIndexes(affectedItems, startIndexOfAffectedItems);
+                    var (StartIndexOfAffectedItems, AmountOfAffectedItems) = CollectionTools.GetMoveRange(
+                        modification.OldIndex, 
+                        modification.NewIndex, 
+                        modification.NewItems.Count);
+
+                    var affectedItems = ItemCollection.Skip(StartIndexOfAffectedItems).Take(AmountOfAffectedItems);
+                    replaceItemIndexes(affectedItems, StartIndexOfAffectedItems);
                     break;
                 case NotifyCollectionChangedAction.Reset:
-                    itemIndexByKeyDictionary.Clear();
+                    keyedItemIndexes.Clear();
                     break;
             }
+        }
+
+        public ItemType GetItem(KeyType key)
+        {
+            var itemIndex = keyedItemIndexes[key];
+            var item = ItemCollection[itemIndex];
+            return item;
+        }
+
+        [return: MaybeNull]
+        public ItemType GetItemOrDefault(KeyType key)
+        {
+            if (keyedItemIndexes.TryGetValue(key, out int itemIndex)) {
+                var item = ItemCollection[itemIndex];
+                return item;
+            }
+
+            return default;
         }
     }
 }

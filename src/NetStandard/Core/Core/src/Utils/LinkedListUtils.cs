@@ -4,13 +4,13 @@ namespace Teronis.Utils
 {
     public static class LinkedListUtils
     {
-        public static IEnumerable<T> YieldItemsReversed<T>(LinkedList<T> list)
+        public static IEnumerable<LinkedListNode<T>> YieldNodesReversed<T>(LinkedListNode<T> node)
         {
-            var node = list.Last;
+            var currentNode = node;
 
-            while (node != null) {
-                yield return node.Value;
-                node = node.Previous;
+            while (currentNode != null) {
+                yield return currentNode;
+                currentNode = currentNode.Previous;
             }
         }
     }

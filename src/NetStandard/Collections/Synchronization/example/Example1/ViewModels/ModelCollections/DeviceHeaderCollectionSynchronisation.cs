@@ -16,7 +16,7 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollectio
 #pragma warning restore IDE0052 // Ungelesene private Member entfernen
 
         public DeviceHeaderCollectionSynchronisation()
-            : base(DeviceHeaderEntityEqualityComparer.Default)
+            : base(SynchronizingCollectionAlignment.OrderedAlignment(DeviceHeaderEntityEqualityComparer.Default))
         {
             collectionItemParentsBehaviour = new AddRemoveResetBehaviourForCollectionItemByAddRemoveParents<DeviceHeaderViewModel, DeviceHeaderEntity>(this);
         }

@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30309.148
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.NetStandard.Linq.Expressions", "Expressions\Expressions\test\Expressions\Test.NetStandard.Linq.Expressions.csproj", "{1F734567-2C3D-4799-8D79-B3F458989864}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Linq.Expressions.Test", "Expressions\Expressions\test\Expressions\Teronis.NetStandard.Linq.Expressions.Test.csproj", "{1F734567-2C3D-4799-8D79-B3F458989864}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Linq.Expressions", "Expressions\Expressions\src\Teronis.NetStandard.Linq.Expressions.csproj", "{784CE847-70AD-4792-B191-39B5A94E4BBB}"
 EndProject

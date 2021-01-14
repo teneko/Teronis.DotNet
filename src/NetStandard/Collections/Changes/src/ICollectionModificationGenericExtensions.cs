@@ -91,9 +91,9 @@ namespace Teronis.Collections.Changes
 
         public static CollectionModification<OldItemType, NewItemType> CopyWithOtherValues<OldItemType, NewItemType>(
             this ICollectionModification<OldItemType, NewItemType> modification,
-            StillNullable<IReadOnlyList<OldItemType>>? oldItems = null,
+            YetNullable<IReadOnlyList<OldItemType>>? oldItems = null,
             int? oldIndex = null,
-            StillNullable<IReadOnlyList<NewItemType>>? newItems = null,
+            YetNullable<IReadOnlyList<NewItemType>>? newItems = null,
             int? newIndex = null)
         {
             modification = modification ?? throw new ArgumentNullException(nameof(modification));
@@ -108,7 +108,7 @@ namespace Teronis.Collections.Changes
         {
             var oldItemReadOnlyCollection = modification.OldItems is null ? null : new ReadOnlyList<ItemType>(modification.OldItems);
             var newItemReadOnlyCollection = modification.NewItems is null ? null : new ReadOnlyList<ItemType>(modification.NewItems);
-
+            
             return NotifyCollectionChangedEventArgsUtils.CreateNotifyCollectionChangedEventArgs(
                 modification.Action,
                 oldItemReadOnlyCollection,

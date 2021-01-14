@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netcoreapp3.1;net5.0</TargetFrameworks>
-    <RootNamespace>Teronis</RootNamespace>
+    <RootNamespace>Teronis.Collections</RootNamespace>
     <Nullable>enable</Nullable>
     <Description>
       <![CDATA[Provides classes that define generic collections.
@@ -21,11 +21,6 @@ CovariantKeyValuePairCollection<KeyType, ValueType>]]>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Core\Core\src\Teronis.NetStandard.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Extensions\Collections\" />
-    <Folder Include="Utils\" />
   </ItemGroup>
 
 </Project>

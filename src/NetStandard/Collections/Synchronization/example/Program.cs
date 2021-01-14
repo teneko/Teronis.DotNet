@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Teronis.Collections.Changes;
@@ -12,12 +13,68 @@ namespace Teronis.Collections.Synchronization
             int[] list, list2;
             List<CollectionModification<int, int>> modifications;
 
-            list = new int[] { 1, 2, 3 };
-            list2 = new int[] { 2, 3, 3 };
+            //list = new int[] { 5, 6, 4 };
+            //list2 = new int[] { 4, 3, 5 };
 
-            modifications = SortedCollectionModifications.YieldCollectionModifications(list, list2, SortedCollectionModificationsOrder.Ascending).ToList();
+            //modifications = CollectionModifications2.YieldCollectionModifications(
+            //    list,
+            //    x => x,
+            //    list2,
+            //    x => x).ToList();
 
-            ;
+            //;
+
+            //list = new int[] { 5, 6, 4 };
+            //list2 = new int[] { 4, 4, 5 };
+
+            //modifications = CollectionModifications2.YieldCollectionModifications(
+            //    list,
+            //    x => x,
+            //    list2,
+            //    x => x).ToList();
+
+            //;
+
+            //list = new int[] { 9, 9 };
+            //list2 = new int[] { 1, 9 };
+
+            //modifications = CollectionModifications2.YieldCollectionModifications(
+            //    list,
+            //    x => x,
+            //    list2,
+            //    x => x).ToList();
+
+            //;
+
+            //list = new int[] { 4, 4, 5 };
+            //list2 = new int[] { 5, 6, 4 };
+
+            //modifications = CollectionModifications2.YieldCollectionModifications(
+            //    list,
+            //    x => x,
+            //    list2,
+            //    x => x).ToList();
+
+            //;
+
+            //list = new int[] { 5, 6, 4 };
+            //list2 = new int[] { 9, 4, 4, 7 };
+
+            //modifications = CollectionModifications.YieldCollectionModifications(
+            //    list,
+            //    x => x,
+            //    list2,
+            //    x => x).ToList();
+
+            //;
+
+            //list = new int[] { 2, 4, 5 };
+            //list2 = new int[] { 3, 8 };
+
+            //modifications = SortedCollectionModifications.YieldCollectionModifications(list, list2, SortedCollectionModificationsOrder.Ascending, 
+            //    actions: CollectionModificationsActions.InsertReplace).ToList();
+
+            //;
 
             //list = new int[] { 1, 1, 2 };
             //list2 = new int[] { 1, 2, 1 };

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Teronis.Collections.Generic;
+using Teronis.Collections.Specialized;
 using Teronis.Extensions;
 
 namespace Teronis.ObjectModel.TreeColumn.Core

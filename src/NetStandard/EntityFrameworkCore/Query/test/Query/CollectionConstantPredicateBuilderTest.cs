@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 using Teronis.EntityFrameworkCore.Query;
 using Xunit;
 
-namespace Test.NetStandard.EntityFrameworkCore.Query
+namespace Teronis.NetStandard.EntityFrameworkCore.Query.Test
 {
     public class CollectionConstantPredicateBuilderTest
     {

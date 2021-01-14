@@ -32,11 +32,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitVersionCache.MSBuild.Pac
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitVersionCache.MSBuild.Core", "src\MSBuild\Core\Core\ref\GitVersionCache\GitVersionCache.MSBuild.Core.csproj", "{AB88356C-E3E5-476B-AA39-93935A4AC260}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.MSBuild.Packaging.ProjectBuildInPackage.Localization", "src\MSBuild\Packaging\ProjectBuildInPackage\test\Pbip.Localization\Test.MSBuild.Packaging.ProjectBuildInPackage.Localization.csproj", "{09796FBB-1475-40A0-ABD0-92CD3849C156}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.MSBuild.Packaging.ProjectBuildInPackage.Test.Localization", "src\MSBuild\Packaging\ProjectBuildInPackage\test\0.Localization\Teronis.MSBuild.Packaging.ProjectBuildInPackage.Test.Localization.csproj", "{09796FBB-1475-40A0-ABD0-92CD3849C156}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.MSBuild.Packaging.ProjectBuildInPackage", "src\MSBuild\Packaging\ProjectBuildInPackage\test\Pbib\Test.MSBuild.Packaging.ProjectBuildInPackage.csproj", "{95D75683-6C08-4ED2-852B-36A97239E8DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.MSBuild.Packaging.ProjectBuildInPackage.Test", "src\MSBuild\Packaging\ProjectBuildInPackage\test\0\Teronis.MSBuild.Packaging.ProjectBuildInPackage.Test.csproj", "{95D75683-6C08-4ED2-852B-36A97239E8DE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.NetStandard.Core", "src\NetStandard\Core\Core\test\Core\Test.NetStandard.Core.csproj", "{23D2F491-8FAA-4E15-9E3B-355CDAEE9693}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Core.Test", "src\NetStandard\Core\Core\test\Core\Teronis.NetStandard.Core.Test.csproj", "{23D2F491-8FAA-4E15-9E3B-355CDAEE9693}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.ObjectModel.TreeColumn", "src\NetStandard\ObjectModel\TreeColumn\src\Teronis.NetStandard.ObjectModel.TreeColumn.csproj", "{BD1B9AA3-E929-4520-AE25-E5014C8E5D06}"
 EndProject
@@ -48,15 +48,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collect
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections.Synchronization.Example", "src\NetStandard\Collections\Synchronization\example\Teronis.NetStandard.Collections.Synchronization.Example.csproj", "{DBFEAB25-EA40-449B-9B02-934CB29EB25E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.NetStandard.Linq.Expressions", "src\NetStandard\Linq\Expressions\Expressions\test\Expressions\Test.NetStandard.Linq.Expressions.csproj", "{32053618-5722-48D8-901F-01B2B8375A10}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Linq.Expressions.Test", "src\NetStandard\Linq\Expressions\Expressions\test\Expressions\Teronis.NetStandard.Linq.Expressions.Test.csproj", "{32053618-5722-48D8-901F-01B2B8375A10}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Linq.Expressions", "src\NetStandard\Linq\Expressions\Expressions\src\Teronis.NetStandard.Linq.Expressions.csproj", "{975FE130-F657-40A4-AC4F-713E512A75AC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.NetStandard.EntityFrameworkCore.Query", "src\NetStandard\EntityFrameworkCore\Query\test\Query\Test.NetStandard.EntityFrameworkCore.Query.csproj", "{8CA6AF2C-A6FA-42ED-BA79-11E620179B63}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.EntityFrameworkCore.Query.Test", "src\NetStandard\EntityFrameworkCore\Query\test\Query\Teronis.NetStandard.EntityFrameworkCore.Query.Test.csproj", "{8CA6AF2C-A6FA-42ED-BA79-11E620179B63}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.EntityFrameworkCore.Query", "src\NetStandard\EntityFrameworkCore\Query\src\Teronis.NetStandard.EntityFrameworkCore.Query.csproj", "{D459D788-4D79-40B3-9A26-CBE85C5A87D5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.NetStandard.Collections", "src\NetStandard\Collections\Collections\test\Collections\Test.NetStandard.Collections.csproj", "{14AA09E4-71E4-4AF7-A14D-5B2443CD04F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections.Test", "src\NetStandard\Collections\Collections\test\Collections\Teronis.NetStandard.Collections.Test.csproj", "{14AA09E4-71E4-4AF7-A14D-5B2443CD04F5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.ModuleInitializer.AssemblyLoader.MSBuild", "src\ModuleInitializer\AssemblyLoader\0.MSBuild\src\Teronis.ModuleInitializer.AssemblyLoader.MSBuild.csproj", "{03D82C50-BD40-4BEB-A027-7C2795B5E109}"
 EndProject
@@ -106,6 +106,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections.Changes.Test", "src\NetStandard\Collections\Changes\test\Teronis.NetStandard.Collections.Changes.Test.csproj", "{A0326291-BA4A-4EFF-84A4-4B4E913D8C2C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C6017EE4-F4D2-499C-9352-ECBF8B644D76}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{0AC8FDC4-2855-49A6-96EC-9893CDC35E84}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", "{E48BE22E-518E-4BFA-9EDC-1BC398675C93}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections.Changes.Benchmark", "src\NetStandard\Collections\Changes\benchmark\Teronis.NetStandard.Collections.Changes.Benchmark.csproj", "{25C55E16-75C6-4B4B-9F48-4ADC5C99279D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -717,9 +727,42 @@ Global
 		{DB8040EA-71AE-4B4F-BBC1-A8B73FA139FE}.Release|x64.Build.0 = Release|x64
 		{DB8040EA-71AE-4B4F-BBC1-A8B73FA139FE}.Release|x86.ActiveCfg = Release|x86
 		{DB8040EA-71AE-4B4F-BBC1-A8B73FA139FE}.Release|x86.Build.0 = Release|x86
+		{A0326291-BA4A-4EFF-84A4-4B4E913D8C2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0326291-BA4A-4EFF-84A4-4B4E913D8C2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0326291-BA4A-4EFF-84A4-4B4E913D8C2C}.Debug|x64.ActiveCfg = Debug|x64
+		{A0326291-BA4A-4EFF-84A4-4B4E913D8C2C}.Debug|x64.Build.0 = Debug|x64
+		{A0326291-BA4A-4EFF-84A4-4B4E913D8C2C}.Debug|x86.ActiveCfg = Debug|x86
+		{A0326291-BA4A-4EFF-84A4-4B4E913D8C2C}.Debug|x86.Build.0 = Debug|x86
+		{A0326291-BA4A-4EFF-84A4-4B4E913D8C2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0326291-BA4A-4EFF-84A4-4B4E913D8C2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0326291-BA4A-4EFF-84A4-4B4E913D8C2C}.Release|x64.ActiveCfg = Release|x64
+		{A0326291-BA4A-4EFF-84A4-4B4E913D8C2C}.Release|x64.Build.0 = Release|x64
+		{A0326291-BA4A-4EFF-84A4-4B4E913D8C2C}.Release|x86.ActiveCfg = Release|x86
+		{A0326291-BA4A-4EFF-84A4-4B4E913D8C2C}.Release|x86.Build.0 = Release|x86
+		{25C55E16-75C6-4B4B-9F48-4ADC5C99279D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25C55E16-75C6-4B4B-9F48-4ADC5C99279D}.Debug|x64.ActiveCfg = Release|x64
+		{25C55E16-75C6-4B4B-9F48-4ADC5C99279D}.Debug|x86.ActiveCfg = Release|x86
+		{25C55E16-75C6-4B4B-9F48-4ADC5C99279D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25C55E16-75C6-4B4B-9F48-4ADC5C99279D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25C55E16-75C6-4B4B-9F48-4ADC5C99279D}.Release|x64.ActiveCfg = Release|x64
+		{25C55E16-75C6-4B4B-9F48-4ADC5C99279D}.Release|x64.Build.0 = Release|x64
+		{25C55E16-75C6-4B4B-9F48-4ADC5C99279D}.Release|x86.ActiveCfg = Release|x86
+		{25C55E16-75C6-4B4B-9F48-4ADC5C99279D}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{09796FBB-1475-40A0-ABD0-92CD3849C156} = {C6017EE4-F4D2-499C-9352-ECBF8B644D76}
+		{95D75683-6C08-4ED2-852B-36A97239E8DE} = {C6017EE4-F4D2-499C-9352-ECBF8B644D76}
+		{23D2F491-8FAA-4E15-9E3B-355CDAEE9693} = {C6017EE4-F4D2-499C-9352-ECBF8B644D76}
+		{DBFEAB25-EA40-449B-9B02-934CB29EB25E} = {0AC8FDC4-2855-49A6-96EC-9893CDC35E84}
+		{32053618-5722-48D8-901F-01B2B8375A10} = {C6017EE4-F4D2-499C-9352-ECBF8B644D76}
+		{8CA6AF2C-A6FA-42ED-BA79-11E620179B63} = {C6017EE4-F4D2-499C-9352-ECBF8B644D76}
+		{14AA09E4-71E4-4AF7-A14D-5B2443CD04F5} = {C6017EE4-F4D2-499C-9352-ECBF8B644D76}
+		{0D97861F-2F56-415E-843B-C6207D0E3C9E} = {0AC8FDC4-2855-49A6-96EC-9893CDC35E84}
+		{A0326291-BA4A-4EFF-84A4-4B4E913D8C2C} = {C6017EE4-F4D2-499C-9352-ECBF8B644D76}
+		{25C55E16-75C6-4B4B-9F48-4ADC5C99279D} = {E48BE22E-518E-4BFA-9EDC-1BC398675C93}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {36A367F3-E122-453A-9AE6-B6912E86F6CB}

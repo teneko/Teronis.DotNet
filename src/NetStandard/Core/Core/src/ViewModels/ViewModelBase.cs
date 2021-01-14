@@ -35,6 +35,15 @@ namespace Teronis.ViewModels
             PropertyChanged?.Invoke(this, args);
         }
 
+        ///// <summary>
+        ///// Calls <see cref="OnPropertyChanging(string?)"/> and <see cref="OnPropertyChanged(string?)"/>.
+        ///// </summary>
+        ///// <param name="propertyName"></param>
+        //protected void OnPropertyChange(string? propertyName = null) {
+        //    OnPropertyChanging(propertyName);
+        //    OnPropertyChanged(propertyName);
+        //}
+
         private void Property_RequestParents(object sender, HavingParentsEventArgs havingParents)
             => havingParents.AddParentAndItsParents(this);
 

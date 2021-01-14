@@ -1,22 +1,21 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Teronis.Collections.ObjectModel;
 using Teronis.Collections.Specialized;
-using Teronis.Diagnostics;
+using Teronis.Tools;
 
 namespace Teronis.Collections.Changes
 {
     public static class CollectionModifications
     {
         /// <summary>
-        /// Yields collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/>.
+        /// Yields the collection modifications for <paramref name="leftItems"/>.
         /// The collection modifications may be used to reorder <paramref name="leftItems"/>.
-        /// The collection is not assumed to be in any order.
-        /// Sorted duplications are allowed.
+        /// The more the collection is synchronized in an orderly way, the more efficient the algorithm is.
+        /// Duplications are allowed but take into account that duplications are yielded as they are appearing.
         /// </summary>
         /// <typeparam name="LeftItemType">The typ of left items.</typeparam>
         /// <typeparam name="RightItemType">The type of right items.</typeparam>
@@ -25,179 +24,260 @@ namespace Teronis.Collections.Changes
         /// <param name="getComparablePartOfLeftItem">The part of left item that is comparable with part of right item.</param>
         /// <param name="rightItems">The right items that left items want to become.</param>
         /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
-        /// <returns>For <paramref name="leftItems"/> the collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/></returns>
+        /// <returns>The collection modifications for <paramref name="leftItems"/></returns>
         public static IEnumerable<CollectionModification<LeftItemType, RightItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
             IEnumerable<LeftItemType> leftItems,
             Func<LeftItemType, ComparablePartType> getComparablePartOfLeftItem,
             IEnumerable<RightItemType> rightItems,
             Func<RightItemType, ComparablePartType> getComparablePartOfRightItem,
-            IEqualityComparer<ComparablePartType> equalityComparer)
+            IEqualityComparer<ComparablePartType>? equalityComparer = null,
+            CollectionModificationsActions actions = CollectionModificationsActions.All)
+            where ComparablePartType : notnull
         {
-            equalityComparer ??= EqualityComparer<ComparablePartType>.Default;
-            var comparablePartEqualityComparer = new CommonValueContainerEqualityComparer<ComparablePartType>(equalityComparer);
-            var leftItemEnumerator = leftItems.GetEnumerator();
-            var rightItemEnumerator = rightItems.GetEnumerator();
-            var hasLeftItem = true;
-            var hasRightItem = true;
-            // It will only count until a left or right item is not found
-            var earlyIterationCount = 0;
-            var earlyLeftValueIndex = 0;
-            var earlyRightValueIndex = 0;
-            // Early modifications that are synchronized or are synchronized but having
-            // removing or adding modifications at the end can be returned all at once.
-            // This list represents the cache for it.
-            var earlyIterationModifications = new List<CollectionModification<LeftItemType, RightItemType>>();
-            var leftItemIndexShifter = new ObjectEventDispatcher<CollectionModification<LeftItemType, RightItemType>>();
-            ILinkedBucketList<CommonValueContainer<ComparablePartType>, LeftItemContainer<LeftItemType, RightItemType, ComparablePartType>> lateLeftItemContainers = new LinkedBucketList<CommonValueContainer<ComparablePartType>, LeftItemContainer<LeftItemType, RightItemType, ComparablePartType>>(comparablePartEqualityComparer);
-            var lateRightItemContainers = new LinkedBucketList<CommonValueContainer<ComparablePartType>, RightItemContainer<LeftItemType, RightItemType, ComparablePartType>>(comparablePartEqualityComparer);
-            var areEarlyIterationValuesEqual = true;
+            static CollectionModification<LeftItemType, RightItemType> createReplaceModification(
+                LinkedBucketListNode<ComparablePartType, LeftItemContainer<LeftItemType>> leftItemNode,
+                LinkedBucketListNode<ComparablePartType, RightItemContainer<LeftItemType, RightItemType>> rightItemNode) =>
+                new CollectionModification<LeftItemType, RightItemType>(
+                    NotifyCollectionChangedAction.Replace,
+                    leftItemNode.Value.Item,
+                    leftItemNode.Value.IndexEntry,
+                    rightItemNode.Value.Item,
+                    leftItemNode.Value.IndexEntry);
 
-            /* Cache left and right items */
-            while ((hasLeftItem && (hasLeftItem = leftItemEnumerator.MoveNext()))
-                | (hasRightItem && (hasRightItem = rightItemEnumerator.MoveNext()))) {
-                // Cancel if not a left and right value is available
-                if (!(hasLeftItem || hasRightItem)) {
-                    break;
-                }
+            static CollectionModification<LeftItemType, RightItemType> createMoveModification(
+                LinkedBucketListNode<ComparablePartType, LeftItemContainer<LeftItemType>> leftItemNode,
+                int leftItemMoveToIndex,
+                LinkedBucketListNode<ComparablePartType, RightItemContainer<LeftItemType, RightItemType>> rightItemNode) =>
+                new CollectionModification<LeftItemType, RightItemType>(
+                    NotifyCollectionChangedAction.Move,
+                    leftItemNode.Value.Item,
+                    leftItemNode.Value.IndexEntry,
+                    rightItemNode.Value.Item,
+                    leftItemMoveToIndex);
 
-                var leftItem = hasLeftItem ? leftItemEnumerator.Current : default;
-                var leftCommonValue = hasLeftItem ? getComparablePartOfLeftItem(leftItem!) : default;
+            equalityComparer = equalityComparer ?? EqualityComparer<ComparablePartType>.Default;
 
-                var rightItem = hasRightItem ? rightItemEnumerator.Current : default;
-                var rightCommonValue = hasRightItem ? getComparablePartOfRightItem(rightItem!) : default;
-                CollectionModification<LeftItemType, RightItemType>? syncedIterationModification = default;
+            var canInsert = actions.HasFlag(CollectionModificationsActions.Insert);
+            var canRemove = actions.HasFlag(CollectionModificationsActions.Remove);
 
-                LeftItemContainer<LeftItemType, RightItemType, ComparablePartType> createLeftItemContainer()
-                    => new LeftItemContainer<LeftItemType, RightItemType, ComparablePartType>(leftItem, leftCommonValue, earlyLeftValueIndex, leftItemIndexShifter);
+            var leftIndexDirectory = new IndexDirectory();
 
-                RightItemContainer<LeftItemType, RightItemType, ComparablePartType> createRightItemContainer()
-                    => new RightItemContainer<LeftItemType, RightItemType, ComparablePartType>(rightItem, rightCommonValue, earlyRightValueIndex);
+            var leftItemsEnumerator = new IndexPreferredEnumerator<LeftItemType>(leftItems, leftIndexDirectory);
+            var leftItemsEnumeratorIsFunctional = leftItemsEnumerator.MoveNext();
+            var leftItemsNodes = new LinkedBucketList<ComparablePartType, LeftItemContainer<LeftItemType>>(equalityComparer);
 
-                if (hasLeftItem && hasRightItem) {
-                    var leftItemContainer = createLeftItemContainer();
-                    var rightItemContainer = createRightItemContainer();
+            var rightItemsEnumerator = rightItems.GetEnumerator();
+            var rightItemsEnumeratorIsFunctional = rightItemsEnumerator.MoveNext();
+            var rightItemIndexNext = 0;
+            var rightItemsNodes = new LinkedBucketList<ComparablePartType, RightItemContainer<LeftItemType, RightItemType>>(equalityComparer);
 
-                    // Check if: "Both items are equal" => (true supports [1,..] <-> [1,..])
-                    //       AND "Left and right buckets are empty"  (false supports [1,1,2,..] <-> [2,1,..])
-                    if (equalityComparer.Equals(leftCommonValue!, rightCommonValue!)
-                        && ((lateRightItemContainers.Buckets.TryGetValue(rightItemContainer).Item2?.All(x => x.CachedLeftItem != null)) ?? false)) {
-                        syncedIterationModification = new CollectionModification<LeftItemType, RightItemType>(
-                            NotifyCollectionChangedAction.Replace, leftItem, earlyLeftValueIndex, rightItem, earlyRightValueIndex);
+            var leftIndexOfLatestSyncedRightItem = new IndexDirectoryEntry(-1, IndexDirectoryEntryMode.Floating);
 
-                        // We only move forward to back, but never back to forward, so this item, even when 
-                        // it's now well positioned, needs to be checked, if it is still well positioned.
-                        //var rightItemContainer = createRightItemContainer();
-
-                        // We take use of a cache, so that we don't have to search for left item and don't replace it twice
-                        rightItemContainer.CachedLeftItem = leftItemContainer;
-                        lateRightItemContainers.AddLast(rightItemContainer);
-                    } else {
-                        lateLeftItemContainers.AddLast(leftItemContainer);
-                        lateRightItemContainers.AddLast(rightItemContainer);
-                        areEarlyIterationValuesEqual = false;
-                    }
-
-                    earlyIterationCount++;
-                    earlyLeftValueIndex = earlyIterationCount;
-                    earlyRightValueIndex = earlyIterationCount;
-                } else if (hasLeftItem) {
-                    if (areEarlyIterationValuesEqual) {
-                        // When early iterations are synchronized, then we always need 
-                        // to delete the left value at index of the greatest right value index plus one
-                        var newLeftValueIndex = earlyLeftValueIndex - (earlyLeftValueIndex - earlyRightValueIndex);
-                        syncedIterationModification = CollectionModification<LeftItemType, RightItemType>.CreateOld(NotifyCollectionChangedAction.Remove, leftItem, newLeftValueIndex);
-                    } else {
-                        lateLeftItemContainers.AddLast(createLeftItemContainer());
-                    }
-
-                    earlyLeftValueIndex++;
-                } else {
-                    if (areEarlyIterationValuesEqual) {
-                        syncedIterationModification = CollectionModification<LeftItemType, RightItemType>.CreateNew(NotifyCollectionChangedAction.Add, rightItem, earlyRightValueIndex);
-                    } else {
-                        lateRightItemContainers.AddLast(createRightItemContainer());
-                    }
-
-                    earlyRightValueIndex++;
-                }
-
-                if (syncedIterationModification != null) {
-                    earlyIterationModifications.Add(syncedIterationModification);
+            void SetLeftIndexOfLatestSyncedRightItem(int newIndex)
+            {
+                if (newIndex > leftIndexOfLatestSyncedRightItem.Index) {
+                    leftIndexDirectory.Replace(leftIndexOfLatestSyncedRightItem, newIndex);
                 }
             }
 
-            foreach (var modification in earlyIterationModifications) {
-                yield return modification;
-            }
+            while (leftItemsEnumeratorIsFunctional || rightItemsEnumeratorIsFunctional) {
+                LinkedBucketListNode<ComparablePartType, LeftItemContainer<LeftItemType>>? leftItemNodeLast;
+                LinkedBucketListNode<ComparablePartType, RightItemContainer<LeftItemType, RightItemType>>? rightItemNodeLast;
 
-            // Exit only if both lists were synchronized from early on
-            if (areEarlyIterationValuesEqual) {
-                yield break;
-            }
+                if (rightItemsEnumeratorIsFunctional) {
+                    var rightItem = rightItemsEnumerator.Current;
+                    var comparablePartOfRightItem = getComparablePartOfRightItem(rightItem);
 
-            foreach (var rightItemContainer in lateRightItemContainers) {
-                // This index represents the current index of the right value collection.
-                var rightValueIndex = rightItemContainer.ShiftedIndex;
-                var rightValue = rightItemContainer.CommonValue;
-                var hasCachedLeftItem = rightItemContainer.CachedLeftItem != null;
-                LeftItemContainer<LeftItemType, RightItemType, ComparablePartType>? foundLeftItemContainer;
-
-                if (hasCachedLeftItem) {
-                    foundLeftItemContainer = rightItemContainer.CachedLeftItem;
+                    rightItemNodeLast = rightItemsNodes.AddLast(comparablePartOfRightItem, new RightItemContainer<LeftItemType, RightItemType>(rightItem, rightItemIndexNext));
+                    rightItemIndexNext++;
                 } else {
-                    if (lateLeftItemContainers.TryGetBucket(CommonValueContainer<ComparablePartType>.CreateEqualComparableItem(rightValue), out var bucket) && bucket.Count != 0) {
-                        var firstNode = bucket.First!;
-                        foundLeftItemContainer = firstNode.Value;
-                        lateLeftItemContainers.Remove(firstNode);
-                    } else {
-                        foundLeftItemContainer = null;
-                    }
+                    rightItemNodeLast = null;
                 }
 
-                var rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount = rightValueIndex;
+                var rightItemNodeLastBucketFirstNode = rightItemNodeLast?.Bucket!.First;
 
-                if (foundLeftItemContainer == null) {
-                    var modification = CollectionModification<LeftItemType, RightItemType>.CreateNew(NotifyCollectionChangedAction.Add, rightItemContainer.RightItem, rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount);
-                    yield return modification;
-                    leftItemIndexShifter.DispatchObject(modification);
-                } else {
-                    var foundLeftIndex = foundLeftItemContainer.ShiftedIndex;
+                /* Is the first node of bucket of right node anywhere on left side? */
+                if (!(rightItemNodeLastBucketFirstNode is null) && leftItemsNodes.TryGetBucket(rightItemNodeLastBucketFirstNode!.Key, out var leftItemBucket)) {
+                    var leftItemNode = leftItemBucket.First!;
 
-                    // Indexes can be equal, when not processed items are before the moved item
-                    if (foundLeftIndex != rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount) {
-                        // Here we deny the forward to backward move, so we have to process already replaced items, 
-                        // and move them forward, because they could be now behind those skipped items, but need to
-                        // be moved before them
-                        if (foundLeftIndex < rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount) {
-                            continue;
+                    yield return createReplaceModification(leftItemNode, rightItemNodeLastBucketFirstNode);
+
+                    int leftItemMoveToIndex;
+
+                    if (leftItemNode.Value.IndexEntry > leftIndexOfLatestSyncedRightItem.Index) {
+                        // We do not need to move, because the item has not 
+                        // exceeded the index of latest synced right item.
+                        leftItemMoveToIndex = leftItemNode.Value.IndexEntry;
+                    } else {
+                        // The index where it would be inserted when it is removed.
+                        leftItemMoveToIndex = leftIndexOfLatestSyncedRightItem.Index;
+                    }
+
+                    LinkedBucketListNode<ComparablePartType, RightItemContainer<LeftItemType, RightItemType>>? rightItemNodeLastBucketFirstNodeListPreviousNode;
+
+                    {
+                        if (leftItemNode.Value.IndexEntry != leftItemMoveToIndex) {
+                            var moveModification = createMoveModification(leftItemNode, leftItemMoveToIndex, rightItemNodeLastBucketFirstNode);
+                            yield return moveModification;
+                            leftIndexDirectory.Move(moveModification.OldIndex, moveModification.NewIndex);
                         }
 
-                        var modification = new CollectionModification<LeftItemType, RightItemType>(NotifyCollectionChangedAction.Move, foundLeftItemContainer.LeftItem, foundLeftIndex, rightItemContainer.RightItem, rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount);
-                        // We move the old existing item
-                        yield return modification;
-                        leftItemIndexShifter.DispatchObject(modification);
+                        rightItemNodeLastBucketFirstNodeListPreviousNode = rightItemNodeLastBucketFirstNode.ListPart.Previous;
+                        rightItemNodeLastBucketFirstNode.Bucket?.Remove(rightItemNodeLastBucketFirstNode);
+
+                        leftItemNode.Bucket!.Remove(leftItemNode);
                     }
 
-                    if (!hasCachedLeftItem) {
-                        // Then we replace the left item by moved item at the destination index of the moved item
-                        yield return new CollectionModification<LeftItemType, RightItemType>(NotifyCollectionChangedAction.Replace, foundLeftItemContainer.LeftItem, rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount, rightItemContainer.RightItem, rightValueIndex);
+                    var currentLeftItemNodeAsParentForPreviousRightItemNodes = leftItemNode;
+
+                    while (!(rightItemNodeLastBucketFirstNodeListPreviousNode is null)) {
+                        if (leftItemsNodes.TryGetBucket(rightItemNodeLastBucketFirstNodeListPreviousNode.Key, out var leftBucket)) {
+                            var leftItemFirstNodeOfRightItemNodeLastBucketFirstNodeListPreviousNode = leftBucket.First!;
+
+                            yield return createReplaceModification(
+                                leftItemFirstNodeOfRightItemNodeLastBucketFirstNodeListPreviousNode,
+                                rightItemNodeLastBucketFirstNodeListPreviousNode);
+
+                            int newLeftItemMoveToIndex;
+
+                            if (!(rightItemNodeLastBucketFirstNodeListPreviousNode.Value.Parent is null)) {
+                                // If the parent is not null, we want to move it before that parent.
+                                newLeftItemMoveToIndex = rightItemNodeLastBucketFirstNodeListPreviousNode.Value.Parent.IndexEntry;
+                                rightItemNodeLastBucketFirstNodeListPreviousNode.Value.Parent = null;
+                            } else {
+                                newLeftItemMoveToIndex = leftItemMoveToIndex;
+                            }
+
+                            var moveModification = createMoveModification(
+                                leftItemFirstNodeOfRightItemNodeLastBucketFirstNodeListPreviousNode,
+                                newLeftItemMoveToIndex,
+                                rightItemNodeLastBucketFirstNodeListPreviousNode);
+
+                            yield return moveModification;
+
+                            leftItemFirstNodeOfRightItemNodeLastBucketFirstNodeListPreviousNode.Bucket!.Remove(leftItemFirstNodeOfRightItemNodeLastBucketFirstNodeListPreviousNode);
+                            leftIndexDirectory.Move(moveModification.OldIndex, moveModification.NewIndex);
+
+                            // After dispatch we set new index;
+                            currentLeftItemNodeAsParentForPreviousRightItemNodes = leftItemFirstNodeOfRightItemNodeLastBucketFirstNodeListPreviousNode;
+                        } else {
+                            // Do not set parent after it has been already set.
+                            if (rightItemNodeLastBucketFirstNodeListPreviousNode.Value.Parent is null) {
+                                // We cannot add right item blindly to left side, because we do not know if exact this node will
+                                // appear on left side. So we are tell current previous node about a left node that is definitely below him.
+                                rightItemNodeLastBucketFirstNodeListPreviousNode.Value.Parent = currentLeftItemNodeAsParentForPreviousRightItemNodes.Value;
+                            }
+                        }
+
+                        var tempRightItemNodeLastBucketFirstNodeListPreviousNode = rightItemNodeLastBucketFirstNodeListPreviousNode;
+                        var tempPrevious = rightItemNodeLastBucketFirstNodeListPreviousNode.ListPart.Previous;
+
+                        if (tempPrevious is null || !(tempPrevious.Value.Parent is null)) {
+                            rightItemNodeLastBucketFirstNodeListPreviousNode = null;
+                        } else {
+                            rightItemNodeLastBucketFirstNodeListPreviousNode = tempPrevious;
+                        }
+
+                        if (tempRightItemNodeLastBucketFirstNodeListPreviousNode.Value.Parent is null) {
+                            // Remove node that has been definitely found on left side.
+                            tempRightItemNodeLastBucketFirstNodeListPreviousNode.Bucket?.Remove(tempRightItemNodeLastBucketFirstNodeListPreviousNode);
+                        }
                     }
+
+                    // Let's refresh index after left item may have been moved several times.
+                    SetLeftIndexOfLatestSyncedRightItem(leftItemNode.Value.IndexEntry);
+                }
+
+                if (leftItemsEnumeratorIsFunctional) {
+                    var leftItem = leftItemsEnumerator.Current;
+                    var comparablePartOfLeftItem = getComparablePartOfLeftItem(leftItem);
+                    var nextLeftIndex = leftIndexDirectory.Count;
+
+                    leftItemNodeLast = leftItemsNodes.AddLast(comparablePartOfLeftItem, new LeftItemContainer<LeftItemType>(leftItem, leftIndexDirectory.Add(nextLeftIndex)));
+                } else {
+                    leftItemNodeLast = null;
+                }
+
+                var leftItemNodeLastBucketFirstNode = leftItemNodeLast?.Bucket?.First;
+
+                /* Is the first node of bucket of left node anywhere on right side? */
+                if (!(leftItemNodeLastBucketFirstNode is null) && rightItemsNodes.TryGetBucket(leftItemNodeLastBucketFirstNode!.Key, out var rightItembucket)) {
+                    var rightItemNode = rightItembucket.First!;
+
+                    yield return createReplaceModification(leftItemNodeLastBucketFirstNode, rightItemNode);
+
+                    if (!(rightItemNode.Value.Parent is null)) {
+                        var moveLeftItemTo = rightItemNode.Value.Parent.IndexEntry;
+
+                        var moveModification = createMoveModification(
+                            leftItemNodeLastBucketFirstNode,
+                            moveLeftItemTo,
+                            rightItemNode);
+
+                        yield return moveModification;
+                        leftIndexDirectory.Move(moveModification.OldIndex, moveModification.NewIndex);
+                    }
+
+                    var rightItemNodePrevious = rightItemNode.ListPart.Previous;
+
+                    while (!(rightItemNodePrevious is null)
+                        && ((rightItemNode.Value.Parent is null && rightItemNodePrevious.Value.Parent is null)
+                            || (!(rightItemNode.Value.Parent is null) && ReferenceEquals(rightItemNodePrevious.Value.Parent, rightItemNode.Value.Parent)))) {
+                        rightItemNodePrevious.Value.Parent = leftItemNodeLastBucketFirstNode.Value;
+                        rightItemNodePrevious = rightItemNodePrevious.ListPart.Previous;
+                    }
+
+                    leftItemNodeLastBucketFirstNode.Bucket?.Remove(leftItemNodeLastBucketFirstNode);
+                    rightItemNode.Bucket?.Remove(rightItemNode);
+                    SetLeftIndexOfLatestSyncedRightItem(leftItemNodeLastBucketFirstNode.Value.IndexEntry);
+                }
+
+                leftItemsEnumeratorIsFunctional = leftItemsEnumerator.MoveNext();
+                rightItemsEnumeratorIsFunctional = rightItemsEnumerator.MoveNext();
+            }
+
+            var leftItemsLength = leftItemsEnumerator.CurrentLength;
+
+            if (canRemove && !(leftItemsNodes.Last is null)) {
+                foreach (var leftItemNode in LinkedBucketListUtils.YieldNodesReversed(leftItemsNodes.Last)) {
+                    var removeModification = CollectionModification<LeftItemType, RightItemType>.CreateOld(
+                        NotifyCollectionChangedAction.Remove,
+                        leftItemNode.Value.Item,
+                        leftItemNode.Value.IndexEntry);
+
+                    yield return removeModification;
+                    leftIndexDirectory.Remove(removeModification.OldIndex);
+                    leftItemsLength--;
                 }
             }
 
-            if (!(lateLeftItemContainers.Last is null)) {
-                // We remove all left left-value-index-pairs, because they did not match any condition above and have to be removed in REVERSED order
-                foreach (var leftValueIndexPair in lateLeftItemContainers.Last.ListPart.GetEnumerableButReversed()) {
-                    yield return CollectionModification<LeftItemType, RightItemType>.CreateOld(NotifyCollectionChangedAction.Remove, leftValueIndexPair.Value.LeftItem, leftValueIndexPair.Value.ShiftedIndex);
+            if (canInsert && !(rightItemsNodes.First is null)) {
+                foreach (var rightItemNode in rightItemsNodes) {
+                    int insertItemTo;
+
+                    if (rightItemNode.Parent is null) {
+                        insertItemTo = leftItemsLength;
+                    } else {
+                        insertItemTo = rightItemNode.Parent.IndexEntry;
+                    }
+
+                    var addModification = CollectionModification<LeftItemType, RightItemType>.CreateNew(
+                        NotifyCollectionChangedAction.Add,
+                        rightItemNode.Item,
+                        insertItemTo);
+
+                    yield return addModification;
+                    leftIndexDirectory.Insert(insertItemTo);
+                    leftItemsLength++;
                 }
             }
         }
 
         /// <summary>
-        /// Yields collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/>.
+        /// Yields the collection modifications for <paramref name="leftItems"/>.
         /// The collection modifications may be used to reorder <paramref name="leftItems"/>.
-        /// The collection is not assumed to be in any order.
-        /// Sorted duplications are allowed.
+        /// The more the collection is synchronized in an orderly way, the more efficient the algorithm is.
+        /// Duplications are allowed but take into account that duplications are yielded as they are appearing.
         /// </summary>
         /// <typeparam name="LeftItemType">The typ of left items.</typeparam>
         /// <typeparam name="RightItemType">The type of right items.</typeparam>
@@ -206,12 +286,13 @@ namespace Teronis.Collections.Changes
         /// <param name="getComparablePartOfLeftItem">The part of left item that is comparable with part of right item.</param>
         /// <param name="rightItems">The right items that left items want to become.</param>
         /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
-        /// <returns>For <paramref name="leftItems"/> the collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/></returns>
+        /// <returns>The collection modifications for <paramref name="leftItems"/></returns>
         public static IEnumerable<CollectionModification<LeftItemType, RightItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
             IEnumerable<LeftItemType> leftItems,
-            IEnumerable<RightItemType> rightItems,
             Func<LeftItemType, ComparablePartType> getComparablePartOfLeftItem,
-            Func<RightItemType, ComparablePartType> getComparablePartOfRightItem) =>
+            IEnumerable<RightItemType> rightItems,
+            Func<RightItemType, ComparablePartType> getComparablePartOfRightItem)
+            where ComparablePartType : notnull =>
             YieldCollectionModifications(
                 leftItems,
                 getComparablePartOfLeftItem,
@@ -219,22 +300,21 @@ namespace Teronis.Collections.Changes
                 getComparablePartOfRightItem,
                 EqualityComparer<ComparablePartType>.Default);
 
-
         /// <summary>
-        /// Yields collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/>.
+        /// Yields the collection modifications for <paramref name="leftItems"/>.
         /// The collection modifications may be used to reorder <paramref name="leftItems"/>.
-        /// The collection is not assumed to be in any order.
-        /// Sorted duplications are allowed.
+        /// The more the collection is synchronized in an orderly way, the more efficient the algorithm is.
+        /// Duplications are allowed but take into account that duplications are yielded as they are appearing.
         /// </summary>
-        /// <typeparam name="ItemType"></typeparam>
+        /// <typeparam name="ItemType">The item type.</typeparam>
         /// <param name="leftItems">The left items to whom collection modifications are addressed to.</param>
         /// <param name="rightItems">The right items that left items want to become.</param>
-        /// <param name="equalityComparer"></param>
-        /// <returns>For <paramref name="leftItems"/> the collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/></returns>
+        /// <returns>The collection modifications for <paramref name="leftItems"/></returns>
         public static IEnumerable<CollectionModification<ItemType, ItemType>> YieldCollectionModifications<ItemType>(
             IEnumerable<ItemType> leftItems,
             IEnumerable<ItemType> rightItems,
-            IEqualityComparer<ItemType> equalityComparer) =>
+            IEqualityComparer<ItemType> equalityComparer)
+            where ItemType : notnull =>
             YieldCollectionModifications(
                 leftItems,
                 leftItem => leftItem,
@@ -242,22 +322,20 @@ namespace Teronis.Collections.Changes
                 rightItem => rightItem,
                 equalityComparer);
 
-
-
         /// <summary>
-        /// Yields collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/>.
+        /// Yields the collection modifications for <paramref name="leftItems"/>.
         /// The collection modifications may be used to reorder <paramref name="leftItems"/>.
-        /// The collection is not assumed to be in any order.
-        /// Sorted duplications are allowed.
+        /// The more the collection is synchronized in an orderly way, the more efficient the algorithm is.
+        /// Duplications are allowed but take into account that duplications are yielded as they are appearing.
         /// </summary>
-        /// <typeparam name="ItemType"></typeparam>
+        /// <typeparam name="ItemType">The item type.</typeparam>
         /// <param name="leftItems">The left items to whom collection modifications are addressed to.</param>
         /// <param name="rightItems">The right items that left items want to become.</param>
-        /// <param name="equalityComparer"></param>
-        /// <returns>For <paramref name="leftItems"/> the collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/></returns>
+        /// <returns>The collection modifications for <paramref name="leftItems"/></returns>
         public static IEnumerable<CollectionModification<ItemType, ItemType>> YieldCollectionModifications<ItemType>(
             IEnumerable<ItemType> leftItems,
-            IEnumerable<ItemType> rightItems) =>
+            IEnumerable<ItemType> rightItems)
+            where ItemType : notnull =>
             YieldCollectionModifications(
                 leftItems,
                 leftItem => leftItem,
@@ -265,102 +343,131 @@ namespace Teronis.Collections.Changes
                 rightItem => rightItem,
                 EqualityComparer<ItemType>.Default);
 
-        private class LeftItemContainer<LeftItemType, RightItemType, CommonValueType> : CommonValueContainer<CommonValueType>
+        private static int shiftIndexAdd(int index, ICollectionModificationParameters modification)
         {
-            [AllowNull, MaybeNull]
-            public LeftItemType LeftItem { get; private set; }
-
-            public LeftItemContainer([AllowNull] LeftItemType leftItem, [AllowNull] CommonValueType commonValue, int index,
-                ObjectEventDispatcher<CollectionModification<LeftItemType, RightItemType>> indexShifter)
-                : base(commonValue, index)
-            {
-                LeftItem = leftItem;
-                indexShifter = indexShifter ?? throw new ArgumentNullException(nameof(indexShifter));
-                indexShifter.ObjectDispatch += IndexShifter_ObjectDispatch;
+            if (index >= modification.NewIndex) {
+                return index + modification.NewItemsCount!.Value;
             }
 
-            protected void IndexShifter_ObjectDispatch(object? sender, ObjectDispachEventArgs<CollectionModification<LeftItemType, RightItemType>> args)
+            return index;
+        }
+
+        private static int shiftIndexRemove(int index, ICollectionModificationParameters modification)
+        {
+            if (index >= modification.OldIndex) {
+                return index - 1;
+            }
+
+            return index;
+        }
+
+        private class IndexPreferredEnumerator<ItemType> : IEnumerator<ItemType>
+        {
+            public int CurrentLength { get; private set; }
+
+            private readonly IEnumerator<ItemType> enumerator;
+
+            public IndexPreferredEnumerator(IEnumerable<ItemType> enumerable, IndexDirectory leftIndexDirectory)
             {
-                var modification = args.Object;
-
-                switch (args.Object.Action) {
-                    case NotifyCollectionChangedAction.Add:
-                        // When adding a 
-                        if (ShiftedIndex >= modification.NewIndex) {
-                            Shifts++;
-                        }
-
-                        break;
-                    case NotifyCollectionChangedAction.Move:
-                        if (ShiftedIndex >= modification.NewIndex && ShiftedIndex < modification.OldIndex) {
-                            Shifts++;
-                        }
-
-                        break;
+                if (enumerable is IReadOnlyList<ItemType> readOnlyList) {
+                    enumerator = new IndexedEnumerator(readOnlyList, leftIndexDirectory);
+                } else if (enumerable is IList<ItemType> list) {
+                    enumerator = new IndexedEnumerator(new ReadOnlyCollection<ItemType>(list), leftIndexDirectory);
+                } else {
+                    enumerator = enumerable.GetEnumerator();
                 }
             }
-        }
 
-        private class RightItemContainer<LeftItemType, RightItemType, CommonValueType> : CommonValueContainer<CommonValueType>
-        {
-            [AllowNull]
-            [MaybeNull]
-            public RightItemType RightItem { get; private set; }
-            public LeftItemContainer<LeftItemType, RightItemType, CommonValueType>? CachedLeftItem { get; set; }
+            public ItemType Current =>
+                enumerator.Current;
 
-            public RightItemContainer([AllowNull] RightItemType rightItem, [AllowNull] CommonValueType commonValue, int index)
-                : base(commonValue, index)
-                => RightItem = rightItem;
-        }
-
-        [DebuggerDisplay(IDebuggerDisplayLibrary.FullGetDebuggerDisplayMethodPathWithParameterizedThis)]
-        private class CommonValueContainer<CommonValueType> : IDebuggerDisplay
-        {
-            public static CommonValueContainer<CommonValueType> CreateEqualComparableItem([AllowNull] CommonValueType value)
-                => new CommonValueContainer<CommonValueType>(value, -1);
-
-            [AllowNull]
-            [MaybeNull]
-            public CommonValueType CommonValue { get; set; }
-            public int InitialIndex { get; set; }
-            public int Shifts { get; protected set; }
-            public int ShiftedIndex => InitialIndex + Shifts;
-
-            string IDebuggerDisplay.DebuggerDisplay => $"[{CommonValue}, {ShiftedIndex}]";
-
-            protected CommonValueContainer([AllowNull] CommonValueType commonValue, int index)
+            public bool MoveNext()
             {
-                CommonValue = commonValue;
-                InitialIndex = index;
-            }
-        }
-
-        private class CommonValueContainerEqualityComparer<CommonValueType> : IEqualityComparer<CommonValueContainer<CommonValueType>>
-        {
-            public IEqualityComparer<CommonValueType> CommonValueEqualityComparer { get; private set; }
-
-            public CommonValueContainerEqualityComparer(IEqualityComparer<CommonValueType> commonValueEqualityComparer)
-                => CommonValueEqualityComparer = commonValueEqualityComparer ?? throw new ArgumentNullException(nameof(commonValueEqualityComparer));
-
-            public bool Equals(CommonValueContainer<CommonValueType>? x, CommonValueContainer<CommonValueType>? y)
-            {
-                if (x is null && y is null) {
-                    return false;
-                } else if (x is null || y is null) {
+                if (enumerator.MoveNext()) {
+                    CurrentLength++;
+                    return true;
+                } else {
                     return false;
                 }
-
-                return CommonValueEqualityComparer.Equals(x.CommonValue!, y.CommonValue!);
             }
 
-            public int GetHashCode(CommonValueContainer<CommonValueType>? obj)
+            public void Reset() =>
+                enumerator.Reset();
+
+            object? IEnumerator.Current =>
+                ((IEnumerator)enumerator).Current;
+
+            public void Dispose() =>
+                enumerator.Dispose();
+
+            public class IndexedEnumerator : IEnumerator<ItemType>
             {
-                if (obj is null) {
-                    return 0;
+                private readonly IReadOnlyList<ItemType> list;
+                private readonly IndexDirectory leftIndexDirectory;
+
+                public ItemType Current { get; private set; }
+
+                public IndexedEnumerator(IReadOnlyList<ItemType> list, IndexDirectory leftIndexDirectory)
+                {
+                    Current = default!;
+                    this.list = list;
+                    this.leftIndexDirectory = leftIndexDirectory;
                 }
 
-                return CommonValueEqualityComparer.GetHashCode(obj.CommonValue!);
+                public bool MoveNext()
+                {
+                    if (leftIndexDirectory.Count < list.Count) {
+                        Current = list[leftIndexDirectory.Count];
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+
+                public void Reset() =>
+                    throw new NotImplementedException();
+
+                object IEnumerator.Current =>
+                    Current!;
+
+                public void Dispose() { }
             }
+        }
+
+        private class ItemContainer<ItemType>
+        {
+            public ItemType Item { get; }
+
+            public ItemContainer(ItemType item) => 
+                Item = item;
+        }
+
+        private class LeftItemContainer<LeftItemType> : ItemContainer<LeftItemType>//, IDisposable
+        {
+            public IndexDirectoryEntry IndexEntry { get; set; }
+
+            public LeftItemContainer(LeftItemType item, IndexDirectoryEntry indexEntry)
+                : base(item) => 
+                IndexEntry = indexEntry;
+        }
+
+        private class RightItemContainer<LeftItemType, RightItemType> : ItemContainer<RightItemType>
+        {
+            /// <summary>
+            /// Not null means that this right item should be BEFORE parent.
+            /// </summary>
+            public LeftItemContainer<LeftItemType>? Parent { get; set; }
+            public int Index { get; }
+
+            public RightItemContainer(RightItemType item, int index)
+                : base(item) => 
+                Index = index;
+        }
+
+        private enum NodeAppendBehaviour
+        {
+            Before,
+            After
         }
     }
 }

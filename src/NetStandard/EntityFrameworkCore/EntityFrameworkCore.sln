@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.EntityF
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Abstractions", "..\Abstractions\Abstractions\src\Teronis.NetStandard.Abstractions.csproj", "{7DC1B5D8-8D92-4EDB-A153-3F1F4B66A03F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.NetStandard.EntityFrameworkCore.Query", "Query\test\Query\Test.NetStandard.EntityFrameworkCore.Query.csproj", "{C81CAF81-747F-4E96-AE22-2123BD324495}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.EntityFrameworkCore.Query.Test", "Query\test\Query\Teronis.NetStandard.EntityFrameworkCore.Query.Test.csproj", "{C81CAF81-747F-4E96-AE22-2123BD324495}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.EntityFrameworkCore.Query", "Query\src\Teronis.NetStandard.EntityFrameworkCore.Query.csproj", "{662AFA86-2E37-4968-9276-6B997A50266D}"
 EndProject

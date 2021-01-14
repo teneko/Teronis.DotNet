@@ -1,3 +1,3 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Test.NetStandard.EntityFrameworkCore.Query")]
+[assembly: InternalsVisibleTo("Teronis.NetStandard.EntityFrameworkCore.Query.Test")]

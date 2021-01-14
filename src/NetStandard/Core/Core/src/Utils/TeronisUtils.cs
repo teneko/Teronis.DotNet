@@ -14,8 +14,8 @@ namespace Teronis.Utils
         public static bool ReturnNonDefault<T>(T inValue, [MaybeNull] out T outValue, Func<T>? getNonDefaultWhenDefault = null)
         //=> !CompareEquality(outValue = inValue, default) || (FuncGenericUtils.ReturnIsInvocable(getNonDefaultIfDefault, out outValue) && !CompareEquality(outValue, default));
         {
+            var isValueNotEqualsDefault = !CompareEquality(inValue, default);
             outValue = inValue;
-            var isValueNotEqualsDefault = !CompareEquality(outValue, default);
 
             if (isValueNotEqualsDefault) {
                 return true;

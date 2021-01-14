@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using Teronis.Collections.Changes;
-using Teronis.Collections.Generic;
 using Teronis.Collections.Synchronization.Utils;
 using Teronis.Extensions;
 using Teronis.ObjectModel.Parenting;
@@ -49,21 +48,17 @@ namespace Teronis.Collections.Synchronization
 
         public SubItemCollection SubItems => subItems;
         public SuperItemCollection SuperItems => superItems;
-        public IEqualityComparer<SuperItemType> SuperItemEqualityComparer { get; private set; }
-        /// <summary>
-        /// The replace strategy is used in <see cref="ApplyCollectionItemReplace(in ApplyingCollectionModificationBundle)"/>.
-        /// </summary>
-        public CollectionItemReplaceStrategyBase? ItemReplaceStrategy { get; set; }
 
         private readonly SubItemCollection subItems;
         private readonly SuperItemCollection superItems;
+        private readonly SynchronizingCollectionAlignment<SuperItemType> alignment;
 
-        public SynchronizingCollection(IEqualityComparer<SuperItemType>? superItemEqualityComparer)
+        public SynchronizingCollection(SynchronizingCollectionAlignment<SuperItemType> alignment)
         {
-            SuperItemEqualityComparer = superItemEqualityComparer ?? EqualityComparer<SuperItemType>.Default;
             /* Initialize collections. */
             subItems = new SubItemCollection(this);
             superItems = new SuperItemCollection(this);
+            this.alignment = alignment ?? throw new ArgumentNullException(nameof(alignment));
         }
 
         public SynchronizingCollection() : this(default) { }
@@ -81,26 +76,6 @@ namespace Teronis.Collections.Synchronization
         public CollectionSynchronisationMirror<ToBeImitatedCollectionType> CreateCollectionSynchronisationMirror<ToBeImitatedCollectionType>(ToBeImitatedCollectionType toBeImitatedCollection)
             where ToBeImitatedCollectionType : INotifyCollectionSynchronizing<SuperItemType>, INotifyCollectionModified<SuperItemType>, INotifyCollectionSynchronized<SuperItemType> =>
             new CollectionSynchronisationMirror<ToBeImitatedCollectionType>(this, toBeImitatedCollection);
-
-        protected virtual void ApplyCollectionItemRemove(in ApplyingCollectionModificationBundle modificationBundle)
-        {
-            var contentContentChange = modificationBundle.OldSuperItemsNewSuperItemsModification;
-            var oldItems = contentContentChange.OldItems;
-
-            if (oldItems is null) {
-                throw new ArgumentException("No old items were given although a remove collection modification action has been triggered.");
-            }
-
-            var oldItemsCount = oldItems.Count;
-            var oldIndex = contentContentChange.OldIndex;
-
-            for (var oldItemIndex = oldItemsCount - 1; oldItemIndex >= 0; oldItemIndex--) {
-                var removeIndex = oldItemIndex + oldIndex;
-                Debug.Assert(SuperItemEqualityComparer.Equals(superItems[removeIndex], oldItems[oldItemIndex]), "Removing item is not equals old item that should be removed instead");
-                subItems.RemoveAt(removeIndex);
-                superItems.RemoveAt(removeIndex);
-            }
-        }
 
         protected virtual void ApplyCollectionItemAdd(in ApplyingCollectionModificationBundle modificationBundle)
         {
@@ -123,6 +98,26 @@ namespace Teronis.Collections.Synchronization
             }
         }
 
+        protected virtual void ApplyCollectionItemRemove(in ApplyingCollectionModificationBundle modificationBundle)
+        {
+            var contentContentChange = modificationBundle.OldSuperItemsNewSuperItemsModification;
+            var oldItems = contentContentChange.OldItems;
+
+            if (oldItems is null) {
+                throw new ArgumentException("No old items were given although a remove collection modification action has been triggered.");
+            }
+
+            var oldItemsCount = oldItems.Count;
+            var oldIndex = contentContentChange.OldIndex;
+
+            for (var oldItemIndex = oldItemsCount - 1; oldItemIndex >= 0; oldItemIndex--) {
+                var removeIndex = oldItemIndex + oldIndex;
+                //Debug.Assert(SuperItemEqualityComparer.Equals(superItems[removeIndex], oldItems[oldItemIndex]), "Removing item is not equals old item that should be removed instead");
+                subItems.RemoveAt(removeIndex);
+                superItems.RemoveAt(removeIndex);
+            }
+        }
+
         /// <summary>
         /// Does regards <see cref="ObservableCollection{T}.Move(int, int)"/>, otherwise 
         /// it fallbacks to <see cref="IListGenericExtensions.Move{T}(IList{T}, int, int)"/>
@@ -132,26 +127,23 @@ namespace Teronis.Collections.Synchronization
         {
             var modification = modificationBundle.OldSubItemsNewSuperItemsModification;
 
-            void moveItem<T>(IList<T> list)
-            {
-                if (list is ObservableCollection<SubItemType> observableList) {
-                    observableList.Move(modification.OldIndex, modification.NewIndex);
-                } else {
-                    list.Move(modification.OldIndex, modification.NewIndex);
-                }
-            }
+            void moveItem<T>(IList<T> list) =>
+                list.Move(modification.OldIndex, modification.NewIndex, modification.OldItems!.Count);
 
-            moveItem(subItems);
-            moveItem(superItems);
+            /// We need to pass the internal collection, because we don't want to
+            /// use the implementation of <see cref="ItemCollection{ItemType}.RemoveAt(int)"/>
+            /// and <see cref="ItemCollection{ItemType}.Insert(int, ItemType)"/> but
+            /// <see cref="List{T}.RemoveAt(int)"/> and <see cref="List{T}.Insert(int, T)"/>
+            /// in <see cref="IListGenericExtensions.Move{T}(IList{T}, int, int)"/>.
+            moveItem(subItems.Items);
+            moveItem(superItems.Items);
         }
 
         /// <summary>
-        /// Uses <see cref="SynchronizingCollection{SubItemType, SuperItemType}.ItemReplaceStrategy"/> and calls 
-        /// <see cref="CollectionItemReplaceStrategyBase.ApplyCollectionItemReplace{SubItemType, SuperItemType}(SynchronizingCollection{SubItemType, SuperItemType}, ICollectionModification{SubItemType, SuperItemType}, ICollectionModification{SuperItemType, SuperItemType})"/>
-        /// .
+        /// Has no code inside is ready for being overriden.
         /// </summary>
-        protected virtual void ApplyCollectionItemReplace(in ApplyingCollectionModificationBundle modificationBundle) =>
-            ItemReplaceStrategy?.ApplyCollectionItemReplace(this, modificationBundle.OldSubItemsNewSuperItemsModification, modificationBundle.OldSuperItemsNewSuperItemsModification);
+        protected virtual void ApplyCollectionItemReplace(in ApplyingCollectionModificationBundle modificationBundle) 
+        { }
 
         protected virtual void ApplyCollectionReset(in ApplyingCollectionModificationBundle modificationBundle)
         {
@@ -238,82 +230,113 @@ namespace Teronis.Collections.Synchronization
         /// Synchronizes collection with <paramref name="items"/>.
         /// </summary>
         /// <param name="items"></param>
-        public virtual void SynchronizeCollection(IEnumerable<SuperItemType> items)
+        public virtual void SynchronizeCollection(IEnumerable<SuperItemType>? items)
         {
             OnCollectionSynchronizing();
-            items ??= Enumerable.Empty<SuperItemType>();
 
-            //var cachedCollection = new List<TItem>(Collection);
-            //var list = items.Take(5).ToList();
-            //items = list.ReturnInValue((x) => x.Shuffle()).Take(ThreadSafeRandom.Next(0, list.Count + 1));
-
-            var modifications = CollectionModifications.YieldCollectionModifications(superItems, items, SuperItemEqualityComparer);
-
-            foreach (var modification in modifications) {
+            foreach (var modification in alignment.YieldCollectionModifications(superItems, items)) {
                 ApplyCollectionModification(modification);
             }
 
             OnCollectionSynchronized();
         }
 
-        /// <summary>
-        /// Updates existing items with <paramref name="items"/>. 
-        /// <br/>Depending on <see cref="ItemReplaceStrategy"/> and 
-        /// <see cref="ApplyCollectionItemReplace(in ApplyingCollectionModificationBundle)"/>
-        /// this can mean for example to replace super items or update sub items.
-        /// </summary>
-        /// <param name="items">The items used to find updatable items.</param>
-        public virtual void UpdateItems(IEnumerable<SuperItemType> items)
-        {
-            OnCollectionSynchronizing();
-            items ??= Enumerable.Empty<SuperItemType>();
-            var modifications = CollectionModifications.YieldCollectionModifications(superItems, items, SuperItemEqualityComparer);
+        ///// <summary>
+        ///// Updates existing items with <paramref name="items"/>. 
+        ///// <br/>Depending on <see cref="ItemReplaceStrategy"/> and 
+        ///// <see cref="ApplyCollectionItemReplace(in ApplyingCollectionModificationBundle)"/>
+        ///// this can mean for example to replace super items or update sub items.
+        ///// </summary>
+        ///// <param name="items">The items used to find updatable items.</param>
+        //public virtual void UpdateItems(IEnumerable<SuperItemType> items)
+        //{
+        //    OnCollectionSynchronizing();
+        //    items ??= Enumerable.Empty<SuperItemType>();
+        //    var modifications = CollectionModifications.YieldCollectionModifications(superItems, items, SuperItemEqualityComparer);
 
-            foreach (var tuple in IEnumerableICollectionModificationUtils.YieldTuplesButOnlyReplaceModificationWithInitialOldIndex(modifications)) {
-                if (tuple.Modification.OldItems is null) {
-                    throw new InvalidOperationException("The old items were null.");
-                }
+        //    foreach (var tuple in IEnumerableICollectionModificationUtils.YieldTuplesButOnlyReplaceModificationWithInitialOldIndex(modifications)) {
+        //        if (tuple.Modification.OldItems is null) {
+        //            throw new InvalidOperationException("The old items were null.");
+        //        }
 
-                var initialOldIndex = tuple.InitialOldIndex;
-                var oldItems = SuperItems.Skip(initialOldIndex).Take(tuple.Modification.OldItems.Count).ToList();
+        //        var initialOldIndex = tuple.InitialOldIndex;
+        //        var oldItems = SuperItems.Skip(initialOldIndex).Take(tuple.Modification.OldItems.Count).ToList();
 
-                var newModification = tuple.Modification.CopyWithOtherValues(
-                    oldItems: oldItems,
-                    oldIndex: initialOldIndex,
-                    newIndex: initialOldIndex);
+        //        var newModification = tuple.Modification.CopyWithOtherValues(
+        //            oldItems: oldItems,
+        //            oldIndex: initialOldIndex,
+        //            newIndex: initialOldIndex);
 
-                ApplyCollectionModification(newModification, NotifyCollectionChangedAction.Replace);
-            }
+        //        ApplyCollectionModification(newModification, NotifyCollectionChangedAction.Replace);
+        //    }
 
-            OnCollectionSynchronized();
-        }
+        //    OnCollectionSynchronized();
+        //}
 
-        /// <summary>
-        /// Adds not existing items from <paramref name="items"/> and updates existing items 
-        /// with <paramref name="items"/>.
-        /// <br/>Depending on <see cref="ItemReplaceStrategy"/> and/or 
-        /// <see cref="ApplyCollectionItemReplace(in ApplyingCollectionModificationBundle)"/>
-        /// this can mean for example to replace super items or update sub items.
-        /// </summary>
-        /// <br/>The items that are not added or updated will be at the end of the list.
-        /// <param name="items">The items used to find addable and updatable items.</param>
-        public virtual void AddAndUpdateItems(IEnumerable<SuperItemType> items)
-        {
-            OnCollectionSynchronizing();
-            items ??= Enumerable.Empty<SuperItemType>();
-            var modifications = CollectionModifications.YieldCollectionModifications(superItems, items, SuperItemEqualityComparer);
+        ///// <summary>
+        ///// Inserts not existing items from <paramref name="items"/> and updates existing items
+        ///// with <paramref name="items"/>.
+        ///// <br/>Depending on <see cref="ItemReplaceStrategy"/> and/or 
+        ///// <see cref="ApplyCollectionItemReplace(in ApplyingCollectionModificationBundle)"/>
+        ///// this can mean for example to replace super items or update sub items.
+        ///// </summary>
+        ///// <br/>The items that are not added or updated will be at the end of the list.
+        ///// <param name="items">The items used to find addable and updatable items.</param>
+        //public virtual void InsertAndUpdateItems(IEnumerable<SuperItemType> items)
+        //{
+        //    OnCollectionSynchronizing();
+        //    items ??= Enumerable.Empty<SuperItemType>();
+        //    var modifications = superItems.GetCollectionModifications(items, SuperItemEqualityComparer);
 
-            foreach (var modification in modifications) {
-                // This is algorithm dependent. The remove modification are coming at last.
-                if (modification.Action == NotifyCollectionChangedAction.Remove) {
-                    break;
-                }
+        //    foreach (var modification in modifications) {
+        //        // This is algorithm dependent. The remove modification are coming at last.
+        //        if (modification.Action == NotifyCollectionChangedAction.Remove) {
+        //            break;
+        //        }
 
-                ApplyCollectionModification(modification);
-            }
+        //        ApplyCollectionModification(modification);
+        //    }
 
-            OnCollectionSynchronized();
-        }
+        //    OnCollectionSynchronized();
+        //}
+
+        //public void InsertAndUpdateItems<ItemType, KeyType>(IReadOnlyList<SuperItemType> items, KeyedItemIndexTracker<ItemType, KeyType> tracker,
+        //    Func<SuperItemType, KeyType> getItemKey, IComparer<KeyType> comparer)
+        //{
+        //    OnCollectionSynchronizing();
+        //    items ??= new List<SuperItemType>(0);
+        //    var modifications = CollectionModifications.YieldCollectionModifications(superItems, items, SuperItemEqualityComparer);
+
+        //    if (!(ReferenceEquals(tracker.ItemCollection, SubItems) || ReferenceEquals(tracker.ItemCollection, SuperItems))) {
+        //        throw new ArgumentException("Tracker is not originating from this synchronizing collection.");
+        //    }
+
+        //    var sortedDictionary = new SortedDictionary<KeyType, SuperItemType>(comparer);
+
+        //    foreach (var pair in tracker.KeyedItemIndexes) {
+        //        sortedDictionary.Add(pair.Key, SuperItems[pair.Value]);
+        //    }
+
+        //    var itemsCount = items.Count;
+
+        //    for (var index = 0; index < itemsCount; index++) {
+        //        var itemKey = getItemKey(items[index]);
+        //        sortedDictionary.Add(itemKey, items[index]);
+        //    }
+
+        //    SynchronizeCollection(sortedDictionary.Values);
+        //}
+
+        //public void InsertAndUpdateItems<ItemType, KeyType>(IReadOnlyList<SuperItemType> items, KeyedItemIndexTracker<ItemType,KeyType> tracker,
+        //    Func<SuperItemType, KeyType> getItemKey) =>
+        //    InsertAndUpdateItems(items, tracker, getItemKey, Comparer<KeyType>.Default);
+
+        //public void InsertAndUpdateItems<KeyType>(IReadOnlyList<SuperItemType> items, KeyedItemIndexTracker<SuperItemType, KeyType> tracker,
+        //    IComparer<KeyType> comparer) =>
+        //    InsertAndUpdateItems(items, tracker, tracker.GetItemKeyDelegate, comparer);
+
+        //public void InsertAndUpdateItems<KeyType>(IReadOnlyList<SuperItemType> items, KeyedItemIndexTracker<SuperItemType, KeyType> tracker) =>
+        //    InsertAndUpdateItems(items, tracker, tracker.GetItemKeyDelegate, Comparer<KeyType>.Default);
 
         protected readonly struct ApplyingCollectionModificationBundle
         {

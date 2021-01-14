@@ -34,13 +34,36 @@ namespace Teronis.Utils
         /// <summary>
         /// A generic move-item version for list, collection or dictionary.
         /// </summary>
-        public static void MoveItem<S, T>(int fromIndex, int toIndex, Func<int, T> getItemAt, Action<int, T> insertItem, Action<int> removeItemAt)
+        public static void MoveItem<T>(int fromIndex, int toIndex, Func<int, T> getItemAt, Action<int> removeItemAt, Action<int, T> insertItem)
         {
             var from = getItemAt(fromIndex);
-            //removeItemAt(toIndex < fromIndex ? fromIndex + 1 : fromIndex);
-            //insertItem(fromIndex < toIndex ? toIndex + 1 : toIndex, from);
             removeItemAt(fromIndex);
             insertItem(toIndex, from);
+        }
+
+        private static void insertItems<T>(int toIndex, T[] items, Action<int, T> insertItem)
+        {
+            var itemsLength = items.Length;
+
+            for (var index = 0; index < itemsLength; index++) {
+                insertItem(toIndex + index, items[index]);
+            }
+        }
+
+        /// <summary>
+        /// A generic move-item version for list, collection or dictionary.
+        /// </summary>
+        public static void MoveItems<T>(int fromIndex, int toIndex, int count, Func<int, T> getItemAt, Action<int> removeItemAt, Action<int, T> insertItem)
+        {
+            var items = new T[count];
+
+            for (var index = count - 1; index >= 0; index--) {
+                var floatedIndex = fromIndex + index;
+                items[index] = getItemAt(floatedIndex);
+                removeItemAt(floatedIndex);
+            }
+
+            insertItems(toIndex, items, insertItem);
         }
     }
 }

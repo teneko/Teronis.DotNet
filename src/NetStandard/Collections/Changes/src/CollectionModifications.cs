@@ -4,35 +4,39 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Teronis.Collections.Changes;
 using Teronis.Collections.ObjectModel;
 using Teronis.Collections.Specialized;
 using Teronis.Diagnostics;
 
-namespace Teronis.Extensions
+namespace Teronis.Collections.Changes
 {
-    public static partial class IEnumerableGenericExtensions
+    public static class CollectionModifications
     {
         /// <summary>
-        /// Get step by step modifications to reorder the left value collection, without to need to clear it.
-        /// The modifications can contain adding, replacing and removing statements, but nothing else.
+        /// Yields collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/>.
+        /// The collection modifications may be used to reorder <paramref name="leftItems"/>.
+        /// The collection is not assumed to be in any order.
+        /// Sorted duplications are allowed.
         /// </summary>
-        /// <typeparam name="ItemType"></typeparam>
-        /// <param name="leftItems"></param>
-        /// <param name="rigthItems"></param>
-        /// <param name="commonValueEqualityComparer"></param>
-        /// <returns></returns>
-        public static IEnumerable<CollectionModification<LeftItemType, RightItemType>> GetCollectionModifications<LeftItemType, RightItemType, CommonValueType>(
-            this IEnumerable<LeftItemType> leftItems,
-            IEnumerable<RightItemType> rigthItems,
-            Func<LeftItemType, CommonValueType> getCommonValueFromLeftItem,
-            Func<RightItemType, CommonValueType> getCommonValueFromRightItem,
-            IEqualityComparer<CommonValueType> commonValueEqualityComparer)
+        /// <typeparam name="LeftItemType">The typ of left items.</typeparam>
+        /// <typeparam name="RightItemType">The type of right items.</typeparam>
+        /// <typeparam name="ComparablePartType">The type of the comparable part of left item and right item.</typeparam>
+        /// <param name="leftItems">The left items to whom collection modifications are addressed to.</param>
+        /// <param name="getComparablePartOfLeftItem">The part of left item that is comparable with part of right item.</param>
+        /// <param name="rightItems">The right items that left items want to become.</param>
+        /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
+        /// <returns>For <paramref name="leftItems"/> the collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/></returns>
+        public static IEnumerable<CollectionModification<LeftItemType, RightItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
+            IEnumerable<LeftItemType> leftItems,
+            Func<LeftItemType, ComparablePartType> getComparablePartOfLeftItem,
+            IEnumerable<RightItemType> rightItems,
+            Func<RightItemType, ComparablePartType> getComparablePartOfRightItem,
+            IEqualityComparer<ComparablePartType> equalityComparer)
         {
-            commonValueEqualityComparer ??= EqualityComparer<CommonValueType>.Default;
-            var commonValueContainerEqualityComparer = new CommonValueContainerEqualityComparer<CommonValueType>(commonValueEqualityComparer);
+            equalityComparer ??= EqualityComparer<ComparablePartType>.Default;
+            var comparablePartEqualityComparer = new CommonValueContainerEqualityComparer<ComparablePartType>(equalityComparer);
             var leftItemEnumerator = leftItems.GetEnumerator();
-            var rightItemEnumerator = rigthItems.GetEnumerator();
+            var rightItemEnumerator = rightItems.GetEnumerator();
             var hasLeftItem = true;
             var hasRightItem = true;
             // It will only count until a left or right item is not found
@@ -44,8 +48,8 @@ namespace Teronis.Extensions
             // This list represents the cache for it.
             var earlyIterationModifications = new List<CollectionModification<LeftItemType, RightItemType>>();
             var leftItemIndexShifter = new ObjectEventDispatcher<CollectionModification<LeftItemType, RightItemType>>();
-            ILinkedBucketList<CommonValueContainer<CommonValueType>, LeftItemContainer<LeftItemType, RightItemType, CommonValueType>> lateLeftItemContainers = new LinkedBucketList<CommonValueContainer<CommonValueType>, LeftItemContainer<LeftItemType, RightItemType, CommonValueType>>(commonValueContainerEqualityComparer);
-            var lateRightItemContainers = new LinkedBucketList<CommonValueContainer<CommonValueType>, RightItemContainer<LeftItemType, RightItemType, CommonValueType>>(commonValueContainerEqualityComparer);
+            ILinkedBucketList<CommonValueContainer<ComparablePartType>, LeftItemContainer<LeftItemType, RightItemType, ComparablePartType>> lateLeftItemContainers = new LinkedBucketList<CommonValueContainer<ComparablePartType>, LeftItemContainer<LeftItemType, RightItemType, ComparablePartType>>(comparablePartEqualityComparer);
+            var lateRightItemContainers = new LinkedBucketList<CommonValueContainer<ComparablePartType>, RightItemContainer<LeftItemType, RightItemType, ComparablePartType>>(comparablePartEqualityComparer);
             var areEarlyIterationValuesEqual = true;
 
             /* Cache left and right items */
@@ -57,17 +61,17 @@ namespace Teronis.Extensions
                 }
 
                 var leftItem = hasLeftItem ? leftItemEnumerator.Current : default;
-                var leftCommonValue = hasLeftItem ? getCommonValueFromLeftItem(leftItem!) : default;
+                var leftCommonValue = hasLeftItem ? getComparablePartOfLeftItem(leftItem!) : default;
 
                 var rightItem = hasRightItem ? rightItemEnumerator.Current : default;
-                var rightCommonValue = hasRightItem ? getCommonValueFromRightItem(rightItem!) : default;
+                var rightCommonValue = hasRightItem ? getComparablePartOfRightItem(rightItem!) : default;
                 CollectionModification<LeftItemType, RightItemType>? syncedIterationModification = default;
 
-                LeftItemContainer<LeftItemType, RightItemType, CommonValueType> createLeftItemContainer()
-                    => new LeftItemContainer<LeftItemType, RightItemType, CommonValueType>(leftItem, leftCommonValue, earlyLeftValueIndex, leftItemIndexShifter);
+                LeftItemContainer<LeftItemType, RightItemType, ComparablePartType> createLeftItemContainer()
+                    => new LeftItemContainer<LeftItemType, RightItemType, ComparablePartType>(leftItem, leftCommonValue, earlyLeftValueIndex, leftItemIndexShifter);
 
-                RightItemContainer<LeftItemType, RightItemType, CommonValueType> createRightItemContainer()
-                    => new RightItemContainer<LeftItemType, RightItemType, CommonValueType>(rightItem, rightCommonValue, earlyRightValueIndex);
+                RightItemContainer<LeftItemType, RightItemType, ComparablePartType> createRightItemContainer()
+                    => new RightItemContainer<LeftItemType, RightItemType, ComparablePartType>(rightItem, rightCommonValue, earlyRightValueIndex);
 
                 if (hasLeftItem && hasRightItem) {
                     var leftItemContainer = createLeftItemContainer();
@@ -75,7 +79,7 @@ namespace Teronis.Extensions
 
                     // Check if: "Both items are equal" => (true supports [1,..] <-> [1,..])
                     //       AND "Left and right buckets are empty"  (false supports [1,1,2,..] <-> [2,1,..])
-                    if (commonValueEqualityComparer.Equals(leftCommonValue!, rightCommonValue!)
+                    if (equalityComparer.Equals(leftCommonValue!, rightCommonValue!)
                         && ((lateRightItemContainers.Buckets.TryGetValue(rightItemContainer).Item2?.All(x => x.CachedLeftItem != null)) ?? false)) {
                         syncedIterationModification = new CollectionModification<LeftItemType, RightItemType>(
                             NotifyCollectionChangedAction.Replace, leftItem, earlyLeftValueIndex, rightItem, earlyRightValueIndex);
@@ -136,12 +140,12 @@ namespace Teronis.Extensions
                 var rightValueIndex = rightItemContainer.ShiftedIndex;
                 var rightValue = rightItemContainer.CommonValue;
                 var hasCachedLeftItem = rightItemContainer.CachedLeftItem != null;
-                LeftItemContainer<LeftItemType, RightItemType, CommonValueType>? foundLeftItemContainer;
+                LeftItemContainer<LeftItemType, RightItemType, ComparablePartType>? foundLeftItemContainer;
 
                 if (hasCachedLeftItem) {
                     foundLeftItemContainer = rightItemContainer.CachedLeftItem;
                 } else {
-                    if (lateLeftItemContainers.TryGetBucket(CommonValueContainer<CommonValueType>.CreateEqualComparableItem(rightValue), out var bucket) && bucket.Count != 0) {
+                    if (lateLeftItemContainers.TryGetBucket(CommonValueContainer<ComparablePartType>.CreateEqualComparableItem(rightValue), out var bucket) && bucket.Count != 0) {
                         var firstNode = bucket.First!;
                         foundLeftItemContainer = firstNode.Value;
                         lateLeftItemContainers.Remove(firstNode);
@@ -189,26 +193,77 @@ namespace Teronis.Extensions
             }
         }
 
-        public static IEnumerable<CollectionModification<LeftItemType, RightItemType>> GetCollectionModifications<LeftItemType, RightItemType>(
-            this IEnumerable<LeftItemType> leftItems, 
-            IEnumerable<RightItemType> rightItems, 
-            Func<LeftItemType, RightItemType> getCommonValueFromLeftItem, 
-            IEqualityComparer<RightItemType> commonValueEqualityComparer)
-        {
-            static RightItemType getCommonValueFromRightItem(RightItemType rightItem) =>
-                rightItem;
+        /// <summary>
+        /// Yields collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/>.
+        /// The collection modifications may be used to reorder <paramref name="leftItems"/>.
+        /// The collection is not assumed to be in any order.
+        /// Sorted duplications are allowed.
+        /// </summary>
+        /// <typeparam name="LeftItemType">The typ of left items.</typeparam>
+        /// <typeparam name="RightItemType">The type of right items.</typeparam>
+        /// <typeparam name="ComparablePartType">The type of the comparable part of left item and right item.</typeparam>
+        /// <param name="leftItems">The left items to whom collection modifications are addressed to.</param>
+        /// <param name="getComparablePartOfLeftItem">The part of left item that is comparable with part of right item.</param>
+        /// <param name="rightItems">The right items that left items want to become.</param>
+        /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
+        /// <returns>For <paramref name="leftItems"/> the collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/></returns>
+        public static IEnumerable<CollectionModification<LeftItemType, RightItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
+            IEnumerable<LeftItemType> leftItems,
+            IEnumerable<RightItemType> rightItems,
+            Func<LeftItemType, ComparablePartType> getComparablePartOfLeftItem,
+            Func<RightItemType, ComparablePartType> getComparablePartOfRightItem) =>
+            YieldCollectionModifications(
+                leftItems,
+                getComparablePartOfLeftItem,
+                rightItems,
+                getComparablePartOfRightItem,
+                EqualityComparer<ComparablePartType>.Default);
 
-            return GetCollectionModifications(leftItems, rightItems, getCommonValueFromLeftItem, getCommonValueFromRightItem, commonValueEqualityComparer);
-        }
 
-        public static IEnumerable<CollectionModification<ItemType, ItemType>> GetCollectionModifications<ItemType>(
-            this IEnumerable<ItemType> leftItems,
+        /// <summary>
+        /// Yields collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/>.
+        /// The collection modifications may be used to reorder <paramref name="leftItems"/>.
+        /// The collection is not assumed to be in any order.
+        /// Sorted duplications are allowed.
+        /// </summary>
+        /// <typeparam name="ItemType"></typeparam>
+        /// <param name="leftItems">The left items to whom collection modifications are addressed to.</param>
+        /// <param name="rightItems">The right items that left items want to become.</param>
+        /// <param name="equalityComparer"></param>
+        /// <returns>For <paramref name="leftItems"/> the collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/></returns>
+        public static IEnumerable<CollectionModification<ItemType, ItemType>> YieldCollectionModifications<ItemType>(
+            IEnumerable<ItemType> leftItems,
             IEnumerable<ItemType> rightItems,
-            IEqualityComparer<ItemType> commonValueEqualityComparer)
-        {
-            static ItemType getCommonValueFromItem(ItemType item) => item;
-            return GetCollectionModifications(leftItems, rightItems, getCommonValueFromItem, getCommonValueFromItem, commonValueEqualityComparer);
-        }
+            IEqualityComparer<ItemType> equalityComparer) =>
+            YieldCollectionModifications(
+                leftItems,
+                leftItem => leftItem,
+                rightItems,
+                rightItem => rightItem,
+                equalityComparer);
+
+
+
+        /// <summary>
+        /// Yields collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/>.
+        /// The collection modifications may be used to reorder <paramref name="leftItems"/>.
+        /// The collection is not assumed to be in any order.
+        /// Sorted duplications are allowed.
+        /// </summary>
+        /// <typeparam name="ItemType"></typeparam>
+        /// <param name="leftItems">The left items to whom collection modifications are addressed to.</param>
+        /// <param name="rightItems">The right items that left items want to become.</param>
+        /// <param name="equalityComparer"></param>
+        /// <returns>For <paramref name="leftItems"/> the collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/></returns>
+        public static IEnumerable<CollectionModification<ItemType, ItemType>> YieldCollectionModifications<ItemType>(
+            IEnumerable<ItemType> leftItems,
+            IEnumerable<ItemType> rightItems) =>
+            YieldCollectionModifications(
+                leftItems,
+                leftItem => leftItem,
+                rightItems,
+                rightItem => rightItem,
+                EqualityComparer<ItemType>.Default);
 
         private class LeftItemContainer<LeftItemType, RightItemType, CommonValueType> : CommonValueContainer<CommonValueType>
         {

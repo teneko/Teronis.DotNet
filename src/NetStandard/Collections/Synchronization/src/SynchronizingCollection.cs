@@ -247,11 +247,7 @@ namespace Teronis.Collections.Synchronization
             //var list = items.Take(5).ToList();
             //items = list.ReturnInValue((x) => x.Shuffle()).Take(ThreadSafeRandom.Next(0, list.Count + 1));
 
-            var modifications = superItems.GetCollectionModifications(items, SuperItemEqualityComparer)
-#if DEBUG
-                .ToList()
-#endif
-            ;
+            var modifications = CollectionModifications.YieldCollectionModifications(superItems, items, SuperItemEqualityComparer);
 
             foreach (var modification in modifications) {
                 ApplyCollectionModification(modification);
@@ -271,7 +267,7 @@ namespace Teronis.Collections.Synchronization
         {
             OnCollectionSynchronizing();
             items ??= Enumerable.Empty<SuperItemType>();
-            var modifications = superItems.GetCollectionModifications(items, SuperItemEqualityComparer);
+            var modifications = CollectionModifications.YieldCollectionModifications(superItems, items, SuperItemEqualityComparer);
 
             foreach (var tuple in IEnumerableICollectionModificationUtils.YieldTuplesButOnlyReplaceModificationWithInitialOldIndex(modifications)) {
                 if (tuple.Modification.OldItems is null) {
@@ -305,7 +301,7 @@ namespace Teronis.Collections.Synchronization
         {
             OnCollectionSynchronizing();
             items ??= Enumerable.Empty<SuperItemType>();
-            var modifications = superItems.GetCollectionModifications(items, SuperItemEqualityComparer);
+            var modifications = CollectionModifications.YieldCollectionModifications(superItems, items, SuperItemEqualityComparer);
 
             foreach (var modification in modifications) {
                 // This is algorithm dependent. The remove modification are coming at last.

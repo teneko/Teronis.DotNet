@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using Teronis.Collections.Algorithms;
+using Teronis.Collections.Algorithms.Modifications;
 using Teronis.Extensions;
 using Teronis.ObjectModel.Parenting;
 using Teronis.ViewModels;
@@ -49,9 +50,9 @@ namespace Teronis.Collections.Synchronization
 
         private readonly SubItemCollection subItems;
         private readonly SuperItemCollection superItems;
-        private readonly SyncingCollectionViewModelAlignment<SuperItemType> alignment;
+        private readonly CollectionSynchronizationMethod<SuperItemType> alignment;
 
-        public SyncingCollectionViewModel(SyncingCollectionViewModelAlignment<SuperItemType> alignment)
+        public SyncingCollectionViewModel(CollectionSynchronizationMethod<SuperItemType> alignment)
         {
             /* Initialize collections. */
             subItems = new SubItemCollection(this);
@@ -59,7 +60,7 @@ namespace Teronis.Collections.Synchronization
             this.alignment = alignment ?? throw new ArgumentNullException(nameof(alignment));
         }
 
-        public SyncingCollectionViewModel() : this(default) { }
+        public SyncingCollectionViewModel() : this(CollectionSynchronizationMethod.Sequential(EqualityComparer<SuperItemType>.Default)) { }
 
         protected abstract SubItemType CreateSubItem(SuperItemType superItem);
 

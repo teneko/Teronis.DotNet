@@ -71,8 +71,8 @@ namespace Teronis.Collections.Synchronization
             //list = new int[] { 2, 4, 5 };
             //list2 = new int[] { 3, 8 };
 
-            //modifications = SortedCollectionModifications.YieldCollectionModifications(list, list2, SortedCollectionModificationsOrder.Ascending, 
-            //    actions: CollectionModificationsActions.InsertReplace).ToList();
+            //modifications = SortedCollectionModifications.YieldCollectionModifications(list, list2, SortedCollectionOrder.Ascending, 
+            //    actions: CollectionModificationsYieldCapabilities.InsertReplace).ToList();
 
             //;
 

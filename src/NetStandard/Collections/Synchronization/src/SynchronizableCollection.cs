@@ -12,11 +12,11 @@ namespace Teronis.NetStandard.Collections.Algorithms.Test
         public SynchronizableCollection(IEnumerable<T> collection)
             : base(collection) { }
 
-        public void SynchronizeCollection(IEnumerable<T> enumerable, bool preventYielding)
+        public void SynchronizeCollection(IEnumerable<T> enumerable, bool consumeInitially)
         {
             var modifications = EqualityTrailingCollectionModifications.YieldCollectionModifications(this, enumerable);
 
-            if (preventYielding) {
+            if (consumeInitially) {
                 modifications = modifications.ToList();  
             }
 
@@ -60,6 +60,6 @@ namespace Teronis.NetStandard.Collections.Algorithms.Test
         }
 
         public void SynchronizeCollection(IEnumerable<T> enumerable) =>
-            SynchronizeCollection(enumerable, preventYielding: false);
+            SynchronizeCollection(enumerable, consumeInitially: false);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Teronis.Collections.Synchronization.Example1.Models;
+﻿using Teronis.Collections.Algorithms.Modifications;
+using Teronis.Collections.Synchronization.Example1.Models;
 using Teronis.Collections.Synchronization.Extensions;
 
 namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollections
@@ -16,7 +17,7 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollectio
 #pragma warning restore IDE0052 // Ungelesene private Member entfernen
 
         public DeviceHeaderCollectionSynchronisation()
-            : base(SyncingCollectionViewModelAlignment.OrderedAlignment(DeviceHeaderEntityEqualityComparer.Default))
+            : base(CollectionSynchronizationMethod.Sequential(DeviceHeaderEntityEqualityComparer.Default))
         {
             collectionItemParentsBehaviour = new AddRemoveResetBehaviourForCollectionItemByAddRemoveParents<DeviceHeaderViewModel, DeviceHeaderEntity>(this);
         }

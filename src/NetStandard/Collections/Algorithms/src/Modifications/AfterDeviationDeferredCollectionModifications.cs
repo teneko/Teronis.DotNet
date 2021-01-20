@@ -12,8 +12,8 @@ using Teronis.Diagnostics;
 namespace Teronis.Collections.Algorithms.Algorithms
 {
     /// <summary>
-    /// The algorithm calculates differences between left items and right items in view of left items.
-    /// It yields first equal items immediatelly. After first deviation the items are going to to be cached.
+    /// The algorithm creates modifications that can transform one collection into another collection.
+    /// It yieldCapabilities first equal items immediatelly. After first deviation the items are going to to be cached.
     /// If left item and right item during enumeration of both are present, the left item is linked to right
     /// item, but only when the a previous right item with same comparable part has not been linked already.
     /// </summary>
@@ -23,17 +23,17 @@ namespace Teronis.Collections.Algorithms.Algorithms
     public static class AfterDeviationDeferredCollectionModifications
     {
         /// <summary>
-        /// Yields collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/>.
-        /// The collection modifications may be used to reorder <paramref name="leftItems"/>.
+        /// The algorithm creates modifications that can transform one collection into another collection.
+        /// The collection modifications may be used to transform <paramref name="leftItems"/>.
         /// The collection is not assumed to be in any order.
         /// Sorted duplications are allowed.
         /// </summary>
         /// <typeparam name="LeftItemType">The type of left items.</typeparam>
         /// <typeparam name="RightItemType">The type of right items.</typeparam>
         /// <typeparam name="ComparablePartType">The type of the comparable part of left item and right item.</typeparam>
-        /// <param name="leftItems">The left items to whom collection modifications are addressed to.</param>
+        /// <param name="leftItems">The collection you want to have transformed.</param>
         /// <param name="getComparablePartOfLeftItem">The part of left item that is comparable with part of right item.</param>
-        /// <param name="rightItems">The right items that left items want to become.</param>
+        /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
         /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
         /// <returns>For <paramref name="leftItems"/> the collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/></returns>
         public static IEnumerable<CollectionModification<LeftItemType, RightItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
@@ -204,17 +204,17 @@ namespace Teronis.Collections.Algorithms.Algorithms
         }
 
         /// <summary>
-        /// Yields collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/>.
-        /// The collection modifications may be used to reorder <paramref name="leftItems"/>.
+        /// The algorithm creates modifications that can transform one collection into another collection.
+        /// The collection modifications may be used to transform <paramref name="leftItems"/>.
         /// The collection is not assumed to be in any order.
         /// Sorted duplications are allowed.
         /// </summary>
         /// <typeparam name="LeftItemType">The type of left items.</typeparam>
         /// <typeparam name="RightItemType">The type of right items.</typeparam>
         /// <typeparam name="ComparablePartType">The type of the comparable part of left item and right item.</typeparam>
-        /// <param name="leftItems">The left items to whom collection modifications are addressed to.</param>
+        /// <param name="leftItems">The collection you want to have transformed.</param>
         /// <param name="getComparablePartOfLeftItem">The part of left item that is comparable with part of right item.</param>
-        /// <param name="rightItems">The right items that left items want to become.</param>
+        /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
         /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
         /// <returns>For <paramref name="leftItems"/> the collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/></returns>
         public static IEnumerable<CollectionModification<LeftItemType, RightItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
@@ -231,14 +231,14 @@ namespace Teronis.Collections.Algorithms.Algorithms
 
 
         /// <summary>
-        /// Yields collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/>.
-        /// The collection modifications may be used to reorder <paramref name="leftItems"/>.
+        /// The algorithm creates modifications that can transform one collection into another collection.
+        /// The collection modifications may be used to transform <paramref name="leftItems"/>.
         /// The collection is not assumed to be in any order.
         /// Sorted duplications are allowed.
         /// </summary>
         /// <typeparam name="ItemType"></typeparam>
-        /// <param name="leftItems">The left items to whom collection modifications are addressed to.</param>
-        /// <param name="rightItems">The right items that left items want to become.</param>
+        /// <param name="leftItems">The collection you want to have transformed.</param>
+        /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
         /// <param name="equalityComparer"></param>
         /// <returns>For <paramref name="leftItems"/> the collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/></returns>
         public static IEnumerable<CollectionModification<ItemType, ItemType>> YieldCollectionModifications<ItemType>(
@@ -255,14 +255,14 @@ namespace Teronis.Collections.Algorithms.Algorithms
 
 
         /// <summary>
-        /// Yields collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/>.
-        /// The collection modifications may be used to reorder <paramref name="leftItems"/>.
+        /// The algorithm creates modifications that can transform one collection into another collection.
+        /// The collection modifications may be used to transform <paramref name="leftItems"/>.
         /// The collection is not assumed to be in any order.
         /// Sorted duplications are allowed.
         /// </summary>
         /// <typeparam name="ItemType"></typeparam>
-        /// <param name="leftItems">The left items to whom collection modifications are addressed to.</param>
-        /// <param name="rightItems">The right items that left items want to become.</param>
+        /// <param name="leftItems">The collection you want to have transformed.</param>
+        /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
         /// <param name="equalityComparer"></param>
         /// <returns>For <paramref name="leftItems"/> the collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/></returns>
         public static IEnumerable<CollectionModification<ItemType, ItemType>> YieldCollectionModifications<ItemType>(

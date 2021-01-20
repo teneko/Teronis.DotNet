@@ -10,7 +10,7 @@ namespace Teronis.Collections.Algorithms.Algorithms
     // TODO: Implement the ability to move right items appearing consecutive before markers before
     // their individual marker.
     /// <summary>
-    /// The algorithm calculates differences between left items and right items in view of left items.
+    /// The algorithm creates modifications that can transform one collection into another collection.
     /// If equal left and right items are appearing the right items are going to act as markers. The
     /// right items before markers are the children of the markers, to assure that the these right
     /// items are inserted before their individual marker.
@@ -18,26 +18,28 @@ namespace Teronis.Collections.Algorithms.Algorithms
     public static class EqualityTrailingCollectionModifications
     {
         /// <summary>
-        /// Yields the collection modifications for <paramref name="leftItems"/>.
-        /// The collection modifications may be used to reorder <paramref name="leftItems"/>.
+        /// The algorithm creates modifications that can transform one collection into another collection.
+        /// The collection modifications may be used to transform <paramref name="leftItems"/>.
         /// The more the collection is synchronized in an orderly way, the more efficient the algorithm is.
         /// Duplications are allowed but take into account that duplications are yielded as they are appearing.
         /// </summary>
         /// <typeparam name="LeftItemType">The type of left items.</typeparam>
         /// <typeparam name="RightItemType">The type of right items.</typeparam>
         /// <typeparam name="ComparablePartType">The type of the comparable part of left item and right item.</typeparam>
-        /// <param name="leftItems">The left items to whom collection modifications are addressed to.</param>
+        /// <param name="leftItems">The collection you want to have transformed.</param>
         /// <param name="getComparablePartOfLeftItem">The part of left item that is comparable with part of right item.</param>
-        /// <param name="rightItems">The right items that left items want to become.</param>
+        /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
         /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
-        /// <returns>The collection modifications for <paramref name="leftItems"/></returns>
+        /// <param name="equalityComparer">The equality comparer to be used to compare comparable parts.</param>
+        /// <param name="yieldCapabilities">The yield capabilities, e.g. only insert or only remove.</param>
+        /// <returns>The collection modifications</returns>
         public static IEnumerable<CollectionModification<LeftItemType, RightItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
             IEnumerable<LeftItemType> leftItems,
             Func<LeftItemType, ComparablePartType> getComparablePartOfLeftItem,
             IEnumerable<RightItemType> rightItems,
             Func<RightItemType, ComparablePartType> getComparablePartOfRightItem,
-            IEqualityComparer<ComparablePartType>? equalityComparer = null,
-            CollectionModificationsActions actions = CollectionModificationsActions.All)
+            IEqualityComparer<ComparablePartType>? equalityComparer,
+            CollectionModificationsYieldCapabilities yieldCapabilities)
             where ComparablePartType : notnull
         {
             static CollectionModification<LeftItemType, RightItemType> createReplaceModification(
@@ -63,8 +65,8 @@ namespace Teronis.Collections.Algorithms.Algorithms
 
             equalityComparer = equalityComparer ?? EqualityComparer<ComparablePartType>.Default;
 
-            var canInsert = actions.HasFlag(CollectionModificationsActions.Insert);
-            var canRemove = actions.HasFlag(CollectionModificationsActions.Remove);
+            var canInsert = yieldCapabilities.HasFlag(CollectionModificationsYieldCapabilities.Insert);
+            var canRemove = yieldCapabilities.HasFlag(CollectionModificationsYieldCapabilities.Remove);
 
             var leftIndexDirectory = new IndexDirectory();
 
@@ -243,19 +245,79 @@ namespace Teronis.Collections.Algorithms.Algorithms
         }
 
         /// <summary>
-        /// Yields the collection modifications for <paramref name="leftItems"/>.
-        /// The collection modifications may be used to reorder <paramref name="leftItems"/>.
+        /// The algorithm creates modifications that can transform one collection into another collection.
+        /// The collection modifications may be used to transform <paramref name="leftItems"/>.
         /// The more the collection is synchronized in an orderly way, the more efficient the algorithm is.
         /// Duplications are allowed but take into account that duplications are yielded as they are appearing.
         /// </summary>
         /// <typeparam name="LeftItemType">The type of left items.</typeparam>
         /// <typeparam name="RightItemType">The type of right items.</typeparam>
         /// <typeparam name="ComparablePartType">The type of the comparable part of left item and right item.</typeparam>
-        /// <param name="leftItems">The left items to whom collection modifications are addressed to.</param>
+        /// <param name="leftItems">The collection you want to have transformed.</param>
         /// <param name="getComparablePartOfLeftItem">The part of left item that is comparable with part of right item.</param>
-        /// <param name="rightItems">The right items that left items want to become.</param>
+        /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
         /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
-        /// <returns>The collection modifications for <paramref name="leftItems"/></returns>
+        /// <param name="equalityComparer">The equality comparer to be used to compare comparable parts.</param>
+        /// <returns>The collection modifications</returns>
+        public static IEnumerable<CollectionModification<LeftItemType, RightItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
+            IEnumerable<LeftItemType> leftItems,
+            Func<LeftItemType, ComparablePartType> getComparablePartOfLeftItem,
+            IEnumerable<RightItemType> rightItems,
+            Func<RightItemType, ComparablePartType> getComparablePartOfRightItem,
+            IEqualityComparer<ComparablePartType>? equalityComparer)
+            where ComparablePartType : notnull =>
+            YieldCollectionModifications(
+                leftItems,
+                getComparablePartOfLeftItem,
+                rightItems,
+                getComparablePartOfRightItem,
+                equalityComparer,
+                CollectionModificationsYieldCapabilities.All);
+
+        /// <summary>
+        /// The algorithm creates modifications that can transform one collection into another collection.
+        /// The collection modifications may be used to transform <paramref name="leftItems"/>.
+        /// The more the collection is synchronized in an orderly way, the more efficient the algorithm is.
+        /// Duplications are allowed but take into account that duplications are yielded as they are appearing.
+        /// </summary>
+        /// <typeparam name="LeftItemType">The type of left items.</typeparam>
+        /// <typeparam name="RightItemType">The type of right items.</typeparam>
+        /// <typeparam name="ComparablePartType">The type of the comparable part of left item and right item.</typeparam>
+        /// <param name="leftItems">The collection you want to have transformed.</param>
+        /// <param name="getComparablePartOfLeftItem">The part of left item that is comparable with part of right item.</param>
+        /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
+        /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
+        /// <param name="yieldCapabilities">The yield capabilities, e.g. only insert or only remove.</param>
+        /// <returns>The collection modifications</returns>
+        public static IEnumerable<CollectionModification<LeftItemType, RightItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
+            IEnumerable<LeftItemType> leftItems,
+            Func<LeftItemType, ComparablePartType> getComparablePartOfLeftItem,
+            IEnumerable<RightItemType> rightItems,
+            Func<RightItemType, ComparablePartType> getComparablePartOfRightItem,
+            CollectionModificationsYieldCapabilities yieldCapabilities)
+            where ComparablePartType : notnull =>
+            YieldCollectionModifications(
+                leftItems,
+                getComparablePartOfLeftItem,
+                rightItems,
+                getComparablePartOfRightItem,
+                EqualityComparer<ComparablePartType>.Default,
+                yieldCapabilities);
+
+        /// <summary>
+        /// The algorithm creates modifications that can transform one collection into another collection.
+        /// The collection modifications may be used to transform <paramref name="leftItems"/>.
+        /// The more the collection is synchronized in an orderly way, the more efficient the algorithm is.
+        /// Duplications are allowed but take into account that duplications are yielded as they are appearing.
+        /// </summary>
+        /// <typeparam name="LeftItemType">The type of left items.</typeparam>
+        /// <typeparam name="RightItemType">The type of right items.</typeparam>
+        /// <typeparam name="ComparablePartType">The type of the comparable part of left item and right item.</typeparam>
+        /// <param name="leftItems">The collection you want to have transformed.</param>
+        /// <param name="getComparablePartOfLeftItem">The part of left item that is comparable with part of right item.</param>
+        /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
+        /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
+        /// <returns>The collection modifications</returns>
         public static IEnumerable<CollectionModification<LeftItemType, RightItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
             IEnumerable<LeftItemType> leftItems,
             Func<LeftItemType, ComparablePartType> getComparablePartOfLeftItem,
@@ -267,40 +329,93 @@ namespace Teronis.Collections.Algorithms.Algorithms
                 getComparablePartOfLeftItem,
                 rightItems,
                 getComparablePartOfRightItem,
-                EqualityComparer<ComparablePartType>.Default);
+                EqualityComparer<ComparablePartType>.Default,
+                CollectionModificationsYieldCapabilities.All);
 
         /// <summary>
-        /// Yields the collection modifications for <paramref name="leftItems"/>.
-        /// The collection modifications may be used to reorder <paramref name="leftItems"/>.
+        /// The algorithm creates modifications that can transform one collection into another collection.
+        /// The collection modifications may be used to transform <paramref name="leftItems"/>.
         /// The more the collection is synchronized in an orderly way, the more efficient the algorithm is.
         /// Duplications are allowed but take into account that duplications are yielded as they are appearing.
         /// </summary>
         /// <typeparam name="ItemType">The item type.</typeparam>
-        /// <param name="leftItems">The left items to whom collection modifications are addressed to.</param>
-        /// <param name="rightItems">The right items that left items want to become.</param>
-        /// <returns>The collection modifications for <paramref name="leftItems"/></returns>
+        /// <param name="leftItems">The collection you want to have transformed.</param>
+        /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
+        /// <param name="equalityComparer">The equality comparer to be used to compare comparable parts.</param>
+        /// <param name="yieldCapabilities">The yield capabilities, e.g. only insert or only remove.</param>
+        /// <returns>The collection modifications</returns>
         public static IEnumerable<CollectionModification<ItemType, ItemType>> YieldCollectionModifications<ItemType>(
             IEnumerable<ItemType> leftItems,
             IEnumerable<ItemType> rightItems,
-            IEqualityComparer<ItemType> equalityComparer)
+            IEqualityComparer<ItemType>? equalityComparer,
+            CollectionModificationsYieldCapabilities yieldCapabilities)
             where ItemType : notnull =>
             YieldCollectionModifications(
                 leftItems,
                 leftItem => leftItem,
                 rightItems,
                 rightItem => rightItem,
-                equalityComparer);
+                equalityComparer,
+                yieldCapabilities);
 
         /// <summary>
-        /// Yields the collection modifications for <paramref name="leftItems"/>.
-        /// The collection modifications may be used to reorder <paramref name="leftItems"/>.
+        /// The algorithm creates modifications that can transform one collection into another collection.
+        /// The collection modifications may be used to transform <paramref name="leftItems"/>.
         /// The more the collection is synchronized in an orderly way, the more efficient the algorithm is.
         /// Duplications are allowed but take into account that duplications are yielded as they are appearing.
         /// </summary>
         /// <typeparam name="ItemType">The item type.</typeparam>
-        /// <param name="leftItems">The left items to whom collection modifications are addressed to.</param>
-        /// <param name="rightItems">The right items that left items want to become.</param>
-        /// <returns>The collection modifications for <paramref name="leftItems"/></returns>
+        /// <param name="leftItems">The collection you want to have transformed.</param>
+        /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
+        /// <param name="equalityComparer">The equality comparer to be used to compare comparable parts.</param>
+        /// <returns>The collection modifications</returns>
+        public static IEnumerable<CollectionModification<ItemType, ItemType>> YieldCollectionModifications<ItemType>(
+            IEnumerable<ItemType> leftItems,
+            IEnumerable<ItemType> rightItems,
+            IEqualityComparer<ItemType>? equalityComparer)
+            where ItemType : notnull =>
+            YieldCollectionModifications(
+                leftItems,
+                leftItem => leftItem,
+                rightItems,
+                rightItem => rightItem,
+                equalityComparer,
+                CollectionModificationsYieldCapabilities.All);
+
+        /// <summary>
+        /// The algorithm creates modifications that can transform one collection into another collection.
+        /// The collection modifications may be used to transform <paramref name="leftItems"/>.
+        /// The more the collection is synchronized in an orderly way, the more efficient the algorithm is.
+        /// Duplications are allowed but take into account that duplications are yielded as they are appearing.
+        /// </summary>
+        /// <typeparam name="ItemType">The item type.</typeparam>
+        /// <param name="leftItems">The collection you want to have transformed.</param>
+        /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
+        /// <param name="yieldCapabilities">The yield capabilities, e.g. only insert or only remove.</param>
+        /// <returns>The collection modifications</returns>
+        public static IEnumerable<CollectionModification<ItemType, ItemType>> YieldCollectionModifications<ItemType>(
+            IEnumerable<ItemType> leftItems,
+            IEnumerable<ItemType> rightItems,
+            CollectionModificationsYieldCapabilities yieldCapabilities)
+            where ItemType : notnull =>
+            YieldCollectionModifications(
+                leftItems,
+                leftItem => leftItem,
+                rightItems,
+                rightItem => rightItem,
+                EqualityComparer<ItemType>.Default,
+                yieldCapabilities);
+
+        /// <summary>
+        /// The algorithm creates modifications that can transform one collection into another collection.
+        /// The collection modifications may be used to transform <paramref name="leftItems"/>.
+        /// The more the collection is synchronized in an orderly way, the more efficient the algorithm is.
+        /// Duplications are allowed but take into account that duplications are yielded as they are appearing.
+        /// </summary>
+        /// <typeparam name="ItemType">The item type.</typeparam>
+        /// <param name="leftItems">The collection you want to have transformed.</param>
+        /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
+        /// <returns>The collection modifications</returns>
         public static IEnumerable<CollectionModification<ItemType, ItemType>> YieldCollectionModifications<ItemType>(
             IEnumerable<ItemType> leftItems,
             IEnumerable<ItemType> rightItems)
@@ -310,7 +425,8 @@ namespace Teronis.Collections.Algorithms.Algorithms
                 leftItem => leftItem,
                 rightItems,
                 rightItem => rightItem,
-                EqualityComparer<ItemType>.Default);
+                EqualityComparer<ItemType>.Default,
+                CollectionModificationsYieldCapabilities.All);
 
         private class IndexPreferredEnumerator<ItemType> : IEnumerator<ItemType>
         {

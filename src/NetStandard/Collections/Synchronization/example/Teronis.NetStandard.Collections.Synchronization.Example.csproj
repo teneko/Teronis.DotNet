@@ -14,7 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Core\Core\src\Teronis.NetStandard.Core.csproj" />
     <ProjectReference Include="..\..\..\ObjectModel\TreeColumn\src\Teronis.NetStandard.ObjectModel.TreeColumn.csproj" />
-    <ProjectReference Include="..\..\Changes\src\Teronis.NetStandard.Collections.Changes.csproj" />
+    <ProjectReference Include="..\..\Algorithms\src\Teronis.NetStandard.Collections.Algorithms.csproj" />
     <ProjectReference Include="..\src\Teronis.NetStandard.Collections.Synchronization.csproj" />
   </ItemGroup>
 

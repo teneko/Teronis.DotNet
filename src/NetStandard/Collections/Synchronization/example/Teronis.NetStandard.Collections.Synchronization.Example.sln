@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Core", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.ObjectModel.TreeColumn", "..\..\..\ObjectModel\TreeColumn\src\Teronis.NetStandard.ObjectModel.TreeColumn.csproj", "{B3F34A29-4913-4A79-BB72-D702F6AECB85}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections.Changes", "..\..\Changes\src\Teronis.NetStandard.Collections.Changes.csproj", "{725CA5F0-B2D2-4D8A-AF7C-A25F5A51DF6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections.Algorithms", "..\..\Algorithms\src\Teronis.NetStandard.Collections.Algorithms.csproj", "{725CA5F0-B2D2-4D8A-AF7C-A25F5A51DF6F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Core.Localization", "..\..\..\Core\Core.Localization\src\Teronis.NetStandard.Core.Localization.csproj", "{2EE77861-67A2-49A9-8209-1DEB406A8452}"
 EndProject

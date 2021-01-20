@@ -1,4 +1,4 @@
-﻿using Teronis.Collections.Changes;
+﻿using Teronis.Collections.Algorithms;
 
 namespace Teronis.Collections.Synchronization
 {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Specialized;
-using Teronis.Collections.Changes;
+using Teronis.Collections.Algorithms;
 using Teronis.Collections.ObjectModel;
 using Teronis.Utils;
 

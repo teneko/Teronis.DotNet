@@ -1,4 +1,6 @@
-﻿namespace Teronis.Collections.Changes
+﻿using Teronis.Collections.Synchronization;
+
+namespace Teronis.Collections.Algorithms
 {
     public interface INotifyCollectionModified<SubItemType, SuperItemType>
     {

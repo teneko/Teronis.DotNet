@@ -116,7 +116,7 @@
       <SetTargetFramework Condition="'%(SetTargetFramework)' == '' And (
         '%(Filename)' == 'Teronis.NetStandard.Core'
         Or '%(Filename)' == 'Teronis.NetStandard.Collections'
-        Or '%(Filename)' == 'Teronis.NetStandard.Collections.Changes')">TargetFramework=$(TargetFramework)</SetTargetFramework>
+        Or '%(Filename)' == 'Teronis.NetStandard.Collections.Algorithms')">TargetFramework=$(TargetFramework)</SetTargetFramework>
     </_ProjectReferences>
 
     <ProjectReference Remove="@(ProjectReference)" />

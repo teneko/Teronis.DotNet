@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Teronis.Collections.Changes;
+using Teronis.Collections.Algorithms;
 using Teronis.Tools;
 
 namespace Teronis.Collections.Synchronization

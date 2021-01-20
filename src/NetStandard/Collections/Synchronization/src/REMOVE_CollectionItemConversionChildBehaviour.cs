@@ -1,6 +1,6 @@
 ﻿//using System;
 //using System.Collections.Specialized;
-//using Teronis.Collections.Changes;
+//using Teronis.Collections.Algorithms;
 //using Teronis.ObjectModel.Parenting;
 
 //namespace Teronis.Collections.Synchronization

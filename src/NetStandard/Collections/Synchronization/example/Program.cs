@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Teronis.Collections.Changes;
+using Teronis.Collections.Algorithms;
 
 namespace Teronis.Collections.Synchronization
 {
@@ -60,7 +60,7 @@ namespace Teronis.Collections.Synchronization
             //list = new int[] { 5, 6, 4 };
             //list2 = new int[] { 9, 4, 4, 7 };
 
-            //modifications = CollectionModifications.YieldCollectionModifications(
+            //modifications = EqualityTrailingCollectionModifications.YieldCollectionModifications(
             //    list,
             //    x => x,
             //    list2,

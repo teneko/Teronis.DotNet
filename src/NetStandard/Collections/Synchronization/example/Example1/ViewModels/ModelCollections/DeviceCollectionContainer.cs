@@ -7,7 +7,7 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollectio
     /// It holds an observable collection of <see cref="DeviceHeaderSyntheticEntity"/>. Its purpose
     /// is to have a long running synced collection of <see cref="DeviceHeaderSyntheticEntity"/>.
     /// </summary>
-    public class DeviceCollectionSynchronisation : SynchronizingCollection<DeviceViewModel, DeviceHeaderViewModel>
+    public class DeviceCollectionSynchronisation : SyncingCollectionViewModel<DeviceViewModel, DeviceHeaderViewModel>
     {
         public DeviceViewModel SelectedItem {
             get => deviceHeaderCollectionContainer.SelectedItem?.CreateParentsCollector().SingleParent<DeviceViewModel>();

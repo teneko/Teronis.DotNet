@@ -27,7 +27,7 @@ Here a list of the project folders:
       You just need to set-up PackSourceAs and PackageSourceReference and depending on scenario creating a synthetic project.
 - [Teronis.MSBuild.ProjectBuildInPackage](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/MSBuild/Packaging/ProjectBuildInPackage) Allows project reference content to be added to the NuGet-package during pack process.
 - [Teronis.NetStandard.Collections](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Collections/Collections) Provides classes that define generic collections.
-- [Teronis.NetStandard.Collections.Changes](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Collections/Changes) Provides algorithm to calculate collection differences between two collection.
+- [Teronis.NetStandard.Collections.Algorithms](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Collections/Algorithms) Provides algorithm to calculate collection differences between two collection.
 - [Teronis.NetStandard.Collections.Synchronization](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Collections/Synchronization) Provides classes for collection synchronization.
 - [Teronis.NetStandard.Core](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Core/Core) A collection of utilities, extensions and classes for the .NET Standard implementation.
 - [Teronis.NetStandard.ObjectModel.TreeColumn](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/ObjectModel/TreeColumn) Provides TreeColumnSeeker for complex data structures.

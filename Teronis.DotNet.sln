@@ -44,7 +44,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collect
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections", "src\NetStandard\Collections\Collections\src\Teronis.NetStandard.Collections.csproj", "{8BED5E8B-B9C1-4B06-AC29-92E93953C320}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections.Changes", "src\NetStandard\Collections\Changes\src\Teronis.NetStandard.Collections.Changes.csproj", "{8A5DF294-C612-48AB-936B-618B1A6419ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections.Algorithms", "src\NetStandard\Collections\Algorithms\src\Teronis.NetStandard.Collections.Algorithms.csproj", "{8A5DF294-C612-48AB-936B-618B1A6419ED}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections.Synchronization.Example", "src\NetStandard\Collections\Synchronization\example\Teronis.NetStandard.Collections.Synchronization.Example.csproj", "{DBFEAB25-EA40-449B-9B02-934CB29EB25E}"
 EndProject
@@ -107,7 +107,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections.Changes.Test", "src\NetStandard\Collections\Changes\test\Teronis.NetStandard.Collections.Changes.Test.csproj", "{A0326291-BA4A-4EFF-84A4-4B4E913D8C2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections.Algorithms.Test", "src\NetStandard\Collections\Algorithms\test\Teronis.NetStandard.Collections.Algorithms.Test.csproj", "{A0326291-BA4A-4EFF-84A4-4B4E913D8C2C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C6017EE4-F4D2-499C-9352-ECBF8B644D76}"
 EndProject
@@ -115,7 +115,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{0A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", "{E48BE22E-518E-4BFA-9EDC-1BC398675C93}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections.Changes.Benchmark", "src\NetStandard\Collections\Changes\benchmark\Teronis.NetStandard.Collections.Changes.Benchmark.csproj", "{25C55E16-75C6-4B4B-9F48-4ADC5C99279D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections.Algorithms.Benchmark", "src\NetStandard\Collections\Algorithms\benchmark\Teronis.NetStandard.Collections.Algorithms.Benchmark.csproj", "{25C55E16-75C6-4B4B-9F48-4ADC5C99279D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

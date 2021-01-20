@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using Teronis.Collections.Changes;
+using Teronis.Collections.Algorithms.Algorithms;
 using Teronis.Extensions;
 
-namespace Teronis.NetStandard.Collections.Changes.Test
+namespace Teronis.NetStandard.Collections.Algorithms.Test
 {
     public class SynchronizableCollection<T> : List<T>
         where T : notnull
@@ -14,7 +14,7 @@ namespace Teronis.NetStandard.Collections.Changes.Test
 
         public void SynchronizeCollection(IEnumerable<T> enumerable, bool preventYielding)
         {
-            var modifications = CollectionModifications.YieldCollectionModifications(this, enumerable);
+            var modifications = EqualityTrailingCollectionModifications.YieldCollectionModifications(this, enumerable);
 
             if (preventYielding) {
                 modifications = modifications.ToList();  

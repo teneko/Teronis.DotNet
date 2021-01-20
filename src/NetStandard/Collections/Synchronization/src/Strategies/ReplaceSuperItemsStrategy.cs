@@ -1,4 +1,4 @@
-﻿using Teronis.Collections.Changes;
+﻿using Teronis.Collections.Algorithms;
 using Teronis.Collections.Synchronization.Extensions;
 
 namespace Teronis.Collections.Synchronization.Strategies
@@ -6,7 +6,7 @@ namespace Teronis.Collections.Synchronization.Strategies
     public class ReplaceSuperCollectionItemByNewSuperItemStrategy : CollectionItemReplaceStrategyBase
     {
         public override void ApplyCollectionItemReplace<SubItemType, SuperItemType>(
-            SynchronizingCollection<SubItemType, SuperItemType> collection,
+            SyncingCollectionViewModel<SubItemType, SuperItemType> collection,
             ICollectionModification<SubItemType, SuperItemType> applyingOldSubNewSuperModification,
             ICollectionModification<SuperItemType, SuperItemType> applyingOldSuperNewSuperModification)
         {

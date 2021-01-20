@@ -12,7 +12,7 @@ namespace Teronis.Collections.Algorithms
         /// Assumes <paramref name="leftItems"/> and <paramref name="rightItems"/> to be sorted by that order you specify by <paramref name="presumedOrder"/>.
         /// Duplications are allowed but take into account that duplications are yielded as they are appearing.
         /// </summary>
-        /// <typeparam name="LeftItemType">The typ of left items.</typeparam>
+        /// <typeparam name="LeftItemType">The type of left items.</typeparam>
         /// <typeparam name="RightItemType">The type of right items.</typeparam>
         /// <typeparam name="ComparablePartType">The type of the comparable part of left item and right item.</typeparam>
         /// <param name="leftItems">The left items to whom collection modifications are addressed to.</param>

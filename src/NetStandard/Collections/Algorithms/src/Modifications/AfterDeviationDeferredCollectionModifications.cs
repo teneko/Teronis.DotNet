@@ -28,7 +28,7 @@ namespace Teronis.Collections.Algorithms.Algorithms
         /// The collection is not assumed to be in any order.
         /// Sorted duplications are allowed.
         /// </summary>
-        /// <typeparam name="LeftItemType">The typ of left items.</typeparam>
+        /// <typeparam name="LeftItemType">The type of left items.</typeparam>
         /// <typeparam name="RightItemType">The type of right items.</typeparam>
         /// <typeparam name="ComparablePartType">The type of the comparable part of left item and right item.</typeparam>
         /// <param name="leftItems">The left items to whom collection modifications are addressed to.</param>
@@ -209,7 +209,7 @@ namespace Teronis.Collections.Algorithms.Algorithms
         /// The collection is not assumed to be in any order.
         /// Sorted duplications are allowed.
         /// </summary>
-        /// <typeparam name="LeftItemType">The typ of left items.</typeparam>
+        /// <typeparam name="LeftItemType">The type of left items.</typeparam>
         /// <typeparam name="RightItemType">The type of right items.</typeparam>
         /// <typeparam name="ComparablePartType">The type of the comparable part of left item and right item.</typeparam>
         /// <param name="leftItems">The left items to whom collection modifications are addressed to.</param>

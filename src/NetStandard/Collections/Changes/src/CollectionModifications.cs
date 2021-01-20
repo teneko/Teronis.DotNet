@@ -3,9 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using Teronis.Collections.ObjectModel;
 using Teronis.Collections.Specialized;
-using Teronis.Tools;
 
 namespace Teronis.Collections.Changes
 {
@@ -76,7 +74,7 @@ namespace Teronis.Collections.Changes
             void SetLeftIndexOfLatestSyncedRightItem(int newIndex)
             {
                 if (newIndex > leftIndexOfLatestSyncedRightItem.Index) {
-                    leftIndexDirectory.Replace(leftIndexOfLatestSyncedRightItem, newIndex);
+                    leftIndexDirectory.ReplaceEntry(leftIndexOfLatestSyncedRightItem, newIndex);
                 }
             }
 
@@ -164,7 +162,7 @@ namespace Teronis.Collections.Changes
                             // Do not set parent after it has been already set.
                             if (rightItemNodeLastBucketFirstNodeListPreviousNode.Value.Parent is null) {
                                 // We cannot add right item blindly to left side, because we do not know if exact this node will
-                                // appear on left side. So we are tell current previous node about a left node that is definitely below him.
+                                // appear on left side. So we tell current previous node about a left node that is definitely below him.
                                 rightItemNodeLastBucketFirstNodeListPreviousNode.Value.Parent = currentLeftItemNodeAsParentForPreviousRightItemNodes.Value;
                             }
                         }
@@ -342,24 +340,6 @@ namespace Teronis.Collections.Changes
                 rightItems,
                 rightItem => rightItem,
                 EqualityComparer<ItemType>.Default);
-
-        private static int shiftIndexAdd(int index, ICollectionModificationParameters modification)
-        {
-            if (index >= modification.NewIndex) {
-                return index + modification.NewItemsCount!.Value;
-            }
-
-            return index;
-        }
-
-        private static int shiftIndexRemove(int index, ICollectionModificationParameters modification)
-        {
-            if (index >= modification.OldIndex) {
-                return index - 1;
-            }
-
-            return index;
-        }
 
         private class IndexPreferredEnumerator<ItemType> : IEnumerator<ItemType>
         {

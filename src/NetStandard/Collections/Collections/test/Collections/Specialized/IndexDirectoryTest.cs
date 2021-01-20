@@ -18,10 +18,12 @@ namespace Teronis.Collections.Specialized
         {
             var zero = indexDirectory.Add(0);
             var zero2 = indexDirectory.Add(0);
+            Assert.Equal(1, indexDirectory.Count);
             Assert.Equal(0, zero);
             Assert.Equal(0, zero2);
 
             var one = indexDirectory.Add(1);
+            Assert.Equal(2, indexDirectory.Count);
             Assert.Equal(1, one);
         }
 
@@ -32,16 +34,19 @@ namespace Teronis.Collections.Specialized
             var zero2 = indexDirectory.Add(0);
             var two = indexDirectory.Add(2);
 
-            indexDirectory.Remove(zero2);
+            indexDirectory.RemoveEntry(zero2);
+            Assert.Equal(3, indexDirectory.Count);
             Assert.Equal(0, zero);
             Assert.Equal(2, two);
 
-            indexDirectory.Remove(zero);
+            indexDirectory.RemoveEntry(zero);
+            Assert.Equal(2, indexDirectory.Count);
             Assert.Equal(0, zero);
-            Assert.Equal(2, two);
+            Assert.Equal(1, two);
 
             indexDirectory.Remove(0);
-            Assert.Equal(1, two);
+            Assert.Equal(1, indexDirectory.Count);
+            Assert.Equal(0, two);
         }
 
         [Fact]
@@ -62,13 +67,21 @@ namespace Teronis.Collections.Specialized
         [Fact]
         public void Insert()
         {
-            var zero = indexDirectory.Add(0);
             var one = indexDirectory.Add(1);
+            var two = indexDirectory.Add(2);
 
+            // Insert between.
             var newOne = indexDirectory.Insert(1);
-            Assert.Equal(0, zero);
+            Assert.Equal(4, indexDirectory.Count);
             Assert.Equal(1, newOne);
             Assert.Equal(2, one);
+            Assert.Equal(3, two);
+
+            // Insert at the end.
+            var four = indexDirectory.Insert(4);
+            Assert.Equal(5, indexDirectory.Count);
+            Assert.Equal(3, two);
+            Assert.Equal(4, four);
         }
 
         [Fact]
@@ -91,6 +104,16 @@ namespace Teronis.Collections.Specialized
             Assert.Equal(1, two);
             Assert.Equal(2, floatingTwo);
             Assert.Equal(2, three);
+            Assert.Equal(3, floatingThree);
+
+            indexDirectory.Move(3, 0);
+            Assert.Equal(0, zero);
+            Assert.Equal(3, floatingZero);
+            Assert.Equal(1, one);
+            Assert.Equal(2, floatingOne);
+            Assert.Equal(2, two);
+            Assert.Equal(3, floatingTwo);
+            Assert.Equal(3, three);
             Assert.Equal(3, floatingThree);
         }
 
@@ -115,6 +138,16 @@ namespace Teronis.Collections.Specialized
             Assert.Equal(3, floatingTwo);
             Assert.Equal(0, three);
             Assert.Equal(3, floatingThree);
+
+            indexDirectory.Move(0, 3);
+            Assert.Equal(0, zero);
+            Assert.Equal(1, floatingZero);
+            Assert.Equal(1, one);
+            Assert.Equal(2, floatingOne);
+            Assert.Equal(2, two);
+            Assert.Equal(3, floatingTwo);
+            Assert.Equal(3, three);
+            Assert.Equal(3, floatingThree);
         }
 
         [Fact]
@@ -124,10 +157,10 @@ namespace Teronis.Collections.Specialized
             var floatingZero = indexDirectory.Add(0, IndexDirectoryEntryMode.Floating);
             indexDirectory.Expand(3);
 
-            indexDirectory.Replace(zero, 3);
+            indexDirectory.ReplaceEntry(zero, 3);
             Assert.Equal(3, zero);
 
-            indexDirectory.Replace(floatingZero, 3);
+            indexDirectory.ReplaceEntry(floatingZero, 3);
             Assert.Equal(3, floatingZero);
         }
 

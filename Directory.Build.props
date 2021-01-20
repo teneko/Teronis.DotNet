@@ -140,7 +140,8 @@
       And ($(IsGitVersionCacheRelated)
         Or $(IsTestProject)
         Or $(IsLocalizationProject)
-        Or $(IsExampleProject))">false</IsPackable>
+        Or $(IsExampleProject)
+        Or $(IsBenchmarkProject))">false</IsPackable>
 
     <IsPackable Condition="'$(IsPackable)' == ''">true</IsPackable>
 

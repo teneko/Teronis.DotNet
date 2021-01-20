@@ -23,7 +23,7 @@ namespace Teronis.Collections.Specialized
                 entryList = entryLists[index];
             } else {
                 var lastIndex = entryLists.Count - 1;
-
+                
                 do {
                     entryList = null;
                     entryLists.Add(entryList);
@@ -52,7 +52,7 @@ namespace Teronis.Collections.Specialized
         /// </summary>
         /// <param name="index">The to be added index.</param>
         /// <returns>The index entry.</returns>
-        public IndexDirectoryEntry Add(IndexDirectoryEntry indexEntry)
+        public IndexDirectoryEntry AddEntry(IndexDirectoryEntry indexEntry)
         {
             var entryList = prepareListAt(indexEntry.Index);
             entryList.Add(indexEntry);
@@ -81,9 +81,9 @@ namespace Teronis.Collections.Specialized
             Add(index, IndexDirectoryEntryMode.Normal);
 
         /// <summary>
-        /// inserts <paramref name="index"/> between <paramref name="index"/> - 1
+        /// Inserts <paramref name="index"/> between <paramref name="index"/> - 1
         /// and <paramref name="index"/> and will cause to move existing indexes at
-        /// <paramref name="index"/> by one.
+        /// <paramref name="index"/> by one except floating indexes.
         /// </summary>
         /// <param name="index">The to be inserted index.</param>
         /// <returns>The index entry.</returns>
@@ -96,11 +96,11 @@ namespace Teronis.Collections.Specialized
             }
 
             var newLastIndex = entryListsCount;
-            entryLists.Add(null!);
+            var indexEntry = new IndexDirectoryEntry(index, mode);
+            entryLists.Insert(index, new List<IndexDirectoryEntry>() { indexEntry });
 
             do {
-                var entryList = entryLists[newLastIndex - 1];
-                entryLists[newLastIndex] = entryList;
+                var entryList = entryLists[newLastIndex];
 
                 if (!(entryList is null)) {
                     var entryListCount = entryList.Count;
@@ -109,14 +109,17 @@ namespace Teronis.Collections.Specialized
                         entryList[entryIndex].Index++;
                     }
                 }
-            } while (index != --newLastIndex);
+            } while (--newLastIndex > index);
 
-            var indexEntry = new IndexDirectoryEntry(index, mode);
-            entryLists[index] = new List<IndexDirectoryEntry>() { indexEntry };
             return indexEntry;
         }
 
-        public bool Remove(IndexDirectoryEntry indexEntry)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="indexEntry"></param>
+        /// <returns></returns>
+        public bool RemoveEntry(IndexDirectoryEntry indexEntry)
         {
             if (indexEntry.Index >= entryLists.Count) {
                 throw new ArgumentOutOfRangeException(nameof(indexEntry));
@@ -128,7 +131,13 @@ namespace Teronis.Collections.Specialized
                 return false;
             }
 
-            return entryList.Remove(indexEntry);
+            var success = entryList.Remove(indexEntry);
+
+            if (entryList.Count == 0) {
+                Remove(indexEntry.Index);
+            }
+
+            return success;
         }
 
         public void Remove(int index)
@@ -139,13 +148,10 @@ namespace Teronis.Collections.Specialized
                 throw new ArgumentOutOfRangeException(nameof(index));
             }
 
-            entryLists[index]?.Clear();
-            int newIndex = index;
-            int nextIndex = newIndex + 1;
+            int nextIndex = index + 1;
 
             while (nextIndex < entryListsCount) {
                 var entryList = entryLists[nextIndex];
-                entryLists[newIndex] = entryList;
 
                 if (!(entryList is null)) {
                     var entryListCount = entryList.Count;
@@ -155,11 +161,10 @@ namespace Teronis.Collections.Specialized
                     }
                 }
 
-                newIndex++;
                 nextIndex++;
             }
 
-            entryLists[newIndex] = null;
+            entryLists.RemoveAt(index);
         }
 
         public void Move(int fromIndex, int toIndex)
@@ -203,14 +208,12 @@ namespace Teronis.Collections.Specialized
 
             do {
                 var (entryListIndex, entryList) = entryEnumerator.Current;
-                entryLists[newEntryListIndex] = entryList;
 
                 if (!(entryList is null)) {
                     var entryListCount = entryList.Count;
 
                     if (enumeratesNonReversed && floatingEntries!.Count != 0) {
                         var floatingEntriesCount = floatingEntries.Count;
-                        var previousEntryList = entryLists[newEntryListIndex - 1]!;
 
                         for (var index = 0; index < floatingEntriesCount; index++) {
                             var floatingEntry = floatingEntries[index];
@@ -243,8 +246,6 @@ namespace Teronis.Collections.Specialized
                 firstEntryList = new List<IndexDirectoryEntry>(floatingEntries!.Count);
             }
 
-            entryLists[toIndex] = firstEntryList;
-
             if (requiresFloatingEntriesHandlingCausedByNonReversedEnumeration) {
                 var floatingEntriesCount = floatingEntries!.Count;
 
@@ -256,6 +257,10 @@ namespace Teronis.Collections.Specialized
 
                 floatingEntries.Clear();
             }
+
+
+            entryLists.RemoveAt(fromIndex);
+            entryLists.Insert(toIndex, firstEntryList);
 
             if (!(firstEntryList is null)) {
                 var firstEntryListCount = firstEntryList.Count;
@@ -273,14 +278,14 @@ namespace Teronis.Collections.Specialized
             }
         }
 
-        public void Replace(IndexDirectoryEntry indexEntry, int newIndex)
+        public void ReplaceEntry(IndexDirectoryEntry indexEntry, int newIndex)
         {
             if (indexEntry.Index >= 0) {
                 entryLists[indexEntry.Index]!.Remove(indexEntry);
             }
 
             indexEntry.Index = newIndex;
-            Add(indexEntry);
+            AddEntry(indexEntry);
         }
 
         /// <summary>

@@ -58,9 +58,9 @@ namespace Teronis.Utils
             var items = new T[count];
 
             for (var index = count - 1; index >= 0; index--) {
-                var floatedIndex = fromIndex + index;
-                items[index] = getItemAt(floatedIndex);
-                removeItemAt(floatedIndex);
+                var nextIndex = fromIndex + index;
+                items[index] = getItemAt(nextIndex);
+                removeItemAt(nextIndex);
             }
 
             insertItems(toIndex, items, insertItem);

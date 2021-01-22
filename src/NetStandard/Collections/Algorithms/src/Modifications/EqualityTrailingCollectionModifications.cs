@@ -5,17 +5,15 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Teronis.Collections.Specialized;
 
-namespace Teronis.Collections.Algorithms.Algorithms
+namespace Teronis.Collections.Algorithms.Modifications
 {
-    // TODO: Implement the ability to move right items appearing consecutive before markers before
-    // their individual marker.
     /// <summary>
     /// The algorithm creates modifications that can transform one collection into another collection.
     /// If equal left and right items are appearing the right items are going to act as markers. The
     /// right items before markers are the children of the markers, to assure that the these right
     /// items are inserted before their individual marker.
     /// </summary>
-    public static class EqualityTrailingCollectionModifications
+    public static partial class EqualityTrailingCollectionModifications
     {
         /// <summary>
         /// The algorithm creates modifications that can transform one collection into another collection.
@@ -32,7 +30,8 @@ namespace Teronis.Collections.Algorithms.Algorithms
         /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
         /// <param name="equalityComparer">The equality comparer to be used to compare comparable parts.</param>
         /// <param name="yieldCapabilities">The yield capabilities, e.g. only insert or only remove.</param>
-        /// <returns>The collection modifications</returns>
+        /// <returns>The collection modifications.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
         public static IEnumerable<CollectionModification<LeftItemType, RightItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
             IEnumerable<LeftItemType> leftItems,
             Func<LeftItemType, ComparablePartType> getComparablePartOfLeftItem,
@@ -67,10 +66,12 @@ namespace Teronis.Collections.Algorithms.Algorithms
 
             var canInsert = yieldCapabilities.HasFlag(CollectionModificationsYieldCapabilities.Insert);
             var canRemove = yieldCapabilities.HasFlag(CollectionModificationsYieldCapabilities.Remove);
+            var canReplace = yieldCapabilities.HasFlag(CollectionModificationsYieldCapabilities.Replace);
+            var canMove = canInsert && canRemove;
 
             var leftIndexDirectory = new IndexDirectory();
 
-            var leftItemsEnumerator = new IndexPreferredEnumerator<LeftItemType>(leftItems, leftIndexDirectory);
+            var leftItemsEnumerator = new IndexPreferredEnumerator<LeftItemType>(leftItems, leftIndexDirectory.LastIndexEntry);
             var leftItemsEnumeratorIsFunctional = leftItemsEnumerator.MoveNext();
             var leftItemsNodes = new LinkedBucketList<ComparablePartType, LeftItemContainer<LeftItemType>>(equalityComparer);
 
@@ -108,7 +109,9 @@ namespace Teronis.Collections.Algorithms.Algorithms
                 if (!(rightItemNodeLastBucketFirstNode is null) && leftItemsNodes.TryGetBucket(rightItemNodeLastBucketFirstNode!.Key, out var leftItemBucket)) {
                     var leftItemNode = leftItemBucket.First!;
 
-                    yield return createReplaceModification(leftItemNode, rightItemNodeLastBucketFirstNode);
+                    if (canReplace) {
+                        yield return createReplaceModification(leftItemNode, rightItemNodeLastBucketFirstNode);
+                    }
 
                     int leftItemMoveToIndex;
 
@@ -124,7 +127,7 @@ namespace Teronis.Collections.Algorithms.Algorithms
                     LinkedBucketListNode<ComparablePartType, RightItemContainer<LeftItemType, RightItemType>>? rightItemNodeLastBucketFirstNodeListPreviousNode;
 
                     {
-                        if (leftItemNode.Value.IndexEntry != leftItemMoveToIndex) {
+                        if (canMove && leftItemNode.Value.IndexEntry != leftItemMoveToIndex) {
                             var moveModification = createMoveModification(leftItemNode, leftItemMoveToIndex, rightItemNodeLastBucketFirstNode);
                             yield return moveModification;
                             leftIndexDirectory.Move(moveModification.OldIndex, moveModification.NewIndex);
@@ -175,14 +178,14 @@ namespace Teronis.Collections.Algorithms.Algorithms
                 if (!(leftItemNodeLastBucketFirstNode is null) && rightItemsNodes.TryGetBucket(leftItemNodeLastBucketFirstNode!.Key, out var rightItembucket)) {
                     var rightItemNode = rightItembucket.First!;
 
-                    yield return createReplaceModification(leftItemNodeLastBucketFirstNode, rightItemNode);
+                    if (canReplace) {
+                        yield return createReplaceModification(leftItemNodeLastBucketFirstNode, rightItemNode);
+                    }
 
-                    if (!(rightItemNode.Value.Parent is null)) {
-                        var moveLeftItemTo = rightItemNode.Value.Parent.IndexEntry;
-
+                    if (canMove && !(rightItemNode.Value.Parent is null)) {
                         var moveModification = createMoveModification(
                             leftItemNodeLastBucketFirstNode,
-                            moveLeftItemTo,
+                            rightItemNode.Value.Parent.IndexEntry,
                             rightItemNode);
 
                         yield return moveModification;
@@ -258,7 +261,8 @@ namespace Teronis.Collections.Algorithms.Algorithms
         /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
         /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
         /// <param name="equalityComparer">The equality comparer to be used to compare comparable parts.</param>
-        /// <returns>The collection modifications</returns>
+        /// <returns>The collection modifications.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
         public static IEnumerable<CollectionModification<LeftItemType, RightItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
             IEnumerable<LeftItemType> leftItems,
             Func<LeftItemType, ComparablePartType> getComparablePartOfLeftItem,
@@ -288,7 +292,8 @@ namespace Teronis.Collections.Algorithms.Algorithms
         /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
         /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
         /// <param name="yieldCapabilities">The yield capabilities, e.g. only insert or only remove.</param>
-        /// <returns>The collection modifications</returns>
+        /// <returns>The collection modifications.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
         public static IEnumerable<CollectionModification<LeftItemType, RightItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
             IEnumerable<LeftItemType> leftItems,
             Func<LeftItemType, ComparablePartType> getComparablePartOfLeftItem,
@@ -317,7 +322,8 @@ namespace Teronis.Collections.Algorithms.Algorithms
         /// <param name="getComparablePartOfLeftItem">The part of left item that is comparable with part of right item.</param>
         /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
         /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
-        /// <returns>The collection modifications</returns>
+        /// <returns>The collection modifications.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
         public static IEnumerable<CollectionModification<LeftItemType, RightItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
             IEnumerable<LeftItemType> leftItems,
             Func<LeftItemType, ComparablePartType> getComparablePartOfLeftItem,
@@ -343,7 +349,8 @@ namespace Teronis.Collections.Algorithms.Algorithms
         /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
         /// <param name="equalityComparer">The equality comparer to be used to compare comparable parts.</param>
         /// <param name="yieldCapabilities">The yield capabilities, e.g. only insert or only remove.</param>
-        /// <returns>The collection modifications</returns>
+        /// <returns>The collection modifications.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
         public static IEnumerable<CollectionModification<ItemType, ItemType>> YieldCollectionModifications<ItemType>(
             IEnumerable<ItemType> leftItems,
             IEnumerable<ItemType> rightItems,
@@ -368,7 +375,8 @@ namespace Teronis.Collections.Algorithms.Algorithms
         /// <param name="leftItems">The collection you want to have transformed.</param>
         /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
         /// <param name="equalityComparer">The equality comparer to be used to compare comparable parts.</param>
-        /// <returns>The collection modifications</returns>
+        /// <returns>The collection modifications.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
         public static IEnumerable<CollectionModification<ItemType, ItemType>> YieldCollectionModifications<ItemType>(
             IEnumerable<ItemType> leftItems,
             IEnumerable<ItemType> rightItems,
@@ -392,7 +400,8 @@ namespace Teronis.Collections.Algorithms.Algorithms
         /// <param name="leftItems">The collection you want to have transformed.</param>
         /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
         /// <param name="yieldCapabilities">The yield capabilities, e.g. only insert or only remove.</param>
-        /// <returns>The collection modifications</returns>
+        /// <returns>The collection modifications.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
         public static IEnumerable<CollectionModification<ItemType, ItemType>> YieldCollectionModifications<ItemType>(
             IEnumerable<ItemType> leftItems,
             IEnumerable<ItemType> rightItems,
@@ -415,7 +424,8 @@ namespace Teronis.Collections.Algorithms.Algorithms
         /// <typeparam name="ItemType">The item type.</typeparam>
         /// <param name="leftItems">The collection you want to have transformed.</param>
         /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
-        /// <returns>The collection modifications</returns>
+        /// <returns>The collection modifications.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
         public static IEnumerable<CollectionModification<ItemType, ItemType>> YieldCollectionModifications<ItemType>(
             IEnumerable<ItemType> leftItems,
             IEnumerable<ItemType> rightItems)
@@ -427,79 +437,6 @@ namespace Teronis.Collections.Algorithms.Algorithms
                 rightItem => rightItem,
                 EqualityComparer<ItemType>.Default,
                 CollectionModificationsYieldCapabilities.All);
-
-        private class IndexPreferredEnumerator<ItemType> : IEnumerator<ItemType>
-        {
-            public int CurrentLength { get; private set; }
-
-            private readonly IEnumerator<ItemType> enumerator;
-
-            public IndexPreferredEnumerator(IEnumerable<ItemType> enumerable, IndexDirectory leftIndexDirectory)
-            {
-                if (enumerable is IReadOnlyList<ItemType> readOnlyList) {
-                    enumerator = new IndexedEnumerator(readOnlyList, leftIndexDirectory);
-                } else if (enumerable is IList<ItemType> list) {
-                    enumerator = new IndexedEnumerator(new ReadOnlyCollection<ItemType>(list), leftIndexDirectory);
-                } else {
-                    enumerator = enumerable.GetEnumerator();
-                }
-            }
-
-            public ItemType Current =>
-                enumerator.Current;
-
-            public bool MoveNext()
-            {
-                if (enumerator.MoveNext()) {
-                    CurrentLength++;
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-
-            public void Reset() =>
-                enumerator.Reset();
-
-            object? IEnumerator.Current =>
-                ((IEnumerator)enumerator).Current;
-
-            public void Dispose() =>
-                enumerator.Dispose();
-
-            public class IndexedEnumerator : IEnumerator<ItemType>
-            {
-                private readonly IReadOnlyList<ItemType> list;
-                private readonly IndexDirectory leftIndexDirectory;
-
-                public ItemType Current { get; private set; }
-
-                public IndexedEnumerator(IReadOnlyList<ItemType> list, IndexDirectory leftIndexDirectory)
-                {
-                    Current = default!;
-                    this.list = list;
-                    this.leftIndexDirectory = leftIndexDirectory;
-                }
-
-                public bool MoveNext()
-                {
-                    if (leftIndexDirectory.Count < list.Count) {
-                        Current = list[leftIndexDirectory.Count];
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-
-                public void Reset() =>
-                    throw new NotImplementedException();
-
-                object IEnumerator.Current =>
-                    Current!;
-
-                public void Dispose() { }
-            }
-        }
 
         private class ItemContainer<ItemType>
         {

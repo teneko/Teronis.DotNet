@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collect
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections.Synchronization", "Synchronization\src\Teronis.NetStandard.Collections.Synchronization.csproj", "{D3780DD0-1C16-46B3-A6BC-755993837B85}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections.Test", "Collections\test\Collections\Teronis.NetStandard.Collections.Test.csproj", "{5258C5AD-6FE6-42A0-8D2E-3F34A82FFEFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections.Test", "Collections\test\0\Teronis.NetStandard.Collections.Test.csproj", "{5258C5AD-6FE6-42A0-8D2E-3F34A82FFEFF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections.Synchronization.Example", "Synchronization\example\Teronis.NetStandard.Collections.Synchronization.Example.csproj", "{920AD94F-31C0-4A17-B744-6482BE237B91}"
 EndProject

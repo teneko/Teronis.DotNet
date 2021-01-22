@@ -1,23 +1,48 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using Teronis.Collections.Algorithms.Algorithms;
+using Teronis.Collections.Algorithms.Modifications;
 using Teronis.Extensions;
 
-namespace Teronis.NetStandard.Collections.Algorithms.Test
+namespace Teronis.Collections.Synchronization
 {
-    public class SynchronizableCollection<T> : List<T>
-        where T : notnull
+    public class SynchronizableCollection<ItemType> : List<ItemType>, ISynchronizableCollection<ItemType>
+        where ItemType : notnull
     {
-        public SynchronizableCollection(IEnumerable<T> collection)
-            : base(collection) { }
+        public ICollectionSynchronizationMethod<ItemType> SynchronizationMethod { get; }
 
-        public void SynchronizeCollection(IEnumerable<T> enumerable, bool consumeInitially)
+        public SynchronizableCollection()
+            : base() =>
+            SynchronizationMethod = CollectionSynchronizationMethod.Sequential<ItemType>();
+
+        public SynchronizableCollection(IEnumerable<ItemType> collection)
+            : base(collection) =>
+            SynchronizationMethod = CollectionSynchronizationMethod.Sequential<ItemType>();
+
+        public SynchronizableCollection(int capacity)
+            : base(capacity) =>
+            SynchronizationMethod = CollectionSynchronizationMethod.Sequential<ItemType>();
+
+        public SynchronizableCollection(ICollectionSynchronizationMethod<ItemType> synchronizationMethod)
+            : base() =>
+            SynchronizationMethod = synchronizationMethod;
+
+        public SynchronizableCollection(ICollectionSynchronizationMethod<ItemType> synchronizationMethod, IEnumerable<ItemType> collection)
+            : base(collection) =>
+            SynchronizationMethod = synchronizationMethod;
+
+        public SynchronizableCollection(ICollectionSynchronizationMethod<ItemType> synchronizationMethod, int capacity)
+            : base(capacity) =>
+            SynchronizationMethod = synchronizationMethod;
+
+        internal void SynchronizeCollection(IEnumerable<ItemType> leftItems, IEnumerable<ItemType>? rightItems, CollectionModificationsYieldCapabilities yieldCapabilities, bool consumeModifications)
         {
-            var modifications = EqualityTrailingCollectionModifications.YieldCollectionModifications(this, enumerable);
+            leftItems = leftItems ?? throw new ArgumentNullException(nameof(leftItems));
+            var modifications = SynchronizationMethod.YieldCollectionModifications(leftItems, rightItems, yieldCapabilities);
 
-            if (consumeInitially) {
-                modifications = modifications.ToList();  
+            if (consumeModifications) {
+                modifications = modifications.ToList();
             }
 
             foreach (var modification in modifications) {
@@ -59,7 +84,25 @@ namespace Teronis.NetStandard.Collections.Algorithms.Test
             }
         }
 
-        public void SynchronizeCollection(IEnumerable<T> enumerable) =>
-            SynchronizeCollection(enumerable, consumeInitially: false);
+        internal void SynchronizeCollection(IEnumerable<ItemType>? enumerable, CollectionModificationsYieldCapabilities yieldCapabilities, bool consumeModifications) =>
+            SynchronizeCollection(
+                consumeModifications
+                ? (IReadOnlyList<ItemType>)this
+                : this.AsIReadOnlyList().ToYieldIteratorInfluencedReadOnlyList(),
+                enumerable,
+                yieldCapabilities,
+                consumeModifications);
+
+        internal void SynchronizeCollection(IEnumerable<ItemType>? enumerable, bool consumeModifications) =>
+            SynchronizeCollection(enumerable, CollectionModificationsYieldCapabilities.All, consumeModifications);
+
+        internal void SynchronizeCollection(IEnumerable<ItemType>? enumerable, CollectionModificationsYieldCapabilities yieldCapabilities) =>
+            SynchronizeCollection(enumerable, yieldCapabilities, consumeModifications: false);
+
+        public void SynchronizeCollection(IEnumerable<ItemType>? enumerable) =>
+            SynchronizeCollection(enumerable, consumeModifications: false);
+
+        public void SynchronizeInsertables(IEnumerable<ItemType>? enumerable) =>
+            SynchronizeCollection(enumerable, CollectionModificationsYieldCapabilities.Insert, consumeModifications: false);
     }
 }

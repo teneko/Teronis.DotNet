@@ -8,12 +8,23 @@ namespace Teronis.Collections.Specialized
 {
     public class IndexDirectory
     {
-        public int Count => entryLists.Count;
+        public int Count => virtualizableLength;
+        public LastIndexDirectoryEntry LastIndexEntry {get;}
 
         private List<List<IndexDirectoryEntry>?> entryLists;
+        private int virtualizableLength;
 
-        public IndexDirectory() =>
+        public IndexDirectory()
+        {
             entryLists = new List<List<IndexDirectoryEntry>?>();
+            LastIndexEntry = new LastIndexDirectoryEntry(this);
+        }
+
+        public IndexDirectory(int capacity)
+        {
+            entryLists = new List<List<IndexDirectoryEntry>?>(capacity);
+            LastIndexEntry = new LastIndexDirectoryEntry(this);
+        }
 
         private List<IndexDirectoryEntry> prepareListAt(int index)
         {
@@ -23,7 +34,7 @@ namespace Teronis.Collections.Specialized
                 entryList = entryLists[index];
             } else {
                 var lastIndex = entryLists.Count - 1;
-                
+
                 do {
                     entryList = null;
                     entryLists.Add(entryList);
@@ -36,14 +47,21 @@ namespace Teronis.Collections.Specialized
                 entryLists[index] = entryList;
             }
 
+            if (entryLists.Count > virtualizableLength) {
+                virtualizableLength = entryLists.Count;
+            }
+
             return entryList;
         }
 
-        public void Expand(int toIndex) {
-            var newCount = entryLists.Count + toIndex;
-
-            for (int index = entryLists.Count; index <= newCount; index++) {
-                entryLists.Add(null);
+        /// <summary>
+        /// Expands the index directory.
+        /// </summary>
+        /// <param name="toIndex">The index to be used to expand index directory.</param>
+        public void Expand(int toIndex)
+        {
+            if (toIndex >= virtualizableLength) {
+                virtualizableLength = toIndex + 1;
             }
         }
 
@@ -80,6 +98,12 @@ namespace Teronis.Collections.Specialized
         public IndexDirectoryEntry Add(int index) =>
             Add(index, IndexDirectoryEntryMode.Normal);
 
+        public IndexDirectoryEntry Add(IndexDirectoryEntryMode mode) =>
+            Add(virtualizableLength, mode);
+
+        public IndexDirectoryEntry Add() =>
+            Add(IndexDirectoryEntryMode.Normal);
+
         /// <summary>
         /// Inserts <paramref name="index"/> between <paramref name="index"/> - 1
         /// and <paramref name="index"/> and will cause to move existing indexes at
@@ -89,7 +113,7 @@ namespace Teronis.Collections.Specialized
         /// <returns>The index entry.</returns>
         public IndexDirectoryEntry Insert(int index, IndexDirectoryEntryMode mode = IndexDirectoryEntryMode.Normal)
         {
-            var entryListsCount = entryLists.Count;
+            var entryListsCount = virtualizableLength;
 
             if (index >= entryListsCount) {
                 return Add(index, mode);
@@ -98,6 +122,7 @@ namespace Teronis.Collections.Specialized
             var newLastIndex = entryListsCount;
             var indexEntry = new IndexDirectoryEntry(index, mode);
             entryLists.Insert(index, new List<IndexDirectoryEntry>() { indexEntry });
+            virtualizableLength++;
 
             do {
                 var entryList = entryLists[newLastIndex];
@@ -115,37 +140,21 @@ namespace Teronis.Collections.Specialized
         }
 
         /// <summary>
-        /// 
+        /// Removes index at <paramref name="index"/>.
         /// </summary>
-        /// <param name="indexEntry"></param>
-        /// <returns></returns>
-        public bool RemoveEntry(IndexDirectoryEntry indexEntry)
-        {
-            if (indexEntry.Index >= entryLists.Count) {
-                throw new ArgumentOutOfRangeException(nameof(indexEntry));
-            }
-
-            var entryList = entryLists[indexEntry.Index];
-
-            if (entryList is null) {
-                return false;
-            }
-
-            var success = entryList.Remove(indexEntry);
-
-            if (entryList.Count == 0) {
-                Remove(indexEntry.Index);
-            }
-
-            return success;
-        }
-
+        /// <param name="index"></param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is smaller than zero greater than <see cref="Count"/>.</exception>
         public void Remove(int index)
         {
-            var entryListsCount = entryLists.Count;
+            var entryListsCount = virtualizableLength;
 
-            if (index >= entryListsCount) {
+            if (index < 0 || index >= virtualizableLength) {
                 throw new ArgumentOutOfRangeException(nameof(index));
+            }
+
+            if (index >= entryLists.Count) {
+                virtualizableLength--;
+                return;
             }
 
             int nextIndex = index + 1;
@@ -165,6 +174,33 @@ namespace Teronis.Collections.Specialized
             }
 
             entryLists.RemoveAt(index);
+            virtualizableLength--;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="indexEntry"></param>
+        /// <returns></returns>
+        public bool RemoveEntry(IndexDirectoryEntry indexEntry)
+        {
+            if (indexEntry.Index >= virtualizableLength) {
+                throw new ArgumentOutOfRangeException(nameof(indexEntry));
+            }
+
+            var entryList = entryLists[indexEntry.Index];
+
+            if (entryList is null) {
+                return false;
+            }
+
+            var success = entryList.Remove(indexEntry);
+
+            if (entryList.Count == 0) {
+                Remove(indexEntry.Index);
+            }
+
+            return success;
         }
 
         public void Move(int fromIndex, int toIndex)
@@ -173,11 +209,11 @@ namespace Teronis.Collections.Specialized
                 return;
             }
 
-            if (fromIndex < 0 || fromIndex >= entryLists.Count) {
+            if (fromIndex < 0 || fromIndex >= virtualizableLength) {
                 new ArgumentOutOfRangeException(nameof(fromIndex));
             }
 
-            if (toIndex < 0 || toIndex >= entryLists.Count) {
+            if (toIndex < 0 || toIndex >= virtualizableLength) {
                 new ArgumentOutOfRangeException(nameof(toIndex));
             }
 
@@ -289,11 +325,10 @@ namespace Teronis.Collections.Specialized
         }
 
         /// <summary>
-        /// Removes all null and empty lists that are containing 
-        /// the <see cref="IndexDirectoryEntry"/> at the end of
-        /// this directory.
+        /// Removes all null and empty lists at the end of
+        /// this index directory.
         /// </summary>
-        public void TrimExcess()
+        public void TrimEnd()
         {
             var entryListsCount = entryLists.Count;
             var lastIndex = entryListsCount;
@@ -307,6 +342,8 @@ namespace Teronis.Collections.Specialized
                     break;
                 }
             }
+
+            virtualizableLength = lastIndex;
 
             if (lastIndex >= entryListsCount) {
                 return;
@@ -331,8 +368,21 @@ namespace Teronis.Collections.Specialized
             Mode = mode;
         }
 
-        public static implicit operator int(IndexDirectoryEntry indexEntry) =>
-            indexEntry.Index;
+        public static implicit operator int(IndexDirectoryEntry entry) =>
+            entry.Index;
+    }
+
+    public sealed class LastIndexDirectoryEntry
+    {
+        public int Index => indexDirectory.Count - 1;
+
+        private readonly IndexDirectory indexDirectory;
+
+        internal LastIndexDirectoryEntry(IndexDirectory indexDirectory) => 
+            this.indexDirectory = indexDirectory;
+
+        public static implicit operator int(LastIndexDirectoryEntry entry) =>
+            entry.Index;
     }
 
     public enum IndexDirectoryEntryMode
@@ -343,6 +393,6 @@ namespace Teronis.Collections.Specialized
         /// but other moving indexes increases own index always by one only
         /// if they cross own index.
         /// </summary>
-        Floating,
+        Floating
     }
 }

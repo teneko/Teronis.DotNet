@@ -8,7 +8,7 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollectio
     /// It holds an observable collection of <see cref="DeviceHeaderSyntheticEntity"/>. Its purpose
     /// is to have a long running synced collection of <see cref="DeviceHeaderSyntheticEntity"/>.
     /// </summary>
-    public class DeviceHeaderCollectionSynchronisation : SyncingCollectionViewModel<DeviceHeaderViewModel, DeviceHeaderEntity>
+    public class DeviceHeaderCollectionSynchronization : SyncingCollectionViewModel<DeviceHeaderViewModel, DeviceHeaderEntity>
     {
         public DeviceHeaderViewModel SelectedItem { get; set; }
 
@@ -16,7 +16,7 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollectio
         private readonly AddRemoveResetBehaviourForCollectionItemByAddRemoveParents<DeviceHeaderViewModel, DeviceHeaderEntity> collectionItemParentsBehaviour;
 #pragma warning restore IDE0052 // Ungelesene private Member entfernen
 
-        public DeviceHeaderCollectionSynchronisation()
+        public DeviceHeaderCollectionSynchronization()
             : base(CollectionSynchronizationMethod.Sequential(DeviceHeaderEntityEqualityComparer.Default))
         {
             collectionItemParentsBehaviour = new AddRemoveResetBehaviourForCollectionItemByAddRemoveParents<DeviceHeaderViewModel, DeviceHeaderEntity>(this);

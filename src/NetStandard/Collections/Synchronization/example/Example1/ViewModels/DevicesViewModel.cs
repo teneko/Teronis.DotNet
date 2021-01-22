@@ -7,16 +7,16 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels
 {
     public class DevicesViewModel : ViewModelBase
     {
-        public DeviceHeaderCollectionSynchronisation DeviceHeaderCollectionSynchronisation { get; private set; }
-        public DeviceCollectionSynchronisation DeviceCollectionSynchronisation { get; private set; }
+        public DeviceHeaderCollectionSynchronization DeviceHeaderCollectionSynchronization { get; private set; }
+        public DeviceCollectionSynchronization DeviceCollectionSynchronization { get; private set; }
 
         public DevicesViewModel()
         {
-            DeviceHeaderCollectionSynchronisation = new DeviceHeaderCollectionSynchronisation();
-            DeviceCollectionSynchronisation = new DeviceCollectionSynchronisation(DeviceHeaderCollectionSynchronisation);
+            DeviceHeaderCollectionSynchronization = new DeviceHeaderCollectionSynchronization();
+            DeviceCollectionSynchronization = new DeviceCollectionSynchronization(DeviceHeaderCollectionSynchronization);
         }
 
         public void UpdateDevices(IEnumerable<DeviceHeaderEntity> deviceHeaders) => 
-            DeviceHeaderCollectionSynchronisation.SynchronizeCollection(deviceHeaders);
+            DeviceHeaderCollectionSynchronization.SynchronizeCollection(deviceHeaders);
     }
 }

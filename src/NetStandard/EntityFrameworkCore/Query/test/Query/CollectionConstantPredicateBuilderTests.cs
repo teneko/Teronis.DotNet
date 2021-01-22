@@ -13,7 +13,7 @@ using Xunit;
 
 namespace Teronis.NetStandard.EntityFrameworkCore.Query.Test
 {
-    public class CollectionConstantPredicateBuilderTest
+    public class CollectionConstantPredicateBuilderTests
     {
         public const string FirstChildName = "Child 1";
         public const string SecondChildName = "Child 2";

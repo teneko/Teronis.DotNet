@@ -1,4 +1,4 @@
-﻿using Teronis.Collections.Algorithms;
+﻿using Teronis.Collections.Algorithms.Modifications;
 using Teronis.Collections.Synchronization.Extensions;
 
 namespace Teronis.Collections.Synchronization.Strategies

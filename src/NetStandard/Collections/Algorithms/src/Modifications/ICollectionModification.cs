@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Specialized;
 
-namespace Teronis.Collections.Algorithms
+namespace Teronis.Collections.Algorithms.Modifications
 {
     public interface ICollectionModification<out OldItemType, out NewItemType>
     {

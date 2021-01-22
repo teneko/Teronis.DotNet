@@ -3,11 +3,11 @@ using Xunit;
 
 namespace Teronis.Collections.Specialized
 {
-    public class IndexDirectoryTest : IDisposable
+    public class IndexDirectoryTests : IDisposable
     {
         IndexDirectory indexDirectory;
 
-        public IndexDirectoryTest() =>
+        public IndexDirectoryTests() =>
             indexDirectory = new IndexDirectory();
 
         public void Dispose() =>
@@ -170,7 +170,7 @@ namespace Teronis.Collections.Specialized
             indexDirectory.Expand(10);
             Assert.Equal(11, indexDirectory.Count);
 
-            indexDirectory.TrimExcess();
+            indexDirectory.TrimEnd();
             Assert.Equal(0, indexDirectory.Count);
         }
     }

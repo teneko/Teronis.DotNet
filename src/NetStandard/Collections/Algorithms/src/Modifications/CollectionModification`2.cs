@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Teronis.Diagnostics;
 
-namespace Teronis.Collections.Algorithms
+namespace Teronis.Collections.Algorithms.Modifications
 {
     [DebuggerDisplay(IDebuggerDisplayLibrary.FullGetDebuggerDisplayMethodPathWithParameterizedThis)]
     public class CollectionModification<OldItemType, NewItemType> : ICollectionModification<OldItemType, NewItemType>, IDebuggerDisplay, ICollectionModificationParameters
@@ -65,19 +65,20 @@ namespace Teronis.Collections.Algorithms
             NewItem
         }
 
-        
+
         public abstract class CollectionModificationPartBase<ItemType, OtherItemType> : ICollectionModificationPart<OldItemType, NewItemType, ItemType, OtherItemType>
         {
             public ICollectionModification<OldItemType, NewItemType> Owner { get; }
 
-            public ICollectionModificationPart<OldItemType, NewItemType, OtherItemType, ItemType> OtherPart => 
-                ReferenceEquals(this, Owner.OldPart) ? (ICollectionModificationPart<OldItemType, NewItemType, OtherItemType, ItemType>)Owner.NewPart : 
+            public ICollectionModificationPart<OldItemType, NewItemType, OtherItemType, ItemType> OtherPart =>
+                ReferenceEquals(this, Owner.OldPart) ? (ICollectionModificationPart<OldItemType, NewItemType, OtherItemType, ItemType>)Owner.NewPart :
                 (ICollectionModificationPart<OldItemType, NewItemType, OtherItemType, ItemType>)Owner.OldPart;
 
             public abstract IReadOnlyList<ItemType>? Items { get; }
             public abstract int Index { get; }
 
-            public CollectionModificationPartBase(ICollectionModification<OldItemType, NewItemType> modification) {
+            public CollectionModificationPartBase(ICollectionModification<OldItemType, NewItemType> modification)
+            {
                 Owner = modification;
             }
         }
@@ -88,7 +89,7 @@ namespace Teronis.Collections.Algorithms
             public override IReadOnlyList<ItemType>? Items { get; }
             public override int Index { get; }
 
-            public CollectionModificationPart(CollectionModification<OldItemType, NewItemType> modification, 
+            public CollectionModificationPart(CollectionModification<OldItemType, NewItemType> modification,
                 PartialCollectionChangeItemState itemState, IReadOnlyList<ItemType>? items, int index)
                 : base(modification)
             {

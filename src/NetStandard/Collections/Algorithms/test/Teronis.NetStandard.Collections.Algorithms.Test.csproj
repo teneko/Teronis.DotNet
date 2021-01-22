@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Teronis.Collections.Algorithms.Test</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

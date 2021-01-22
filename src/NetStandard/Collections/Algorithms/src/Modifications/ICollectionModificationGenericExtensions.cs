@@ -6,7 +6,7 @@ using Teronis.Collections.ObjectModel;
 using Teronis.Extensions;
 using Teronis.Utils;
 
-namespace Teronis.Collections.Algorithms
+namespace Teronis.Collections.Algorithms.Modifications
 {
     public static class ICollectionModificationGenericExtensions
     {
@@ -108,7 +108,7 @@ namespace Teronis.Collections.Algorithms
         {
             var oldItemReadOnlyCollection = modification.OldItems is null ? null : new ReadOnlyList<ItemType>(modification.OldItems);
             var newItemReadOnlyCollection = modification.NewItems is null ? null : new ReadOnlyList<ItemType>(modification.NewItems);
-            
+
             return NotifyCollectionChangedEventArgsUtils.CreateNotifyCollectionChangedEventArgs(
                 modification.Action,
                 oldItemReadOnlyCollection,

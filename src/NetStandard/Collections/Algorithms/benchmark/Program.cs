@@ -4,7 +4,7 @@ using System.Linq;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using Teronis.Collections.Algorithms;
-using Teronis.Collections.Algorithms.Algorithms;
+using Teronis.Collections.Algorithms.Modifications;
 
 namespace Teronis.NetStandard.Collections.Algorithms.Benchmark
 {

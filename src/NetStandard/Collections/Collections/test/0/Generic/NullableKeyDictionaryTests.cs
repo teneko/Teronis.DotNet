@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Teronis.Collections.Generic
 {
-    public class NullableKeyDictionaryTest
+    public class NullableKeyDictionaryTests
     {
         [Fact]
         public void Add_and_remove_test()

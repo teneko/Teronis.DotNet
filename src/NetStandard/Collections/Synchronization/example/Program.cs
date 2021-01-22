@@ -10,8 +10,8 @@ namespace Teronis.Collections.Synchronization
     {
         static async Task Main()
         {
-            int[] list, list2;
-            List<CollectionModification<int, int>> modifications;
+            //int[] list, list2;
+            //List<CollectionModification<int, int>> modifications;
 
             //list = new int[] { 5, 6, 4 };
             //list2 = new int[] { 4, 3, 5 };
@@ -133,15 +133,15 @@ namespace Teronis.Collections.Synchronization
             //    //new DeviceHeaderEntity() { Serial = "3", State = new DeviceHeaderStateEntity() { IsFactory = true } },
             //};
 
-            //var test = devicesViewModel.DeviceHeaderCollectionSynchronisation.SubItems.CreateKeyedItemIndexTracker(item => item.Header.Serial);
+            //var test = devicesViewModel.DeviceHeaderCollectionSynchronization.SubItems.CreateKeyedItemIndexTracker(item => item.Header.Serial);
 
             //devicesViewModel.UpdateDevices(initialDeviceHeaders);
             //devicesViewModel.UpdateDevices(deviceHeaders);
-            ////var deviceHeaderModifications = devicesViewModel.DeviceHeaderCollectionSynchronisation.SuperItems.GetCollectionModifications(deviceHeaders, DeviceHeaderEntityEqualityComparer.Default).ToList();
+            ////var deviceHeaderModifications = devicesViewModel.DeviceHeaderCollectionSynchronization.SuperItems.GetCollectionModifications(deviceHeaders, DeviceHeaderEntityEqualityComparer.Default).ToList();
 
             ////;
 
-            //devicesViewModel.DeviceHeaderCollectionSynchronisation.SelectedItem = devicesViewModel.DeviceHeaderCollectionSynchronisation.SubItems[0];
+            //devicesViewModel.DeviceHeaderCollectionSynchronization.SelectedItem = devicesViewModel.DeviceHeaderCollectionSynchronization.SubItems[0];
 
             //;
         }

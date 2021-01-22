@@ -47,20 +47,20 @@ namespace Teronis.Collections.Synchronization
 
         public SubItemCollection SubItems => subItems;
         public SuperItemCollection SuperItems => superItems;
+        public ICollectionSynchronizationMethod<SuperItemType> SynchronizationMethod { get; }
 
         private readonly SubItemCollection subItems;
         private readonly SuperItemCollection superItems;
-        private readonly CollectionSynchronizationMethod<SuperItemType> alignment;
 
-        public SyncingCollectionViewModel(CollectionSynchronizationMethod<SuperItemType> alignment)
+        public SyncingCollectionViewModel(ICollectionSynchronizationMethod<SuperItemType> synchronizationMethod)
         {
             /* Initialize collections. */
             subItems = new SubItemCollection(this);
             superItems = new SuperItemCollection(this);
-            this.alignment = alignment ?? throw new ArgumentNullException(nameof(alignment));
+            SynchronizationMethod = synchronizationMethod ?? throw new ArgumentNullException(nameof(synchronizationMethod));
         }
 
-        public SyncingCollectionViewModel() : this(CollectionSynchronizationMethod.Sequential(EqualityComparer<SuperItemType>.Default)) { }
+        public SyncingCollectionViewModel() : this(CollectionSynchronizationMethod.Sequential<SuperItemType>()) { }
 
         protected abstract SubItemType CreateSubItem(SuperItemType superItem);
 
@@ -72,9 +72,9 @@ namespace Teronis.Collections.Synchronization
         /// <typeparam name="ToBeImitatedCollectionType">The generic constraint that represents the to be imitated collection.</typeparam>
         /// <param name="toBeImitatedCollection">The foreign collection that is about to be imitated related to its modifications.</param>
         /// <returns>A collection synchronisation mirror.</returns>
-        public CollectionSynchronisationMirror<ToBeImitatedCollectionType> CreateCollectionSynchronisationMirror<ToBeImitatedCollectionType>(ToBeImitatedCollectionType toBeImitatedCollection)
+        public SynchronizationMirror<ToBeImitatedCollectionType> CreateSynchronizationMirror<ToBeImitatedCollectionType>(ToBeImitatedCollectionType toBeImitatedCollection)
             where ToBeImitatedCollectionType : INotifyCollectionSynchronizing<SuperItemType>, INotifyCollectionModified<SuperItemType>, INotifyCollectionSynchronized<SuperItemType> =>
-            new CollectionSynchronisationMirror<ToBeImitatedCollectionType>(this, toBeImitatedCollection);
+            new SynchronizationMirror<ToBeImitatedCollectionType>(this, toBeImitatedCollection);
 
         protected virtual void ApplyCollectionItemAdd(in ApplyingCollectionModificationBundle modificationBundle)
         {
@@ -233,7 +233,7 @@ namespace Teronis.Collections.Synchronization
         {
             OnCollectionSynchronizing();
 
-            foreach (var modification in alignment.YieldCollectionModifications(superItems, items)) {
+            foreach (var modification in SynchronizationMethod.YieldCollectionModifications(superItems, items)) {
                 ApplyCollectionModification(modification);
             }
 

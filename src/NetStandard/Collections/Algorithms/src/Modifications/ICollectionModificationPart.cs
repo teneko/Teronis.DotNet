@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Teronis.Collections.Algorithms
+namespace Teronis.Collections.Algorithms.Modifications
 {
     public interface ICollectionModificationPart<out OldItemType, out NewItemType, out ItemType, out OtherItemType>
     {

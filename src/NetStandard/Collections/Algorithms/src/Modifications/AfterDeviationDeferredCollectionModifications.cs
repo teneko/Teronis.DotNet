@@ -9,7 +9,7 @@ using Teronis.Collections.ObjectModel;
 using Teronis.Collections.Specialized;
 using Teronis.Diagnostics;
 
-namespace Teronis.Collections.Algorithms.Algorithms
+namespace Teronis.Collections.Algorithms.Modifications
 {
     /// <summary>
     /// The algorithm creates modifications that can transform one collection into another collection.
@@ -43,7 +43,6 @@ namespace Teronis.Collections.Algorithms.Algorithms
             Func<RightItemType, ComparablePartType> getComparablePartOfRightItem,
             IEqualityComparer<ComparablePartType> equalityComparer)
         {
-            equalityComparer ??= EqualityComparer<ComparablePartType>.Default;
             var comparablePartEqualityComparer = new CommonValueContainerEqualityComparer<ComparablePartType>(equalityComparer);
             var leftItemEnumerator = leftItems.GetEnumerator();
             var rightItemEnumerator = rightItems.GetEnumerator();

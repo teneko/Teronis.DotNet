@@ -1,6 +1,6 @@
 ﻿using System.Collections.Specialized;
 
-namespace Teronis.Collections.Algorithms
+namespace Teronis.Collections.Algorithms.Modifications
 {
     public interface ICollectionModificationParameters
     {

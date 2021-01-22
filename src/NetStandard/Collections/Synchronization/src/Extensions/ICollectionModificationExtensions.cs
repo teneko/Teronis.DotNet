@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using Teronis.Collections.Algorithms;
+using Teronis.Collections.Algorithms.Modifications;
 
 namespace Teronis.Collections.Synchronization.Extensions
 {

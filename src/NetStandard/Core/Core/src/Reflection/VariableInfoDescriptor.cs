@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.ComponentModel;
 
 namespace Teronis.Reflection
 {
-    public sealed class VariableInfoDescriptor : INotifyPropertyChanging
+    public sealed class VariableInfoDescriptor
     {
-#pragma warning disable 0067
-        public event PropertyChangingEventHandler? PropertyChanging;
-#pragma warning restore 0067
-
         /// <summary>
         /// A combination of <see cref="BindingFlags.Instance"/> and <see cref="BindingFlags.Public"/>.
         /// </summary>
@@ -19,16 +14,97 @@ namespace Teronis.Reflection
         /// <summary>
         /// Has the value of <see cref="DefaultFlags"/> by default.
         /// </summary>
-        public BindingFlags Flags { get; set; }
-        public bool ExcludeIfReadable { get; set; }
-        public bool ExcludeIfWritable { get; set; }
-        public bool IncludeIfReadable { get; set; }
-        public bool IncludeIfWritable { get; set; }
-        public IEnumerable<Type>? ExcludeByAttributeTypes { get; set; }
-        public bool ExcludeByAttributeTypesInherit { get; set; }
-        public IEnumerable<Type>? IncludeByAttributeTypes { get; set; }
-        public bool IncludeByAttributeTypesInherit { get; set; }
+        public BindingFlags Flags {
+            get => flags;
+
+            set {
+                throwExceptionIfSealed();
+                flags = value;
+            }
+        }
+        public bool ExcludeIfReadable {
+            get => excludeIfReadable;
+
+            set {
+                throwExceptionIfSealed();
+                excludeIfReadable = value;
+            }
+        }
+
+        public bool ExcludeIfWritable {
+            get => excludeIfWritable;
+
+            set {
+                throwExceptionIfSealed();
+                excludeIfWritable = value;
+            }
+        }
+
+        public bool IncludeIfReadable {
+            get => includeIfReadable;
+
+            set {
+                throwExceptionIfSealed();
+                includeIfReadable = value;
+            }
+        }
+
+        public bool IncludeIfWritable {
+            get => includeIfWritable;
+
+            set {
+                throwExceptionIfSealed();
+                includeIfWritable = value;
+            }
+        }
+
+        public IEnumerable<Type>? ExcludeByAttributeTypes {
+            get => excludeByAttributeTypes;
+
+            set {
+                throwExceptionIfSealed();
+                excludeByAttributeTypes = value;
+            }
+        }
+
+        public bool ExcludeByAttributeTypesInherit {
+            get => excludeByAttributeTypesInherit;
+
+            set {
+                throwExceptionIfSealed();
+                excludeByAttributeTypesInherit = value;
+            }
+        }
+
+        public IEnumerable<Type>? IncludeByAttributeTypes {
+            get => includeByAttributeTypes;
+
+            set {
+                throwExceptionIfSealed();
+                includeByAttributeTypes = value;
+            }
+        }
+
+        public bool IncludeByAttributeTypesInherit {
+            get => includeByAttributeTypesInherit;
+
+            set {
+                throwExceptionIfSealed();
+                includeByAttributeTypesInherit = value;
+            }
+        }
+
         public bool IsSealed { get; private set; }
+
+        private BindingFlags flags;
+        private bool excludeIfReadable;
+        private bool excludeIfWritable;
+        private bool includeIfReadable;
+        private bool includeIfWritable;
+        private IEnumerable<Type>? excludeByAttributeTypes;
+        private bool excludeByAttributeTypesInherit;
+        private IEnumerable<Type>? includeByAttributeTypes;
+        private bool includeByAttributeTypesInherit;
 
         public VariableInfoDescriptor()
         {
@@ -59,14 +135,9 @@ namespace Teronis.Reflection
 
         private void throwExceptionIfSealed()
         {
-            if (IsSealed)
-                throw new Exception("This instance is already sealed");
-        }
-
-        private void OnPropertyChanging(string propertyName)
-        {
-            throwExceptionIfSealed();
-            PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(propertyName));
+            if (IsSealed) {
+                throw new Exception("This instance has been sealed is not intented to be changed any further.");
+            }
         }
 
         public void Seal() => IsSealed = true;

@@ -18,8 +18,9 @@ namespace Teronis.Extensions
         /// is null.</see>
         public static Bitmap RotateImage(this Image image, PointF offset, float angle)
         {
-            if (image == null)
+            if (image == null) {
                 throw new ArgumentNullException("image");
+            }
 
             //create a new empty bitmap to hold rotated image
             var rotatedBmp = new Bitmap(image.Width, image.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
@@ -36,14 +37,14 @@ namespace Teronis.Extensions
             g.DrawImage(image, new PointF(0, 0));
             return rotatedBmp;
         }
-        
+
         /// <summary>
-         /// Resize the image to the specified width and height.
-         /// </summary>
-         /// <param name="image">The image to resize.</param>
-         /// <param name="width">The width to resize to.</param>
-         /// <param name="height">The height to resize to.</param>
-         /// <returns>The resized image.</returns>
+        /// Resize the image to the specified width and height.
+        /// </summary>
+        /// <param name="image">The image to resize.</param>
+        /// <param name="width">The width to resize to.</param>
+        /// <param name="height">The height to resize to.</param>
+        /// <returns>The resized image.</returns>
         public static Bitmap ResizeImage(this Image image, int width, int height)
         {
             var destRect = new Rectangle(0, 0, width, height);
@@ -58,10 +59,9 @@ namespace Teronis.Extensions
                 graphics.SmoothingMode = SmoothingMode.HighQuality;
                 graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-                using (var wrapMode = new ImageAttributes()) {
-                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
-                }
+                using var wrapMode = new ImageAttributes();
+                wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
             }
 
             return destImage;

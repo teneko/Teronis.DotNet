@@ -1,0 +1,12 @@
+﻿<Project>
+
+  <PropertyGroup>
+    <TeronisMSBuildPackagingPackTargetsHasBeenImported>true</TeronisMSBuildPackagingPackTargetsHasBeenImported>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).props" Condition="'$(TeronisMSBuildPackagingPackPropsHasBeenImported)' != 'true'"/>
+  <Import Project="$(MSBuildThisFileDirectory)Teronis.MSBuild.Packaging.PackDependency.targets" Condition="'$(TeronisMSBuildPackagingPackPackDependencyTargetsHasBeenImported)' != 'true'" />
+  <Import Project="$(MSBuildThisFileDirectory)Teronis.MSBuild.Packaging.PackExecutable.targets" Condition="'$(TeronisMSBuildPackagingPackPackExecutableTargetsHasBeenImported)' != 'true'" />
+  <Import Project="$(MSBuildThisFileDirectory)Teronis.MSBuild.Packaging.ShadowProject.targets" Condition="'$(TeronisMSBuildPackagingPackShadowProjectTargetsHasBeenImported)' != 'true'"/>
+
+</Project>

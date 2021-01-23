@@ -2,8 +2,8 @@
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
-using Teronis.Threading.Tasks;
 using Teronis.Extensions;
+using Teronis.Threading.Tasks;
 
 namespace Teronis.Diagnostics
 {
@@ -28,7 +28,7 @@ namespace Teronis.Diagnostics
                 StartInfo = processInfo,
             };
 
-            void _dettachHandlers()
+            void dettachHandlersDefinition()
             {
                 process.Exited -= onExited;
                 process.OutputDataReceived -= onOutputDataReceived;
@@ -36,7 +36,7 @@ namespace Teronis.Diagnostics
             }
 
             void onExited(object? sender, EventArgs e) =>
-                _dettachHandlers();
+                dettachHandlersDefinition();
 
             process.Exited += onExited;
 
@@ -57,19 +57,19 @@ namespace Teronis.Diagnostics
 
             process.ErrorDataReceived += onErrorDataReceived;
 
-            NonZeroExitCodeException _createNonZeroExitCodeException()
+            NonZeroExitCodeException createNonZeroExitCodeExceptionDefinition()
             {
                 var isErrorMessageBuilderEmpty = errorMessageBuilder.Length == 0;
 
-                var executionInfoText = ProcessStartInfoTools.GetExecutionInfoText(processInfo, commandEchoPrefix: commandEchoPrefix) +
+                var executionInfoText = ProcessStartInfoUtils.GetExecutionInfoText(processInfo, commandEchoPrefix: commandEchoPrefix) +
                     (isErrorMessageBuilderEmpty ? "" : Environment.NewLine);
 
                 errorMessageBuilder.Insert(0, executionInfoText);
                 return new NonZeroExitCodeException(process.ExitCode, errorMessageBuilder.ToString());
             }
 
-            dettachHandlers = _dettachHandlers;
-            createNonZeroExitCodeException = _createNonZeroExitCodeException;
+            dettachHandlers = dettachHandlersDefinition;
+            createNonZeroExitCodeException = createNonZeroExitCodeExceptionDefinition;
             return process;
         }
 

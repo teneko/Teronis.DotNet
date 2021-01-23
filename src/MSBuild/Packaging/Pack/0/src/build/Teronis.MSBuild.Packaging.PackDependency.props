@@ -1,0 +1,9 @@
+﻿<Project>
+
+  <PropertyGroup>
+    <TeronisMSBuildPackagingPackPackDependencyPropsHasBeenImported>true</TeronisMSBuildPackagingPackPackDependencyPropsHasBeenImported>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)Teronis.MSBuild.Packaging.Pack.Common.props" Condition="'$(TeronisMSBuildPackagingPackPackCommonPropsHasBeenImported)' != 'true'" />
+
+</Project>

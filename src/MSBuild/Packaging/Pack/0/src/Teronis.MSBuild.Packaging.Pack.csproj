@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.0</TargetFramework>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <Description>
+      An addition to NuGet.Build.Tasks.Pack that adds more package types beside of existing ones like DotNetCli and Dependency.
+      You just need to set-up PackSourceAs and PackageSourceReference and depending on scenario creating a synthetic project.
+
+      Commonly Used Package Types: Executable(Publish,Package), DependencyPublish
+    </Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="build\**\*.props;build\**\*.targets" Pack="true" PackagePath="build" />
+  </ItemGroup>
+
+</Project>

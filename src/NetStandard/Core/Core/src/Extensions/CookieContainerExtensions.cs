@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
-using Teronis.Tools;
+using Teronis.Utils;
 
 namespace Teronis.Extensions
 {
@@ -14,11 +14,9 @@ namespace Teronis.Extensions
             try {
                 var domainTableFieldName = "m_domainTable";
 
-                var domainTable = cookieContainer.GetType().InvokeMember("m_domainTable",
+                if (!(cookieContainer.GetType().InvokeMember("m_domainTable",
                     BindingFlags.NonPublic | BindingFlags.GetField | BindingFlags.Instance,
-                    null, cookieContainer, new object[] { }) as Hashtable;
-
-                if (domainTable is null) {
+                    null, cookieContainer, new object[] { }) is Hashtable domainTable)) {
                     throw new ArgumentNullException($"Field {domainTableFieldName} is not existing.");
                 }
 
@@ -73,19 +71,19 @@ namespace Teronis.Extensions
         {
             var domainTableFieldName = "m_domainTable";
             var bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-            var domainTable = ObjectTools.GetFieldValue<dynamic>(cookieContainer, domainTableFieldName, bindFlags);
+            var domainTable = ObjectUtils.GetFieldValue<dynamic>(cookieContainer, domainTableFieldName, bindFlags);
 
             if (domainTable is null) {
                 throw new ArgumentNullException($"Field {domainTableFieldName} is not existing.");
             }
 
             foreach (var entry in domainTable) {
-                string key = ObjectTools.GetPropertyValue<string>(entry, "Key");
+                string key = ObjectUtils.GetPropertyValue<string>(entry, "Key");
 
                 if (key.Contains(domain)) {
-                    var value = ObjectTools.GetPropertyValue<dynamic>(entry, "Value");
+                    var value = ObjectUtils.GetPropertyValue<dynamic>(entry, "Value");
 
-                    var internalList = ObjectTools.GetFieldValue<SortedList<string, CookieCollection>>(value, "_list", bindFlags);
+                    var internalList = ObjectUtils.GetFieldValue<SortedList<string, CookieCollection>>(value, "_list", bindFlags);
                     foreach (var li in internalList) {
                         if (li is null) {
                             continue;
@@ -106,9 +104,8 @@ namespace Teronis.Extensions
         public static IEnumerable<Cookie> GetAllCookies(this CookieContainer cookieContainer)
         {
             var domainTableFieldName = "m_domainTable";
-            var k = cookieContainer.GetType().GetField(domainTableFieldName, BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(cookieContainer) as Hashtable;
 
-            if (k is null) {
+            if (!(cookieContainer.GetType().GetField(domainTableFieldName, BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(cookieContainer) is Hashtable k)) {
                 throw new ArgumentNullException($"Field {domainTableFieldName} is not existing.");
             }
 
@@ -118,9 +115,8 @@ namespace Teronis.Extensions
                 }
 
                 var listFieldName = "m_list";
-                var l = element.Value.GetType().GetField(listFieldName, BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(element.Value) as SortedList;
 
-                if (l is null) {
+                if (!(element.Value.GetType().GetField(listFieldName, BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(element.Value) is SortedList l)) {
                     throw new ArgumentNullException($"Field {listFieldName} is not existing.");
                 }
 

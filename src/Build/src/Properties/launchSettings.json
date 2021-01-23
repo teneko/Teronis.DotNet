@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Teronis.Build": {
+      "commandName": "Project",
+      "commandLineArgs": "pack"
+    }
+  }
+}

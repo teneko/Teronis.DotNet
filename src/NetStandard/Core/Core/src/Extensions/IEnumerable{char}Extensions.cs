@@ -9,8 +9,9 @@ namespace Teronis.Extensions
         {
             var sb = new StringBuilder();
 
-            foreach (var c in source)
+            foreach (var c in source) {
                 sb.Append(c);
+            }
 
             return sb.ToString();
         }

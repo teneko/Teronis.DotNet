@@ -8,7 +8,7 @@ namespace Teronis.Reflection.Caching
     {
         public bool CanTrackProperty { get; set; }
 
-        public PropertyCachingEventArgs(string propertyName, [AllowNull]TProperty property)
+        public PropertyCachingEventArgs(string propertyName, [AllowNull] TProperty property)
             : base(propertyName, property)
             => CanTrackProperty = true;
     }

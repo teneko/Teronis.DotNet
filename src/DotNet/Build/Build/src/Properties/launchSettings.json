@@ -1,7 +1,0 @@
-{
-  "profiles": {
-    "Teronis.DotNet.Build": {
-      "commandName": "Project"
-    }
-  }
-}

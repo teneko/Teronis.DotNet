@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using Teronis.Tools;
 using Teronis.Reflection;
 
 namespace Teronis.Extensions
@@ -36,7 +35,7 @@ namespace Teronis.Extensions
         }
 
         public static IEnumerable<MemberInfo> GetPropertyMembers(this Type beginningType, Type interruptingBaseType, VariableInfoDescriptor? descriptor = null)
-            => ReflectionTools.GetMembers((_type, __settings) => GetPropertyMembers(_type, __settings), beginningType, interruptingBaseType, descriptor);
+            => TeronisReflectionUtils.GetMembers((_type, __settings) => GetPropertyMembers(_type, __settings), beginningType, interruptingBaseType, descriptor);
 
         // // ATTRIBUTES
 
@@ -57,7 +56,7 @@ namespace Teronis.Extensions
 
         public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributePropertyMembers<TAttribute>(this Type beginningType, Type? interruptingBaseType = null, VariableInfoDescriptor? descriptor = null, bool? getCustomAttributesInherit = null)
             where TAttribute : Attribute
-            => ReflectionTools.GetAttributeMembers<TAttribute>(GetPropertyMembers, beginningType, interruptingBaseType, descriptor, getCustomAttributesInherit);
+            => TeronisReflectionUtils.GetAttributeMembers<TAttribute>(GetPropertyMembers, beginningType, interruptingBaseType, descriptor, getCustomAttributesInherit);
 
         // NON-TYPED
 
@@ -74,7 +73,7 @@ namespace Teronis.Extensions
         }
 
         public static IEnumerable<AttributeMemberInfo> GetAttributePropertyMembers(this Type beginningType, Type attributeType, Type? interruptingBaseType = null, VariableInfoDescriptor? descriptor = null, bool? getCustomAttributesInherit = null)
-            => ReflectionTools.GetAttributeMembers(attributeType, GetPropertyMembers, beginningType, interruptingBaseType, descriptor, getCustomAttributesInherit);
+            => TeronisReflectionUtils.GetAttributeMembers(attributeType, GetPropertyMembers, beginningType, interruptingBaseType, descriptor, getCustomAttributesInherit);
 
         #endregion
 
@@ -104,7 +103,7 @@ namespace Teronis.Extensions
         }
 
         public static IEnumerable<MemberInfo> GetFieldMembers(this Type beginningType, Type interruptingBaseType, VariableInfoDescriptor? descriptor = null)
-            => ReflectionTools.GetMembers((_type, __settings) => GetFieldMembers(_type, __settings), beginningType, interruptingBaseType, descriptor);
+            => TeronisReflectionUtils.GetMembers((_type, __settings) => GetFieldMembers(_type, __settings), beginningType, interruptingBaseType, descriptor);
 
         // // ATTRIBUTES
 
@@ -126,7 +125,7 @@ namespace Teronis.Extensions
 
         public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeFieldMembers<TAttribute>(this Type beginningType, Type? interruptingBaseType = null, VariableInfoDescriptor? descriptor = null, bool? getCustomAttributesInherit = null)
             where TAttribute : Attribute
-            => ReflectionTools.GetAttributeMembers<TAttribute>(GetFieldMembers, beginningType, interruptingBaseType, descriptor, getCustomAttributesInherit);
+            => TeronisReflectionUtils.GetAttributeMembers<TAttribute>(GetFieldMembers, beginningType, interruptingBaseType, descriptor, getCustomAttributesInherit);
 
         // NON-TYPED
 
@@ -144,7 +143,7 @@ namespace Teronis.Extensions
         }
 
         public static IEnumerable<AttributeMemberInfo> GetAttributeFieldMembers(this Type beginningType, Type attributeType, Type? interruptingBaseType = null, VariableInfoDescriptor? descriptor = null, bool? getCustomAttributesInherit = null)
-            => ReflectionTools.GetAttributeMembers(attributeType, GetFieldMembers, beginningType, interruptingBaseType, descriptor, getCustomAttributesInherit);
+            => TeronisReflectionUtils.GetAttributeMembers(attributeType, GetFieldMembers, beginningType, interruptingBaseType, descriptor, getCustomAttributesInherit);
 
         #endregion
 
@@ -213,11 +212,13 @@ namespace Teronis.Extensions
         {
             descriptor = descriptor.DefaultIfNull(true);
 
-            foreach (var variable in GetAttributeFieldMembers<TAttribute>(beginningType, interruptingBaseType, descriptor, getCustomAttributesInherit))
+            foreach (var variable in GetAttributeFieldMembers<TAttribute>(beginningType, interruptingBaseType, descriptor, getCustomAttributesInherit)) {
                 yield return variable;
+            }
 
-            foreach (var variable in GetAttributePropertyMembers<TAttribute>(beginningType, interruptingBaseType, descriptor, getCustomAttributesInherit))
+            foreach (var variable in GetAttributePropertyMembers<TAttribute>(beginningType, interruptingBaseType, descriptor, getCustomAttributesInherit)) {
                 yield return variable;
+            }
         }
 
         // NON-TYPED
@@ -226,11 +227,13 @@ namespace Teronis.Extensions
         {
             descriptor = descriptor.DefaultIfNull(true);
 
-            foreach (var variable in GetAttributeFieldMembers(beginningType, attributeType, interruptingBaseType, descriptor, getCustomAttributesInherit))
+            foreach (var variable in GetAttributeFieldMembers(beginningType, attributeType, interruptingBaseType, descriptor, getCustomAttributesInherit)) {
                 yield return variable;
+            }
 
-            foreach (var variable in GetAttributePropertyMembers(beginningType, attributeType, interruptingBaseType, descriptor, getCustomAttributesInherit))
+            foreach (var variable in GetAttributePropertyMembers(beginningType, attributeType, interruptingBaseType, descriptor, getCustomAttributesInherit)) {
                 yield return variable;
+            }
         }
 
         // // // ORDERED
@@ -241,7 +244,7 @@ namespace Teronis.Extensions
 
         /// <returns>Returns null if passed attribute allows multiple declarations.</returns>
         public static AttributeMemberInfo<TAttribute>[]? TryGetOrderedAttributeMemberInfos<TAttribute>(this Type type, Type? interruptingBaseType = null, VariableInfoDescriptor? descriptor = null, bool? getCustomAttributesInherit = null)
-            where TAttribute : Attribute, IZeroBasedIndex
+            where TAttribute : Attribute, IZeroBasedNumbered
         {
             var customAttribute = typeof(TAttribute).GetCustomAttribute<AttributeUsageAttribute>();
 
@@ -252,8 +255,9 @@ namespace Teronis.Extensions
             var vars = GetAttributeVariableMembers<TAttribute>(type, interruptingBaseType, descriptor, getCustomAttributesInherit).ToList();
             var array = new AttributeMemberInfo<TAttribute>[vars.Count];
 
-            foreach (var variable in vars)
+            foreach (var variable in vars) {
                 array[variable.FirstAttribute().Index] = variable;
+            }
 
             return array;
         }

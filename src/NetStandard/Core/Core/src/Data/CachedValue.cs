@@ -10,9 +10,9 @@ namespace Teronis.Data
         [MaybeNull]
         public override T Value {
             get {
-                if (IsValueCached)
+                if (IsValueCached) {
                     return base.Value;
-                else {
+                } else {
                     var value = getValue();
                     base.Value = value;
                     IsValueCached = true;
@@ -21,9 +21,9 @@ namespace Teronis.Data
             }
         }
 
-        private Func<T> getValue;
+        private readonly Func<T> getValue;
 
-        public CachedValue(Func<T> getValue) 
+        public CachedValue(Func<T> getValue)
             : base(default) => this.getValue = getValue;
     }
 }

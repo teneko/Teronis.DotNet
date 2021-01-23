@@ -4,21 +4,23 @@
   <Import Condition="'$(IsMSBuildFileImported)' != 'true'" Project="$([MSBuild]::GetPathOfFileAbove(.msbuild))" />
   <Import Condition="'$(IsTeronisDotNetCorePropsFileImported)' != 'true'" Project="$(RootCorePropsPath)" />
   <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackagePropsFile)" />
+  <Import Project="$(TeronisMSBuildPackagingPackPropsFile)" Condition="Exists($(TeronisMSBuildPackagingPackPropsFile))" />
+
+  <Import Project="$(TeronisModuleInitializerAssemblyLoaderExecutablePropsFile)" Condition="Exists($(TeronisModuleInitializerAssemblyLoaderExecutablePropsFile))" />
+  <Import Project="$(TeronisModuleInitializerAssemblyLoaderMSBuildPropsFile)" />
 
   <PropertyGroup>
-    <!-- <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies> -->
-    <DisableGitVersionTaskAutoInstall>false</DisableGitVersionTaskAutoInstall>
-    <ProjectBuildInPackageVerbosity>detailed</ProjectBuildInPackageVerbosity>
+    <AssemblyName Condition="'$(AssemblyName)' == ''">$(MSBuildProjectName)</AssemblyName>
+    <Platforms Condition="'$(Platforms)' == ''">AnyCPU;x64;x86</Platforms>
+    <DebugSymbols Condition="'$(DebugSymbols)' == ''">true</DebugSymbols>
+    <DebugType Condition="'$(DebugType)' == ''">portable</DebugType>
+    <GeneratePackageOnBuild Condition="'$(GeneratePackageOnBuild)' == ''">false</GeneratePackageOnBuild>
+    <LangVersion Condition="'$(LangVersion)' == ''">8.0</LangVersion>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
-    <Platforms>AnyCPU;x64;x86</Platforms>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <LangVersion>8.0</LangVersion>
-  </PropertyGroup>
+  <ItemGroup>
+	  <Compile Include="$(MSBuildThisFileDirectory)/Nullable.cs" />
+  </ItemGroup>
 
   <PropertyGroup>
     <Authors Condition="'$(Authors)' == ''">Teroneko</Authors>
@@ -36,68 +38,9 @@
     This is useful if you generate files during the build .
     -->
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <!-- Source Link -->
-    <DebugType>portable</DebugType>
-    <DebugSymbols>true</DebugSymbols>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <NeutralLanguage Condition="'$(NeutralLanguage)' == ''">en</NeutralLanguage>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-  </PropertyGroup>
-
-  <PropertyGroup>
-  <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies>
- </PropertyGroup>
-
-  <PropertyGroup>
-
-    <IsTeronisProject>false</IsTeronisProject>
-    <IsTeronisProject Condition="$(MSBuildProjectName.StartsWith('Teronis.'))">true</IsTeronisProject>
-
-    <IsGitVersionCacheProject>false</IsGitVersionCacheProject>
-    <IsGitVersionCacheProject Condition="$(MSBuildProjectName.StartsWith('GitVersionCache.'))">true</IsGitVersionCacheProject>
-
-    <IsTestProject>false</IsTestProject>
-    <IsTestProject Condition="$(MSBuildProjectName.EndsWith('.Test')) Or $(MSBuildProjectName.StartsWith('Test.'))">true</IsTestProject>
-
-    <IsPackagePublishProject>false</IsPackagePublishProject>
-    <IsPackagePublishProject Condition="$(MSBuildProjectName.StartsWith('PackagePublish.'))">true</IsPackagePublishProject>
-
-    <IsLocalizationProject>false</IsLocalizationProject>
-    <IsLocalizationProject Condition="$(MSBuildProjectName.EndsWith('.Localization'))">true</IsLocalizationProject>
-
-    <IsExampleProject>false</IsExampleProject>
-    <IsExampleProject Condition="$(MSBuildProjectName.EndsWith('.Example'))">true</IsExampleProject>
-
-  </PropertyGroup>
-
-  <PropertyGroup Condition="$(IsLocalizationProject)">
-    <Description>Contains localization resources for assembly $(MSBuildProjectName.Replace('.Localization','')).</Description>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="$(IsTestProject)">
-    <_ProjectNameWithoutTest Condition="$(MSBuildProjectName.EndsWith('.Test'))">$(MSBuildProjectName.Replace('.Test','')</_ProjectNameWithoutTest>
-    <_ProjectNameWithoutTest Condition="$(MSBuildProjectName.StartsWith('Test.'))">$(MSBuildProjectName.Replace('Test.','Teronis')</_ProjectNameWithoutTest>
-    <Description>Contains test cases for assembly $(_ProjectNameWithoutTest).</Description>
-  </PropertyGroup>
-
-  <PropertyGroup>
-
-    <!-- https://docs.microsoft.com/de-de/dotnet/core/tools/csproj#ispackable -->
-    <IsPackable Condition="'$(IsPackable)' == ''
-      And ($(IsGitVersionCacheProject) 
-        Or $(IsTestProject) 
-        Or $(IsPackagePublishProject) 
-        Or $(IsLocalizationProject) 
-        Or $(IsExampleProject))">false</IsPackable>
-
-    <IsPackable Condition="'$(IsPackable)' == ''">true</IsPackable>
-
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <!-- GitVersionTask: NuGet does support SemVer 2.0 -->
-    <!-- Disabled because we use GitVersionCache. -->
-    <!-- <UseFullSemVerForNuGet>true</UseFullSemVerForNuGet> -->
   </PropertyGroup>
 
   <ItemGroup>
@@ -111,5 +54,131 @@
       <PackagePath></PackagePath>
     </None>
   </ItemGroup>
+
+  <PropertyGroup>
+    <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies>
+  </PropertyGroup>
+
+  <PropertyGroup>
+
+    <!-- <IsTeronisProject>false</IsTeronisProject>
+    <IsTeronisProject Condition="$(MSBuildProjectName.StartsWith('Teronis.'))">true</IsTeronisProject> -->
+
+    <IsGitVersionCacheProject>false</IsGitVersionCacheProject>
+    <IsGitVersionCacheProject Condition="$(MSBuildProjectName.StartsWith('GitVersionCache.'))">true</IsGitVersionCacheProject>
+
+    <IsTestProject>false</IsTestProject>
+    <IsTestProject Condition="$(MSBuildProjectName.EndsWith('.Test')) Or $(MSBuildProjectName.StartsWith('Test.'))">true</IsTestProject>
+
+    <IsLocalizationProject>false</IsLocalizationProject>
+    <IsLocalizationProject Condition="$(MSBuildProjectName.EndsWith('.Localization'))">true</IsLocalizationProject>
+
+    <IsExampleProject>false</IsExampleProject>
+    <IsExampleProject Condition="$(MSBuildProjectName.EndsWith('.Example'))">true</IsExampleProject>
+
+    <IsBenchmarkProject>false</IsBenchmarkProject>
+    <IsBenchmarkProject Condition="$(MSBuildProjectName.EndsWith('.Benchmark'))">true</IsBenchmarkProject>
+
+    <IsExecutablePackageProject>false</IsExecutablePackageProject>
+    <!--
+      If true, the project is a synthetic project. It is the package creation
+      replacement for the project specified by PackageSourceReference.
+
+      Firstly, the project specified by PackageSourceReference is published
+      to filesystem, then it gets special packed as executable. The package
+      inherits package name and package version from referenced project.
+    -->
+    <IsExecutablePackageProject Condition="$(MSBuildProjectName.StartsWith('ExecutablePackage.'))">true</IsExecutablePackageProject>
+
+    <IsDependencyPublishProject>false</IsDependencyPublishProject>
+    <!--
+      If true, the project is a synthetic project. It creates the filesystem
+      publishment for the project specified by PackageSourceReference.
+
+      We want to use the .props and .targets inside the project like
+      it would be when you installed the nuget packge, otherwise we
+      would have to separate path logic for local use in projects.
+    -->
+    <IsDependencyPublishProject Condition="$(MSBuildProjectName.StartsWith('DependencyPublish.'))">true</IsDependencyPublishProject>
+
+    <IsExecutablePublishProject>false</IsExecutablePublishProject>
+    <!--
+      If true, the project is a synthetic project. It creates the filesystem
+      publishment for the project specified by PackageSourceReference.
+
+      Firstly, the project specified by PackageSourceReference is published
+      to filesystem, then it gets special packed as executable. Finally the
+      package gets unzipped.
+
+      We want to use the .props and .targets inside the project like
+      it would be when you installed the nuget packge, otherwise we
+      would have to separate path logic for local use in projects.
+     -->
+    <IsExecutablePublishProject Condition="$(MSBuildProjectName.StartsWith('ExecutablePublish.'))">true</IsExecutablePublishProject>
+
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(IsLocalizationProject)">
+    <Description>Contains localization resources for assembly $(MSBuildProjectName.Replace('.Localization','')).</Description>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(IsTestProject)">
+    <!-- TODO: Refactor with .Substring(..) and .IndexOf(..). -->
+    <_ProjectNameWithoutTest Condition="$(MSBuildProjectName.EndsWith('.Test'))">$(MSBuildProjectName.Replace('.Test','')</_ProjectNameWithoutTest>
+    <_ProjectNameWithoutTest Condition="$(MSBuildProjectName.StartsWith('Test.'))">$(MSBuildProjectName.Replace('Test.','Teronis')</_ProjectNameWithoutTest>
+    <Description>Contains test cases for assembly $(_ProjectNameWithoutTest).</Description>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsGitVersionCacheRelated Condition="'$(IsGitVersionCacheRelated)' == ''
+      And ('$(IsGitVersionCacheProject)')">true</IsGitVersionCacheRelated>
+
+    <IsGitVersionCacheRelated Condition="'$(IsGitVersionCacheRelated)' == ''">false</IsGitVersionCacheRelated>
+
+    <!-- https://docs.microsoft.com/de-de/dotnet/core/tools/csproj#ispackable -->
+    <IsPackable Condition="'$(IsPackable)' == ''
+      And ($(IsGitVersionCacheRelated)
+        Or $(IsTestProject)
+        Or $(IsLocalizationProject)
+        Or $(IsExampleProject)
+        Or $(IsBenchmarkProject))">false</IsPackable>
+
+    <IsPackable Condition="'$(IsPackable)' == ''">true</IsPackable>
+
+    <DisableGitVersionCache Condition="$(IsExecutablePackageProject)
+      Or $(IsDependencyPublishProject)
+      Or $(IsExecutablePublishProject)">true</DisableGitVersionCache>
+
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IsGitVersionCacheRelated)' == 'true'">
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>None</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- GitVersionTask: NuGet does support SemVer 2.0. -->
+
+    <!-- Disabled because we use GitVersionCache. -->
+    <!-- <UseFullSemVerForNuGet>true</UseFullSemVerForNuGet> -->
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ProjectBuildInPackageVerbosity>detailed</ProjectBuildInPackageVerbosity>
+    <!-- The package name and package version are inherited from project specified in PackageSourceReference. -->
+    <PackSourceWhenPackingPublishTypedProjectMSBuildProperties>$(PackSourceWhenPackingPublishTypedProjectMSBuildProperties);DisableGitVersionCache=true</PackSourceWhenPackingPublishTypedProjectMSBuildProperties>
+  </PropertyGroup>
+
+  <!-- 
+    Belongs to Teronis.MSBuild.Pacakging.PackExecutable
+   -->
+  <PropertyGroup>
+    <PublishPackageOutputPath>$(PackagePublishmentsDirectory)$(MSBuildProjectName)</PublishPackageOutputPath>
+    <BeforeCollectPackageSourceContextualPackagePackRelatedProperties>GetVersionCacheWhenGettingPackageTypedExecutableSourceProperties;$(BeforeCollectPackageSourceContextualPackagePackRelatedProperties)</BeforeCollectPackageSourceContextualPackagePackRelatedProperties>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageSourceSyntheticProjectMSBuildProperties>$(PackageSourceSyntheticProjectMSBuildProperties);DisableGitVersionCache=true</PackageSourceSyntheticProjectMSBuildProperties>
+  </PropertyGroup>
 
 </Project>

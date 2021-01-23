@@ -8,7 +8,7 @@ namespace Teronis.Extensions
     {
         public const bool IgnoreZeroWhenCrushingContainingBits = false;
 
-        public static IEnumerable<EnumType> CrushContainingBitsToEnumerable<EnumType>(this EnumType enumValue, bool ignoreZero = IgnoreZeroWhenCrushingContainingBits) 
+        public static IEnumerable<EnumType> CrushContainingBitsToEnumerable<EnumType>(this EnumType enumValue, bool ignoreZero = IgnoreZeroWhenCrushingContainingBits)
             where EnumType : struct, IComparable, IFormattable, IConvertible
         {
             var enumValue2 = (Enum)(object)enumValue;
@@ -17,11 +17,13 @@ namespace Teronis.Extensions
             bool hasFlag(out EnumType enumValue3) =>
                 enumValue2.HasFlag((Enum)(object)(enumValue3 = (EnumType)enumerator.Current!));
 
-            if (enumerator.MoveNext() && !ignoreZero && hasFlag(out var enumValue4))
+            if (enumerator.MoveNext() && !ignoreZero && hasFlag(out var enumValue4)) {
                 yield return enumValue4;
+            }
 
-            while (enumerator.MoveNext() && hasFlag(out enumValue4))
+            while (enumerator.MoveNext() && hasFlag(out enumValue4)) {
                 yield return enumValue4;
+            }
         }
 
         public static EnumType[] CrushContainingBitsToArray<EnumType>(this EnumType enumValue, bool ignoreZero = IgnoreZeroWhenCrushingContainingBits)
@@ -32,8 +34,9 @@ namespace Teronis.Extensions
         {
             var retVal = 0;
 
-            foreach (var enumVal in Enum.GetValues(typeof(EnumType)).Cast<int>())
+            foreach (var enumVal in Enum.GetValues(typeof(EnumType)).Cast<int>()) {
                 retVal |= enumVal;
+            }
 
             return (EnumType)(object)retVal;
         }

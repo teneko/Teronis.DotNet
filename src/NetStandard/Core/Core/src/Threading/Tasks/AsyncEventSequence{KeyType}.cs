@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Teronis.Threading.Tasks
@@ -23,8 +22,8 @@ namespace Teronis.Threading.Tasks
         public IEqualityComparer<KeyType> EqualityComparer { get; protected set; }
         public bool IsDisposed { get; private set; }
 
-        private Dictionary<KeyType, List<TaskCompletionSource>> tcsDependencies;
-        private TaskCompletionSource tcsRegistrationPhaseEnd;
+        private readonly Dictionary<KeyType, List<TaskCompletionSource>> tcsDependencies;
+        private readonly TaskCompletionSource tcsRegistrationPhaseEnd;
         private Task? finishDependenciesTask;
 
         public AsyncEventSequence(IEqualityComparer<KeyType> equalityComparer)
@@ -39,13 +38,15 @@ namespace Teronis.Threading.Tasks
             : this(EqualityComparer<KeyType>.Default) { }
 
         /// <summary>
-        /// Checks the dispose status by checking the <see cref="IsDisposed"/> object, if it is true means that object
-        /// has been disposed and throw ObjectDisposedException
+        /// Checks if this instance is disposed. If true an exception
+        /// of type <see cref="ObjectDisposedException"/> will be thrown.
         /// </summary>
+        /// <exception cref="ObjectDisposedException">Instance has been already disposed.</exception>
         private void checkDispose()
         {
-            if (IsDisposed)
+            if (IsDisposed) {
                 throw new ObjectDisposedException(null, "Object has been already disposed");
+            }
         }
 
         public TaskCompletionSource RegisterDependency(KeyType key)
@@ -78,11 +79,11 @@ namespace Teronis.Threading.Tasks
         /// </summary>
         public async Task<bool> TryAwaitDependency(params KeyType[] keys)
         {
-            if (Status == AsyncEventSequenceStatus.Finished)
+            if (Status == AsyncEventSequenceStatus.Finished) {
                 return true;
-            else if (Status == AsyncEventSequenceStatus.Canceled)
+            } else if (Status == AsyncEventSequenceStatus.Canceled) {
                 return false;
-            else {
+            } else {
                 checkDispose();
                 // We want to wait for the end of the registration, so that we can assure
                 // that everyone could register their dependencies.
@@ -98,8 +99,9 @@ namespace Teronis.Threading.Tasks
 
                     // Finally we want to add them to the awaitable tasks
                     //awaitableTasks.AddRange(awaitableDependencies);
-                } else
+                } else {
                     awaitableDependencies = Enumerable.Empty<Task>();
+                }
 
                 try {
                     await Task.WhenAll(awaitableDependencies).ConfigureAwait(false);

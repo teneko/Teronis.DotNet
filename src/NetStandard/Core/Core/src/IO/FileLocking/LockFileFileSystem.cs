@@ -2,7 +2,7 @@
 
 namespace Teronis.IO.FileLocking
 {
-    public class LockFileFileSystem : ILockFileFileSystem
+    public class LockFileSystem : ILockFileSystem
     {
         public FileStream Open(string filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare) =>
             File.Open(filePath, fileMode, fileAccess, fileShare);

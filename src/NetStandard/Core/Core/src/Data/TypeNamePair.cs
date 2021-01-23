@@ -7,7 +7,8 @@ namespace Teronis.Data
         public Type Type { get; private set; }
         public string Name { get; private set; }
 
-        public TypeNamePair(Type type, string name) {
+        public TypeNamePair(Type type, string name)
+        {
             Type = type;
             Name = name;
         }

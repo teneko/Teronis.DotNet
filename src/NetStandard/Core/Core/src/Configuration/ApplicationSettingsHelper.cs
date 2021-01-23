@@ -14,10 +14,10 @@ namespace Teronis.Configuration
             Settings.SettingsSaving += SettingsBase_SettingsSaving;
         }
 
-        private void SettingsBase_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) 
+        private void SettingsBase_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
             => AreSettingsUnsaved = true;
 
-        private void SettingsBase_SettingsSaving(object sender, System.ComponentModel.CancelEventArgs e) 
+        private void SettingsBase_SettingsSaving(object sender, System.ComponentModel.CancelEventArgs e)
             => AreSettingsUnsaved = false;
 
         /// <summary>
@@ -25,8 +25,9 @@ namespace Teronis.Configuration
         /// </summary>
         public void Save()
         {
-            if (AreSettingsUnsaved)
+            if (AreSettingsUnsaved) {
                 Settings.Save();
+            }
         }
 
         /// <summary>
@@ -34,8 +35,9 @@ namespace Teronis.Configuration
         /// </summary>
         public void Reload()
         {
-            if (AreSettingsUnsaved)
+            if (AreSettingsUnsaved) {
                 Settings.Reload();
+            }
         }
 
         public void DetachEventHandlers()

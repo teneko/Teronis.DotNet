@@ -4,41 +4,119 @@
   <Import Condition="'$(IsMSBuildFileImported)' != 'true'" Project="$([MSBuild]::GetPathOfFileAbove(.msbuild))" />
   <Import Condition="'$(IsTeronisDotNetCorePropsFileImported)' != 'true'" Project="$(RootCorePropsPath)" />
   <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackageTargetsFile)" />
+  <Import Project="$(TeronisMSBuildPackagingPackTargetsFile)" Condition="Exists($(TeronisMSBuildPackagingPackTargetsFile))" />
+
+  <!--
+  ModuleInitializerAssemblyLoader
+  -->
+
+  <Import Project="$(TeronisModuleInitializerAssemblyLoaderExecutableTargetsFile)" Condition="Exists($(TeronisModuleInitializerAssemblyLoaderExecutableTargetsFile))" />
+  <Import Project="$(TeronisModuleInitializerAssemblyLoaderMSBuildTargetsFile)" />
+
+  <!--
+  GitVersionCache
+  -->
+
+  <Import Project="$(TeronisMSBuildPackagingGitVersionCachePropsFile)" 
+    Condition="Exists('$(TeronisMSBuildPackagingGitVersionCachePropsFile)')
+      And '$(IsGitVersionCacheRelated)' != 'true'
+      And '$(DisableGitVersionCache)' != 'true'" />
+
+  <!-- This gets overriden if below import exists. -->
+  <Target Name="GetVersionCache" />
+
+  <Import Project="$(TeronisMSBuildPackagingGitVersionCacheTargetsFile)"
+    Condition="Exists('$(TeronisMSBuildPackagingGitVersionCacheTargetsFile)') 
+      And '$(IsGitVersionCacheRelated)' != 'true'
+      And '$(DisableGitVersionCache)' != 'true'" />
   
   <ItemGroup>
-	  <Compile Include="$(MSBuildThisFileDirectory)/Nullable.cs" Conditions="'$(Nullable)' == 'enable'" />
+    <Compile Remove="$(MSBuildThisFileDirectory)/Nullable.cs" Condition="'$(Nullable)' != 'enable' Or '$(DisallowNullableAttributes)' == 'true'" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <PackageDescription Condition="'$(PackageDescription)' == '' And '$(Description)' != ''">$(Description)</PackageDescription>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- 
+      We get these errors, because the .NET Core 2.0 implementation/interfaces are not decorated with nullability attributes and somehow the analyzer/compiler just checks nullability
+      because of pure existence of such attribtues. 
+      -->
+    <!-- Warning	CS8767	Nullability of reference types in type of parameter '..' of '..' doesn't match implicitly implemented member '..' (possibly because of nullability attributes). -->
+    <!-- Warning	CS8769	Nullability of reference types in type of parameter '..' doesn't match implemented member '..' (possibly because of nullability attributes). -->
+    <NoWarn Condition="'$(TargetFramework)' == 'netstandard2.0'">$(NoWarn);8769;8767</NoWarn>
+  </PropertyGroup>
+
+  <!-- <ItemGroup>
+    <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\PackExecutable\0\src\Teronis.MSBuild.Packaging.PackExecutable.csproj" Condition="'$(DisablePackExecutableSourceInclude)' != 'true'">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+      <GlobalPropertiesToRemove>TargetFramework;TargetFrameworks</GlobalPropertiesToRemove>
+      <BuildProjectReferences>false</BuildProjectReferences>
+    </ProjectReference>
+  </ItemGroup> -->
 
   <ItemGroup>
 
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" Conditions="'$(DisableGitVersionCache)' != 'true' And $(IsPackable)" />
 
-    <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\GitVersionCache\GitVersionCache\ref\PackagePublish\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj" Condition="'$(DisableGitVersionCache)' != 'true' And $(IsPackable)" />
+    <!-- <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\GitVersionCache\0\ref\PackagePublish\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj"
+      Condition="'$(IsGitVersionCacheRelated)' != 'true'
+        And '$(DisableGitVersionCache)' != 'true' 
+        And '$(IsPackable)' == 'true'" /> -->
+
+    <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\GitVersionCache\0\ref\GitVersionCache\GitVersionCache.MSBuild.Packaging.GitVersionCache.csproj"
+      Condition="'$(IsGitVersionCacheRelated)' != 'true'
+        And '$(DisableGitVersionCache)' != 'true' 
+        And '$(IsPackable)' == 'true'">
+        <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+        <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+        <SetTargetFramework>TargetFramework=netstandard2.0</SetTargetFramework>
+        <Private>false</Private>
+      </ProjectReference>
     
   </ItemGroup>
 
-  <PropertyGroup>
+  <ItemGroup>
+    <!-- <ProjectReference Include="$(MSBuildThisFileDirectory)src\ModuleInitializer\AssemblyLoader\0.Executable\ref\ExecutablePublish\ExecutablePublish.ModuleInitializer.AssemblyLoader.Executable.csproj"
+      Condition="'$(IsDependencyPublishProject)' == 'true' And '$(MSBuildProjectFile)' != 'ExecutablePublish.ModuleInitializer.AssemblyLoader.Executable.csproj'"/> -->
+
+      <!-- <_ProjectReference Include="@(ProjectReference)" Condition="'%(Identity)' == 'Teronis.ModuleInitializer.AssemblyLoader.MSBuild'" /> -->
+
+      <!-- <ProjectReference Include="$(MSBuildThisFileDirectory)src\ModuleInitializer\AssemblyLoader\0.Executable\ref\ExecutablePublish\ExecutablePublish.ModuleInitializer.AssemblyLoader.Executable.csproj"
+                        Condition="'%(ProjectReference.Filename)' == 'Teronis.ModuleInitializer.AssemblyLoader.MSBuild'" /> -->
+  </ItemGroup>
+
+  <!-- <PropertyGroup>
     <_TeronisMSBuildPackagingGitVersionCachePropsFile>$(TeronisMSBuildPackagingGitVersionCachePropsFileTemplate.Replace('(Configuration)','$(Configuration)'))</_TeronisMSBuildPackagingGitVersionCachePropsFile>
     <_TeronisMSBuildPackagingGitVersionCacheTargetsFile>$(TeronisMSBuildPackagingGitVersionCacheTargetsFileTemplate.Replace('(Configuration)','$(Configuration)'))</_TeronisMSBuildPackagingGitVersionCacheTargetsFile>
-  </PropertyGroup>
-
-  <Import Project="$(_TeronisMSBuildPackagingGitVersionCachePropsFile)" Condition="Exists('$(_TeronisMSBuildPackagingGitVersionCachePropsFile)') And '$(DisableGitVersionCache)' != 'true'" />
-  <Import Project="$(_TeronisMSBuildPackagingGitVersionCacheTargetsFile)" Condition="Exists('$(_TeronisMSBuildPackagingGitVersionCacheTargetsFile)') And '$(DisableGitVersionCache)' != 'true'" />
+  </PropertyGroup> -->
 
   <ItemGroup>
 
     <_ProjectReferences Include="@(ProjectReference)">
-      <!-- Prevent PackagePublish.*-projects from being tracked in *.nuspec files. -->
-      <IsPackagePublishProject Condition="'%(IsPackagePublishProject)' == ''">$([System.String]::Copy('%(Filename)').Contains('PackagePublish.'))</IsPackagePublishProject>
-      <ReferenceOutputAssembly Condition="'%(IsPackagePublishProject)' == 'true'">false</ReferenceOutputAssembly>
-      <SkipGetTargetFrameworkProperties Condition="'%(IsPackagePublishProject)' == 'true'">true</SkipGetTargetFrameworkProperties>
-      <GlobalPropertiesToRemove Condition="'%(IsPackagePublishProject)' == 'true'">TargetFramework</GlobalPropertiesToRemove>
-      <BuildProjectReferences Condition="'%(IsPackagePublishProject)' == 'true'">false</BuildProjectReferences>
+      <!-- Prevent *Publish.*-projects from being tracked in *.nuspec files. -->
+      <IsPublishProject>false</IsPublishProject>
+
+      <IsPublishProject Condition="$([System.String]::Copy('%(Filename)').Contains('ExecutablePublish.'))
+        Or $([System.String]::Copy('%(Filename)').Contains('DependencyPublish.'))">true</IsPublishProject>
+
+      <ReferenceOutputAssembly Condition="'%(IsPublishProject)' == 'true'">false</ReferenceOutputAssembly>
+      <SkipGetTargetFrameworkProperties Condition="'%(IsPublishProject)' == 'true'">true</SkipGetTargetFrameworkProperties>
+      <GlobalPropertiesToRemove Condition="'%(IsPublishProject)' == 'true'">TargetFramework</GlobalPropertiesToRemove>
+      <BuildProjectReferences Condition="'%(IsPublishProject)' == 'true'">false</BuildProjectReferences>
 
       <!-- <AdditionalProperties Condition="'%(Filename)' == 'Teronis.NetStandard.Core'">%(AdditionalProperties);TargetFramework=netstandard2.0</AdditionalProperties> -->
       <!-- <AdditionalProperties >%(AdditionalProperties);TargetFramework=$(TargetFramework)</AdditionalProperties> -->
       <!-- <AdditionalProperties Condition="'%(Filename)' == 'Teronis.NetStandard.Core'">TargetFramework=$(TargetFramework)</AdditionalProperties> -->
-      <AdditionalProperties Condition="'%(Filename)' == 'Teronis.NetStandard.Core'">%(AdditionalProperties);TargetFramework=$(TargetFramework)</AdditionalProperties>
+      <!-- <Properties>%(Properties);DisallowNullableAttributes=true</Properties> -->
+      <!-- <AdditionalProperties Condition="'%(Filename)' == 'Teronis.NetStandard.Core'">%(AdditionalProperties);TargetFramework=$(TargetFramework)</AdditionalProperties> -->
+      <!-- <SetTargetFramework Condition="'%(Filename)' == 'Teronis.NetStandard.Core'">TargetFramework=$(TargetFramework)</SetTargetFramework> -->
+      <SetTargetFramework Condition="'%(SetTargetFramework)' == '' And (
+        '%(Filename)' == 'Teronis.NetStandard.Core'
+        Or '%(Filename)' == 'Teronis.NetStandard.Collections'
+        Or '%(Filename)' == 'Teronis.NetStandard.Collections.Algorithms')">TargetFramework=$(TargetFramework)</SetTargetFramework>
     </_ProjectReferences>
 
     <ProjectReference Remove="@(ProjectReference)" />
@@ -58,19 +136,26 @@
     </PropertyGroup>
   </Target>
 
-  <!-- <Target Name="InstallGitVersionTask" >
-
+  <Target Name="AfterUnpackAsExecutablePackedProject" BeforeTargets="PackSourceWhenPackingPublishTypedProject">
     <PropertyGroup>
-      <HasGitVersionTask Condition="'%(PackageReference.Identity)' == 'GitVersionTask'">true</HasGitVersionTask>
+      <DisableGitVersionCache>true</DisableGitVersionCache>
     </PropertyGroup>
+  </Target>
 
-    <ItemGroup Condition="'$(DisableGitVersionTaskAutoInstall)' != 'true' And '$(HasGitVersionTask)' != 'true'">
-      <PackageReference Include="GitVersionTask" Version="$(GitVersionTaskVersion)">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-    </ItemGroup>
+  <Target Name="AfterUnpackAsExecutablePackedProject" AfterTargets="PackSourceWhenPackingPublishTypedProject">
+    <PropertyGroup>
+      <DisableGitVersionCache>false</DisableGitVersionCache>
+    </PropertyGroup>
+  </Target>
 
-  </Target> -->
+  <!--
+  ============================================================
+  GetVersionCacheWhenGettingPackageTypedExecutableSourceProperties
+  
+  Invokes GetVersionCache, so its evaluation is regarded when
+  packing executable source project.
+  ============================================================
+  -->
+  <Target Name="GetVersionCacheWhenGettingPackageTypedExecutableSourceProperties" DependsOnTargets="GetVersionCache" Condition="'$(ParentIsExecutablePackageTyped)' == 'true'" />
 
 </Project>

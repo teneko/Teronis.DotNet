@@ -11,21 +11,25 @@ namespace Teronis.Extensions
         {
             CancellationTokenRegistration? nullableCancellationTokenRegistration;
 
-            if (nullableCancellationToken is CancellationToken cancellationToken)
+            if (nullableCancellationToken is CancellationToken cancellationToken) {
                 nullableCancellationTokenRegistration = cancellationToken.Register(() => request.Abort(), useSynchronizationContext: false);
-            else
+            } else {
                 nullableCancellationTokenRegistration = null;
+                cancellationToken = default;
+            }
 
             try {
                 return request.GetResponseAsync();
             } catch (WebException error) {
-                if (nullableCancellationToken != null && cancellationToken.IsCancellationRequested)
+                if (nullableCancellationToken != null && cancellationToken.IsCancellationRequested) {
                     throw new OperationCanceledException(error.Message, error, cancellationToken);
-                else
-                    throw error;
+                } else {
+                    throw;
+                }
             } finally {
-                if (nullableCancellationTokenRegistration is CancellationTokenRegistration cancellationTokenRegistration)
+                if (nullableCancellationTokenRegistration is CancellationTokenRegistration cancellationTokenRegistration) {
                     cancellationTokenRegistration.Dispose();
+                }
             }
         }
     }

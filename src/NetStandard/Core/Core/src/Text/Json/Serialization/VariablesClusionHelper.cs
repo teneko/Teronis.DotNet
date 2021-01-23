@@ -26,11 +26,13 @@ namespace Teronis.Text.Json.Serialization
             propertyName = propertyName ?? throw new ArgumentNullException(nameof(propertyName));
 
             // Start bucket if does not exist
-            if (!VariablesByTypeList.ContainsKey(declaringType))
+            if (!VariablesByTypeList.ContainsKey(declaringType)) {
                 VariablesByTypeList[declaringType] = new HashSet<string>();
+            }
 
-            foreach (var prop in propertyName)
+            foreach (var prop in propertyName) {
                 VariablesByTypeList[declaringType].Add(prop);
+            }
         }
 
         /// <summary>

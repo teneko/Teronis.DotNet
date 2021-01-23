@@ -55,7 +55,7 @@ namespace Teronis.IO.FileLocking
             // two times accidentally.
             lock (decreaseLockUseLocker) {
                 if (!(FileStream.CanRead || FileStream.CanWrite)) {
-                    Trace.WriteLine($"{FileLocker.CurrentThreadWithLockIdPrefix(lockId)} Lock use has been invalidated before. Skip decreasing lock use.", FileLocker.TraceCategory);
+                    Trace.WriteLine($"{FileLocker.GetCurrentThreadWithLockIdPrefixString(lockId)} Lock use has been invalidated before. Skip decreasing lock use.", FileLocker.TraceCategory);
                     return;
                 }
 

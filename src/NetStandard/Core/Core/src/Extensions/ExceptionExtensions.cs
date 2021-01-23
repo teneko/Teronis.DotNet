@@ -8,8 +8,9 @@ namespace Teronis.Extensions
         {
             var lines = exception?.Message ?? string.Empty;
 
-            while (exception != null && (exception = exception.InnerException) != null && exception.Message != null)
+            while (exception != null && (exception = exception.InnerException) != null && exception.Message != null) {
                 lines += "\r\n" + exception.Message;
+            }
 
             return lines;
         }

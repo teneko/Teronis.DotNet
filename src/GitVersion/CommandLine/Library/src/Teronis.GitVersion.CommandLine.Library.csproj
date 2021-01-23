@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Teronis.GitVersion.CommandLine</RootNamespace>
+    <Nullable>Enable</Nullable>
+    <Description>A wrapper to use the executable of GitVersion (https://chocolatey.org/packages/GitVersion.Portable) in C# programmatically.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GitVersion.CommandLine" Version="5.5.1" GeneratePathProperty="true">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="build\*" Pack="true" PackagePath="build" />
+    <None Include="buildMultiTargeting\*" Pack="true" PackagePath="buildMultiTargeting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(PkgGitVersion_CommandLine)\tools\GitVersion.exe" Pack="true" PackagePath="GitVersion"> 
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj" />
+  </ItemGroup>
+
+</Project>

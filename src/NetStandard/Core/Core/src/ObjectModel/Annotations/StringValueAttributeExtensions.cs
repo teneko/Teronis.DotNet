@@ -16,10 +16,9 @@ namespace Teronis.ObjectModel.Annotations
             Type type = value.GetType() ?? throw new ArgumentException("Enum value type is null.");
             // Get fieldinfo for this type.
             FieldInfo fieldInfo = type.GetField(value.ToString()) ?? throw new ArgumentException("Enum value does not exist.");
-            // Get the stringvalue attributes.
-            StringValueAttribute[]? attributes = fieldInfo?.GetCustomAttributes(typeof(StringValueAttribute), false) as StringValueAttribute[];
 
-            if (attributes == null || !(attributes.Length > index)) {
+            // Get the stringvalue attributes.
+            if (!(fieldInfo?.GetCustomAttributes(typeof(StringValueAttribute), false) is StringValueAttribute[] attributes) || !(attributes.Length > index)) {
                 throw new ArgumentException("Enum value has no string value attribute");
             }
 

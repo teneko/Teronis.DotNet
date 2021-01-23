@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Teronis.Reflection;
-using Teronis.Tools;
+using Teronis.Utils;
 
 namespace Teronis.Extensions
 {
@@ -13,7 +13,7 @@ namespace Teronis.Extensions
 
         public static bool IsVariable(this MemberInfo memberInfo, VariableInfoDescriptor variableInfoDescriptor)
         {
-            if (!MemberInfoTools.IsVariable(memberInfo)) {
+            if (!MemberInfoUtils.IsVariable(memberInfo)) {
                 return false;
             }
 
@@ -44,14 +44,14 @@ namespace Teronis.Extensions
         public static AttributeMemberInfo<T> GetAttributeVariableMember<T>(this MemberInfo memberInfo, bool? getCustomAttributesInherit = null)
             where T : Attribute
         {
-            MemberInfoTools.CheckedAttributeVariable(memberInfo, typeof(T));
+            MemberInfoUtils.CheckedAttributeVariable(memberInfo, typeof(T));
             return new AttributeMemberInfo<T>(memberInfo, getCustomAttributesInherit);
         }
 
         /// <param name="memberInfo">Pass <see cref="PropertyInfo"/> or <see cref="FieldInfo"/>.</param>
         public static AttributeMemberInfo GetAttributeVariableMember(this MemberInfo memberInfo, Type attributeType, bool? getCustomAttributesInherit = null)
         {
-            MemberInfoTools.CheckedAttributeVariable(memberInfo, attributeType);
+            MemberInfoUtils.CheckedAttributeVariable(memberInfo, attributeType);
             return new AttributeMemberInfo(memberInfo, attributeType, getCustomAttributesInherit);
         }
 
@@ -61,7 +61,7 @@ namespace Teronis.Extensions
         {
             bool _getCustomAttributesInherit = getCustomAttributesInherit ?? true; // Library.DefaultCustomAttributesInherit
 
-            if (!MemberInfoTools.IsVariable(memberInfo, typeof(T), _getCustomAttributesInherit)) {
+            if (!MemberInfoUtils.IsVariable(memberInfo, typeof(T), _getCustomAttributesInherit)) {
                 attrVarInfo = null;
                 return false;
             }
@@ -71,11 +71,11 @@ namespace Teronis.Extensions
         }
 
         /// <param name="memberInfo">Pass <see cref="PropertyInfo"/> or <see cref="FieldInfo"/>.</param>
-        public static bool TryGetAttributeVariableMember(this MemberInfo memberInfo, Type attributeType, [MaybeNull]out AttributeMemberInfo attrVarInfo, bool? getCustomAttributesInherit = null)
+        public static bool TryGetAttributeVariableMember(this MemberInfo memberInfo, Type attributeType, [MaybeNull] out AttributeMemberInfo attrVarInfo, bool? getCustomAttributesInherit = null)
         {
             bool _getCustomAttributesInherit = getCustomAttributesInherit ?? true; // Library.DefaultCustomAttributesInherit
 
-            if (!MemberInfoTools.IsVariable(memberInfo, attributeType, _getCustomAttributesInherit)) {
+            if (!MemberInfoUtils.IsVariable(memberInfo, attributeType, _getCustomAttributesInherit)) {
                 attrVarInfo = null;
                 return false;
             }

@@ -28,8 +28,9 @@ namespace Teronis.Text
 
         public void SetStringSeparator(StringBuilder builder)
         {
-            if (LastSeperationIndex >= 0)
+            if (LastSeperationIndex >= 0) {
                 builder.Insert(LastSeperationIndex, StringSeparator);
+            }
 
             LastSeperationIndex = builder.Length;
         }

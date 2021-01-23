@@ -6,7 +6,7 @@ namespace Teronis.Extensions
     {
         internal static VariableInfoDescriptor DefaultIfNull(this VariableInfoDescriptor? descriptor, bool seal)
         {
-            descriptor = descriptor ?? new VariableInfoDescriptor();
+            descriptor ??= new VariableInfoDescriptor();
 
             if (seal) {
                 descriptor.Seal();

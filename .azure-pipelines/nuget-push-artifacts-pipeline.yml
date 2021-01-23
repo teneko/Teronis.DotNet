@@ -21,6 +21,7 @@ variables:
   vmImage: 'windows-latest'
   publishBuildArtifactsArtifactName: NuGetPushArtifacts
   publishBuildArtifactsJobName: PublishBuildArtifacts
+  nuGetPushWorkingDirectory: $(Build.SourcesDirectory)\.azure-pipelines
 
 jobs:
   - template: publish-build-artifacts-job.yml
@@ -58,22 +59,67 @@ jobs:
 
       - powershell: |
           ("$(nugetOrg.canPush)" -eq "TRUE") -or `
-          (("$Env:GIT_COMMIT_MESSAGE" -match [System.Text.RegularExpressions.Regex]::Escape("[push nuget.local]")) -and `
-            (-not ("$Env:GIT_COMMIT_MESSAGE" -match [System.Text.RegularExpressions.Regex]::Escape("[skip nuget.local]")))) | 
+          (("$Env:GIT_COMMIT_MESSAGE" -match [System.Text.RegularExpressions.Regex]::Escape("[push nuget.azure]")) -and `
+            (-not ("$Env:GIT_COMMIT_MESSAGE" -match [System.Text.RegularExpressions.Regex]::Escape("[skip nuget.azure]")))) | 
             % { Write-Host $_; echo "##vso[task.setvariable variable=canPush;isOutput=true]$_" }
         env:
           GIT_COMMIT_MESSAGE: '$(git.commitMessage)'
-        displayName: Set "nugetLocal.canPush" Variable
-        name: nugetLocal
+        displayName: Set "nugetAzure.canPush" Variable
+        name: nugetAzure
 
-  ##############################
-  - job: NuGetLocalPushArtifacts
+      - powershell: |
+          ("$(nugetOrg.canPush)" -eq "TRUE") -or `
+          (("$Env:GIT_COMMIT_MESSAGE" -match [System.Text.RegularExpressions.Regex]::Escape("[push nuget.github]")) -and `
+            (-not ("$Env:GIT_COMMIT_MESSAGE" -match [System.Text.RegularExpressions.Regex]::Escape("[skip nuget.github]")))) | 
+            % { Write-Host $_; echo "##vso[task.setvariable variable=canPush;isOutput=true]$_" }
+        env:
+          GIT_COMMIT_MESSAGE: '$(git.commitMessage)'
+        displayName: Set "nugetGitHub.canPush" Variable
+        name: nugetGitHub
+
+  ############################
+  - job: NuGetOrgPushArtifacts
     dependsOn: PrepareNuGetPush
-    condition: and(succeeded(), eq(dependencies.PrepareNuGetPush.outputs['nugetLocal.canPush'], 'TRUE'))
+    condition: and(succeeded(), eq(dependencies.PrepareNuGetPush.outputs['nugetOrg.canPush'], 'TRUE'))
     variables:
       - name: nugetArguments
-        value: '-ConfigFile $(Build.SourcesDirectory)\nuget.config -Source "nuget.local" -ApiKey optional -SkipDuplicate -Verbosity detailed'
-    displayName: 'Push "nuget.local" Artifacts'
+        value: '-Source "nuget.org" -SkipDuplicate -Verbosity detailed'
+    displayName: 'Push "nuget.org" Artifacts'
+    pool:
+      vmImage: ${{ variables.vmImage }}
+    steps:
+      - task: DownloadBuildArtifacts@0
+        displayName: Download NuGet Packages
+        inputs:
+          buildType: current
+          artifactName: '${{ variables.publishBuildArtifactsArtifactName }}'
+          downloadPath: '$(Build.StagingDirectory)'
+          
+      - task: NuGetToolInstaller@1
+
+      - script: nuget push $(Build.StagingDirectory)\${{ variables.publishBuildArtifactsArtifactName }}\**\*.nupkg $(nugetArguments) -ApiKey $(NUGET_ORG_APIKEY) -NoSymbols
+        workingDirectory: ${{ variables.nuGetPushWorkingDirectory }}
+        displayName: Push NuGet Packages
+
+      - task: PowerShell@2
+        inputs:
+          filePath: '$(Build.SourcesDirectory)\.build\push-nuget-packages.ps1'
+          arguments:
+            $(Build.StagingDirectory)\${{ variables.publishBuildArtifactsArtifactName }}\**\*.snupkg
+            -Arguments '$(nugetArguments) -ApiKey $Env:NUGET_ORG_APIKEY'
+            -ContinueOnError 1
+        env:
+          NUGET_ORG_APIKEY: $(NUGET_ORG_APIKEY)
+        displayName: Push NuGet Symbol Packages
+
+  ##############################
+  - job: NuGetAzurePushArtifacts
+    dependsOn: PrepareNuGetPush
+    condition: and(succeeded(), eq(dependencies.PrepareNuGetPush.outputs['nugetAzure.canPush'], 'TRUE'))
+    variables:
+      - name: nugetArguments
+        value: '-Source "nuget.azure" -ApiKey optional -SkipDuplicate -Verbosity detailed'
+    displayName: 'Push "nuget.azure" Artifacts'
     pool:
       vmImage: ${{ variables.vmImage }}
     steps:
@@ -90,6 +136,7 @@ jobs:
         env:
           NUGET_CREDENTIALPROVIDER_SESSIONTOKENCACHE_ENABLED: true
           VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: '$(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)'
+        workingDirectory: ${{ variables.nuGetPushWorkingDirectory }}
         displayName: Push NuGet Packages
 
       - task: PowerShell@2
@@ -104,14 +151,16 @@ jobs:
           VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: '$(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)'
         displayName: Push NuGet Symbol Packages
 
-  ############################
-  - job: NuGetOrgPushArtifacts
+  ##############################
+  - job: NuGetGitHubPushArtifacts
     dependsOn: PrepareNuGetPush
-    condition: and(succeeded(), eq(dependencies.PrepareNuGetPush.outputs['nugetOrg.canPush'], 'TRUE'))
+    condition: and(succeeded(), eq(dependencies.PrepareNuGetPush.outputs['nugetGitHub.canPush'], 'TRUE'))
     variables:
+      - name: nugetSourceName
+        value: "nuget.github"
       - name: nugetArguments
-        value: '-ConfigFile $(Build.SourcesDirectory)\nuget.config -Source "nuget.org" -SkipDuplicate -Verbosity detailed'
-    displayName: 'Push "nuget.org" Artifacts'
+        value: '-Source $(nugetSourceName) -SkipDuplicate -Verbosity detailed'
+    displayName: 'Push "nuget.github" Artifacts'
     pool:
       vmImage: ${{ variables.vmImage }}
     steps:
@@ -121,19 +170,10 @@ jobs:
           buildType: current
           artifactName: '${{ variables.publishBuildArtifactsArtifactName }}'
           downloadPath: '$(Build.StagingDirectory)'
-          
+      
       - task: NuGetToolInstaller@1
+      - script: nuget sources Update -Name $(nugetSourceName) -UserName teroneko -Password $(GITHUB_TOKEN)
 
-      - script: nuget push $(Build.StagingDirectory)\${{ variables.publishBuildArtifactsArtifactName }}\**\*.nupkg $(nugetArguments) -ApiKey $(NUGET_ORG_APIKEY) -NoSymbols
+      - script: nuget push $(Build.StagingDirectory)\${{ variables.publishBuildArtifactsArtifactName }}\**\*.nupkg $(nugetArguments) -NoSymbols
+        workingDirectory: ${{ variables.nuGetPushWorkingDirectory }}
         displayName: Push NuGet Packages
-
-      - task: PowerShell@2
-        inputs:
-          filePath: '$(Build.SourcesDirectory)\.build\push-nuget-packages.ps1'
-          arguments:
-            $(Build.StagingDirectory)\${{ variables.publishBuildArtifactsArtifactName }}\**\*.snupkg
-            -Arguments '$(nugetArguments) -ApiKey $Env:NUGET_ORG_APIKEY'
-            -ContinueOnError 1
-        env:
-          NUGET_ORG_APIKEY: $(NUGET_ORG_APIKEY)
-        displayName: Push NuGet Symbol Packages

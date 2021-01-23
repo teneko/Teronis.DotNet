@@ -7,8 +7,9 @@ namespace Teronis.Extensions
     {
         public static void LetAttributesReceiveAttributeMemberInfo<T>(this AttributeMemberInfo<T> attrVarInfo) where T : Attribute, IAttributeMemberInfoReceiver<T>
         {
-            foreach (var attribute in attrVarInfo.Attributes)
+            foreach (var attribute in attrVarInfo.Attributes) {
                 attribute.ReceiveAttributeVariableInfo(attrVarInfo);
+            }
         }
     }
 }

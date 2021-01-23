@@ -17,10 +17,10 @@ namespace Teronis.Drawing
 
         public XY(IXY xy) : this(xy.X, xy.Y) { }
 
-        public bool Equals(IXY? other) => 
+        public bool Equals(IXY? other) =>
             XYEqualityComparer.Default.Equals(this, other);
 
-        public override bool Equals(object? obj) => 
+        public override bool Equals(object? obj) =>
             Equals(obj as IXY);
 
         public override int GetHashCode() => XYEqualityComparer.Default.GetHashCode(this);

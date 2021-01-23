@@ -1,43 +1,35 @@
-﻿<Project>
-
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" Condition="'$(DisableSdkProps)' != 'true'" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.1;net5.0</TargetFrameworks>
     <RootNamespace>Teronis</RootNamespace>
-    <Description>A collection of utilities, extensions, tools and classes for the .NET Standard implementation.</Description>
+    <Description>A collection of utilities, extensions and classes for the .NET Standard implementation.</Description>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" Condition="'$(DisableSdkProps)' != 'true'" />
-
   <ItemGroup>
-    <PackageReference Include="Fody" Version="6.2.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="3.1.5" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.5" />
-    <PackageReference Include="MorseCode.ITask" Version="2.0.3" />
-    <PackageReference Include="PropertyChanged.Fody" Version="3.2.8" PrivateAssets="all" />
-    <PackageReference Include="PropertyChanging.Fody" Version="1.30.1" PrivateAssets="all" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
-    <PackageReference Include="System.Interactive.Async" Version="4.1.1" />
-    <PackageReference Include="System.Management" Version="4.7.0" />
-    <PackageReference Include="System.Text.Json" Version="4.7.2" />
-    <PackageReference Include="System.Threading.Tasks.Dataflow" Version="4.11.1" />
+    <Compile Remove="DataModelling\**" />
+    <EmbeddedResource Remove="DataModelling\**" />
+    <None Remove="DataModelling\**" />
   </ItemGroup>
 
-  <Target Name="test" BeforeTargets="BeforeTarget">
-    <PropertyGroup>
-      <EnableSomething>true</EnableSomething>
-    </PropertyGroup>
-  </Target>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+    <PackageReference Include="MorseCode.ITask" Version="2.0.3" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
+    <PackageReference Include="System.Interactive.Async" Version="5.0.0" />
+    <PackageReference Include="System.Management" Version="5.0.0" />
+    <PackageReference Include="System.Text.Json" Version="5.0.0" />
+    <PackageReference Include="System.Threading.Tasks.Dataflow" Version="5.0.0" />
+  </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core.Localization\src\Teronis.NetStandard.Core.Localization.csproj" PrivateAssets="all" Condition="'$(DisableLocalizationProject)' != 'true'" />
+    <ProjectReference Include="..\..\Core.Localization\src\Teronis.NetStandard.Core.Localization.csproj" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>

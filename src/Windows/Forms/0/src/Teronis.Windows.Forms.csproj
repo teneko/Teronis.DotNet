@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.1;net5.0-windows</TargetFrameworks>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>Teronis.Windows.Forms</RootNamespace>
+    <Nullable>enable</Nullable>
+    <Description>A collection of utilities, extensions and classes for Windows Forms.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Core\src\Teronis.Windows.Core.csproj" />
+    <ProjectReference Include="..\..\0.Localization\src\Teronis.Windows.Forms.Localization.csproj" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>

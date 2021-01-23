@@ -1,7 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
-using Teronis.Tools;
-using Teronis.Extensions;
+﻿using System;
+using Newtonsoft.Json;
+using Teronis.Utils;
 
 namespace Teronis.Json.Converters
 {
@@ -9,15 +8,16 @@ namespace Teronis.Json.Converters
     {
         public bool IsExceptionUnwanted { get; private set; }
 
-        public ECMAScriptTimestampConverter(bool isExceptionUnwanted) 
+        public ECMAScriptTimestampConverter(bool isExceptionUnwanted)
             => IsExceptionUnwanted = isExceptionUnwanted;
 
         public ECMAScriptTimestampConverter() : this(false) { }
 
         public override bool CanConvert(Type objectType)
         {
-            if (objectType.IsNullable())
+            if (TypeUtils.IsNullable(objectType)) {
                 objectType = Nullable.GetUnderlyingType(objectType);
+            }
 
             return objectType == typeof(DateTime);
         }
@@ -26,24 +26,27 @@ namespace Teronis.Json.Converters
         {
             var value = reader.Value;
             var isValueNull = value == null;
-            var isObjectTypeNullable = objectType.IsNullable();
+            var isObjectTypeNullable = TypeUtils.IsNullable(objectType);
 
-            if (isValueNull && isObjectTypeNullable)
+            if (isValueNull && isObjectTypeNullable) {
                 return null;
-            else {
+            } else {
                 try {
-                    if (!isValueNull && double.TryParse(reader.Value.ToString(), out double timeOffset))
-                        return DateTimeTools.ECMAScriptTimestampToDateTime(timeOffset);
-                    else
+                    if (!isValueNull && double.TryParse(reader.Value.ToString(), out double timeOffset)) {
+                        return DateTimeUtils.ECMAScriptTimestampToDateTime(timeOffset);
+                    } else {
                         throw new ArgumentException("Value is not a ECMAScript valid time value");
+                    }
                 } catch (Exception error) {
                     if (IsExceptionUnwanted) {
-                        if (isObjectTypeNullable)
+                        if (isObjectTypeNullable) {
                             return null;
-                        else
+                        } else {
                             return new DateTime();
-                    } else
+                        }
+                    } else {
                         throw error;
+                    }
                 }
             }
         }
@@ -52,11 +55,11 @@ namespace Teronis.Json.Converters
         {
             object ttbWrittenValue;
 
-            if (value == null)
+            if (value == null) {
                 ttbWrittenValue = null;
-            else {
+            } else {
                 var dateTime = (DateTime)value;
-                ttbWrittenValue = DateTimeTools.DateTimeToECMAScriptTimestamp(dateTime);
+                ttbWrittenValue = DateTimeUtils.DateTimeToECMAScriptTimestamp(dateTime);
             }
 
             writer.WriteValue(ttbWrittenValue);

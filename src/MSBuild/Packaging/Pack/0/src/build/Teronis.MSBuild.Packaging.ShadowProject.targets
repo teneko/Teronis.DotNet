@@ -1,0 +1,89 @@
+﻿<Project InitialTargets="CopyShadowSourceProjectFiles">
+
+  <PropertyGroup>
+    <TeronisMSBuildPackagingPackShadowProjectTargetsHasBeenImported>true</TeronisMSBuildPackagingPackShadowProjectTargetsHasBeenImported>
+  </PropertyGroup>
+  
+  <Import Project="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).props" Condition="'$(TeronisMSBuildPackagingPackShadowProjectPropsHasBeenImported)' != 'true'" />
+
+  <PropertyGroup>
+    <ShadowProjectIsEnabled Condition="'$(ShadowProjectIsEnabled)' == ''">false</ShadowProjectIsEnabled>
+    <ShadowProjectIsEnabled Condition="'$(ShadowProjectReference)' != ''">true</ShadowProjectIsEnabled>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(ShadowProjectIsEnabled)' == 'true'">
+
+    <!--
+    ShadowSourceProject
+    -->
+
+    <ShadowSourceProjectReference>$(ShadowProjectReference)</ShadowSourceProjectReference>
+    <ShadowSourceProjectPathIsRooted>$([System.IO.Path]::IsPathRooted('$(ShadowSourceProjectReference)'))</ShadowSourceProjectPathIsRooted>
+    <ShadowSourceProjectFullPath Condition="$(ShadowSourceProjectPathIsRooted)" >$(ShadowSourceProjectReference)</ShadowSourceProjectFullPath>
+
+    <ShadowSourceProjectFullPath Condition="!$(ShadowSourceProjectPathIsRooted)" >$(MSBuildProjectDirectory)\$(ShadowSourceProjectReference)</ShadowSourceProjectFullPath>
+    <ShadowSourceProjectFullPath Condition="!$(ShadowSourceProjectPathIsRooted)" >$([System.IO.Path]::GetFullPath('$(ShadowSourceProjectFullPath)'))</ShadowSourceProjectFullPath>
+
+    <ShadowSourceProjectFilename>$([System.IO.Path]::GetFileNameWithoutExtension('$(ShadowSourceProjectFullPath)'))</ShadowSourceProjectFilename>
+    <ShadowSourceProjectFullName>$([System.IO.Path]::GetFileName('$(ShadowSourceProjectFullPath)'))</ShadowSourceProjectFullName>
+    <ShadowSourceProjectDirectory>$([System.IO.Path]::GetDirectoryName('$(ShadowSourceProjectFullPath)'))\</ShadowSourceProjectDirectory>
+
+    <!-- Is ShadowSourceProjectReference a self dependence? -->
+    <ShadowSourceProjectIsCircularDependency>false</ShadowSourceProjectIsCircularDependency>
+    <ShadowSourceProjectIsCircularDependency Condition="'$(ShadowSourceProjectFullPath)' == '$(MSBuildProjectFullPath)'">true</ShadowSourceProjectIsCircularDependency>
+    
+    <!--
+    ShadowTargetProject
+    -->
+
+    <ShadowTargetProjectDirectory>$(MSBuildProjectDirectory)\</ShadowTargetProjectDirectory>
+
+    <!--<_SourceProjectDirectory>$(SourceProjectDirectory)</_SourceProjectDirectory>
+    <_SourceProjectDirectory Condition="'$(_SourceProjectDirectory)' != '' And !$(_SourceProjectDirectory.EndsWith('\'))">$(_SourceProjectDirectory)\</_SourceProjectDirectory>
+    <_ShadowProjectDirectory>$(ShadowProjectDirectory)</_ShadowProjectDirectory>
+    <_ShadowProjectDirectory Condition="'$(_ShadowProjectDirectory)' != '' And !$(_ShadowProjectDirectory.EndsWith('\'))">$(_ShadowProjectDirectory)\</_ShadowProjectDirectory>-->
+
+  </PropertyGroup>
+
+  <Choose>
+    <When Condition="'$(ShadowProjectIsEnabled)' == 'true'">      
+      <ItemGroup>
+        
+        <_ExcludedFiles Include="$(ShadowSourceProjectDirectory)bin\**\*;$(ShadowSourceProjectDirectory)obj\**\*" />
+
+        <Compile Include="$(ShadowSourceProjectDirectory)**\*.cs" Exclude="@(_ExcludedFiles)">
+          <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+        </Compile>
+
+        <EmbeddedResource Include="$(ShadowSourceProjectDirectory)**\*.resx" Exclude="@(_ExcludedFiles)">
+          <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+        </EmbeddedResource>
+
+        <None Include="$(ShadowSourceProjectDirectory)**\*.props;$(ShadowSourceProjectDirectory)**\*.targets" Exclude="@(_ExcludedFiles)">
+          <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+        </None>
+        
+      </ItemGroup>
+    </When>
+  </Choose>
+  
+  <!--<Target Name="_Ensure_SourceProjectDirectory">
+    <Error Text="[$(MSBuildThisFileName)] Property '_SourceProjectDirectory' is empty " Condition="'$(_SourceProjectDirectory)' == ''" />
+    <Error Text="[$(MSBuildThisFileName)] Directory of source project '$(_SourceProjectDirectory)' does not exist." Condition="!Exists('$(_SourceProjectDirectory)')" />
+    <Error Text="[$(MSBuildThisFileName)] Directory of shadow project '$(_ShadowProjectDirectory)' does not exist." Condition="!Exists('$(_ShadowProjectDirectory)')" />
+  </Target>-->
+
+  <Target Name="CopyShadowSourceProjectFiles" DependsOnTargets="$(CopyShadowSourceProjectFilesDependsOn)" Condition="'$(ShadowProjectIsEnabled)' == 'true'">
+
+    <ItemGroup>
+      <_FodyFiles Include="$(ShadowSourceProjectDirectory)FodyWeavers*" />
+      <_PropertiesFiles Include="$(ShadowSourceProjectDirectory)Properties\**\*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(_FodyFiles)" DestinationFolder="." SkipUnchangedFiles="true" Condition="'@(_FodyFiles)' != ''" />
+    <Copy SourceFiles="@(_PropertiesFiles)" DestinationFolder="Properties\%(RecursiveDir)" SkipUnchangedFiles="true" Condition="'@(_PropertiesFiles)' != ''" />
+    <Copy SourceFiles="$(ProjectShadowGitIgnoreFile)" DestinationFiles=".gitignore" SkipUnchangedFiles="true" Condition="'$(ProjectShadowGitIgnoreFile)' != '' And Exists('$(ProjectShadowGitIgnoreFile)')" />
+
+  </Target>
+
+</Project>

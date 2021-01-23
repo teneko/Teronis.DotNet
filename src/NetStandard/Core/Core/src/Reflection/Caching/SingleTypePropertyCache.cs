@@ -22,8 +22,8 @@ namespace Teronis.Reflection.Caching
         public Type TrackingPropertyType { get; set; }
         /// <summary>
         /// If true, then only properties are added to the cache whose property
-        /// values are not equals <see cref="TrackingPropertyDefaultValue"/>, and cached 
-        /// properties are removed and not recached whose property values 
+        /// values are not equals <see cref="TrackingPropertyDefaultValue"/> and
+        /// cached properties are removed and not recached whose property values 
         /// are equals <see cref="TrackingPropertyDefaultValue"/>.
         /// </summary>
         public bool CanHandleDefaultValue { get; set; }
@@ -44,8 +44,8 @@ namespace Teronis.Reflection.Caching
         /// </summary>
         public bool CanSkipPropertyRemovedEventInvocationWhenRetracking { get; set; }
 
-        private Dictionary<string, PropertyType> cachedPropertyValues;
-        private PropertyComparisonMode propertyComparisonMode;
+        private readonly Dictionary<string, PropertyType> cachedPropertyValues;
+        private readonly PropertyComparisonMode propertyComparisonMode;
 
         public SingleTypePropertyCache(INotifyPropertyChanged singleTypedPropertyNotifier, object singleTypedPropertiesOwner, IEqualityComparer<PropertyType>? propertyValueEqualityComparer)
         {
@@ -55,8 +55,7 @@ namespace Teronis.Reflection.Caching
             singleTypedPropertiesOwner = singleTypedPropertiesOwner
                 ?? throw new ArgumentNullException(nameof(singleTypedPropertiesOwner));
 
-            propertyValueEqualityComparer = propertyValueEqualityComparer
-                ?? EqualityComparer<PropertyType>.Default;
+            propertyValueEqualityComparer ??= EqualityComparer<PropertyType>.Default;
 
             TrackingPropertyType = typeof(PropertyType);
             var propertyTypeInfo = TrackingPropertyType.GetTypeInfo();
@@ -70,6 +69,7 @@ namespace Teronis.Reflection.Caching
             cachedPropertyValues = new Dictionary<string, PropertyType>();
             CachedPropertyValues = new ReadOnlyDictionary<string, PropertyType>(cachedPropertyValues);
             VariableInfoDescriptor = new VariableInfoDescriptor();
+            VariableInfoDescriptor.Flags |= BindingFlags.NonPublic | BindingFlags.GetProperty | BindingFlags.GetField;
             TrackingPropertyDefaultValue = default;
             CanHandleDefaultValue = true;
 
@@ -80,14 +80,14 @@ namespace Teronis.Reflection.Caching
             PropertyValueEqualityComparer = propertyValueEqualityComparer;
         }
 
-        public SingleTypePropertyCache(INotifyPropertyChanged singleTypedPropertyNotifier, object propertyChangedRelayTarget)
-            : this(singleTypedPropertyNotifier, propertyChangedRelayTarget, default) { }
+        public SingleTypePropertyCache(INotifyPropertyChanged singleTypedPropertyNotifier, object singleTypedPropertiesOwner)
+            : this(singleTypedPropertyNotifier, singleTypedPropertiesOwner, default) { }
 
-        public SingleTypePropertyCache(INotifyPropertyChanged singleTypedPropertyNotifierAndTarget, IEqualityComparer<PropertyType>? propertyValueEqualityComparer)
-            : this(singleTypedPropertyNotifierAndTarget, singleTypedPropertyNotifierAndTarget, propertyValueEqualityComparer) { }
+        public SingleTypePropertyCache(INotifyPropertyChanged singleTypedPropertyNotifierAndOwner, IEqualityComparer<PropertyType>? propertyValueEqualityComparer)
+            : this(singleTypedPropertyNotifierAndOwner, singleTypedPropertyNotifierAndOwner, propertyValueEqualityComparer) { }
 
-        public SingleTypePropertyCache(INotifyPropertyChanged singleTypedPropertyNotifierAndTarget)
-            : this(singleTypedPropertyNotifierAndTarget, default) { }
+        public SingleTypePropertyCache(INotifyPropertyChanged singleTypedPropertyNotifierAndOwner)
+            : this(singleTypedPropertyNotifierAndOwner, default(IEqualityComparer<PropertyType>)) { }
 
         protected void OnPropertyCacheAdding(PropertyCachingEventArgs<PropertyType> args)
             => PropertyAdding?.Invoke(this, args);
@@ -99,12 +99,11 @@ namespace Teronis.Reflection.Caching
             => PropertyRemoved?.Invoke(this, args);
 
         /// <summary>
-        /// We calling it, you are forcing a property being tracked.
+        /// When calling it, you are about to trigger a change of a property.
         /// </summary>
         /// <param name="propertyName"></param>
         public void SingleTypePropertyNotifierPropertyChanged(string propertyName)
         {
-            VariableInfoDescriptor.Flags |= BindingFlags.NonPublic | BindingFlags.GetProperty | BindingFlags.GetField;
             var propertyMember = SingleTypedPropertiesOwnerType.GetVariableMember(propertyName, VariableInfoDescriptor);
 
             // There is no member that can be handled, so we return.

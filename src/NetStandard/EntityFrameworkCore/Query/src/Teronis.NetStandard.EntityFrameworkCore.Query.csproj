@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.1;net5.0</TargetFrameworks>
+    <RootNamespace>Teronis.EntityFrameworkCore.Query</RootNamespace>
+    <Description>Provides expression builder to increase query ability in Entity Framework Core.</Description>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Linq\Expressions\Expressions\src\Teronis.NetStandard.Linq.Expressions.csproj" />
+  </ItemGroup>
+
+</Project>

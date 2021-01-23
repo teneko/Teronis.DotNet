@@ -1,0 +1,227 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="$(MSBuildThisFileName).props" Condition="'$(TeronisMSBuildPackagingGitVersionCacheHasBeenLoaded)' != 'true'" />
+
+  <PropertyGroup>
+    <WriteVersionInfoToBuildLog>false</WriteVersionInfoToBuildLog>
+    <UpdateAssemblyInfo>false</UpdateAssemblyInfo>
+    <GenerateGitVersionInformation>false</GenerateGitVersionInformation>
+    <GetVersion>false</GetVersion>
+    <_GetVersionCache>$(GetVersionCache)</_GetVersionCache>
+  </PropertyGroup>
+
+  <PropertyGroup>
+
+    <GitVersionCacheTargetsFile>$(MSBuildThisFileDirectory)GitVersionCache.targets</GitVersionCacheTargetsFile>
+
+    <!-- Possible canditates: -->
+    <!--CoreCompile;-->
+    <!--GetAssemblyVersion;
+    GenerateNuspec;
+    _GenerateRestoreProjectSpec;
+    _GetOutputItemsFromPack;-->
+    <!--EnsureWixToolsetInstalled-->
+    <!-- 
+    # Always generate version informations before the following targets are going
+    # to be called:
+    # - GenerateNuspec: When packing, this target creates nuspec file for package.
+    # - _GetProjectVersion: Before nuspec can be built it has to collect the 
+    #     versions of project references the package depends on. 
+    -->
+    <GetVersionBeforeTargets>
+      _GetProjectVersion;
+      GenerateNuspec;
+    </GetVersionBeforeTargets>
+
+    <!--<GetVersionCacheBeforeGetVersionTaskTargets>
+      WriteVersionInfoToBuildLog;
+      GenerateGitVersionInformation;
+      GetVersion
+    </GetVersionCacheBeforeGetVersionTaskTargets>-->
+
+    <!--$(GetVersionCacheBeforeGetVersionTaskTargets)-->
+    <GetVersionCacheBeforeTargets>
+      $(GetVersionBeforeTargets)
+    </GetVersionCacheBeforeTargets>
+
+    <_GetVersionCacheInline>true</_GetVersionCacheInline>
+
+  </PropertyGroup>
+  
+  <Target Name="_GetVersionCacheInline" Condition="'$(_GetVersionCacheInline)' == 'true'">
+
+    <PropertyGroup>
+
+      <_GitVersionCacheUseSemVer2 Condition="'$(_GitVersionCacheUseSemVer2)' == ''">$(GitVersionCacheUseSemVer2)</_GitVersionCacheUseSemVer2>
+      <_GitVersionCacheUseSemVer2 Condition="'$(_GitVersionCacheUseSemVer2)' == ''">true</_GitVersionCacheUseSemVer2>
+      
+      <_GitVersionCacheIdentifier Condition="'$(_GitVersionCacheIdentifier)' == ''">$(GitVersionCacheIdentifier)</_GitVersionCacheIdentifier>
+
+      <_GitVersionCacheProjectDirectory Condition="'$(_GitVersionCacheProjectDirectory)' == ''">$(GitVersionCacheProjectDirectory)</_GitVersionCacheProjectDirectory>
+      <_GitVersionCacheProjectDirectory Condition="'$(_GitVersionCacheProjectDirectory)' == ''">$(MSBuildProjectDirectory)</_GitVersionCacheProjectDirectory>
+
+      <_GitVersionCacheConfigFile Condition="'$(_GitVersionCacheConfigFile)' == ''">$(GitVersionCacheConfigFile)</_GitVersionCacheConfigFile>
+      <_GitVersionCacheNoFetch Condition="'$(_GitVersionCacheNoFetch)' == ''">$(GitVersionCacheNoFetch)</_GitVersionCacheNoFetch>
+      <_GitVersionCacheNoNormalize Condition="'$(_GitVersionCacheNoNormalize)' == ''">$(GitVersionCacheNoNormalize)</_GitVersionCacheNoNormalize>
+
+    </PropertyGroup>
+    
+    <PropertyGroup>
+      <!-- Have to be inlined. -->
+      <_GitVersionCacheIdentifierProperties>&quot;-p:GitVersionCacheIdentifier=$(_GitVersionCacheIdentifier)&quot; &quot;-p:GitVersionCacheProjectDirectory=$(_GitVersionCacheProjectDirectory)&quot; &quot;-p:GitVersionCacheConfigFile=$(_GitVersionCacheConfigFile)&quot; &quot;-p:GitVersionCacheNoFetch=$(_GitVersionCacheNoFetch)&quot; &quot;-p:GitVersionCacheNoNormalize=$(_GitVersionCacheNoNormalize)&quot;</_GitVersionCacheIdentifierProperties>
+    </PropertyGroup>
+    
+    <Exec Command="dotnet msbuild &quot;$(GitVersionCacheTargetsFile)&quot; -nologo -nodereuse:false &quot;-t:GetVersionCache;GetVersionCacheInline&quot; $(_GitVersionCacheIdentifierProperties)" ConsoleToMSBuild="true" >
+      <Output TaskParameter="ConsoleOutput" PropertyName="GetVersionCacheInline" />
+    </Exec>
+  </Target>
+
+  <Target Name="GetVersionCache" BeforeTargets="$(GetVersionCacheBeforeTargets)" DependsOnTargets=" _GetVersionCacheInline" Condition="'$(DisableGitVersionCache)' != 'true' And '$(_GetVersionCache)' != 'false'">
+
+    <PropertyGroup>
+      <_GetVersionCache Condition="'$(MSBuildLastTaskResult)' == 'false'">false</_GetVersionCache>
+    </PropertyGroup>
+
+    <Warning Text="[$(MSBuildThisFileName)] The git version cache could not been retrieved." Condition="'$(_GetVersionCache)' == 'false'" />
+
+  </Target>
+
+  <!--
+  # Required parameters:
+  # - GetVersionCacheInline
+  -->
+  <Target Name="_ApplyVersionCache" AfterTargets="GetVersionCache" Condition="'$(_GetVersionCache)' != 'false'">
+
+    <PropertyGroup>
+      <!--PrintDebug=true-->
+      <GetVersionCacheInlinePropertyMSBuildProperties>
+        GetVersionCacheInline=$(GetVersionCacheInline)
+      </GetVersionCacheInlinePropertyMSBuildProperties>
+    </PropertyGroup>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=Major" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_Major" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=Minor" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_Minor" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=Patch" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_Patch" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=PreReleaseTag" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_PreReleaseTag" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=PreReleaseTagWithDash" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_PreReleaseTagWithDash" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=PreReleaseLabel" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_PreReleaseLabel" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=PreReleaseNumber" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_PreReleaseNumber" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=BuildMetaData" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_BuildMetaData" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=BuildMetaDataPadded" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_BuildMetaDataPadded" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=FullBuildMetaData" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_FullBuildMetaData" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=MajorMinorPatch" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_MajorMinorPatch" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=SemVer" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_SemVer" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=LegacySemVer" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_LegacySemVer" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=LegacySemVerPadded" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_LegacySemVerPadded" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=AssemblySemVer" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_AssemblySemVer" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=AssemblySemFileVer" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_AssemblySemFileVer" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=FullSemVer" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_FullSemVer" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=InformationalVersion" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_InformationalVersion" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=BranchName" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_BranchName" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=Sha" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_Sha" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=NuGetVersionV2" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_NuGetVersionV2" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=NuGetVersion" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_NuGetVersion" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=NuGetPreReleaseTagV2" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_NuGetPreReleaseTagV2" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=NuGetPreReleaseTag" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_NuGetPreReleaseTag" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=CommitDate" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_CommitDate" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=CommitsSinceVersionSource" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_CommitsSinceVersionSource" />
+    </MSBuild>
+
+    <MSBuild Projects="$(GitVersionCacheTargetsFile)" Targets="GetVersionCacheInlineProperty" Properties="$(GetVersionCacheInlinePropertyMSBuildProperties);GetVersionPropertyName=CommitsSinceVersionSourcePadded" Condition="Exists('$(GitVersionCacheTargetsFile)')" >
+      <Output TaskParameter="TargetOutputs" PropertyName="GitVersion_CommitsSinceVersionSourcePadded" />
+    </MSBuild>
+
+    <PropertyGroup Condition="'$(DisableVersionUpdate)' != 'true'">
+      <Version>$(GitVersion_FullSemVer)</Version>
+      <VersionPrefix>$(GitVersion_MajorMinorPatch)</VersionPrefix>
+      <VersionSuffix Condition=" '$(_GitVersionCacheUseSemVer2)' == 'false' ">$(GitVersion_NuGetPreReleaseTag)</VersionSuffix>
+      <VersionSuffix Condition=" '$(_GitVersionCacheUseSemVer2)' == 'true' ">$(GitVersion_PreReleaseTag)</VersionSuffix>
+      <PackageVersion Condition=" '$(_GitVersionCacheUseSemVer2)' == 'false' ">$(GitVersion_NuGetVersion)</PackageVersion>
+      <PackageVersion Condition=" '$(_GitVersionCacheUseSemVer2)' == 'true' ">$(GitVersion_FullSemVer)</PackageVersion>
+      <InformationalVersion Condition=" '$(InformationalVersion)' == '' ">$(GitVersion_InformationalVersion)</InformationalVersion>
+      <AssemblyVersion Condition=" '$(AssemblyVersion)' == '' ">$(GitVersion_AssemblySemVer)</AssemblyVersion>
+      <FileVersion Condition=" '$(FileVersion)' == '' ">$(GitVersion_AssemblySemFileVer)</FileVersion>
+      <RepositoryBranch Condition=" '$(RepositoryBranch)' == '' ">$(GitVersion_BranchName)</RepositoryBranch>
+      <RepositoryCommit Condition=" '$(RepositoryCommit)' == '' ">$(GitVersion_Sha)</RepositoryCommit>
+    </PropertyGroup>
+
+  </Target>
+
+</Project>

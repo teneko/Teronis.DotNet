@@ -1,0 +1,81 @@
+﻿<Project>
+
+  <PropertyGroup>
+    <!-- Will be overwritten by GitVersionCache.MSBuild.Packaging.GitVersionCache. -->
+    <MSBuildPackagingGitVersionProjectFile Condition="'$(MSBuildPackagingGitVersionProjectFile)' == ''">$(MSBuildThisFileDirectory)$(MSBuildProjectName).csproj</MSBuildPackagingGitVersionProjectFile>
+  </PropertyGroup>
+
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" Condition="'$(DisableSdkProps)' != 'true'" />
+
+  <PropertyGroup>
+    
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Teronis.GitVersionCache</RootNamespace>
+    <Description>GitVersionCache is an improved implementation to GitVersionTask. It does support concurrency and nested GitVersion.yml relative to your .git folder.</Description>
+
+    <!-- We don't build an executable package. 
+         We build an only-build-time package. -->
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IncludeSymbols>false</IncludeSymbols>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+
+    <!--<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>-->
+
+    <!-- We only need the package reference for binaries. -->
+    <DisableGitVersionTask>true</DisableGitVersionTask>
+    <WriteVersionInfoToBuildLog>false</WriteVersionInfoToBuildLog>
+    <UpdateAssemblyInfo>false</UpdateAssemblyInfo>
+    <GenerateGitVersionInformation>false</GenerateGitVersionInformation>
+    <GetVersion>false</GetVersion>
+    
+    <!-- TODO: Make this executable package able. -->
+    <!--<IsPackable>false</IsPackable>-->
+    <PackSourceAs Condition="'$(PackSourceAs)' == ''">ExecutablePackage</PackSourceAs>
+
+  </PropertyGroup>
+
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" Condition="'$(DisableSdkProps)' != 'true'" />
+
+  <ItemGroup>
+
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\..\..\NetStandard\Core\Core\ref\GitVersionCache\GitVersionCache.NetStandard.Core.csproj">
+      <AdditionalProperties>TargetFramework=$(TargetFramework)</AdditionalProperties>
+    </ProjectReference>
+
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\..\..\NetStandard\Json\Json\ref\GitVersionCache\GitVersionCache.NetStandard.Json.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\..\..\GitVersion\CommandLine\Library\ref\GitVersionCache\GitVersionCache.GitVersion.CommandLine.Library.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\..\Core\Core\ref\GitVersionCache\GitVersionCache.MSBuild.Core.csproj" />
+
+  </ItemGroup>
+
+  <ItemGroup>
+
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.8.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
+    <PackageReference Include="System.Text.Json" Version="5.0.0" />
+
+  </ItemGroup>
+
+  <PropertyGroup>
+
+  </PropertyGroup>
+
+  <ItemGroup>
+
+    <None Include="$(MSBuildThisFileDirectory)build\**\*.props;$(MSBuildThisFileDirectory)build\**\*.targets" Pack="true" PackagePath="build">
+      <Link>build\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+
+    <None Include="$(MSBuildThisFileDirectory)build\**\*.props;$(MSBuildThisFileDirectory)build\**\*.targets" Pack="true" PackagePath="buildMultiTargeting">
+      <Link>buildMultiTargeting\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+
+  </ItemGroup>
+
+</Project>

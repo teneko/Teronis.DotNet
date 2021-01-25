@@ -5,7 +5,7 @@ using System.Threading;
 using Teronis.IO.FileLocking;
 using Xunit;
 
-namespace Teronis.NetStandard.IO
+namespace Teronis.IO
 {
     /// <summary>
     /// XUnit used for testing file locker when used concurrently and nested.

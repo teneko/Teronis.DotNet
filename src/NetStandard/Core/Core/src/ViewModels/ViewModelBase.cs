@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
+using Teronis.Linq.Expressions;
 using Teronis.ObjectModel;
 using Teronis.ObjectModel.Parenting;
 using Teronis.Reflection.Caching;
@@ -23,26 +25,32 @@ namespace Teronis.ViewModels
             havingParentsPropertyChangedCache.PropertyRemoved -= HavingParentsPropertyChangedCache_PropertyCacheRemoved;
         }
 
-        protected void OnPropertyChanging([CallerMemberName] string? propertyName = null)
+        internal protected void OnPropertyChanging([CallerMemberName] string? propertyName = null)
         {
             var args = new PropertyChangingEventArgs(propertyName);
             PropertyChanging?.Invoke(this, args);
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        internal protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             var args = new PropertyChangedEventArgs(propertyName);
             PropertyChanged?.Invoke(this, args);
         }
 
-        ///// <summary>
-        ///// Calls <see cref="OnPropertyChanging(string?)"/> and <see cref="OnPropertyChanged(string?)"/>.
-        ///// </summary>
-        ///// <param name="propertyName"></param>
-        //protected void OnPropertyChange(string? propertyName = null) {
-        //    OnPropertyChanging(propertyName);
-        //    OnPropertyChanged(propertyName);
-        //}
+        protected void ChangeProperty(Action action, params string[] properties) {
+            foreach (var propertyName in properties) {
+                OnPropertyChanging(propertyName);
+            }
+
+            action?.Invoke();
+
+            foreach (var propertyName in properties) {
+                OnPropertyChanged(propertyName);
+            }
+        }
+
+        public void ChangeProperty(Action action, Expression<Func<object?>> anonymousProperties) =>
+            ChangeProperty(action, ExpressionGenericTools.GetAnonTypeNames(anonymousProperties));
 
         private void Property_RequestParents(object sender, HavingParentsEventArgs havingParents)
             => havingParents.AddParentAndItsParents(this);

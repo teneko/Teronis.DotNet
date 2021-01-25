@@ -8,8 +8,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using Teronis.Extensions;
+using Teronis.Linq.Expressions;
 using Teronis.Reflection.Caching;
-using Teronis.Utils;
 
 namespace Teronis.Configuration
 {
@@ -289,7 +289,7 @@ namespace Teronis.Configuration
         {
             public static ArgumentNullException ArgumentNullException(Expression<Func<object?>> propertySelector, string? message = null)
             {
-                var propertyName = ExpressionUtils.GetReturnName(propertySelector);
+                var propertyName = ExpressionTools.GetReturnName(propertySelector);
                 return new ArgumentNullException(propertyName, message);
             }
         }

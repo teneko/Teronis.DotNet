@@ -229,16 +229,19 @@ namespace Teronis.Collections.Synchronization
         /// Synchronizes collection with <paramref name="items"/>.
         /// </summary>
         /// <param name="items"></param>
-        public virtual void SynchronizeCollection(IEnumerable<SuperItemType>? items)
+        public virtual void SynchronizeCollection(IEnumerable<SuperItemType>? items, CollectionModificationsYieldCapabilities yieldCapabilities)
         {
             OnCollectionSynchronizing();
 
-            foreach (var modification in SynchronizationMethod.YieldCollectionModifications(superItems, items)) {
+            foreach (var modification in SynchronizationMethod.YieldCollectionModifications(superItems.AsIReadOnlyList().ToYieldIteratorInfluencedReadOnlyList(), items)) {
                 ApplyCollectionModification(modification);
             }
 
             OnCollectionSynchronized();
         }
+
+        public void SynchronizeCollection(IEnumerable<SuperItemType>? items) =>
+            SynchronizeCollection(items, CollectionModificationsYieldCapabilities.All);
 
         ///// <summary>
         ///// Updates existing items with <paramref name="items"/>. 

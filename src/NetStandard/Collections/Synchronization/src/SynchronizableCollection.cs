@@ -96,13 +96,10 @@ namespace Teronis.Collections.Synchronization
         internal void SynchronizeCollection(IEnumerable<ItemType>? enumerable, bool consumeModifications) =>
             SynchronizeCollection(enumerable, CollectionModificationsYieldCapabilities.All, consumeModifications);
 
-        internal void SynchronizeCollection(IEnumerable<ItemType>? enumerable, CollectionModificationsYieldCapabilities yieldCapabilities) =>
+        public void SynchronizeCollection(IEnumerable<ItemType>? enumerable, CollectionModificationsYieldCapabilities yieldCapabilities) =>
             SynchronizeCollection(enumerable, yieldCapabilities, consumeModifications: false);
 
         public void SynchronizeCollection(IEnumerable<ItemType>? enumerable) =>
             SynchronizeCollection(enumerable, consumeModifications: false);
-
-        public void SynchronizeInsertables(IEnumerable<ItemType>? enumerable) =>
-            SynchronizeCollection(enumerable, CollectionModificationsYieldCapabilities.Insert, consumeModifications: false);
     }
 }

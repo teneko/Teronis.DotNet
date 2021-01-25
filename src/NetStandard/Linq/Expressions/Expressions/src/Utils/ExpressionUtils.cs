@@ -2,7 +2,7 @@
 
 namespace Teronis.Linq.Expressions.Utils
 {
-    public class ExpressionUtils
+    public class ExpressionTools
     {
         public static MemberExpression? TryGetMember(Expression? expression)
         {

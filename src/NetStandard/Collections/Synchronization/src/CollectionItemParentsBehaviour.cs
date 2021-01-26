@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Teronis.Collections.Algorithms;
-using Teronis.ObjectModel.Parenting;
+using Teronis.ObjectModel.Parenthood;
 
 namespace Teronis.Collections.Synchronization
 {
     public class AddRemoveResetBehaviourForCollectionItemByAddRemoveParents<ItemType, ContentType>
         where ItemType : IHaveParents
     {
-        public INotifyCollectionModified<ItemType, ContentType> CollectionModifiedNotifier { get; private set; }
+        public INotifyCollectionModification<ItemType, ContentType> CollectionModifiedNotifier { get; private set; }
         public ReadOnlyCollection<object> Parents { get; private set; }
 
-        public AddRemoveResetBehaviourForCollectionItemByAddRemoveParents(INotifyCollectionModified<ItemType, ContentType> collectionModifiedNotifier, params object[] parents)
+        public AddRemoveResetBehaviourForCollectionItemByAddRemoveParents(INotifyCollectionModification<ItemType, ContentType> collectionModifiedNotifier, params object[] parents)
         {
             CollectionModifiedNotifier = collectionModifiedNotifier;
             CollectionModifiedNotifier.CollectionModified += CollectionModifiedNotifier_CollectionModified;
@@ -21,7 +21,7 @@ namespace Teronis.Collections.Synchronization
             Parents = new ReadOnlyCollection<object>(parentList);
         }
 
-        public AddRemoveResetBehaviourForCollectionItemByAddRemoveParents(INotifyCollectionModified<ItemType, ContentType> collectionModifiedNotifier, bool collectionModifiedNotifierIsParent)
+        public AddRemoveResetBehaviourForCollectionItemByAddRemoveParents(INotifyCollectionModification<ItemType, ContentType> collectionModifiedNotifier, bool collectionModifiedNotifierIsParent)
             : this(collectionModifiedNotifier, collectionModifiedNotifierIsParent ? new object[] { collectionModifiedNotifier } : new object[] { }) { }
 
         private void Item_WantParent(object sender, HavingParentsEventArgs e)
@@ -35,7 +35,7 @@ namespace Teronis.Collections.Synchronization
 
         private void CollectionModifiedNotifier_CollectionModified(object sender, CollectionModifiedEventArgs<ItemType, ContentType> args)
         {
-            var change = args.OldSubItemsNewSubItemsModification;
+            var change = args.SubItemModification;
 
             var oldItemItemItems = new Lazy<IReadOnlyList<ItemType>>(() => change.OldItems ??
                 throw CollectionModificationThrowHelper.OldItemsWereNullException());

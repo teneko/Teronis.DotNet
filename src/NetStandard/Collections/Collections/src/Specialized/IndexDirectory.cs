@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Teronis.Tools;
 using Teronis.Utils;
 
 namespace Teronis.Collections.Specialized
@@ -9,49 +8,42 @@ namespace Teronis.Collections.Specialized
     public class IndexDirectory
     {
         public int Count => virtualizableLength;
-        public LastIndexDirectoryEntry LastIndexEntry {get;}
 
-        private List<List<IndexDirectoryEntry>?> entryLists;
+        private List<Entries?> entriesList;
         private int virtualizableLength;
 
-        public IndexDirectory()
-        {
-            entryLists = new List<List<IndexDirectoryEntry>?>();
-            LastIndexEntry = new LastIndexDirectoryEntry(this);
-        }
+        public IndexDirectory() =>
+            entriesList = new List<Entries?>();
 
-        public IndexDirectory(int capacity)
-        {
-            entryLists = new List<List<IndexDirectoryEntry>?>(capacity);
-            LastIndexEntry = new LastIndexDirectoryEntry(this);
-        }
+        public IndexDirectory(int capacity) =>
+            entriesList = new List<Entries?>(capacity);
 
-        private List<IndexDirectoryEntry> prepareListAt(int index)
+        private Entries prepareEntriesAt(int index)
         {
-            List<IndexDirectoryEntry>? entryList;
+            Entries? entries;
 
-            if (index < entryLists.Count) {
-                entryList = entryLists[index];
+            if (index < entriesList.Count) {
+                entries = entriesList[index];
             } else {
-                var lastIndex = entryLists.Count - 1;
+                var lastIndex = entriesList.Count - 1;
 
                 do {
-                    entryList = null;
-                    entryLists.Add(entryList);
+                    entries = null;
+                    entriesList.Add(entries);
                     lastIndex++;
                 } while (lastIndex != index);
             }
 
-            if (entryList is null) {
-                entryList = new List<IndexDirectoryEntry>();
-                entryLists[index] = entryList;
+            if (entries is null) {
+                entries = new Entries();
+                entriesList[index] = entries;
             }
 
-            if (entryLists.Count > virtualizableLength) {
-                virtualizableLength = entryLists.Count;
+            if (entriesList.Count > virtualizableLength) {
+                virtualizableLength = entriesList.Count;
             }
 
-            return entryList;
+            return entries;
         }
 
         /// <summary>
@@ -72,8 +64,8 @@ namespace Teronis.Collections.Specialized
         /// <returns>The index entry.</returns>
         public IndexDirectoryEntry AddEntry(IndexDirectoryEntry indexEntry)
         {
-            var entryList = prepareListAt(indexEntry.Index);
-            entryList.Add(indexEntry);
+            var entries = prepareEntriesAt(indexEntry.Index);
+            entries.Add(indexEntry);
             return indexEntry;
         }
 
@@ -84,10 +76,8 @@ namespace Teronis.Collections.Specialized
         /// <returns>The index entry.</returns>
         public IndexDirectoryEntry Add(int index, IndexDirectoryEntryMode mode)
         {
-            var entryList = prepareListAt(index);
             var indexEntry = new IndexDirectoryEntry(index, mode);
-            entryList.Add(indexEntry);
-            return indexEntry;
+            return AddEntry(indexEntry);
         }
 
         /// <summary>
@@ -110,8 +100,9 @@ namespace Teronis.Collections.Specialized
         /// <paramref name="index"/> by one except floating indexes.
         /// </summary>
         /// <param name="index">The to be inserted index.</param>
+        /// <param name="mode">The mode for the index.</param>
         /// <returns>The index entry.</returns>
-        public IndexDirectoryEntry Insert(int index, IndexDirectoryEntryMode mode = IndexDirectoryEntryMode.Normal)
+        public IndexDirectoryEntry Insert(int index, IndexDirectoryEntryMode mode)
         {
             var entryListsCount = virtualizableLength;
 
@@ -121,23 +112,33 @@ namespace Teronis.Collections.Specialized
 
             var newLastIndex = entryListsCount;
             var indexEntry = new IndexDirectoryEntry(index, mode);
-            entryLists.Insert(index, new List<IndexDirectoryEntry>() { indexEntry });
+            entriesList.Insert(index, new Entries(new List<IndexDirectoryEntry>() { indexEntry }));
             virtualizableLength++;
 
             do {
-                var entryList = entryLists[newLastIndex];
+                var entryList = entriesList[newLastIndex];
 
                 if (!(entryList is null)) {
-                    var entryListCount = entryList.Count;
+                    var entryListCount = entryList.NormalEntries.Count;
 
                     for (var entryIndex = 0; entryIndex < entryListCount; entryIndex++) {
-                        entryList[entryIndex].Index++;
+                        entryList.NormalEntries[entryIndex].Index++;
                     }
                 }
             } while (--newLastIndex > index);
 
             return indexEntry;
         }
+
+        /// <summary>
+        /// Inserts <paramref name="index"/> between <paramref name="index"/> - 1
+        /// and <paramref name="index"/> and will cause to move existing indexes at
+        /// <paramref name="index"/> by one except floating indexes.
+        /// </summary>
+        /// <param name="index">The to be inserted index.</param>
+        /// <returns>The index entry.</returns>
+        public IndexDirectoryEntry Insert(int index) =>
+            Insert(index, IndexDirectoryEntryMode.Normal);
 
         /// <summary>
         /// Removes index at <paramref name="index"/>.
@@ -152,7 +153,7 @@ namespace Teronis.Collections.Specialized
                 throw new ArgumentOutOfRangeException(nameof(index));
             }
 
-            if (index >= entryLists.Count) {
+            if (index >= entriesList.Count) {
                 virtualizableLength--;
                 return;
             }
@@ -160,20 +161,20 @@ namespace Teronis.Collections.Specialized
             int nextIndex = index + 1;
 
             while (nextIndex < entryListsCount) {
-                var entryList = entryLists[nextIndex];
+                var entryList = entriesList[nextIndex];
 
                 if (!(entryList is null)) {
-                    var entryListCount = entryList.Count;
+                    var entryListCount = entryList.NormalEntries.Count;
 
                     for (var entryIndex = 0; entryIndex < entryListCount; entryIndex++) {
-                        entryList[entryIndex].Index--;
+                        entryList.NormalEntries[entryIndex].Index--;
                     }
                 }
 
                 nextIndex++;
             }
 
-            entryLists.RemoveAt(index);
+            entriesList.RemoveAt(index);
             virtualizableLength--;
         }
 
@@ -188,22 +189,22 @@ namespace Teronis.Collections.Specialized
                 throw new ArgumentOutOfRangeException(nameof(indexEntry));
             }
 
-            var entryList = entryLists[indexEntry.Index];
+            var entryList = entriesList[indexEntry.Index];
 
             if (entryList is null) {
                 return false;
             }
 
-            var success = entryList.Remove(indexEntry);
+            var success = entryList.NormalEntries.Remove(indexEntry);
 
-            if (entryList.Count == 0) {
+            if (entryList.NormalEntries.Count == 0) {
                 Remove(indexEntry.Index);
             }
 
             return success;
         }
 
-        public void Move(int fromIndex, int toIndex)
+        public void Move(int fromIndex, int toIndex, int count)
         {
             if (fromIndex == toIndex) {
                 return;
@@ -217,107 +218,126 @@ namespace Teronis.Collections.Specialized
                 new ArgumentOutOfRangeException(nameof(toIndex));
             }
 
-            IEnumerator<(int Index, List<IndexDirectoryEntry>? Item)> entryEnumerator;
-            var (minIndex, distance) = CollectionTools.GetMoveRange(fromIndex, toIndex, 1);
+            IEnumerator<(int Index, Entries? Entries)> entryEnumerator;
+            var (lowerIndex, distance) = CollectionTools.GetMoveRange(fromIndex, toIndex, count);
             bool enumeratesNonReversed;
 
             if (fromIndex < toIndex) {
                 var enumeratorIndex = fromIndex;
-                entryEnumerator = entryLists.Skip(minIndex).Take(distance).Select(item => (enumeratorIndex++, item)).GetEnumerator();
+                entryEnumerator = entriesList.Skip(lowerIndex).Take(distance).Select(item => (enumeratorIndex++, item)).GetEnumerator();
                 enumeratesNonReversed = true;
             } else {
-                entryEnumerator = IListGenericUtils.IndexedReverse(entryLists, minIndex, distance).GetEnumerator();
+                entryEnumerator = IListGenericUtils.IndexedReverse(entriesList, lowerIndex, distance).GetEnumerator();
                 enumeratesNonReversed = false;
             }
 
             entryEnumerator.MoveNext();
-            var (firstEntryListIndex, firstEntryList) = entryEnumerator.Current;
-            var newEntryListIndex = firstEntryListIndex;
-            entryEnumerator.MoveNext();
-            List<IndexDirectoryEntry>? floatingEntries;
+            var (entriesIndexFirst, entriesFirst) = entryEnumerator.Current;
 
-            if (enumeratesNonReversed) {
-                floatingEntries = new List<IndexDirectoryEntry>();
-            } else {
-                floatingEntries = null;
+            var entriesToBeMoved = new Entries?[count];
+            entriesToBeMoved[0] = entriesFirst;
+
+            {
+                var toBeMovedIndex = 0;
+
+                while (++toBeMovedIndex < count) {
+                    entryEnumerator.MoveNext();
+                    entriesToBeMoved[toBeMovedIndex] = entryEnumerator.Current.Entries;
+                }
             }
+
+            var entriesIndexCurrent = entriesIndexFirst;
+            entryEnumerator.MoveNext();
 
             do {
                 var (entryListIndex, entryList) = entryEnumerator.Current;
 
                 if (!(entryList is null)) {
-                    var entryListCount = entryList.Count;
+                    var entryListCount = entryList.NormalEntries.Count;
 
-                    if (enumeratesNonReversed && floatingEntries!.Count != 0) {
-                        var floatingEntriesCount = floatingEntries.Count;
+                    //if (enumeratesNonReversed && floatingEntries!.Count != 0) {
+                    //    var floatingEntriesCount = floatingEntries.Count;
 
-                        for (var index = 0; index < floatingEntriesCount; index++) {
-                            var floatingEntry = floatingEntries[index];
-                            // Set index because..
-                            floatingEntry.Index = newEntryListIndex;
-                            // added floating entries won't be iterated below.
-                            entryList.Add(floatingEntry);
-                        }
+                    //    for (var index = 0; index < floatingEntriesCount; index++) {
+                    //        var floatingEntry = floatingEntries[index];
+                    //        // Set index because..
+                    //        floatingEntry.Index = newEntryListIndex;
+                    //        // added floating entries won't be iterated below.
+                    //        entryList.Add(floatingEntry);
+                    //    }
 
-                        floatingEntries.Clear();
-                    }
+                    //    floatingEntries.Clear();
+                    //}
 
                     for (var index = entryListCount - 1; index >= 0; index--) {
-                        var entry = entryList[index];
-                        entry.Index = newEntryListIndex;
+                        var entry = entryList.NormalEntries[index];
+                        entry.Index = entriesIndexCurrent;
 
-                        if (entry.Mode == IndexDirectoryEntryMode.Floating && enumeratesNonReversed) {
-                            floatingEntries!.Add(entry);
-                            entryList.RemoveAt(index);
-                        }
+                        //if (entry.Mode == IndexDirectoryEntryMode.Floating && enumeratesNonReversed) {
+                        //    floatingEntries!.Add(entry);
+                        //    entryList.RemoveAt(index);
+                        //}
                     }
                 }
 
-                newEntryListIndex = entryListIndex;
+                entriesIndexCurrent = entryListIndex;
             } while (entryEnumerator.MoveNext());
 
-            var requiresFloatingEntriesHandlingCausedByNonReversedEnumeration = enumeratesNonReversed && floatingEntries!.Count != 0;
+            //var requiresFloatingEntriesHandlingCausedByNonReversedEnumeration = enumeratesNonReversed && floatingEntries!.Count != 0;
 
-            if (requiresFloatingEntriesHandlingCausedByNonReversedEnumeration && firstEntryList is null) {
-                firstEntryList = new List<IndexDirectoryEntry>(floatingEntries!.Count);
-            }
+            //if (requiresFloatingEntriesHandlingCausedByNonReversedEnumeration) {
+            //    if (firstEntryList is null) {
+            //        firstEntryList = new List<IndexDirectoryEntry>(floatingEntries!.Count);
+            //    }
 
-            if (requiresFloatingEntriesHandlingCausedByNonReversedEnumeration) {
-                var floatingEntriesCount = floatingEntries!.Count;
+            //    var floatingEntriesCount = floatingEntries!.Count;
 
-                for (var floatingEntryIndex = 0; floatingEntryIndex < floatingEntriesCount; floatingEntryIndex++) {
-                    var floatingEntry = floatingEntries[floatingEntryIndex];
-                    floatingEntry.Index = toIndex;
-                    firstEntryList!.Add(floatingEntry);
-                }
+            //    for (var floatingEntryIndex = 0; floatingEntryIndex < floatingEntriesCount; floatingEntryIndex++) {
+            //        var floatingEntry = floatingEntries[floatingEntryIndex];
+            //        floatingEntry.Index = toIndex;
+            //        firstEntryList!.Add(floatingEntry);
+            //    }
 
-                floatingEntries.Clear();
-            }
+            //    floatingEntries.Clear();
+            //}
 
+            entriesList.RemoveAt(fromIndex);
+            entriesList.InsertRange(toIndex, entriesToBeMoved);
 
-            entryLists.RemoveAt(fromIndex);
-            entryLists.Insert(toIndex, firstEntryList);
+            if (!(entriesFirst is null)) {
+                var toIndexLast = toIndex + count;
 
-            if (!(firstEntryList is null)) {
-                var firstEntryListCount = firstEntryList.Count;
+                for (var entriesToBeMovedIndex = entriesIndexFirst; entriesToBeMovedIndex < toIndexLast; entriesToBeMovedIndex++) {
+                    var entries = entriesToBeMoved[entriesToBeMovedIndex];
 
-                for (var index = firstEntryListCount - 1; index >= 0; index--) {
-                    var entry = firstEntryList[index];
+                    if (enumeratesNonReversed) {
+                        for (var index = 0; index >= 0; index--) {
+                            //var entries = entr
+                            var entry = entriesFirst.NormalEntries[index];
 
-                    if (entry.Mode == IndexDirectoryEntryMode.Floating && !enumeratesNonReversed) {
-                        firstEntryList.RemoveAt(index);
-                        prepareListAt(entry.Index).Add(entry);
-                    } else {
-                        firstEntryList[index].Index = toIndex;
+                            //if (entry.Mode == IndexDirectoryEntryMode.Floating && !enumeratesNonReversed) {
+                            //    firstEntryList.RemoveAt(index);
+                            //    prepareListAt(entry.Index).Add(entry);
+                            //} else {
+                            entriesFirst.NormalEntries[index].Index = toIndex;
+                            //}
+                        }
                     }
+
+                    //var floatingEntries = entries.FloatingEntries
                 }
+
+                var firstEntryListCount = entriesFirst.NormalEntries.Count;
             }
         }
+
+        public void Move(int fromIndex, int toIndex) =>
+            Move(fromIndex, toIndex, 1);
 
         public void ReplaceEntry(IndexDirectoryEntry indexEntry, int newIndex)
         {
             if (indexEntry.Index >= 0) {
-                entryLists[indexEntry.Index]!.Remove(indexEntry);
+                entriesList[indexEntry.Index]!.NormalEntries.Remove(indexEntry);
             }
 
             indexEntry.Index = newIndex;
@@ -330,13 +350,13 @@ namespace Teronis.Collections.Specialized
         /// </summary>
         public void TrimEnd()
         {
-            var entryListsCount = entryLists.Count;
+            var entryListsCount = entriesList.Count;
             var lastIndex = entryListsCount;
 
             for (var index = entryListsCount - 1; index >= 0; index--) {
-                var entryList = entryLists[index];
+                var entries = entriesList[index];
 
-                if (entryList is null || entryList.Count == 0) {
+                if (entries is null || (entries.NormalEntries.Count == 0 && entries.FloatingEntries.Count == 0)) {
                     lastIndex = index;
                 } else {
                     break;
@@ -349,50 +369,64 @@ namespace Teronis.Collections.Specialized
                 return;
             }
 
-            entryLists.RemoveRange(lastIndex, entryListsCount - lastIndex);
-            entryLists.TrimExcess();
+            entriesList.RemoveRange(lastIndex, entryListsCount - lastIndex);
+            entriesList.TrimExcess();
         }
 
         public void Clear() =>
-            entryLists.Clear();
-    }
+            entriesList.Clear();
 
-    public sealed class IndexDirectoryEntry
-    {
-        public int Index { get; internal set; }
-        public IndexDirectoryEntryMode Mode { get; }
-
-        public IndexDirectoryEntry(int index, IndexDirectoryEntryMode mode)
+        private class Entries
         {
-            Index = index;
-            Mode = mode;
+            public List<IndexDirectoryEntry> NormalEntries {
+                get {
+                    if (normalEntries is null) {
+                        var entryList = new List<IndexDirectoryEntry>();
+                        normalEntries = entryList;
+                        return entryList;
+                    }
+
+                    return normalEntries;
+                }
+            }
+
+            public List<IndexDirectoryEntry> FloatingEntries {
+                get {
+                    if (floatingEntries is null) {
+                        var entryList = new List<IndexDirectoryEntry>();
+                        floatingEntries = entryList;
+                        return entryList;
+                    }
+
+                    return floatingEntries;
+                }
+            }
+
+            private List<IndexDirectoryEntry>? normalEntries;
+            private List<IndexDirectoryEntry>? floatingEntries;
+
+            public Entries(List<IndexDirectoryEntry>? normalEntries, List<IndexDirectoryEntry>? floatingEntries)
+            {
+                this.normalEntries = normalEntries;
+                this.floatingEntries = floatingEntries;
+            }
+
+            public Entries(List<IndexDirectoryEntry> normalEntries)
+                : this(normalEntries, null) { }
+
+            public Entries()
+                : this(null, null) { }
+
+            public void Add(IndexDirectoryEntry entry)
+            {
+                if (entry.Mode == IndexDirectoryEntryMode.Normal) {
+                    NormalEntries.Add(entry);
+                } else if (entry.Mode == IndexDirectoryEntryMode.Floating) {
+                    FloatingEntries.Add(entry);
+                } else {
+                    throw new ArgumentException("Index entry has bad mode.");
+                }
+            }
         }
-
-        public static implicit operator int(IndexDirectoryEntry entry) =>
-            entry.Index;
-    }
-
-    public sealed class LastIndexDirectoryEntry
-    {
-        public int Index => indexDirectory.Count - 1;
-
-        private readonly IndexDirectory indexDirectory;
-
-        internal LastIndexDirectoryEntry(IndexDirectory indexDirectory) => 
-            this.indexDirectory = indexDirectory;
-
-        public static implicit operator int(LastIndexDirectoryEntry entry) =>
-            entry.Index;
-    }
-
-    public enum IndexDirectoryEntryMode
-    {
-        Normal,
-        /// <summary>
-        /// Adding and removing other indexes affects own index as expected 
-        /// but other moving indexes increases own index always by one only
-        /// if they cross own index.
-        /// </summary>
-        Floating
     }
 }

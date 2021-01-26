@@ -5,7 +5,7 @@ namespace Teronis.Collections.Synchronization
     public abstract partial class SyncingCollectionViewModel<SubItemType, SuperItemType> 
     {
         public class SynchronizationMirror<ToBeImitatedCollectionType>
-            where ToBeImitatedCollectionType : INotifyCollectionSynchronizing<SuperItemType>, INotifyCollectionModified<SuperItemType>, INotifyCollectionSynchronized<SuperItemType>
+            where ToBeImitatedCollectionType : INotifyCollectionSynchronizing<SuperItemType>, INotifyCollectionModification<SuperItemType>, INotifyCollectionSynchronized<SuperItemType>
         {
             private readonly SyncingCollectionViewModel<SubItemType, SuperItemType> collectionViewModel;
 

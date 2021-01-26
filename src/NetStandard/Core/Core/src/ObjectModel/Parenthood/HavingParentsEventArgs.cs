@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Teronis.ObjectModel.Parenting
+namespace Teronis.ObjectModel.Parenthood
 {
     public class HavingParentsEventArgs : EventArgs
     {

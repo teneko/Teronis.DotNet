@@ -1,6 +1,6 @@
 ﻿namespace Teronis.Collections.Synchronization
 {
-    public interface INotifyCollectionModified<ItemType>
+    public interface INotifyCollectionModification<ItemType>
     {
         event NotifyNotifyCollectionModifiedEventHandler<ItemType> CollectionModified;
     }

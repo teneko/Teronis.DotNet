@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Teronis.ObjectModel.Parenting
+namespace Teronis.ObjectModel.Parenthood
 {
     public class RegisteredRequestParentHandlerDictionary : IReadOnlyDictionary<object, ParentsRequestedEventHandler>
     {

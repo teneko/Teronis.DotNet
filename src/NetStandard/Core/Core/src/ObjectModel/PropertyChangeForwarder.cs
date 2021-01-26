@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace Teronis.ObjectModel
 {
-    public abstract class PropertyChangeForwarder<ForwardingEventContainerType, EventArgumentType> : EventInvocationForwarder<ForwardingEventContainerType, EventArgumentType>
+    public abstract class PropertyChangeForwarder<EventArgumentType> : EventInvocationForwarder<object?, EventArgumentType>
     {
         protected Dictionary<string, string> CalleePropertyNameByCallerPropertyNameDictionary;
 
-        public PropertyChangeForwarder(ForwardingEventContainerType forwardingEventContainer, object? alternativeEventSender = null)
-            : base(forwardingEventContainer, alternativeEventSender: alternativeEventSender) =>
+        public PropertyChangeForwarder(object? alternativeEventSender = null)
+            : base(alternativeEventSender) =>
             CalleePropertyNameByCallerPropertyNameDictionary = new Dictionary<string, string>();
 
         public void AddPropertyChangeForwarding(string callerPropertyName, string calleePropertyName)

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using Teronis.Collections.Specialized;
 
 namespace Teronis.Collections.Algorithms.Modifications
 {
@@ -12,10 +10,10 @@ namespace Teronis.Collections.Algorithms.Modifications
 
         private readonly IEnumerator<ItemType> enumerator;
 
-        public IndexPreferredEnumerator(IEnumerable<ItemType> enumerable, LastIndexDirectoryEntry lastIndex)
+        public IndexPreferredEnumerator(IEnumerable<ItemType> enumerable, Func<int> getLastIndex)
         {
             if (enumerable is YieldIteratorInfluencedReadOnlyList<ItemType> list) {
-                enumerator = new IndexedEnumerator(list, lastIndex);
+                enumerator = new IndexedEnumerator(list, getLastIndex);
             } else {
                 enumerator = enumerable.GetEnumerator();
             }
@@ -46,19 +44,21 @@ namespace Teronis.Collections.Algorithms.Modifications
         public class IndexedEnumerator : IEnumerator<ItemType>
         {
             private readonly IReadOnlyList<ItemType> list;
-            private readonly LastIndexDirectoryEntry lastIndex;
+            private readonly Func<int> getLastIndex;
 
             public ItemType Current { get; private set; }
 
-            public IndexedEnumerator(IReadOnlyList<ItemType> list, LastIndexDirectoryEntry lastIndex)
+            public IndexedEnumerator(IReadOnlyList<ItemType> list, Func<int> getLastIndex)
             {
                 Current = default!;
                 this.list = list;
-                this.lastIndex = lastIndex;
+                this.getLastIndex = getLastIndex;
             }
 
             public bool MoveNext()
             {
+                var lastIndex = getLastIndex();
+
                 if (lastIndex + 1 < list.Count) {
                     Current = list[lastIndex + 1];
                     return true;

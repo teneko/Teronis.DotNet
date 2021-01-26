@@ -2,27 +2,22 @@
 
 namespace Teronis.ObjectModel
 {
-    public abstract class EventInvocationForwarder<ForwardingEventContainerType, EventArgumentType>
+    public abstract class EventInvocationForwarder<SenderType, EventArgumentType>
     {
-        protected event Action<object, EventArgumentType>? EventInvocationForward;
+        protected event Action<SenderType, EventArgumentType>? EventInvocationForward;
 
-        public ForwardingEventContainerType ForwardingEventContainer { get; }
+        protected abstract Action<SenderType, EventArgumentType>? ForwardEventInvocation { get; }
 
-        protected abstract Action<object, EventArgumentType>? ForwardEventInvocation { get; }
+        protected readonly SenderType AlternativeEventSender;
 
-        protected readonly object? AlternativeEventSender;
-
-        public EventInvocationForwarder(ForwardingEventContainerType forwardingEventContainer, object? alternativeEventSender = null)
-        {
-            ForwardingEventContainer = forwardingEventContainer;
+        public EventInvocationForwarder(SenderType alternativeEventSender) =>
             AlternativeEventSender = alternativeEventSender;
-        }
 
         protected abstract bool CanForwardEventInvocation(EventArgumentType eventArgument);
 
         protected abstract EventArgumentType CreateEventArgument(EventArgumentType eventArgument);
 
-        protected void OnEventInvocationForward(object sender, EventArgumentType eventArgument)
+        protected void OnEventInvocationForward(SenderType sender, EventArgumentType eventArgument)
         {
             if (CanForwardEventInvocation(eventArgument)) {
                 return;
@@ -30,8 +25,8 @@ namespace Teronis.ObjectModel
 
             sender = AlternativeEventSender ?? sender;
             eventArgument = CreateEventArgument(eventArgument);
-            ForwardEventInvocation?.Invoke(sender, eventArgument);
-            EventInvocationForward?.Invoke(sender, eventArgument);
+            ForwardEventInvocation?.Invoke(sender!, eventArgument);
+            EventInvocationForward?.Invoke(sender!, eventArgument);
         }
     }
 }

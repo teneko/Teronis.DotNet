@@ -7,7 +7,7 @@ using System.Linq;
 using Teronis.Collections.Algorithms;
 using Teronis.Collections.Algorithms.Modifications;
 using Teronis.Extensions;
-using Teronis.ObjectModel.Parenting;
+using Teronis.ObjectModel.Parenthood;
 using Teronis.ViewModels;
 
 namespace Teronis.Collections.Synchronization
@@ -19,7 +19,7 @@ namespace Teronis.Collections.Synchronization
     /// </summary>
     /// <typeparam name="SubItemType"></typeparam>
     /// <typeparam name="SuperItemType"></typeparam>
-    public abstract partial class SyncingCollectionViewModel<SubItemType, SuperItemType> : ViewModelBase, ISynchronizableCollection<SuperItemType>, INotifyCollectionModified<SubItemType, SuperItemType>, IHaveParents
+    public abstract partial class SyncingCollectionViewModel<SubItemType, SuperItemType> : ViewModelBase, ISynchronizableCollection<SuperItemType>, INotifyCollectionModification<SubItemType, SuperItemType>, IHaveParents
         where SubItemType : notnull
         where SuperItemType : notnull
     {
@@ -73,7 +73,7 @@ namespace Teronis.Collections.Synchronization
         /// <param name="toBeImitatedCollection">The foreign collection that is about to be imitated related to its modifications.</param>
         /// <returns>A collection synchronisation mirror.</returns>
         public SynchronizationMirror<ToBeImitatedCollectionType> CreateSynchronizationMirror<ToBeImitatedCollectionType>(ToBeImitatedCollectionType toBeImitatedCollection)
-            where ToBeImitatedCollectionType : INotifyCollectionSynchronizing<SuperItemType>, INotifyCollectionModified<SuperItemType>, INotifyCollectionSynchronized<SuperItemType> =>
+            where ToBeImitatedCollectionType : INotifyCollectionSynchronizing<SuperItemType>, INotifyCollectionModification<SuperItemType>, INotifyCollectionSynchronized<SuperItemType> =>
             new SynchronizationMirror<ToBeImitatedCollectionType>(this, toBeImitatedCollection);
 
         protected virtual void ApplyCollectionItemAdd(in ApplyingCollectionModificationBundle modificationBundle)
@@ -190,22 +190,6 @@ namespace Teronis.Collections.Synchronization
             }
         }
 
-        protected CollectionModificationBundle<SubItemType, SuperItemType> CreateAppliedCollectionModificationBundle(in ApplyingCollectionModificationBundle applyingModificationBundle)
-        {
-            /*  We want transform new-super-items to new-sub-items because 
-             *  they have been created previously if any is existing. */
-            var oldSubItemsNewSuperItemsModification = applyingModificationBundle.OldSubItemsNewSuperItemsModification;
-            var newSubItems = oldSubItemsNewSuperItemsModification.GetItemsBeginningFromNewIndex(subItems);
-            var oldSubItemsNewSubItemsModification = oldSubItemsNewSuperItemsModification.CopyWithOtherItems(oldSubItemsNewSuperItemsModification.OldItems, newSubItems);
-
-            var appliedModificationBundle = new CollectionModificationBundle<SubItemType, SuperItemType>(
-                oldSubItemsNewSubItemsModification,
-                applyingModificationBundle.OldSubItemsNewSuperItemsModification,
-                applyingModificationBundle.OldSuperItemsNewSuperItemsModification);
-
-            return appliedModificationBundle;
-        }
-
         protected void OnCollectionModified(CollectionModifiedEventArgs<SubItemType, SuperItemType> args)
             => CollectionModified?.Invoke(this, args);
 
@@ -214,9 +198,18 @@ namespace Teronis.Collections.Synchronization
             var oldSubItemsNewSuperItemsModification = ReplaceOldSuperItemsByOldSubItems(superItemsModification, subItems);
             var applyingModificationBundle = new ApplyingCollectionModificationBundle(oldSubItemsNewSuperItemsModification, superItemsModification);
             ApplyCollectionModificationBundle(applyingModificationBundle, allowedActions);
-            var appliedModificationBundle = CreateAppliedCollectionModificationBundle(applyingModificationBundle);
-            var args = new CollectionModifiedEventArgs<SubItemType, SuperItemType>(appliedModificationBundle);
-            OnCollectionModified(args);
+
+            /*  We want transform new-super-items to new-sub-items because 
+             *  they have been created previously if any is existing. */
+            var newSubItems = oldSubItemsNewSuperItemsModification.GetItemsBeginningFromNewIndex(subItems);
+            var oldSubItemsNewSubItemsModification = oldSubItemsNewSuperItemsModification.CopyWithOtherItems(oldSubItemsNewSuperItemsModification.OldItems, newSubItems);
+
+            var collectionModifiedArgs = new CollectionModifiedEventArgs<SubItemType, SuperItemType>(
+                oldSubItemsNewSubItemsModification,
+                applyingModificationBundle.OldSubItemsNewSuperItemsModification,
+                applyingModificationBundle.OldSuperItemsNewSuperItemsModification);
+
+            OnCollectionModified(collectionModifiedArgs);
         }
 
         protected void OnCollectionSynchronizing() =>

@@ -84,7 +84,7 @@ namespace Teronis.Collections.Synchronization
                 : base(synchronizingCollection) { }
 
             protected override CollectionModifiedEventArgs<SubItemType> CreateCollectionModifiedEventArgs(CollectionModifiedEventArgs<SubItemType, SuperItemType> args) =>
-                new CollectionModifiedEventArgs<SubItemType>(args.OldSubItemsNewSubItemsModification);
+                new CollectionModifiedEventArgs<SubItemType>(args.SubItemModification);
         }
 
         public class SuperItemCollection : ItemCollection<SuperItemType>
@@ -93,7 +93,7 @@ namespace Teronis.Collections.Synchronization
                 : base(synchronizingCollection) { }
 
             protected override CollectionModifiedEventArgs<SuperItemType> CreateCollectionModifiedEventArgs(CollectionModifiedEventArgs<SubItemType, SuperItemType> args) =>
-                new CollectionModifiedEventArgs<SuperItemType>(args.OldSuperItemsNewSuperItemsModification);
+                new CollectionModifiedEventArgs<SuperItemType>(args.SuperItemModification);
         }
     }
 }

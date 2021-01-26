@@ -1,6 +1,4 @@
-﻿using Teronis.Tools;
-
-namespace Teronis.Collections.Algorithms.Modifications
+﻿namespace Teronis.Collections.Algorithms.Modifications
 {
     public static class ICollectionModificationParametersTools
     {

@@ -2,7 +2,7 @@
 
 namespace Teronis.Collections.Algorithms
 {
-    public interface INotifyCollectionModified<SubItemType, SuperItemType>
+    public interface INotifyCollectionModification<SubItemType, SuperItemType>
     {
         event NotifyCollectionModifiedEventHandler<SubItemType, SuperItemType> CollectionModified;
     }

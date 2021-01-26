@@ -40,7 +40,7 @@ namespace Teronis.Collections.Algorithms.Modifications
 
             var leftIndexDirectory = new IndexDirectory();
 
-            var leftItemsEnumerator = new IndexPreferredEnumerator<LeftItemType>(leftItems, leftIndexDirectory.LastIndexEntry);
+            var leftItemsEnumerator = new IndexPreferredEnumerator<LeftItemType>(leftItems, () => leftIndexDirectory.Count - 1);
             bool leftItemsEnumeratorIsFunctional = leftItemsEnumerator.MoveNext();
 
             var rightItemsEnumerator = rightItems.GetEnumerator();

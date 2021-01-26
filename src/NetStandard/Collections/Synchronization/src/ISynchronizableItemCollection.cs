@@ -7,7 +7,7 @@ namespace Teronis.Collections.Synchronization
 {
     public interface ISynchronizableItemCollection<ItemType> :
         ICollection<ItemType>, IEnumerable<ItemType>, IEnumerable, IList<ItemType>, IReadOnlyCollection<ItemType>, IReadOnlyList<ItemType>, ICollection, IList,
-        INotifyCollectionSynchronizing<ItemType>, INotifyCollectionModified<ItemType>, INotifyCollectionChanged, INotifyCollectionSynchronized<ItemType>
+        INotifyCollectionSynchronizing<ItemType>, INotifyCollectionModification<ItemType>, INotifyCollectionChanged, INotifyCollectionSynchronized<ItemType>
     {
         new ItemType this[int index] { get; set; }
         new int Count { get; }

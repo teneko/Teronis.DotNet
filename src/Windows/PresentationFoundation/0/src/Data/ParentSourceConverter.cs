@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Markup;
-using Teronis.ObjectModel.Parenting;
+using Teronis.ObjectModel.Parenthood;
 
 namespace Teronis.Windows.PresentationFoundation.Data
 {

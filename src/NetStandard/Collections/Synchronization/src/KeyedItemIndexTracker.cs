@@ -5,28 +5,30 @@ using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Teronis.Collections.Algorithms.Modifications;
-using Teronis.Tools;
+using Teronis.Collections.Specialized;
 
 namespace Teronis.Collections.Synchronization
 {
     public class KeyedItemIndexTracker<ItemType, KeyType>
     {
-        public IReadOnlyDictionary<KeyType, int> KeyedItemIndexes { get; }
+        public IReadOnlyDictionary<KeyType, IndexDirectoryEntry> KeyedItemIndexes { get; }
 
         internal readonly ISynchronizableItemCollection<ItemType> ItemCollection;
         internal readonly Func<ItemType, KeyType> GetItemKeyDelegate;
 
-        private readonly Dictionary<KeyType, int> keyedItemIndexes;
+        private readonly Dictionary<KeyType, IndexDirectoryEntry> keyedItemIndexes;
+        private readonly IndexDirectory indexDirectory;
 
         public KeyedItemIndexTracker(ISynchronizableItemCollection<ItemType> itemCollection, Func<ItemType, KeyType> getItemKey,
             IEqualityComparer<KeyType>? keyEqualityComparer)
         {
             keyEqualityComparer = keyEqualityComparer ?? EqualityComparer<KeyType>.Default;
-            keyedItemIndexes = new Dictionary<KeyType, int>(keyEqualityComparer);
-            KeyedItemIndexes = new ReadOnlyDictionary<KeyType, int>(keyedItemIndexes);
+            keyedItemIndexes = new Dictionary<KeyType, IndexDirectoryEntry>(keyEqualityComparer);
+            KeyedItemIndexes = new ReadOnlyDictionary<KeyType, IndexDirectoryEntry>(keyedItemIndexes);
+            indexDirectory = new IndexDirectory();
             ItemCollection = itemCollection;
             GetItemKeyDelegate = getItemKey ?? throw new ArgumentNullException(nameof(getItemKey));
-            itemCollection.CollectionModified += ModificationNotifier_CollectionModified;
+            itemCollection.CollectionModified += ModificationNotifier_CollectionModifying;
             recalculateItemKeys();
         }
 
@@ -41,14 +43,15 @@ namespace Teronis.Collections.Synchronization
             for (var index = 0; index < itemCollectionCount; index++) {
                 var item = ItemCollection[index];
                 var itemKey = GetItemKeyDelegate(item);
-                keyedItemIndexes[itemKey] = index;
+                var indexEntry = indexDirectory.Insert(index);
+                keyedItemIndexes[itemKey] = indexEntry;
             }
         }
 
         public KeyedItemIndexTracker(ISynchronizableItemCollection<ItemType> itemCollection, Func<ItemType, KeyType> getItemKey)
             : this(itemCollection, getItemKey, default(IEqualityComparer<KeyType>)) { }
 
-        private void ModificationNotifier_CollectionModified(object sender, ICollectionModification<ItemType, ItemType> modification)
+        private void ModificationNotifier_CollectionModifying(object sender, ICollectionModification<ItemType, ItemType> modification)
         {
             void replaceItemIndexes(IEnumerable<ItemType> items, int offset)
             {
@@ -57,7 +60,7 @@ namespace Teronis.Collections.Synchronization
 
                 while (itemsEnumerator.MoveNext()) {
                     var itemKey = GetItemKeyDelegate(itemsEnumerator.Current);
-                    keyedItemIndexes[itemKey] = offset + index;
+                    //keyedItemIndexes[itemKey] = offset + index;
                     index++;
                 }
             }
@@ -81,6 +84,8 @@ namespace Teronis.Collections.Synchronization
                             var itemKey = GetItemKeyDelegate(modification.OldItems[index]);
                             keyedItemIndexes.Remove(itemKey);
                         }
+
+                        recalculateItemKeys();
                     }
                     break;
                 case NotifyCollectionChangedAction.Replace:
@@ -115,7 +120,7 @@ namespace Teronis.Collections.Synchronization
         [return: MaybeNull]
         public ItemType GetItemOrDefault(KeyType key)
         {
-            if (keyedItemIndexes.TryGetValue(key, out int itemIndex)) {
+            if (keyedItemIndexes.TryGetValue(key, out var itemIndex)) {
                 var item = ItemCollection[itemIndex];
                 return item;
             }

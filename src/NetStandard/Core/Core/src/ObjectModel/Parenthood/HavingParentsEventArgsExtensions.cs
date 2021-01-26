@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Teronis.ObjectModel.Parenting
+namespace Teronis.ObjectModel.Parenthood
 {
     public static class HavingParentsEventArgsExtensions
     {

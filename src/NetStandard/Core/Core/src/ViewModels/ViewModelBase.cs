@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using Teronis.Linq.Expressions;
 using Teronis.ObjectModel;
-using Teronis.ObjectModel.Parenting;
+using Teronis.ObjectModel.Parenthood;
 using Teronis.Reflection.Caching;
 
 namespace Teronis.ViewModels
@@ -25,19 +25,36 @@ namespace Teronis.ViewModels
             havingParentsPropertyChangedCache.PropertyRemoved -= HavingParentsPropertyChangedCache_PropertyCacheRemoved;
         }
 
-        internal protected void OnPropertyChanging([CallerMemberName] string? propertyName = null)
+        /// <summary>
+        /// Initiates a property changing event invocation.
+        /// </summary>
+        /// <param name="sender">The sender to be sent.</param>
+        /// <param name="args">The argument to be sent.</param>
+        protected void InvokePropertyChanging(object? sender, PropertyChangingEventArgs args) =>
+            PropertyChanging?.Invoke(this, args);
+
+        /// <summary>
+        /// Initiates a property changed event invocation.
+        /// </summary>
+        /// <param name="sender">The sender to be sent.</param>
+        /// <param name="args">The argument to be sent.</param>
+        protected void InvokePropertyChanged(object? sender, PropertyChangedEventArgs args) =>
+            PropertyChanged?.Invoke(this, args);
+
+        internal protected virtual void OnPropertyChanging([CallerMemberName] string? propertyName = null)
         {
             var args = new PropertyChangingEventArgs(propertyName);
             PropertyChanging?.Invoke(this, args);
         }
 
-        internal protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        internal protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             var args = new PropertyChangedEventArgs(propertyName);
             PropertyChanged?.Invoke(this, args);
         }
 
-        protected void ChangeProperty(Action action, params string[] properties) {
+        protected virtual void ChangeProperty(Action action, params string[] properties)
+        {
             foreach (var propertyName in properties) {
                 OnPropertyChanging(propertyName);
             }
@@ -49,7 +66,7 @@ namespace Teronis.ViewModels
             }
         }
 
-        public void ChangeProperty(Action action, Expression<Func<object?>> anonymousProperties) =>
+        protected void ChangeProperty(Action action, Expression<Func<object?>> anonymousProperties) =>
             ChangeProperty(action, ExpressionGenericTools.GetAnonTypeNames(anonymousProperties));
 
         private void Property_RequestParents(object sender, HavingParentsEventArgs havingParents)

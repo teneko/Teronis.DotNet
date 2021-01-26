@@ -1,4 +1,4 @@
-﻿namespace Teronis.ObjectModel.Parenting
+﻿namespace Teronis.ObjectModel.Parenthood
 {
     public interface IHaveParents
     {

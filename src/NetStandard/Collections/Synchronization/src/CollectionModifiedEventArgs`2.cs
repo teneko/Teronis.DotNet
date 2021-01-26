@@ -5,18 +5,18 @@ namespace Teronis.Collections.Synchronization
 {
     public class CollectionModifiedEventArgs<SubItemType, SuperItemType> : EventArgs, ICollectionModificationBundle<SubItemType, SuperItemType>
     {
-        public ICollectionModification<SubItemType, SubItemType> OldSubItemsNewSubItemsModification
-            => modificationBundle.OldSubItemsNewSubItemsModification;
+        public ICollectionModification<SubItemType, SubItemType> SubItemModification { get; }
+        public ICollectionModification<SubItemType, SuperItemType> SubSuperItemModification { get; }
+        public ICollectionModification<SuperItemType, SuperItemType> SuperItemModification { get; }
 
-        public ICollectionModification<SubItemType, SuperItemType> OldSubItemsNewSuperItemsModification
-            => modificationBundle.OldSubItemsNewSuperItemsModification;
-
-        public ICollectionModification<SuperItemType, SuperItemType> OldSuperItemsNewSuperItemsModification
-            => modificationBundle.OldSuperItemsNewSuperItemsModification;
-
-        private readonly ICollectionModificationBundle<SubItemType, SuperItemType> modificationBundle;
-
-        public CollectionModifiedEventArgs(CollectionModificationBundle<SubItemType, SuperItemType> modificationBundle) =>
-            this.modificationBundle = modificationBundle ?? throw new ArgumentNullException(nameof(modificationBundle));
+        public CollectionModifiedEventArgs(
+            ICollectionModification<SubItemType, SubItemType> subItemModification,
+            ICollectionModification<SubItemType, SuperItemType> subSuperItemModification,
+            ICollectionModification<SuperItemType, SuperItemType> superItemModification)
+        {
+            SubItemModification = subItemModification;
+            SubSuperItemModification = subSuperItemModification;
+            SuperItemModification = superItemModification;
+        }
     }
 }

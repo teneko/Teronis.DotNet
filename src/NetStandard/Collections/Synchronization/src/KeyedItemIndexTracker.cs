@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Teronis.Collections.Algorithms.Modifications;
 using Teronis.Collections.Specialized;
 
@@ -29,11 +28,8 @@ namespace Teronis.Collections.Synchronization
             ItemCollection = itemCollection;
             GetItemKeyDelegate = getItemKey ?? throw new ArgumentNullException(nameof(getItemKey));
             itemCollection.CollectionModified += ModificationNotifier_CollectionModifying;
-            recalculateItemKeys();
-        }
+            //recalculateItemKeys();
 
-        private void recalculateItemKeys()
-        {
             if (keyedItemIndexes.Count != 0) {
                 keyedItemIndexes.Clear();
             }
@@ -48,22 +44,28 @@ namespace Teronis.Collections.Synchronization
             }
         }
 
+        //private void recalculateItemKeys()
+        //{
+            
+        //}
+
         public KeyedItemIndexTracker(ISynchronizableItemCollection<ItemType> itemCollection, Func<ItemType, KeyType> getItemKey)
             : this(itemCollection, getItemKey, default(IEqualityComparer<KeyType>)) { }
 
         private void ModificationNotifier_CollectionModifying(object sender, ICollectionModification<ItemType, ItemType> modification)
         {
-            void replaceItemIndexes(IEnumerable<ItemType> items, int offset)
-            {
-                var itemsEnumerator = items.GetEnumerator();
-                var index = 0;
+            //void replaceItemIndexes(IEnumerable<ItemType> items, int offset)
+            //{
+            //    var itemsEnumerator = items.GetEnumerator();
+            //    var index = 0;
 
-                while (itemsEnumerator.MoveNext()) {
-                    var itemKey = GetItemKeyDelegate(itemsEnumerator.Current);
-                    //keyedItemIndexes[itemKey] = offset + index;
-                    index++;
-                }
-            }
+            //    //while (itemsEnumerator.MoveNext()) {
+            //    //    var itemKey = GetItemKeyDelegate(itemsEnumerator.Current);
+            //    //    indexDirectory.
+            //    //    keyedItemIndexes[itemKey] = ;
+            //    //    index++;
+            //    //}
+            //}
 
             switch (modification.Action) {
                 case NotifyCollectionChangedAction.Add:
@@ -71,7 +73,17 @@ namespace Teronis.Collections.Synchronization
                         throw CollectionModificationThrowHelper.NewItemsWereNullException();
                     }
 
-                    replaceItemIndexes(modification.NewItems, modification.NewIndex);
+                    var modificationNewIndex = modification.NewIndex;
+                    var itemEnumerator = modification.NewItems.GetEnumerator();
+                    var offset = 0;
+
+                    while (itemEnumerator.MoveNext()) {
+                        var itemKey = GetItemKeyDelegate(itemEnumerator.Current);
+                        var indexEntry = indexDirectory.Insert(modificationNewIndex + offset);
+                        keyedItemIndexes[itemKey] = indexEntry;
+                        offset++;
+                    }
+
                     break;
                 case NotifyCollectionChangedAction.Remove: {
                         if (modification.OldItems is null) {
@@ -82,30 +94,35 @@ namespace Teronis.Collections.Synchronization
 
                         for (var index = 0; index < oldItemsCount; index++) {
                             var itemKey = GetItemKeyDelegate(modification.OldItems[index]);
+                            var indexEntry = keyedItemIndexes[itemKey];
+                            indexDirectory.RemoveEntry(indexEntry);
                             keyedItemIndexes.Remove(itemKey);
                         }
 
-                        recalculateItemKeys();
+                        //recalculateItemKeys();
                     }
                     break;
                 case NotifyCollectionChangedAction.Replace:
                     // Replace has not affect on calculated keys.
                     break;
                 case NotifyCollectionChangedAction.Move:
-                    if (modification.NewItems is null) {
-                        throw CollectionModificationThrowHelper.NewItemsWereNullException();
+                    if (modification.OldItems is null) {
+                        throw CollectionModificationThrowHelper.OldItemsWereNullException();
                     }
 
-                    var (StartIndexOfAffectedItems, AmountOfAffectedItems) = CollectionTools.GetMoveRange(
-                        modification.OldIndex, 
-                        modification.NewIndex, 
-                        modification.NewItems.Count);
+                    //var (StartIndexOfAffectedItems, AmountOfAffectedItems) = CollectionTools.GetMoveRange(
+                    //    modification.OldIndex, 
+                    //    modification.NewIndex, 
+                    //    modification.NewItems.Count);
 
-                    var affectedItems = ItemCollection.Skip(StartIndexOfAffectedItems).Take(AmountOfAffectedItems);
-                    replaceItemIndexes(affectedItems, StartIndexOfAffectedItems);
+                    //var affectedItems = ItemCollection.Skip(StartIndexOfAffectedItems).Take(AmountOfAffectedItems);
+                    //replaceItemIndexes(affectedItems, StartIndexOfAffectedItems);
+
+                    indexDirectory.Move(modification.OldIndex, modification.NewIndex, modification.OldItems.Count);
                     break;
                 case NotifyCollectionChangedAction.Reset:
                     keyedItemIndexes.Clear();
+                    indexDirectory.Clear();
                     break;
             }
         }

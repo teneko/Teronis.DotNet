@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Teronis.Utils;
 
 namespace Teronis.Collections.Specialized
@@ -119,11 +120,16 @@ namespace Teronis.Collections.Specialized
                 var entryList = entriesList[newLastIndex];
 
                 if (!(entryList is null)) {
-                    var entryListCount = entryList.NormalEntries.Count;
+                    static void increaseEntryIndexesByOne(List<IndexDirectoryEntry> entries)
+                    {
+                        var entriesCount = entries.Count;
 
-                    for (var entryIndex = 0; entryIndex < entryListCount; entryIndex++) {
-                        entryList.NormalEntries[entryIndex].Index++;
+                        for (var entryIndex = 0; entryIndex < entriesCount; entryIndex++) {
+                            entries[entryIndex].Index++;
+                        }
                     }
+
+                    Parallel.ForEach(new List<IndexDirectoryEntry>[] { entryList.NormalEntries, entryList.FloatingEntries }, increaseEntryIndexesByOne);
                 }
             } while (--newLastIndex > index);
 
@@ -145,38 +151,55 @@ namespace Teronis.Collections.Specialized
         /// </summary>
         /// <param name="index"></param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is smaller than zero greater than <see cref="Count"/>.</exception>
-        public void Remove(int index)
+        public void Remove(int index, int count)
         {
-            var entryListsCount = virtualizableLength;
+            var indexCount = index + count;
 
-            if (index < 0 || index >= virtualizableLength) {
+            if (index < 0 || indexCount > virtualizableLength) {
                 throw new ArgumentOutOfRangeException(nameof(index));
             }
 
-            if (index >= entriesList.Count) {
-                virtualizableLength--;
+            virtualizableLength -= count;
+
+            var entriesListCount = entriesList.Count;
+
+            if (index >= entriesListCount) {
                 return;
             }
 
-            int nextIndex = index + 1;
+            var borderedIndexCount = indexCount > entriesListCount
+                ? entriesListCount 
+                : indexCount;
 
-            while (nextIndex < entryListsCount) {
+            var removeRange = borderedIndexCount - index;
+            int nextIndex = index;
+
+            while (nextIndex < entriesListCount) {
                 var entryList = entriesList[nextIndex];
 
                 if (!(entryList is null)) {
-                    var entryListCount = entryList.NormalEntries.Count;
+                    static void decreaseEntryIndexesBy(List<IndexDirectoryEntry> entries, int amount)
+                    {
+                        var entriesCount = entries.Count;
 
-                    for (var entryIndex = 0; entryIndex < entryListCount; entryIndex++) {
-                        entryList.NormalEntries[entryIndex].Index--;
+                        for (var entryIndex = 0; entryIndex < entriesCount; entryIndex++) {
+                            entries[entryIndex].Index--;
+                        }
                     }
+
+                    Parallel.ForEach(
+                        new List<IndexDirectoryEntry>[] { entryList.NormalEntries, entryList.FloatingEntries },
+                        (entries) => decreaseEntryIndexesBy(entries, removeRange));
                 }
 
                 nextIndex++;
             }
 
-            entriesList.RemoveAt(index);
-            virtualizableLength--;
+            entriesList.RemoveRange(index, removeRange);
         }
+
+        public void Remove(int index) =>
+            Remove(index, 1);
 
         /// <summary>
         /// 
@@ -218,117 +241,91 @@ namespace Teronis.Collections.Specialized
                 new ArgumentOutOfRangeException(nameof(toIndex));
             }
 
-            IEnumerator<(int Index, Entries? Entries)> entryEnumerator;
+            IEnumerator<(int Index, Entries? Entries)> enumerator;
+            IEnumerator<(int Index, Entries? Entries)> futureEnumerator;
+            int nonEqualNormalEntryIndexAddend;
+            int equalNormalEntryIndexAddend;
+
             var (lowerIndex, distance) = CollectionTools.GetMoveRange(fromIndex, toIndex, count);
-            bool enumeratesNonReversed;
+            var conserveDistance = distance - count;
+            var overlapDistance = conserveDistance > count ? count : conserveDistance;
 
             if (fromIndex < toIndex) {
-                var enumeratorIndex = fromIndex;
-                entryEnumerator = entriesList.Skip(lowerIndex).Take(distance).Select(item => (enumeratorIndex++, item)).GetEnumerator();
-                enumeratesNonReversed = true;
+                enumerator = Enumerable.Concat(
+                        IListGenericUtils.YieldIndexedReverse(entriesList, fromIndex, count),
+                        IListGenericUtils.YieldIndexedReverse(entriesList, fromIndex + count, conserveDistance))
+                    .GetEnumerator();
+
+                futureEnumerator = Enumerable.Concat(
+                        Enumerable.Concat(
+                            IListGenericUtils.YieldIndexedReverse(entriesList, fromIndex, count),
+                            IListGenericUtils.YieldIndexedReverse(entriesList, fromIndex + count - overlapDistance, overlapDistance)),
+                        IListGenericUtils.YieldIndexedReverse(entriesList, fromIndex + count + overlapDistance, conserveDistance - overlapDistance))
+                    .GetEnumerator();
+
+                nonEqualNormalEntryIndexAddend = -count;
+                equalNormalEntryIndexAddend = conserveDistance;
             } else {
-                entryEnumerator = IListGenericUtils.IndexedReverse(entriesList, lowerIndex, distance).GetEnumerator();
-                enumeratesNonReversed = false;
+                enumerator = Enumerable.Concat(
+                        IListGenericUtils.YieldIndexedReverse(entriesList, lowerIndex, conserveDistance),
+                        IListGenericUtils.YieldIndexedReverse(entriesList, fromIndex, count))
+                    .GetEnumerator();
+
+                var refillRequiredNonSpareCount = count - overlapDistance;
+                // The count of indexes from the back of conserve distance.
+                var nonRefillRequiredNonSpareCount = count - refillRequiredNonSpareCount;
+
+                futureEnumerator = Enumerable.Concat(
+                        Enumerable.Concat(
+                            IListGenericUtils.YieldIndexedReverse(entriesList, lowerIndex, conserveDistance),
+                            IListGenericUtils.YieldIndexedReverse(entriesList, lowerIndex + conserveDistance - nonRefillRequiredNonSpareCount, nonRefillRequiredNonSpareCount)),
+                        IListGenericUtils.YieldIndexedReverse(entriesList, fromIndex + count - refillRequiredNonSpareCount, refillRequiredNonSpareCount))
+                    .GetEnumerator();
+
+                nonEqualNormalEntryIndexAddend = -conserveDistance;
+                equalNormalEntryIndexAddend = count;
             }
 
-            entryEnumerator.MoveNext();
-            var (entriesIndexFirst, entriesFirst) = entryEnumerator.Current;
+            while (enumerator.MoveNext() && futureEnumerator.MoveNext()) {
+                var (entriesIndex, entries) = enumerator.Current;
+                var (futureEntriesIndex, futureEntries) = futureEnumerator.Current;
 
-            var entriesToBeMoved = new Entries?[count];
-            entriesToBeMoved[0] = entriesFirst;
+                if (!(entries is null)) {
+                    if (entries.FloatingEntries.Count != 0) {
+                        if (entriesIndex != futureEntriesIndex) {
+                            if (futureEntries is null) {
+                                futureEntries = prepareEntriesAt(futureEntriesIndex);
+                            }
 
-            {
-                var toBeMovedIndex = 0;
+                            futureEntries.FloatingEntries.AddRange(entries.FloatingEntries);
+                            entries.FloatingEntries.Clear();
+                        } else {
+                            var floatingEntriesCount = entries.FloatingEntries.Count;
 
-                while (++toBeMovedIndex < count) {
-                    entryEnumerator.MoveNext();
-                    entriesToBeMoved[toBeMovedIndex] = entryEnumerator.Current.Entries;
-                }
-            }
-
-            var entriesIndexCurrent = entriesIndexFirst;
-            entryEnumerator.MoveNext();
-
-            do {
-                var (entryListIndex, entryList) = entryEnumerator.Current;
-
-                if (!(entryList is null)) {
-                    var entryListCount = entryList.NormalEntries.Count;
-
-                    //if (enumeratesNonReversed && floatingEntries!.Count != 0) {
-                    //    var floatingEntriesCount = floatingEntries.Count;
-
-                    //    for (var index = 0; index < floatingEntriesCount; index++) {
-                    //        var floatingEntry = floatingEntries[index];
-                    //        // Set index because..
-                    //        floatingEntry.Index = newEntryListIndex;
-                    //        // added floating entries won't be iterated below.
-                    //        entryList.Add(floatingEntry);
-                    //    }
-
-                    //    floatingEntries.Clear();
-                    //}
-
-                    for (var index = entryListCount - 1; index >= 0; index--) {
-                        var entry = entryList.NormalEntries[index];
-                        entry.Index = entriesIndexCurrent;
-
-                        //if (entry.Mode == IndexDirectoryEntryMode.Floating && enumeratesNonReversed) {
-                        //    floatingEntries!.Add(entry);
-                        //    entryList.RemoveAt(index);
-                        //}
-                    }
-                }
-
-                entriesIndexCurrent = entryListIndex;
-            } while (entryEnumerator.MoveNext());
-
-            //var requiresFloatingEntriesHandlingCausedByNonReversedEnumeration = enumeratesNonReversed && floatingEntries!.Count != 0;
-
-            //if (requiresFloatingEntriesHandlingCausedByNonReversedEnumeration) {
-            //    if (firstEntryList is null) {
-            //        firstEntryList = new List<IndexDirectoryEntry>(floatingEntries!.Count);
-            //    }
-
-            //    var floatingEntriesCount = floatingEntries!.Count;
-
-            //    for (var floatingEntryIndex = 0; floatingEntryIndex < floatingEntriesCount; floatingEntryIndex++) {
-            //        var floatingEntry = floatingEntries[floatingEntryIndex];
-            //        floatingEntry.Index = toIndex;
-            //        firstEntryList!.Add(floatingEntry);
-            //    }
-
-            //    floatingEntries.Clear();
-            //}
-
-            entriesList.RemoveAt(fromIndex);
-            entriesList.InsertRange(toIndex, entriesToBeMoved);
-
-            if (!(entriesFirst is null)) {
-                var toIndexLast = toIndex + count;
-
-                for (var entriesToBeMovedIndex = entriesIndexFirst; entriesToBeMovedIndex < toIndexLast; entriesToBeMovedIndex++) {
-                    var entries = entriesToBeMoved[entriesToBeMovedIndex];
-
-                    if (enumeratesNonReversed) {
-                        for (var index = 0; index >= 0; index--) {
-                            //var entries = entr
-                            var entry = entriesFirst.NormalEntries[index];
-
-                            //if (entry.Mode == IndexDirectoryEntryMode.Floating && !enumeratesNonReversed) {
-                            //    firstEntryList.RemoveAt(index);
-                            //    prepareListAt(entry.Index).Add(entry);
-                            //} else {
-                            entriesFirst.NormalEntries[index].Index = toIndex;
-                            //}
+                            while (--floatingEntriesCount >= 0) {
+                                entries.FloatingEntries[floatingEntriesCount].Index = entries.FloatingEntries[floatingEntriesCount].Index + equalNormalEntryIndexAddend;
+                            }
                         }
                     }
 
-                    //var floatingEntries = entries.FloatingEntries
-                }
+                    var entryListCount = entries.NormalEntries.Count;
 
-                var firstEntryListCount = entriesFirst.NormalEntries.Count;
+                    for (var index = entryListCount - 1; index >= 0; index--) {
+                        var entry = entries.NormalEntries[index];
+
+                        if (entriesIndex != futureEntriesIndex) {
+                            entry.Index += nonEqualNormalEntryIndexAddend;
+                        } else {
+                            entry.Index += equalNormalEntryIndexAddend;
+                        }
+                    }
+                }
             }
+
+            var entriesToBeMoved = new Entries[count];
+            entriesList.CopyTo(fromIndex, entriesToBeMoved, 0, count);
+            entriesList.RemoveRange(fromIndex, count);
+            entriesList.InsertRange(toIndex, entriesToBeMoved);
         }
 
         public void Move(int fromIndex, int toIndex) =>

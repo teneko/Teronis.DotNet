@@ -79,7 +79,7 @@ namespace Teronis.Utils
         public static int BinarySearch<T>(IList<T> list, T item) =>
             BinarySearch(list, item, Comparer<T>.Default);
 
-        public static IEnumerable<T> Reverse<T>(IList<T> list, int index, int count)
+        public static IEnumerable<T> YieldReverse<T>(IList<T> list, int index, int count)
         {
             if (index < 0) {
                 throw new ArgumentOutOfRangeException(nameof(index), "The index is smaller than zero.");
@@ -96,7 +96,7 @@ namespace Teronis.Utils
             }
         }
 
-        public static IEnumerable<(int Index, T Item)> IndexedReverse<T>(IList<T> list, int index, int count)
+        public static IEnumerable<(int Index, T Item)> YieldIndexedReverse<T>(IList<T> list, int index, int count)
         {
             if (index < 0) {
                 throw new ArgumentOutOfRangeException(nameof(index), "The index is smaller than zero.");

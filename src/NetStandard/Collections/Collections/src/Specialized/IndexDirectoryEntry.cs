@@ -1,4 +1,6 @@
-﻿namespace Teronis.Collections.Specialized
+﻿using System;
+
+namespace Teronis.Collections.Specialized
 {
     public sealed class IndexDirectoryEntry
     {
@@ -10,6 +12,9 @@
             Index = index;
             Mode = mode;
         }
+
+        public override string ToString() =>
+            $"[{Index}, {Enum.GetName(typeof(IndexDirectoryEntryMode), Mode)}]";
 
         public static implicit operator int(IndexDirectoryEntry entry) =>
             entry.Index;

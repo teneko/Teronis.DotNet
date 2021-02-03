@@ -17,13 +17,20 @@ namespace Teronis.Extensions
             return false;
         }
 
-        public static T AddAndReturn<T>(this ICollection<T> source, T item)
+        public static T AddAndReturnItem<T>(this ICollection<T> source, T item)
         {
             source.Add(item);
             return item;
         }
 
-        public static ListType AddRange<ListType, ItemType>(this ListType target, IEnumerable<ItemType> source)
+        public static CollectionType AddItemAndReturnList<CollectionType, T>(this CollectionType source, T item)
+            where CollectionType : ICollection<T>
+        {
+            source.Add(item);
+            return source;
+        }
+
+        public static ListType AddItemRangeAndReturnList<ListType, ItemType>(this ListType target, IEnumerable<ItemType> source)
             where ListType : ICollection<ItemType>
         {
             target = target ?? throw new ArgumentNullException(nameof(target));

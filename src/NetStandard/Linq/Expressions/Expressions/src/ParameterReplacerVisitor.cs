@@ -4,27 +4,23 @@ using System.Linq.Expressions;
 
 namespace Teronis.Linq.Expressions
 {
-    public class ParameterReplacerVisitor : ExpressionVisitor
+    /// <summary>
+    /// The Expression visitor compares visiting parameter node
+    /// with each source-node by reference and if true, the
+    /// visiting node is about to be replaced by target-node.
+    /// </summary>
+    public class ParameterReplacingVisitor : ReplacingVisitor<ParameterExpression, ParameterExpression>
     {
-        private readonly IReadOnlyList<ParameterExpression> from, to;
+        public ParameterReplacingVisitor(IReadOnlyList<SourceTargetPair<ParameterExpression, ParameterExpression>> sourceTargetPairs)
+            : base(sourceTargetPairs) { }
 
-        public ParameterReplacerVisitor(IReadOnlyList<ParameterExpression> from,
-            IReadOnlyList<ParameterExpression> to)
-        {
-            this.from = from ?? throw new ArgumentNullException(nameof(from));
-            this.to = to ?? throw new ArgumentNullException(nameof(to));
-
-            if (from.Count != to.Count) {
-                throw new InvalidOperationException("Parameter expression lengths have to be equal.");
-            }
-        }
+        public ParameterReplacingVisitor(ParameterExpression source, ParameterExpression target) 
+            : base(source, target) { }
 
         protected override Expression VisitParameter(ParameterExpression node)
         {
-            for (int i = 0; i < from.Count; i++) {
-                if (node == from[i]) {
-                    return to[i];
-                }
+            if (TryReplaceNode(node, out var replacedNode)) {
+                return replacedNode;
             }
 
             return node;

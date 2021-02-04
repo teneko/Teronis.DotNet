@@ -1,43 +1,99 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 
 namespace Teronis.Linq.Expressions
 {
-    public static class SourceExpression
+    public static class SourceTargetExpressionTools
     {
         /// <summary>
         /// Reduces parameter list by replacing the expression parameter expression
-        /// usages (of type <typeparamref name="ComparisonType"/>) with constant 
-        /// expression crafted from <paramref name="comparisonValue"/>.
+        /// usages (of type <typeparamref name="T2"/>) with constant 
+        /// expression crafted from <paramref name="constant"/>.
         /// </summary>
-        /// <typeparam name="SourceType">The first parameter expression.</typeparam>
-        /// <typeparam name="ComparisonType">The second parameter expression.</typeparam>
-        /// <param name="comparisonValue">The value that will be used as constant.</param>
-        /// <param name="sourceAndValuePredicate">The lambda expression from which the body will be rewritten.</param>
+        /// <param name="constant">The value that will be used as constant.</param>
+        /// <param name="lambdaWithParameters">
+        /// The lambda expression from which the body will be rewritten.
+        /// </param>
+        /// <param name="positionalParameterReplacements">
+        /// Positional parameters that replace parameters before they may get replaced by
+        /// constants. 
+        /// (E.g. replace parameter at index two of lambda parameters with specified parameter)
+        /// </param>
         /// <returns>The body that got rewritten.</returns>
-        public static Expression WhereInConstant<SourceType, ComparisonType>(
-            [AllowNull] ComparisonType comparisonValue, Expression<SourceInConstantPredicateDelegate<SourceType, ComparisonType>> sourceAndValuePredicate,
-            out ParameterExpression sourceParameter, ParameterExpression? sourceParameterReplacement = null)
+        public static Expression ReplaceParameterByConstantLambdaBody(
+            LambdaExpression lambdaWithParameters,
+            IReadOnlyDictionary<int, ParameterExpression>? positionalParameterReplacements,
+            IReadOnlyDictionary<int, object?> positionalConstants,
+            out IReadOnlyList<ParameterExpression> positionalParameters)
         {
-            sourceAndValuePredicate = sourceAndValuePredicate ?? throw new ArgumentNullException(nameof(sourceAndValuePredicate));
+            lambdaWithParameters = lambdaWithParameters ?? throw new ArgumentNullException(nameof(lambdaWithParameters));
+            positionalConstants = positionalConstants ?? throw new ArgumentNullException(nameof(positionalConstants));
 
-            /* Replace KeyType parameter/member by constant. */
-            var comparisonParameter = sourceAndValuePredicate.Parameters[1];
-            var comparisonConstant = Expression.Constant(comparisonValue, comparisonParameter.Type);
+            var lambdaParameters = new List<ParameterExpression>(lambdaWithParameters.Parameters);
+            Expression visitedLambdaBody;
 
-            var nodeReplacer = new NodeReplacerVisitor(comparisonParameter, comparisonConstant);
-            var newSourcePredicateBody = nodeReplacer.Visit(sourceAndValuePredicate.Body);
+            if (!(positionalParameterReplacements is null)) {
+                var sourceTargetPairs = new SourceTargetPair<ParameterExpression, ParameterExpression>[positionalParameterReplacements.Count];
+                var positionalParameterReplacementsEnumerator = positionalParameterReplacements.GetEnumerator();
+                var sourceTargetPairsIndex = 0;
 
-            /* Replace source parameter by known one. */
-            sourceParameter = sourceParameterReplacement ?? sourceAndValuePredicate.Parameters[0];
+                while (positionalParameterReplacementsEnumerator.MoveNext()) {
+                    var positionalParameterReplacementEnumeratorCurrent = positionalParameterReplacementsEnumerator.Current;
 
-            var parameterReplacer = new ParameterReplacerVisitor(new[] { sourceAndValuePredicate.Parameters[0] },
-                new[] { sourceParameter });
+                    sourceTargetPairs[sourceTargetPairsIndex] = new SourceTargetPair<ParameterExpression, ParameterExpression>(
+                        lambdaWithParameters.Parameters[positionalParameterReplacementEnumeratorCurrent.Key],
+                        positionalParameterReplacementEnumeratorCurrent.Value);
 
-            newSourcePredicateBody = parameterReplacer.Visit(newSourcePredicateBody);
-            return newSourcePredicateBody;
+                    sourceTargetPairsIndex++;
+                }
+
+                var parameterReplacer = new ParameterReplacingVisitor(sourceTargetPairs);
+                visitedLambdaBody = parameterReplacer.Visit(lambdaWithParameters.Body);
+
+                // After replacing parameter expression, you should update the references of lambda parameters.
+                foreach (var replacedParameter in parameterReplacer.ReplacedSourceTargetPairs) {
+                    var index = lambdaParameters.FindIndex(parameter => ReferenceEquals(parameter, replacedParameter.Source));
+
+                    if (index >= 0) {
+                        lambdaParameters[index] = replacedParameter.Target;
+                    }
+                }
+            } else {
+                visitedLambdaBody = lambdaWithParameters.Body;
+            }
+
+            var replacableNodes = new SourceTargetPair<Expression, Expression>[positionalConstants.Count];
+            var positionalConstantsEnumerator = positionalConstants.GetEnumerator();
+            var replacableNodesIndex = 0;
+
+            while (positionalConstantsEnumerator.MoveNext()) {
+                var positionalParameterReplacementEnumeratorCurrent = positionalConstantsEnumerator.Current;
+
+                replacableNodes[replacableNodesIndex] = new SourceTargetPair<Expression, Expression>(
+                    lambdaParameters[positionalParameterReplacementEnumeratorCurrent.Key],
+                    Expression.Constant(positionalParameterReplacementEnumeratorCurrent.Value));
+
+                replacableNodesIndex++;
+            }
+
+            var nodeReplacer = new NodeReplacerVisitor(replacableNodes);
+            visitedLambdaBody = nodeReplacer.Visit(visitedLambdaBody);
+
+            // After replacing parameters by constants, you should remove those lambda parameters.
+            foreach (var replacedParameter in nodeReplacer.ReplacedSourceTargetPairs.Reverse()) {
+                /* We assume that the front expressions got replaced first. */
+                var index = lambdaParameters.FindIndex(parameter => ReferenceEquals(parameter, replacedParameter));
+
+                if (index >= 0) {
+                    lambdaParameters.RemoveAt(index);
+                }
+            }
+
+            positionalParameters = lambdaParameters;
+            return visitedLambdaBody;
         }
 
         #region
@@ -52,17 +108,19 @@ namespace Teronis.Linq.Expressions
         /// <param name="comparisonValue">The value that will be used as constant.</param>
         /// <param name="sourceAndValuePredicate">The lambda expression from which the body will be rewritten.</param>
         /// <returns>A new lambda with rewritten body.</returns>
-        public static Expression<Func<SourceType, bool>> WhereInConstantLambda<SourceType, ComparisonType>(
-            [AllowNull] ComparisonType comparisonValue, Expression<SourceInConstantPredicateDelegate<SourceType, ComparisonType>> sourceAndValuePredicate,
-            ParameterExpression? sourceParameterExpression = null)
+        public static Expression<Func<SourceType, bool>> ReplaceParameterByConstantLambda<SourceType>(
+            LambdaExpression lambdaWithParameters,
+            IReadOnlyDictionary<int, ParameterExpression>? positionalParameterReplacements,
+            IReadOnlyDictionary<int, object?> positionalConstants,
+            out IReadOnlyList<ParameterExpression> positionalParameters)
         {
-            sourceAndValuePredicate = sourceAndValuePredicate ?? throw new ArgumentNullException(nameof(sourceAndValuePredicate));
-            sourceParameterExpression ??= Expression.Parameter(typeof(SourceType), "source");
+            var whereInConstantExpression = ReplaceParameterByConstantLambdaBody(
+                lambdaWithParameters, 
+                positionalParameterReplacements,
+                positionalConstants,
+                out positionalParameters);
 
-            /* Replace KeyType parameter/member by constant. */
-            var whereInConstantExpression = WhereInConstant(comparisonValue, sourceAndValuePredicate, out _, sourceParameterReplacement: sourceParameterExpression);
-            var newSourcePredicate = Expression.Lambda<Func<SourceType, bool>>(whereInConstantExpression, sourceAndValuePredicate.Parameters[0]);
-
+            var newSourcePredicate = Expression.Lambda<Func<SourceType, bool>>(whereInConstantExpression, positionalParameters);
             return newSourcePredicate;
         }
 

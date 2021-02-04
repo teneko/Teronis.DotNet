@@ -9,12 +9,13 @@ using System.Threading;
 
 namespace Teronis.IO.FileLocking
 {
+    internal delegate FileStream? FileLockerLockHandler(string filePath, int timeoutInMilliseconds, FileMode fileMode, FileAccess fileAccess, FileShare fileShare, CancellationToken cancellationToken);
+
     /// <summary>
-    /// Provides a file locker that is thread-safe and supports nesting.
+    /// Provides a file locker for one file that is thread-safe and supports nesting.
     /// </summary>
     public sealed class FileLocker : IFileLocker
     {
-
         #region Trace Methods
 
 #if TRACE
@@ -67,6 +68,7 @@ namespace Teronis.IO.FileLocking
         /// </summary>
         private int locksInUse = 0;
         private FileLockContext? fileLockContext;
+        // TODO: Consider usefulness of locking decreaseLockUseLocker everywhere DecreaseLockUse() is called.
         private readonly object decreaseLockUseLocker;
         private readonly IFileStreamLocker fileStreamLocker;
 
@@ -105,7 +107,9 @@ namespace Teronis.IO.FileLocking
         /// Locks the file specified at location <see cref="FilePath"/>.
         /// </summary>
         /// <returns>The file lock use that can be revoked by disposing it.</returns>
-        public FileLockUse WaitUntilAcquired()
+        /// <exception cref="TimeoutException">When timeout is hit.</exception>
+        /// <exception cref="FileLockException">Trying to acquire file lock once failed.</exception>
+        internal FileLockUse Lock(FileLockerLockHandler lockDelegate, CancellationToken cancellationToken = default)
         {
             var lockId = getLockIdString();
             Trace.WriteLine($"{GetCurrentThreadWithLockIdPrefixString(lockId)} Begin locking file {FilePath}.", TraceCategory);
@@ -116,6 +120,7 @@ namespace Teronis.IO.FileLocking
                 var desiredLocksInUse = currentLocksInUse + 1;
                 var currentFileLockContext = fileLockContext;
 
+                // The field currentFileLockContext may be null, but extension method will lead to false if doing so.
                 if (currentFileLockContext.IsErroneous()) {
                     if (EnableConcurrentRethrow) {
                         Trace.WriteLine($"{GetCurrentThreadWithLockIdPrefixString(lockId)} Error from previous lock will be rethrown.", TraceCategory);
@@ -123,19 +128,22 @@ namespace Teronis.IO.FileLocking
                     }
 
                     // Imagine stair steps where each stair step is Lock():
-                    // Thread #0 Lock #0 -> Incremented to 1 -> Exception occured.
-                    //  Thread #1 Lock #1 -> Incremented to 2. Recognozes exception in #0 because #0 not yet entered Unlock().
-                    //   Thread #2 Lock #2 -> Incremented to 3. Recognizes excetion in #1 because #0 not yet entered Unlock().
+                    // Thread #0 Lock #0 -> Incremented to 1. Exception occured.
+                    //  Thread #1 Lock #1 -> Incremented to 2. Recognozes exception in #0 because #0 not yet processed Unlock()/fileLockContext not yet null.
+                    //   Thread #2 Lock #2 -> Incremented to 3. Recognizes excetion in #1 because #0 not yet processed Unlock()/fileLockContext not yet null.
+                    // Thread #0 Lock #0 -> Processed Unlock().
+                    //  Thread #1 Lock #1 -> Try again due to WaitOne() -> Incremented to 1 -> Expcetion occured.
+                    //      Thread #2 Lock #2 -> Incremented to 2. Recognozes exception in #1 because #1 not yet processed Unlock()/fileLockContext not yet null.
+                    // Thread #1 Lock #1 -> Processed Unlock().
                     // Thread #3 Lock #3 -> Incremented to 1. Lock was successful.
-                    // We want Lock #1 and Lock #2 to retry their Lock():
-                    //  Thread #1 Lock #1 -> Incremented to 2. Lock was successful.
-                    //   Thread #2 Lock #2 -> Incremented to 3. Lock was successful.
+                    //  Thread #2 Lock #2 -> Try again due to WaitOne(). Incremented to 2.
                     currentFileLockContext!.ErrorUnlockDone!.WaitOne();
                     Trace.WriteLine($"{GetCurrentThreadWithLockIdPrefixString(lockId)} Retry lock due to previously failed lock.", TraceCategory);
                     continue;
                 }
                 // If it is the initial lock, then we expect file stream being null.
                 // If it is not the initial lock, we expect the stream being not null.
+                // If these conditions are NOT met, spin once and continue loop.
                 else if ((currentLocksInUse == 0 && currentFileLockContext != null) ||
                     (currentLocksInUse != 0 && currentFileLockContext == null)) {
                     spinWait.SpinOnce();
@@ -149,11 +157,14 @@ namespace Teronis.IO.FileLocking
                     // to acquire the lock.
                     if (desiredLocksInUse == 1) {
                         try {
-                            var fileStream = FileStreamLocker.Default.WaitUntilAcquired(FilePath, TimeoutInMilliseconds, fileMode: FileMode,
-                                    fileAccess: FileAccess, fileShare: FileShare)!;
+                            var fileStream = lockDelegate(FilePath, TimeoutInMilliseconds, fileMode: FileMode,
+                                    fileAccess: FileAccess, fileShare: FileShare, cancellationToken: cancellationToken)!;
+
+                            if (fileStream is null) {
+                                throw new FileLockException("Acquiring lock failed.");
+                            }
 
                             currentFileLockContext = new FileLockContext(this, decreaseLockUseLocker, fileStream);
-
                             fileLockContext = currentFileLockContext;
                             Trace.WriteLine($"{GetCurrentThreadWithLockIdPrefixString(lockId)} File {FilePath} locked by file locker.", TraceCategory);
                         } catch (Exception error) {
@@ -176,6 +187,34 @@ namespace Teronis.IO.FileLocking
             }
         }
 
+        /// <summary>Tries to acquire once the lock for file located at <see cref="FilePath"/>.</summary>
+        /// <returns>The file lock use that can be revoked by disposing it.</returns>
+        /// <exception cref="TimeoutException">When timeout is hit.</exception>
+        /// <exception cref="FileLockException">Trying to acquire file lock once failed.</exception>
+        public FileLockUse TryAcquire() =>
+            Lock((string filePath, int timeoutInMilliseconds, FileMode fileMode, FileAccess fileAccess, FileShare fileShare, CancellationToken _) =>
+                fileStreamLocker.TryAcquire(
+                    filePath,
+                    fileMode: fileMode,
+                    fileAccess: fileAccess,
+                    fileShare: fileShare));
+
+        /// <summary>Tries to acquire the lock for file located at <see cref="FilePath"/> as long as timeout is not hit and cancellation not requested.</summary>
+        /// <returns>The file lock use that can be revoked by disposing it.</returns>
+        /// <exception cref="TimeoutException">When timeout is hit.</exception>
+        public FileLockUse WaitUntilAcquired(CancellationToken cancellationToken = default) =>
+            Lock((string filePath, int timeoutInMilliseconds, FileMode fileMode, FileAccess fileAccess, FileShare fileShare, CancellationToken scopedCancellationToken) =>
+                fileStreamLocker.WaitUntilAcquired(
+                    filePath,
+                    timeoutInMilliseconds,
+                    fileMode: fileMode,
+                    fileAccess: fileAccess,
+                    fileShare: fileShare,
+                    noThrowOnTimeout: false,
+                    cancellationToken: scopedCancellationToken),
+                cancellationToken: cancellationToken);
+
+        // TODO: merge 
         /// <summary>
         /// Decreases the number of locks in use. If becoming zero, file gets unlocked.
         /// </summary>
@@ -258,6 +297,7 @@ namespace Teronis.IO.FileLocking
         internal void Unlock(string lockId)
         {
             lock (decreaseLockUseLocker) {
+                // We want to decrease to zero to procovate unlock.
                 DecreaseLockUse(true, lockId);
             }
         }

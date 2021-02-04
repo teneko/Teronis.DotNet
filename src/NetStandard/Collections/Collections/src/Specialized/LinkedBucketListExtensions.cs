@@ -27,5 +27,8 @@ namespace Teronis.Collections.Specialized
                 node = node.PreviousPart;
             } while (!(node is null));
         }
+
+        public static void Add<KeyType, ValueType>(this LinkedBucketList<KeyType, ValueType> list, KeyType key, ValueType value) =>
+            list.AddLast(key, value);
     }
 }

@@ -34,7 +34,7 @@ namespace Teronis.NetStandard.EntityFrameworkCore.Query.Test
                     (child, comparisonChild) => true)
                 .ThenCreateFromCollection(Expression.AndAlso,
                     comparisonChild => comparisonChild.Fathers)
-                .DefinePredicatePerItem(Expression.OrElse,
+                .ThenDefinePredicatePerItem(Expression.OrElse,
                     (child, comparisonFather) => comparisonFather != null && child.MockedFatherName == comparisonFather.Name)
                 .BuildBodyExpression<Child>(memberMapper => {
                     // We have to map each member access that are actually used above.
@@ -95,7 +95,7 @@ namespace Teronis.NetStandard.EntityFrameworkCore.Query.Test
                     (child, comparisonChild) => true)
                 .ThenCreateFromCollection(Expression.AndAlso,
                     comparisonChild => comparisonChild.Friends)
-                .DefinePredicatePerItem(Expression.OrElse,
+                .ThenDefinePredicatePerItem(Expression.OrElse,
                     /// Select the children only if it has <see cref="SecondManName"/> as friend.
                     (child, comparisonFriend) => child.MockedFriends.Select(x => x.FriendName).Contains(comparisonFriend.Name))
                 // Here begins the the member mapping from MockedChild to Child.
@@ -159,7 +159,7 @@ namespace Teronis.NetStandard.EntityFrameworkCore.Query.Test
         [ClassData(typeof(ComparisonChildrenWithFlagsAndNotEmptyExpectationGenerator))]
         public async Task Find_single_child_by_nested_collection_constant(
             ComparisonChild[] comparisonChildren,
-            ComparisonValuesBehaviourFlags comparisonValuesFalseEvaluationFlags,
+            ComparisonItemsBehaviourFlags comparisonValuesFalseEvaluationFlags,
             bool notEmptyExpectation)
         {
             var findLambdaExpression = CollectionConstantPredicateBuilder<MockedChild>
@@ -169,7 +169,7 @@ namespace Teronis.NetStandard.EntityFrameworkCore.Query.Test
                 .ThenCreateFromCollection(Expression.AndAlso,
                     comparisonChild => comparisonChild.Children,
                     comparisonValuesFalseEvaluationFlags)
-                .DefinePredicatePerItem(Expression.OrElse,
+                .ThenDefinePredicatePerItem(Expression.OrElse,
                     (child, comparisonFather) => true)
                 // Here begins the the member mapping from MockedChild to Child.
                 .BuildLambdaExpression<Child>(mapper => { });
@@ -304,14 +304,14 @@ namespace Teronis.NetStandard.EntityFrameworkCore.Query.Test
                 var nullChildren = new ComparisonChild[] { new ComparisonChild() { Children = null } };
                 var emptyChildren = new ComparisonChild[] { new ComparisonChild() { Children = new ComparisonChild[] { } } };
 
-                yield return array(nullChildren, ComparisonValuesBehaviourFlags.NullOrEmptyLeadsToSkip, true);
-                yield return array(emptyChildren, ComparisonValuesBehaviourFlags.NullOrEmptyLeadsToSkip, true);
+                yield return array(nullChildren, ComparisonItemsBehaviourFlags.NullOrEmptyLeadsToSkip, true);
+                yield return array(emptyChildren, ComparisonItemsBehaviourFlags.NullOrEmptyLeadsToSkip, true);
 
-                yield return array(nullChildren, ComparisonValuesBehaviourFlags.NullLeadsToFalse, false);
-                yield return array(emptyChildren, ComparisonValuesBehaviourFlags.NullLeadsToFalse, true);
+                yield return array(nullChildren, ComparisonItemsBehaviourFlags.NullLeadsToFalse, false);
+                yield return array(emptyChildren, ComparisonItemsBehaviourFlags.NullLeadsToFalse, true);
 
-                yield return array(nullChildren, ComparisonValuesBehaviourFlags.EmptyLeadsToFalse, true);
-                yield return array(emptyChildren, ComparisonValuesBehaviourFlags.EmptyLeadsToFalse, false);
+                yield return array(nullChildren, ComparisonItemsBehaviourFlags.EmptyLeadsToFalse, true);
+                yield return array(emptyChildren, ComparisonItemsBehaviourFlags.EmptyLeadsToFalse, false);
             }
 
             IEnumerator IEnumerable.GetEnumerator() =>

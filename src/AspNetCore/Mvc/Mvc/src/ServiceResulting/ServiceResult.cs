@@ -72,9 +72,9 @@ namespace Teronis.Mvc.ServiceResulting
 
         public ServiceResultDatransject DeepCopy()
         {
-            return new ServiceResultDatransject(Succeeded, Content, Errors is null ? null : new JsonErrors().AddRange(Errors),
-                DeclaredType, Formatters is null ? null : new FormatterCollection<IOutputFormatter>().AddRange(Formatters),
-                ContentTypes is null ? null : new MediaTypeCollection().AddRange(ContentTypes), StatusCode);
+            return new ServiceResultDatransject(Succeeded, Content, Errors is null ? null : new JsonErrors().AddItemRangeAndReturnList(Errors),
+                DeclaredType, Formatters is null ? null : new FormatterCollection<IOutputFormatter>().AddItemRangeAndReturnList(Formatters),
+                ContentTypes is null ? null : new MediaTypeCollection().AddItemRangeAndReturnList(ContentTypes), StatusCode);
         }
     }
 }

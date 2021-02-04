@@ -24,7 +24,7 @@ namespace Teronis.IO.FileLocking
         /// <summary>
         /// Try to acquire lock on file but only as long the file stream is opened.
         /// </summary>
-        /// <param name="filePath">The path to file that get locked.</param>
+        /// <param name="filePath">The path to file that is tried to get locked..</param>
         /// <param name="fileStream">The locked file as file stream.</param>
         /// <param name="fileMode">The file mode when opening file.</param>
         /// <param name="fileAccess">The file access when opening file.</param>
@@ -56,7 +56,7 @@ namespace Teronis.IO.FileLocking
         /// <summary>
         /// Try to acquire lock on file but only as long the file stream is opened.
         /// </summary>
-        /// <param name="filePath">The path to file that get locked.</param>
+        /// <param name="filePath">The path to file that is tried to get locked..</param>
         /// <param name="fileMode">The file mode when opening file.</param>
         /// <param name="fileAccess">The file access when opening file.</param>
         /// <param name="fileShare">The file share when opening file</param>
@@ -70,22 +70,38 @@ namespace Teronis.IO.FileLocking
             return fileStream;
         }
 
+        /// <param name="timeoutInMilliseconds">The number of milliseconds to hold on, or System.Threading.Timeout.Infinite (-1) to wait indefinitely.</param>
+        /// <exception cref="TimeoutException">When timeout is hit.</exception>
+        /// <exception cref="OperationCanceledException">When cancellation was requested.</exception>
         private bool waitUntilAcquired(string filePath, out FileStream? fileStream, FileMode fileMode,
-            FileAccess fileAccess, FileShare fileShare, int timeoutInMilliseconds, bool throwOnTimeout)
+            FileAccess fileAccess, FileShare fileShare, int timeoutInMilliseconds, bool throwOnTimeout, 
+            CancellationToken cancellationToken)
         {
-            var readOnlyThis = this;
+            /// Needs to be done, because we use 
+            /// method of <see cref="TryAcquire(string, out FileStream?, FileMode, FileAccess, FileShare)"/> 
+            /// inside lambda expression below.
+            var fileStreamLocker = this;
             FileStream? spinningFileStream = null;
 
-            var spinHasBeenFinished = SpinWait.SpinUntil(() => {
-                return readOnlyThis.TryAcquire(filePath, out spinningFileStream, fileMode: fileMode, fileAccess: fileAccess, fileShare: fileShare);
+            var spinHasBeenFinishedSuccessfully = SpinWait.SpinUntil(() => {
+                if (cancellationToken.IsCancellationRequested) {
+                    return false;
+                }
+
+                return fileStreamLocker.TryAcquire(filePath, out spinningFileStream, fileMode: fileMode, fileAccess: fileAccess, fileShare: fileShare);
             }, timeoutInMilliseconds);
 
-            if (spinHasBeenFinished) {
-                fileStream = spinningFileStream ?? throw new ArgumentNullException(nameof(spinningFileStream));
+            if (spinHasBeenFinishedSuccessfully) {
+                // File stream should never be null.
+                fileStream = spinningFileStream!;
                 return true;
             } else {
                 if (throwOnTimeout) {
-                    throw new TimeoutException($"Acquiring file lock failed due to timeout.");
+                    if (cancellationToken.IsCancellationRequested) {
+                        cancellationToken.ThrowIfCancellationRequested();
+                    } else {
+                        throw new TimeoutException($"Acquiring file lock failed due to timeout.");
+                    }
                 }
 
                 fileStream = null;
@@ -93,79 +109,93 @@ namespace Teronis.IO.FileLocking
             }
         }
 
+        /// <param name="timeoutInMilliseconds">The number of milliseconds to hold on, or System.Threading.Timeout.Infinite (-1) to wait indefinitely.</param>
+        /// <exception cref="TimeoutException">When timeout is hit.</exception>
+        /// <exception cref="OperationCanceledException">When cancellation was requested.</exception>
         private FileStream? waitUntilAcquired(string filePath, FileMode fileMode,
-            FileAccess fileAccess, FileShare fileShare, int timeoutInMilliseconds, bool noThrowOnTimeout)
+            FileAccess fileAccess, FileShare fileShare, int timeoutInMilliseconds, 
+            bool noThrowOnTimeout, CancellationToken cancellationToken)
         {
-            waitUntilAcquired(filePath, out var fileStream, fileMode, fileAccess, fileShare, timeoutInMilliseconds, !noThrowOnTimeout);
+            waitUntilAcquired(filePath, out var fileStream, fileMode, fileAccess, fileShare, timeoutInMilliseconds, !noThrowOnTimeout, cancellationToken);
             return fileStream;
         }
 
         /// <summary>
         /// Wait until file gets acquired lock but only as long the file stream is opened.
         /// </summary>
-        /// <param name="filePath">The path to file that get locked.</param>
+        /// <param name="filePath">The path to file that is tried to get locked..</param>
         /// <param name="fileStream">The locked file as file stream.</param>
         /// <param name="fileMode">The file mode when opening file.</param>
         /// <param name="fileAccess">The file access when opening file.</param>
         /// <param name="fileShare">The file share when opening file</param>
         /// <param name="throwOnTimeout">Enable throw when exception occured due due to timeout.</param>
         /// <returns>If true the lock acquirement was successful.</returns>
+        /// <exception cref="OperationCanceledException">When cancellation was requested.</exception>
         public bool WaitUntilAcquired(string filePath, out FileStream? fileStream, FileMode fileMode = DefaultFileMode,
-            FileAccess fileAccess = DefaultFileAccess, FileShare fileShare = DefaultFileShare, bool throwOnTimeout = false)
+            FileAccess fileAccess = DefaultFileAccess, FileShare fileShare = DefaultFileShare, bool throwOnTimeout = false,
+            CancellationToken cancellationToken = default)
         {
             var timeoutInMilliseconds = DefaultTimeoutInMilliseconds;
-            return waitUntilAcquired(filePath, out fileStream, fileMode, fileAccess, fileShare, timeoutInMilliseconds, throwOnTimeout);
+            return waitUntilAcquired(filePath, out fileStream, fileMode, fileAccess, fileShare, timeoutInMilliseconds, throwOnTimeout, cancellationToken);
         }
 
         /// <summary>
         /// Wait until file gets acquired lock but only as long the file stream is opened.
         /// </summary>
-        /// <param name="filePath">The path to file that get locked.</param>
+        /// <param name="filePath">The path to file that is tried to get locked..</param>
         /// <param name="fileMode">The file mode when opening file.</param>
         /// <param name="fileAccess">The file access when opening file.</param>
         /// <param name="fileShare">The file share when opening file</param>
-        /// <param name="noThrowOnTimeout">Disable throw when exception occured due due to timeout.</param>
+        /// <param name="noThrowOnTimeout">Prevents throwing exception when lock fails.</param>
         /// <returns>If not null the lock acquirement was successful.</returns>
+        /// <exception cref="OperationCanceledException">When cancellation was requested.</exception>
         public FileStream? WaitUntilAcquired(string filePath, FileMode fileMode = DefaultFileMode,
-            FileAccess fileAccess = DefaultFileAccess, FileShare fileShare = DefaultFileShare, bool noThrowOnTimeout = false)
+            FileAccess fileAccess = DefaultFileAccess, FileShare fileShare = DefaultFileShare, bool noThrowOnTimeout = false,
+            CancellationToken cancellationToken = default)
         {
             var timeoutInMilliseconds = DefaultTimeoutInMilliseconds;
-            return waitUntilAcquired(filePath, fileMode, fileAccess, fileShare, timeoutInMilliseconds, noThrowOnTimeout);
+            return waitUntilAcquired(filePath, fileMode, fileAccess, fileShare, timeoutInMilliseconds, noThrowOnTimeout, cancellationToken);
         }
 
         /// <summary>
         /// Wait until file gets acquired lock but only as long the file stream is opened.
         /// </summary>
-        /// <param name="filePath">The path to file that get locked.</param>
-        /// <param name="timeoutInMilliseconds">The timeout in milliseconds.</param>
+        /// <param name="filePath">The path to file that is tried to get locked..</param>
+        /// <param name="timeoutInMilliseconds">The number of milliseconds to hold on, or System.Threading.Timeout.Infinite (-1) to hold on indefinitely.</param>
         /// <param name="fileStream">The locked file as file stream.</param>
         /// <param name="fileMode">The file mode when opening file.</param>
         /// <param name="fileAccess">The file access when opening file.</param>
         /// <param name="fileShare">The file share when opening file</param>
         /// <param name="throwOnTimeout">Enable throw when exception occured due due to timeout.</param>
         /// <returns>If true the lock acquirement was successful.</returns>
+        /// <exception cref="TimeoutException">When timeout is hit.</exception>
+        /// <exception cref="OperationCanceledException">When cancellation was requested.</exception>
         public bool WaitUntilAcquired(string filePath, int timeoutInMilliseconds, out FileStream? fileStream, FileMode fileMode = DefaultFileMode,
-            FileAccess fileAccess = DefaultFileAccess, FileShare fileShare = DefaultFileShare, bool throwOnTimeout = false) =>
-            waitUntilAcquired(filePath, out fileStream, fileMode, fileAccess, fileShare, timeoutInMilliseconds, throwOnTimeout);
+            FileAccess fileAccess = DefaultFileAccess, FileShare fileShare = DefaultFileShare, bool throwOnTimeout = false,
+            CancellationToken cancellationToken = default) =>
+            waitUntilAcquired(filePath, out fileStream, fileMode, fileAccess, fileShare, timeoutInMilliseconds, throwOnTimeout, cancellationToken);
 
         /// <summary>
         /// Wait until file gets acquired lock but only as long the file stream is opened.
         /// </summary>
-        /// <param name="filePath">The path to file that get locked.</param>
-        /// <param name="timeoutInMilliseconds">The timeout in milliseconds.</param>
+        /// <param name="filePath">The path to file that is tried to get locked..</param>
+        /// <param name="timeoutInMilliseconds">The number of milliseconds to hold on, or System.Threading.Timeout.Infinite (-1) to wait indefinitely.</param>
         /// <param name="fileMode">The file mode when opening file.</param>
         /// <param name="fileAccess">The file access when opening file.</param>
         /// <param name="fileShare">The file share when opening file</param>
-        /// <param name="noThrowOnTimeout">Disable throw when exception occured due due to timeout.</param>
+        /// <param name="noThrowOnTimeout">Prevents throwing exception when lock fails.</param>
         /// <returns>If not null the lock acquirement was successful.</returns>
+        /// <exception cref="TimeoutException">When timeout is hit.</exception>
+        /// <exception cref="OperationCanceledException">When cancellation was requested.</exception>
         public FileStream? WaitUntilAcquired(string filePath, int timeoutInMilliseconds, FileMode fileMode = DefaultFileMode,
-            FileAccess fileAccess = DefaultFileAccess, FileShare fileShare = DefaultFileShare, bool noThrowOnTimeout = false) =>
-            waitUntilAcquired(filePath, fileMode, fileAccess, fileShare, timeoutInMilliseconds, noThrowOnTimeout);
+            FileAccess fileAccess = DefaultFileAccess, FileShare fileShare = DefaultFileShare, bool noThrowOnTimeout = false,
+            CancellationToken cancellationToken = default) =>
+            waitUntilAcquired(filePath, fileMode, fileAccess, fileShare, timeoutInMilliseconds, noThrowOnTimeout, cancellationToken);
 
         /// <summary>
         /// Wait until file gets acquired lock but only as long the file stream is opened.
         /// </summary>
-        /// <param name="filePath">The path to file that get locked.</param>
+        /// <param name="filePath">The path to file that is tried to get locked..</param>
         /// <param name="timeout">The timeout specified as <see cref="TimeSpan"/>.</param>
         /// <param name="fileStream">The locked file as file stream.</param>
         /// <param name="fileMode">The file mode when opening file.</param>
@@ -173,28 +203,34 @@ namespace Teronis.IO.FileLocking
         /// <param name="fileShare">The file share when opening file</param>
         /// <param name="throwOnTimeout">Enable throw when exception occured due due to timeout.</param>
         /// <returns>If true the lock acquirement was successful.</returns>
+        /// <exception cref="TimeoutException">When timeout is hit.</exception>
+        /// <exception cref="OperationCanceledException">When cancellation was requested.</exception>
         public bool WaitUntilAcquired(string filePath, TimeSpan timeout, out FileStream? fileStream, FileMode fileMode = DefaultFileMode,
-            FileAccess fileAccess = DefaultFileAccess, FileShare fileShare = DefaultFileShare, bool throwOnTimeout = false)
+            FileAccess fileAccess = DefaultFileAccess, FileShare fileShare = DefaultFileShare, bool throwOnTimeout = false,
+            CancellationToken cancellationToken = default)
         {
             var timeoutInMilliseconds = Convert.ToInt32(timeout.TotalMilliseconds);
-            return waitUntilAcquired(filePath, out fileStream, fileMode, fileAccess, fileShare, timeoutInMilliseconds, throwOnTimeout);
+            return waitUntilAcquired(filePath, out fileStream, fileMode, fileAccess, fileShare, timeoutInMilliseconds, throwOnTimeout, cancellationToken);
         }
 
         /// <summary>
         /// Wait until file gets acquired lock but only as long the file stream is opened.
         /// </summary>
-        /// <param name="filePath">The path to file that get locked.</param>
+        /// <param name="filePath">The path to file that is tried to get locked..</param>
         /// <param name="timeout">The timeout specified as <see cref="TimeSpan"/>.</param>
         /// <param name="fileMode">The file mode when opening file.</param>
         /// <param name="fileAccess">The file access when opening file.</param>
         /// <param name="fileShare">The file share when opening file</param>
-        /// <param name="noThrowOnTimeout">Disable throw when exception occured due due to timeout.</param>
-        /// <returns>If ont null lock acquirement was successful.</returns>
+        /// <param name="noThrowOnTimeout">Prevents throwing exception when lock fails.</param>
+        /// <returns>If not null the lock acquirement was successful.</returns>
+        /// <exception cref="TimeoutException">When timeout is hit.</exception>
+        /// <exception cref="OperationCanceledException">When cancellation was requested.</exception>
         public FileStream? WaitUntilAcquired(string filePath, TimeSpan timeout, FileMode fileMode = DefaultFileMode,
-            FileAccess fileAccess = DefaultFileAccess, FileShare fileShare = DefaultFileShare, bool noThrowOnTimeout = false)
+            FileAccess fileAccess = DefaultFileAccess, FileShare fileShare = DefaultFileShare, bool noThrowOnTimeout = false,
+            CancellationToken cancellationToken = default)
         {
             var timeoutInMilliseconds = Convert.ToInt32(timeout.TotalMilliseconds);
-            return waitUntilAcquired(filePath, fileMode, fileAccess, fileShare, timeoutInMilliseconds, noThrowOnTimeout);
+            return waitUntilAcquired(filePath, fileMode, fileAccess, fileShare, timeoutInMilliseconds, noThrowOnTimeout, cancellationToken);
         }
     }
 }

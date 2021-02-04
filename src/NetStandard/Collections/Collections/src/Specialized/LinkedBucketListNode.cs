@@ -70,8 +70,8 @@
 
         internal class LinkedBucketListNodeBucketPart : LinkedBucketListNodePart
         {
-            public override LinkedBucketListNode<KeyType, ValueType>.LinkedBucketListNodePart? PreviousPart => previous?.BucketPart;
-            public override LinkedBucketListNode<KeyType, ValueType>.LinkedBucketListNodePart? NextPart => next?.BucketPart;
+            public override LinkedBucketListNode<KeyType, ValueType>.LinkedBucketListNodePart? PreviousPart => Previous?.BucketPart;
+            public override LinkedBucketListNode<KeyType, ValueType>.LinkedBucketListNodePart? NextPart => Next?.BucketPart;
 
             internal override LinkedBucketListNode<KeyType, ValueType>.LinkedBucketListNodePart previousPart => previous.BucketPart;
             internal override LinkedBucketListNode<KeyType, ValueType>.LinkedBucketListNodePart nextPart => next.BucketPart;

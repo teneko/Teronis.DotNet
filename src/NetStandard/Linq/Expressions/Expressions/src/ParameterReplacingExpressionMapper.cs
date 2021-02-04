@@ -17,7 +17,7 @@ namespace Teronis.Linq.Expressions
 
         protected virtual T ReplaceExpressionParameters<T>(T expression, ParameterExpression from, ParameterExpression to)
             where T : Expression =>
-            new ParameterReplacerVisitor(new[] { from }, new[] { to })
+            new ParameterReplacingVisitor(new[] { new SourceTargetPair<ParameterExpression, ParameterExpression>(from, to) })
             .VisitAndConvert(expression, nameof(ReplaceParameters));
 
         protected virtual void ReplaceParameters(ref Expression sourceBody, ParameterExpression sourceBodyParameter,

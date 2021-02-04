@@ -108,7 +108,7 @@ namespace Teronis.Linq.Expressions.EntityExtension
     {
         public static IQueryable<T> Get<T>(this IRepository<T> repository, Expression<Func<T, IParcel, bool>> query, Action<IParameterReplacableExpressionMapper<IParcel, T>> configureMappings)
         {
-            var replacedBody = SourceExpression.ReplaceParameters(query.Body, query.Parameters[1], query.Parameters[0], configureMappings);
+            var replacedBody = SourceTargetExpressionTools.ReplaceParameters(query.Body, query.Parameters[1], query.Parameters[0], configureMappings);
             var newParameterizedQuery = Expression.Lambda<Func<T, bool>>(replacedBody, query.Parameters[0]);
             return repository.Get(newParameterizedQuery);
         }

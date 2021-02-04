@@ -24,10 +24,7 @@ namespace Teronis.IO.FileLocking
             LockId = lockId;
         }
 
-        public void Dispose()
-        {
-            // When stream not closed, we can decrease lock use.
+        public void Dispose() =>
             fileLockContext.DecreaseLockUse(false, LockId);
-        }
     }
 }

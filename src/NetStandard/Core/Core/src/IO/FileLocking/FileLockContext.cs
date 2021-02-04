@@ -21,10 +21,8 @@ namespace Teronis.IO.FileLocking
         }
 
         public FileLockContext(FileLocker fileLocker, object decreaseLockUseLocker, FileStream fileStream)
-            : this(fileLocker, decreaseLockUseLocker)
-        {
+            : this(fileLocker, decreaseLockUseLocker) =>
             FileStream = fileStream ?? throw new ArgumentNullException(nameof(fileStream));
-        }
 
         public FileLockContext(FileLocker fileLocker, object decreaseLockUseLocker, Exception error, ManualResetEvent errorUnlockDone)
             : this(fileLocker, decreaseLockUseLocker)

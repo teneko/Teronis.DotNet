@@ -2,5 +2,5 @@
 
 namespace Teronis.Linq.Expressions
 {
-    public delegate bool SourceInConstantPredicateDelegate<SourceType, ComparisonType>(SourceType source, [MaybeNull] ComparisonType comparisonValue);
+    public delegate bool SourceInConstantPredicateDelegate<SourceType, ComparisonType>([MaybeNull] SourceType source, [MaybeNull] ComparisonType comparisonValue);
 }

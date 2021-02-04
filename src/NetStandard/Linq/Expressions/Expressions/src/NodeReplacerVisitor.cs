@@ -1,18 +1,29 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace Teronis.Linq.Expressions
 {
-    public class NodeReplacerVisitor : ExpressionVisitor
+    /// <summary>
+    /// The Expression visitor compares visiting node with
+    /// each source-node by reference and if true, the visiting
+    /// node is about to be replaced by target-node.
+    /// </summary>
+    public class NodeReplacerVisitor : ReplacingVisitor<Expression, Expression>
     {
-        private readonly Expression from, to;
+        public NodeReplacerVisitor(IReadOnlyList<SourceTargetPair<Expression, Expression>> sourceTargetPairs)
+            : base(sourceTargetPairs) { }
 
-        public NodeReplacerVisitor(Expression from, Expression to)
+        public NodeReplacerVisitor(Expression source, Expression target)
+            : base(source, target) { }
+
+        public override Expression Visit(Expression node)
         {
-            this.from = from;
-            this.to = to;
-        }
+            if (TryReplaceNode(node, out var replacedNode)) {
+                return replacedNode;
+            }
 
-        public override Expression Visit(Expression node) =>
-            node == from ? to : base.Visit(node);
+            return node;
+        }
     }
 }

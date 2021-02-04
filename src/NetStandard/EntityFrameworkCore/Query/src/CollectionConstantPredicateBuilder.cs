@@ -8,36 +8,47 @@ namespace Teronis.EntityFrameworkCore.Query
     public static class CollectionConstantPredicateBuilder<SourceType>
     {
         /// <summary>
-        /// Creates a deferred collection constant predicate builder from a non-null and non-empty collection.
+        /// Creates a collection constant predicate builder from a non-null and non-empty collection. Otherwise
+        /// <see cref="ArgumentNullException"/> will be thrown. When starting with a non-null and non-empty colection
+        /// you are able to use <see cref="CollectionConstantPredicateBuilder{SourceType, ComparisonItemType}.ThenCreateFromCollection{ThenComparisonItemType}(Func{Expression, Expression, BinaryExpression}, Func{ComparisonItemType, IEnumerable{ThenComparisonItemType}?}, ComparisonItemsBehaviourFlags)"/>
+        /// and this collection can then be null or empy.
         /// </summary>
-        /// <typeparam name="ComparisonType">The type of an item of <paramref name="comparisonValues"/>.</typeparam>
-        /// <param name="comparisonValues">A collection of comparison values with at least one item.</param>
+        /// <typeparam name="ComparisonItemType">The type of an item of <paramref name="comparisonItems"/>.</typeparam>
+        /// <param name="comparisonItems">A collection of comparison items with at least one item.</param>
         /// <returns>A deferred collection constant predicate builder.</returns>
-        public static DeferredCreateBuilder<ComparisonType> CreateFromCollection<ComparisonType>(
-            IEnumerable<ComparisonType> comparisonValues) =>
-            new DeferredCreateBuilder<ComparisonType>(comparisonValues);
+        public static DeferredCreateBuilder<ComparisonItemType> CreateFromCollection<ComparisonItemType>(
+            IEnumerable<ComparisonItemType> comparisonItems) =>
+            new DeferredCreateBuilder<ComparisonItemType>(comparisonItems);
 
-        public readonly struct DeferredCreateBuilder<ComparisonType>
+        public readonly struct DeferredCreateBuilder<ComparisonItemType>
         {
-            private readonly IEnumerable<ComparisonType> enumerable;
+            private readonly IEnumerable<ComparisonItemType> comparisonItems;
 
-            public DeferredCreateBuilder(IEnumerable<ComparisonType> enumerable) =>
-                this.enumerable = enumerable;
+            public DeferredCreateBuilder(IEnumerable<ComparisonItemType> comparisonItems) =>
+                this.comparisonItems = comparisonItems;
 
             /// <summary>
             /// Defines a predicate per item. The predicates are combined 
             /// via <paramref name="consecutiveItemBinaryExpressionFactory"/>.
             /// </summary>
-            /// <param name="consecutiveItemBinaryExpressionFactory">The binary expression factory combines an item predicate with a previous item predicate.</param>
-            /// <param name="sourceAndItemPredicate">The expression that represents the predicate.</param>
+            /// <param name="consecutiveItemBinaryExpressionFactory">
+            /// The binary expression factory that combines an item predicate, an item predicate that is arisen from 
+            /// <see cref="DeferredCreateBuilder{ComparisonItemType}.comparisonItems"/> and that encloses every item predicate of item
+            /// predicates of child collection and their collections, with another item predicate arisen from
+            /// <see cref="DeferredCreateBuilder{ComparisonItemType}.comparisonItems"/> that encloses every item predicate of item
+            /// predicates of child collection and their collections.
+            /// </param>
+            /// <param name="sourceAndComparisonItemPredicate">The expression that represents the predicate.</param>
             /// <returns>The origin builder from which you called this method.</returns>
-            /// <exception cref="ArgumentNullException">A deferred parameter is null.</exception>
-            /// <exception cref="ArgumentException">The deferred comparison list is empty.</exception>
-            public CollectionConstantPredicateBuilder<SourceType, ComparisonType> DefinePredicatePerItem(
+            /// <exception cref="ArgumentNullException">The private field <see cref="DeferredCreateBuilder{ComparisonItemType}.comparisonItems"/> is null.</exception>
+            /// <exception cref="ArgumentException">The private field <see cref="DeferredCreateBuilder{ComparisonItemType}.comparisonItems"/> is empty.</exception>
+            public CollectionConstantPredicateBuilder<SourceType, ComparisonItemType> DefinePredicatePerItem(
                 Func<Expression, Expression, BinaryExpression> consecutiveItemBinaryExpressionFactory,
-                Expression<SourceInConstantPredicateDelegate<SourceType, ComparisonType>> sourceAndItemPredicate) =>
-                new CollectionConstantPredicateBuilder<SourceType, ComparisonType>(consecutiveItemBinaryExpressionFactory,
-                    enumerable, sourceAndItemPredicate);
+                Expression<SourceInConstantPredicateDelegate<SourceType, ComparisonItemType>> sourceAndComparisonItemPredicate) =>
+                new CollectionConstantPredicateBuilder<SourceType, ComparisonItemType>(
+                    consecutiveItemBinaryExpressionFactory,
+                    comparisonItems, 
+                    sourceAndComparisonItemPredicate);
         }
     }
 }

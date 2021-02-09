@@ -4,13 +4,13 @@ namespace Teronis.Linq.Expressions
 {
     public readonly struct ExpressionMapping
     {
-        public readonly Expression SourceTargetExpressionTools;
-        public readonly Expression ReplacmentExpression;
+        public readonly Expression SourceExpression;
+        public readonly Expression TargetExpression;
 
-        public ExpressionMapping(Expression source, Expression replacment)
+        public ExpressionMapping(Expression source, Expression target)
         {
-            SourceTargetExpressionTools = source;
-            ReplacmentExpression = replacment;
+            SourceExpression = source;
+            TargetExpression = target;
         }
     }
 }

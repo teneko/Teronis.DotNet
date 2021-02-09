@@ -17,8 +17,8 @@ namespace Teronis.Linq.Expressions
             }
 
             foreach (var expressionMapping in expressionMappings) {
-                if (ExpressionEqualityComparer.Default.Equals(node, expressionMapping.SourceTargetExpressionTools)) {
-                    return expressionMapping.ReplacmentExpression;
+                if (ExpressionEqualityComparer.Default.Equals(node, expressionMapping.SourceExpression)) {
+                    return expressionMapping.TargetExpression;
                 }
             }
 

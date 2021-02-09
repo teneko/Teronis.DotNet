@@ -30,7 +30,7 @@ namespace Teronis.Linq.Expressions
         /// </summary>
         /// <param name="node"></param>
         /// <returns>The node that got passed or if weighted as replacable the target node.</returns>
-        protected bool TryReplaceNode(Expression node, [MaybeNullWhen(false)] out Expression replacedNode)
+        protected bool TryReplaceNode(Expression node, [MaybeNullWhen(false)] out TargetType replacedNode)
         {
             for (int i = 0; i < sourceTargetPairs.Count; i++) {
                 var sourceTargetPair = sourceTargetPairs[i];

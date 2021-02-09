@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -79,7 +78,7 @@ namespace Teronis.Linq.Expressions
                 replacableNodesIndex++;
             }
 
-            var nodeReplacer = new NodeReplacerVisitor(replacableNodes);
+            var nodeReplacer = new NodeReplacingVisitor(replacableNodes);
             visitedLambdaBody = nodeReplacer.Visit(visitedLambdaBody);
 
             // After replacing parameters by constants, you should remove those lambda parameters.
@@ -125,7 +124,7 @@ namespace Teronis.Linq.Expressions
         }
 
         /// <summary>
-        /// Replaces all expressions by those expressions who are defined 
+        /// Replaces all expressions by those expressions who are defined
         /// with the help of <paramref name="configureMemberMappings"/>.
         /// </summary>
         /// <typeparam name="SourceType">The source type.</typeparam>
@@ -138,8 +137,11 @@ namespace Teronis.Linq.Expressions
         /// <param name="targetParameter">The new target expression parameter that
         /// is used in replacement of the source target expression.</param>
         /// <returns>The expression with replaced expressions.</returns>
-        public static Expression ReplaceExpressions<SourceType, TargetType>(Expression expression, ParameterExpression sourceParameter,
-            ref ParameterExpression? targetParameter, Action<IParameterReplacableExpressionMapper<SourceType, TargetType>> configureMemberMappings)
+        public static Expression ReplaceExpressions<SourceType, TargetType>(
+            Expression expression, 
+            ParameterExpression sourceParameter,
+            ref ParameterExpression? targetParameter, 
+            Action<IParameterReplacableExpressionMapper<SourceType, TargetType>> configureMemberMappings)
         {
             targetParameter ??= Expression.Parameter(typeof(TargetType), "targetAsSource");
             var memberMappingBuilder = new ParameterReplacingExpressionMapper<SourceType, TargetType>(sourceParameter, targetParameter);
@@ -169,7 +171,9 @@ namespace Teronis.Linq.Expressions
         /// <param name="targetParameter">The new target expression parameter that
         /// is used in replacement of the source target expression.</param>
         /// <returns>The expression with replaced expressions.</returns>
-        public static Expression ReplaceExpressions<SourceType, TargetType>(Expression expression, ParameterExpression sourceParameter,
+        public static Expression ReplaceExpressions<SourceType, TargetType>(
+            Expression expression, 
+            ParameterExpression sourceParameter,
             Action<IParameterReplacableExpressionMapper<SourceType, TargetType>> configureMemberMappings,
             out ParameterExpression targetParameter)
         {

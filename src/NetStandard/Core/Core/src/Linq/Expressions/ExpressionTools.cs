@@ -35,7 +35,7 @@ namespace Teronis.Linq.Expressions
         /// <param name="expression">The expression.</param>
         /// <returns>The member names.</returns>
         /// <exception cref="ArgumentException">Expression body is not of type <see cref="NewExpression"/>.</exception>
-        public static string[] GetAnonTypeNames(LambdaExpression expression)
+        public static string[] GetAnonymousTypeNames(LambdaExpression expression)
         {
             if (!(expression.Body is NewExpression newExpression)) {
                 throw new ArgumentException($"Expression body is not of type {nameof(NewExpression)}.");

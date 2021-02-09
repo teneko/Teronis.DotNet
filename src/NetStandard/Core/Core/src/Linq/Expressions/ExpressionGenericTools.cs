@@ -17,10 +17,10 @@ namespace Teronis.Linq.Expressions
         public static string GetReturnName<ReturnType>(Expression<Func<ReturnType>> expression) =>
             ExpressionTools.GetReturnName(expression);
 
-        public static string[] GetAnonTypeNames<OwnerType, ReturnType>(Expression<Func<OwnerType, ReturnType>> expression) =>
-            ExpressionTools.GetAnonTypeNames(expression);
+        public static string[] GetAnonymousTypeNames<OwnerType, ReturnType>(Expression<Func<OwnerType, ReturnType>> expression) =>
+            ExpressionTools.GetAnonymousTypeNames(expression);
 
-        public static string[] GetAnonTypeNames<ReturnType>(Expression<Func<ReturnType>> expression) =>
-            ExpressionTools.GetAnonTypeNames(expression);
+        public static string[] GetAnonymousTypeNames<ReturnType>(Expression<Func<ReturnType>> expression) =>
+            ExpressionTools.GetAnonymousTypeNames(expression);
     }
 }

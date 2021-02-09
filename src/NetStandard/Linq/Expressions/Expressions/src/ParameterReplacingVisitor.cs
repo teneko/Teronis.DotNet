@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace Teronis.Linq.Expressions
@@ -20,10 +19,10 @@ namespace Teronis.Linq.Expressions
         protected override Expression VisitParameter(ParameterExpression node)
         {
             if (TryReplaceNode(node, out var replacedNode)) {
-                return replacedNode;
+                return base.VisitParameter(replacedNode);
             }
 
-            return node;
+            return base.VisitParameter(node);
         }
     }
 }

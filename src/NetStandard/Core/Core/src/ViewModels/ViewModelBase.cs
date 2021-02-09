@@ -67,7 +67,7 @@ namespace Teronis.ViewModels
         }
 
         protected void ChangeProperty(Action action, Expression<Func<object?>> anonymousProperties) =>
-            ChangeProperty(action, ExpressionGenericTools.GetAnonTypeNames(anonymousProperties));
+            ChangeProperty(action, ExpressionGenericTools.GetAnonymousTypeNames(anonymousProperties));
 
         private void Property_RequestParents(object sender, HavingParentsEventArgs havingParents)
             => havingParents.AddParentAndItsParents(this);

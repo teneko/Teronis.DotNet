@@ -11,7 +11,7 @@ namespace Teronis.Linq.Expressions
         {
             var ball = new Ball();
             Expression<Func<Ball, object>> action = ball => new { ball.Height };
-            Assert.Equal(ExpressionGenericTools.GetAnonTypeNames(action), new string[] { nameof(ball.Height) });
+            Assert.Equal(ExpressionGenericTools.GetAnonymousTypeNames(action), new string[] { nameof(ball.Height) });
         }
 
         [Fact]
@@ -19,7 +19,7 @@ namespace Teronis.Linq.Expressions
         {
             var ball = new Ball();
             Expression<Func<object>> action = () => new { ball.Height };
-            Assert.Equal(ExpressionGenericTools.GetAnonTypeNames(action), new string[] { nameof(ball.Height) });
+            Assert.Equal(ExpressionGenericTools.GetAnonymousTypeNames(action), new string[] { nameof(ball.Height) });
         }
 
         private class Ball

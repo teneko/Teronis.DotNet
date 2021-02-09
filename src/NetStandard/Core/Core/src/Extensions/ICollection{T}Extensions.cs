@@ -5,8 +5,6 @@ namespace Teronis.Extensions
 {
     public static class ICollectionGenericExtensions
     {
-        public static bool IsNullOrEmpty<T>(this ICollection<T> anyCollection) => anyCollection == default || anyCollection.Count == 0;
-
         public static bool TryAdd<T>(this ICollection<T> list, T item)
         {
             if (!list.Contains(item)) {

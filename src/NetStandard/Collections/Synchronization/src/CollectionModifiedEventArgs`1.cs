@@ -13,6 +13,8 @@ namespace Teronis.Collections.Synchronization
 
         private readonly ICollectionModification<ItemType, ItemType> collectionModification;
 
+        #region ICollectionModification<ItemType, ItemType>
+
         IReadOnlyList<ItemType>? ICollectionModification<ItemType, ItemType>.OldItems =>
             collectionModification.OldItems;
 
@@ -24,6 +26,24 @@ namespace Teronis.Collections.Synchronization
 
         int ICollectionModification<ItemType, ItemType>.NewIndex =>
             collectionModification.NewIndex;
+
+        #endregion
+
+        #region ICollectionModificationParameters
+
+        int? ICollectionModificationParameters.OldItemsCount =>
+            OldPart.Items?.Count;
+
+        int ICollectionModificationParameters.OldIndex =>
+            OldPart.Index;
+
+        int? ICollectionModificationParameters.NewItemsCount =>
+            NewPart.Items?.Count;
+
+        int ICollectionModificationParameters.NewIndex =>
+            NewPart.Index;
+
+        #endregion
 
         public CollectionModifiedEventArgs(ICollectionModification<ItemType, ItemType> collectionModification)
             : base(NotifyCollectionChangedAction.Reset)
@@ -44,7 +64,7 @@ namespace Teronis.Collections.Synchronization
         {
             protected readonly ICollectionModification<ItemType, ItemType> Modification;
 
-            public CollectionModificationPartBase(ICollectionModification<ItemType, ItemType> modification) 
+            public CollectionModificationPartBase(ICollectionModification<ItemType, ItemType> modification)
                 : base(modification) =>
                 Modification = modification;
         }

@@ -8,7 +8,7 @@
       <![CDATA[Provides classes for collection synchronization.
 
 Commonly Used Types:
-SyncingCollectionViewModel<ItemType, ContentType>]]>
+SynchronizingCollection<ItemType, ContentType>]]>
     </Description>
   </PropertyGroup>
 

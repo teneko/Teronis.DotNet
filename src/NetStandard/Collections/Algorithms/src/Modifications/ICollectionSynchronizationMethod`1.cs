@@ -1,9 +1,5 @@
-﻿using System.Collections.Generic;
-
-namespace Teronis.Collections.Algorithms.Modifications
+﻿namespace Teronis.Collections.Algorithms.Modifications
 {
-    public interface ICollectionSynchronizationMethod<ItemType>
-    {
-        IEnumerable<CollectionModification<ItemType, ItemType>> YieldCollectionModifications(IEnumerable<ItemType> leftItems, IEnumerable<ItemType>? rightItems, CollectionModificationsYieldCapabilities yieldCapabilities);
-    }
+    public interface ICollectionSynchronizationMethod<ItemType> : ICollectionSynchronizationMethod<ItemType, ItemType>
+    { }
 }

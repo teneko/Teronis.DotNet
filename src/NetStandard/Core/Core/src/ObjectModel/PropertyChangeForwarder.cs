@@ -7,8 +7,12 @@ namespace Teronis.ObjectModel
     {
         protected Dictionary<string, string> CalleePropertyNameByCallerPropertyNameDictionary;
 
-        public PropertyChangeForwarder(object? alternativeEventSender = null)
+        public PropertyChangeForwarder(object? alternativeEventSender)
             : base(alternativeEventSender) =>
+            CalleePropertyNameByCallerPropertyNameDictionary = new Dictionary<string, string>();
+
+        public PropertyChangeForwarder()
+            : base() =>
             CalleePropertyNameByCallerPropertyNameDictionary = new Dictionary<string, string>();
 
         public void AddPropertyChangeForwarding(string callerPropertyName, string calleePropertyName)

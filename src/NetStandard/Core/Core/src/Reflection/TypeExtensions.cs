@@ -243,8 +243,8 @@ namespace Teronis.Extensions
         // TYPED
 
         /// <returns>Returns null if passed attribute allows multiple declarations.</returns>
-        public static AttributeMemberInfo<TAttribute>[]? TryGetOrderedAttributeMemberInfos<TAttribute>(this Type type, Type? interruptingBaseType = null, VariableInfoDescriptor? descriptor = null, bool? getCustomAttributesInherit = null)
-            where TAttribute : Attribute, IZeroBasedNumbered
+        public static AttributeMemberInfo<TAttribute>[]? TryGetOrderedAttributeMemberInfos<TAttribute>(this Type type, Func<TAttribute, int> getAttributeIndex, Type? interruptingBaseType = null, VariableInfoDescriptor? descriptor = null, bool? getCustomAttributesInherit = null)
+            where TAttribute : Attribute
         {
             var customAttribute = typeof(TAttribute).GetCustomAttribute<AttributeUsageAttribute>();
 
@@ -256,7 +256,9 @@ namespace Teronis.Extensions
             var array = new AttributeMemberInfo<TAttribute>[vars.Count];
 
             foreach (var variable in vars) {
-                array[variable.FirstAttribute().Index] = variable;
+                var firstAttribute = variable.FirstAttribute();
+                var attributeIndex = getAttributeIndex(firstAttribute);
+                array[attributeIndex] = variable;
             }
 
             return array;

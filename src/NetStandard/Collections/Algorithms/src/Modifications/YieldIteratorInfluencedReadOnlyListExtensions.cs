@@ -2,7 +2,7 @@
 
 namespace Teronis.Collections.Algorithms.Modifications
 {
-    public static class YieldIteratorInfluencedReadOnlyListExtensions
+    internal static class YieldIteratorInfluencedReadOnlyListExtensions
     {
         public static IList<ItemType> AsIList<ItemType>(this IList<ItemType> list) =>
             list;

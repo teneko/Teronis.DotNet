@@ -8,14 +8,32 @@ namespace Teronis.ObjectModel
 
         protected abstract Action<SenderType, EventArgumentType>? ForwardEventInvocation { get; }
 
-        protected readonly SenderType AlternativeEventSender;
+        public virtual bool HasAlternativeEventSender { get; }
+        public virtual SenderType AlternativeEventSender { get; }
 
-        public EventInvocationForwarder(SenderType alternativeEventSender) =>
+        public EventInvocationForwarder(SenderType alternativeEventSender)
+        {
+            HasAlternativeEventSender = true;
             AlternativeEventSender = alternativeEventSender;
+        }
+
+        public EventInvocationForwarder() {
+            HasAlternativeEventSender = false;
+            AlternativeEventSender = default(SenderType)!;
+        }
 
         protected abstract bool CanForwardEventInvocation(EventArgumentType eventArgument);
 
         protected abstract EventArgumentType CreateEventArgument(EventArgumentType eventArgument);
+
+        protected virtual SenderType GetAlternativeEventSender(SenderType originalSender)
+        {
+            if (HasAlternativeEventSender) {
+                originalSender = AlternativeEventSender;
+            }
+
+            return originalSender;
+        }
 
         protected void OnEventInvocationForward(SenderType sender, EventArgumentType eventArgument)
         {
@@ -23,10 +41,10 @@ namespace Teronis.ObjectModel
                 return;
             }
 
-            sender = AlternativeEventSender ?? sender;
+            sender = GetAlternativeEventSender(sender);
             eventArgument = CreateEventArgument(eventArgument);
-            ForwardEventInvocation?.Invoke(sender!, eventArgument);
-            EventInvocationForward?.Invoke(sender!, eventArgument);
+            ForwardEventInvocation?.Invoke(sender, eventArgument);
+            EventInvocationForward?.Invoke(sender, eventArgument);
         }
     }
 }

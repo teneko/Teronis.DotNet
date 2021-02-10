@@ -13,7 +13,7 @@ namespace Teronis.Collections.Synchronization
                 Number.ReferenceEqualityComparer.Default;
 
             public Descended()
-                : base(new SynchronizableCollection<Number>(CollectionSynchronizationMethod.Descending(Number.Comparer.Default))) { }
+                : base(new SynchronizableCollection<Number>(Number.Comparer.Default, descended: true)) { }
 
             [Theory]
             [ClassData(typeof(DescendedGenerator))]

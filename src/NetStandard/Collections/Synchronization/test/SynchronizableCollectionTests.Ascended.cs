@@ -23,7 +23,7 @@ namespace Teronis.Collections.Synchronization
             private static Number nine = 9;
 
             public Ascended()
-                : base(new SynchronizableCollection<Number>(CollectionSynchronizationMethod.Ascending(Number.Comparer.Default)))
+                : base(new SynchronizableCollection<Number>(Number.Comparer.Default, descended: false))
             { }
 
             [Theory]

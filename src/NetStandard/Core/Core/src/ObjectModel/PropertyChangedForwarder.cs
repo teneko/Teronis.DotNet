@@ -5,7 +5,7 @@ namespace Teronis.ObjectModel
 {
     public class PropertyChangedForwarder : PropertyChangeForwarder<PropertyChangedEventArgs>, INotifyPropertyChanged
     {
-        private static Action<object, PropertyChangedEventArgs>? convertNotifyPropertyChangeMethod(Action<PropertyChangedEventArgs>? notifyPropertyChanged)
+        private static Action<object?, PropertyChangedEventArgs>? convertNotifyPropertyChangeMethod(Action<PropertyChangedEventArgs>? notifyPropertyChanged)
         {
             if (notifyPropertyChanged is null) {
                 return null;
@@ -14,7 +14,7 @@ namespace Teronis.ObjectModel
             }
         }
 
-        private static Action<object, PropertyChangedEventArgs>? convertNotifyPropertyChangeMethod(Action<string>? notifyPropertyChanged)
+        private static Action<object?, PropertyChangedEventArgs>? convertNotifyPropertyChangeMethod(Action<string>? notifyPropertyChanged)
         {
             if (notifyPropertyChanged is null) {
                 return null;
@@ -36,20 +36,32 @@ namespace Teronis.ObjectModel
             remove => PropertyChangedForward -= value;
         }
 
-        protected override Action<object, PropertyChangedEventArgs>? ForwardEventInvocation { get; }
+        protected override Action<object?, PropertyChangedEventArgs>? ForwardEventInvocation { get;}
 
-        public PropertyChangedForwarder(Action<object, PropertyChangedEventArgs>? notifyPropertyChange = null, object? alternativeEventSender = null)
+        public PropertyChangedForwarder(Action<object?, PropertyChangedEventArgs>? notifyPropertyChange, object? alternativeEventSender)
             : base(alternativeEventSender: alternativeEventSender) =>
             ForwardEventInvocation = notifyPropertyChange;
 
-        public PropertyChangedForwarder(object? alternativeEventSender = null)
-           : this(default(Action<object, PropertyChangedEventArgs>?), alternativeEventSender: alternativeEventSender) { }
+        public PropertyChangedForwarder(Action<object?, PropertyChangedEventArgs>? notifyPropertyChange) =>
+            ForwardEventInvocation = notifyPropertyChange;
 
-        public PropertyChangedForwarder(Action<PropertyChangedEventArgs>? notifyPropertyChange = null, object? alternativeEventSender = null)
+        public PropertyChangedForwarder(object? alternativeEventSender)
+           : this(default(Action<object?, PropertyChangedEventArgs>?), alternativeEventSender: alternativeEventSender) { }
+
+        public PropertyChangedForwarder()
+           : this(default(Action<object?, PropertyChangedEventArgs>?)) { }
+
+        public PropertyChangedForwarder(Action<PropertyChangedEventArgs>? notifyPropertyChange, object? alternativeEventSender)
             : this(notifyPropertyChange: convertNotifyPropertyChangeMethod(notifyPropertyChange), alternativeEventSender: alternativeEventSender) { }
 
-        public PropertyChangedForwarder(Action<string>? notifyPropertyChange = null, object? alternativeEventSender = null)
+        public PropertyChangedForwarder(Action<PropertyChangedEventArgs>? notifyPropertyChange)
+            : this(notifyPropertyChange: convertNotifyPropertyChangeMethod(notifyPropertyChange)) { }
+
+        public PropertyChangedForwarder(Action<string>? notifyPropertyChange, object? alternativeEventSender)
             : this(convertNotifyPropertyChangeMethod(notifyPropertyChange), alternativeEventSender: alternativeEventSender) { }
+
+        public PropertyChangedForwarder(Action<string>? notifyPropertyChange)
+            : this(convertNotifyPropertyChangeMethod(notifyPropertyChange)) { }
 
         protected override bool CanForwardEventInvocation(PropertyChangedEventArgs eventArgs) =>
             CalleePropertyNameByCallerPropertyNameDictionary.ContainsKey(eventArgs.PropertyName);

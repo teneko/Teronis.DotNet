@@ -6,19 +6,19 @@ namespace Teronis.ObjectModel
     public class EventInvocationGate<SenderType, ArgumentType> : IPassableEventInvocationGate
     {
         private readonly Action<SenderType, ArgumentType> eventInvoker;
-        private List<Invocation> invocations;
+        private List<EventInvocation> eventInvocations;
         private bool guarded;
 
         public EventInvocationGate(Action<SenderType, ArgumentType> eventInvoker)
         {
-            invocations = new List<Invocation>();
+            eventInvocations = new List<EventInvocation>();
             this.eventInvoker = eventInvoker;
         }
 
         public void PassThrough(SenderType sender, ArgumentType argument)
         {
             if (guarded) {
-                invocations.Add(new Invocation(sender, argument));
+                eventInvocations.Add(new EventInvocation(sender, argument));
             } else {
                 eventInvoker?.Invoke(sender, argument);
             }
@@ -26,7 +26,7 @@ namespace Teronis.ObjectModel
 
         void IPassableEventInvocationGate.LetPassThrough()
         {
-            foreach (var invocation in invocations) {
+            foreach (var invocation in eventInvocations) {
                 eventInvoker?.Invoke(invocation.Sender, invocation.Argument);
             }
 
@@ -42,12 +42,12 @@ namespace Teronis.ObjectModel
             return new EventInvocationGateGuardian(this);
         }
 
-        private readonly struct Invocation
+        private readonly struct EventInvocation
         {
             public SenderType Sender { get; }
             public ArgumentType Argument { get; }
 
-            public Invocation(SenderType sender, ArgumentType argument)
+            public EventInvocation(SenderType sender, ArgumentType argument)
             {
                 Sender = sender;
                 Argument = argument;

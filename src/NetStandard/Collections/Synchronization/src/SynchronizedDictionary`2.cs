@@ -8,17 +8,17 @@ using Teronis.Collections.Specialized;
 
 namespace Teronis.Collections.Synchronization
 {
-    public class KeyedItemIndexTracker<ItemType, KeyType>
+    public class SynchronizedDictionary<KeyType, ItemType>
     {
         public IReadOnlyDictionary<KeyType, IndexDirectoryEntry> KeyedItemIndexes { get; }
 
-        internal readonly ISynchronizableItemCollection<ItemType> ItemCollection;
+        internal readonly ISynchronizedCollection<ItemType> ItemCollection;
         internal readonly Func<ItemType, KeyType> GetItemKeyDelegate;
 
         private readonly Dictionary<KeyType, IndexDirectoryEntry> keyedItemIndexes;
         private readonly IndexDirectory indexDirectory;
 
-        public KeyedItemIndexTracker(ISynchronizableItemCollection<ItemType> itemCollection, Func<ItemType, KeyType> getItemKey,
+        public SynchronizedDictionary(ISynchronizedCollection<ItemType> itemCollection, Func<ItemType, KeyType> getItemKey,
             IEqualityComparer<KeyType>? keyEqualityComparer)
         {
             keyEqualityComparer = keyEqualityComparer ?? EqualityComparer<KeyType>.Default;
@@ -28,7 +28,6 @@ namespace Teronis.Collections.Synchronization
             ItemCollection = itemCollection;
             GetItemKeyDelegate = getItemKey ?? throw new ArgumentNullException(nameof(getItemKey));
             itemCollection.CollectionModified += ModificationNotifier_CollectionModifying;
-            //recalculateItemKeys();
 
             if (keyedItemIndexes.Count != 0) {
                 keyedItemIndexes.Clear();
@@ -44,29 +43,11 @@ namespace Teronis.Collections.Synchronization
             }
         }
 
-        //private void recalculateItemKeys()
-        //{
-            
-        //}
-
-        public KeyedItemIndexTracker(ISynchronizableItemCollection<ItemType> itemCollection, Func<ItemType, KeyType> getItemKey)
+        public SynchronizedDictionary(ISynchronizedCollection<ItemType> itemCollection, Func<ItemType, KeyType> getItemKey)
             : this(itemCollection, getItemKey, default(IEqualityComparer<KeyType>)) { }
 
         private void ModificationNotifier_CollectionModifying(object sender, ICollectionModification<ItemType, ItemType> modification)
         {
-            //void replaceItemIndexes(IEnumerable<ItemType> items, int offset)
-            //{
-            //    var itemsEnumerator = items.GetEnumerator();
-            //    var index = 0;
-
-            //    //while (itemsEnumerator.MoveNext()) {
-            //    //    var itemKey = GetItemKeyDelegate(itemsEnumerator.Current);
-            //    //    indexDirectory.
-            //    //    keyedItemIndexes[itemKey] = ;
-            //    //    index++;
-            //    //}
-            //}
-
             switch (modification.Action) {
                 case NotifyCollectionChangedAction.Add:
                     if (modification.NewItems is null) {
@@ -92,14 +73,12 @@ namespace Teronis.Collections.Synchronization
 
                         var oldItemsCount = modification.OldItems.Count;
 
-                        for (var index = 0; index < oldItemsCount; index++) {
+                        for (var index = oldItemsCount - 1; index >= 0; index++) {
                             var itemKey = GetItemKeyDelegate(modification.OldItems[index]);
                             var indexEntry = keyedItemIndexes[itemKey];
                             indexDirectory.RemoveEntry(indexEntry);
                             keyedItemIndexes.Remove(itemKey);
                         }
-
-                        //recalculateItemKeys();
                     }
                     break;
                 case NotifyCollectionChangedAction.Replace:
@@ -109,14 +88,6 @@ namespace Teronis.Collections.Synchronization
                     if (modification.OldItems is null) {
                         throw CollectionModificationThrowHelper.OldItemsWereNullException();
                     }
-
-                    //var (StartIndexOfAffectedItems, AmountOfAffectedItems) = CollectionTools.GetMoveRange(
-                    //    modification.OldIndex, 
-                    //    modification.NewIndex, 
-                    //    modification.NewItems.Count);
-
-                    //var affectedItems = ItemCollection.Skip(StartIndexOfAffectedItems).Take(AmountOfAffectedItems);
-                    //replaceItemIndexes(affectedItems, StartIndexOfAffectedItems);
 
                     indexDirectory.Move(modification.OldIndex, modification.NewIndex, modification.OldItems.Count);
                     break;
@@ -137,9 +108,13 @@ namespace Teronis.Collections.Synchronization
         [return: MaybeNull]
         public ItemType GetItemOrDefault(KeyType key)
         {
-            if (keyedItemIndexes.TryGetValue(key, out var itemIndex)) {
-                var item = ItemCollection[itemIndex];
-                return item;
+            try {
+                if (keyedItemIndexes.TryGetValue(key, out var itemIndex)) {
+                    var item = ItemCollection[itemIndex];
+                    return item;
+                }
+            } catch (Exception error) {
+                Console.WriteLine(key!.ToString() + error.Message);
             }
 
             return default;

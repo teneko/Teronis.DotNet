@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Teronis.Collections.Algorithms.Modifications
 {
-    public abstract class YieldIteratorInfluencedReadOnlyList<ItemType> : IReadOnlyList<ItemType>
+    internal abstract class YieldIteratorInfluencedReadOnlyList<ItemType> : IReadOnlyList<ItemType>
     {
         protected YieldIteratorInfluencedReadOnlyList() { }
 

@@ -9,7 +9,14 @@ namespace Teronis.Diagnostics
 {
     public static class SimpleProcess
     {
-        private static Process prepareProcess(string name, string? args, string? commandEchoPrefix, Action<string>? outputReceived, Action<string>? errorReceived, out Action dettachHandlers, out Func<NonZeroExitCodeException> createNonZeroExitCodeException)
+        private static Process prepareProcess(
+            string name,
+            string? args,
+            string? commandEchoPrefix,
+            Action<string>? outputReceived,
+            Action<string>? errorReceived,
+            out Action dettachHandlers,
+            out Func<NonZeroExitCodeException> createNonZeroExitCodeException)
         {
             ProcessStartInfo processInfo;
 
@@ -73,9 +80,22 @@ namespace Teronis.Diagnostics
             return process;
         }
 
-        public static void Run(string name, string? args = null, bool echoCommand = false, string? commandEchoPrefix = null, Action<string>? outputReceived = null, Action<string>? errorReceived = null)
+        public static void Run(
+            string name,
+            string? args = null,
+            bool echoCommand = false,
+            string? commandEchoPrefix = null,
+            Action<string>? outputReceived = null,
+            Action<string>? errorReceived = null)
         {
-            var process = prepareProcess(name, args, commandEchoPrefix, outputReceived, errorReceived, out var dispose, out var createNonZeroExitCodeException);
+            var process = prepareProcess(
+                name,
+                args,
+                commandEchoPrefix,
+                outputReceived,
+                errorReceived,
+                out var dispose,
+                out var createNonZeroExitCodeException);
 
             try {
                 process.Start(echoCommand: echoCommand, commandEchoPrefix: commandEchoPrefix);
@@ -91,7 +111,13 @@ namespace Teronis.Diagnostics
             }
         }
 
-        private static ValueTask<string> readAsyncOrNot(bool readAsync, string name, string? args, bool echoCommand, string? commandEchoPrefix, Action<string>? errorReceived)
+        private static ValueTask<string> readAsyncOrNot(
+            bool readAsync,
+            string name,
+            string? args,
+            bool echoCommand,
+            string? commandEchoPrefix,
+            Action<string>? errorReceived)
         {
             var output = new StringBuilder();
 
@@ -101,7 +127,14 @@ namespace Teronis.Diagnostics
             }
 
             if (readAsync) {
-                return new ValueTask<string>(RunAsync(name, args, echoCommand, commandEchoPrefix, onOutputReceived, errorReceived)
+                return new ValueTask<string>(
+                        RunAsync(
+                            name, 
+                            args, 
+                            echoCommand, 
+                            commandEchoPrefix, 
+                            onOutputReceived, 
+                            errorReceived)
                     .ContinueWith(task => output.ToString()));
             } else {
                 Run(name, args, echoCommand, commandEchoPrefix, onOutputReceived, errorReceived);
@@ -109,13 +142,37 @@ namespace Teronis.Diagnostics
             }
         }
 
-        public static string Read(string name, string? args = null, bool echoCommand = false, string? commandEchoPrefix = null, Action<string>? errorReceived = null) =>
+        public static string Read(
+            string name,
+            string? args = null,
+            bool echoCommand = false,
+            string? commandEchoPrefix = null,
+            Action<string>? errorReceived = null) =>
             /// We can grab for <see cref="ValueTask{string}.Result"/> safely.
-            readAsyncOrNot(false, name, args, echoCommand, commandEchoPrefix, errorReceived).Result;
+            readAsyncOrNot(
+                readAsync: false, 
+                name, 
+                args, 
+                echoCommand, 
+                commandEchoPrefix, 
+                errorReceived).Result;
 
-        public static Task RunAsync(string name, string? args = null, bool echoCommand = false, string? commandEchoPrefix = null, Action<string>? outputReceived = null, Action<string>? errorReceived = null)
+        public static Task RunAsync(
+            string name,
+            string? args = null,
+            bool echoCommand = false,
+            string? commandEchoPrefix = null,
+            Action<string>? outputReceived = null,
+            Action<string>? errorReceived = null)
         {
-            var process = prepareProcess(name, args, commandEchoPrefix, outputReceived, errorReceived, out Action innerDispose, out var createNonZeroExitCodeException);
+            var process = prepareProcess(
+                name, 
+                args, 
+                commandEchoPrefix, 
+                outputReceived, 
+                errorReceived, 
+                out Action innerDispose, 
+                out var createNonZeroExitCodeException);
 
             var processCompletionSource = new TaskCompletionSource();
 
@@ -152,7 +209,18 @@ namespace Teronis.Diagnostics
             return processCompletionSource.Task;
         }
 
-        public static ValueTask<string> ReadAsync(string name, string? args = null, bool echoCommand = false, string? commandEchoPrefix = null, Action<string>? errorReceived = null) =>
-           readAsyncOrNot(true, name, args, echoCommand, commandEchoPrefix, errorReceived);
+        public static ValueTask<string> ReadAsync(
+            string name,
+            string? args = null,
+            bool echoCommand = false,
+            string? commandEchoPrefix = null,
+            Action<string>? errorReceived = null) =>
+           readAsyncOrNot(
+               readAsync: true, 
+               name, 
+               args, 
+               echoCommand, 
+               commandEchoPrefix, 
+               errorReceived);
     }
 }

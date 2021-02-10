@@ -39,7 +39,7 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// </summary>
         public static List<TargetItemType>? GetItemsBeginningFromOldIndex<OldItemType, NewItemType, TargetItemType>(
             this ICollectionModification<OldItemType, NewItemType> change,
-            ICollection<TargetItemType> collection)
+            IReadOnlyCollection<TargetItemType> collection)
             => getItems(collection, collection?.Count, change.OldIndex, change.OldItems?.Count);
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// </summary>
         public static List<TargetItemType>? GetItemsBeginningFromNewIndex<OldItemType, NewItemType, TargetItemType>(
             this ICollectionModification<OldItemType, NewItemType> change,
-            ICollection<TargetItemType> collection)
+            IReadOnlyCollection<TargetItemType> collection)
             => getItems(collection, collection?.Count, change.NewIndex, change.NewItems?.Count);
 
         /// <summary>

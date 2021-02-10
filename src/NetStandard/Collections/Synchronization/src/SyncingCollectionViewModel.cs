@@ -226,7 +226,7 @@ namespace Teronis.Collections.Synchronization
         {
             OnCollectionSynchronizing();
 
-            foreach (var modification in SynchronizationMethod.YieldCollectionModifications(superItems.AsIReadOnlyList().ToYieldIteratorInfluencedReadOnlyList(), items)) {
+            foreach (var modification in SynchronizationMethod.YieldCollectionModifications(superItems.AsIReadOnlyList().ToYieldIteratorInfluencedReadOnlyList(), items, yieldCapabilities)) {
                 ApplyCollectionModification(modification);
             }
 

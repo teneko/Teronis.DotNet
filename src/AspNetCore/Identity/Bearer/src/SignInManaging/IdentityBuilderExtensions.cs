@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Teronis.Extensions;
 using Teronis.AspNetCore.Identity.Entities;
 using Teronis.AspNetCore.Identity.Bearer.Stores;
 
@@ -30,18 +29,21 @@ namespace Teronis.AspNetCore.Identity.Bearer.SignInManaging
                 // Only those values are taken over whose property values are null.
                 void TakeOverFromDefaultOptions(SecurityTokenDescriptor tokenDescriptor)
                 {
+                    var isTokenDescriptorClaimsInvalid = tokenDescriptor.Claims is null || tokenDescriptor.Claims.Count == 0;
+                    var isDefaultTokenDescriptorClaimsInvalid = defaultTokenDescriptor.Claims is null || defaultTokenDescriptor.Claims.Count == 0;
+
                     // Claims can be null..
-                    if (tokenDescriptor.Claims.IsNullOrEmpty() && defaultTokenDescriptor.Claims.IsNullOrEmpty()) {
+                    if (isTokenDescriptorClaimsInvalid && isDefaultTokenDescriptorClaimsInvalid) {
                         tokenDescriptor.Claims = new Dictionary<string, object>();
                     }
                     // Take over claims.
-                    else if (tokenDescriptor.Claims.IsNullOrEmpty() && !defaultTokenDescriptor.Claims.IsNullOrEmpty()) {
-                        tokenDescriptor.Claims = new Dictionary<string, object>(defaultTokenDescriptor.Claims);
+                    else if (isTokenDescriptorClaimsInvalid && !isDefaultTokenDescriptorClaimsInvalid) {
+                        tokenDescriptor.Claims = new Dictionary<string, object>(defaultTokenDescriptor.Claims!);
                     }
                     // Add defaulted claims to existing claims.
-                    else if (!tokenDescriptor.Claims.IsNullOrEmpty() && !defaultTokenDescriptor.Claims.IsNullOrEmpty()) {
-                        foreach (var claim in (ICollection<KeyValuePair<string, object>>)defaultTokenDescriptor.Claims) {
-                            tokenDescriptor.Claims.Add(claim);
+                    else if (!isTokenDescriptorClaimsInvalid && !isDefaultTokenDescriptorClaimsInvalid) {
+                        foreach (var claim in (ICollection<KeyValuePair<string, object>>)defaultTokenDescriptor.Claims!) {
+                            tokenDescriptor.Claims!.Add(claim);
                         }
                     }
 

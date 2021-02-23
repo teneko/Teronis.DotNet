@@ -2,12 +2,12 @@
 
 namespace Teronis.Collections.Synchronization
 {
-    internal readonly struct ApplyingCollectionModificationBundle<SubItemType, SuperItemType>
+    internal readonly struct ApplyingCollectionModificationBundle<SuperItemType, SubItemType>
     {
-        public ICollectionModification<SubItemType, SuperItemType> OldSubItemsNewSuperItemsModification { get; }
+        public ICollectionModification<SuperItemType, SubItemType> OldSubItemsNewSuperItemsModification { get; }
         public ICollectionModification<SuperItemType, SuperItemType> OldSuperItemsNewSuperItemsModification { get; }
 
-        public ApplyingCollectionModificationBundle(ICollectionModification<SubItemType, SuperItemType> oldSubItemsNewSuperItemsModification,
+        public ApplyingCollectionModificationBundle(ICollectionModification<SuperItemType, SubItemType> oldSubItemsNewSuperItemsModification,
             ICollectionModification<SuperItemType, SuperItemType> oldSuperItemsNewSuperItemsModification)
         {
             OldSubItemsNewSuperItemsModification = oldSubItemsNewSuperItemsModification;

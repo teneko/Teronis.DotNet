@@ -1,4 +1,6 @@
-﻿namespace Teronis.Collections.Synchronization
+﻿using System;
+
+namespace Teronis.Collections.Synchronization
 {
-    public delegate void CollectionUpdateItemDelegate<ItemType, NewItemType>(ItemType item, NewItemType newItem);
+    public delegate void CollectionUpdateItemDelegate<ItemType, NewItemType>(ItemType item, Func<NewItemType> getNewItem);
 }

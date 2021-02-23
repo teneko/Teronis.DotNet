@@ -7,33 +7,33 @@ using Teronis.Diagnostics;
 namespace Teronis.Collections.Algorithms.Modifications
 {
     [DebuggerDisplay(IDebuggerDisplayLibrary.FullGetDebuggerDisplayMethodPathWithParameterizedThis)]
-    public class CollectionModification<OldItemType, NewItemType> : ICollectionModification<OldItemType, NewItemType>, IDebuggerDisplay, ICollectionModificationParameters
+    public class CollectionModification<NewItemType, OldItemType> : ICollectionModification<NewItemType, OldItemType>, IDebuggerDisplay, ICollectionModificationParameters
     {
-        public static CollectionModification<OldItemType, NewItemType> CreateOld(NotifyCollectionChangedAction changeAction, IReadOnlyList<OldItemType>? oldItems, int oldIndex)
-            => new CollectionModification<OldItemType, NewItemType>(changeAction, oldItems, oldIndex, null, -1);
+        public static CollectionModification<NewItemType, OldItemType> CreateOld(NotifyCollectionChangedAction changeAction, IReadOnlyList<OldItemType>? oldItems, int oldIndex)
+            => new CollectionModification<NewItemType, OldItemType>(changeAction, oldItems, oldIndex, null, -1);
 
-        public static CollectionModification<OldItemType, NewItemType> CreateOld(NotifyCollectionChangedAction changeAction, [AllowNull] OldItemType oldItem, int oldIndex)
+        public static CollectionModification<NewItemType, OldItemType> CreateOld(NotifyCollectionChangedAction changeAction, [AllowNull] OldItemType oldItem, int oldIndex)
         {
             var oldItems = new OldItemType[] { oldItem! };
             return CreateOld(changeAction, oldItems, oldIndex);
         }
 
-        public static CollectionModification<OldItemType, NewItemType> CreateNew(NotifyCollectionChangedAction changeAction, IReadOnlyList<NewItemType>? newValues, int newIndex)
-            => new CollectionModification<OldItemType, NewItemType>(changeAction, null, -1, newValues, newIndex);
+        public static CollectionModification<NewItemType, OldItemType> CreateNew(NotifyCollectionChangedAction changeAction, IReadOnlyList<NewItemType>? newValues, int newIndex)
+            => new CollectionModification<NewItemType, OldItemType>(changeAction, null, -1, newValues, newIndex);
 
-        public static CollectionModification<OldItemType, NewItemType> CreateNew(NotifyCollectionChangedAction changeAction, [AllowNull] NewItemType newItem, int newIndex)
+        public static CollectionModification<NewItemType, OldItemType> CreateNew(NotifyCollectionChangedAction changeAction, [AllowNull] NewItemType newItem, int newIndex)
         {
             var newItems = new NewItemType[] { newItem! };
             return CreateNew(changeAction, newItems, newIndex);
         }
 
         public NotifyCollectionChangedAction Action { get; private set; }
-        public ICollectionModificationPart<OldItemType, NewItemType, OldItemType, NewItemType> OldPart => oldPart;
+        public ICollectionModificationPart<NewItemType, OldItemType, OldItemType, NewItemType> OldPart => oldPart;
         public IReadOnlyList<OldItemType>? OldItems => oldPart.Items;
         int? ICollectionModificationParameters.OldItemsCount => oldPart.Items?.Count;
 
         public int OldIndex => oldPart.Index;
-        public ICollectionModificationPart<OldItemType, NewItemType, NewItemType, OldItemType> NewPart => newPart;
+        public ICollectionModificationPart<NewItemType, OldItemType, NewItemType, OldItemType> NewPart => newPart;
         public IReadOnlyList<NewItemType>? NewItems => newPart.Items;
         int? ICollectionModificationParameters.NewItemsCount => newPart.Items?.Count;
         public int NewIndex => newPart.Index;
@@ -65,19 +65,18 @@ namespace Teronis.Collections.Algorithms.Modifications
             NewItem
         }
 
-
-        public abstract class CollectionModificationPartBase<ItemType, OtherItemType> : ICollectionModificationPart<OldItemType, NewItemType, ItemType, OtherItemType>
+        public abstract class CollectionModificationPartBase<ItemType, OtherItemType> : ICollectionModificationPart<NewItemType, OldItemType, ItemType, OtherItemType>
         {
-            public ICollectionModification<OldItemType, NewItemType> Owner { get; }
+            public ICollectionModification<NewItemType, OldItemType> Owner { get; }
 
-            public ICollectionModificationPart<OldItemType, NewItemType, OtherItemType, ItemType> OtherPart =>
-                ReferenceEquals(this, Owner.OldPart) ? (ICollectionModificationPart<OldItemType, NewItemType, OtherItemType, ItemType>)Owner.NewPart :
-                (ICollectionModificationPart<OldItemType, NewItemType, OtherItemType, ItemType>)Owner.OldPart;
+            public ICollectionModificationPart<NewItemType, OldItemType, OtherItemType, ItemType> OtherPart =>
+                ReferenceEquals(this, Owner.OldPart) ? (ICollectionModificationPart<NewItemType, OldItemType, OtherItemType, ItemType>)Owner.NewPart :
+                (ICollectionModificationPart<NewItemType, OldItemType, OtherItemType, ItemType>)Owner.OldPart;
 
             public abstract IReadOnlyList<ItemType>? Items { get; }
             public abstract int Index { get; }
 
-            public CollectionModificationPartBase(ICollectionModification<OldItemType, NewItemType> modification)
+            public CollectionModificationPartBase(ICollectionModification<NewItemType, OldItemType> modification)
             {
                 Owner = modification;
             }
@@ -89,7 +88,7 @@ namespace Teronis.Collections.Algorithms.Modifications
             public override IReadOnlyList<ItemType>? Items { get; }
             public override int Index { get; }
 
-            public CollectionModificationPart(CollectionModification<OldItemType, NewItemType> modification,
+            public CollectionModificationPart(CollectionModification<NewItemType, OldItemType> modification,
                 PartialCollectionChangeItemState itemState, IReadOnlyList<ItemType>? items, int index)
                 : base(modification)
             {

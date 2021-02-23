@@ -12,8 +12,11 @@ namespace Teronis.Collections.Synchronization
             public override EqualityComparer<Number> EqualityComparer =>
                 Number.ReferenceEqualityComparer.Default;
 
-            public Descended()
-                : base(new SynchronizableCollection<Number>(Number.Comparer.Default, descended: true)) { }
+            public Descended(): base(
+                new SynchronizableCollection<Number>(
+                    new SynchronizableCollection<Number>.Options()
+                    .SetItems(CollectionChangeHandler<Number>.DecoupledItemReplacingHandler.Default)
+                    .SetSortedSynchronizationMethod(Number.Comparer.Default, descended: true))) { }
 
             [Theory]
             [ClassData(typeof(DescendedGenerator))]

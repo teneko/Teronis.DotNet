@@ -22,8 +22,11 @@ namespace Teronis.Collections.Synchronization
             private static Number five = 5;
             private static Number nine = 9;
 
-            public Ascended()
-                : base(new SynchronizableCollection<Number>(Number.Comparer.Default, descended: false))
+            public Ascended() : base(
+                new SynchronizableCollection<Number>(
+                    new SynchronizableCollection<Number>.Options()
+                    .SetItems(CollectionChangeHandler<Number>.DecoupledItemReplacingHandler.Default)
+                    .SetSortedSynchronizationMethod(Number.Comparer.Default, descended: false)))
             { }
 
             [Theory]

@@ -30,8 +30,11 @@ namespace Teronis.Collections.Synchronization
             private static Number nine = 9;
             private static Number nine2 = 9;
 
-            public Sequential()
-                : base(new SynchronizableCollection<Number>(CollectionSynchronizationMethod.Sequential(Number.ReferenceOrValueEqualityComparer.Default))) { }
+            public Sequential() : base(
+                new SynchronizableCollection<Number>(
+                    new SynchronizableCollection<Number>.Options()
+                    .SetItems(CollectionChangeHandler<Number>.DecoupledItemReplacingHandler.Default)
+                    .SetSequentialSynchronizationMethod(Number.ReferenceOrValueEqualityComparer.Default))) { }
 
             [Theory]
             [ClassData(typeof(Generator))]

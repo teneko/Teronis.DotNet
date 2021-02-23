@@ -13,8 +13,6 @@ namespace Teronis.Collections.Algorithms.Modifications
         protected Func<LeftItemType, ComparableItemType> GetComparablePartOfLeftItem { get; }
         protected Func<RightItemType, ComparableItemType> GetComparablePartOfRightItem { get; }
 
-        internal
-
         protected CollectionSynchronizationMethod(
             CollectionSequenceType sequenceType,
             Func<LeftItemType, ComparableItemType> getComparablePartOfLeftItem,
@@ -48,7 +46,7 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// <param name="yieldCapabilities">The yield capabilities, e.g. only insert or only remove.</param>
         /// <returns>The collection modifications.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="leftItems"/> is null.</exception>
-        public abstract IEnumerable<CollectionModification<LeftItemType, RightItemType>> YieldCollectionModifications(
+        public abstract IEnumerable<CollectionModification<RightItemType, LeftItemType>> YieldCollectionModifications(
             IEnumerable<LeftItemType> leftItems,
             IEnumerable<RightItemType>? rightItems,
             CollectionModificationsYieldCapabilities yieldCapabilities);
@@ -64,7 +62,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                 : base(CollectionSequenceType.Sequential, getComparablePartOfLeftItem, getComparablePartOfRightItem) =>
                 EqualityComparer = equalityComparer ?? throw new ArgumentNullException(nameof(equalityComparer));
 
-            public override IEnumerable<CollectionModification<LeftItemType, RightItemType>> YieldCollectionModifications(
+            public override IEnumerable<CollectionModification<RightItemType, LeftItemType>> YieldCollectionModifications(
                 IEnumerable<LeftItemType> leftItems,
                 IEnumerable<RightItemType>? rightItems,
                 CollectionModificationsYieldCapabilities yieldCapabilities)
@@ -97,7 +95,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                 Comparer = comparer ?? throw new ArgumentNullException(nameof(comparer));
             }
 
-            public override IEnumerable<CollectionModification<LeftItemType, RightItemType>> YieldCollectionModifications(
+            public override IEnumerable<CollectionModification<RightItemType, LeftItemType>> YieldCollectionModifications(
                 IEnumerable<LeftItemType> leftItems,
                 IEnumerable<RightItemType>? rightItems,
                 CollectionModificationsYieldCapabilities yieldCapabilities)

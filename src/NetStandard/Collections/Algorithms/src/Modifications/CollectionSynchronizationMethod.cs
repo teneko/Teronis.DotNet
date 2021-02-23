@@ -80,5 +80,15 @@ namespace Teronis.Collections.Algorithms.Modifications
         public static ICollectionSynchronizationMethod<ItemType> Descending<ItemType>()
             where ItemType : notnull =>
             Descending(Comparer<ItemType>.Default);
+
+        public static ICollectionSynchronizationMethod<ItemType> Sorted<ItemType>(IComparer<ItemType> comparer, bool descended)
+            where ItemType : notnull
+        {
+            if (descended) {
+                return Descending(comparer);
+            }
+
+            return Ascending(comparer);
+        }
     }
 }

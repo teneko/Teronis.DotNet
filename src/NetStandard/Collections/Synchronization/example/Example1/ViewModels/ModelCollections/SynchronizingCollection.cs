@@ -4,7 +4,7 @@ using Teronis.ObjectModel;
 
 namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollections
 {
-    public abstract class CustomSynchronizingCollection<SubItemType, SuperItemType> : SynchronizingCollection<SubItemType, SuperItemType>, INotifyPropertyChanged, INotifyPropertyChanging
+    public abstract class CustomSynchronizingCollection<SuperItemType, SubItemType> : SynchronizingCollectionBase<SuperItemType, SubItemType>, INotifyPropertyChanged, INotifyPropertyChanging
         where SubItemType : notnull
         where SuperItemType : notnull
     {

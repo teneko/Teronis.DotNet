@@ -7,13 +7,13 @@ using Teronis.ObjectModel.Parenthood;
 
 namespace Teronis.Collections.Synchronization
 {
-    public class AddRemoveResetBehaviourForCollectionItemByAddRemoveParents<ItemType, ContentType>
+    public class AddRemoveResetBehaviourForCollectionItemByAddRemoveParents<ContentType, ItemType>
         where ItemType : IHaveParents
     {
-        public INotifyCollectionModification<ItemType, ContentType> CollectionModifiedNotifier { get; private set; }
+        public INotifyCollectionModification<ContentType, ItemType> CollectionModifiedNotifier { get; private set; }
         public ReadOnlyCollection<object> Parents { get; private set; }
 
-        public AddRemoveResetBehaviourForCollectionItemByAddRemoveParents(INotifyCollectionModification<ItemType, ContentType> collectionModifiedNotifier, params object[] parents)
+        public AddRemoveResetBehaviourForCollectionItemByAddRemoveParents(INotifyCollectionModification<ContentType, ItemType> collectionModifiedNotifier, params object[] parents)
         {
             CollectionModifiedNotifier = collectionModifiedNotifier;
             CollectionModifiedNotifier.CollectionModified += CollectionModifiedNotifier_CollectionModified;
@@ -21,7 +21,7 @@ namespace Teronis.Collections.Synchronization
             Parents = new ReadOnlyCollection<object>(parentList);
         }
 
-        public AddRemoveResetBehaviourForCollectionItemByAddRemoveParents(INotifyCollectionModification<ItemType, ContentType> collectionModifiedNotifier, bool collectionModifiedNotifierIsParent)
+        public AddRemoveResetBehaviourForCollectionItemByAddRemoveParents(INotifyCollectionModification<ContentType, ItemType> collectionModifiedNotifier, bool collectionModifiedNotifierIsParent)
             : this(collectionModifiedNotifier, collectionModifiedNotifierIsParent ? new object[] { collectionModifiedNotifier } : new object[] { }) { }
 
         private void Item_WantParent(object sender, HavingParentsEventArgs e)
@@ -33,7 +33,7 @@ namespace Teronis.Collections.Synchronization
         private void removeParentWhenRequestedHandler(ItemType item)
             => item.ParentsRequested -= Item_WantParent;
 
-        private void CollectionModifiedNotifier_CollectionModified(object sender, CollectionModifiedEventArgs<ItemType, ContentType> args)
+        private void CollectionModifiedNotifier_CollectionModified(object sender, CollectionModifiedEventArgs<ContentType, ItemType> args)
         {
             var change = args.SubItemModification;
 

@@ -4,11 +4,11 @@ using Teronis.Collections.Algorithms.Modifications;
 
 namespace Teronis.Collections.Synchronization
 {
-    public abstract partial class SynchronizingCollection<SubItemType, SuperItemType>
+    public abstract partial class SynchronizingCollectionBase<SuperItemType, SubItemType>
     {
         public abstract partial class ItemCollection<ItemType, NewItemType> : SynchronizableCollectionBase<ItemType, NewItemType>
         {
-            public ItemCollection(IList<ItemType> list, SynchronizingCollection<SubItemType, SuperItemType> synchronizingCollection)
+            public ItemCollection(IList<ItemType> list, SynchronizingCollectionBase<SuperItemType, SubItemType> synchronizingCollection)
                 : base(list)
             {
                 synchronizingCollection.CollectionSynchronizing += SynchronizingCollection_CollectionSynchronizing;
@@ -19,9 +19,9 @@ namespace Teronis.Collections.Synchronization
             private void SynchronizingCollection_CollectionSynchronizing(object? sender, EventArgs e) =>
                 InvokeCollectionSynchronizing();
 
-            protected abstract ICollectionModification<ItemType, ItemType> GetCollectionModification(CollectionModifiedEventArgs<SubItemType, SuperItemType> args);
+            protected abstract ICollectionModification<ItemType, ItemType> GetCollectionModification(CollectionModifiedEventArgs<SuperItemType, SubItemType> args);
 
-            private void CollectionModificationNotifier_CollectionModified(object? sender, CollectionModifiedEventArgs<SubItemType, SuperItemType> args)
+            private void CollectionModificationNotifier_CollectionModified(object? sender, CollectionModifiedEventArgs<SuperItemType, SubItemType> args)
             {
                 var collectionModification = GetCollectionModification(args);
                 InvokeCollectionModified(collectionModification);
@@ -33,19 +33,19 @@ namespace Teronis.Collections.Synchronization
 
         public class SubItemCollection : ItemCollection<SubItemType, SuperItemType>
         {
-            public SubItemCollection(IList<SubItemType> list, SynchronizingCollection<SubItemType, SuperItemType> synchronizingCollection)
+            public SubItemCollection(IList<SubItemType> list, SynchronizingCollectionBase<SuperItemType, SubItemType> synchronizingCollection)
                 : base(list, synchronizingCollection) { }
 
-            protected override ICollectionModification<SubItemType, SubItemType> GetCollectionModification(CollectionModifiedEventArgs<SubItemType, SuperItemType> args) =>
+            protected override ICollectionModification<SubItemType, SubItemType> GetCollectionModification(CollectionModifiedEventArgs<SuperItemType, SubItemType> args) =>
                 args.SubItemModification;
         }
 
         public class SuperItemCollection : ItemCollection<SuperItemType, SubItemType>
         {
-            public SuperItemCollection(IList<SuperItemType> list, SynchronizingCollection<SubItemType, SuperItemType> synchronizingCollection)
+            public SuperItemCollection(IList<SuperItemType> list, SynchronizingCollectionBase<SuperItemType, SubItemType> synchronizingCollection)
                 : base(list, synchronizingCollection) { }
 
-            protected override ICollectionModification<SuperItemType, SuperItemType> GetCollectionModification(CollectionModifiedEventArgs<SubItemType, SuperItemType> args) =>
+            protected override ICollectionModification<SuperItemType, SuperItemType> GetCollectionModification(CollectionModifiedEventArgs<SuperItemType, SubItemType> args) =>
                 args.SuperItemModification;
         }
     }

@@ -2,10 +2,10 @@
 
 namespace Teronis.Collections.Synchronization
 {
-    internal interface ICollectionModificationBundle<out SubItemType, out SuperItemType>
+    internal interface ICollectionModificationBundle<out SuperItemType, out SubItemType>
     {
         ICollectionModification<SubItemType, SubItemType> SubItemModification { get; }
-        ICollectionModification<SubItemType, SuperItemType> SubSuperItemModification { get; }
+        ICollectionModification<SuperItemType, SubItemType> SubSuperItemModification { get; }
         ICollectionModification<SuperItemType, SuperItemType> SuperItemModification { get; }
     }
 }

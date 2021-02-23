@@ -9,86 +9,131 @@ namespace Teronis.Collections.Synchronization
     public partial class SynchronizableCollection<ItemType> : SynchronizableCollectionBase<ItemType, ItemType>, ICollectionSynchronizationContext<ItemType>
         where ItemType : notnull
     {
+        private static Options prepareOptions(ref Options? options)
+        {
+            options ??= new Options();
+            options.CollectionChangeHandler ??= new CollectionChangeHandler<ItemType>.DependencyInjectedHandler(new List<ItemType>());
+            return options;
+        }
+
         public ICollectionSynchronizationMethod<ItemType, ItemType> SynchronizationMethod { get; private set; } = null!;
+
+        private CollectionUpdateItemDelegate<ItemType, ItemType>? updateItem;
+
+        public SynchronizableCollection(Options? options)
+            : base(prepareOptions(ref options).CollectionChangeHandler!)
+        {
+            options!.SynchronizationMethod ??= CollectionSynchronizationMethod.Sequential<ItemType>();
+            SynchronizationMethod = options.SynchronizationMethod;
+            updateItem = options.UpdateItem;
+        }
 
         public SynchronizableCollection(
             IList<ItemType> items,
-            ICollectionSynchronizationMethod<ItemType, ItemType>? synchronizationMethod)
-            : base(items) =>
-            onConstruction(synchronizationMethod);
+            ICollectionSynchronizationMethod<ItemType, ItemType>? synchronizationMethod) : this(
+                new Options() { SynchronizationMethod = synchronizationMethod }
+                .SetItems(items))
+        { }
 
         public SynchronizableCollection(IList<ItemType> items)
-            : base(items) =>
-            onConstruction(synchronizationMethod: null);
+            : this(new Options().SetItems(items)) { }
 
-        public SynchronizableCollection(ICollectionSynchronizationMethod<ItemType> synchronizationMethod) =>
-            onConstruction(synchronizationMethod);
+        public SynchronizableCollection(ICollectionSynchronizationMethod<ItemType, ItemType> synchronizationMethod)
+            : this(new Options() { SynchronizationMethod = synchronizationMethod }) { }
 
-        public SynchronizableCollection() =>
-            onConstruction(equalityComparer: null);
+        public SynchronizableCollection()
+            : this(options: null) { }
 
-        public SynchronizableCollection(IList<ItemType> items, IEqualityComparer<ItemType> equalityComparer)
-            : base(items) =>
-            onConstruction(equalityComparer);
+        public SynchronizableCollection(IList<ItemType> items, IEqualityComparer<ItemType> equalityComparer) : this(
+            new Options()
+            .SetItems(items)
+            .SetSequentialSynchronizationMethod(equalityComparer))
+        { }
 
-        public SynchronizableCollection(IEqualityComparer<ItemType> equalityComparer) =>
-            onConstruction(equalityComparer);
+        public SynchronizableCollection(IEqualityComparer<ItemType> equalityComparer) : this(
+            new Options()
+            .SetSequentialSynchronizationMethod(equalityComparer))
+        { }
 
-        public SynchronizableCollection(IList<ItemType> items, IComparer<ItemType> comparer, bool descended)
-            : base(items) =>
-            onConstruction(comparer, descended);
+        public SynchronizableCollection(IList<ItemType> items, IComparer<ItemType> comparer, bool descended) : this(
+            new Options()
+            .SetItems(items)
+            .SetSortedSynchronizationMethod(comparer, descended))
+        { }
 
-        public SynchronizableCollection(IComparer<ItemType> comparer, bool descended) =>
-            onConstruction(comparer, descended);
+        public SynchronizableCollection(IComparer<ItemType> comparer, bool descended)
+            : this(
+                  new Options()
+                  .SetSortedSynchronizationMethod(comparer, descended))
+        { }
 
-        private void onConstruction(ICollectionSynchronizationMethod<ItemType, ItemType>? synchronizationMethod) =>
-            SynchronizationMethod = synchronizationMethod ?? CollectionSynchronizationMethod.Sequential<ItemType>();
-
-        private void onConstruction(IEqualityComparer<ItemType>? equalityComparer) =>
-            SynchronizationMethod = CollectionSynchronizationMethod.Sequential(equalityComparer ?? EqualityComparer<ItemType>.Default);
-
-        private void onConstruction(IComparer<ItemType> comparer, bool descended)
+        protected virtual void AddItemByModification(ICollectionModification<ItemType, ItemType> modification)
         {
-            SynchronizationMethod = descended
-                    ? CollectionSynchronizationMethod.Descending(comparer)
-                    : CollectionSynchronizationMethod.Ascending(comparer);
+            CollectionModificationIterationTools.BeginInsert(modification)
+                /// The modification is now null checked.
+                .Add((modificationItemIndex, globalIndexOffset) => {
+                    var superItem = modification.NewItems![modificationItemIndex];
+                    var globalIndex = globalIndexOffset + modificationItemIndex;
+                    CollectionChangeHandler.InsertItem(globalIndex, superItem);
+                })
+                .Iterate();
         }
+
+        protected virtual void RemoveItemByModification(ICollectionModification<ItemType, ItemType> modification)
+        {
+            CollectionModificationIterationTools.BeginRemove(modification)
+                .Add((modificationItemIndex, globalIndexOffset) => {
+                    var globalIndex = globalIndexOffset + modificationItemIndex;
+                    CollectionChangeHandler.RemoveItem(globalIndex);
+                })
+                .Iterate();
+        }
+
+        protected virtual void ReplaceItemByModification(ICollectionModification<ItemType, ItemType> modification)
+        {
+            CollectionModificationIterationTools.BeginReplace(modification)
+                .Add((modificationItemIndex, globalIndexOffset) => {
+                    var globalIndex = globalIndexOffset + modificationItemIndex;
+                    var item = modification.NewItems![modificationItemIndex];
+
+                    ItemType getItem() =>
+                        item;
+
+                    if (CollectionChangeHandler.CanReplaceItem) {
+                        CollectionChangeHandler.ReplaceItem(globalIndex, getItem);
+                    }
+
+                    updateItem?.Invoke(CollectionChangeHandler.Items[globalIndex], getItem);
+                })
+                .Iterate();
+        }
+
+        protected virtual void MoveItemByModification(ICollectionModification<ItemType, ItemType> modification)
+        {
+            CollectionModificationIterationTools.CheckMove(modification);
+            CollectionChangeHandler.MoveItems(modification.OldIndex, modification.NewIndex, modification.OldItems!.Count);
+        }
+
+        protected virtual void ResetItemByModification(ICollectionModification<ItemType, ItemType> modification) =>
+            CollectionChangeHandler.Reset();
 
         protected virtual void GoThroughModification(ICollectionModification<ItemType, ItemType> modification)
         {
             switch (modification.Action) {
-                case NotifyCollectionChangedAction.Add: {
-                        var index = modification.NewIndex;
-
-                        foreach (var newItem in modification.NewItems!) {
-                            Insert(index++, newItem);
-                        }
-                    }
-
+                case NotifyCollectionChangedAction.Add:
+                    AddItemByModification(modification);
                     break;
-                case NotifyCollectionChangedAction.Remove: {
-                        var index = modification.OldIndex + modification.OldItems!.Count - 1;
-
-                        foreach (var newItem in modification.OldItems) {
-                            RemoveAt(index--);
-                        }
-                    }
-
+                case NotifyCollectionChangedAction.Remove:
+                    RemoveItemByModification(modification);
                     break;
-                case NotifyCollectionChangedAction.Replace: {
-                        var index = modification.NewIndex;
-
-                        foreach (var newItem in modification.NewItems!) {
-                            this[index] = newItem;
-                        }
-                    }
-
+                case NotifyCollectionChangedAction.Replace:
+                    ReplaceItemByModification(modification);
                     break;
                 case NotifyCollectionChangedAction.Move:
-                    MoveItems(modification.OldIndex, modification.NewIndex, modification.OldItems!.Count);
+                    MoveItemByModification(modification);
                     break;
                 case NotifyCollectionChangedAction.Reset:
-                    Clear();
+                    ResetItemByModification(modification);
                     break;
             }
         }

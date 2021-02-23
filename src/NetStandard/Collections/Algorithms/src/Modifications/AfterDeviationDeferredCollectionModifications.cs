@@ -36,7 +36,7 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
         /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
         /// <returns>For <paramref name="leftItems"/> the collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/></returns>
-        public static IEnumerable<CollectionModification<LeftItemType, RightItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
+        public static IEnumerable<CollectionModification<RightItemType, LeftItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
             IEnumerable<LeftItemType> leftItems,
             Func<LeftItemType, ComparablePartType> getComparablePartOfLeftItem,
             IEnumerable<RightItemType> rightItems,
@@ -55,8 +55,8 @@ namespace Teronis.Collections.Algorithms.Modifications
             // Early modifications that are synchronized or are synchronized but having
             // removing or adding modifications at the end can be returned all at once.
             // This list represents the cache for it.
-            var earlyIterationModifications = new List<CollectionModification<LeftItemType, RightItemType>>();
-            var leftItemIndexShifter = new ObjectEventDispatcher<CollectionModification<LeftItemType, RightItemType>>();
+            var earlyIterationModifications = new List<CollectionModification<RightItemType, LeftItemType>>();
+            var leftItemIndexShifter = new ObjectEventDispatcher<CollectionModification<RightItemType, LeftItemType>>();
             ILinkedBucketList<CommonValueContainer<ComparablePartType>, LeftItemContainer<LeftItemType, RightItemType, ComparablePartType>> lateLeftItemContainers = new LinkedBucketList<CommonValueContainer<ComparablePartType>, LeftItemContainer<LeftItemType, RightItemType, ComparablePartType>>(comparablePartEqualityComparer);
             var lateRightItemContainers = new LinkedBucketList<CommonValueContainer<ComparablePartType>, RightItemContainer<LeftItemType, RightItemType, ComparablePartType>>(comparablePartEqualityComparer);
             var areEarlyIterationValuesEqual = true;
@@ -74,7 +74,7 @@ namespace Teronis.Collections.Algorithms.Modifications
 
                 var rightItem = hasRightItem ? rightItemEnumerator.Current : default;
                 var rightCommonValue = hasRightItem ? getComparablePartOfRightItem(rightItem!) : default;
-                CollectionModification<LeftItemType, RightItemType>? syncedIterationModification = default;
+                CollectionModification<RightItemType, LeftItemType>? syncedIterationModification = default;
 
                 LeftItemContainer<LeftItemType, RightItemType, ComparablePartType> createLeftItemContainer()
                     => new LeftItemContainer<LeftItemType, RightItemType, ComparablePartType>(leftItem, leftCommonValue, earlyLeftValueIndex, leftItemIndexShifter);
@@ -90,7 +90,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                     //       AND "Left and right buckets are empty"  (false supports [1,1,2,..] <-> [2,1,..])
                     if (equalityComparer.Equals(leftCommonValue!, rightCommonValue!)
                         && ((lateRightItemContainers.Buckets.TryGetValue(rightItemContainer).Item2?.All(x => x.CachedLeftItem != null)) ?? false)) {
-                        syncedIterationModification = new CollectionModification<LeftItemType, RightItemType>(
+                        syncedIterationModification = new CollectionModification<RightItemType, LeftItemType>(
                             NotifyCollectionChangedAction.Replace, leftItem, earlyLeftValueIndex, rightItem, earlyRightValueIndex);
 
                         // We only move forward to back, but never back to forward, so this item, even when 
@@ -114,7 +114,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                         // When early iterations are synchronized, then we always need 
                         // to delete the left value at index of the greatest right value index plus one
                         var newLeftValueIndex = earlyLeftValueIndex - (earlyLeftValueIndex - earlyRightValueIndex);
-                        syncedIterationModification = CollectionModification<LeftItemType, RightItemType>.CreateOld(NotifyCollectionChangedAction.Remove, leftItem, newLeftValueIndex);
+                        syncedIterationModification = CollectionModification<RightItemType, LeftItemType>.CreateOld(NotifyCollectionChangedAction.Remove, leftItem, newLeftValueIndex);
                     } else {
                         lateLeftItemContainers.AddLast(createLeftItemContainer());
                     }
@@ -122,7 +122,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                     earlyLeftValueIndex++;
                 } else {
                     if (areEarlyIterationValuesEqual) {
-                        syncedIterationModification = CollectionModification<LeftItemType, RightItemType>.CreateNew(NotifyCollectionChangedAction.Add, rightItem, earlyRightValueIndex);
+                        syncedIterationModification = CollectionModification<RightItemType, LeftItemType>.CreateNew(NotifyCollectionChangedAction.Add, rightItem, earlyRightValueIndex);
                     } else {
                         lateRightItemContainers.AddLast(createRightItemContainer());
                     }
@@ -166,7 +166,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                 var rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount = rightValueIndex;
 
                 if (foundLeftItemContainer == null) {
-                    var modification = CollectionModification<LeftItemType, RightItemType>.CreateNew(NotifyCollectionChangedAction.Add, rightItemContainer.RightItem, rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount);
+                    var modification = CollectionModification<RightItemType, LeftItemType>.CreateNew(NotifyCollectionChangedAction.Add, rightItemContainer.RightItem, rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount);
                     yield return modification;
                     leftItemIndexShifter.DispatchObject(modification);
                 } else {
@@ -181,7 +181,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                             continue;
                         }
 
-                        var modification = new CollectionModification<LeftItemType, RightItemType>(NotifyCollectionChangedAction.Move, foundLeftItemContainer.LeftItem, foundLeftIndex, rightItemContainer.RightItem, rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount);
+                        var modification = new CollectionModification<RightItemType, LeftItemType>(NotifyCollectionChangedAction.Move, foundLeftItemContainer.LeftItem, foundLeftIndex, rightItemContainer.RightItem, rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount);
                         // We move the old existing item
                         yield return modification;
                         leftItemIndexShifter.DispatchObject(modification);
@@ -189,7 +189,7 @@ namespace Teronis.Collections.Algorithms.Modifications
 
                     if (!hasCachedLeftItem) {
                         // Then we replace the left item by moved item at the destination index of the moved item
-                        yield return new CollectionModification<LeftItemType, RightItemType>(NotifyCollectionChangedAction.Replace, foundLeftItemContainer.LeftItem, rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount, rightItemContainer.RightItem, rightValueIndex);
+                        yield return new CollectionModification<RightItemType, LeftItemType>(NotifyCollectionChangedAction.Replace, foundLeftItemContainer.LeftItem, rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount, rightItemContainer.RightItem, rightValueIndex);
                     }
                 }
             }
@@ -197,7 +197,7 @@ namespace Teronis.Collections.Algorithms.Modifications
             if (!(lateLeftItemContainers.Last is null)) {
                 // We remove all left left-value-index-pairs, because they did not match any condition above and have to be removed in REVERSED order
                 foreach (var leftValueIndexPair in lateLeftItemContainers.Last.ListPart.GetEnumerableButReversed()) {
-                    yield return CollectionModification<LeftItemType, RightItemType>.CreateOld(NotifyCollectionChangedAction.Remove, leftValueIndexPair.Value.LeftItem, leftValueIndexPair.Value.ShiftedIndex);
+                    yield return CollectionModification<RightItemType, LeftItemType>.CreateOld(NotifyCollectionChangedAction.Remove, leftValueIndexPair.Value.LeftItem, leftValueIndexPair.Value.ShiftedIndex);
                 }
             }
         }
@@ -216,7 +216,7 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
         /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
         /// <returns>For <paramref name="leftItems"/> the collection modifications between <paramref name="leftItems"/> and <paramref name="rightItems"/></returns>
-        public static IEnumerable<CollectionModification<LeftItemType, RightItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
+        public static IEnumerable<CollectionModification<RightItemType, LeftItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
             IEnumerable<LeftItemType> leftItems,
             IEnumerable<RightItemType> rightItems,
             Func<LeftItemType, ComparablePartType> getComparablePartOfLeftItem,
@@ -280,7 +280,7 @@ namespace Teronis.Collections.Algorithms.Modifications
             public LeftItemType LeftItem { get; private set; }
 
             public LeftItemContainer([AllowNull] LeftItemType leftItem, [AllowNull] CommonValueType commonValue, int index,
-                ObjectEventDispatcher<CollectionModification<LeftItemType, RightItemType>> indexShifter)
+                ObjectEventDispatcher<CollectionModification<RightItemType, LeftItemType>> indexShifter)
                 : base(commonValue, index)
             {
                 LeftItem = leftItem;
@@ -288,7 +288,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                 indexShifter.ObjectDispatch += IndexShifter_ObjectDispatch;
             }
 
-            protected void IndexShifter_ObjectDispatch(object? sender, ObjectDispachEventArgs<CollectionModification<LeftItemType, RightItemType>> args)
+            protected void IndexShifter_ObjectDispatch(object? sender, ObjectDispachEventArgs<CollectionModification<RightItemType, LeftItemType>> args)
             {
                 var modification = args.Object;
 

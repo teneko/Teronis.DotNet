@@ -14,10 +14,10 @@ namespace Teronis.Collections.Synchronization.Utils
         /// <typeparam name="NewItemType"></typeparam>
         /// <param name="modifications"></param>
         /// <returns></returns>
-        internal static IEnumerable<(ICollectionModification<OldItemType, NewItemType> Modification, int InitialOldIndex)> YieldTuplesButOnlyReplaceModificationWithInitialOldIndex<OldItemType, NewItemType>(IEnumerable<ICollectionModification<OldItemType, NewItemType>> modifications) {
+        internal static IEnumerable<(ICollectionModification<NewItemType, OldItemType> Modification, int InitialOldIndex)> YieldTuplesButOnlyReplaceModificationWithInitialOldIndex<NewItemType, OldItemType>(IEnumerable<ICollectionModification<NewItemType, OldItemType>> modifications) {
             yield return default;
 
-            var tempModification = new Dictionary<int, (ICollectionModification<OldItemType, NewItemType> Modification, int InitialOldIndex)>();
+            var tempModification = new Dictionary<int, (ICollectionModification<NewItemType, OldItemType> Modification, int InitialOldIndex)>();
 
             foreach (var modification in modifications) {
                 if (modification.Action == NotifyCollectionChangedAction.Move) {

@@ -25,7 +25,7 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// <param name="yieldCapabilities">The yieldCapabilities that regulates how <paramref name="leftItems"/> and <paramref name="rightItems"/> are synchronized.</param>
         /// <returns>The collection modifications.</returns>
         /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
-        public static IEnumerable<CollectionModification<LeftItemType, RightItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
+        public static IEnumerable<CollectionModification<RightItemType, LeftItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
             IEnumerable<LeftItemType> leftItems,
             Func<LeftItemType, ComparablePartType> getComparablePartOfLeftItem,
             IEnumerable<RightItemType> rightItems,
@@ -53,7 +53,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                     if (canRemove) {
                         var leftItem = leftItemsEnumerator.Current;
 
-                        yield return CollectionModification<LeftItemType, RightItemType>.CreateOld(
+                        yield return CollectionModification<RightItemType, LeftItemType>.CreateOld(
                                 NotifyCollectionChangedAction.Remove,
                                 leftItem,
                                 leftIndexOfLatestSyncedRightItem + 1);
@@ -68,7 +68,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                         var rightItem = rightItemsEnumerator.Current;
                         leftIndexOfLatestSyncedRightItem++;
 
-                        yield return CollectionModification<LeftItemType, RightItemType>.CreateNew(
+                        yield return CollectionModification<RightItemType, LeftItemType>.CreateNew(
                             NotifyCollectionChangedAction.Add,
                             rightItem,
                             leftIndexOfLatestSyncedRightItem);
@@ -90,7 +90,7 @@ namespace Teronis.Collections.Algorithms.Modifications
 
                     if (comparablePartComparison < 0) {
                         if (canRemove) {
-                            yield return CollectionModification<LeftItemType, RightItemType>.CreateOld(
+                            yield return CollectionModification<RightItemType, LeftItemType>.CreateOld(
                                 NotifyCollectionChangedAction.Remove,
                                 leftItem,
                                 leftIndexOfLatestSyncedRightItem + 1);
@@ -104,7 +104,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                         if (canInsert) {
                             leftIndexOfLatestSyncedRightItem++;
 
-                            yield return CollectionModification<LeftItemType, RightItemType>.CreateNew(
+                            yield return CollectionModification<RightItemType, LeftItemType>.CreateNew(
                             NotifyCollectionChangedAction.Add,
                             rightItem,
                             leftIndexOfLatestSyncedRightItem);
@@ -118,7 +118,7 @@ namespace Teronis.Collections.Algorithms.Modifications
 
                         if (canReplace) {
 
-                            yield return new CollectionModification<LeftItemType, RightItemType>(
+                            yield return new CollectionModification<RightItemType, LeftItemType>(
                                 NotifyCollectionChangedAction.Replace,
                                 leftItem,
                                 leftIndexOfLatestSyncedRightItem,
@@ -152,7 +152,7 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// <param name="yieldCapabilities">The yieldCapabilities that regulates how <paramref name="leftItems"/> and <paramref name="rightItems"/> are synchronized.</param>
         /// <returns>The collection modifications.</returns>
         /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
-        public static IEnumerable<CollectionModification<LeftItemType, RightItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
+        public static IEnumerable<CollectionModification<RightItemType, LeftItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
             IEnumerable<LeftItemType> leftItems,
             Func<LeftItemType, ComparablePartType> getComparablePartOfLeftItem,
             IEnumerable<RightItemType> rightItems,
@@ -186,7 +186,7 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// <param name="yieldCapabilities">The yieldCapabilities that regulates how <paramref name="leftItems"/> and <paramref name="rightItems"/> are synchronized.</param>
         /// <returns>The collection modifications.</returns>
         /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
-        public static IEnumerable<CollectionModification<LeftItemType, RightItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
+        public static IEnumerable<CollectionModification<RightItemType, LeftItemType>> YieldCollectionModifications<LeftItemType, RightItemType, ComparablePartType>(
             IEnumerable<LeftItemType> leftItems,
             Func<LeftItemType, ComparablePartType> getComparablePartOfLeftItem,
             IEnumerable<RightItemType> rightItems,

@@ -11,7 +11,7 @@
     
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Teronis.GitVersionCache</RootNamespace>
-    <Description>GitVersionCache is an improved implementation to GitVersionTask. It does support concurrency and nested GitVersion.yml relative to your .git folder.</Description>
+    <Description>GitVersionCache uses GitVersion.exe (https://chocolatey.org/packages/GitVersion.Portable) by using Teronis.GitVersion.CommandLine.Library and surrounds each call to GitVersion.exe with a file lock to allow concurrency. It supports nested GitVersion.yml-files relative to your .git folder.</Description>
 
     <!-- We don't build an executable package. 
          We build an only-build-time package. -->

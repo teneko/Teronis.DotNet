@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
 
@@ -30,7 +31,7 @@ namespace Teronis.IO.FileLocking
         /// <param name="fileAccess">The file access when opening file.</param>
         /// <param name="fileShare">The file share when opening file</param>
         /// <returns>If true the lock acquirement was successful.</returns>
-        public bool TryAcquire(string filePath, out FileStream? fileStream, FileMode fileMode = DefaultFileMode,
+        public bool TryAcquire(string filePath, [MaybeNullWhen(false)] out FileStream fileStream, FileMode fileMode = DefaultFileMode,
             FileAccess fileAccess = DefaultFileAccess, FileShare fileShare = DefaultFileShare)
         {
             filePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
@@ -73,7 +74,7 @@ namespace Teronis.IO.FileLocking
         /// <param name="timeoutInMilliseconds">The number of milliseconds to hold on, or System.Threading.Timeout.Infinite (-1) to wait indefinitely.</param>
         /// <exception cref="TimeoutException">When timeout is hit.</exception>
         /// <exception cref="OperationCanceledException">When cancellation was requested.</exception>
-        private bool waitUntilAcquired(string filePath, out FileStream? fileStream, FileMode fileMode,
+        private bool waitUntilAcquired(string filePath, [MaybeNullWhen(false)] out FileStream fileStream, FileMode fileMode,
             FileAccess fileAccess, FileShare fileShare, int timeoutInMilliseconds, bool throwOnTimeout, 
             CancellationToken cancellationToken)
         {
@@ -131,7 +132,7 @@ namespace Teronis.IO.FileLocking
         /// <param name="throwOnTimeout">Enable throw when exception occured due due to timeout.</param>
         /// <returns>If true the lock acquirement was successful.</returns>
         /// <exception cref="OperationCanceledException">When cancellation was requested.</exception>
-        public bool WaitUntilAcquired(string filePath, out FileStream? fileStream, FileMode fileMode = DefaultFileMode,
+        public bool WaitUntilAcquired(string filePath, [MaybeNullWhen(false)] out FileStream fileStream, FileMode fileMode = DefaultFileMode,
             FileAccess fileAccess = DefaultFileAccess, FileShare fileShare = DefaultFileShare, bool throwOnTimeout = false,
             CancellationToken cancellationToken = default)
         {
@@ -170,7 +171,7 @@ namespace Teronis.IO.FileLocking
         /// <returns>If true the lock acquirement was successful.</returns>
         /// <exception cref="TimeoutException">When timeout is hit.</exception>
         /// <exception cref="OperationCanceledException">When cancellation was requested.</exception>
-        public bool WaitUntilAcquired(string filePath, int timeoutInMilliseconds, out FileStream? fileStream, FileMode fileMode = DefaultFileMode,
+        public bool WaitUntilAcquired(string filePath, int timeoutInMilliseconds,[MaybeNullWhen(false)] out FileStream fileStream, FileMode fileMode = DefaultFileMode,
             FileAccess fileAccess = DefaultFileAccess, FileShare fileShare = DefaultFileShare, bool throwOnTimeout = false,
             CancellationToken cancellationToken = default) =>
             waitUntilAcquired(filePath, out fileStream, fileMode, fileAccess, fileShare, timeoutInMilliseconds, throwOnTimeout, cancellationToken);
@@ -205,7 +206,7 @@ namespace Teronis.IO.FileLocking
         /// <returns>If true the lock acquirement was successful.</returns>
         /// <exception cref="TimeoutException">When timeout is hit.</exception>
         /// <exception cref="OperationCanceledException">When cancellation was requested.</exception>
-        public bool WaitUntilAcquired(string filePath, TimeSpan timeout, out FileStream? fileStream, FileMode fileMode = DefaultFileMode,
+        public bool WaitUntilAcquired(string filePath, TimeSpan timeout,[MaybeNullWhen(false)] out FileStream fileStream, FileMode fileMode = DefaultFileMode,
             FileAccess fileAccess = DefaultFileAccess, FileShare fileShare = DefaultFileShare, bool throwOnTimeout = false,
             CancellationToken cancellationToken = default)
         {

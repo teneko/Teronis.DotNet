@@ -10,7 +10,7 @@ namespace Teronis.Collections.Synchronization
             public ICollectionSynchronizationMethod<ItemType, ItemType>? SynchronizationMethod { get; set; }
 
             /// <summary>
-            /// If not null it is called in <see cref="SynchronizingCollectionBase{SuperItemType, SubItemType}.ReplaceItemByModification(ApplyingCollectionModificationBundle)"/>
+            /// If not null it is called in <see cref="SynchronizingCollectionBase{SuperItemType, SubItemType}.ReplaceItemsByModification(SynchronizingCollectionBase{SuperItemType, SubItemType}.ApplyingCollectionModifications)"/>
             /// but after the items could have been replaced.
             /// </summary>
             public CollectionUpdateItemDelegate<ItemType, ItemType>? UpdateItem { get; set; }

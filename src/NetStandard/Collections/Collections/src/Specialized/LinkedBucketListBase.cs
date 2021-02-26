@@ -48,8 +48,8 @@ namespace Teronis.Collections.Specialized
             node.Invalidate();
         }
 
-        public ICovariantReadOnlyNullabkeKeyDictionary<KeyType, LinkedBucketListBase<KeyType, ValueType>> Buckets => buckets;
-        ICovariantReadOnlyNullabkeKeyDictionary<KeyType, ILinkedBucketList<KeyType, ValueType>> ILinkedBucketList<KeyType, ValueType>.Buckets => Buckets;
+        public ICovariantReadOnlyNullableKeyDictionary<KeyType, LinkedBucketListBase<KeyType, ValueType>> Buckets => buckets;
+        ICovariantReadOnlyNullableKeyDictionary<KeyType, ILinkedBucketList<KeyType, ValueType>> ILinkedBucketList<KeyType, ValueType>.Buckets => Buckets;
         public LinkedBucketListBase<KeyType, ValueType> List => list ?? throw new InvalidOperationException("This bucket is not attached.");
         ILinkedBucketList<KeyType, ValueType> ILinkedBucketList<KeyType, ValueType>.List => List;
         public LinkedBucketListNode<KeyType, ValueType>? First => head;
@@ -318,6 +318,49 @@ namespace Teronis.Collections.Specialized
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() =>
+            GetEnumerator();
+
+        /// <summary>
+        /// Gets item at position of <paramref name="index"/>.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public ValueType this[int index] {
+            get {
+                if (head is null) {
+                    throw new ArgumentOutOfRangeException();
+                }
+
+                var nodePart = GetNodePart(head);
+                var currentIndex = 0;
+
+                while (!(nodePart is null)) {
+                    if (currentIndex == index) {
+                        return nodePart.Owner.Value;
+                    }
+
+                    nodePart = nodePart.NextPart;
+                }
+
+                throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        #region ILinkedBucketList<KeyType, ValueType>
+
+        ICovariantReadOnlyNullableKeyDictionary<KeyType, IReadOnlyLinkedBucketList<KeyType, ValueType>> IReadOnlyLinkedBucketList<KeyType, ValueType>.Buckets =>
+            Buckets;
+
+        IReadOnlyLinkedBucketListNode<KeyType, ValueType>? IReadOnlyLinkedBucketList<KeyType, ValueType>.First =>
+            First;
+
+        IReadOnlyLinkedBucketListNode<KeyType, ValueType>? IReadOnlyLinkedBucketList<KeyType, ValueType>.Last =>
+            Last;
+
+        IReadOnlyLinkedBucketList<KeyType, ValueType> IReadOnlyLinkedBucketList<KeyType, ValueType>.List =>
+            List;
+
+        #endregion
     }
 }

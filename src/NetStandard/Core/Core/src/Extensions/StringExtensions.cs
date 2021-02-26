@@ -24,31 +24,31 @@ namespace Teronis.Extensions
         public static string GetUnicodeString(this byte[] input)
             => Encoding.Unicode.GetString(input);
 
-        public delegate char ManipulateFirstLetterDelegate(char firstChar);
+        public delegate char ManipulateFirstCharacterDelegate(char firstChar);
 
         /// <summary>
         /// Returns the input string with the first character converted to uppercase, or mutates any nulls passed into string.Empty
         /// </summary>
-        public static string UpperFirstLetter(this string source)
-            => ManipulateFirstLetter(source, c => char.ToUpper(c));
+        public static string UpperFirst(this string source)
+            => ManipulateFirst(source, c => char.ToUpper(c));
 
         /// <summary>
         /// Returns the input string with the first character converted to uppercase, or mutates any nulls passed into string.Empty
         /// </summary>
-        public static string LowerFirstLetter(this string source)
-            => ManipulateFirstLetter(source, c => char.ToLower(c));
+        public static string LowerFirst(this string source)
+            => ManipulateFirst(source, c => char.ToLower(c));
 
         /// <summary>
         /// Returns the input string with the first character converted to uppercase, or mutates any nulls passed into string.Empty
         /// </summary>
-        public static string ManipulateFirstLetter(this string source, ManipulateFirstLetterDelegate manipulateFirstLetter)
+        public static string ManipulateFirst(this string source, ManipulateFirstCharacterDelegate manipulateFirstCharacter)
         {
             if (string.IsNullOrEmpty(source)) {
                 return source;
             }
 
             char[] a = source.ToCharArray();
-            a[0] = manipulateFirstLetter(a[0]);
+            a[0] = manipulateFirstCharacter(a[0]);
             return new string(a);
         }
 

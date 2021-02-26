@@ -99,6 +99,16 @@ namespace Teronis.Collections.Specialized
         }
 
         [Fact]
+        public void Remove_range() {
+            _ = indexDirectory.Add(5);
+            _ = indexDirectory.Add(7);
+
+            indexDirectory.Remove(5, 3);
+
+            Assert.Equal(5, indexDirectory.Count);
+        }
+
+        [Fact]
         public void Insert()
         {
             var one = indexDirectory.Add(1);

@@ -462,12 +462,12 @@ namespace Teronis.Collections.Generic
 
         #endregion
 
-        #region ICovariantReadOnlyNullabkeKeyDictionary<KeyType, ValueType>
+        #region ICovariantReadOnlyNullableKeyDictionary<KeyType, ValueType>
 
-        IEnumerable<KeyType> ICovariantReadOnlyNullabkeKeyDictionary<KeyType, ValueType>.Keys => dictionary.Keys;
-        IEnumerable<ValueType> ICovariantReadOnlyNullabkeKeyDictionary<KeyType, ValueType>.Values => dictionary.Values;
+        IEnumerable<KeyType> ICovariantReadOnlyNullableKeyDictionary<KeyType, ValueType>.Keys => dictionary.Keys;
+        IEnumerable<ValueType> ICovariantReadOnlyNullableKeyDictionary<KeyType, ValueType>.Values => dictionary.Values;
 
-        ICovariantTuple<bool, ValueType> ICovariantReadOnlyNullabkeKeyDictionary<KeyType, ValueType>.TryGetValue(YetNullable<KeyType> key) =>
+        ICovariantTuple<bool, ValueType> ICovariantReadOnlyNullableKeyDictionary<KeyType, ValueType>.TryGetValue(YetNullable<KeyType> key) =>
             FindValue(key);
 
         #region ICovariantReadOnlyDictionary<KeyType, ValueType>

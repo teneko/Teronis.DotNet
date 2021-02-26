@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Teronis.Utils;
 
 namespace Teronis.Collections.Specialized
@@ -129,7 +128,8 @@ namespace Teronis.Collections.Specialized
                         }
                     }
 
-                    Parallel.ForEach(new List<IndexDirectoryEntry>[] { entryList.NormalEntries, entryList.FloatingEntries }, increaseEntryIndexesByOne);
+                    increaseEntryIndexesByOne(entryList.NormalEntries);
+                    increaseEntryIndexesByOne(entryList.FloatingEntries);
                 }
             } while (--newLastIndex > index);
 
@@ -147,7 +147,7 @@ namespace Teronis.Collections.Specialized
             Insert(index, IndexDirectoryEntryMode.Normal);
 
         /// <summary>
-        /// Removes index at <paramref name="index"/>.
+        /// Removes index entries that are in range of <paramref name="index"/> and <paramref name="index"/> + <paramref name="count"/> - 1.
         /// </summary>
         /// <param name="index"></param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is smaller than zero greater than <see cref="Count"/>.</exception>
@@ -183,13 +183,12 @@ namespace Teronis.Collections.Specialized
                         var entriesCount = entries.Count;
 
                         for (var entryIndex = 0; entryIndex < entriesCount; entryIndex++) {
-                            entries[entryIndex].Index--;
+                            entries[entryIndex].Index -= amount;
                         }
                     }
 
-                    Parallel.ForEach(
-                        new List<IndexDirectoryEntry>[] { entryList.NormalEntries, entryList.FloatingEntries },
-                        (entries) => decreaseEntryIndexesBy(entries, removeRange));
+                    decreaseEntryIndexesBy(entryList.NormalEntries, removeRange);
+                    decreaseEntryIndexesBy(entryList.FloatingEntries, removeRange);
                 }
 
                 nextIndex++;
@@ -198,6 +197,10 @@ namespace Teronis.Collections.Specialized
             entriesList.RemoveRange(index, removeRange);
         }
 
+        /// <summary>
+        /// Removes index entry at <paramref name="index"/>.
+        /// </summary>
+        /// <param name="index"></param>
         public void Remove(int index) =>
             Remove(index, 1);
 

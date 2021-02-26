@@ -3,7 +3,7 @@
 namespace Teronis.Collections.Generic
 {
     public interface IReadOnlyNullableKeyDictionary<KeyType, ValueType> : IReadOnlyDictionary<KeyType, ValueType>, IReadOnlyDictionary<YetNullable<KeyType>, ValueType>,
-        IReadOnlyCollection<KeyValuePair<IYetNullable<KeyType>, ValueType>>, ICovariantReadOnlyNullabkeKeyDictionary<KeyType, ValueType>
+        IReadOnlyCollection<KeyValuePair<IYetNullable<KeyType>, ValueType>>, ICovariantReadOnlyNullableKeyDictionary<KeyType, ValueType>
         where KeyType : notnull
     {
         new ValueType this[YetNullable<KeyType> key] { get; }

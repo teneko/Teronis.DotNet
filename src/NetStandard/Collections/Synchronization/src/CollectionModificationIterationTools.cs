@@ -7,18 +7,20 @@ namespace Teronis.Collections.Synchronization
     /// <summary>
     /// Represents the delegate for the handler that is called from <see cref="CollectionModificationIterationTools.IteratorBuilder.Iterate"/>.
     /// </summary>
-    /// <param name="itemIndex">The index of item without index offset.</param>
-    /// <param name="indexOffset">The index offset.</param>
-    public delegate void CollectionModificationIterationDelegate(int itemIndex, int indexOffset);
+    /// <param name="frontIndex">The modification item index without index offset.</param>
+    /// <param name="backIndexOffset">The index offset that is when summed up with <param name="frontIndex"/> the index of the synchronized list.</param>
+    public delegate void CollectionModificationIterationWithIndexDelegate(int frontIndex, int backIndexOffset);
 
-    internal class CollectionModificationIterationTools
+    public delegate void CollectionModificationIterationDelegate();
+
+    public class CollectionModificationIterationTools
     {
         /// <summary>
         /// Creates an iterator builder.
         /// </summary>
         /// <param name="modification"></param>
         /// <returns></returns>
-        /// <exception cref="ArgumentException">Thrown when member <see cref="ICollectionModificationParameters.NewItemsCount"/> is null.</exception>
+        /// <exception cref="ArgumentException">Member <see cref="ICollectionModificationParameters.NewItemsCount"/> is null.</exception>
         public static IteratorBuilder BeginInsert(ICollectionModificationParameters modification)
         {
             if (modification.NewItemsCount is null) {
@@ -27,7 +29,7 @@ namespace Teronis.Collections.Synchronization
 
             return new IteratorBuilder(
                 iterationCount: modification.NewItemsCount.Value,
-                indexOffset: modification.NewIndex,
+                backIndexOffset: modification.NewIndex,
                 iteratesBackward: false);
         }
 
@@ -36,7 +38,7 @@ namespace Teronis.Collections.Synchronization
         /// </summary>
         /// <param name="modification"></param>
         /// <returns></returns>
-        /// <exception cref="ArgumentException">Thrown when member <see cref="ICollectionModificationParameters.OldItemsCount"/> is null.</exception>
+        /// <exception cref="ArgumentException">Member <see cref="ICollectionModificationParameters.OldItemsCount"/> is null.</exception>
         public static IteratorBuilder BeginRemove(ICollectionModificationParameters modification)
         {
             if (modification.OldItemsCount is null) {
@@ -45,7 +47,7 @@ namespace Teronis.Collections.Synchronization
 
             return new IteratorBuilder(
                 iterationCount: modification.OldItemsCount.Value,
-                indexOffset: modification.OldIndex,
+                backIndexOffset: modification.OldIndex,
                 iteratesBackward: true);
         }
 
@@ -53,38 +55,56 @@ namespace Teronis.Collections.Synchronization
         /// Checks move action.
         /// </summary>
         /// <param name="modification"></param>
-        /// <exception cref="ArgumentException">Thrown when <see cref="ICollectionModificationParameters.OldItemsCount"/> is null.</exception>
-        public static void CheckMove(ICollectionModificationParameters modification) {
+        /// <exception cref="ArgumentException">Member <see cref="ICollectionModificationParameters.OldItemsCount"/> is null.</exception>
+        public static void CheckMove(ICollectionModificationParameters modification)
+        {
             if (modification.OldItemsCount is null) {
                 throw new ArgumentException("Old items were not given while moving.");
             }
         }
 
-        public static IteratorBuilder BeginReplace(ICollectionModificationParameters modification) {
+        /// <summary>
+        /// Creates an iterator builder.
+        /// </summary>
+        /// <param name="modification"></param>
+        /// <exception cref="ArgumentException">Member <see cref="ICollectionModificationParameters.NewItemsCount"/> is null.</exception>
+        public static IteratorBuilder BeginReplace(ICollectionModificationParameters modification)
+        {
             if (modification.NewItemsCount is null) {
                 throw new ArgumentNullException("New items were not given while replacing");
             }
 
             return new IteratorBuilder(
-                modification.NewItemsCount.Value, 
-                modification.NewIndex, 
+                modification.NewItemsCount.Value,
+                modification.NewIndex,
                 iteratesBackward: false);
         }
 
-        public class IteratorBuilder {
+        public class IteratorBuilder
+        {
 
             public bool IteratesBackward { get; }
 
-            private List<CollectionModificationIterationDelegate> handlers;
+            private List<MulticastDelegate> handlers;
             private readonly int iterationCount;
-            private readonly int indexOffset;
+            private readonly int backIndexOffset;
 
-            public IteratorBuilder(int iterationCount, int indexOffset, bool iteratesBackward)
+            public IteratorBuilder(int iterationCount, int backIndexOffset, bool iteratesBackward)
             {
-                handlers = new List<CollectionModificationIterationDelegate>();
+                handlers = new List<MulticastDelegate>();
                 this.iterationCount = iterationCount;
-                this.indexOffset = indexOffset;
+                this.backIndexOffset = backIndexOffset;
                 IteratesBackward = iteratesBackward;
+            }
+
+            public IteratorBuilder Add(CollectionModificationIterationWithIndexDelegate actionHandler)
+            {
+                if (actionHandler is null) {
+                    throw new ArgumentNullException(nameof(actionHandler));
+                }
+
+                handlers.Add(actionHandler);
+                return this;
             }
 
             public IteratorBuilder Add(CollectionModificationIterationDelegate actionHandler)
@@ -97,18 +117,28 @@ namespace Teronis.Collections.Synchronization
                 return this;
             }
 
-            public void Iterate() {
-                if (IteratesBackward) {
-                    for (var index = iterationCount - 1; index >= 0; index--) {
-                        foreach (var handler in handlers) {
-                            handler.Invoke(index, indexOffset);
+            public void Iterate()
+            {
+                void invokeIterationStep(int modificationItemIndex)
+                {
+                    foreach (var handler in handlers) {
+                        if (handler is CollectionModificationIterationWithIndexDelegate iterationWithIndexHandler) {
+                            iterationWithIndexHandler.Invoke(modificationItemIndex, backIndexOffset);
+                        } else if (handler is CollectionModificationIterationDelegate iterationHandler) {
+                            iterationHandler.Invoke();
+                        } else {
+                            throw new NotSupportedException();
                         }
                     }
+                }
+
+                if (IteratesBackward) {
+                    for (var modificationItemIndex = iterationCount - 1; modificationItemIndex >= 0; modificationItemIndex--) {
+                        invokeIterationStep(modificationItemIndex);
+                    }
                 } else {
-                    for (var index = 0; index < iterationCount; index++) {
-                        foreach (var handler in handlers) {
-                            handler.Invoke(index, indexOffset);
-                        }
+                    for (var modificationItemIndex = 0; modificationItemIndex < iterationCount; modificationItemIndex++) {
+                        invokeIterationStep(modificationItemIndex);
                     }
                 }
             }

@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Teronis.Collections.Generic;
 
 namespace Teronis.Collections.Specialized
 {
-    public interface ILinkedBucketList<KeyType, ValueType> : IEnumerable<ValueType>
+    public interface ILinkedBucketList<KeyType, ValueType> : IReadOnlyLinkedBucketList<KeyType, ValueType>, IReadOnlyList<ValueType>, IEnumerable<ValueType>
         where KeyType : notnull
     {
-        ICovariantReadOnlyNullabkeKeyDictionary<KeyType, ILinkedBucketList<KeyType, ValueType>> Buckets { get; }
-        int Count { get; }
-        LinkedBucketListNode<KeyType, ValueType>? First { get; }
-        bool IsBucket { get; }
-        LinkedBucketListNode<KeyType, ValueType>? Last { get; }
-        ILinkedBucketList<KeyType, ValueType> List { get; }
+        new ICovariantReadOnlyNullableKeyDictionary<KeyType, ILinkedBucketList<KeyType, ValueType>> Buckets { get; }
+        new int Count { get; }
+        new LinkedBucketListNode<KeyType, ValueType>? First { get; }
+        new bool IsBucket { get; }
+        new LinkedBucketListNode<KeyType, ValueType>? Last { get; }
+        new ILinkedBucketList<KeyType, ValueType> List { get; }
 
         void AddAfter(LinkedBucketListNode<KeyType, ValueType> node, LinkedBucketListNode<KeyType, ValueType> toBeInsertedNode);
         LinkedBucketListNode<KeyType, ValueType> AddAfter(LinkedBucketListNode<KeyType, ValueType> node, ValueType value);
@@ -27,7 +26,7 @@ namespace Teronis.Collections.Specialized
         void Clear();
         LinkedBucketListNode<KeyType, ValueType>? FindFirst(ValueType value);
         LinkedBucketListNode<KeyType, ValueType>? FindLast(ValueType value);
-        IEnumerator<ValueType> GetEnumerator();
+        new IEnumerator<ValueType> GetEnumerator();
         void Remove(LinkedBucketListNode<KeyType, ValueType> node, bool preserveEmptyBucket = false);
         void RemoveFirst(bool preserveEmptyBucket = false);
         void RemoveFirst(ValueType value, bool preserveEmptyBucket = false);

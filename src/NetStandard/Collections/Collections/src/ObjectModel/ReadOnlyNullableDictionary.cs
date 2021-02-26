@@ -45,9 +45,9 @@ namespace Teronis.Collections.ObjectModel
 
         ICovariantTuple<bool, ValueType> ICovariantReadOnlyDictionary<KeyType, ValueType>.TryGetValue(KeyType key) => ((ICovariantReadOnlyDictionary<KeyType, ValueType>)dictionary).TryGetValue(key);
 
-        ICovariantTuple<bool, ValueType> ICovariantReadOnlyNullabkeKeyDictionary<KeyType, ValueType>.TryGetValue(YetNullable<KeyType> key) => ((ICovariantReadOnlyNullabkeKeyDictionary<KeyType, ValueType>)dictionary).TryGetValue(key);
+        ICovariantTuple<bool, ValueType> ICovariantReadOnlyNullableKeyDictionary<KeyType, ValueType>.TryGetValue(YetNullable<KeyType> key) => ((ICovariantReadOnlyNullableKeyDictionary<KeyType, ValueType>)dictionary).TryGetValue(key);
 
-        ICovariantTuple<bool, ValueType> ICovariantReadOnlyDictionary<YetNullable<KeyType>, ValueType>.TryGetValue(YetNullable<KeyType> key) => ((ICovariantReadOnlyNullabkeKeyDictionary<KeyType, ValueType>)dictionary).TryGetValue(key);
+        ICovariantTuple<bool, ValueType> ICovariantReadOnlyDictionary<YetNullable<KeyType>, ValueType>.TryGetValue(YetNullable<KeyType> key) => ((ICovariantReadOnlyNullableKeyDictionary<KeyType, ValueType>)dictionary).TryGetValue(key);
 
 
         IEnumerable<KeyType> IReadOnlyDictionary<KeyType, ValueType>.Keys => ((IReadOnlyDictionary<KeyType, ValueType>)dictionary).Keys;
@@ -62,9 +62,9 @@ namespace Teronis.Collections.ObjectModel
 
         IEnumerator<KeyValuePair<IYetNullable<KeyType>, ValueType>> IEnumerable<KeyValuePair<IYetNullable<KeyType>, ValueType>>.GetEnumerator() => ((IEnumerable<KeyValuePair<IYetNullable<KeyType>, ValueType>>)dictionary).GetEnumerator();
 
-        IEnumerable<KeyType> ICovariantReadOnlyNullabkeKeyDictionary<KeyType, ValueType>.Keys => ((ICovariantReadOnlyNullabkeKeyDictionary<KeyType, ValueType>)dictionary).Keys;
+        IEnumerable<KeyType> ICovariantReadOnlyNullableKeyDictionary<KeyType, ValueType>.Keys => ((ICovariantReadOnlyNullableKeyDictionary<KeyType, ValueType>)dictionary).Keys;
 
-        IEnumerable<ValueType> ICovariantReadOnlyNullabkeKeyDictionary<KeyType, ValueType>.Values => ((ICovariantReadOnlyNullabkeKeyDictionary<KeyType, ValueType>)dictionary).Values;
+        IEnumerable<ValueType> ICovariantReadOnlyNullableKeyDictionary<KeyType, ValueType>.Values => ((ICovariantReadOnlyNullableKeyDictionary<KeyType, ValueType>)dictionary).Values;
 
 
         IEnumerable<KeyType> ICovariantReadOnlyDictionary<KeyType, ValueType>.Keys => ((ICovariantReadOnlyDictionary<KeyType, ValueType>)dictionary).Keys;

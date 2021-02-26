@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Teronis.Collections.Generic
 {
-    public interface ICovariantReadOnlyNullabkeKeyDictionary<KeyType, out ValueType> :
+    public interface ICovariantReadOnlyNullableKeyDictionary<KeyType, out ValueType> :
         ICovariantReadOnlyDictionary<KeyType, ValueType>, ICovariantReadOnlyDictionary<YetNullable<KeyType>, ValueType>,
         IEnumerable
         where KeyType : notnull

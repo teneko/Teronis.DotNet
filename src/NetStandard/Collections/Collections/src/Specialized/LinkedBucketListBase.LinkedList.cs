@@ -72,6 +72,9 @@ namespace Teronis.Collections.Specialized
                 EqualityComparer = equalityComparer;
             }
 
+            public LinkedList()
+                : this(EqualityComparer<KeyType>.Default) { }
+
             internal override LinkedBucketListNode<KeyType, ValueType>.LinkedBucketListNodePart GetNodePart(LinkedBucketListNode<KeyType, ValueType> node) =>
                 node.ListPart;
 

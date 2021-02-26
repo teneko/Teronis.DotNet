@@ -47,6 +47,11 @@ namespace Teronis.Collections.Synchronization
                 public ISynchronizedCollection<ItemType>? Items { get; private set; }
                 public CollectionChangeHandler<ItemType>.IDependencyInjectedHandler? CollectionChangeHandler { get; private set; }
 
+                /// <summary>
+                /// Sets <see cref="Items"/> and <see cref="CollectionChangeHandler"/>.
+                /// </summary>
+                /// <param name="items"></param>
+                /// <param name="modificationHandler"></param>
                 public void SetItems(
                     ISynchronizedCollection<ItemType> items,
                     CollectionChangeHandler<ItemType>.IDependencyInjectedHandler modificationHandler)
@@ -55,21 +60,43 @@ namespace Teronis.Collections.Synchronization
                     CollectionChangeHandler = modificationHandler ?? throw new ArgumentNullException(nameof(modificationHandler));
                 }
 
-                public void SetItems(CollectionChangeHandler<ItemType>.DecoupledHandler modificationHandler)
+                /// <summary>
+                /// Sets <see cref="CollectionChangeHandler"/> by creating a 
+                /// <see cref="CollectionChangeHandler{ItemType}.DependencyInjectedHandler"/>
+                /// with <paramref name="modificationHandlerItems"/> and <paramref name="modificationHandler"/>.
+                /// The <see cref="Items"/> remains null and is initialized at contruction of
+                /// <see cref="SynchronizableCollectionBase{ItemType, NewItemType}"/>.
+                /// </summary>
+                /// <param name="modificationHandler"></param>
+                public void SetItems(IList<ItemType> modificationHandlerItems, CollectionChangeHandler<ItemType>.IDecoupledHandler modificationHandler)
                 {
+                    if (modificationHandlerItems is null) {
+                        throw new ArgumentNullException(nameof(modificationHandlerItems));
+                    }
+
                     if (modificationHandler is null) {
                         throw new ArgumentNullException(nameof(modificationHandler));
                     }
 
-                    var list = new List<ItemType>();
-                    CollectionChangeHandler = new CollectionChangeHandler<ItemType>.DependencyInjectedHandler(list, modificationHandler);
+                    CollectionChangeHandler = new CollectionChangeHandler<ItemType>.DependencyInjectedHandler(modificationHandlerItems, modificationHandler);
                 }
+
+                /// <summary>
+                /// Sets <see cref="CollectionChangeHandler"/> by creating a 
+                /// <see cref="CollectionChangeHandler{ItemType}.DependencyInjectedHandler"/>
+                /// with new <see cref="List{T}"/> and <paramref name="modificationHandler"/>.
+                /// The <see cref="Items"/> remains null and is initialized at contruction of
+                /// <see cref="SynchronizableCollectionBase{ItemType, NewItemType}"/>.
+                /// </summary>
+                /// <param name="modificationHandler"></param>
+                public void SetItems(CollectionChangeHandler<ItemType>.IDecoupledHandler modificationHandler) =>
+                    SetItems(new List<ItemType>(), modificationHandler);
             }
 
             public sealed class OptionsForSuperItems : ItemsOptions<SuperItemType> {
                 /// <summary>
                 /// If not null it is called in <see cref="SynchronizingCollectionBase{SuperItemType, SubItemType}.ReplaceItemByModification(ApplyingCollectionModifications)"/>
-                /// but after the items could have been replaced.
+                /// but after the items could have been replaced and before <see cref="SynchronizingCollectionBase{SuperItemType, SubItemType}.OnReplacedItemByModification(int)"/>.
                 /// </summary>
                 public CollectionUpdateItemDelegate<SuperItemType, SubItemType>? UpdateItem { get; set; }
             }
@@ -77,9 +104,9 @@ namespace Teronis.Collections.Synchronization
             public sealed class OptionsForSubItems : ItemsOptions<SubItemType> {
                 /// <summary>
                 /// If not null it is called by <see cref="SynchronizingCollectionBase{SuperItemType, SubItemType}.ReplaceItemByModification(ApplyingCollectionModifications)"/>
-                /// but after the items could have been replaced.
+                /// but after the items could have been replaced and before <see cref="SynchronizingCollectionBase{SuperItemType, SubItemType}.OnReplacedItemByModification(int)"/>.
                 /// <br/>
-                /// <br/>(!) Take into regard, that <see cref="UpdateSuperItem"/> is called at first if not null.
+                /// <br/>(!) Take into regard, that <see cref="OptionsForSuperItems.UpdateItem"/> is called at first if not null.
                 /// </summary>
                 public CollectionUpdateItemDelegate<SubItemType, SuperItemType>? UpdateItem { get; set; }
             }

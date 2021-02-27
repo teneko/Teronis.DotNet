@@ -14,7 +14,7 @@ namespace Teronis.Mvc.ServiceResulting
         public JsonError(Exception? error = null, string? errorCode = null)
         {
             Error = error ?? new Exception(StringResources.DefaultErrorMessage);
-            ErrorCode = errorCode ?? error?.GetType().Name.UpperFirstLetter() ?? DefaultErrorCode;
+            ErrorCode = errorCode ?? error?.GetType().Name.UpperFirst() ?? DefaultErrorCode;
         }
 
         public JsonError(Exception? error)

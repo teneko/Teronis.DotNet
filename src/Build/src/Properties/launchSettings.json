@@ -2,7 +2,7 @@
   "profiles": {
     "Teronis.Build": {
       "commandName": "Project",
-      "commandLineArgs": "pack"
+      "commandLineArgs": "build --dry-run"
     }
   }
 }

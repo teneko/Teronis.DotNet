@@ -2,7 +2,7 @@
 
 namespace Teronis.Build
 {
-    interface ICommandOptions
+    public interface ICommandOptions
     {
         public const string ConfigurationLongName = "configuration";
         public const string VerbosityLongName = "verbosity";

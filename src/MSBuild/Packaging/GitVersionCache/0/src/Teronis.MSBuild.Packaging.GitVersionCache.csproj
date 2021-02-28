@@ -1,11 +1,4 @@
-﻿<Project>
-
-  <PropertyGroup>
-    <!-- Will be overwritten by GitVersionCache.MSBuild.Packaging.GitVersionCache. -->
-    <MSBuildPackagingGitVersionProjectFile Condition="'$(MSBuildPackagingGitVersionProjectFile)' == ''">$(MSBuildThisFileDirectory)$(MSBuildProjectName).csproj</MSBuildPackagingGitVersionProjectFile>
-  </PropertyGroup>
-
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" Condition="'$(DisableSdkProps)' != 'true'" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     
@@ -37,20 +30,6 @@
 
   </PropertyGroup>
 
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" Condition="'$(DisableSdkProps)' != 'true'" />
-
-  <ItemGroup>
-
-    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\..\..\NetStandard\Core\Core\ref\GitVersionCache\GitVersionCache.NetStandard.Core.csproj">
-      <AdditionalProperties>TargetFramework=$(TargetFramework)</AdditionalProperties>
-    </ProjectReference>
-
-    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\..\..\NetStandard\Json\Json\ref\GitVersionCache\GitVersionCache.NetStandard.Json.csproj" />
-    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\..\..\GitVersion\CommandLine\Library\ref\GitVersionCache\GitVersionCache.GitVersion.CommandLine.Library.csproj" />
-    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\..\Core\Core\ref\GitVersionCache\GitVersionCache.MSBuild.Core.csproj" />
-
-  </ItemGroup>
-
   <ItemGroup>
 
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.8.0" PrivateAssets="all" />
@@ -76,6 +55,12 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
 
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\GitVersion\CommandLine\Library\src\Teronis.GitVersion.CommandLine.Library.csproj" />
+    <ProjectReference Include="..\..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\..\NetStandard\Json\Json\src\Teronis.NetStandard.Json.csproj" />
   </ItemGroup>
 
 </Project>

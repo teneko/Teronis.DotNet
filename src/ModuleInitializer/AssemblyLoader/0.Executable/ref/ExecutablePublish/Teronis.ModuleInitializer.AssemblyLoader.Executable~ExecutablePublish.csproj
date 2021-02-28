@@ -1,0 +1,21 @@
+<!--
+ExecutablePublish.ModuleInitializer.AssemblyLoader.Executable.csproj
+
+This project is a synthetic project. It creates the filesystem
+publishment for the project specified by PackageSourceReference.
+
+Firstly, the project specified by PackageSourceReference is published
+to filesystem, then it gets special packed as executable. Finally the
+package gets unzipped.
+
+We want to use the .props and .targets inside the project like
+it would be when you installed the nuget packge, otherwise we
+would have to separate path logic for local use in projects.
+-->
+<Project Sdk="Microsoft.NET.Sdk"> 
+  <PropertyGroup>
+    <TargetFramework>netstandard1.0</TargetFramework>
+    <PackSourceAs>ExecutablePublish</PackSourceAs>
+    <PackageSourceReference>..\..\src\Teronis.ModuleInitializer.AssemblyLoader.Executable.csproj</PackageSourceReference>
+  </PropertyGroup>
+</Project>

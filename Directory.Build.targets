@@ -7,13 +7,6 @@
   <Import Project="$(TeronisMSBuildPackagingPackTargetsFile)" Condition="Exists($(TeronisMSBuildPackagingPackTargetsFile))" />
 
   <!--
-  ModuleInitializerAssemblyLoader
-  -->
-
-  <Import Project="$(TeronisModuleInitializerAssemblyLoaderExecutableTargetsFile)" Condition="Exists($(TeronisModuleInitializerAssemblyLoaderExecutableTargetsFile))" />
-  <Import Project="$(TeronisModuleInitializerAssemblyLoaderMSBuildTargetsFile)" />
-
-  <!--
   GitVersionCache
   -->
 
@@ -51,58 +44,29 @@
   <ItemGroup>
 
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" Conditions="'$(DisableGitVersionCache)' != 'true' And $(IsPackable)" />
-
-    <!-- <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\GitVersionCache\0\ref\GitVersionCache\GitVersionCache.MSBuild.Packaging.GitVersionCache.csproj"
-      Condition="'$(IsGitVersionCacheRelated)' != 'true'
-        And '$(DisableGitVersionCache)' != 'true' 
-        And '$(IsPackable)' == 'true'">
-        <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-        <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
-        <SetTargetFramework>TargetFramework=netstandard2.0</SetTargetFramework>
-        <Private>false</Private>
-      </ProjectReference> -->
     
   </ItemGroup>
 
   <ItemGroup>
-    <!-- <ProjectReference Include="$(MSBuildThisFileDirectory)src\ModuleInitializer\AssemblyLoader\0.Executable\ref\ExecutablePublish\ExecutablePublish.ModuleInitializer.AssemblyLoader.Executable.csproj"
-      Condition="'$(IsDependencyPublishProject)' == 'true' And '$(MSBuildProjectFile)' != 'ExecutablePublish.ModuleInitializer.AssemblyLoader.Executable.csproj'"/> -->
-
-      <!-- <_ProjectReference Include="@(ProjectReference)" Condition="'%(Identity)' == 'Teronis.ModuleInitializer.AssemblyLoader.MSBuild'" /> -->
-
-      <!-- <ProjectReference Include="$(MSBuildThisFileDirectory)src\ModuleInitializer\AssemblyLoader\0.Executable\ref\ExecutablePublish\ExecutablePublish.ModuleInitializer.AssemblyLoader.Executable.csproj"
-                        Condition="'%(ProjectReference.Filename)' == 'Teronis.ModuleInitializer.AssemblyLoader.MSBuild'" /> -->
-  </ItemGroup>
-
-  <!-- <PropertyGroup>
-    <_TeronisMSBuildPackagingGitVersionCachePropsFile>$(TeronisMSBuildPackagingGitVersionCachePropsFileTemplate.Replace('(Configuration)','$(Configuration)'))</_TeronisMSBuildPackagingGitVersionCachePropsFile>
-    <_TeronisMSBuildPackagingGitVersionCacheTargetsFile>$(TeronisMSBuildPackagingGitVersionCacheTargetsFileTemplate.Replace('(Configuration)','$(Configuration)'))</_TeronisMSBuildPackagingGitVersionCacheTargetsFile>
-  </PropertyGroup> -->
-
-  <ItemGroup>
 
     <_ProjectReferences Include="@(ProjectReference)">
+
       <!-- Prevent *Publish.*-projects from being tracked in *.nuspec files. -->
       <IsPublishProject>false</IsPublishProject>
 
-      <IsPublishProject Condition="$([System.String]::Copy('%(Filename)').Contains('ExecutablePublish.'))
-        Or $([System.String]::Copy('%(Filename)').Contains('DependencyPublish.'))">true</IsPublishProject>
+      <IsPublishProject Condition="$([System.String]::Copy('%(Filename)').Contains('~ExecutablePublish'))
+        Or $([System.String]::Copy('%(Filename)').Contains('~DependencyPublish'))">true</IsPublishProject>
 
       <ReferenceOutputAssembly Condition="'%(IsPublishProject)' == 'true'">false</ReferenceOutputAssembly>
       <SkipGetTargetFrameworkProperties Condition="'%(IsPublishProject)' == 'true'">true</SkipGetTargetFrameworkProperties>
       <GlobalPropertiesToRemove Condition="'%(IsPublishProject)' == 'true'">TargetFramework</GlobalPropertiesToRemove>
       <BuildProjectReferences Condition="'%(IsPublishProject)' == 'true'">false</BuildProjectReferences>
 
-      <!-- <AdditionalProperties Condition="'%(Filename)' == 'Teronis.NetStandard.Core'">%(AdditionalProperties);TargetFramework=netstandard2.0</AdditionalProperties> -->
-      <!-- <AdditionalProperties >%(AdditionalProperties);TargetFramework=$(TargetFramework)</AdditionalProperties> -->
-      <!-- <AdditionalProperties Condition="'%(Filename)' == 'Teronis.NetStandard.Core'">TargetFramework=$(TargetFramework)</AdditionalProperties> -->
-      <!-- <Properties>%(Properties);DisallowNullableAttributes=true</Properties> -->
-      <!-- <AdditionalProperties Condition="'%(Filename)' == 'Teronis.NetStandard.Core'">%(AdditionalProperties);TargetFramework=$(TargetFramework)</AdditionalProperties> -->
-      <!-- <SetTargetFramework Condition="'%(Filename)' == 'Teronis.NetStandard.Core'">TargetFramework=$(TargetFramework)</SetTargetFramework> -->
       <SetTargetFramework Condition="'%(SetTargetFramework)' == '' And (
         '%(Filename)' == 'Teronis.NetStandard.Core'
         Or '%(Filename)' == 'Teronis.NetStandard.Collections'
         Or '%(Filename)' == 'Teronis.NetStandard.Collections.Algorithms')">TargetFramework=$(TargetFramework)</SetTargetFramework>
+
     </_ProjectReferences>
 
     <ProjectReference Remove="@(ProjectReference)" />
@@ -135,12 +99,12 @@
   </Target>
 
   <!--
-  ============================================================
+  ================================================================
   GetVersionCacheWhenGettingPackageTypedExecutableSourceProperties
   
   Invokes GetVersionCache, so its evaluation is regarded when
   packing executable source project.
-  ============================================================
+  ================================================================
   -->
   <Target Name="GetVersionCacheWhenGettingPackageTypedExecutableSourceProperties" DependsOnTargets="GetVersionCache" Condition="'$(ParentIsExecutablePackageTyped)' == 'true'" />
 

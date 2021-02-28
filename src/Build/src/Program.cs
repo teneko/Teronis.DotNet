@@ -7,44 +7,16 @@ using System.Threading.Tasks;
 using CommandLine;
 using Teronis.Diagnostics;
 using Teronis.Build.CommandOptions;
-using Microsoft.Build.Evaluation;
 using static Bullseye.Targets;
 using static Teronis.Build.ICommandOptions;
-using System.Diagnostics;
 using System.Xml.Linq;
 
 namespace Teronis.Build
 {
     class Program
     {
-        //private static void setMsBuildExePath()
-        //{
-        //    try {
-        //        var startInfo = new ProcessStartInfo("dotnet", "--list-sdks") {
-        //            RedirectStandardOutput = true
-        //        };
-
-        //        var process = Process.Start(startInfo);
-        //        process.WaitForExit(1000);
-
-        //        var output = process.StandardOutput.ReadToEnd();
-
-        //        var sdkPaths = Regex.Matches(output, "([0-9]+.[0-9]+.[0-9]+(-[a-z]+.[0-9]+.[0-9]+.[0-9]+)?) \\[(.*)\\]")
-        //            .OfType<Match>()
-        //            //.Where(m => m.Groups[1].Value.StartsWith("3.")) // The runtime you actually use for Teronis.Build.
-        //            .Select(m => Path.Combine(m.Groups[3].Value, m.Groups[1].Value, "MSBuild.dll"));
-
-        //        var sdkPath = sdkPaths.Last();
-        //        Environment.SetEnvironmentVariable("MSBUILD_EXE_PATH", sdkPath);
-        //    } catch (Exception) {
-        //        ;
-        //    }
-        //}
-
         static async Task<int> Main(string[] args)
         {
-            //setMsBuildExePath();
-
             var options = Parser.Default.ParseArguments<RestoreCommandOptions, BuildCommandOptions, PackCommandOptions, TestCommandOptions, AzureCommandOptions>(args)
                 .MapResult<ICommandOptions, ICommandOptions>((options) => options, (errors) => {
 #if DEBUG
@@ -63,31 +35,29 @@ namespace Teronis.Build
             }
 
             // Marker file represents root directory
-            var dotNetProgram = $"dotnet.exe";
-            var gitVersionCacheIdentifier = Guid.NewGuid();
-            var rootDirectory = TeronisBuildUtils.GetRootDirectory() ?? throw new DirectoryNotFoundException("Root directory not found.");
-            var sourceDirectory = Path.Combine(rootDirectory.FullName, "src");
+            var dotNetExecutableNameWithExtension = $"dotnet.exe";
+            var gitVersionCacheRandomIdentifier = Guid.NewGuid();
+            var teronisProjectRootDirectory = TeronisBuildUtils.GetRootDirectory() ?? throw new DirectoryNotFoundException("Root directory not found.");
+            var rootSourceDirectory = Path.Combine(teronisProjectRootDirectory.FullName, "src");
 
-            var allProjects = Directory.GetFiles(sourceDirectory, "*.csproj", SearchOption.AllDirectories)
-                   .Select(x => new ProjectInfo(new FileInfo(x)));
+            var allCSharpProjects = Directory.GetFiles(rootSourceDirectory, "*.csproj", SearchOption.AllDirectories)
+                .Select(x => new ProjectInfo(new FileInfo(x)));
 
-            var matchDependencyPublishProjects = @"(\\DependencyPublish\.|\\PackagePublish\.)";
-            var matchGitVersionCacheProjects = @"(\\GitVersionCache\.)";
-            var matchSyntheticProjects = string.Format("({0}|{1})", matchDependencyPublishProjects, matchGitVersionCacheProjects);
+            var matchPatternOfSyntheticProjects = @"\\[a-zA-Z.]*(~Executable|~Package)\\?";
 
-            var matchBuildProgramProjects = Regex.Escape(Path.Combine(sourceDirectory, "DotNet", "Build", @"Build\"));
+            var matchPatternOfBuildProgramProjects = Regex.Escape(Path.Combine(rootSourceDirectory, "DotNet", "Build", @"Build\"));
 
-            var matchTestProjects = @"(\.Test\.csproj|\\test\\)";
+            var matchPatternOfTestProjects = @"(\.Test\.csproj|\\test\\)";
 
-            var matchBuildExcludedProjects = string.Format(@"({0}|{1}|{2})",
-                matchSyntheticProjects,
-                matchTestProjects,
-                matchBuildProgramProjects);
+            var matchPatternOfBuildExcludedProjects = string.Format(@"({0}|{1}|{2})",
+                matchPatternOfSyntheticProjects,
+                matchPatternOfTestProjects,
+                matchPatternOfBuildProgramProjects);
 
-            var matchExampleProjects = @"(\\Example\.|\.Example\.csproj|\\example\\)";
-            var matchPackExcludedProjects = string.Format(@"({0}|{1})", matchBuildExcludedProjects, matchExampleProjects);
+            var matchPatternOfExampleProjects = @"(\\Example\.|\.Example\.csproj|\\example\\)";
+            var matchPatternOfPackExcludedProjects = string.Format(@"({0}|{1})", matchPatternOfBuildExcludedProjects, matchPatternOfExampleProjects);
 
-            var matchAzureExcludedProjects = string.Format(@"({0}|{1})", matchSyntheticProjects, matchBuildProgramProjects);
+            var matchPatternOfAzureExcludedProjects = string.Format(@"({0}|{1})", matchPatternOfSyntheticProjects, matchPatternOfBuildProgramProjects);
 
             IEnumerable<ProjectInfo> restoreProjects = null!;
             IEnumerable<ProjectInfo> buildProjects = null!;
@@ -97,7 +67,7 @@ namespace Teronis.Build
 
             IList<ProjectInfo> getPackProjects()
             {
-                var validProjects = allProjects.Where(x => !Regex.IsMatch(x.Path, matchPackExcludedProjects)).ToList();
+                var validProjects = allCSharpProjects.Where(x => !Regex.IsMatch(x.Path, matchPatternOfPackExcludedProjects)).ToList();
                 var validProjectsLength = validProjects.Count;
 
                 for (var index = validProjectsLength - 1; index >= 0; index--) {
@@ -118,13 +88,13 @@ namespace Teronis.Build
             }
 
             IEnumerable<ProjectInfo> getTestProjects() =>
-                allProjects.Where(x => Regex.IsMatch(x.Path, matchTestProjects));
+                allCSharpProjects.Where(x => Regex.IsMatch(x.Path, matchPatternOfTestProjects));
 
             if (options.Command == RestoreCommandOptions.RestoreCommand) {
-                restoreProjects = allProjects;
+                restoreProjects = allCSharpProjects;
             } else if (options.Command == BuildCommandOptions.BuildCommand) {
-                buildProjects = allProjects.Where(x => !Regex.IsMatch(x.Path, matchBuildExcludedProjects));
-                buildProjects = allProjects;
+                buildProjects = allCSharpProjects.Where(x => !Regex.IsMatch(x.Path, matchPatternOfBuildExcludedProjects));
+                buildProjects = allCSharpProjects;
                 restoreProjects = buildProjects;
             } else if (options.Command == PackCommandOptions.PackCommand) {
                 packProjects = getPackProjects();
@@ -135,7 +105,7 @@ namespace Teronis.Build
                 buildProjects = testProjects;
                 restoreProjects = testProjects;
             } else if (options.Command == AzureCommandOptions.AzureCommand) {
-                azureProjects = allProjects.Where(x => !Regex.IsMatch(x.Path, matchAzureExcludedProjects));
+                azureProjects = allCSharpProjects.Where(x => !Regex.IsMatch(x.Path, matchPatternOfAzureExcludedProjects));
                 testProjects = getTestProjects();
                 packProjects = getPackProjects();
                 buildProjects = azureProjects;
@@ -163,8 +133,8 @@ namespace Teronis.Build
                     retry:
 
                     try {
-                        Console.WriteLine($"\u001b[35;1m{dotNetProgram} {commandArgs}\u001b[0m");
-                        await SimpleProcess.RunAsync(dotNetProgram!, args: commandArgs, outputReceived: Console.Out.WriteLine, errorReceived: Console.Error.WriteLine);
+                        Console.WriteLine($"\u001b[35;1m{dotNetExecutableNameWithExtension} {commandArgs}\u001b[0m");
+                        await SimpleProcess.RunAsync(dotNetExecutableNameWithExtension!, args: commandArgs, outputReceived: Console.Out.WriteLine, errorReceived: Console.Error.WriteLine);
                     } catch {
                         if (retries <= 0) {
                             throw;
@@ -180,7 +150,7 @@ namespace Teronis.Build
             {
                 options = options ?? throw new ArgumentNullException(nameof(options));
                 projects = projects ?? throw new ArgumentNullException(nameof(projects));
-                var additionalArgumentProperties = $"\"-p:GitVersionCacheIdentifier={gitVersionCacheIdentifier}\"";
+                var additionalArgumentProperties = $"\"-p:GitVersionCacheIdentifier={gitVersionCacheRandomIdentifier}\"";
                 string additonalArguments;
 
                 if (buildStyle == BuildStyle.DotNet) {
@@ -193,7 +163,7 @@ namespace Teronis.Build
 
                 if (options.DryRun) {
                     Console.ForegroundColor = ConsoleColor.Gray;
-                    Console.WriteLine(dotNetProgram + " " + command);
+                    Console.WriteLine(dotNetExecutableNameWithExtension + " " + command);
                     Console.ResetColor();
                 }
 

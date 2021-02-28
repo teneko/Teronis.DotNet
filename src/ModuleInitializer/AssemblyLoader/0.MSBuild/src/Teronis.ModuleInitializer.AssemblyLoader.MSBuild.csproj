@@ -11,11 +11,11 @@
   <ItemGroup>
     
     <!-- This is only a synthetic project reference for being recognized as nuspec dependency. -->
-    <ProjectReference Include="..\..\0.Executable\ref\ExecutablePackage\ExecutablePackage.ModuleInitializer.AssemblyLoader.Executable.csproj">
+    <ProjectReference Include="..\..\0.Executable\ref\ExecutablePackage\Teronis.ModuleInitializer.AssemblyLoader.Executable~ExecutablePackage.csproj">
       <PrivateAssets>contentfiles;analyzers</PrivateAssets>
     </ProjectReference>
     
-    <ProjectReference Include="..\..\0.Executable\ref\ExecutablePublish\ExecutablePublish.ModuleInitializer.AssemblyLoader.Executable.csproj" />
+    <ProjectReference Include="..\..\0.Executable\ref\ExecutablePublish\Teronis.ModuleInitializer.AssemblyLoader.Executable~ExecutablePublish.csproj" />
     
   </ItemGroup>
 

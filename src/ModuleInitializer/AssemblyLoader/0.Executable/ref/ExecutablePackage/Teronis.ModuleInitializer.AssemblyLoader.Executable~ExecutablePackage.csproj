@@ -9,11 +9,12 @@ to filesystem, then it gets special packed as executable. The package
 inherits package name and package version from referenced project.
 -->
 <Project Sdk="Microsoft.NET.Sdk">
-  
+
   <PropertyGroup>
     <TargetFramework>netstandard1.0</TargetFramework>
     <PackSourceAs>ExecutablePackage</PackSourceAs>
     <PackageSourceReference>..\..\src\Teronis.ModuleInitializer.AssemblyLoader.Executable.csproj</PackageSourceReference>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
 </Project>

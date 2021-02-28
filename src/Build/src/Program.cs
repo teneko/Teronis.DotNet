@@ -49,14 +49,14 @@ namespace Teronis.Build
                 .Select(x => new ProjectInfo(new FileInfo(x)))
                 .ToList();
 
-            var matchPatternOfSyntheticProjects = @"\\[a-zA-Z.]*~(ExecutablePublish|ExecutablePackage|DependencyPublish)\\?";
+            var matchPatternOfSyntheticPublishProjects = @"\\[a-zA-Z.]*~(ExecutablePublish|DependencyPublish)\\?";
 
             var matchPatternOfBuildProgramProjects = Regex.Escape(buildDirectory);
 
             var matchPatternOfTestProjects = @"(\.Test\.csproj|\\test\\)";
 
             var matchPatternOfBuildExcludedProjects = string.Format(@"({0}|{1}|{2})",
-                matchPatternOfSyntheticProjects,
+                matchPatternOfSyntheticPublishProjects,
                 matchPatternOfTestProjects,
                 matchPatternOfBuildProgramProjects);
 
@@ -74,7 +74,7 @@ namespace Teronis.Build
                 matchPatternOfBenchmarkProjects);
 
             var matchPatternOfAzureExcludedProjects = string.Format(@"({0}|{1})",
-                matchPatternOfSyntheticProjects,
+                matchPatternOfSyntheticPublishProjects,
                 matchPatternOfBuildProgramProjects);
 
             IReadOnlyList<ProjectInfo> restoreProjects = null!;
@@ -117,7 +117,7 @@ namespace Teronis.Build
                     return;
                 }
 
-                buildSyntheticProjects = allCSharpProjects.Where(x => Regex.IsMatch(x.Path, matchPatternOfSyntheticProjects)).ToList();
+                buildSyntheticProjects = allCSharpProjects.Where(x => Regex.IsMatch(x.Path, matchPatternOfSyntheticPublishProjects)).ToList();
 
                 if (options.IsBuildSyntheticCommand()) {
                     return;

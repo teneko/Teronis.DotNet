@@ -58,9 +58,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\GitVersion\CommandLine\Library\src\Teronis.GitVersion.CommandLine.Library.csproj" />
-    <ProjectReference Include="..\..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj" />
-    <ProjectReference Include="..\..\..\..\..\NetStandard\Json\Json\src\Teronis.NetStandard.Json.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\..\..\GitVersion\CommandLine\Library\src\Teronis.GitVersion.CommandLine.Library.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\..\..\NetStandard\Json\Json\src\Teronis.NetStandard.Json.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\..\Core\Core\src\Teronis.MSBuild.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -48,25 +48,11 @@
     <NoWarn Condition="'$(TargetFramework)' == 'netstandard2.0'">$(NoWarn);8769;8767</NoWarn>
   </PropertyGroup>
 
-  <!-- <ItemGroup>
-    <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\PackExecutable\0\src\Teronis.MSBuild.Packaging.PackExecutable.csproj" Condition="'$(DisablePackExecutableSourceInclude)' != 'true'">
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
-      <GlobalPropertiesToRemove>TargetFramework;TargetFrameworks</GlobalPropertiesToRemove>
-      <BuildProjectReferences>false</BuildProjectReferences>
-    </ProjectReference>
-  </ItemGroup> -->
-
   <ItemGroup>
 
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" Conditions="'$(DisableGitVersionCache)' != 'true' And $(IsPackable)" />
 
-    <!-- <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\GitVersionCache\0\ref\PackagePublish\PackagePublish.MSBuild.Packaging.GitVersionCache.csproj"
-      Condition="'$(IsGitVersionCacheRelated)' != 'true'
-        And '$(DisableGitVersionCache)' != 'true' 
-        And '$(IsPackable)' == 'true'" /> -->
-
-    <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\GitVersionCache\0\ref\GitVersionCache\GitVersionCache.MSBuild.Packaging.GitVersionCache.csproj"
+    <!-- <ProjectReference Include="$(MSBuildThisFileDirectory)src\MSBuild\Packaging\GitVersionCache\0\ref\GitVersionCache\GitVersionCache.MSBuild.Packaging.GitVersionCache.csproj"
       Condition="'$(IsGitVersionCacheRelated)' != 'true'
         And '$(DisableGitVersionCache)' != 'true' 
         And '$(IsPackable)' == 'true'">
@@ -74,7 +60,7 @@
         <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
         <SetTargetFramework>TargetFramework=netstandard2.0</SetTargetFramework>
         <Private>false</Private>
-      </ProjectReference>
+      </ProjectReference> -->
     
   </ItemGroup>
 

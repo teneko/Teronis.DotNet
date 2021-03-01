@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Teronis.Build": {
-      "commandName": "Project",
-      "commandLineArgs": "build --dry-run"
-    }
-  }
-}

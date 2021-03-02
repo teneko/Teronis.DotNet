@@ -36,4 +36,4 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Write to console
-        run: echo repository_dispatch -> teroneko.github.io (TBD)
+        run: echo "repository_dispatch -> teroneko.github.io (TBD)"

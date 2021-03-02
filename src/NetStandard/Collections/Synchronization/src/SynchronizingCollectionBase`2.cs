@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Linq;
 using Teronis.Collections.Algorithms;
 using Teronis.Collections.Algorithms.Modifications;
 using Teronis.Extensions;
@@ -17,8 +16,8 @@ namespace Teronis.Collections.Synchronization
     /// <typeparam name="SubItemType"></typeparam>
     /// <typeparam name="SuperItemType"></typeparam>
     public abstract partial class SynchronizingCollectionBase<SuperItemType, SubItemType> : INotifyCollectionModification<SuperItemType, SubItemType>, ICollectionSynchronizationContext<SuperItemType>
-        where SubItemType : notnull
         where SuperItemType : notnull
+        where SubItemType : notnull
     {
         private static CollectionModification<SuperItemType, SubItemType> replaceOldSuperItemsByOldSubItems(
             ICollectionModification<SuperItemType, SuperItemType> superItemsSuperItemsModification,

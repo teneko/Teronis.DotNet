@@ -15,17 +15,38 @@ jobs:
     # buildPlatform: 'Any CPU'
     verbosity: 'normal'
   steps:
+
+  # For better visualization we go through each step 
+  # instead of just defining the steps [test, pack].
+
   - task: PowerShell@2
-    displayName: 'Build, Pack & Test'
+    displayName: 'Restore'
     inputs:
       filePath: '$(Build.SourcesDirectory)\build.ps1'
-      # test depeneds on [ build, pack ]
-      arguments: 'azure --configuration $(configuration) --verbosity $(verbosity)'
+      arguments: 'restore'
+
+  - task: PowerShell@2
+    displayName: 'Compile'
+    inputs:
+      filePath: '$(Build.SourcesDirectory)\build.ps1'
+      arguments: 'compile --configuration $(configuration) --verbosity $(verbosity)'
+
+  - task: PowerShell@2
+    displayName: 'Test'
+    inputs:
+      filePath: '$(Build.SourcesDirectory)\build.ps1'
+      arguments: 'test --configuration $(configuration) --verbosity $(verbosity)'
+
+  - task: PowerShell@2
+    displayName: 'Pack'
+    inputs:
+      filePath: '$(Build.SourcesDirectory)\build.ps1'
+      arguments: 'pack --configuration $(configuration) --verbosity $(verbosity)'
       
   - task: CopyFiles@2
     displayName: 'Copy Build Artifacts'
     inputs:
-      Contents: $(Build.SourcesDirectory)/src/**/bin/$(configuration)/*.?(s)nupkg
+      Contents: $(Build.SourcesDirectory)/obj/packages/*.?(s)nupkg
       TargetFolder: $(Build.ArtifactStagingDirectory)
       flattenFolders: true
 

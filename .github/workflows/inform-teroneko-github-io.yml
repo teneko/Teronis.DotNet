@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: InformTeronekoGithubIO
 
 # Controls when the action will run. 
 on:
@@ -36,5 +36,4 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Write to console
-        run: echo Test succeeded
-          echo test, and deploy your project.
+        run: echo repository_dispatch -> teroneko.github.io (TBD)

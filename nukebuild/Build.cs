@@ -76,9 +76,9 @@ class Build : NukeBuild
         .DependsOn(Compile)
         .Executes(() => {
             SourceDirectory.GlobFiles("**/*.Test.csproj")
-                .ForEach(absoluteFile => {
-                    DotNetBuild(s => s
-                        .SetProjectFile(absoluteFile)
+                .ForEach(testProjectPath => {
+                    DotNetTest(s => s
+                        .SetProjectFile(testProjectPath)
                         .SetConfiguration(Configuration)
                         .EnableNoRestore());
                 });

@@ -89,6 +89,9 @@ class Build : NukeBuild
         .Executes(() => {
             DotNetPack(s => s
                 .SetProject(PublishSolution)
+                .SetAssemblyVersion(GitVersion.AssemblySemVer)
+                .SetFileVersion(GitVersion.AssemblySemFileVer)
+                .SetInformationalVersion(GitVersion.InformationalVersion)
                 .SetConfiguration(Configuration));
 
             PublishSolution.Projects.ForEach(project => {

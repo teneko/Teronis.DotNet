@@ -102,8 +102,12 @@ namespace Teronis.Reflection.Caching
         /// When calling it, you are about to trigger a change of a property.
         /// </summary>
         /// <param name="propertyName"></param>
-        public void SingleTypePropertyNotifierPropertyChanged(string propertyName)
+        public void SingleTypePropertyNotifierPropertyChanged(string? propertyName)
         {
+            if (propertyName == null) {
+                return;
+            }
+
             var propertyMember = SingleTypedPropertiesOwnerType.GetVariableMember(propertyName, VariableInfoDescriptor);
 
             // There is no member that can be handled, so we return.
@@ -187,7 +191,7 @@ namespace Teronis.Reflection.Caching
             }
         }
 
-        private void SingleTypePropertyNotifier_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void SingleTypePropertyNotifier_PropertyChanged(object? sender, PropertyChangedEventArgs e)
             => SingleTypePropertyNotifierPropertyChanged(e.PropertyName);
     }
 }

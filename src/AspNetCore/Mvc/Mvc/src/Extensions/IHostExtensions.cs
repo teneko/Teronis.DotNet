@@ -8,7 +8,7 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IHost CreateScope(this IHost host, Action<IServiceProvider> handler)
         {
-            var serviceScopeFactory = (IServiceScopeFactory)host.Services.GetService(typeof(IServiceScopeFactory));
+            var serviceScopeFactory = (IServiceScopeFactory)host.Services.GetRequiredService(typeof(IServiceScopeFactory));
 
             using (var scope = serviceScopeFactory.CreateScope()) {
                 handler(scope.ServiceProvider);
@@ -19,7 +19,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static async Task<IHost> CreateScopeAsync(this IHost host, Func<IServiceProvider, Task> handler)
         {
-            var serviceScopeFactory = (IServiceScopeFactory)host.Services.GetService(typeof(IServiceScopeFactory));
+            var serviceScopeFactory = (IServiceScopeFactory)host.Services.GetRequiredService(typeof(IServiceScopeFactory));
 
             using (var scope = serviceScopeFactory.CreateScope()) {
                 await handler(scope.ServiceProvider);

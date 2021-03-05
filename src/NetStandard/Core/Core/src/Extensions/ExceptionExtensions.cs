@@ -1,18 +1,39 @@
 ﻿using System;
+using System.Text;
+using Teronis.Text;
 
 namespace Teronis.Extensions
 {
     public static class ExceptionExtensions
     {
-        public static string ListInnerMessages(this Exception? exception)
+        /// <summary>
+        /// Joins the message of <paramref name="exception"/> and the message of <see cref="Exception.InnerException"/> recursively.
+        /// </summary>
+        /// <param name="exception">The exception.</param>
+        /// <param name="separator">If null it is <see cref="Environment.NewLine"/></param>
+        /// <returns></returns>
+        public static string JoinInnerMessages(this Exception? exception, string? separator = null)
         {
-            var lines = exception?.Message ?? string.Empty;
+            separator ??= Environment.NewLine;
+            var stringBuilder = new StringBuilder();
+            var stringSeparationHelper = new StringSeparator(separator);
 
-            while (exception != null && (exception = exception.InnerException) != null && exception.Message != null) {
-                lines += "\r\n" + exception.Message;
+            var currentException = exception;
+
+            while (!(currentException is null)) {
+                if (!string.IsNullOrWhiteSpace(currentException.Message)) {
+                    stringBuilder.Append(currentException.Message.Trim());
+                    stringSeparationHelper.SetSeparator(stringBuilder);
+                }
+
+                if (currentException.InnerException is null) {
+                    break;
+                }
+
+                currentException = currentException.InnerException;
             }
 
-            return lines;
+            return stringBuilder.ToString();
         }
     }
 }

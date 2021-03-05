@@ -57,6 +57,7 @@ namespace Teronis.Linq.Expressions
                     var index = lambdaParameters.FindIndex(parameter => ReferenceEquals(parameter, replacedParameter.Source));
 
                     if (index >= 0) {
+                        // Update lambda parameter by replaced one.
                         lambdaParameters[index] = replacedParameter.Target;
                     }
                 }
@@ -79,12 +80,12 @@ namespace Teronis.Linq.Expressions
             }
 
             var nodeReplacer = new NodeReplacingVisitor(replacableNodes);
-            visitedLambdaBody = nodeReplacer.Visit(visitedLambdaBody);
+            visitedLambdaBody = nodeReplacer.Visit(visitedLambdaBody)!;
 
             // After replacing parameters by constants, you should remove those lambda parameters.
             foreach (var replacedParameter in nodeReplacer.ReplacedSourceTargetPairs.Reverse()) {
-                /* We assume that the front expressions got replaced first. */
-                var index = lambdaParameters.FindIndex(parameter => ReferenceEquals(parameter, replacedParameter));
+                // We assume that the first appearing expression got replaced first.
+                var index = lambdaParameters.FindIndex(parameter => ReferenceEquals(parameter, replacedParameter.Target));
 
                 if (index >= 0) {
                     lambdaParameters.RemoveAt(index);
@@ -94,8 +95,6 @@ namespace Teronis.Linq.Expressions
             positionalParameters = lambdaParameters;
             return visitedLambdaBody;
         }
-
-        #region
 
         /// <summary>
         /// Reduces parameter list by replacing the expression parameter expression
@@ -201,7 +200,5 @@ namespace Teronis.Linq.Expressions
             targetParameter = targetParameter ?? throw new ArgumentNullException(nameof(targetParameter));
             return ReplaceExpressions(expression, sourceParameter, ref targetParameter!, configureMemberMappings);
         }
-
-        #endregion
     }
 }

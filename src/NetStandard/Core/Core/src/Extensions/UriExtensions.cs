@@ -31,10 +31,10 @@ namespace Teronis.Extensions
                 var stringBuilder = new StringBuilder();
 
                 for (int i = 0; i < httpValueCollection.Count; i++) {
-                    string text = httpValueCollection.GetKey(i);
+                    string? text = httpValueCollection.GetKey(i);
                     text = HttpUtility.UrlEncode(text);
                     string val = (text != null) ? (text + "=") : string.Empty;
-                    string[] vals = httpValueCollection.GetValues(i);
+                    string[]? vals = httpValueCollection.GetValues(i);
 
                     if (stringBuilder.Length > 0) {
                         stringBuilder.Append('&');

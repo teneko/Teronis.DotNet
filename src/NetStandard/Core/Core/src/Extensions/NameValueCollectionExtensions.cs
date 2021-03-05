@@ -17,15 +17,13 @@ namespace Teronis.Extensions
         {
             collection = collection ?? throw new ArgumentNullException(nameof(collection));
             var builder = new StringBuilder();
-            var separator = new StringSeparationHelper("&");
+            var separator = new StringSeparator("&");
 
             foreach (string? key in collection.Keys) {
-                if (key is null) {
-                    throw new ArgumentNullException(nameof(key));
-                }
-
-                builder.AppendFormat("{0}={1}", Uri.EscapeDataString(key), Uri.EscapeDataString(collection[key]));
-                separator.SetStringSeparator(builder);
+                var keyToEscape = key ?? string.Empty;
+                var valueToEscape = collection[key] ?? string.Empty;
+                builder.AppendFormat("{0}={1}", Uri.EscapeDataString(keyToEscape), Uri.EscapeDataString(valueToEscape));
+                separator.SetSeparator(builder);
             }
 
             return builder.ToString();

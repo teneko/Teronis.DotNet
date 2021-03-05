@@ -47,7 +47,7 @@ namespace Teronis.Collections.Synchronization
                 Assert.Equal(expected, Collection, EqualityComparer);
             }
 
-            private IEnumerable<T> ToEnumerable<T>(IEnumerable<T> items)
+            private IEnumerable<T> ToEnumerable(IEnumerable<T> items)
             {
                 foreach (var item in items) {
                     yield return item;

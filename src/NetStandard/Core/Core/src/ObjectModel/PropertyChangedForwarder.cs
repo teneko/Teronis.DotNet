@@ -14,7 +14,7 @@ namespace Teronis.ObjectModel
             }
         }
 
-        private static Action<object?, PropertyChangedEventArgs>? convertNotifyPropertyChangeMethod(Action<string>? notifyPropertyChanged)
+        private static Action<object?, PropertyChangedEventArgs>? convertNotifyPropertyChangeMethod(Action<string?>? notifyPropertyChanged)
         {
             if (notifyPropertyChanged is null) {
                 return null;
@@ -31,7 +31,7 @@ namespace Teronis.ObjectModel
             remove => EventInvocationForward -= value!.Invoke;
         }
 
-        event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged {
+        event PropertyChangedEventHandler? INotifyPropertyChanged.PropertyChanged {
             add => PropertyChangedForward += value;
             remove => PropertyChangedForward -= value;
         }
@@ -57,17 +57,21 @@ namespace Teronis.ObjectModel
         public PropertyChangedForwarder(Action<PropertyChangedEventArgs>? notifyPropertyChange)
             : this(notifyPropertyChange: convertNotifyPropertyChangeMethod(notifyPropertyChange)) { }
 
-        public PropertyChangedForwarder(Action<string>? notifyPropertyChange, object? alternativeEventSender)
+        public PropertyChangedForwarder(Action<string?>? notifyPropertyChange, object? alternativeEventSender)
             : this(convertNotifyPropertyChangeMethod(notifyPropertyChange), alternativeEventSender: alternativeEventSender) { }
 
-        public PropertyChangedForwarder(Action<string>? notifyPropertyChange)
+        public PropertyChangedForwarder(Action<string?>? notifyPropertyChange)
             : this(convertNotifyPropertyChangeMethod(notifyPropertyChange)) { }
 
         protected override bool CanForwardEventInvocation(PropertyChangedEventArgs eventArgs) =>
-            CalleePropertyNameByCallerPropertyNameDictionary.ContainsKey(eventArgs.PropertyName);
+            eventArgs.PropertyName != null && CalleePropertyNameByCallerPropertyNameDictionary.ContainsKey(eventArgs.PropertyName);
 
         protected override PropertyChangedEventArgs CreateEventArgument(PropertyChangedEventArgs eventArgs)
         {
+            if (eventArgs.PropertyName == null) {
+                throw new ArgumentException("Non-null property name was expected.");
+            }
+
             var calleePropertyName = CalleePropertyNameByCallerPropertyNameDictionary[eventArgs.PropertyName];
             var forwardingEventArgs = new PropertyChangedEventArgs(calleePropertyName);
             return forwardingEventArgs;

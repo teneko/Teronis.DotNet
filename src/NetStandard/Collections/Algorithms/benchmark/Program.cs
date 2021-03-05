@@ -42,6 +42,7 @@ namespace Teronis.NetStandard.Collections.Algorithms.Benchmark
 
         [Benchmark]
         [ArgumentsSource(nameof(Data))]
+        [Obsolete]
         public List<CollectionModification<int, int>> YieldCollectionModificationsOld(DataSource leftItems, DataSource rightItems) =>
             AfterDeviationDeferredCollectionModifications.YieldCollectionModifications(leftItems.Items, rightItems.Items).ToList();
 

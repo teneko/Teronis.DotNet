@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Teronis.ObjectModel
 {
@@ -16,10 +17,10 @@ namespace Teronis.ObjectModel
         public DataErrorInfosBase() =>
             ErrorInfos = new Dictionary<string, ICollection<string>>();
 
-        public virtual IEnumerable? GetErrors(string propertyName)
+        public virtual IEnumerable GetErrors(string? propertyName)
         {
-            if (string.IsNullOrEmpty(propertyName) || !ErrorInfos.ContainsKey(propertyName)) {
-                return null;
+            if (propertyName == null || propertyName == string.Empty || !ErrorInfos.ContainsKey(propertyName)) {
+                return Enumerable.Empty<string>();
             }
 
             return ErrorInfos[propertyName];

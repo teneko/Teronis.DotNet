@@ -36,7 +36,7 @@ namespace Teronis.Utils
             memberInfo = memberInfo ?? throw new ArgumentNullException(nameof(memberInfo));
 
             if (!IsFieldOrProperty(memberInfo)) {
-                throw new ArgumentException("The member info is not a field or a property");
+                throw new ArgumentException("The member info not a field nor a property");
             }
         }
 

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using Teronis.Extensions;
 using Teronis.Json.Extensions;
 using Teronis.Json.Serialization;
+using static Teronis.Reflection.TeronisReflectionUtils;
 
 namespace Teronis.Json.Utils
 {
@@ -33,7 +33,7 @@ namespace Teronis.Json.Utils
 
             // Settings can be null, so do not copy it when null
             if (settings != null) {
-                copiedSettings = settings.ShallowCopy();
+                copiedSettings = ShallowCopy(settings);
                 copiedSettings.ContractResolver = contractResolver;
             } else {
                 copiedSettings = null;

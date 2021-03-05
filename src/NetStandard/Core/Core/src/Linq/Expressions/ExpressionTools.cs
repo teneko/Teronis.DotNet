@@ -41,6 +41,10 @@ namespace Teronis.Linq.Expressions
                 throw new ArgumentException($"Expression body is not of type {nameof(NewExpression)}.");
             }
 
+            if (newExpression.Members is null) {
+                return new string[0];
+            }
+
             var membersCount = newExpression.Members.Count;
             var names = new string[membersCount];
 

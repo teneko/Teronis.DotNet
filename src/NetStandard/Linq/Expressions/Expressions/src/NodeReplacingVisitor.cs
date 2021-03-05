@@ -17,8 +17,12 @@ namespace Teronis.Linq.Expressions
         public NodeReplacingVisitor(Expression source, Expression target)
             : base(source, target) { }
 
-        public override Expression Visit(Expression node)
+        public override Expression? Visit(Expression? node)
         {
+            if (node is null) {
+                return null;
+            }
+
             if (TryReplaceNode(node, out var replacedNode)) {
                 return base.Visit(replacedNode);
             }

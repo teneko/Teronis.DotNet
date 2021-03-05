@@ -11,10 +11,10 @@ namespace Teronis.Windows.PresentationFoundation.Input
             remove => CommandManager.RequerySuggested -= value;
         }
 
-        public CommandManagerRelayCommand(Action<T> executeAction, Predicate<T> canExecutePredicate)
+        public CommandManagerRelayCommand(RelayCommandExecutor<T> executeAction, RelayCommandPredicate<T> canExecutePredicate)
             : base(executeAction, canExecutePredicate) { }
 
-        public CommandManagerRelayCommand(Action<T> executeAction)
+        public CommandManagerRelayCommand(RelayCommandExecutor<T> executeAction)
             : base(executeAction) { }
     }
 }

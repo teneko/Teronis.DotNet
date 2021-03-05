@@ -15,13 +15,13 @@ namespace Teronis.Collections.Synchronization
             this.collection = collection;
         }
 
-        private void ToBeMirroredCollection_CollectionSynchronizing(object sender, EventArgs e) =>
+        private void ToBeMirroredCollection_CollectionSynchronizing(object? sender, EventArgs e) =>
             collection.BeginCollectionSynchronization();
 
-        private void ToBeMirroredCollection_CollectionModified(object sender, CollectionModifiedEventArgs<SuperItemType> e) =>
+        private void ToBeMirroredCollection_CollectionModified(object? sender, CollectionModifiedEventArgs<SuperItemType> e) =>
             collection.GoThroughModification(e);
 
-        private void ToBeMirroredCollection_CollectionSynchronized(object sender, EventArgs e) =>
+        private void ToBeMirroredCollection_CollectionSynchronized(object? sender, EventArgs e) =>
             collection.EndCollectionSynchronization();
     }
 }

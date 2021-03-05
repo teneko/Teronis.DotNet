@@ -15,7 +15,7 @@ namespace Teronis.Collections.Generic
         new ICollection<ValueType> Values { get; }
 
         new bool ContainsKey(YetNullable<KeyType> key);
-        new bool TryGetValue(YetNullable<KeyType> key, out ValueType value);
+        new bool TryGetValue(YetNullable<KeyType> key, [MaybeNullWhen(false)] out ValueType value);
 
         new void Clear();
 

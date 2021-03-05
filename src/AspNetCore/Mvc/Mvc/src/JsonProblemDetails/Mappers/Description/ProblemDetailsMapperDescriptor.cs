@@ -61,7 +61,7 @@ namespace Teronis.Mvc.JsonProblemDetails.Mappers.Description
         }
 
         public bool TryFindConstructor(int startIndex, MapperConstructorArea area, Type? mappableObjectType,
-            [NotNullWhen(true)] out (MapperConstructorEvaluation ConstructorEvaluation, int NextIndex)? find,
+            [NotNullWhen(true)] out (MapperConstructorEvaluation ConstructorEvaluation, int NextIndex)? foundConstructor,
             bool? globalAllowDerivedMappableObjectTypes = null)
         {
             if (!MapperConstructorsByArea.ContainsKey(area)) {
@@ -74,16 +74,20 @@ namespace Teronis.Mvc.JsonProblemDetails.Mappers.Description
             for (var index = startIndex; index < constructorsCount; index++) {
                 var constructorEvaluation = constructors[index];
 
-                if (constructorEvaluation.MapperConstructorArea == area
-                    && constructorEvaluation.FirstParameterEvaluation.TryGetMapperContextParameterEvaluation(out var parameterEvaluation)
+                if (constructorEvaluation.MapperConstructorArea != area
+                    || constructorEvaluation.FirstParameterEvaluation is null) {
+                    goto exit;
+                }
+
+                if (constructorEvaluation.FirstParameterEvaluation.TryGetMapperContextParameterEvaluation(out var parameterEvaluation)
                     && parameterEvaluation.IsMappableObjectTypeSuitable(mappableObjectType, globalAllowDerivedMappableObjectTypes: globalAllowDerivedMappableObjectTypes)) {
-                    find = (constructorEvaluation, index + 1);
+                    foundConstructor = (constructorEvaluation, index + 1);
                     return true;
                 }
             }
 
             exit:
-            find = null;
+            foundConstructor = null;
             return false;
         }
     }

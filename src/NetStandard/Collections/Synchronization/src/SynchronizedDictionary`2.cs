@@ -10,6 +10,7 @@ using Teronis.Collections.Specialized;
 namespace Teronis.Collections.Synchronization
 {
     public class SynchronizedDictionary<KeyType, ItemType> : IReadOnlyDictionary<KeyType, ItemType>
+        where KeyType : notnull
     {
         public IReadOnlyDictionary<KeyType, IndexDirectoryEntry> KeyedIndexes { get; }
 

@@ -20,14 +20,16 @@ namespace Teronis.AspNetCore.Identity.Authentication.Utils
         public static async Task ValidateRefreshTokenIdClaim<BearerTokenType>(TokenValidatedContext tokenValidatedContext)
             where BearerTokenType : class, IBearerTokenEntity
         {
-            var bearerTokenStore = tokenValidatedContext.HttpContext.RequestServices.GetService<IBearerTokenStore<BearerTokenType>>();
-            var identityOptions = tokenValidatedContext.HttpContext.RequestServices.GetService<IOptions<IdentityOptions>>();
-
-            var principal = tokenValidatedContext.Principal;
+            var bearerTokenStore = tokenValidatedContext.HttpContext.RequestServices.GetRequiredService<IBearerTokenStore<BearerTokenType>>();
+            var identityOptions = tokenValidatedContext.HttpContext.RequestServices.GetRequiredService<IOptions<IdentityOptions>>();
 
             try {
-                var refreshTokenEntity = await BearerSignInManagerUtils.FindRefreshTokenAsync(bearerTokenStore, principal)
-                    ?? throw new ArgumentException($"The refresh token identifier is not deposited.");
+                if (tokenValidatedContext.Principal is null) {
+                    throw new InvalidOperationException("The principal was expected to be not-null.");
+                }
+
+                var refreshTokenEntity = await BearerSignInManagerUtils.FindRefreshTokenAsync(bearerTokenStore, tokenValidatedContext.Principal)
+                    ?? throw new InvalidOperationException($"The refresh token identifier is not deposited.");
 
                 var claims = new[] { new Claim(identityOptions.Value.ClaimsIdentity.UserIdClaimType, refreshTokenEntity.UserId.ToString()) };
                 var identity = new ClaimsIdentity(claims);
@@ -50,7 +52,7 @@ namespace Teronis.AspNetCore.Identity.Authentication.Utils
         /// </summary>
         public static async Task ValidateSecurityStamp(TokenValidatedContext context)
         {
-            var signInManager = context.HttpContext.RequestServices.GetService<SignInManager<UserEntity>>();
+            var signInManager = context.HttpContext.RequestServices.GetRequiredService<SignInManager<UserEntity>>();
             // Why does this works?? IdentityOptions.ClaimIdentity.UserIdClaimType is by default
             // ClaimTypes.NameIdentifier, and this one will be grabbed, if not user will be null.
             var user = await signInManager.ValidateSecurityStampAsync(context.Principal);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis.ObjectModel.Parenthood
 {
@@ -53,7 +54,7 @@ namespace Teronis.ObjectModel.Parenthood
         public bool ContainsKey(object key) =>
             ((IReadOnlyDictionary<object, ParentsRequestedEventHandler>)handlerByCallerDictionary).ContainsKey(key);
 
-        public bool TryGetValue(object key, out ParentsRequestedEventHandler value) =>
+        public bool TryGetValue(object key, [MaybeNullWhen(false)] out ParentsRequestedEventHandler value) =>
             ((IReadOnlyDictionary<object, ParentsRequestedEventHandler>)handlerByCallerDictionary).TryGetValue(key, out value);
 
         public IEnumerator<KeyValuePair<object, ParentsRequestedEventHandler>> GetEnumerator() =>

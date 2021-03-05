@@ -23,8 +23,18 @@
       And '$(IsGitVersionCacheRelated)' != 'true'
       And '$(DisableGitVersionCache)' != 'true'" />
   
-  <ItemGroup>
+  <!-- <ItemGroup>
     <Compile Remove="$(MSBuildThisFileDirectory)/Nullable.cs" Condition="'$(Nullable)' != 'enable' Or '$(DisallowNullableAttributes)' == 'true'" />
+  </ItemGroup> -->
+
+  <ItemGroup>
+    <PackageReference Include="Nullable" Version="1.3.0"
+      Condition="'$(Nullable)' == 'enable' And ('$(TargetFramework)' == 'netstandard2.0'
+        Or '$(TargetFramework)' == 'netstandard2.1'
+        Or '$(TargetFramework)' == 'netstandard2.2')">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <PropertyGroup>
@@ -38,7 +48,8 @@
       -->
     <!-- Warning	CS8767	Nullability of reference types in type of parameter '..' of '..' doesn't match implicitly implemented member '..' (possibly because of nullability attributes). -->
     <!-- Warning	CS8769	Nullability of reference types in type of parameter '..' doesn't match implemented member '..' (possibly because of nullability attributes). -->
-    <NoWarn Condition="'$(TargetFramework)' == 'netstandard2.0'">$(NoWarn);8769;8767</NoWarn>
+    <!-- Warning  CS0436 -->
+    <NoWarn Condition="'$(TargetFramework)' == 'netstandard2.0'">$(NoWarn);CS8767;CS8769;0436</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

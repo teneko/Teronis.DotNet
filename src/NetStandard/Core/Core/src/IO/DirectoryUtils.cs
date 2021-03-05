@@ -10,21 +10,21 @@ namespace Teronis.IO
         /// </summary>
         public static DirectoryInfo? GetDirectoryOfPathAbove(DirectoryOfPathIsAboveDelegate isDirectoryOfPathAbove, DirectoryInfo beginningDirectory, bool includeBeginningDirectory = false)
         {
-            beginningDirectory = beginningDirectory ?? throw new ArgumentNullException(nameof(beginningDirectory));
+            var currentDirectory = beginningDirectory ?? throw new ArgumentNullException(nameof(beginningDirectory));
 
             if (!includeBeginningDirectory) {
-                beginningDirectory = beginningDirectory.Parent;
+                currentDirectory = currentDirectory.Parent;
             }
 
             for (; ; ) {
-                if (beginningDirectory == null) {
+                if (currentDirectory == null) {
                     return null;
                 }
 
-                if (isDirectoryOfPathAbove(beginningDirectory)) {
-                    return beginningDirectory;
+                if (isDirectoryOfPathAbove(currentDirectory)) {
+                    return currentDirectory;
                 } else {
-                    beginningDirectory = beginningDirectory.Parent;
+                    currentDirectory = currentDirectory.Parent;
                 }
             }
         }

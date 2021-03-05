@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 
 namespace Teronis.Linq.Expressions
@@ -17,17 +18,27 @@ namespace Teronis.Linq.Expressions
 
         protected HashCodeCalculatingExpressionVisitor() { }
 
-        private void AddToHash<T>(T hashableValue) =>
-            hashCode.Add(hashableValue);
-
-        private void addEnumerableToHash<T>(IEnumerable<T> enumerable)
+        private void AddToHash<T>([AllowNull] T hashableValue)
         {
+            if (hashableValue is null) {
+                return;
+            }
+
+            hashCode.Add(hashableValue);
+        }
+
+        private void addEnumerableToHash<T>(IEnumerable<T>? enumerable)
+        {
+            if (enumerable is null) {
+                return;
+            }
+
             foreach (var item in enumerable) {
                 AddToHash(item);
             }
         }
 
-        public override Expression Visit(Expression expression)
+        public override Expression Visit(Expression? expression)
         {
             if (expression == null) {
                 return expression!; // Might be the very first expression.
@@ -72,7 +83,7 @@ namespace Teronis.Linq.Expressions
 
         protected override Expression VisitConstant(ConstantExpression constant)
         {
-            AddToHash(constant?.Value);
+            AddToHash(constant.Value);
             return base.VisitConstant(constant);
         }
 
@@ -92,7 +103,7 @@ namespace Teronis.Linq.Expressions
 
         protected override Expression VisitNew(NewExpression @new)
         {
-            AddToHash(@new.Constructor.GetHashCode());
+            AddToHash(@new.Constructor);
             addEnumerableToHash(@new.Members);
             return base.VisitNew(@new);
         }

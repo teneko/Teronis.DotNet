@@ -19,6 +19,7 @@ namespace Teronis.AspNetCore.Identity.Bearer
 
             if (getRequiredService is null) {
                 services.AddScoped<BearerTokenStore<DbContextType, BearerTokenType>>();
+                getRequiredService = serviceProvider => serviceProvider.GetRequiredService<BearerTokenStore<DbContextType, BearerTokenType>>();
             } else {
                 services.AddScoped(getRequiredService);
             }

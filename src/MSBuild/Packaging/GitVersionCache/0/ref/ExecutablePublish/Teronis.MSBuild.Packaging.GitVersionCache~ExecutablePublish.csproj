@@ -29,4 +29,10 @@ in "outer" build.
 
   <Import Project="$(ShadowProjectReference)" />
 
+  <ItemGroup>
+    <PackageReference Update="Microsoft.Build.Utilities.Core" Version="16.9.0" />
+    <PackageReference Update="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+    <PackageReference Update="System.Text.Json" Version="5.0.1" />
+  </ItemGroup>
+
 </Project>

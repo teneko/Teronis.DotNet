@@ -33,7 +33,6 @@ namespace Teronis.Collections.Specialized
         /// Gets or sets the value associated with the specified key.
         /// </summary>
         /// <param name="key">The key associated with the value to get or set.</param>
-        [MaybeNull, AllowNull]
         public V this[K key] {
             get => GetValue(key);
             set => SetValue(key, value);
@@ -252,7 +251,6 @@ namespace Teronis.Collections.Specialized
         /// Gets the value associated with the specified key.
         /// </summary>
         /// <param name="key">The key associated with the value to get.</param>
-        [return: MaybeNull]
         public V GetValue(K key)
         {
             if (keyedCollection.Contains(key) == false) {
@@ -377,15 +375,15 @@ namespace Teronis.Collections.Specialized
         IDictionaryEnumerator IOrderedDictionary.GetEnumerator() =>
             new DictionaryEnumerator<K, V>(this);
 
-        void IOrderedDictionary.Insert(int index, object key, object value) =>
-            Insert(index, (K)key, (V)value);
+        void IOrderedDictionary.Insert(int index, object key, object? value) =>
+            Insert(index, (K)key, (V)value!);
 
         void IOrderedDictionary.RemoveAt(int index) =>
             RemoveAt(index);
 
-        object IOrderedDictionary.this[int index] {
+        object? IOrderedDictionary.this[int index] {
             get => this[index];
-            set => this[index] = (KeyValuePair<K, V>)value;
+            set => this[index] = (KeyValuePair<K, V>)value!;
         }
 
         #endregion

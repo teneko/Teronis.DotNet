@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Formatters;
-using Teronis.Extensions;
+using static Teronis.Utils.ICollectionGenericUtils;
 
 namespace Teronis.Mvc.ServiceResulting
 {
@@ -72,9 +72,9 @@ namespace Teronis.Mvc.ServiceResulting
 
         public ServiceResultDatransject DeepCopy()
         {
-            return new ServiceResultDatransject(Succeeded, Content, Errors is null ? null : new JsonErrors().AddItemRangeAndReturnList(Errors),
-                DeclaredType, Formatters is null ? null : new FormatterCollection<IOutputFormatter>().AddItemRangeAndReturnList(Formatters),
-                ContentTypes is null ? null : new MediaTypeCollection().AddItemRangeAndReturnList(ContentTypes), StatusCode);
+            return new ServiceResultDatransject(Succeeded, Content, Errors is null ? null : AddItemRangeAndReturnList(new JsonErrors(), Errors),
+                DeclaredType, Formatters is null ? null : AddItemRangeAndReturnList(new FormatterCollection<IOutputFormatter>(), Formatters),
+                ContentTypes is null ? null : AddItemRangeAndReturnList(new MediaTypeCollection(), ContentTypes), StatusCode);
         }
     }
 }

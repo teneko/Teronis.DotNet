@@ -50,8 +50,12 @@ namespace Teronis.Linq.Expressions
                 Expressions = new Queue<Expression>();
             }
 
-            public override Expression Visit(Expression node)
+            public override Expression? Visit(Expression? node)
             {
+                if (node is null) {
+                    return null;
+                }
+
                 Expressions.Enqueue(node);
                 return base.Visit(node);
             }

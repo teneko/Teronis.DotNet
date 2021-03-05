@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 namespace Teronis.Collections.ObjectModel
 {
     public class SortableKeyCollection<KeyType, ItemType> : KeyedCollection<KeyType, ItemType>
+        where KeyType : notnull
     {
         private const string DelegateIsNullErrorMessage = "Delegate passed cannot be null.";
 

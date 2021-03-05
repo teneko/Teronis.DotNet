@@ -36,7 +36,9 @@ namespace Teronis.AspNetCore.Identity.Bearer
         /// and then look in the database. If a refresh token has been found, it will be returned.
         /// </summary>
         /// <exception cref="BearerSignInException" />
-        public static async Task<BearerTokenType> FindRefreshTokenAsync<BearerTokenType>(IBearerTokenStore<BearerTokenType> refreshTokenStore, ClaimsPrincipal principal, ILogger? logger = null)
+        public static async Task<BearerTokenType> FindRefreshTokenAsync<BearerTokenType>(
+            IBearerTokenStore<BearerTokenType> refreshTokenStore, 
+            ClaimsPrincipal principal)
             where BearerTokenType : class, IBearerTokenEntity
         {
             principal = principal ?? throw new ArgumentNullException(nameof(principal));

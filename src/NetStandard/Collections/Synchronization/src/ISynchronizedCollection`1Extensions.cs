@@ -8,12 +8,14 @@ namespace Teronis.Collections.Synchronization
         public static SynchronizedDictionary<KeyType, ItemType> CreateSynchronizedDictionary<ItemType, KeyType>(
             this ISynchronizedCollection<ItemType> collection,
             Func<ItemType, KeyType> getItemKey,
-            IEqualityComparer<KeyType> keyEqualityComparer) =>
+            IEqualityComparer<KeyType> keyEqualityComparer)
+            where KeyType : notnull =>
             new SynchronizedDictionary<KeyType, ItemType>(collection, getItemKey, keyEqualityComparer);
 
         public static SynchronizedDictionary<KeyType, ItemType> CreateSynchronizedDictionary<ItemType, KeyType>(
             this ISynchronizedCollection<ItemType> collection,
-            Func<ItemType, KeyType> getItemKey) =>
+            Func<ItemType, KeyType> getItemKey)
+            where KeyType : notnull =>
             new SynchronizedDictionary<KeyType, ItemType>(collection, getItemKey);
     }
 }

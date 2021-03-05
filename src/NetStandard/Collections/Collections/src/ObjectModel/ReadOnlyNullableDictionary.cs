@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Teronis.Collections.Generic;
 
 namespace Teronis.Collections.ObjectModel
@@ -22,22 +23,22 @@ namespace Teronis.Collections.ObjectModel
 
         private INullableKeyDictionary<KeyType, ValueType> dictionary;
 
-        public ReadOnlyNullableDictionary(INullableKeyDictionary<KeyType, ValueType> dictionary) => 
+        public ReadOnlyNullableDictionary(INullableKeyDictionary<KeyType, ValueType> dictionary) =>
             this.dictionary = dictionary;
 
-        public bool ContainsKey(YetNullable<KeyType> key) => 
+        public bool ContainsKey(YetNullable<KeyType> key) =>
             ((IReadOnlyNullableKeyDictionary<KeyType, ValueType>)dictionary).ContainsKey(key);
 
-        public bool TryGetValue(YetNullable<KeyType> key, out ValueType value) => 
+        public bool TryGetValue(YetNullable<KeyType> key, [MaybeNullWhen(false)] out ValueType value) =>
             ((IReadOnlyNullableKeyDictionary<KeyType, ValueType>)dictionary).TryGetValue(key, out value);
 
-        public bool ContainsKey(KeyType key) => 
+        public bool ContainsKey(KeyType key) =>
             ((IReadOnlyDictionary<KeyType, ValueType>)dictionary).ContainsKey(key);
 
-        public bool TryGetValue(KeyType key, out ValueType value) => 
+        public bool TryGetValue(KeyType key, [MaybeNullWhen(false)] out ValueType value) =>
             ((IReadOnlyDictionary<KeyType, ValueType>)dictionary).TryGetValue(key, out value);
 
-        public ValueType this[KeyType key] => 
+        public ValueType this[KeyType key] =>
             ((IReadOnlyDictionary<KeyType, ValueType>)dictionary)[key];
 
         public IEnumerator<KeyValuePair<YetNullable<KeyType>, ValueType>> GetEnumerator() =>

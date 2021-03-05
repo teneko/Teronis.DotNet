@@ -15,8 +15,8 @@ namespace Teronis.AspNetCore.Identity.Authentication.Utils
             where UserType : class, IBearerUserEntity
         {
             var logger = context.HttpContext.RequestServices.GetService<ILoggerFactory>()?.CreateLogger(nameof(BasicAuthenticationEventsUtils));
-            var userManager = (UserManager<UserType>)context.HttpContext.RequestServices.GetService(typeof(UserManager<UserEntity>));
-            var signInManager = (SignInManager<UserType>)context.HttpContext.RequestServices.GetService(typeof(SignInManager<UserEntity>));
+            var userManager = (UserManager<UserType>)context.HttpContext.RequestServices.GetRequiredService(typeof(UserManager<UserEntity>));
+            var signInManager = (SignInManager<UserType>)context.HttpContext.RequestServices.GetRequiredService(typeof(SignInManager<UserEntity>));
             var userEntity = await userManager.FindByNameAsync(context.UserName);
 
             if (userEntity is null) {

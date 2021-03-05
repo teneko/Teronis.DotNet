@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using Teronis.Extensions;
 using Teronis.Mvc.JsonProblemDetails.Mappers;
 using Teronis.Mvc.JsonProblemDetails.MappableObjectResolvers;
 using Teronis.Mvc.JsonProblemDetails.Reflection;
@@ -38,7 +37,7 @@ namespace Teronis.Mvc.JsonProblemDetails
             return alternativeStatusCode;
         }
 
-        private bool tryCreateResult(MapperConstructorArea area, HttpContext httpContext, IEnumerable<ServiceDescriptor>? serviceDescriptors, object? mappableObject,
+        private bool tryCreateResult(MapperConstructorArea area, HttpContext httpContext, IEnumerable<ServiceDescriptor> serviceDescriptors, object? mappableObject,
             [MaybeNullWhen(false)] out ProblemDetailsResult result, int? comparableStatusCode = null)
         {
             var mappableObjectType = mappableObject?.GetType();

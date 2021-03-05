@@ -20,7 +20,7 @@ namespace Teronis.AspNetCore.Identity.Bearer.Controllers
         {
             var routes = actionDescriptorCollectionProvider.ActionDescriptors.Items.Where(
                 ad => ad.AttributeRouteInfo != null).Select(ad => new RouteModel {
-                    Name = ad.AttributeRouteInfo.Template,
+                    Name = ad.AttributeRouteInfo?.Template ?? string.Empty,
                     Method = ad.ActionConstraints?.OfType<HttpMethodActionConstraint>().FirstOrDefault()?.HttpMethods.First(),
                 }).ToList();
 

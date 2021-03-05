@@ -17,12 +17,12 @@ namespace Teronis.Mvc.Hosting
             var assembliesString = Environment.GetEnvironmentVariable(environmentVariableName, EnvironmentVariableTarget.Process) ?? string.Empty;
             var splitedAssemblies = assembliesString.Split(';').Where(x => x != null && x != string.Empty);
             var joinedAssembliesBuilder = new StringBuilder();
-            var stringSeparater = new StringSeparationHelper(";");
+            var stringSeparater = new StringSeparator(";");
 
             void appendAssembly(string assembly)
             {
                 joinedAssembliesBuilder.Append(assembly);
-                stringSeparater.SetStringSeparator(joinedAssembliesBuilder);
+                stringSeparater.SetSeparator(joinedAssembliesBuilder);
             }
 
             foreach (var splittedAssembly in splitedAssemblies) {

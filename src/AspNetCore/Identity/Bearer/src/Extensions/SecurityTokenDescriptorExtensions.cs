@@ -17,7 +17,7 @@ namespace Teronis.AspNetCore.Identity.Extensions
                 return;
             }
 
-            var claims = tokenDescriptor.Claims?.Select(x => new Claim(x.Key, x.Value.ToString()));
+            var claims = tokenDescriptor.Claims?.Select(x => new Claim(x.Key, x.Value?.ToString() ?? string.Empty));
             // Cache it because it will get overridden.
             var subject = tokenDescriptor.Subject;
 

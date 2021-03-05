@@ -20,7 +20,7 @@ namespace Teronis.Extensions
         {
             var colCookies = new CookieCollection();
 
-            foreach (Cookie? cookie in cookies) {
+            foreach (Cookie cookie in (IEnumerable<Cookie>)cookies) {
                 colCookies.Add(cookie);
             }
 
@@ -33,7 +33,7 @@ namespace Teronis.Extensions
             sephoCookies.Wait();
 
             try {
-                foreach (Cookie? cookie in cookies) {
+                foreach (Cookie cookie in (IEnumerable<Cookie>)cookies) {
                     colCookies.Add(cookie);
                 }
             } finally {
@@ -48,8 +48,9 @@ namespace Teronis.Extensions
             var colCookies = new CookieCollection();
 
             await sephoCookies.WaitAsync();
+
             try {
-                foreach (Cookie? cookie in cookies) {
+                foreach (Cookie cookie in (IEnumerable<Cookie>)cookies) {
                     colCookies.Add(cookie);
                 }
             } finally {

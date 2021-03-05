@@ -9,6 +9,9 @@ namespace Teronis.Collections.ObjectModel
     {
         public virtual bool IsSynchronized => false;
 
+        public int Count =>
+            readOnlyList.Count;
+
         private readonly IReadOnlyList<ItemType> readOnlyList;
 
         private object? syncRoot;
@@ -16,11 +19,11 @@ namespace Teronis.Collections.ObjectModel
         public ReadOnlyList(IReadOnlyList<ItemType> readOnlyList) =>
             this.readOnlyList = readOnlyList;
 
-        public ItemType this[int index] => readOnlyList[index];
+        public ItemType this[int index] => 
+            readOnlyList[index];
 
-        public int Count => readOnlyList.Count;
-
-        public IEnumerator<ItemType> GetEnumerator() => readOnlyList.GetEnumerator();
+        public IEnumerator<ItemType> GetEnumerator() => 
+            readOnlyList.GetEnumerator();
 
         #region IEnumerable
 
@@ -76,12 +79,12 @@ namespace Teronis.Collections.ObjectModel
             set => throw new NotSupportedException();
         }
 
-        int IList.Add(object value) => throw new NotSupportedException();
+        int IList.Add(object? value) => throw new NotSupportedException();
         void IList.Clear() => throw new NotSupportedException();
-        bool IList.Contains(object value) => ((IList<ItemType>)this).Contains((ItemType)value);
-        int IList.IndexOf(object value) => ((IList<ItemType>)this).IndexOf((ItemType)value);
-        void IList.Insert(int index, object value) => throw new NotSupportedException();
-        void IList.Remove(object value) => throw new NotSupportedException();
+        bool IList.Contains(object? value) => readOnlyList.Contains((ItemType)value);
+        int IList.IndexOf(object? value) => throw new NotSupportedException();
+        void IList.Insert(int index, object? value) => throw new NotSupportedException();
+        void IList.Remove(object? value) => throw new NotSupportedException();
         void IList.RemoveAt(int index) => throw new NotSupportedException();
 
         void ICollection.CopyTo(Array array, int arrayIndex)

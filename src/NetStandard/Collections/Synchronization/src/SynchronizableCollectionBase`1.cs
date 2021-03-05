@@ -11,12 +11,12 @@ namespace Teronis.Collections.Synchronization
 {
     public abstract class SynchronizableCollectionBase<ItemType, NewItemType> : Collection<ItemType>, ISynchronizedCollection<ItemType>, INotifyPropertyChanged, INotifyPropertyChanging
     {
-        public event PropertyChangedEventHandler PropertyChanged {
+        public event PropertyChangedEventHandler? PropertyChanged {
             add => ((INotifyPropertyChanged)PropertyNotificationComponent).PropertyChanged += value;
             remove => ((INotifyPropertyChanged)PropertyNotificationComponent).PropertyChanged -= value;
         }
 
-        public event PropertyChangingEventHandler PropertyChanging {
+        public event PropertyChangingEventHandler? PropertyChanging {
             add => ((INotifyPropertyChanging)PropertyNotificationComponent).PropertyChanging += value;
             remove => ((INotifyPropertyChanging)PropertyNotificationComponent).PropertyChanging -= value;
         }
@@ -168,10 +168,12 @@ namespace Teronis.Collections.Synchronization
         protected void InvokeCollectionSynchronized() =>
             CollectionSynchronized?.Invoke(this, new EventArgs());
 
-        public SynchronizedDictionary<KeyType, ItemType> CreateSynchronizedDictionary<KeyType>(Func<ItemType, KeyType> getItemKey, IEqualityComparer<KeyType> keyEqualityComparer) =>
+        public SynchronizedDictionary<KeyType, ItemType> CreateSynchronizedDictionary<KeyType>(Func<ItemType, KeyType> getItemKey, IEqualityComparer<KeyType> keyEqualityComparer)
+            where KeyType : notnull =>
             new SynchronizedDictionary<KeyType, ItemType>(this, getItemKey, keyEqualityComparer);
 
-        public SynchronizedDictionary<KeyType, ItemType> CreateSynchronizedDictionary<KeyType>(Func<ItemType, KeyType> getItemKey) =>
+        public SynchronizedDictionary<KeyType, ItemType> CreateSynchronizedDictionary<KeyType>(Func<ItemType, KeyType> getItemKey)
+            where KeyType : notnull =>
             new SynchronizedDictionary<KeyType, ItemType>(this, getItemKey);
     }
 }

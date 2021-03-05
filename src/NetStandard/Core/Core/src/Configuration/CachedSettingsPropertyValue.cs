@@ -169,10 +169,10 @@ namespace Teronis.Configuration
             }
         }
 
-        private void SettingsPropertyNotifier_Changed(object sender, PropertyChangedEventArgs e)
+        private void SettingsPropertyNotifier_Changed(object? sender, PropertyChangedEventArgs e)
             => recalculateIsCopySynchronous();
 
-        private void SettingsPropertyCollectionNotifier_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void SettingsPropertyCollectionNotifier_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
             => recalculateIsCopySynchronous();
 
         private void propertyChangedCache_PropertyCacheRemoved(PropertyType settingsProperty)

@@ -6,7 +6,7 @@ namespace Teronis.Collections.Synchronization.Example1.Models
     {
         public new static readonly DeviceHeaderEntityEqualityComparer Default = new DeviceHeaderEntityEqualityComparer();
 
-        public override bool Equals(DeviceHeaderEntity x, DeviceHeaderEntity y)
+        public override bool Equals(DeviceHeaderEntity? x, DeviceHeaderEntity? y)
         {
             if (x == null && y == null) {
                 return true;

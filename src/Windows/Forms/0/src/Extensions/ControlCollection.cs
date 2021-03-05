@@ -10,8 +10,12 @@ namespace Teronis.Windows.Forms.Extensions
         // for ControlCollection
         public static bool Swap(this Control.ControlCollection source, int fromIndex, int toIndex)
         {
-            void insertAtCallback(int index, object item)
+            void insertAtCallback(int index, object? item)
             {
+                if (item is null) {
+                    throw new ArgumentNullException(nameof(item));
+                }
+
                 source.Add((Control)item);
                 source.SetChildIndex((Control)item, index);
             }
@@ -19,14 +23,14 @@ namespace Teronis.Windows.Forms.Extensions
             return source.Swap(fromIndex, toIndex, insertAtCallback);
         }
 
-        public static void Shift<T>(this Control.ControlCollection source, T from, T to, Func<T, bool> isItemMovable, Action<int, int> fromIndexToIndexAction = null, Action<T, T> fromToAction = null) where T : Control
+        public static void Shift<T>(this Control.ControlCollection source, T from, T to, Func<T, bool> isItemMovable, Action<int, int>? fromIndexToIndexAction = null, Action<T, T>? fromToAction = null) where T : Control
         {
             var fromIndex = source.IndexOf(from);
             var toIndex = source.IndexOf(to);
             source.Shift(fromIndex, toIndex, isItemMovable, fromIndexToIndexAction, fromToAction);
         }
 
-        public static void Shift<T>(this Control.ControlCollection source, int fromIndex, int toIndex, Func<T, bool> isItemMovable, Action<int, int> fromIndex_ToIndexCallback = null, Action<T, T> from_ToCallback = null) where T : Control
+        public static void Shift<T>(this Control.ControlCollection source, int fromIndex, int toIndex, Func<T, bool> isItemMovable, Action<int, int>? fromIndex_ToIndexCallback = null, Action<T, T>? from_ToCallback = null) where T : Control
         {
             if (isItemMovable((T)source[fromIndex]) && isItemMovable((T)source[toIndex])) {
                 var ascend = fromIndex < toIndex;

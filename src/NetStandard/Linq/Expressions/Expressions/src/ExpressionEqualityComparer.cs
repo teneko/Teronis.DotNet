@@ -21,7 +21,7 @@ namespace Teronis.Linq.Expressions
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns>True if both expressions are equal.</returns>
-        public override bool Equals(Expression x, Expression y) =>
+        public override bool Equals(Expression? x, Expression? y) =>
             EqualityComparingExpressionVisitor.CheckEquality(x, y);
 
         /// <summary>

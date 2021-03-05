@@ -9,12 +9,12 @@ namespace Teronis.Windows.Drawing
     public class Area
     {
         /* TODO: reimplement */
-        public static Area CreateArea([Optional] int? nX, [Optional] int? nY, [Optional] int? nWidth, [Optional] int? nHeight, [Optional] int? nYHeight, [Optional] int? nXWidth, [Optional] Rectangle? nRect, [Optional] bool nEllipse, [Optional] IList<Point> nPolygon)
+        public static Area CreateArea([Optional] int? nX, [Optional] int? nY, [Optional] int? nWidth, [Optional] int? nHeight, [Optional] int? nYHeight, [Optional] int? nXWidth, [Optional] Rectangle? nRect, [Optional] bool nEllipse, [Optional] IList<Point>? nPolygon)
         {
             return new Area() { nX = nX, nY = nY, nWidth = nWidth, nHeight = nHeight, nYHeight = nYHeight, nXWidth = nXWidth, nRect = nRect, nEllipse = nEllipse, nPolygon = nPolygon };
         }
 
-        public static void VerifyValues(ISnapshot snapshot, ref int? nX, ref int? nY, ref int? nWidth, ref int? nHeight, RectangleF? nRect, bool nEllipse, IList<Point> nPolygon, ECancelScanIteration cancelScanIteration, ref bool precalculated, ref int? nYHeight, ref int? nXWidth)
+        public static void VerifyValues(ISnapshot snapshot, ref int? nX, ref int? nY, ref int? nWidth, ref int? nHeight, RectangleF? nRect, bool nEllipse, IList<Point>? nPolygon, ECancelScanIteration cancelScanIteration, ref bool precalculated, ref int? nYHeight, ref int? nXWidth)
         {
             if (!precalculated) {
                 precalculated = true;
@@ -24,7 +24,7 @@ namespace Teronis.Windows.Drawing
                 } else if (nPolygon != null && nEllipse) {
                     throw new ArgumentException("It is not supported to extract a circle of a polygon.", nameof(nEllipse));
                 } else if ((nRect ??= nPolygon?.GetBounds()) != null) { // fill base data
-                    nX = (int)nRect.Value.X;
+                    nX = (int)nRect!.Value.X;
                     nY = (int)nRect.Value.Y;
                     nWidth = (int)nRect.Value.Width;
                     nHeight = (int)nRect.Value.Height;
@@ -88,7 +88,7 @@ namespace Teronis.Windows.Drawing
         public int? nYHeight;
         public Rectangle? nRect;
         public bool nEllipse;
-        public IList<Point> nPolygon;
+        public IList<Point>? nPolygon;
         public bool precalculated;
         public ECancelScanIteration cancelScanIteration;
 

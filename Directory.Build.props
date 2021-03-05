@@ -15,9 +15,9 @@
     <LangVersion Condition="'$(LangVersion)' == ''">8.0</LangVersion>
   </PropertyGroup>
 
-  <ItemGroup>
+  <!-- <ItemGroup>
 	  <Compile Include="$(MSBuildThisFileDirectory)/Nullable.cs" />
-  </ItemGroup>
+  </ItemGroup> -->
 
   <PropertyGroup>
     <Authors Condition="'$(Authors)' == ''">Teroneko</Authors>

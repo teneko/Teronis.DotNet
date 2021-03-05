@@ -10,7 +10,7 @@ namespace Teronis.Linq.Expressions
         public EqualityComparingExpressionReplacerVisitor(IReadOnlyCollection<ExpressionMapping> expressionMappings) =>
             this.expressionMappings = expressionMappings;
 
-        public override Expression Visit(Expression node)
+        public override Expression Visit(Expression? node)
         {
             if (node is null || expressionMappings.Count == 0) {
                 return node!;

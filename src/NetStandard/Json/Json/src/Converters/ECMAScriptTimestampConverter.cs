@@ -37,7 +37,7 @@ namespace Teronis.Json.Converters
                     } else {
                         throw new ArgumentException("Value is not a ECMAScript valid time value");
                     }
-                } catch (Exception error) {
+                } catch (Exception) {
                     if (IsExceptionUnwanted) {
                         if (isObjectTypeNullable) {
                             return null;
@@ -45,7 +45,7 @@ namespace Teronis.Json.Converters
                             return new DateTime();
                         }
                     } else {
-                        throw error;
+                        throw;
                     }
                 }
             }

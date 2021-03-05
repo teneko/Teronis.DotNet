@@ -4,6 +4,7 @@
     <TargetFrameworks>netcoreapp3.1;net5.0-windows</TargetFrameworks>
     <RootNamespace>Teronis.Windows</RootNamespace>
     <Description>A collection of utilities, extensions, classes and platform invokes for the Windows platform.</Description>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup>

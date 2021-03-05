@@ -721,7 +721,7 @@ namespace Teronis.Windows
         {
             GCHandle gcChildhandlesList = GCHandle.FromIntPtr(lParam);
 
-            if (gcChildhandlesList == null || gcChildhandlesList.Target == null) {
+            if (gcChildhandlesList == default || gcChildhandlesList.Target == null) {
                 return false;
             }
 

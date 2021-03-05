@@ -22,7 +22,7 @@ namespace Teronis.Linq.Expressions
                 visitor.stopVisitation();
             }
 
-            return visitor.AreExpressionsEqual;
+            return !visitor.IsVisitationStopped;
         }
 
         /// <summary>
@@ -31,8 +31,16 @@ namespace Teronis.Linq.Expressions
         /// <param name="x">The expression that will be unwinded.</param>
         /// <param name="y">The expression that is used for visitation.</param>
         /// <returns>True of <paramref name="x"/> and <paramref name="y"/> are equal.</returns>
-        public static bool CheckEquality(Expression x, Expression y)
+        public static bool CheckEquality(Expression? x, Expression? y)
         {
+            if (ReferenceEquals(x, y)) {
+                return true;
+            }
+
+            if (x is null || y is null) {
+                return false;
+            }
+
             var visitor = new EqualityComparingExpressionVisitor(x);
             return CheckEquality(visitor, y);
         }
@@ -43,16 +51,16 @@ namespace Teronis.Linq.Expressions
         /// </summary>
         protected Expression? CurrentUnwindedExpression { get; private set; }
 
-        public bool AreExpressionsEqual { get; private set; }
+        /// <summary>
+        /// True if one expression in expression tree was not equal.
+        /// </summary>
+        public bool IsVisitationStopped { get; private set; }
 
-        protected EqualityComparingExpressionVisitor(Expression expression)
-        {
-            AreExpressionsEqual = true;
+        protected EqualityComparingExpressionVisitor(Expression expression) =>
             unwindedExpressions = new UnwindedExpressionQueue(expression);
-        }
 
         private void stopVisitation() =>
-            AreExpressionsEqual = false;
+            IsVisitationStopped = true;
 
         private Expression? peekNextUnwindedExpression()
         {
@@ -66,80 +74,91 @@ namespace Teronis.Linq.Expressions
         private Expression popCurrentUnwindedExpression() =>
             unwindedExpressions.Dequeue();
 
-        private bool checkEqual<T>(T expression, T otherExpression)
+        private bool stopVisitationWhenNotEqual<T>(T expression, T otherExpression)
         {
             if (!EqualityComparer<T>.Default.Equals(expression, otherExpression)) {
                 stopVisitation();
-                return false;
+                return true;
             }
 
-            return true;
+            return false;
         }
 
-        private bool checkSameType(Expression expression, Expression otherExpression)
+        private bool stopVisitationWhenNotSameType(Expression expression, Expression otherExpression)
         {
-            if (!checkEqual(expression.NodeType, otherExpression.NodeType)) {
-                return false;
-            } else if (!checkEqual(expression.Type, otherExpression.Type)) {
-                return false;
+            if (stopVisitationWhenNotEqual(expression.NodeType, otherExpression.NodeType)) {
+                return true;
+            } else if (stopVisitationWhenNotEqual(expression.Type, otherExpression.Type)) {
+                return true;
             }
 
-            return true;
+            return false;
         }
 
-        private void compareList<T>(ReadOnlyCollection<T> collection, ReadOnlyCollection<T> otherCollection, Func<T, T, bool> comparer)
+        private void stopVisitationWhenNotEqual<T>(ReadOnlyCollection<T>? collection, ReadOnlyCollection<T>? otherCollection, Func<T, T, bool> comparer)
         {
-            if (!checkSameLength(collection, otherCollection)) {
+            if (stopVisitationWhenNotSameLength(collection, otherCollection)) {
                 return;
             }
 
-            for (int i = 0; i < collection.Count; i++) {
-                if (!comparer(collection[i], otherCollection[i])) {
+            for (int i = 0; i < collection!.Count; i++) {
+                if (!comparer(collection[i], otherCollection![i])) {
                     stopVisitation();
                     return;
                 }
             }
         }
 
-        private void compareList<T>(ReadOnlyCollection<T> collection, ReadOnlyCollection<T> otherCollection) =>
-            compareList(collection, otherCollection, (item, currentUnwindedExpression) =>
+        private void stopVisitationWhenNotEqual<T>(ReadOnlyCollection<T>? collection, ReadOnlyCollection<T>? otherCollection) =>
+            stopVisitationWhenNotEqual(collection, otherCollection, (item, currentUnwindedExpression) =>
                 EqualityComparer<T>.Default.Equals(item, currentUnwindedExpression));
 
-        private bool checkSameLength<T>(ReadOnlyCollection<T> collection, ReadOnlyCollection<T> otherCollection) =>
-            checkEqual(collection.Count, otherCollection.Count);
-
-        private bool checkNotNull<T>([AllowNull] T value)
+        private bool stopVisitationWhenNotSameLength<T>(ReadOnlyCollection<T>? collection, ReadOnlyCollection<T>? otherCollection)
         {
-            if (value is null) {
-                stopVisitation();
+            if (ReferenceEquals(collection, otherCollection)) {
                 return false;
             }
 
-            return true;
+            if (collection is null || otherCollection is null) {
+                stopVisitation();
+                return true;
+            }
+
+            return stopVisitationWhenNotEqual(collection.Count, otherCollection.Count);
+        }
+
+        private bool stopVisitationWhenNotNull<T>([AllowNull] T value)
+        {
+            if (value is null) {
+                stopVisitation();
+                return true;
+            }
+
+            return false;
         }
 
         protected T CurrentUnwindedExpressionCastTo<T>(T _)
                 where T : Expression =>
                 (T)CurrentUnwindedExpression!;
 
-        public override Expression Visit(Expression expression)
+        public override Expression Visit(Expression? expression)
         {
             if (expression == null) {
                 // Very first expression might be null.
                 return expression!;
             }
 
-            if (!AreExpressionsEqual) {
+            if (IsVisitationStopped) {
                 return expression;
             }
 
             CurrentUnwindedExpression = peekNextUnwindedExpression();
 
-            if (!checkNotNull(CurrentUnwindedExpression)) {
+            if (stopVisitationWhenNotNull(CurrentUnwindedExpression)) {
                 return expression;
             }
 
-            if (!checkSameType(CurrentUnwindedExpression!, expression)) {
+            if (stopVisitationWhenNotSameType(CurrentUnwindedExpression!, expression)) {
                 return expression;
             }
 
@@ -151,7 +170,7 @@ namespace Teronis.Linq.Expressions
         {
             var currentUnwindedExpression = CurrentUnwindedExpressionCastTo(constant);
 
-            if (!checkEqual(constant.Value, currentUnwindedExpression.Value)) {
+            if (stopVisitationWhenNotEqual(constant.Value, currentUnwindedExpression.Value)) {
                 return constant;
             }
 
@@ -162,7 +181,7 @@ namespace Teronis.Linq.Expressions
         {
             var currentUnwindedExpression = CurrentUnwindedExpressionCastTo(member);
 
-            if (!checkEqual(member.Member, currentUnwindedExpression.Member)) {
+            if (stopVisitationWhenNotEqual(member.Member, currentUnwindedExpression.Member)) {
                 return member;
             }
 
@@ -173,7 +192,7 @@ namespace Teronis.Linq.Expressions
         {
             var currentUnwindedExpression = CurrentUnwindedExpressionCastTo(methodCall);
 
-            if (!checkEqual(methodCall.Method, currentUnwindedExpression.Method)) {
+            if (stopVisitationWhenNotEqual(methodCall.Method, currentUnwindedExpression.Method)) {
                 return methodCall;
             }
 
@@ -184,7 +203,7 @@ namespace Teronis.Linq.Expressions
         {
             var currentUnwindedExpression = CurrentUnwindedExpressionCastTo(parameter);
 
-            if (!checkEqual(parameter.Name, currentUnwindedExpression.Name)) {
+            if (stopVisitationWhenNotEqual(parameter.Name, currentUnwindedExpression.Name)) {
                 return parameter;
             }
 
@@ -195,7 +214,7 @@ namespace Teronis.Linq.Expressions
         {
             var currentUnwindedExpression = CurrentUnwindedExpressionCastTo(type);
 
-            if (!checkEqual(type.TypeOperand, currentUnwindedExpression.TypeOperand)) {
+            if (stopVisitationWhenNotEqual(type.TypeOperand, currentUnwindedExpression.TypeOperand)) {
                 return type;
             }
 
@@ -206,12 +225,12 @@ namespace Teronis.Linq.Expressions
         {
             var currentUnwindedExpression = CurrentUnwindedExpressionCastTo(binary);
 
-            if (!checkEqual(binary.Method, currentUnwindedExpression.Method)) {
+            if (stopVisitationWhenNotEqual(binary.Method, currentUnwindedExpression.Method)) {
                 return binary;
-            } else if (!checkEqual(binary.IsLifted, currentUnwindedExpression.IsLifted)) {
+            } else if (stopVisitationWhenNotEqual(binary.IsLifted, currentUnwindedExpression.IsLifted)) {
                 return binary;
-            } else if (!checkEqual(binary.IsLiftedToNull, currentUnwindedExpression.IsLiftedToNull)) {
-                return binary!;
+            } else if (stopVisitationWhenNotEqual(binary.IsLiftedToNull, currentUnwindedExpression.IsLiftedToNull)) {
+                return binary;
             }
 
             return base.VisitBinary(binary);
@@ -221,15 +240,15 @@ namespace Teronis.Linq.Expressions
         {
             var currentUnwindedExpression = CurrentUnwindedExpressionCastTo(unary);
 
-            if (!checkEqual(unary.Method, currentUnwindedExpression.Method)) {
+            if (stopVisitationWhenNotEqual(unary.Method, currentUnwindedExpression.Method)) {
                 return unary;
             }
 
-            if (!checkEqual(unary.IsLifted, currentUnwindedExpression.IsLifted)) {
+            if (stopVisitationWhenNotEqual(unary.IsLifted, currentUnwindedExpression.IsLifted)) {
                 return unary;
             }
 
-            if (!checkEqual(unary.IsLiftedToNull, currentUnwindedExpression.IsLiftedToNull)) {
+            if (stopVisitationWhenNotEqual(unary.IsLiftedToNull, currentUnwindedExpression.IsLiftedToNull)) {
                 return unary;
             }
 
@@ -240,11 +259,11 @@ namespace Teronis.Linq.Expressions
         {
             var currentUnwindedExpression = CurrentUnwindedExpressionCastTo(@new);
 
-            if (!checkEqual(@new.Constructor, currentUnwindedExpression.Constructor)) {
+            if (stopVisitationWhenNotEqual(@new.Constructor, currentUnwindedExpression.Constructor)) {
                 return @new;
             }
 
-            compareList(@new.Members, currentUnwindedExpression.Members);
+            stopVisitationWhenNotEqual(@new.Members, currentUnwindedExpression.Members);
             return base.VisitNew(@new);
         }
     }

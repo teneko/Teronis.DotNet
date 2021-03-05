@@ -17,10 +17,10 @@ namespace Teronis.GitVersion.CommandLine
             return gitVersionExecutablePath;
         }
 
-        public static string ExecuteGitVersion(string? args = null, bool echoCommand = false, string? commandEchoPrefix = null, Action<string>? errorReceived = null) =>
+        public static string ExecuteGitVersion(string? args = null, bool echoCommand = false, string? commandEchoPrefix = null, Action<string?>? errorReceived = null) =>
             SimpleProcess.Read(evaluateGitVersionExecutablePath(), args, echoCommand, commandEchoPrefix, errorReceived);
 
-        public static ValueTask<string> ExecuteGitVersionAsync(string? args = null, bool echoCommand = false, string? commandEchoPrefix = null, Action<string>? errorReceived = null) =>
+        public static ValueTask<string> ExecuteGitVersionAsync(string? args = null, bool echoCommand = false, string? commandEchoPrefix = null, Action<string?>? errorReceived = null) =>
             SimpleProcess.ReadAsync(evaluateGitVersionExecutablePath(), args, echoCommand, commandEchoPrefix, errorReceived);
     }
 }

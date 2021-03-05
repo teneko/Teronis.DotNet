@@ -33,7 +33,7 @@ namespace Teronis.Collections.Generic
         public override string ToString()
         {
             StringBuilder stringBuilder = new StringBuilder();
-            var stringSeparationHelper = new StringSeparationHelper(", ");
+            var stringSeparationHelper = new StringSeparator(", ");
             stringBuilder.Append('[');
 
             foreach (var orderedKey in ((IOrderedKeysProvider)this).GetOrderedKeys()) {
@@ -41,7 +41,7 @@ namespace Teronis.Collections.Generic
                     stringBuilder.Append(orderedKey.ToString());
                 }
 
-                stringSeparationHelper.SetStringSeparator(stringBuilder);
+                stringSeparationHelper.SetSeparator(stringBuilder);
             }
 
             stringBuilder.Append("]");

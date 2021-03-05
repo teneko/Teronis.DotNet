@@ -13,8 +13,8 @@ namespace Teronis.Diagnostics
             string name,
             string? args,
             string? commandEchoPrefix,
-            Action<string>? outputReceived,
-            Action<string>? errorReceived,
+            Action<string?>? outputReceived,
+            Action<string?>? errorReceived,
             out Action dettachHandlers,
             out Func<NonZeroExitCodeException> createNonZeroExitCodeException)
         {
@@ -47,7 +47,7 @@ namespace Teronis.Diagnostics
 
             process.Exited += onExited;
 
-            void onOutputDataReceived(object sender, DataReceivedEventArgs e) =>
+            void onOutputDataReceived(object? sender, DataReceivedEventArgs e) =>
                 outputReceived?.Invoke(e.Data);
 
             if (outputReceived != null) {
@@ -56,7 +56,7 @@ namespace Teronis.Diagnostics
 
             var errorMessageBuilder = new StringBuilder();
 
-            void onErrorDataReceived(object sender, DataReceivedEventArgs e)
+            void onErrorDataReceived(object? sender, DataReceivedEventArgs e)
             {
                 errorMessageBuilder.Append(e.Data);
                 errorReceived?.Invoke(e.Data);
@@ -85,8 +85,8 @@ namespace Teronis.Diagnostics
             string? args = null,
             bool echoCommand = false,
             string? commandEchoPrefix = null,
-            Action<string>? outputReceived = null,
-            Action<string>? errorReceived = null)
+            Action<string?>? outputReceived = null,
+            Action<string?>? errorReceived = null)
         {
             var process = prepareProcess(
                 name,
@@ -117,11 +117,11 @@ namespace Teronis.Diagnostics
             string? args,
             bool echoCommand,
             string? commandEchoPrefix,
-            Action<string>? errorReceived)
+            Action<string?>? errorReceived)
         {
             var output = new StringBuilder();
 
-            void onOutputReceived(string receivedOutput)
+            void onOutputReceived(string? receivedOutput)
             {
                 output.Append(receivedOutput);
             }
@@ -147,7 +147,7 @@ namespace Teronis.Diagnostics
             string? args = null,
             bool echoCommand = false,
             string? commandEchoPrefix = null,
-            Action<string>? errorReceived = null) =>
+            Action<string?>? errorReceived = null) =>
             /// We can grab for <see cref="ValueTask{string}.Result"/> safely.
             readAsyncOrNot(
                 readAsync: false, 
@@ -162,8 +162,8 @@ namespace Teronis.Diagnostics
             string? args = null,
             bool echoCommand = false,
             string? commandEchoPrefix = null,
-            Action<string>? outputReceived = null,
-            Action<string>? errorReceived = null)
+            Action<string?>? outputReceived = null,
+            Action<string?>? errorReceived = null)
         {
             var process = prepareProcess(
                 name, 
@@ -214,7 +214,7 @@ namespace Teronis.Diagnostics
             string? args = null,
             bool echoCommand = false,
             string? commandEchoPrefix = null,
-            Action<string>? errorReceived = null) =>
+            Action<string?>? errorReceived = null) =>
            readAsyncOrNot(
                readAsync: true, 
                name, 

@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Teronis.Linq.Expressions
 {
-    public class ExpressionComparerTests
+    public class ExpressionEqualityComparerTests
     {
         [Theory]
         [ClassData(typeof(ExpressionGenerator))]

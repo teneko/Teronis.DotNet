@@ -176,7 +176,7 @@ namespace Teronis.Windows.Hooks
         // This method must be overriden by each extending hook
         protected virtual int HookCallbackProcedure(int nCode, Int32 wParam, IntPtr lParam) => 0;
 
-        protected void Application_ApplicationExit(object sender, EventArgs e)
+        protected void Application_ApplicationExit(object? sender, EventArgs e)
         {
             if (_isStarted) {
                 Stop();

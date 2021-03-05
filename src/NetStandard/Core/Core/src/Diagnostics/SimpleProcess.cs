@@ -12,6 +12,7 @@ namespace Teronis.Diagnostics
         private static Process prepareProcess(
             string name,
             string? args,
+            string? workingDirectory,
             string? commandEchoPrefix,
             Action<string?>? outputReceived,
             Action<string?>? errorReceived,
@@ -21,9 +22,13 @@ namespace Teronis.Diagnostics
             ProcessStartInfo processInfo;
 
             if (args is null) {
-                processInfo = new ProcessStartInfo(name);
+                processInfo = new ProcessStartInfo(name) {
+                    WorkingDirectory = workingDirectory
+                };
             } else {
-                processInfo = new ProcessStartInfo(name, args);
+                processInfo = new ProcessStartInfo(name, args) {
+                    WorkingDirectory = workingDirectory
+                };
             }
 
             processInfo.UseShellExecute = false;
@@ -80,9 +85,20 @@ namespace Teronis.Diagnostics
             return process;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="args"></param>
+        /// <param name="workingDirectory">The working directory is not used to find the executable. Instead, its value applies to the process that is started and only has meaning within the context of the new process.</param>
+        /// <param name="echoCommand"></param>
+        /// <param name="commandEchoPrefix"></param>
+        /// <param name="outputReceived"></param>
+        /// <param name="errorReceived"></param>
         public static void Run(
             string name,
             string? args = null,
+            string? workingDirectory = null,
             bool echoCommand = false,
             string? commandEchoPrefix = null,
             Action<string?>? outputReceived = null,
@@ -90,10 +106,11 @@ namespace Teronis.Diagnostics
         {
             var process = prepareProcess(
                 name,
-                args,
-                commandEchoPrefix,
-                outputReceived,
-                errorReceived,
+                args: args,
+                workingDirectory: workingDirectory,
+                commandEchoPrefix: commandEchoPrefix,
+                outputReceived: outputReceived,
+                errorReceived: errorReceived,
                 out var dispose,
                 out var createNonZeroExitCodeException);
 
@@ -115,63 +132,95 @@ namespace Teronis.Diagnostics
             bool readAsync,
             string name,
             string? args,
+            string? workingDirectory,
             bool echoCommand,
             string? commandEchoPrefix,
             Action<string?>? errorReceived)
         {
             var output = new StringBuilder();
 
-            void onOutputReceived(string? receivedOutput)
-            {
+            void onOutputReceived(string? receivedOutput) =>
                 output.Append(receivedOutput);
-            }
 
             if (readAsync) {
                 return new ValueTask<string>(
                         RunAsync(
-                            name, 
-                            args, 
-                            echoCommand, 
-                            commandEchoPrefix, 
-                            onOutputReceived, 
-                            errorReceived)
+                            name,
+                            args: args,
+                            workingDirectory: workingDirectory,
+                            echoCommand: echoCommand,
+                            commandEchoPrefix: commandEchoPrefix,
+                            outputReceived: onOutputReceived,
+                            errorReceived: errorReceived)
                     .ContinueWith(task => output.ToString()));
             } else {
-                Run(name, args, echoCommand, commandEchoPrefix, onOutputReceived, errorReceived);
+                Run(name,
+                    args: args,
+                    workingDirectory: workingDirectory,
+                    echoCommand: echoCommand,
+                    commandEchoPrefix: commandEchoPrefix,
+                    outputReceived: onOutputReceived,
+                    errorReceived: errorReceived);
+
                 return new ValueTask<string>(output.ToString());
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="args"></param>
+        /// <param name="workingDirectory">The working directory is not used to find the executable. Instead, its value applies to the process that is started and only has meaning within the context of the new process.</param>
+        /// <param name="echoCommand"></param>
+        /// <param name="commandEchoPrefix"></param>
+        /// <param name="errorReceived"></param>
+        /// <returns></returns>
         public static string Read(
             string name,
             string? args = null,
+            string? workingDirectory = null,
             bool echoCommand = false,
             string? commandEchoPrefix = null,
             Action<string?>? errorReceived = null) =>
             /// We can grab for <see cref="ValueTask{string}.Result"/> safely.
             readAsyncOrNot(
-                readAsync: false, 
-                name, 
-                args, 
-                echoCommand, 
-                commandEchoPrefix, 
-                errorReceived).Result;
+                readAsync: false,
+                name,
+                args: args,
+workingDirectory: workingDirectory,
+                echoCommand: echoCommand,
+                commandEchoPrefix: commandEchoPrefix,
+                errorReceived: errorReceived).Result;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="args"></param>
+        /// <param name="workingDirectory">The working directory is not used to find the executable. Instead, its value applies to the process that is started and only has meaning within the context of the new process.</param>
+        /// <param name="echoCommand"></param>
+        /// <param name="commandEchoPrefix"></param>
+        /// <param name="outputReceived"></param>
+        /// <param name="errorReceived"></param>
+        /// <returns></returns>
         public static Task RunAsync(
             string name,
             string? args = null,
+            string? workingDirectory = null,
             bool echoCommand = false,
             string? commandEchoPrefix = null,
             Action<string?>? outputReceived = null,
             Action<string?>? errorReceived = null)
         {
             var process = prepareProcess(
-                name, 
-                args, 
-                commandEchoPrefix, 
-                outputReceived, 
-                errorReceived, 
-                out Action innerDispose, 
+                name,
+                args: args,
+                workingDirectory: workingDirectory,
+                commandEchoPrefix: commandEchoPrefix,
+                outputReceived: outputReceived,
+                errorReceived: errorReceived,
+                out Action innerDispose,
                 out var createNonZeroExitCodeException);
 
             var processCompletionSource = new TaskCompletionSource();
@@ -209,18 +258,30 @@ namespace Teronis.Diagnostics
             return processCompletionSource.Task;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="args"></param>
+        /// <param name="workingDirectory">The working directory is not used to find the executable. Instead, its value applies to the process that is started and only has meaning within the context of the new process.</param>
+        /// <param name="echoCommand"></param>
+        /// <param name="commandEchoPrefix"></param>
+        /// <param name="errorReceived"></param>
+        /// <returns></returns>
         public static ValueTask<string> ReadAsync(
             string name,
             string? args = null,
+            string? workingDirectory = null,
             bool echoCommand = false,
             string? commandEchoPrefix = null,
             Action<string?>? errorReceived = null) =>
            readAsyncOrNot(
-               readAsync: true, 
-               name, 
-               args, 
-               echoCommand, 
-               commandEchoPrefix, 
-               errorReceived);
+               readAsync: true,
+               name,
+               args: args,
+               workingDirectory: workingDirectory,
+               echoCommand: echoCommand,
+               commandEchoPrefix: commandEchoPrefix,
+               errorReceived: errorReceived);
     }
 }

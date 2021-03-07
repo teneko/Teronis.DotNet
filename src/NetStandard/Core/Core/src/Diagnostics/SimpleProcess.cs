@@ -1,287 +1,239 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text;
-using System.Threading.Tasks;
 using Teronis.Extensions;
-using Teronis.Threading.Tasks;
 
 namespace Teronis.Diagnostics
 {
-    public static class SimpleProcess
+    partial class SimpleProcess : IDisposable, ISimpleProcess
     {
-        private static Process prepareProcess(
-            string name,
-            string? args,
-            string? workingDirectory,
-            string? commandEchoPrefix,
-            Action<string?>? outputReceived,
-            Action<string?>? errorReceived,
-            out Action dettachHandlers,
-            out Func<NonZeroExitCodeException> createNonZeroExitCodeException)
+        public bool EchoCommand { get; }
+        public string? CommandEchoPrefix { get; }
+        public bool HasProcessStarted { get; private set; }
+
+        private Action<string?>? outputReceived { get; }
+        private Action<string?>? errorReceived { get; }
+
+        private readonly ProcessStartInfo processStartInfo;
+        private Process? process;
+        private StringBuilder? outputDataBuilder;
+        private StringBuilder errorMessageBuilder;
+        private bool isDisposed;
+
+        public SimpleProcess(
+            SimpleProcessStartInfo processStartInfo,
+            bool echoCommand = false,
+            string? commandEchoPrefix = null,
+            Action<string?>? outputReceived = null,
+            Action<string?>? errorReceived = null)
         {
-            ProcessStartInfo processInfo;
+            errorMessageBuilder = new StringBuilder();
 
-            if (args is null) {
-                processInfo = new ProcessStartInfo(name) {
-                    WorkingDirectory = workingDirectory
-                };
-            } else {
-                processInfo = new ProcessStartInfo(name, args) {
-                    WorkingDirectory = workingDirectory
-                };
+            if (processStartInfo is null) {
+                throw new ArgumentNullException(nameof(processStartInfo));
             }
 
-            processInfo.UseShellExecute = false;
-            processInfo.RedirectStandardOutput = true;
-            processInfo.RedirectStandardError = true;
-            processInfo.CreateNoWindow = true;
+            this.processStartInfo = processStartInfo.ProcessStartInfo;
+            EchoCommand = echoCommand;
+            CommandEchoPrefix = commandEchoPrefix;
+            this.outputReceived = outputReceived;
+            this.errorReceived = errorReceived;
+        }
 
-            var process = new Process() {
-                StartInfo = processInfo,
-            };
-
-            void dettachHandlersDefinition()
-            {
-                process.Exited -= onExited;
-                process.OutputDataReceived -= onOutputDataReceived;
-                process.ErrorDataReceived -= onOutputDataReceived;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Process already started.</exception>
+        protected Process GetCreatedProcess()
+        {
+            if (!(process is null)) {
+                return process;
             }
 
-            void onExited(object? sender, EventArgs e) =>
-                dettachHandlersDefinition();
+            throw new InvalidOperationException("Process has not been started.");
+        }
 
-            process.Exited += onExited;
-
-            void onOutputDataReceived(object? sender, DataReceivedEventArgs e) =>
-                outputReceived?.Invoke(e.Data);
-
-            if (outputReceived != null) {
-                process.OutputDataReceived += onOutputDataReceived;
+        protected string GetOutputData()
+        {
+            if (outputDataBuilder is null) {
+                throw new InvalidOperationException("Reading output data is not allowed.");
             }
 
-            var errorMessageBuilder = new StringBuilder();
+            return outputDataBuilder.ToString();
+        }
 
-            void onErrorDataReceived(object? sender, DataReceivedEventArgs e)
-            {
-                errorMessageBuilder.Append(e.Data);
-                errorReceived?.Invoke(e.Data);
+        private void DettachProcessHandlers()
+        {
+            var process = GetCreatedProcess();
+            process.Exited -= OnProcessExited;
+            process.OutputDataReceived -= OnOutputDataReceived;
+            process.ErrorDataReceived -= OnOutputDataReceived;
+        }
+
+        protected virtual void OnProcessExited(object? sender, EventArgs e) =>
+                DettachProcessHandlers();
+
+        private void OnOutputDataReceived(object? sender, DataReceivedEventArgs e)
+        {
+            outputDataBuilder?.Append(e.Data);
+            outputReceived?.Invoke(e.Data);
+        }
+
+        private void OnErrorDataReceived(object? sender, DataReceivedEventArgs e)
+        {
+            errorMessageBuilder.Append(e.Data);
+            errorReceived?.Invoke(e.Data);
+        }
+
+        /// <summary>
+        /// You may create it before the process starts.
+        /// </summary>
+        protected void CreateOutputDataBuilder()
+        {
+            if (!(outputDataBuilder is null)) {
+                throw new InvalidOperationException("Output data builder alreay created.");
             }
 
-            process.ErrorDataReceived += onErrorDataReceived;
+            outputDataBuilder = new StringBuilder();
+        }
 
-            NonZeroExitCodeException createNonZeroExitCodeExceptionDefinition()
-            {
-                var isErrorMessageBuilderEmpty = errorMessageBuilder.Length == 0;
-
-                var executionInfoText = ProcessStartInfoUtils.GetExecutionInfoText(processInfo, commandEchoPrefix: commandEchoPrefix) +
-                    (isErrorMessageBuilderEmpty ? "" : Environment.NewLine);
-
-                errorMessageBuilder.Insert(0, executionInfoText);
-                return new NonZeroExitCodeException(process.ExitCode, errorMessageBuilder.ToString());
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Process alreay created.</exception>
+        protected virtual Process PrepareProcess()
+        {
+            if (!(process is null)) {
+                throw new InvalidOperationException("Process alreay created.");
             }
 
-            dettachHandlers = dettachHandlersDefinition;
-            createNonZeroExitCodeException = createNonZeroExitCodeExceptionDefinition;
+            process = new Process() { StartInfo = processStartInfo };
+            process.EnableRaisingEvents = true;
+            process.Exited += OnProcessExited;
+            process.OutputDataReceived += OnOutputDataReceived;
+            process.ErrorDataReceived += OnErrorDataReceived;
             return process;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="args"></param>
-        /// <param name="workingDirectory">The working directory is not used to find the executable. Instead, its value applies to the process that is started and only has meaning within the context of the new process.</param>
-        /// <param name="echoCommand"></param>
-        /// <param name="commandEchoPrefix"></param>
-        /// <param name="outputReceived"></param>
-        /// <param name="errorReceived"></param>
-        public static void Run(
-            string name,
-            string? args = null,
-            string? workingDirectory = null,
-            bool echoCommand = false,
-            string? commandEchoPrefix = null,
-            Action<string?>? outputReceived = null,
-            Action<string?>? errorReceived = null)
+        protected NonZeroExitCodeException CreateNonZeroExitCodeException()
         {
-            var process = prepareProcess(
-                name,
-                args: args,
-                workingDirectory: workingDirectory,
-                commandEchoPrefix: commandEchoPrefix,
-                outputReceived: outputReceived,
-                errorReceived: errorReceived,
-                out var dispose,
-                out var createNonZeroExitCodeException);
+            var process = GetCreatedProcess();
+            var isErrorMessageBuilderEmpty = errorMessageBuilder.Length == 0;
 
-            try {
-                process.Start(echoCommand: echoCommand, commandEchoPrefix: commandEchoPrefix);
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
-                process.WaitForExit();
+            var executionInfoText = ProcessStartInfoUtils.GetExecutionInfoText(processStartInfo, commandEchoPrefix: CommandEchoPrefix) +
+                (isErrorMessageBuilderEmpty ? "" : Environment.NewLine);
 
-                if (process.ExitCode != 0) {
-                    throw createNonZeroExitCodeException();
-                }
-            } finally {
-                dispose();
-            }
-        }
-
-        private static ValueTask<string> readAsyncOrNot(
-            bool readAsync,
-            string name,
-            string? args,
-            string? workingDirectory,
-            bool echoCommand,
-            string? commandEchoPrefix,
-            Action<string?>? errorReceived)
-        {
-            var output = new StringBuilder();
-
-            void onOutputReceived(string? receivedOutput) =>
-                output.Append(receivedOutput);
-
-            if (readAsync) {
-                return new ValueTask<string>(
-                        RunAsync(
-                            name,
-                            args: args,
-                            workingDirectory: workingDirectory,
-                            echoCommand: echoCommand,
-                            commandEchoPrefix: commandEchoPrefix,
-                            outputReceived: onOutputReceived,
-                            errorReceived: errorReceived)
-                    .ContinueWith(task => output.ToString()));
-            } else {
-                Run(name,
-                    args: args,
-                    workingDirectory: workingDirectory,
-                    echoCommand: echoCommand,
-                    commandEchoPrefix: commandEchoPrefix,
-                    outputReceived: onOutputReceived,
-                    errorReceived: errorReceived);
-
-                return new ValueTask<string>(output.ToString());
-            }
+            errorMessageBuilder.Insert(0, executionInfoText);
+            return new NonZeroExitCodeException(process.ExitCode, errorMessageBuilder.ToString());
         }
 
         /// <summary>
-        /// 
+        /// When an error occurred during process start.
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="args"></param>
-        /// <param name="workingDirectory">The working directory is not used to find the executable. Instead, its value applies to the process that is started and only has meaning within the context of the new process.</param>
-        /// <param name="echoCommand"></param>
-        /// <param name="commandEchoPrefix"></param>
-        /// <param name="errorReceived"></param>
-        /// <returns></returns>
-        public static string Read(
-            string name,
-            string? args = null,
-            string? workingDirectory = null,
-            bool echoCommand = false,
-            string? commandEchoPrefix = null,
-            Action<string?>? errorReceived = null) =>
-            /// We can grab for <see cref="ValueTask{string}.Result"/> safely.
-            readAsyncOrNot(
-                readAsync: false,
-                name,
-                args: args,
-workingDirectory: workingDirectory,
-                echoCommand: echoCommand,
-                commandEchoPrefix: commandEchoPrefix,
-                errorReceived: errorReceived).Result;
+        protected virtual void OnProcessNotStarted(Exception error) { }
+
+        private Exception CreateProcessNotStartedException() =>
+            new ProcessNotSpawnedException();
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="args"></param>
-        /// <param name="workingDirectory">The working directory is not used to find the executable. Instead, its value applies to the process that is started and only has meaning within the context of the new process.</param>
-        /// <param name="echoCommand"></param>
-        /// <param name="commandEchoPrefix"></param>
-        /// <param name="outputReceived"></param>
-        /// <param name="errorReceived"></param>
-        /// <returns></returns>
-        public static Task RunAsync(
-            string name,
-            string? args = null,
-            string? workingDirectory = null,
-            bool echoCommand = false,
-            string? commandEchoPrefix = null,
-            Action<string?>? outputReceived = null,
-            Action<string?>? errorReceived = null)
+        /// <exception cref="InvalidOperationException">Process already created.</exception>
+        public void Start()
         {
-            var process = prepareProcess(
-                name,
-                args: args,
-                workingDirectory: workingDirectory,
-                commandEchoPrefix: commandEchoPrefix,
-                outputReceived: outputReceived,
-                errorReceived: errorReceived,
-                out Action innerDispose,
-                out var createNonZeroExitCodeException);
-
-            var processCompletionSource = new TaskCompletionSource();
-
-            void dispose()
-            {
-                innerDispose();
-                process.Exited -= onExited;
-            }
-
-            void onExited(object? sender, EventArgs e)
-            {
-                dispose();
-
-                if (process.ExitCode == 0) {
-                    processCompletionSource.SetResult();
-                } else {
-                    var error = createNonZeroExitCodeException();
-                    processCompletionSource.SetException(error);
-                }
-            }
-
-            process.EnableRaisingEvents = true;
-            process.Exited += onExited;
+            var process = PrepareProcess();
+            bool processSpawned;
 
             try {
-                process.Start(echoCommand: echoCommand, commandEchoPrefix: commandEchoPrefix);
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
+                processSpawned = process.Start(echoCommand: EchoCommand, commandEchoPrefix: CommandEchoPrefix);
             } catch (Exception error) {
-                processCompletionSource.SetException(error);
-                dispose();
+                OnProcessNotStarted(error);
+                throw;
             }
 
-            return processCompletionSource.Task;
+            if (!processSpawned) {
+                OnProcessNotStarted(CreateProcessNotStartedException());
+            }
+
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+            HasProcessStarted = true;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="args"></param>
-        /// <param name="workingDirectory">The working directory is not used to find the executable. Instead, its value applies to the process that is started and only has meaning within the context of the new process.</param>
-        /// <param name="echoCommand"></param>
-        /// <param name="commandEchoPrefix"></param>
-        /// <param name="errorReceived"></param>
-        /// <returns></returns>
-        public static ValueTask<string> ReadAsync(
-            string name,
-            string? args = null,
-            string? workingDirectory = null,
-            bool echoCommand = false,
-            string? commandEchoPrefix = null,
-            Action<string?>? errorReceived = null) =>
-           readAsyncOrNot(
-               readAsync: true,
-               name,
-               args: args,
-               workingDirectory: workingDirectory,
-               echoCommand: echoCommand,
-               commandEchoPrefix: commandEchoPrefix,
-               errorReceived: errorReceived);
+        /// <exception cref="InvalidOperationException">Process not started yet.</exception>
+        protected void EnsureProcessStarted()
+        {
+            if (HasProcessStarted) {
+                return;
+            }
+
+            throw new InvalidOperationException("Process not started yet.");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <exception cref="NonZeroExitCodeException"></exception>
+        protected void ThrowIfNonZeroExitCode()
+        {
+            var process = GetCreatedProcess();
+
+            if (process.ExitCode != 0) {
+                throw CreateNonZeroExitCodeException();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="NonZeroExitCodeException"></exception>
+        public void WaitForExit()
+        {
+            EnsureProcessStarted();
+            var process = GetCreatedProcess();
+            process.WaitForExit();
+            ThrowIfNonZeroExitCode();
+        }
+
+        public string WaitForExitButReadOutput()
+        {
+            EnsureProcessStarted();
+            CreateOutputDataBuilder();
+            WaitForExit();
+            return GetOutputData();
+        }
+
+        public void Kill()
+        {
+            EnsureProcessStarted();
+
+            GetCreatedProcess()
+                .Kill();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (isDisposed) {
+                return;
+            }
+
+            if (disposing) {
+                var process = GetCreatedProcess();
+                DettachProcessHandlers();
+                process.Dispose();
+            }
+
+            isDisposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

@@ -10,6 +10,7 @@ using Teronis.IO.FileLocking;
 using Teronis.Text.Json.Converters;
 using Teronis.Text.Json.Serialization;
 using Teronis.GitVersion.CommandLine;
+using Teronis.Diagnostics;
 
 namespace Teronis.GitVersionCache.BuildTasks
 {
@@ -99,7 +100,8 @@ namespace Teronis.GitVersionCache.BuildTasks
                 var arguments = $"{gitDirectory} /config {configFile}";
 
                 try {
-                    serializedGitVariables = GitVersionCommandLineLibrary.ExecuteGitVersion(arguments);
+                    var gitVersionProcessStartInfo = new GitVersionProcessStartInfo(args: arguments);
+                    serializedGitVariables = SimpleProcess.StartAndWaitForExitButReadOutput(gitVersionProcessStartInfo);
                     isCache = false;
                 } catch (Diagnostics.NonZeroExitCodeException error) {
                     var errorMessage = error.Message + $"(arguments: {arguments})" +

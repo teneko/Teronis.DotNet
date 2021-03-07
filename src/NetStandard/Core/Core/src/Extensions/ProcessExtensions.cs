@@ -6,7 +6,14 @@ namespace Teronis.Extensions
 {
     public static class ProcessExtensions
     {
-        public static void Start(this Process process, bool echoCommand = false, string? commandEchoPrefix = null)
+        /// <summary>
+        /// true if a process resource is started; false if no new process resource is started
+        /// </summary>
+        /// <param name="process"></param>
+        /// <param name="echoCommand"></param>
+        /// <param name="commandEchoPrefix"></param>
+        /// <returns></returns>
+        public static bool Start(this Process process, bool echoCommand = false, string? commandEchoPrefix = null)
         {
             process = process ?? throw new ArgumentNullException(nameof(process));
             echoCommand |= commandEchoPrefix != null;
@@ -16,7 +23,7 @@ namespace Teronis.Extensions
                 Console.Error.WriteLine(commandEcho);
             }
 
-            process.Start();
+            return process.Start();
         }
     }
 }

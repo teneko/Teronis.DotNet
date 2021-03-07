@@ -110,8 +110,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Test", "src\Microsoft\JSInterop\test\0\Teronis.Microsoft.JSInterop.Test.csproj", "{BDE420C5-EA35-4239-AFFE-F2E1854C350B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Test.Server", "src\Microsoft\JSInterop\test\0..Server\Teronis.Microsoft.JSInterop.Test.Server.csproj", "{FCC5009C-B291-4CD4-AE07-00B298E8C068}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -696,18 +694,6 @@ Global
 		{BDE420C5-EA35-4239-AFFE-F2E1854C350B}.Release|x64.Build.0 = Release|x64
 		{BDE420C5-EA35-4239-AFFE-F2E1854C350B}.Release|x86.ActiveCfg = Release|x86
 		{BDE420C5-EA35-4239-AFFE-F2E1854C350B}.Release|x86.Build.0 = Release|x86
-		{FCC5009C-B291-4CD4-AE07-00B298E8C068}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FCC5009C-B291-4CD4-AE07-00B298E8C068}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FCC5009C-B291-4CD4-AE07-00B298E8C068}.Debug|x64.ActiveCfg = Debug|x64
-		{FCC5009C-B291-4CD4-AE07-00B298E8C068}.Debug|x64.Build.0 = Debug|x64
-		{FCC5009C-B291-4CD4-AE07-00B298E8C068}.Debug|x86.ActiveCfg = Debug|x86
-		{FCC5009C-B291-4CD4-AE07-00B298E8C068}.Debug|x86.Build.0 = Debug|x86
-		{FCC5009C-B291-4CD4-AE07-00B298E8C068}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FCC5009C-B291-4CD4-AE07-00B298E8C068}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FCC5009C-B291-4CD4-AE07-00B298E8C068}.Release|x64.ActiveCfg = Release|x64
-		{FCC5009C-B291-4CD4-AE07-00B298E8C068}.Release|x64.Build.0 = Release|x64
-		{FCC5009C-B291-4CD4-AE07-00B298E8C068}.Release|x86.ActiveCfg = Release|x86
-		{FCC5009C-B291-4CD4-AE07-00B298E8C068}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -726,7 +712,6 @@ Global
 		{4345A927-59FA-46AB-BE61-DD7DB83782EB} = {E48BE22E-518E-4BFA-9EDC-1BC398675C93}
 		{8AD14A10-8F74-4C85-9916-7F89978C5DBF} = {C6017EE4-F4D2-499C-9352-ECBF8B644D76}
 		{BDE420C5-EA35-4239-AFFE-F2E1854C350B} = {C6017EE4-F4D2-499C-9352-ECBF8B644D76}
-		{FCC5009C-B291-4CD4-AE07-00B298E8C068} = {C6017EE4-F4D2-499C-9352-ECBF8B644D76}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {36A367F3-E122-453A-9AE6-B6912E86F6CB}

@@ -1,0 +1,27 @@
+﻿@page "/get-tony-hawk"
+@inject IJSFacadesInitializer jsPropertiesInitializer
+@inject IJSRuntime jsRuntime 
+@implements IAsyncDisposable
+
+<h1 id="tony-hawk">Hello @tonyHawk</h1>
+
+@code {
+    [JSModuleFacade] GetTonyHawkModule GetTonyHawkModule { get; set; } = null!;
+
+    JSFacades jsFacades;
+    string tonyHawk;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        jsFacades = await jsPropertiesInitializer.InitializeFacadesAsync(this);
+        var ts = await jsRuntime.InvokeAsync<IJSObjectReference>("window");
+        await jsRuntime.InvokeVoidAsync("console.log", ts);
+        tonyHawk = await GetTonyHawkModule.GetTonyHawkAsync();
+        await base.OnParametersSetAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await jsFacades.DisposeAsync();
+    }
+}

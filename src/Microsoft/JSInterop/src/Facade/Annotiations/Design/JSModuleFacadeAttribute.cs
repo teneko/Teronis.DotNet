@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Teronis.AddOn.Microsoft.JSInterop.Facade.Annotiations.Design
+namespace Teronis.Microsoft.JSInterop.Facade.Annotiations.Design
 {
     /// <summary>
     /// Decoratable on class it provides

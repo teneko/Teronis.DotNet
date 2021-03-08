@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>Teronis._Microsoft.JSInterop.Tests</RootNamespace>
+    <RootNamespace>Teronis_._Microsoft.JSInterop.Tests</RootNamespace>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 

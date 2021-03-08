@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Teronis.AddOn.Microsoft.JSInterop.Facade
+namespace Teronis.Microsoft.JSInterop.Facade
 {
     public interface IJSFacadeResolver
     {
-        ValueTask<IAsyncDisposable> ResolveModuleWrapper(string relativeWwwRootPath, Type moduleWrapperType);
+        ValueTask<IAsyncDisposable> ResolveModule(string pathRelativeToWwwRoot, Type moduleWrapperType);
+        //ValueTask<IAsyncDisposable> ResolveObject(string objectName, Type moduleWrapperType);
     }
 }

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Teronis.AddOn.Microsoft.JSInterop.Facade
+namespace Teronis.Microsoft.JSInterop.Facade
 {
     public sealed class JSFacadeDictionary : IReadOnlyDictionary<Type, JSFacadeCreatorDelegate<IAsyncDisposable>>, IJSFacadeDictionary
     {

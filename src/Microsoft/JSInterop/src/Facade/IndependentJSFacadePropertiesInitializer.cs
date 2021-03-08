@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace Teronis.AddOn.Microsoft.JSInterop.Facade
+namespace Teronis.Microsoft.JSInterop.Facade
 {
     public class IndependentJSFacadePropertiesInitializer : IIndependentJSFacadePropertiesInitializer
     {
@@ -12,14 +12,14 @@ namespace Teronis.AddOn.Microsoft.JSInterop.Facade
             | BindingFlags.Public
             | BindingFlags.NonPublic;
 
-        private static bool GetPathRelativeToWwwRoot(PropertyInfo propertyInfo, [MaybeNullWhen(false)] out string pathRelativeToWwwRoot)
+        private static bool TryGetModulePathRelativeToWwwRoot(PropertyInfo propertyInfo, [MaybeNullWhen(false)] out string pathRelativeToWwwRoot)
         {
             if (!(Attribute.GetCustomAttribute(propertyInfo, propertyModuleAttributeType) is Annotiations.JSModuleFacadeAttribute propertyModuleAttribute)) {
                 goto exit;
             }
 
             if (propertyModuleAttribute.PathRelativeToWwwRoot == null) {
-                if (!(Attribute.GetCustomAttribute(propertyInfo, classModuleAttributeType) is Annotiations.Design.JSModuleFacadeAttribute moduleWrapperModuleAttribute)
+                if (!(Attribute.GetCustomAttribute(propertyInfo.PropertyType, classModuleAttributeType) is Annotiations.Design.JSModuleFacadeAttribute moduleWrapperModuleAttribute)
                     || moduleWrapperModuleAttribute.PathRelativeToWwwRoot == null) {
                     throw new InvalidOperationException("Neither the module attribute from property nor a module attribute from class has a path to script.");
                 }
@@ -55,11 +55,11 @@ namespace Teronis.AddOn.Microsoft.JSInterop.Facade
                     continue;
                 }
 
-                if (!GetPathRelativeToWwwRoot(propertyInfo, out var pathRelativeToWwwRoot)) {
+                if (!TryGetModulePathRelativeToWwwRoot(propertyInfo, out var pathRelativeToWwwRoot)) {
                     continue;
                 }
 
-                var jsModule = await jsFacadeResolver.ResolveModuleWrapper(pathRelativeToWwwRoot, propertyInfo.PropertyType);
+                var jsModule = await jsFacadeResolver.ResolveModule(pathRelativeToWwwRoot, propertyInfo.PropertyType);
                 propertyInfo.SetValue(component, jsModule);
             }
 

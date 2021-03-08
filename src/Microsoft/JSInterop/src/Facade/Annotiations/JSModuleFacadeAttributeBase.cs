@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.JSInterop;
 
-namespace Teronis.AddOn.Microsoft.JSInterop.Facade.Annotiations
+namespace Teronis.Microsoft.JSInterop.Facade.Annotiations
 {
     public abstract class JSModuleFacadeAttributeBase : Attribute
     {

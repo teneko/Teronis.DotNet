@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Teronis.AddOn.Microsoft.JSInterop.Facade
+namespace Teronis.Microsoft.JSInterop.Facade
 {
     public class JSFacadePropertiesInitializer : IJSFacadePropertiesInitializer
     {

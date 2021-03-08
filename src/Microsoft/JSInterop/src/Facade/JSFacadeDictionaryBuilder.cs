@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Teronis.AddOn.Microsoft.JSInterop.Facade
+namespace Teronis.Microsoft.JSInterop.Facade
 {
-    public sealed class JSFacadeDictionaryBuilder
+    public sealed class JSFacadeDictionaryBuilder : IJSFacadeDictionaryBuilder
     {
         private readonly Dictionary<Type, JSFacadeCreatorDelegate<IAsyncDisposable>> moduleWrapperByTypeDictionary;
 

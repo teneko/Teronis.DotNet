@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 
-namespace Teronis.AddOn.Microsoft.JSInterop.Facade
+namespace Teronis.Microsoft.JSInterop.Facade
 {
     public class JSFacadeResolver : IJSFacadeResolver
     {
@@ -15,20 +15,20 @@ namespace Teronis.AddOn.Microsoft.JSInterop.Facade
             this.moduleWrapperDictionary = moduleWrapperDictionary;
         }
 
-        public ValueTask<IJSObjectReference> ResolveModuleAsync(string relativeWwwRootPath) =>
+        public ValueTask<IJSObjectReference> CreateModuleReferenceAsync(string relativeWwwRootPath) =>
             jsRuntime.InvokeAsync<IJSObjectReference>("import", relativeWwwRootPath);
 
-        protected virtual async ValueTask<IAsyncDisposable> ResolveModule(string relativeWwwRootPath, Type moduleWrapperType)
+        public virtual async ValueTask<IAsyncDisposable> ResolveModule(string relativeWwwRootPath, Type moduleWrapperType)
         {
             if (!moduleWrapperDictionary.TryGetValue(moduleWrapperType, out var moduleWrapperResolver)) {
                 throw new NotSupportedException($"Type {moduleWrapperType} is not supported.");
             }
 
-            var module = await ResolveModuleAsync(relativeWwwRootPath);
+            var module = await CreateModuleReferenceAsync(relativeWwwRootPath);
             return moduleWrapperResolver!.Invoke(module);
         }
 
-        ValueTask<IAsyncDisposable> IJSFacadeResolver.ResolveModuleWrapper(string relativeWwwRootPath, Type moduleWrapperType) =>
+        ValueTask<IAsyncDisposable> IJSFacadeResolver.ResolveModule(string relativeWwwRootPath, Type moduleWrapperType) =>
             ResolveModule(relativeWwwRootPath, moduleWrapperType);
     }
 }

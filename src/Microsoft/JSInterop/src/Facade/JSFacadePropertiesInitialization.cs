@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Teronis.AddOn.Microsoft.JSInterop.Facade
+namespace Teronis.Microsoft.JSInterop.Facade
 {
-    public struct JSFacadePropertiesInitialization : IAsyncDisposable, IReadOnlyList<IAsyncDisposable>
+    public readonly struct JSFacadePropertiesInitialization : IAsyncDisposable, IReadOnlyList<IAsyncDisposable>
     {
         public int Count =>
             referenceWrappers.Count;
@@ -31,6 +31,10 @@ namespace Teronis.AddOn.Microsoft.JSInterop.Facade
 
         public async ValueTask DisposeAsync()
         {
+            if (referenceWrappers is null) {
+                return;
+            }
+
             foreach (var moduleWrapper in referenceWrappers) {
                 await moduleWrapper.DisposeAsync();
             }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Teronis.AddOn.Microsoft.JSInterop.Facade.Annotiations
+namespace Teronis.Microsoft.JSInterop.Facade.Annotiations
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class JSModuleFacadeAttribute : JSModuleFacadeAttributeBase

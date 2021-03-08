@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
+using Teronis.Microsoft.JSInterop.Facade.WebAssets;
 
 namespace Teronis.Microsoft.JSInterop.Facade
 {
@@ -8,29 +10,39 @@ namespace Teronis.Microsoft.JSInterop.Facade
     {
         private readonly IJSRuntime jsRuntime;
         private readonly IJSFacadeDictionary jsFacadeDictionary;
+        private readonly IJSObjectInterop jsObjectInterop;
+        private readonly IServiceProvider serviceProvider;
 
-        public JSFacadeResolver(IJSRuntime jsRuntime, IJSFacadeDictionary jsFacadeDictionary)
+        public JSFacadeResolver(IJSRuntime jsRuntime, IJSFacadeDictionary jsFacadeDictionary, IJSObjectInterop jsObjectInterop, IServiceProvider serviceProvider)
         {
-            this.jsRuntime = jsRuntime;
-            this.jsFacadeDictionary = jsFacadeDictionary;
+            this.jsRuntime = jsRuntime ?? throw new ArgumentNullException(nameof(jsRuntime));
+            this.jsFacadeDictionary = jsFacadeDictionary ?? throw new ArgumentNullException(nameof(jsFacadeDictionary));
+            this.jsObjectInterop = jsObjectInterop;
+            this.serviceProvider = serviceProvider;
         }
 
-        public ValueTask<IJSObjectReference> CreateModuleReferenceAsync(string relativeWwwRootPath) =>
-            jsRuntime.InvokeAsync<IJSObjectReference>("import", relativeWwwRootPath);
-
-        public virtual async ValueTask<IAsyncDisposable> ResolveModule(string pathRelativeToWwwRoot, Type jsFacadeType)
+        public async ValueTask<IJSLocalObjectReference> CreateModuleReferenceAsync(string relativeWwwRootPath)
         {
-            if (!jsFacadeDictionary.TryGetValue(jsFacadeType, out var moduleWrapperResolver)) {
+            var objectReference = await jsRuntime.InvokeAsync<IJSObjectReference>("import", relativeWwwRootPath);
+            return jsObjectInterop.CreateObjectReference(objectReference);
+        }
+
+        public virtual async ValueTask<IAsyncDisposable> ResolveModuleAsync(string pathRelativeToWwwRoot, Type jsFacadeType)
+        {
+            if (!jsFacadeDictionary.TryGetValue(jsFacadeType, out var jsFacadeFactory)) {
                 throw new NotSupportedException($"Type {jsFacadeType} is not supported.");
             }
 
-            var module = await CreateModuleReferenceAsync(pathRelativeToWwwRoot);
-            return moduleWrapperResolver!.Invoke(module);
+            var moduleReference = await CreateModuleReferenceAsync(pathRelativeToWwwRoot);
+
+            if (!(jsFacadeFactory is null)) {
+                return jsFacadeFactory.Invoke(moduleReference);
+            }
+
+            return (IAsyncDisposable)ActivatorUtilities.CreateInstance(serviceProvider, jsFacadeType, moduleReference);
         }
 
-        //public ValueTask<IJSObjectReference> CreateObjectReference
-
-        ValueTask<IAsyncDisposable> IJSFacadeResolver.ResolveModule(string relativeWwwRootPath, Type jsFacadeType) =>
-            ResolveModule(relativeWwwRootPath, jsFacadeType);
+        public ValueTask<IJSLocalObjectReference> CreateObjectReferenceAsync(string objectName) =>
+            jsObjectInterop.CreateObjectReferenceAsync(objectName);
     }
 }

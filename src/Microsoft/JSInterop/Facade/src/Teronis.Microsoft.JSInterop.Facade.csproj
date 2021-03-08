@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Facade.Abstraction\src\Teronis.Microsoft.JSInterop.Facade.Abstraction.csproj" />
     <ProjectReference Include="..\..\Facade.Core\src\Teronis.Microsoft.JSInterop.Facade.Core.csproj" />
+    <ProjectReference Include="..\..\Facade.WebAssets\src\Teronis.Microsoft.JSInterop.Facade.WebAssets.csproj" />
   </ItemGroup>
 
 </Project>

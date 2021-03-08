@@ -5,7 +5,6 @@ using Teronis.Microsoft.JSInterop.Facade.Annotiations.Design;
 
 namespace Teronis_._Microsoft.JSInterop.Facade.JSFacades
 {
-    //[JSModuleFacade("./js/test.js")]
     [JSModuleFacade("./js/Teronis.Microsoft.JSInterop.Facade.Test.WebAssembly.js")]
     public class TestModule : IAsyncDisposable
     {

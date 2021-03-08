@@ -10,7 +10,7 @@ namespace Teronis.Microsoft.JSInterop.Facade.Annotiations.Design
     /// but not
     /// <see cref="Annotiations.JSModuleFacadeAttribute.JSModuleFacadeAttribute(string)"/>.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class, Inherited = true)]
     public class JSModuleFacadeAttribute : JSModuleFacadeAttributeBase
     {
         public JSModuleFacadeAttribute(string pathRelativeToWwwRoot)

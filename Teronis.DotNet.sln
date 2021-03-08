@@ -116,6 +116,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Facade.Test", "src\Microsoft\JSInterop\Facade\test\0\Teronis.Microsoft.JSInterop.Facade.Test.csproj", "{1A11011E-0EA4-44A8-AE9D-0C28F6D0A41D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Facade.WebAssets", "src\Microsoft\JSInterop\Facade.WebAssets\src\Teronis.Microsoft.JSInterop.Facade.WebAssets.csproj", "{60F09C43-C6CA-465D-8558-4A32749CE48A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -736,6 +738,18 @@ Global
 		{1A11011E-0EA4-44A8-AE9D-0C28F6D0A41D}.Release|x64.Build.0 = Release|x64
 		{1A11011E-0EA4-44A8-AE9D-0C28F6D0A41D}.Release|x86.ActiveCfg = Release|x86
 		{1A11011E-0EA4-44A8-AE9D-0C28F6D0A41D}.Release|x86.Build.0 = Release|x86
+		{60F09C43-C6CA-465D-8558-4A32749CE48A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60F09C43-C6CA-465D-8558-4A32749CE48A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60F09C43-C6CA-465D-8558-4A32749CE48A}.Debug|x64.ActiveCfg = Debug|x64
+		{60F09C43-C6CA-465D-8558-4A32749CE48A}.Debug|x64.Build.0 = Debug|x64
+		{60F09C43-C6CA-465D-8558-4A32749CE48A}.Debug|x86.ActiveCfg = Debug|x86
+		{60F09C43-C6CA-465D-8558-4A32749CE48A}.Debug|x86.Build.0 = Debug|x86
+		{60F09C43-C6CA-465D-8558-4A32749CE48A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60F09C43-C6CA-465D-8558-4A32749CE48A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60F09C43-C6CA-465D-8558-4A32749CE48A}.Release|x64.ActiveCfg = Release|x64
+		{60F09C43-C6CA-465D-8558-4A32749CE48A}.Release|x64.Build.0 = Release|x64
+		{60F09C43-C6CA-465D-8558-4A32749CE48A}.Release|x86.ActiveCfg = Release|x86
+		{60F09C43-C6CA-465D-8558-4A32749CE48A}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

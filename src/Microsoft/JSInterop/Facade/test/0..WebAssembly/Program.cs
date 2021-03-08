@@ -22,7 +22,8 @@ namespace Teronis_._Microsoft.JSInterop.Facade
             services.AddJSFacade();
 
             services.AddJSFacadeDictionary(builder => builder
-                .AddModuleWrapper(objectReference => new GetTonyHawkModule(objectReference)));
+                .AddFacade(objectReference => new UserCreatedModule(objectReference))
+                .AddFacade<ServiceProviderCreatedModule>());
 
             await builder.Build().RunAsync();
         }

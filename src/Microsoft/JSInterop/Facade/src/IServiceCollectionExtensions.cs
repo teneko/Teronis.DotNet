@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Teronis.Microsoft.JSInterop.Facade.WebAssets;
 
 namespace Teronis.Microsoft.JSInterop.Facade
 {
@@ -19,6 +20,7 @@ namespace Teronis.Microsoft.JSInterop.Facade
             services.AddSingleton<IJSFacadeResolver, JSFacadeResolver>();
             services.AddSingleton<IJSIndependentFacadesInitializer, JSIndependentFacadesInitializer>();
             services.AddSingleton<IJSFacadesInitializer, JSFacadesInitializer>();
+            services.AddSingleton<IJSObjectInterop, JSObjectInterop>();
             return services;
         }
 

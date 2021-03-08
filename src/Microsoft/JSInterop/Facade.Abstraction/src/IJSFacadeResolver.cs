@@ -5,7 +5,8 @@ namespace Teronis.Microsoft.JSInterop.Facade
 {
     public interface IJSFacadeResolver
     {
-        ValueTask<IAsyncDisposable> ResolveModule(string pathRelativeToWwwRoot, Type jsFacadeType);
-        //ValueTask<IAsyncDisposable> ResolveObject(string objectName, Type jsFacadeType);
+        ValueTask<IJSLocalObjectReference> CreateModuleReferenceAsync(string relativeWwwRootPath);
+        ValueTask<IAsyncDisposable> ResolveModuleAsync(string pathRelativeToWwwRoot, Type jsFacadeType);
+        ValueTask<IJSLocalObjectReference> CreateObjectReferenceAsync(string objectName);
     }
 }

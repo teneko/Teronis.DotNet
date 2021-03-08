@@ -1,0 +1,24 @@
+﻿@page "/should_resolve_user_created_module" 
+@inject IJSFacadesInitializer jsFacadesInitializer
+@implements IAsyncDisposable
+
+<h1 id="@ShoudlyPagesDefaults.TonyHawkId">Hello @tonyHawk</h1>
+
+@code {
+    [JSModuleFacade] UserCreatedModule Module { get; set; } = null!;
+
+    JSFacades jsFacades;
+    string tonyHawk;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        jsFacades = await jsFacadesInitializer.InitializeFacadesAsync(this);
+        tonyHawk = await Module.GetTonyHawkAsync();
+        await base.OnParametersSetAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await jsFacades.DisposeAsync();
+    }
+}

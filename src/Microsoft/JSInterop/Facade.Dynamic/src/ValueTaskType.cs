@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
 {
-    internal class ValueTaskType
+    internal partial class ValueTaskType
     {
         public Type? GenericParameterType { get; }
         public bool HasGenericParameterType => !(GenericParameterType is null);
@@ -23,7 +23,7 @@ namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
                 }
             }
 
-            throw new NotSupportedException($"The type is not {typeof(ValueTask)} or {typeof(ValueTask<>)}.");
+            throw ThrowHelper.CreateNotOfTypeValueTaskException(type);
         }
 
         public ValueTaskType(Type type) {

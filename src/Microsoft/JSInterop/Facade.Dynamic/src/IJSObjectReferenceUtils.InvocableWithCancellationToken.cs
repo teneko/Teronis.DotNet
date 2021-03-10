@@ -17,7 +17,7 @@ namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
         {
             invocableWithCancellationTokenFunctions = new Dictionary<Type, Func<IJSObjectReference, string, CancellationToken, object?[], object>>();
 
-            genericValueTaskReturningInvokeFunction =
+            genericValueTaskReturningInvokeWithCancellationTokenFunctionType =
                 jsObjectReferenceExtensionsType.GetMethod(
                     nameof(JSObjectReferenceExtensions.InvokeAsync),
                     genericParameterCount: 1,
@@ -29,9 +29,9 @@ namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
                     })
                 ?? throw new InvalidOperationException();
 
-            valueTaskReturningInvokeFunction =
+            valueTaskReturningInvokeWithCancellationTokenFunctionType =
                 jsObjectReferenceExtensionsType.GetMethod(
-                    nameof(JSObjectReferenceExtensions.InvokeAsync),
+                    nameof(JSObjectReferenceExtensions.InvokeVoidAsync),
                     types: new[] {
                         typeof(IJSObjectReference),
                         typeof(string),
@@ -48,8 +48,8 @@ namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
             }
 
             var invokeFunction = valueTaskType.HasGenericParameterType
-                ? CreateInvoker<Func<IJSObjectReference, string, CancellationToken, object?[], object>>(genericValueTaskReturningInvokeWithCancellationTokenFunctionType)
-                : CreateInvoker<Func<IJSObjectReference, string, CancellationToken, object?[], object>>(valueTaskReturningInvokeWithCancellationTokenFunctionType);
+                ? CreateInvoker<Func<IJSObjectReference, string, CancellationToken, object?[], object>>(genericValueTaskReturningInvokeWithCancellationTokenFunctionType, valueTaskType)
+                : CreateInvoker<Func<IJSObjectReference, string, CancellationToken, object?[], object>>(valueTaskReturningInvokeWithCancellationTokenFunctionType, valueTaskType);
 
             invocableWithCancellationTokenFunctions.Add(valueTaskType.Type, invokeFunction);
             return invokeFunction;

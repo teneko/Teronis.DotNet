@@ -16,7 +16,7 @@ namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
         {
             invocableWithTimeSpanFunctions = new Dictionary<Type, Func<IJSObjectReference, string, TimeSpan, object?[], object>>();
 
-            genericValueTaskReturningInvokeFunction =
+            genericValueTaskReturningInvokeWithTimeSpanFunctionType =
                 jsObjectReferenceExtensionsType.GetMethod(
                     nameof(JSObjectReferenceExtensions.InvokeAsync),
                     genericParameterCount: 1,
@@ -28,9 +28,10 @@ namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
                     })
                 ?? throw new InvalidOperationException();
 
-            valueTaskReturningInvokeFunction =
+            valueTaskReturningInvokeWithTimeSpanFunctionType =
                 jsObjectReferenceExtensionsType.GetMethod(
-                    nameof(JSObjectReferenceExtensions.InvokeAsync),
+                    nameof(JSObjectReferenceExtensions.InvokeVoidAsync),
+                    genericParameterCount: 0,
                     types: new[] {
                         typeof(IJSObjectReference),
                         typeof(string),
@@ -47,8 +48,8 @@ namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
             }
 
             var invokeFunction = valueTaskType.HasGenericParameterType
-                ? CreateInvoker<Func<IJSObjectReference, string, TimeSpan, object?[], object>>(genericValueTaskReturningInvokeWithTimeSpanFunctionType)
-                : CreateInvoker<Func<IJSObjectReference, string, TimeSpan, object?[], object>>(valueTaskReturningInvokeWithTimeSpanFunctionType);
+                ? CreateInvoker<Func<IJSObjectReference, string, TimeSpan, object?[], object>>(genericValueTaskReturningInvokeWithTimeSpanFunctionType, valueTaskType)
+                : CreateInvoker<Func<IJSObjectReference, string, TimeSpan, object?[], object>>(valueTaskReturningInvokeWithTimeSpanFunctionType, valueTaskType);
 
             invocableWithTimeSpanFunctions.Add(valueTaskType.Type, invokeFunction);
             return invokeFunction;

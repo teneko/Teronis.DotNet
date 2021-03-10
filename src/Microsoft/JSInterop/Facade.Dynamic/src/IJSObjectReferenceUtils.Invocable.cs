@@ -28,7 +28,8 @@ namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
 
             valueTaskReturningInvokeFunction =
                 jsObjectReferenceExtensionsType.GetMethod(
-                    nameof(JSObjectReferenceExtensions.InvokeAsync),
+                    nameof(JSObjectReferenceExtensions.InvokeVoidAsync),
+                    genericParameterCount: 0,
                     types: new[] {
                         typeof(IJSObjectReference),
                         typeof(string),
@@ -44,8 +45,8 @@ namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
             }
 
             var invokeFunction = valueTaskType.HasGenericParameterType
-                ? CreateInvoker<Func<IJSObjectReference, string, object?[], object>>(genericValueTaskReturningInvokeFunction)
-                : CreateInvoker<Func<IJSObjectReference, string, object?[], object>>(valueTaskReturningInvokeFunction);
+                ? CreateInvoker<Func<IJSObjectReference, string, object?[], object>>(genericValueTaskReturningInvokeFunction, valueTaskType)
+                : CreateInvoker<Func<IJSObjectReference, string, object?[], object>>(valueTaskReturningInvokeFunction, valueTaskType);
 
             invocableFunctions.Add(valueTaskType.Type, invokeFunction);
             return invokeFunction;

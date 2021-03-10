@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
 using System.Reflection;
-using System.Threading.Tasks;
-using Dynamitey;
 using ImpromptuInterface;
 using Microsoft.JSInterop;
-using Teronis.Microsoft.JSInterop.Facade.Dynamic.Annotations;
 
 namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
 {
-    public static class JSObjectProxyActivator
+    public static class JSDynamicObjectActivator
     {
         private static void CheckInterfaceType(Type interfaceType) {
             if (interfaceType is null) {
@@ -18,7 +13,7 @@ namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
             }
 
             if (!interfaceType.IsInterface) {
-                throw new NotSupportedException("Only interface type is allowed being proxied.");
+                throw new NotSupportedException("Only interface type is allowed to be proxied.");
             }
         }
 
@@ -26,15 +21,13 @@ namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
             // TODO
         }
 
-        public static T CreateInstance<T>(IJSObjectReference objectReference)
-            where T : class, IJSObjectProxy
-        {
-            var interfaceType = typeof(T);
+        private static JSDynamicObject CreateInstance(IJSObjectReference jsObjectReference, params Type[] interfaceTypes) {
+            var interfaceType = interfaceTypes[0];
             CheckInterfaceType(interfaceType);
 
             var methodDictionary = new MethodDictionary();
 
-            foreach (var methodInfo in JSFacadeUtils.GetProxyInterfaceMethods(interfaceType)) {
+            foreach (var methodInfo in JSFacadeUtils.GetDynamicObjectInterfaceMethods(interfaceType)) {
                 CheckMethodInfo(methodInfo);
 
                 var parameterList = ParameterList.Parse(methodInfo.GetParameters());
@@ -45,8 +38,16 @@ namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
                 methodDictionary.AddMethod(methodInfo, parameterList, valueTaskType);
             }
 
-            var jsObjectProxy = new JSObjectProxy(objectReference, methodDictionary);
-            return jsObjectProxy.ActLike<T>();
+            var jsDynamicObject = new JSDynamicObject(jsObjectReference, methodDictionary);
+            return jsDynamicObject;
+        }
+
+        public static T CreateInstance<T>(IJSObjectReference jsObjectReference)
+            where T : class, IJSDynamicObject
+        {
+            var interfaceType = typeof(T);
+            var jsDynamicObject = CreateInstance(jsObjectReference, interfaceType);
+            return jsDynamicObject.ActLike<T>();
         }
     }
 }

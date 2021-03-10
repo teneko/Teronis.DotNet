@@ -19,8 +19,8 @@ namespace Teronis.Microsoft.JSInterop.Facade
             }
         }
 
-        public static IEnumerable<MethodInfo> GetProxyInterfaceMethods(Type proxyInterfaceType) {
-            var memberInfos = proxyInterfaceType.GetMembers(JSFacadeDefaults.PROXY_INTERFACE__METHOD_BINDING_FLAGS);
+        public static IEnumerable<MethodInfo> GetDynamicObjectInterfaceMethods(Type dynamicObjectInterfaceType) {
+            var memberInfos = dynamicObjectInterfaceType.GetMembers(JSFacadeDefaults.PROXY_INTERFACE__METHOD_BINDING_FLAGS);
 
             foreach (var memberInfo in memberInfos) {
                 if (memberInfo.MemberType != MemberTypes.Method) {

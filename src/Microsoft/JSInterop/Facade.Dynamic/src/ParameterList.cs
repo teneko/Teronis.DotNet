@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -19,7 +18,7 @@ namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
                 parameterList.AddParameter(parameterInfo);
             }
 
-            return new ParameterList();
+            return parameterList;
         }
 
         public IReadOnlyList<Exception> Errors =>
@@ -138,7 +137,7 @@ namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
 
             foreach (var parameterInfo in parameterInfos) {
                 if (hasCancellableAnnotatedParameter && cancellableAnnotatedParameter!.ParameterInfo.Position == parameterPosition) {
-                    continue;
+                    goto @continue;
                 }
 
                 if (HasAccommodatableAnnotatedParameter && accommodatableAnnotatedParameter!.ParameterInfo.Position == parameterPosition) {
@@ -150,10 +149,12 @@ namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
                         argumentList.Add(value);
                     }
 
-                    continue;
+                    goto @continue;
                 }
 
                 argumentList.Add(arguments[parameterPosition]);
+
+                @continue:
                 parameterPosition++;
             }
 

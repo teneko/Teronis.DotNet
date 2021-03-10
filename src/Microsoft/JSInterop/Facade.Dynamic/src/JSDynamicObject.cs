@@ -1,23 +1,25 @@
 ﻿using System.Collections.Generic;
 using System.Dynamic;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 
 namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
 {
-    public class JSObjectProxy : DynamicObject, IJSObjectReferenceFacade
+    public class JSDynamicObject : DynamicObject, IJSDynamicObject
     {
-        public IJSObjectReference JSObjectReference => jsObjectReference;
+        public IJSObjectReference JSObjectReference =>
+            jsObjectReference;
 
         private readonly IJSObjectReference jsObjectReference;
         private readonly MethodDictionary methodDictionary;
 
-        internal JSObjectProxy(IJSObjectReference jsObjectReference, MethodDictionary methodDictionary)
+        internal JSDynamicObject(IJSObjectReference jsObjectReference, MethodDictionary methodDictionary)
         {
             this.jsObjectReference = jsObjectReference;
             this.methodDictionary = methodDictionary ?? throw new System.ArgumentNullException(nameof(methodDictionary));
         }
+
+        public override bool TryGetMember(GetMemberBinder binder, out object? result) => base.TryGetMember(binder, out result);
 
         private static string?[] GetPositionalArgumentNames(int numberOfArguments, IReadOnlyList<string> argumentNames)
         {
@@ -41,26 +43,21 @@ namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
         public override bool TryInvokeMember(InvokeMemberBinder binder, object?[]? args, out object? result)
         {
             if (args is null) {
-                result = null;
-                return false;
+                goto exit;
             }
 
             var positionalArgumentNames = GetPositionalArgumentNames(binder.CallInfo.ArgumentCount, binder.CallInfo.ArgumentNames);
 
             if (!methodDictionary.TryFindMethod(binder.Name, positionalArgumentNames, out var method)) {
-                result = null;
-                return false;
+                goto exit;
             }
 
             result = method.Invoke(jsObjectReference, args);
             return true;
+
+            exit:
+            return base.TryInvokeMember(binder, args, out result);
         }
-
-        public ValueTask<TValue> InvokeAsync<TValue>(string identifier, object?[]? args) =>
-            jsObjectReference.InvokeAsync<TValue>(identifier, args);
-
-        public ValueTask<TValue> InvokeAsync<TValue>(string identifier, CancellationToken cancellationToken, object?[]? args) =>
-            jsObjectReference.InvokeAsync<TValue>(identifier, cancellationToken, args);
 
         public ValueTask DisposeAsync() =>
             JSObjectReference.DisposeAsync();

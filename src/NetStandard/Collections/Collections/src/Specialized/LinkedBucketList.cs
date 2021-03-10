@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Teronis.Collections.Generic;
@@ -8,6 +9,24 @@ namespace Teronis.Collections.Specialized
     public class LinkedBucketList<KeyType, ValueType> : ILinkedBucketList<KeyType, ValueType>
         where KeyType : notnull
     {
+        public LinkedBucketListNode<KeyType, ValueType>? First =>
+            ((ILinkedBucketList<KeyType, ValueType>)linkedList).First;
+
+        public LinkedBucketListNode<KeyType, ValueType>? Last =>
+            ((ILinkedBucketList<KeyType, ValueType>)linkedList).Last;
+
+        public ILinkedBucketList<KeyType, ValueType> List =>
+            ((ILinkedBucketList<KeyType, ValueType>)linkedList).List;
+
+        public int Count =>
+            ((ILinkedBucketList<KeyType, ValueType>)linkedList).Count;
+
+        public ICovariantReadOnlyNullableKeyDictionary<KeyType, ILinkedBucketList<KeyType, ValueType>> Buckets =>
+            ((ILinkedBucketList<KeyType, ValueType>)linkedList).Buckets;
+
+        public bool IsBucket =>
+            ((ILinkedBucketList<KeyType, ValueType>)linkedList).IsBucket;
+
         private LinkedBucketListBase<KeyType, ValueType>.LinkedList linkedList;
 
         public LinkedBucketList(IEqualityComparer<KeyType> equalityComparer) =>
@@ -18,24 +37,6 @@ namespace Teronis.Collections.Specialized
 
         public ValueType this[int index] =>
             linkedList[index];
-
-        public ICovariantReadOnlyNullableKeyDictionary<KeyType, ILinkedBucketList<KeyType, ValueType>> Buckets =>
-            ((ILinkedBucketList<KeyType, ValueType>)linkedList).Buckets;
-
-        public int Count =>
-            ((ILinkedBucketList<KeyType, ValueType>)linkedList).Count;
-
-        public LinkedBucketListNode<KeyType, ValueType>? First =>
-            ((ILinkedBucketList<KeyType, ValueType>)linkedList).First;
-
-        public bool IsBucket =>
-            ((ILinkedBucketList<KeyType, ValueType>)linkedList).IsBucket;
-
-        public LinkedBucketListNode<KeyType, ValueType>? Last =>
-            ((ILinkedBucketList<KeyType, ValueType>)linkedList).Last;
-
-        public ILinkedBucketList<KeyType, ValueType> List =>
-            ((ILinkedBucketList<KeyType, ValueType>)linkedList).List;
 
         public void AddAfter(LinkedBucketListNode<KeyType, ValueType> node, LinkedBucketListNode<KeyType, ValueType> toBeInsertedNode) =>
             ((ILinkedBucketList<KeyType, ValueType>)linkedList).AddAfter(node, toBeInsertedNode);
@@ -61,17 +62,6 @@ namespace Teronis.Collections.Specialized
         public LinkedBucketListNode<KeyType, ValueType> AddLast(YetNullable<KeyType> key, ValueType value) =>
             ((ILinkedBucketList<KeyType, ValueType>)linkedList).AddLast(key, value);
 
-        public void Clear() =>
-            ((ILinkedBucketList<KeyType, ValueType>)linkedList).Clear();
-
-        public LinkedBucketListNode<KeyType, ValueType>? FindFirst(ValueType value) =>
-            ((ILinkedBucketList<KeyType, ValueType>)linkedList).FindFirst(value);
-
-        public LinkedBucketListNode<KeyType, ValueType>? FindLast(ValueType value) =>
-            ((ILinkedBucketList<KeyType, ValueType>)linkedList).FindLast(value);
-
-        public IEnumerator<ValueType> GetEnumerator() =>
-            ((ILinkedBucketList<KeyType, ValueType>)linkedList).GetEnumerator();
 
         public void Remove(LinkedBucketListNode<KeyType, ValueType> node, bool preserveEmptyBucket = false) =>
             ((ILinkedBucketList<KeyType, ValueType>)linkedList).Remove(node, preserveEmptyBucket);
@@ -79,14 +69,26 @@ namespace Teronis.Collections.Specialized
         public void RemoveFirst(bool preserveEmptyBucket = false) =>
             ((ILinkedBucketList<KeyType, ValueType>)linkedList).RemoveFirst(preserveEmptyBucket);
 
-        public void RemoveFirst(ValueType value, bool preserveEmptyBucket = false) =>
-            ((ILinkedBucketList<KeyType, ValueType>)linkedList).RemoveFirst(value, preserveEmptyBucket);
-
         public void RemoveLast(bool preserveEmptyBucket = false) =>
             ((ILinkedBucketList<KeyType, ValueType>)linkedList).RemoveLast(preserveEmptyBucket);
 
+
+        public void Clear() =>
+            ((ILinkedBucketList<KeyType, ValueType>)linkedList).Clear();
+
+
         public bool TryGetBucket(YetNullable<KeyType> key, [MaybeNullWhen(false)] out ILinkedBucketList<KeyType, ValueType> bucket) =>
             ((ILinkedBucketList<KeyType, ValueType>)linkedList).TryGetBucket(key, out bucket);
+
+        public LinkedBucketListNode<KeyType, ValueType>? FindFirst(Predicate<ValueType> value) => 
+            ((ILinkedBucketList<KeyType, ValueType>)linkedList).FindFirst(value);
+
+        public LinkedBucketListNode<KeyType, ValueType>? FindLast(Predicate<ValueType> value) => 
+            ((ILinkedBucketList<KeyType, ValueType>)linkedList).FindLast(value);
+
+
+        public IEnumerator<ValueType> GetEnumerator() =>
+            ((ILinkedBucketList<KeyType, ValueType>)linkedList).GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() =>
             ((IEnumerable)linkedList).GetEnumerator();
@@ -104,6 +106,12 @@ namespace Teronis.Collections.Specialized
 
         IReadOnlyLinkedBucketList<KeyType, ValueType> IReadOnlyLinkedBucketList<KeyType, ValueType>.List =>
             ((IReadOnlyLinkedBucketList<KeyType, ValueType>)linkedList).List;
+
+        IReadOnlyLinkedBucketListNode<KeyType, ValueType>? IReadOnlyLinkedBucketList<KeyType, ValueType>.FindFirst(Predicate<ValueType> value) => 
+            ((IReadOnlyLinkedBucketList<KeyType, ValueType>)linkedList).FindFirst(value);
+
+        IReadOnlyLinkedBucketListNode<KeyType, ValueType>? IReadOnlyLinkedBucketList<KeyType, ValueType>.FindLast(Predicate<ValueType> value) => 
+            ((IReadOnlyLinkedBucketList<KeyType, ValueType>)linkedList).FindLast(value);
 
         #endregion
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Teronis.Collections.Generic;
 
@@ -14,22 +15,27 @@ namespace Teronis.Collections.Specialized
         new LinkedBucketListNode<KeyType, ValueType>? Last { get; }
         new ILinkedBucketList<KeyType, ValueType> List { get; }
 
-        void AddAfter(LinkedBucketListNode<KeyType, ValueType> node, LinkedBucketListNode<KeyType, ValueType> toBeInsertedNode);
         LinkedBucketListNode<KeyType, ValueType> AddAfter(LinkedBucketListNode<KeyType, ValueType> node, ValueType value);
-        void AddBefore(LinkedBucketListNode<KeyType, ValueType> node, LinkedBucketListNode<KeyType, ValueType> toBeInsertedNode);
         LinkedBucketListNode<KeyType, ValueType> AddBefore(LinkedBucketListNode<KeyType, ValueType> node, ValueType value);
-        void AddFirst(YetNullable<KeyType> key, LinkedBucketListNode<KeyType, ValueType> node);
         LinkedBucketListNode<KeyType, ValueType> AddFirst(YetNullable<KeyType> key, ValueType value);
-        void AddLast(YetNullable<KeyType> key, LinkedBucketListNode<KeyType, ValueType> node);
-        bool TryGetBucket(YetNullable<KeyType> key, [MaybeNullWhen(false)] out ILinkedBucketList<KeyType, ValueType> bucket);
         LinkedBucketListNode<KeyType, ValueType> AddLast(YetNullable<KeyType> key, ValueType value);
-        void Clear();
-        LinkedBucketListNode<KeyType, ValueType>? FindFirst(ValueType value);
-        LinkedBucketListNode<KeyType, ValueType>? FindLast(ValueType value);
-        new IEnumerator<ValueType> GetEnumerator();
+
+        void AddAfter(LinkedBucketListNode<KeyType, ValueType> node, LinkedBucketListNode<KeyType, ValueType> toBeInsertedNode);
+        void AddBefore(LinkedBucketListNode<KeyType, ValueType> node, LinkedBucketListNode<KeyType, ValueType> toBeInsertedNode);
+        void AddFirst(YetNullable<KeyType> key, LinkedBucketListNode<KeyType, ValueType> node);
+        void AddLast(YetNullable<KeyType> key, LinkedBucketListNode<KeyType, ValueType> node);
+
         void Remove(LinkedBucketListNode<KeyType, ValueType> node, bool preserveEmptyBucket = false);
         void RemoveFirst(bool preserveEmptyBucket = false);
-        void RemoveFirst(ValueType value, bool preserveEmptyBucket = false);
         void RemoveLast(bool preserveEmptyBucket = false);
+
+        void Clear();
+
+        bool TryGetBucket(YetNullable<KeyType> key, [MaybeNullWhen(false)] out ILinkedBucketList<KeyType, ValueType> bucket);
+
+        new LinkedBucketListNode<KeyType, ValueType>? FindFirst(Predicate<ValueType> predicate);
+        new LinkedBucketListNode<KeyType, ValueType>? FindLast(Predicate<ValueType> predicate);
+
+        new IEnumerator<ValueType> GetEnumerator();
     }
 }

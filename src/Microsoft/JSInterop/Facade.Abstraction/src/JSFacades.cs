@@ -47,7 +47,7 @@ namespace Teronis.Microsoft.JSInterop.Facade
             }
         }
 
-        public async ValueTask<IJSLocalObjectReference> CreateModuleReferenceAsync(string pathRelativeToWwwRoot)
+        public async ValueTask<IJSLocalObject> CreateModuleReferenceAsync(string pathRelativeToWwwRoot)
         {
             var module = await jsFacadeResolver.CreateModuleReferenceAsync(pathRelativeToWwwRoot);
             jsFacades.Add(module);
@@ -61,8 +61,8 @@ namespace Teronis.Microsoft.JSInterop.Facade
             return module;
         }
 
-        public async ValueTask<IJSLocalObjectReference> CreateObjectReferenceAsync(string objectName) {
-            var @object = await jsFacadeResolver.CreateObjectReferenceAsync(objectName);
+        public async ValueTask<IJSLocalObject> CreateObjectAsync(string objectName) {
+            var @object = await jsFacadeResolver.CreateObjectAsync(objectName);
             jsFacades.Add(@object);
             return @object;
         }

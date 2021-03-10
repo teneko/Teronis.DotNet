@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Teronis.Microsoft.JSInterop.Facade;
-using Teronis_._Microsoft.JSInterop.Facade.JSFacades;
+using Teronis_._Microsoft.JSInterop.Facade.JSModules;
 
 namespace Teronis_._Microsoft.JSInterop.Facade
 {

@@ -25,7 +25,7 @@ namespace Teronis.Collections.Generic
         /// <param name="value"></param>
         /// <exception cref="ArgumentException">Null key exists already.</exception>
         /// <exception cref="NotSupportedException"><see cref="INullableKeyDictionary{KeyType, ValueType}"/> is read-only.</exception>
-        void Add([AllowNull] ValueType value);
+        void Add(ValueType value);
 
         /// <summary>
         /// Removes the element associated with the nullable key.

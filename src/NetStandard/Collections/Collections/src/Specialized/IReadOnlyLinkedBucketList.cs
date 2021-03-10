@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Teronis.Collections.Generic;
 
 namespace Teronis.Collections.Specialized
@@ -12,5 +13,8 @@ namespace Teronis.Collections.Specialized
         bool IsBucket { get; }
         IReadOnlyLinkedBucketListNode<KeyType, ValueType>? Last { get; }
         IReadOnlyLinkedBucketList<KeyType, ValueType> List { get; }
+
+        IReadOnlyLinkedBucketListNode<KeyType, ValueType>? FindFirst(Predicate<ValueType> predicate);
+        IReadOnlyLinkedBucketListNode<KeyType, ValueType>? FindLast(Predicate<ValueType> predicate);
     }
 }

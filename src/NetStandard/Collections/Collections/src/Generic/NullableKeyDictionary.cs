@@ -67,32 +67,6 @@ namespace Teronis.Collections.Generic
         public NullableKeyDictionary(int capacity, IEqualityComparer<KeyType>? comparer) =>
             dictionary = new Dictionary<KeyType, ValueType>(capacity, comparer);
 
-        public ValueType this[[AllowNull] KeyType key] {
-            get {
-                if (key is null) {
-                    if (!nullableKeyValuePair.HasValue) {
-                        throw new KeyNotFoundException();
-                    }
-
-                    return nullableKeyValuePair.Value.Value;
-                }
-
-                return dictionary[key];
-            }
-
-            set {
-                if (IsReadOnly) {
-                    throw NullableKeyDictionaryExceptionHelper.CreateNotSupportedException();
-                }
-
-                if (key is null) {
-                    nullableKeyValuePair = new KeyValuePair<YetNullable<KeyType>, ValueType>(YetNullable<KeyType>.Null, value);
-                } else {
-                    dictionary[key] = value;
-                }
-            }
-        }
-
         public ValueType this[YetNullable<KeyType> key] {
             get {
                 if (!key.HasValue) {
@@ -119,29 +93,12 @@ namespace Teronis.Collections.Generic
             }
         }
 
-        public void Add([AllowNull] KeyType key, ValueType value)
-        {
-            if (IsReadOnly) {
-                throw NullableKeyDictionaryExceptionHelper.CreateNotSupportedException();
-            }
-
-            if (key is null) {
-                if (nullableKeyValuePair.HasValue) {
-                    throw new ArgumentException();
-                }
-
-                nullableKeyValuePair = new KeyValuePair<YetNullable<KeyType>, ValueType>(YetNullable<KeyType>.Null, value);
-            } else {
-                dictionary.Add(key, value);
-            }
-        }
-
         /// <summary>
         /// Adds an element with the provided key and value to the <see cref="INullableKeyDictionary{KeyType, ValueType}"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        public void Add(YetNullable<KeyType> key, [AllowNull] ValueType value)
+        public void Add(YetNullable<KeyType> key, ValueType value)
         {
             if (IsReadOnly) {
                 throw new NotSupportedException("");
@@ -158,20 +115,11 @@ namespace Teronis.Collections.Generic
             }
         }
 
-        public void Add([AllowNull] ValueType value) =>
-            Add(YetNullable.Null<KeyType>(), value);
+        public void Add(ValueType value) =>
+            Add(YetNullable<KeyType>.Null, value);
 
         bool ICollection<KeyValuePair<KeyType, ValueType>>.Contains(KeyValuePair<KeyType, ValueType> item) =>
             dictionary.AsCollectionWithPairs().Contains(item);
-
-        public bool ContainsKey([AllowNull] KeyType key)
-        {
-            if (key is null) {
-                return nullableKeyValuePair.HasValue;
-            }
-
-            return dictionary.ContainsKey(key);
-        }
 
         public bool ContainsKey(YetNullable<KeyType> key)
         {
@@ -197,17 +145,6 @@ namespace Teronis.Collections.Generic
             return false;
         }
 
-        
-
-        public CovariantTuple<bool, ValueType> FindValue(KeyType key)
-        {
-            if (TryGetValue(key, out ValueType value)) {
-                return new CovariantTuple<bool, ValueType>(true, value);
-            }
-
-            return new CovariantTuple<bool, ValueType>(default, default!);
-        }
-
         public CovariantTuple<bool, ValueType> FindValue(YetNullable<KeyType> key)
         {
             if (TryGetValue(key, out ValueType value)) {
@@ -215,24 +152,6 @@ namespace Teronis.Collections.Generic
             }
 
             return new CovariantTuple<bool, ValueType>(default, default!);
-        }
-
-        public bool Remove([AllowNull] KeyType key)
-        {
-            if (IsReadOnly) {
-                throw NullableKeyDictionaryExceptionHelper.CreateNotSupportedException();
-            }
-
-            if (key is null) {
-                if (nullableKeyValuePair.HasValue) {
-                    nullableKeyValuePair = null;
-                    return true;
-                }
-
-                return false;
-            }
-
-            return dictionary.Remove(key);
         }
 
         public bool Remove(YetNullable<KeyType> key)
@@ -293,8 +212,22 @@ namespace Teronis.Collections.Generic
 
         #region IDictionary<KeyType, ValueType>
 
+        ValueType IDictionary<KeyType, ValueType>.this[KeyType key] {
+            get => this[key];
+            set => this[key] = value;
+        }
+
         ICollection<KeyType> IDictionary<KeyType, ValueType>.Keys => dictionary.Keys;
         ICollection<ValueType> IDictionary<KeyType, ValueType>.Values => dictionary.Values;
+
+        void IDictionary<KeyType, ValueType>.Add(KeyType key, ValueType value) =>
+            Add(key, value);
+
+        bool IDictionary<KeyType, ValueType>.Remove(KeyType key) =>
+            Remove(key);
+
+        bool IDictionary<KeyType, ValueType>.ContainsKey(KeyType key) =>
+            ContainsKey(key);
 
         bool IDictionary<KeyType, ValueType>.TryGetValue(KeyType key, [MaybeNullWhen(false)] out ValueType value) =>
             TryGetValue(key, out value);
@@ -459,6 +392,26 @@ namespace Teronis.Collections.Generic
 
         IEnumerator<KeyValuePair<IYetNullable<KeyType>, ValueType>> IEnumerable<KeyValuePair<IYetNullable<KeyType>, ValueType>>.GetEnumerator() =>
             new KeyValuePairEnumeratorWithPairHavingCovariantNullableKey<KeyType, ValueType>(GetEnumerator());
+
+        #endregion
+
+        #region IReadOnlyDictionary<KeyType, ValueType>
+
+        bool IReadOnlyDictionary<KeyType, ValueType>.ContainsKey(KeyType key) =>
+            ContainsKey(key);
+
+        ValueType IReadOnlyDictionary<KeyType, ValueType>.this[KeyType key] =>
+            this[key];
+
+        #endregion
+
+        #region
+
+        bool ICovariantReadOnlyDictionary<KeyType, ValueType>.ContainsKey(KeyType key) =>
+            ContainsKey(key);
+
+        ValueType ICovariantReadOnlyDictionary<KeyType, ValueType>.this[KeyType key] =>
+            this[key];
 
         #endregion
 

@@ -5,11 +5,9 @@ namespace Teronis.Collections.Generic
     public struct CovariantKeyValuePair<KeyType, ValueType> : ICovariantKeyValuePair<KeyType, ValueType>
     {
         public KeyType Key { get; }
-
-        [MaybeNull, AllowNull]
         public ValueType Value { get; }
 
-        public CovariantKeyValuePair(KeyType key, [AllowNull] ValueType value)
+        public CovariantKeyValuePair(KeyType key, ValueType value)
         {
             Key = key;
             Value = value;

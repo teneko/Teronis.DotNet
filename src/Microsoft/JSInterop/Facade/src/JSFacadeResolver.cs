@@ -21,10 +21,10 @@ namespace Teronis.Microsoft.JSInterop.Facade
             this.serviceProvider = serviceProvider;
         }
 
-        public async ValueTask<IJSLocalObjectReference> CreateModuleReferenceAsync(string relativeWwwRootPath)
+        public async ValueTask<IJSLocalObject> CreateModuleReferenceAsync(string relativeWwwRootPath)
         {
             var objectReference = await jsRuntime.InvokeAsync<IJSObjectReference>("import", relativeWwwRootPath);
-            return jsObjectInterop.CreateObjectReference(objectReference);
+            return jsObjectInterop.CreateObject(objectReference);
         }
 
         public virtual async ValueTask<IAsyncDisposable> ResolveModuleAsync(string pathRelativeToWwwRoot, Type jsFacadeType)
@@ -42,7 +42,7 @@ namespace Teronis.Microsoft.JSInterop.Facade
             return (IAsyncDisposable)ActivatorUtilities.CreateInstance(serviceProvider, jsFacadeType, moduleReference);
         }
 
-        public ValueTask<IJSLocalObjectReference> CreateObjectReferenceAsync(string objectName) =>
-            jsObjectInterop.CreateObjectReferenceAsync(objectName);
+        public ValueTask<IJSLocalObject> CreateObjectAsync(string objectName) =>
+            jsObjectInterop.CreateObjectAsync(objectName);
     }
 }

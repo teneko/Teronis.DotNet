@@ -212,24 +212,18 @@ namespace Teronis.Collections.Specialized
             return false;
         }
 
-        public void RemoveFirst(ValueType value, bool preserveEmptyBucket = false)
+        public LinkedBucketListNode<KeyType, ValueType>? FindFirst(Predicate<ValueType> predicate)
         {
-            var node = FindFirst(value);
-
-            if (node != null) {
-                Remove(node);
+            if (predicate is null) {
+                throw new ArgumentNullException(nameof(predicate));
             }
-        }
 
-        public LinkedBucketListNode<KeyType, ValueType>? FindFirst(ValueType value)
-        {
             if (head != null) {
                 var headPart = GetNodePart(head);
                 var nodePart = headPart;
-                var equalityComparer = EqualityComparer<ValueType>.Default;
 
                 do {
-                    if (equalityComparer.Equals(nodePart.Owner.Value, value)) {
+                    if (predicate(nodePart.Owner.Value)) {
                         return nodePart.Owner;
                     }
 
@@ -240,16 +234,15 @@ namespace Teronis.Collections.Specialized
             return null;
         }
 
-        public LinkedBucketListNode<KeyType, ValueType>? FindLast(ValueType value)
+        public LinkedBucketListNode<KeyType, ValueType>? FindLast(Predicate<ValueType> predicate)
         {
             if (head != null) {
                 var headPart = GetNodePart(head);
                 var lastPart = headPart.previousPart;
                 var nodePart = lastPart;
-                var equalityComparer = EqualityComparer<ValueType>.Default;
 
                 do {
-                    if (equalityComparer.Equals(nodePart.Owner.Value, value)) {
+                    if (predicate(nodePart.Owner.Value)) {
                         return nodePart.Owner;
                     }
 
@@ -258,6 +251,18 @@ namespace Teronis.Collections.Specialized
             }
 
             return null;
+        }
+
+        public LinkedBucketListNode<KeyType, ValueType>? FindFirst(ValueType value, IEqualityComparer? equalityComparer)
+        {
+            equalityComparer ??= EqualityComparer<ValueType>.Default;
+            return FindFirst(x => equalityComparer.Equals(x, value));
+        }
+
+        public LinkedBucketListNode<KeyType, ValueType>? FindLast(ValueType value, IEqualityComparer? equalityComparer)
+        {
+            equalityComparer ??= EqualityComparer<ValueType>.Default;
+            return FindLast(x => equalityComparer.Equals(x, value));
         }
 
         public virtual void Remove(LinkedBucketListNode<KeyType, ValueType> node, bool preserveEmptyBucket = false)
@@ -347,10 +352,14 @@ namespace Teronis.Collections.Specialized
             }
         }
 
-        #region ILinkedBucketList<KeyType, ValueType>
+        #region IReadOnlyLinkedBucketList{`2}
 
         ICovariantReadOnlyNullableKeyDictionary<KeyType, IReadOnlyLinkedBucketList<KeyType, ValueType>> IReadOnlyLinkedBucketList<KeyType, ValueType>.Buckets =>
             Buckets;
+
+        #endregion
+
+        #region IReadOnlyLinkedBucketList{`2}
 
         IReadOnlyLinkedBucketListNode<KeyType, ValueType>? IReadOnlyLinkedBucketList<KeyType, ValueType>.First =>
             First;
@@ -360,6 +369,12 @@ namespace Teronis.Collections.Specialized
 
         IReadOnlyLinkedBucketList<KeyType, ValueType> IReadOnlyLinkedBucketList<KeyType, ValueType>.List =>
             List;
+
+        IReadOnlyLinkedBucketListNode<KeyType, ValueType>? IReadOnlyLinkedBucketList<KeyType, ValueType>.FindFirst(Predicate<ValueType> predicate) => 
+            FindFirst(predicate);
+
+        IReadOnlyLinkedBucketListNode<KeyType, ValueType>? IReadOnlyLinkedBucketList<KeyType, ValueType>.FindLast(Predicate<ValueType> predicate) => 
+            FindLast(predicate);
 
         #endregion
     }

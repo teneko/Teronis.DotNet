@@ -5,9 +5,11 @@ namespace Teronis.Microsoft.JSInterop.Facade.WebAssets
 {
     public interface IJSObjectInterop
     {
-        IJSLocalObjectReference CreateObjectReference(IJSObjectReference objectReference);
-
-        ValueTask<IJSLocalObjectReference> CreateObjectReferenceAsync(IJSObjectReference objectReference, string objectName);
-        ValueTask<IJSLocalObjectReference> CreateObjectReferenceAsync(string? objectName);
+        IJSLocalObject CreateObject(IJSObjectReference objectReference);
+        ValueTask<IJSObjectReference> CreateObjectReferenceAsync(IJSObjectReference objectReference, string objectName);
+        ValueTask<IJSObjectReference> CreateObjectReferenceAsync(string? objectName);
+        ValueTask<IJSLocalObject> CreateObjectAsync(string objectName);
+        ValueTask<IJSLocalObject> CreateObjectAsync(IJSObjectReference objectReference, string objectName);
+        ValueTask<IJSLocalObject> CreateObjectAsync(IJSLocalObject objectReference, string objectName);
     }
 }

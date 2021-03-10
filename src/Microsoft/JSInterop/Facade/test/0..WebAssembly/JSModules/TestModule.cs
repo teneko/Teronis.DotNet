@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop.Facade.Annotiations.Design;
 
-namespace Teronis_._Microsoft.JSInterop.Facade.JSFacades
+namespace Teronis_._Microsoft.JSInterop.Facade.JSModules
 {
     [JSModuleFacade("./js/Teronis.Microsoft.JSInterop.Facade.Test.WebAssembly.js")]
     public class TestModule : IAsyncDisposable

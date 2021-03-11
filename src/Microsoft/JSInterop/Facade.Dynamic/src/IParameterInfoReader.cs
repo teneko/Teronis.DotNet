@@ -1,6 +1,6 @@
 ﻿namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
 {
-    internal interface IParameterInfoReadable
+    internal interface IParameterInfoReader
     {
         void ReadParameterInfo();
     }

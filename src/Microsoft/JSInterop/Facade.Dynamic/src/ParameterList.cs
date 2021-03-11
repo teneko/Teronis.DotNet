@@ -69,7 +69,7 @@ namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
         /// <param name="annotatedParameter"></param>
         /// <param name="newAnnotatedParameter"></param>
         private void SetAnnotatedParameter<T>(ref T? annotatedParameter, T newAnnotatedParameter)
-            where T : class, IParameterInfoReadable
+            where T : class, IParameterInfoReader
         {
             try {
                 annotatedParameter = newAnnotatedParameter;

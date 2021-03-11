@@ -16,10 +16,10 @@ namespace Teronis.Microsoft.JSInterop.Facade
             this.jsFacadeResolver = jsFacadeResolver ?? throw new ArgumentNullException(nameof(jsFacadeResolver));
         }
 
-        public Task<JSFacades> InitializeFacadesAsync(object component) =>
+        public ValueTask<IJSFacades> InitializeFacadesAsync(object component) =>
             jsFacadesInitializer.InitializeFacadesAsync(component, jsFacadeResolver);
 
-        public Task<JSFacades> InitializeFacadesAsync() =>
+        public ValueTask<IJSFacades> InitializeFacadesAsync() =>
             jsFacadesInitializer.InitializeFacadesAsync(jsFacadeResolver);
     }
 }

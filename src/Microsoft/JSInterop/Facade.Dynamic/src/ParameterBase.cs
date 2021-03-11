@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
 {
-    public abstract class ParameterBase<AttributeType> : IParameterInfoReadable
+    public abstract class ParameterBase<AttributeType> : IParameterInfoReader
         where AttributeType : Attribute
     {
         public ParameterInfo ParameterInfo { get; }
@@ -17,7 +17,7 @@ namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
 
         protected internal virtual void ReadParameterInfo() { }
 
-        void IParameterInfoReadable.ReadParameterInfo() =>
+        void IParameterInfoReader.ReadParameterInfo() =>
             ReadParameterInfo();
     }
 }

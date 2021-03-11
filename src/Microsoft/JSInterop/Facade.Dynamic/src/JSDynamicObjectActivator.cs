@@ -7,7 +7,8 @@ namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
 {
     public static class JSDynamicObjectActivator
     {
-        private static void CheckInterfaceType(Type interfaceType) {
+        private static void CheckInterfaceType(Type interfaceType)
+        {
             if (interfaceType is null) {
                 throw new ArgumentNullException(nameof(interfaceType));
             }
@@ -17,37 +18,40 @@ namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
             }
         }
 
-        private static void CheckMethodInfo(MethodInfo methodInfo) { 
+        private static void CheckMethodInfo(MethodInfo methodInfo)
+        {
             // TODO
         }
 
-        private static JSDynamicObject CreateInstance(IJSObjectReference jsObjectReference, params Type[] interfaceTypes) {
-            var interfaceType = interfaceTypes[0];
-            CheckInterfaceType(interfaceType);
-
+        private static MethodDictionary CreateMethodDictionary(params Type[] interfaceTypes)
+        {
             var methodDictionary = new MethodDictionary();
 
-            foreach (var methodInfo in JSFacadeUtils.GetDynamicObjectInterfaceMethods(interfaceType)) {
-                CheckMethodInfo(methodInfo);
+            foreach (var interfaceType in interfaceTypes) {
+                CheckInterfaceType(interfaceType);
 
-                var parameterList = ParameterList.Parse(methodInfo.GetParameters());
-                parameterList.ThrowAggregateExceptionWhenHavingErrors();
+                foreach (var methodInfo in JSFacadeUtils.GetDynamicObjectInterfaceMethods(interfaceType)) {
+                    CheckMethodInfo(methodInfo);
 
-                var valueTaskType = ValueTaskType.Parse(methodInfo.ReturnType);
+                    var parameterList = ParameterList.Parse(methodInfo.GetParameters());
+                    parameterList.ThrowParameterListExceptionWhenHavingErrors();
 
-                methodDictionary.AddMethod(methodInfo, parameterList, valueTaskType);
+                    var valueTaskType = ValueTaskType.Parse(methodInfo.ReturnType);
+
+                    methodDictionary.AddMethod(methodInfo, parameterList, valueTaskType);
+                }
             }
 
-            var jsDynamicObject = new JSDynamicObject(jsObjectReference, methodDictionary);
-            return jsDynamicObject;
+            return methodDictionary;
         }
 
         public static T CreateInstance<T>(IJSObjectReference jsObjectReference)
             where T : class, IJSDynamicObject
         {
-            var interfaceType = typeof(T);
-            var jsDynamicObject = CreateInstance(jsObjectReference, interfaceType);
-            return jsDynamicObject.ActLike<T>();
+            var mainInterfaceType = typeof(T);
+            var methods = CreateMethodDictionary(mainInterfaceType);
+            var jsDynamicObject = new JSDynamicObject(jsObjectReference, methods);
+            return jsDynamicObject.ActLike<T>(/*other interfaces*/);
         }
     }
 }

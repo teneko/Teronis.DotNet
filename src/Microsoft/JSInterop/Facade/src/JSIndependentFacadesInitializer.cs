@@ -41,7 +41,7 @@ namespace Teronis.Microsoft.JSInterop.Facade
             classModuleAttributeType = typeof(Annotiations.Design.JSModuleFacadeAttribute);
         }
 
-        public async Task<JSFacades> InitializeFacadesAsync(object component, IJSFacadeResolver jsFacadeResolver)
+        public async ValueTask<IJSFacades> InitializeFacadesAsync(object component, IJSFacadeResolver jsFacadeResolver)
         {
             if (component is null) {
                 throw new ArgumentNullException(nameof(component));
@@ -61,7 +61,7 @@ namespace Teronis.Microsoft.JSInterop.Facade
             return new JSFacades(jsFacades, jsFacadeResolver);
         }
 
-        public Task<JSFacades> InitializeFacadesAsync(IJSFacadeResolver jsFacadeResolver) =>
-            Task.FromResult(new JSFacades(new List<IAsyncDisposable>(), jsFacadeResolver));
+        public ValueTask<IJSFacades> InitializeFacadesAsync(IJSFacadeResolver jsFacadeResolver) =>
+            new ValueTask<IJSFacades>(new JSFacades(new List<IAsyncDisposable>(), jsFacadeResolver));
     }
 }

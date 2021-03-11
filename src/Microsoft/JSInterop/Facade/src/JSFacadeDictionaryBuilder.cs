@@ -9,8 +9,8 @@ namespace Teronis.Microsoft.JSInterop.Facade
         private readonly Dictionary<Type, JSFacadeCreatorDelegate<IAsyncDisposable>?> facadeByTypeDictionary;
 
         public JSFacadeDictionaryBuilder() =>
-            facadeByTypeDictionary = new Dictionary<Type, JSFacadeCreatorDelegate<IAsyncDisposable>?>(); 
-        
+            facadeByTypeDictionary = new Dictionary<Type, JSFacadeCreatorDelegate<IAsyncDisposable>?>();
+
         public JSFacadeDictionaryBuilder AddDefault()
         {
             ((IJSFacadeDictionaryBuilder)this).AddDefault();
@@ -28,17 +28,19 @@ namespace Teronis.Microsoft.JSInterop.Facade
             return this;
         }
 
-        public JSFacadeDictionaryBuilder AddFacade<T>() {
+        public JSFacadeDictionaryBuilder AddFacade<T>()
+            where T : class
+        {
             facadeByTypeDictionary.Add(typeof(T), null);
             return this;
         }
 
         public JSFacadeDictionary Build() =>
-            new JSFacadeDictionary(new ReadOnlyDictionary<Type, JSFacadeCreatorDelegate<IAsyncDisposable>>(facadeByTypeDictionary));
+            new JSFacadeDictionary(new ReadOnlyDictionary<Type, JSFacadeCreatorDelegate<IAsyncDisposable>?>(facadeByTypeDictionary));
 
         #region IJSFacadeDictionaryBuilder
 
-        IJSFacadeDictionaryBuilder IJSFacadeDictionaryBuilder.AddFacade<T>(JSFacadeCreatorDelegate<T> jsFacadeCreatorHandler) => 
+        IJSFacadeDictionaryBuilder IJSFacadeDictionaryBuilder.AddFacade<T>(JSFacadeCreatorDelegate<T> jsFacadeCreatorHandler) =>
             AddFacade(jsFacadeCreatorHandler);
 
         IJSFacadeDictionaryBuilder IJSFacadeDictionaryBuilder.AddFacade<T>() =>

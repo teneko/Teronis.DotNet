@@ -9,11 +9,11 @@ namespace Teronis.Microsoft.JSInterop.Facade
         /// </summary>
         /// <param name="component"></param>
         /// <returns></returns>
-        Task<JSFacades> InitializeFacadesAsync(object component);
+        ValueTask<IJSFacades> InitializeFacadesAsync(object component);
         /// <summary>
         /// Creates a container for facades.
         /// </summary>
         /// <returns></returns>
-        Task<JSFacades> InitializeFacadesAsync();
+        ValueTask<IJSFacades> InitializeFacadesAsync();
     }
 }

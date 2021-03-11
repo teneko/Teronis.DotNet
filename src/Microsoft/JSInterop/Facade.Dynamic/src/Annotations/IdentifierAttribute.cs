@@ -2,6 +2,11 @@
 
 namespace Teronis.Microsoft.JSInterop.Facade.Dynamic.Annotations
 {
+    /// <summary>
+    /// Can be used to annotate a method to specify an alternative
+    /// JavaScript identifier. This will overwrite the default behaviour
+    /// that takes the name from method.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
     public class IdentifierAttribute : Attribute
     {

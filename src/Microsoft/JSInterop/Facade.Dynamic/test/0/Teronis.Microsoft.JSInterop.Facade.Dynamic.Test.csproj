@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj" />
     <ProjectReference Include="..\..\src\Teronis.Microsoft.JSInterop.Facade.Dynamic.csproj" />
   </ItemGroup>
 

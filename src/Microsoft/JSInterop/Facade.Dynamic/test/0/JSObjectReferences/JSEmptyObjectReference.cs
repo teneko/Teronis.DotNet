@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 
-namespace Teronis.Microsoft.JSInterop.Facade.Dynamic
+namespace Teronis.Microsoft.JSInterop.Facade.Dynamic.JSObjectReferences
 {
-    public class JSObjectReferenceBase : IJSObjectReference
+    public class JSEmptyObjectReference : IJSObjectReference
     {
         public bool IsDisposed { get; private set; }
 

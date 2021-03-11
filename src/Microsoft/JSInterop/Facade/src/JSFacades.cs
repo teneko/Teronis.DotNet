@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Teronis.Microsoft.JSInterop.Facade
 {
-    public readonly struct JSFacades : IAsyncDisposable, IReadOnlyList<IAsyncDisposable>, IJSFacadeResolver
+    internal sealed class JSFacades : IJSFacades
     {
         public int Count =>
             jsFacades.Count;
@@ -13,12 +13,14 @@ namespace Teronis.Microsoft.JSInterop.Facade
         private readonly List<IAsyncDisposable> jsFacades;
         private readonly IJSFacadeResolver jsFacadeResolver;
 
-        public JSFacades(List<IAsyncDisposable> jsFacades, IJSFacadeResolver jsFacadeResolver) {
+        public JSFacades(List<IAsyncDisposable> jsFacades, IJSFacadeResolver jsFacadeResolver)
+        {
             this.jsFacades = jsFacades ?? throw new ArgumentNullException(nameof(jsFacades));
             this.jsFacadeResolver = jsFacadeResolver ?? throw new ArgumentNullException(nameof(jsFacadeResolver));
         }
 
-        public JSFacades(IJSFacadeResolver jsFacadeResolver) {
+        public JSFacades(IJSFacadeResolver jsFacadeResolver)
+        {
             jsFacades = new List<IAsyncDisposable>();
             this.jsFacadeResolver = jsFacadeResolver ?? throw new ArgumentNullException(nameof(jsFacadeResolver));
         }
@@ -61,7 +63,8 @@ namespace Teronis.Microsoft.JSInterop.Facade
             return module;
         }
 
-        public async ValueTask<IJSLocalObject> CreateObjectAsync(string objectName) {
+        public async ValueTask<IJSLocalObject> CreateObjectAsync(string objectName)
+        {
             var @object = await jsFacadeResolver.CreateObjectAsync(objectName);
             jsFacades.Add(@object);
             return @object;

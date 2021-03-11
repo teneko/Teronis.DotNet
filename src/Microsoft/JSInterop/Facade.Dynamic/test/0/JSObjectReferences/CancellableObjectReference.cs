@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Teronis.Microsoft.JSInterop.Facade.Dynamic.JSObjectReferences
 {
-    public class CancellableObjectReference : JSObjectReferenceBase
+    public class CancellableObjectReference : JSEmptyObjectReference
     {
         public override ValueTask<TValue> InvokeAsync<TValue>(string identifier, CancellationToken cancellationToken, object?[]? args)
         {

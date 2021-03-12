@@ -1,5 +1,5 @@
 ﻿namespace Teronis.Microsoft.JSInterop.Dynamic
 {
-    public class JSDynamicObjectActivatorOptions : JSFunctionalObjectReferenceOptions
+    public class JSDynamicObjectActivatorOptions : JSFunctionalObjectOptions
     { }
 }

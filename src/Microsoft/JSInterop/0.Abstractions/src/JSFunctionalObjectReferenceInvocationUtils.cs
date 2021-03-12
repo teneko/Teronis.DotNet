@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace Teronis.Microsoft.JSInterop
 {
-    public static class JSFunctionalObjectReferenceInvocationUtils
+    public static class JSFunctionalObjectInvocationUtils
     {
         public static bool CreateValueTaskSourceIfCancellationRequested<TValue>(CancellationToken? cancellationToken, TimeSpan? timeout, [MaybeNullWhen(false)]out ExceptionValueTaskSource<TValue> valueTaskSource) {
             if (cancellationToken.HasValue && cancellationToken.Value.IsCancellationRequested) {

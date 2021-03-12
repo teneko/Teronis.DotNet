@@ -59,7 +59,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         /// <param name="objectReference"></param>
         /// <returns><see cref="ValueTask"/> or <see cref="ValueTask{TResult}"/> with a generic parameter of type <see cref="ValueTaskReturnType.GenericParameterType"/>.</returns>
         public object Invoke(
-            IJSFunctionalObjectReference jsFunctionalObjectReference,
+            IJSFunctionalObject jsFunctionalObject,
             IJSObjectReference jsObjectReference,
             IReadOnlyList<Type>? genericTypeArguments,
             object?[] arguments)
@@ -89,17 +89,17 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             var javaScriptFunctionIdentifier = GetJavaScriptFunctionIdentifier();
 
             if (ParameterList.HasCancellationTokenParameter) {
-                return JSFunctionalObjectReferenceDelegateCache.Instance.TokenCancellableInvokeDelegateCache.GetDelegate(valueTaskReturnType)(
-                    jsFunctionalObjectReference, jsObjectReference, javaScriptFunctionIdentifier, ParameterList.GetCancellationToken(arguments), javaScriptFunctionArguments);
+                return JSFunctionalObjectDelegateCache.Instance.TokenCancellableInvokeDelegateCache.GetDelegate(valueTaskReturnType)(
+                    jsFunctionalObject, jsObjectReference, javaScriptFunctionIdentifier, ParameterList.GetCancellationToken(arguments), javaScriptFunctionArguments);
             }
 
             if (ParameterList.HasTimeSpanParameter) {
-                return JSFunctionalObjectReferenceDelegateCache.Instance.TimeSpanCancellableInvokeDelegateCache.GetDelegate(valueTaskReturnType)(
-                    jsFunctionalObjectReference, jsObjectReference, javaScriptFunctionIdentifier, ParameterList.GetTimeSpan(arguments), javaScriptFunctionArguments);
+                return JSFunctionalObjectDelegateCache.Instance.TimeSpanCancellableInvokeDelegateCache.GetDelegate(valueTaskReturnType)(
+                    jsFunctionalObject, jsObjectReference, javaScriptFunctionIdentifier, ParameterList.GetTimeSpan(arguments), javaScriptFunctionArguments);
             }
 
-            return JSFunctionalObjectReferenceDelegateCache.Instance.InvokeDelegateCache.GetDelegate(valueTaskReturnType)(
-                jsFunctionalObjectReference, jsObjectReference, javaScriptFunctionIdentifier, javaScriptFunctionArguments);
+            return JSFunctionalObjectDelegateCache.Instance.InvokeDelegateCache.GetDelegate(valueTaskReturnType)(
+                jsFunctionalObject, jsObjectReference, javaScriptFunctionIdentifier, javaScriptFunctionArguments);
         }
     }
 }

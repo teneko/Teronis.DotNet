@@ -9,33 +9,33 @@ namespace Teronis.Microsoft.JSInterop
     {
         public IJSObjectReference JSObjectReference { get; }
 
-        protected virtual IJSFunctionalObjectReference JSFunctionalObjectReference { get; }
+        protected virtual IJSFunctionalObject JSFunctionalObject { get; }
 
-        public JSObjectReferenceFacade(IJSFunctionalObjectReference? jsFunctionalObjectReference, IJSObjectReference jsObjectReference)
+        public JSObjectReferenceFacade(IJSFunctionalObject? jsFunctionalObject, IJSObjectReference jsObjectReference)
         {
-            JSFunctionalObjectReference = jsFunctionalObjectReference ?? JSInterop.JSFunctionalObjectReference.Default;
+            JSFunctionalObject = jsFunctionalObject ?? JSInterop.JSFunctionalObject.Default;
             JSObjectReference = jsObjectReference ?? throw new ArgumentNullException(nameof(jsObjectReference));
         }
 
         public JSObjectReferenceFacade(IJSObjectReference jsObjectReference)
-            : this(jsFunctionalObjectReference: null, jsObjectReference) { }
+            : this(jsFunctionalObject: null, jsObjectReference) { }
 
         public virtual ValueTask<TValue> InvokeAsync<TValue>(string identifier, params object?[] args) =>
-            JSFunctionalObjectReference.InvokeAsync<TValue>(JSObjectReference, identifier, args);
+            JSFunctionalObject.InvokeAsync<TValue>(JSObjectReference, identifier, args);
 
         public virtual ValueTask<TValue> InvokeAsync<TValue>(string identifier, CancellationToken cancellationToken, params object?[] args) =>
-            JSFunctionalObjectReference.InvokeAsync<TValue>(JSObjectReference, identifier, cancellationToken, args);
+            JSFunctionalObject.InvokeAsync<TValue>(JSObjectReference, identifier, cancellationToken, args);
 
         public virtual ValueTask<TValue> InvokeAsync<TValue>(string identifier, TimeSpan timeout, params object?[] args) =>
-            JSFunctionalObjectReference.InvokeAsync<TValue>(JSObjectReference, identifier, timeout, args);
+            JSFunctionalObject.InvokeAsync<TValue>(JSObjectReference, identifier, timeout, args);
 
         public virtual ValueTask InvokeVoidAsync(string identifier, params object?[] args) =>
-            JSFunctionalObjectReference.InvokeVoidAsync(JSObjectReference, identifier, args);
+            JSFunctionalObject.InvokeVoidAsync(JSObjectReference, identifier, args);
 
         public virtual ValueTask InvokeVoidAsync(string identifier, CancellationToken cancellationToken, params object?[] args) =>
-            JSFunctionalObjectReference.InvokeVoidAsync(JSObjectReference, identifier, cancellationToken, args);
+            JSFunctionalObject.InvokeVoidAsync(JSObjectReference, identifier, cancellationToken, args);
 
         public virtual ValueTask InvokeVoidAsync(string identifier, TimeSpan timeout, params object?[] args) =>
-            JSFunctionalObjectReference.InvokeVoidAsync(JSObjectReference, identifier, timeout, args);
+            JSFunctionalObject.InvokeVoidAsync(JSObjectReference, identifier, timeout, args);
     }
 }

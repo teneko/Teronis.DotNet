@@ -6,19 +6,19 @@ namespace Teronis.Microsoft.JSInterop.LocalObject
     public class JSLocalObjectActivator : IJSLocalObjectActivator
     {
         private readonly IJSLocalObjectInterop jsLocalObjectInterop;
-        private readonly IJSFunctionalObjectReference jsFunctionalObjectReference;
+        private readonly GetOrBuildJSFunctionalObjectDelegate getOrBuildJSFunctionalObjectDelegate;
 
         public JSLocalObjectActivator(IJSLocalObjectInterop jsLocalObjectInterop, JSLocalObjectActivatorOptions? options)
         {
             this.jsLocalObjectInterop = jsLocalObjectInterop ?? throw new System.ArgumentNullException(nameof(jsLocalObjectInterop));
-            jsFunctionalObjectReference = options?.GetOrBuildJSFunctionalObjectReference() ?? JSFunctionalObjectReference.Default;
+            getOrBuildJSFunctionalObjectDelegate = options?.GetOrBuildJSFunctionalObjectDelegate ?? JSFunctionalObject.GetDefault;
         }
 
         public JSLocalObjectActivator(IJSLocalObjectInterop jsLocalObjectInterop)
             : this(jsLocalObjectInterop, options: null) { }
 
         public IJSLocalObject CreateLocalObject(IJSObjectReference jsObjectReference) =>
-            new JSLocalObject(jsFunctionalObjectReference, jsObjectReference, this);
+            new JSLocalObject(getOrBuildJSFunctionalObjectDelegate(), jsObjectReference, this);
 
         public async ValueTask<IJSLocalObject> CreateLocalObjectAsync(string objectName) =>
             CreateLocalObject(await jsLocalObjectInterop.CreateObjectReferenceAsync(objectName));

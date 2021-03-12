@@ -2,17 +2,17 @@
 
 namespace Teronis.Microsoft.JSInterop
 {
-    public class JSInterceptableFunctionalObjectReference : JSFunctionalObjectReference
+    public class JSInterceptableFunctionalObject : JSFunctionalObject
     {
-        private readonly JSFunctionalObjectReferenceInterceptorWalker jsFunctionalObjectReferenceInterceptorWalker;
+        private readonly JSFunctionalObjectInterceptorWalker jsFunctionalObjectInterceptorWalker;
 
-        public JSInterceptableFunctionalObjectReference(JSFunctionalObjectReferenceInterceptorWalker jsFunctionalObjectReferenceInterceptorWalker) => 
-            this.jsFunctionalObjectReferenceInterceptorWalker = jsFunctionalObjectReferenceInterceptorWalker;
+        public JSInterceptableFunctionalObject(JSFunctionalObjectInterceptorWalker jsFunctionalObjectInterceptorWalker) => 
+            this.jsFunctionalObjectInterceptorWalker = jsFunctionalObjectInterceptorWalker;
 
-        protected override void TryInvokeAsync<TValue>(ref JSFunctionalObjectReferenceInvocation<TValue> invocation) =>
-            jsFunctionalObjectReferenceInterceptorWalker.WalkUntilCanInvoke(ref invocation);
+        protected override void TryInvokeAsync<TValue>(ref JSFunctionalObjectInvocation<TValue> invocation) =>
+            jsFunctionalObjectInterceptorWalker.WalkUntilCanInvoke(ref invocation);
 
-        protected override void TryInvokeVoidAsync(ref JSFunctionalObjectReferenceInvocation invocation) =>
-            jsFunctionalObjectReferenceInterceptorWalker.WalkUntilCanInvoke(ref invocation);
+        protected override void TryInvokeVoidAsync(ref JSFunctionalObjectInvocation invocation) =>
+            jsFunctionalObjectInterceptorWalker.WalkUntilCanInvoke(ref invocation);
     }
 }

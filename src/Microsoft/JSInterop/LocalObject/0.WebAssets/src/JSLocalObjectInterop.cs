@@ -16,7 +16,7 @@ namespace Teronis.Microsoft.JSInterop.LocalObject.WebAssets
             }
 
             lazyModuleTask = new Lazy<Task<IJSObjectReference>>(() => jsRuntime.InvokeAsync<IJSObjectReference>(
-                "import", "./_content/Teronis.Microsoft.JSInterop.Facade.WebAssets/objectInterop.js").AsTask());
+                "import", "./_content/Teronis.Microsoft.JSInterop.Facades.WebAssets/objectInterop.js").AsTask());
         }
 
         /// <summary>

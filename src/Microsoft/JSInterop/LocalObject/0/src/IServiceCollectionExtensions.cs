@@ -12,15 +12,8 @@ namespace Teronis.Microsoft.JSInterop.LocalObject
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection AddJSLocalObject(this IServiceCollection services, Action<JSLocalObjectActivatorOptions> configureOptions)
+        public static IServiceCollection AddJSLocalObject(this IServiceCollection services)
         {
-            services.AddOptions<JSLocalObjectActivatorOptions>();
-            services.AddSingleton(sp => sp.GetRequiredService<IOptions<JSLocalObjectActivatorOptions>>().Value);
-
-            if (!(configureOptions is null)) {
-                services.Configure(configureOptions);
-            }
-
             services.AddJSLocalObjectActivator();
             services.AddJSLocalObjectInterop();
             return services;

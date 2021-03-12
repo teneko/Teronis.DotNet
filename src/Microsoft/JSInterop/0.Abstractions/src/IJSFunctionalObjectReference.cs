@@ -5,7 +5,7 @@ using Microsoft.JSInterop;
 
 namespace Teronis.Microsoft.JSInterop
 {
-    public interface IJSFunctionalObjectReference
+    public interface IJSFunctionalObject
     {
         ValueTask<TValue> InvokeAsync<TValue>(IJSObjectReference jsObjectReference, string identifier, object?[] arguments);
         ValueTask<TValue> InvokeAsync<TValue>(IJSObjectReference jsObjectReference, string identifier, CancellationToken cancellationToken, object?[] args);

@@ -118,15 +118,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Dynamic.Test", "src\Microsoft\JSInterop\Dynamic\0\test\0\Teronis.Microsoft.JSInterop.Dynamic.Test.csproj", "{964CC742-61EC-45A9-B2D5-2AD80301565A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Facade.Abstractions", "src\Microsoft\JSInterop\Facade\0.Abstractions\src\Teronis.Microsoft.JSInterop.Facade.Abstractions.csproj", "{95632C64-1FB4-4AC8-B6CA-94E90C07E88A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Facades.Abstractions", "src\Microsoft\JSInterop\Facades\0.Abstractions\src\Teronis.Microsoft.JSInterop.Facades.Abstractions.csproj", "{95632C64-1FB4-4AC8-B6CA-94E90C07E88A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Facade.Core", "src\Microsoft\JSInterop\Facade\0.Core\src\Teronis.Microsoft.JSInterop.Facade.Core.csproj", "{1B7B5D1F-171F-4F41-8207-0BE822DC437E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Facades.Core", "src\Microsoft\JSInterop\Facades\0.Core\src\Teronis.Microsoft.JSInterop.Facades.Core.csproj", "{1B7B5D1F-171F-4F41-8207-0BE822DC437E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Facade", "src\Microsoft\JSInterop\Facade\0\src\Teronis.Microsoft.JSInterop.Facade.csproj", "{FFCBF361-88CC-4712-88A9-295F7D5406C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Facades", "src\Microsoft\JSInterop\Facades\0\src\Teronis.Microsoft.JSInterop.Facades.csproj", "{FFCBF361-88CC-4712-88A9-295F7D5406C9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Facade.Test", "src\Microsoft\JSInterop\Facade\0\test\0\Teronis.Microsoft.JSInterop.Facade.Test.csproj", "{B450B5C6-C19B-4320-8F3B-C1E19438FC43}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Facades.Test", "src\Microsoft\JSInterop\Facades\0\test\0\Teronis.Microsoft.JSInterop.Facades.Test.csproj", "{B450B5C6-C19B-4320-8F3B-C1E19438FC43}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Facade.Test.WebAssembly", "src\Microsoft\JSInterop\Facade\0\test\0..WebAssembly\Teronis.Microsoft.JSInterop.Facade.Test.WebAssembly.csproj", "{88201DC5-082A-4CC1-B6DE-67425034EB88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Facades.Test.WebAssembly", "src\Microsoft\JSInterop\Facades\0\test\0..WebAssembly\Teronis.Microsoft.JSInterop.Facades.Test.WebAssembly.csproj", "{88201DC5-082A-4CC1-B6DE-67425034EB88}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Core", "src\Microsoft\JSInterop\0.Core\src\Teronis.Microsoft.JSInterop.Core.csproj", "{3ADFDDDB-EF76-4D74-8256-682E5699CCCE}"
 EndProject

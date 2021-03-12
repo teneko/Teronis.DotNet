@@ -1,0 +1,24 @@
+﻿@page "/should_resolve_service_provider_created_module" 
+@inject IJSComponentFacadesActivator jsFacadesActivator
+@implements IAsyncDisposable
+
+<h1 id="@ShoudlyPagesDefaults.TonyHawkId">Hello @tonyHawk</h1>
+
+@code {
+    [JSModuleFacade] ServiceProviderCreatedModule Module { get; set; } = null!;
+
+    IJSComponentFacades jsFacades;
+    string tonyHawk;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        jsFacades = await jsFacadesActivator.CreateInstance(this);
+        tonyHawk = await Module.GetTonyHawkAsync();
+        await base.OnParametersSetAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await jsFacades.DisposeAsync();
+    }
+}

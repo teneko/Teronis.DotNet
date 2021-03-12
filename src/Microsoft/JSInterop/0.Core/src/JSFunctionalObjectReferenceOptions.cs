@@ -2,30 +2,44 @@
 
 namespace Teronis.Microsoft.JSInterop
 {
-    public class JSFunctionalObjectReferenceOptions
+    public class JSFunctionalObjectOptions
     {
         /// <summary>
         /// This instance will be used if it is not null. If it is not null the configuration made by 
-        /// <see cref="ConfigureInterceptorWalkerBuilder(Action{IJSFunctionalObjectReferenceInterceptorWalkerBuilder})"/>
+        /// <see cref="ConfigureInterceptorWalkerBuilder(Action{IJSFunctionalObjectInterceptorWalkerBuilder})"/>
         /// won't be taken into account.
         /// </summary>
-        public IJSFunctionalObjectReference? JSFunctionalObjectReference { get; set; }
+        public IJSFunctionalObject? JSFunctionalObject { get; set; }
 
-        private JSFunctionalObjectReferenceInterceptorWalkerBuilder jsInterceptableObjectReferenceBuilder;
+        internal IServiceProvider ServiceProvider {
+            set => serviceProvider = value;
+        }
 
-        public JSFunctionalObjectReferenceOptions() =>
-            jsInterceptableObjectReferenceBuilder = new JSFunctionalObjectReferenceInterceptorWalkerBuilder();
+        internal GetOrBuildJSFunctionalObjectDelegate GetOrBuildJSFunctionalObjectDelegate { get; }
+
+        protected JSFunctionalObjectInterceptorWalkerBuilder InterceptorWalkerBuilder { get; }
+
+        private IServiceProvider? serviceProvider;
+
+        public JSFunctionalObjectOptions()
+        {
+            InterceptorWalkerBuilder = new JSFunctionalObjectInterceptorWalkerBuilder();
+            GetOrBuildJSFunctionalObjectDelegate = GetOrBuildJSFunctionalObject;
+        }
 
         /// <summary>
-        /// Configures an implementation of <see cref="IJSFunctionalObjectReferenceInterceptorWalkerBuilder"/>
-        /// to create an implementation of <see cref="IJSFunctionalObjectReference"/> for being used as 
-        /// <see cref="JSFunctionalObjectReference"/> when it is null.
+        /// Configures an implementation of <see cref="IJSFunctionalObjectInterceptorWalkerBuilder"/>
+        /// to create an implementation of <see cref="IJSFunctionalObject"/> for being used as 
+        /// <see cref="JSFunctionalObject"/> when it is null.
         /// </summary>
         /// <param name="configure"></param>
-        public void ConfigureInterceptorWalkerBuilder(Action<IJSFunctionalObjectReferenceInterceptorWalkerBuilder> configure) =>
-            configure?.Invoke(jsInterceptableObjectReferenceBuilder);
+        public void ConfigureInterceptorWalkerBuilder(Action<IJSFunctionalObjectInterceptorWalkerBuilder> configure) =>
+            configure?.Invoke(InterceptorWalkerBuilder);
 
-        internal IJSFunctionalObjectReference GetOrBuildJSFunctionalObjectReference() =>
-            JSFunctionalObjectReference ?? jsInterceptableObjectReferenceBuilder.BuildInterceptableFunctionalObjectReference();
+        private IServiceProvider GetServiceProvider() =>
+            serviceProvider ?? throw new InvalidOperationException("Service provider has not been set.");
+
+        private IJSFunctionalObject GetOrBuildJSFunctionalObject() =>
+            JSFunctionalObject ??= InterceptorWalkerBuilder.BuildInterceptableFunctionalObject(GetServiceProvider());
     }
 }

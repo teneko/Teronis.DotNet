@@ -7,10 +7,10 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
 {
     public class JSDynamicObjectActivator : IJSDynamicObjectActivator
     {
-        protected readonly IJSFunctionalObjectReference JSFunctionalObjectReference;
+        private GetOrBuildJSFunctionalObjectDelegate getOrBuildJSFunctionalObjectDelegate;
 
         public JSDynamicObjectActivator(JSDynamicObjectActivatorOptions? options) =>
-            JSFunctionalObjectReference = options?.GetOrBuildJSFunctionalObjectReference() ?? JSInterop.JSFunctionalObjectReference.Default;
+            getOrBuildJSFunctionalObjectDelegate = options?.GetOrBuildJSFunctionalObjectDelegate ?? JSFunctionalObject.GetDefault;
 
         public JSDynamicObjectActivator()
             : this(options: null) { }
@@ -58,7 +58,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         {
             var mainInterfaceType = typeof(T);
             var methods = CreateMethodDictionary(mainInterfaceType, typeof(IJSObjectReferenceFacade));
-            var jsDynamicObject = new JSDynamicObject(jsObjectReference, methods, JSFunctionalObjectReference);
+            var jsDynamicObject = new JSDynamicObject(jsObjectReference, methods, getOrBuildJSFunctionalObjectDelegate());
             return jsDynamicObject.ActLike<T>(/*other interfaces*/);
         }
     }

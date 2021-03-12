@@ -5,7 +5,7 @@ using Microsoft.JSInterop;
 
 namespace Teronis.Microsoft.JSInterop
 {
-    public ref struct JSFunctionalObjectReferenceInvocation
+    public ref struct JSFunctionalObjectInvocation
     {
         public bool CanInvoke => promise.HasValue;
 
@@ -17,7 +17,7 @@ namespace Teronis.Microsoft.JSInterop
 
         private ValueTask? promise;
 
-        internal JSFunctionalObjectReferenceInvocation(
+        internal JSFunctionalObjectInvocation(
             IJSObjectReference jSObjectReference,
             string identifier,
             CancellationToken? cancellationToken,

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Teronis.Microsoft.JSInterop.LocalObject.WebAssets
 {
@@ -6,7 +7,7 @@ namespace Teronis.Microsoft.JSInterop.LocalObject.WebAssets
     {
         public static IServiceCollection AddJSLocalObjectInterop(this IServiceCollection services)
         {
-            services.AddSingleton<IJSLocalObjectInterop, JSLocalObjectInterop>();
+            services.TryAddSingleton<IJSLocalObjectInterop, JSLocalObjectInterop>();
             return services;
         }
     }

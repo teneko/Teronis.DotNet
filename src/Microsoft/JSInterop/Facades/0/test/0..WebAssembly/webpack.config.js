@@ -1,5 +1,6 @@
 const path = require("path");
 const EsmWebpackPlugin = require("@purtuga/esm-webpack-plugin");
+const webpack = require("webpack");
 
 module.exports = {
     entry: "./wwwroot/js/esm-bundle/index.js",
@@ -21,6 +22,7 @@ module.exports = {
         libraryTarget: "var"
     },
     plugins: [
+        new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
         new EsmWebpackPlugin()
     ]
 };

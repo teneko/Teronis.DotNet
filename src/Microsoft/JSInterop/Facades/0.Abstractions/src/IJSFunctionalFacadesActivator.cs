@@ -4,7 +4,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
 {
     public interface IJSFunctionalFacadesActivator
     {
-        ValueTask<IJSComponentFacades> CreateFacadesAsync(object component, IJSFacadeResolver jsFacadeResolver);
-        ValueTask<IJSComponentFacades> CreateFacadesAsync(IJSFacadeResolver jsFacadeResolver);
+        ValueTask<IJSComponentFacades> CreateInstanceAsync(object component, IJSFacadeResolver jsFacadeResolver);
+        IJSComponentFacades CreateEmptyInstance(IJSFacadeResolver jsFacadeResolver);
     }
 }

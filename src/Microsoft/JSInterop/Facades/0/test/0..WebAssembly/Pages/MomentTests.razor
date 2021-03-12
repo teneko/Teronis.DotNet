@@ -1,0 +1,19 @@
+﻿@page "/MomentTests"
+@inject IJSComponentFacadesActivator jsComponentFacadesActivator
+@inject IJSDynamicObjectActivator jsDynamicObjectActivator
+<h3>@formattedDate</h3>
+
+@code {
+    private IJSComponentFacades jsComponentFacades;
+    private string formattedDate;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        jsComponentFacades = jsComponentFacadesActivator.CreateEmptyInstance();
+        var module = await jsComponentFacades.CreateModuleAsync("./js/esm-bundle.js");
+        var jsMomentDynamicObject = jsDynamicObjectActivator.CreateInstance<IMomentDynamicObject>(module.JSObjectReference);
+        var jsDateObjectReference = await jsMomentDynamicObject.moment("2013-02-08 09");
+        formattedDate = await jsDateObjectReference.InvokeAsync<string>("format");
+        await base.OnParametersSetAsync();
+    }
+}

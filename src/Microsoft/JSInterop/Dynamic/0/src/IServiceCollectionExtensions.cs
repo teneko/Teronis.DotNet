@@ -7,7 +7,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
 {
     public static class IServiceCollectionExtensions
     {
-        public static IServiceCollection AddJSDynamicObjectActicator(IServiceCollection services, Action<JSDynamicObjectActivatorOptions> configureOptions)
+        public static IServiceCollection AddJSDynamicObject(this IServiceCollection services, Action<JSDynamicObjectActivatorOptions>? configureOptions = null)
         {
             services.TryAddSingleton<IConfigureOptions<JSDynamicObjectActivatorOptions>>(serviceProvider =>
                 JSFunctionalObjectOptionsConfiguration<JSDynamicObjectActivatorOptions>.Create(serviceProvider));

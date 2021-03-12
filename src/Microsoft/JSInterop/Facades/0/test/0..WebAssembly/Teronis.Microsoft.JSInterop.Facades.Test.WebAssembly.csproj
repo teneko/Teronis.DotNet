@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Dynamic\0\src\Teronis.Microsoft.JSInterop.Dynamic.csproj" />
     <ProjectReference Include="..\..\src\Teronis.Microsoft.JSInterop.Facades.csproj" />
   </ItemGroup>
 

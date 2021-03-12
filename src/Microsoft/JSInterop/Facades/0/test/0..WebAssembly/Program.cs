@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Teronis.Microsoft.JSInterop.Dynamic;
 using Teronis.Microsoft.JSInterop.Facades;
 using Teronis_._Microsoft.JSInterop.Facades.JSModules;
 
@@ -24,6 +25,8 @@ namespace Teronis_._Microsoft.JSInterop.Facades
             services.AddJSFacadeDictionary(builder => builder
                 .AddFacade(objectReference => new UserCreatedModule(objectReference))
                 .AddFacade<ServiceProviderCreatedModule>());
+
+            services.AddJSDynamicObject();
 
             await builder.Build().RunAsync();
         }

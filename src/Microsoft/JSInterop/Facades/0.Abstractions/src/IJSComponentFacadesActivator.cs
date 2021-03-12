@@ -14,6 +14,6 @@ namespace Teronis.Microsoft.JSInterop.Facades
         /// Creates an empty container for facades.
         /// </summary>
         /// <returns></returns>
-        ValueTask<IJSComponentFacades> CreateEmptyInstance();
+        IJSComponentFacades CreateEmptyInstance();
     }
 }

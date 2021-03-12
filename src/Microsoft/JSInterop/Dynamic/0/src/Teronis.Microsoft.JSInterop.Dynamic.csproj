@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
+    <PackageReference Include="Microsoft.JSInterop" Version="5.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\NetStandard\Collections\Collections\src\Teronis.NetStandard.Collections.csproj" />
+    <ProjectReference Include="..\..\..\0.Abstractions\src\Teronis.Microsoft.JSInterop.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\0.Core\src\Teronis.Microsoft.JSInterop.Core.csproj" />
+  </ItemGroup>
+
+</Project>

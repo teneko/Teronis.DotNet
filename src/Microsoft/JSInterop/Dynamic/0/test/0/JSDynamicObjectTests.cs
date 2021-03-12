@@ -31,14 +31,14 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         }
 
         [Fact]
-        public async Task Should_expect_identifier_as_passed()
+        public async Task Should_expect_equal_input_output()
         {
             // Arrange
             var jsObjectReference = new JSArgumentsPromisingObjectReference();
             var emptyDynamicObject = JSDynamicObjectActivator.CreateInstance<IEmptyDynamicObject>(jsObjectReference);
 
             // Act
-            var expectedContent = nameof(Should_expect_identifier_as_passed);
+            var expectedContent = nameof(Should_expect_equal_input_output);
             // The extension methods get precedence over dynamic object method calls.
             var resultedArguments = await emptyDynamicObject.InvokeAsync<object[]>(expectedContent);
 
@@ -58,22 +58,22 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         }
 
         [Fact]
-        public async Task Should_expect_identifier_as_invoked()
+        public async Task Should_expect_identifier_equal_invoked_method()
         {
             // Arrange
             var jsObjectReference = new IdentifierPromisingObjectReference();
-            var jsDynamicObject = JSDynamicObjectActivator.CreateInstance<IIdentifierReceivableDynamicObject>(jsObjectReference);
+            var jsDynamicObject = JSDynamicObjectActivator.CreateInstance<IIdentifierPromisingDynamicObject>(jsObjectReference);
 
             // Act
-            var expectedIdentifier = nameof(IIdentifierReceivableDynamicObject.ReceiveIdentifier);
-            var resultedIdentifier = await jsDynamicObject.ReceiveIdentifier();
+            var expectedIdentifier = nameof(IIdentifierPromisingDynamicObject.GetIdentifier);
+            var resultedIdentifier = await jsDynamicObject.GetIdentifier();
 
             // Assert
             Assert.Equal(expectedIdentifier, resultedIdentifier);
         }
 
         [Fact]
-        public async Task Should_throw_cancellation_through_cancellation_token()
+        public async Task Should_throw_token_cancellation()
         {
             // Arrange
             var jsObjectReference = new CancellableObjectReference();
@@ -87,7 +87,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             // Assert
             await Assert.ThrowsAsync<ObjectReferenceInvocationCanceledException>(async () =>
                 //await jsDynamicObject.InvokeAsync<string>(nameof(Should_expect_cancellation_through_cancellation_token), cancellationToken, args: null));
-                await jsDynamicObject.InvokeAsync<string>(nameof(Should_throw_cancellation_through_cancellation_token), cancellationToken));
+                await jsDynamicObject.InvokeAsync<string>(nameof(Should_throw_token_cancellation), cancellationToken));
         }
 
         public async Task AssertCancellableObjectIsCancelledAsync<SecondArgumentType>(
@@ -114,7 +114,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         }
 
         [Fact]
-        public async Task Should_throw_cancellation_through_cancellation_token_via_annotation()
+        public async Task Should_throw_token_cancellation_via_annotation()
         {
             // Arrange
             using var cancellationTokenSource = new CancellationTokenSource();
@@ -126,7 +126,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         }
 
         [Fact]
-        public async Task Should_throw_cancellation_through_time_span_via_annotation()
+        public async Task Should_throw_timeout_cancellation_via_annotation()
         {
             // Arrange
             var timeout = TimeSpan.Zero;
@@ -171,6 +171,21 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
 
             // Act & Assert
             Assert.Throws<ParameterListException>(() => JSDynamicObjectActivator.CreateInstance<IMisuedCancellableAnnotatedDynamicObject>(jsObjectReference));
+        }
+
+        [Fact]
+        public async Task Should_get_identifier_via_annotation()
+        {
+            // Arrange
+            var jsObjectReference = new IdentifierPromisingObjectReference();
+            var jsDynamicObjectActivator = new JSDynamicObjectActivator();
+            var jsDynamicObject = jsDynamicObjectActivator.CreateInstance<IIdentifierAnnotatedDynamicObject>(jsObjectReference);
+
+            // Act
+            var javaScriptIdentifier = await jsDynamicObject.CSharpTypicalMethodNameAsync();
+
+            // Assert
+            Assert.Equal(IIdentifierAnnotatedDynamicObject.javaScriptTypicalMethodName, javaScriptIdentifier);
         }
     }
 }

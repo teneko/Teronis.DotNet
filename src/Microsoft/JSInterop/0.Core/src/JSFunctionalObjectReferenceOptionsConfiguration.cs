@@ -4,10 +4,11 @@ using Microsoft.Extensions.Options;
 
 namespace Teronis.Microsoft.JSInterop
 {
-    public class JSFunctionalObjectOptionsConfiguration : IConfigureOptions<JSFunctionalObjectOptions>
+    public class JSFunctionalObjectOptionsConfiguration<DerivedType> : IConfigureOptions<JSFunctionalObjectOptions<DerivedType>>
+        where DerivedType : JSFunctionalObjectOptions<DerivedType>
     {
-        public static JSFunctionalObjectOptionsConfiguration Create(IServiceProvider serviceProvider) =>
-            ActivatorUtilities.CreateInstance<JSFunctionalObjectOptionsConfiguration>(serviceProvider);
+        public static JSFunctionalObjectOptionsConfiguration<DerivedType> Create(IServiceProvider serviceProvider) =>
+            ActivatorUtilities.CreateInstance<JSFunctionalObjectOptionsConfiguration<DerivedType>>(serviceProvider);
 
         private readonly IServiceProvider serviceProvider;
 
@@ -15,7 +16,7 @@ namespace Teronis.Microsoft.JSInterop
             this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
-        public void Configure(JSFunctionalObjectOptions options) {
+        public void Configure(JSFunctionalObjectOptions<DerivedType> options) {
             options.ServiceProvider = serviceProvider;
         }
     }

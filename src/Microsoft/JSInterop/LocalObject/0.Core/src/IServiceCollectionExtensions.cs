@@ -7,9 +7,10 @@ namespace Teronis.Microsoft.JSInterop.LocalObject
 {
     public static class IServiceCollectionExtensions
     {
-        public static IServiceCollection AddJSLocalObjectActivator(this IServiceCollection services, Action<JSLocalObjectActivatorOptions>? configureOptions = null) {
-            services.TryAddSingleton<IConfigureOptions<JSLocalObjectActivatorOptions>>(serviceProvider => 
-                JSFunctionalObjectOptionsConfiguration.Create(serviceProvider));
+        public static IServiceCollection AddJSLocalObjectActivator(this IServiceCollection services, Action<JSLocalObjectActivatorOptions>? configureOptions = null)
+        {
+            services.TryAddSingleton<IConfigureOptions<JSLocalObjectActivatorOptions>>(serviceProvider =>
+                JSFunctionalObjectOptionsConfiguration<JSLocalObjectActivatorOptions>.Create(serviceProvider));
 
             services.TryAddSingleton(sp => sp.GetRequiredService<IOptions<JSLocalObjectActivatorOptions>>().Value);
 

@@ -2,7 +2,8 @@
 
 namespace Teronis.Microsoft.JSInterop
 {
-    public class JSFunctionalObjectOptions
+    public class JSFunctionalObjectOptions<DerivedType>
+        where DerivedType : JSFunctionalObjectOptions<DerivedType>
     {
         /// <summary>
         /// This instance will be used if it is not null. If it is not null the configuration made by 
@@ -33,8 +34,11 @@ namespace Teronis.Microsoft.JSInterop
         /// <see cref="JSFunctionalObject"/> when it is null.
         /// </summary>
         /// <param name="configure"></param>
-        public void ConfigureInterceptorWalkerBuilder(Action<IJSFunctionalObjectInterceptorWalkerBuilder> configure) =>
+        public DerivedType ConfigureInterceptorWalkerBuilder(Action<IJSFunctionalObjectInterceptorWalkerBuilder> configure)
+        {
             configure?.Invoke(InterceptorWalkerBuilder);
+            return (DerivedType)this;
+        }
 
         private IServiceProvider GetServiceProvider() =>
             serviceProvider ?? throw new InvalidOperationException("Service provider has not been set.");

@@ -1,6 +1,4 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Teronis.Microsoft.JSInterop.LocalObject.WebAssets;
 
 namespace Teronis.Microsoft.JSInterop.LocalObject

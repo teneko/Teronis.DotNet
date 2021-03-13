@@ -22,7 +22,12 @@ namespace Teronis.AspNetCore.Identity.AccountManaging
         private readonly RoleManager<RoleType> roleManager;
         private readonly ILogger<AccountManager<DbContextType, UserType, RoleType>>? logger;
 
-        public AccountManager(IOptions<AccountManagerOptions> _, DbContextType dbContext, UserManager<UserType> userManager, RoleManager<RoleType> roleManager, ILogger<AccountManager<DbContextType, UserType, RoleType>>? logger = null)
+        public AccountManager(
+            IOptions<AccountManagerOptions> _,
+            DbContextType dbContext,
+            UserManager<UserType> userManager,
+            RoleManager<RoleType> roleManager,
+            ILogger<AccountManager<DbContextType, UserType, RoleType>>? logger = null)
         {
             // We ensure, that this instance is not tracking user or role. But it does not
             // prevent that the user manager and the role manager are tracking them. So we

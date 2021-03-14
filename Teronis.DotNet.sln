@@ -130,6 +130,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Core", "src\Microsoft\JSInterop\0.Core\src\Teronis.Microsoft.JSInterop.Core.csproj", "{3ADFDDDB-EF76-4D74-8256-682E5699CCCE}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Castle.Core", "..\Stakx.Castle.Core\src\Castle.Core\Castle.Core.csproj", "{298B17A0-9669-4D08-9CE5-C6546533DD5A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -834,6 +836,18 @@ Global
 		{3ADFDDDB-EF76-4D74-8256-682E5699CCCE}.Release|x64.Build.0 = Release|x64
 		{3ADFDDDB-EF76-4D74-8256-682E5699CCCE}.Release|x86.ActiveCfg = Release|x86
 		{3ADFDDDB-EF76-4D74-8256-682E5699CCCE}.Release|x86.Build.0 = Release|x86
+		{298B17A0-9669-4D08-9CE5-C6546533DD5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{298B17A0-9669-4D08-9CE5-C6546533DD5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{298B17A0-9669-4D08-9CE5-C6546533DD5A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{298B17A0-9669-4D08-9CE5-C6546533DD5A}.Debug|x64.Build.0 = Debug|Any CPU
+		{298B17A0-9669-4D08-9CE5-C6546533DD5A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{298B17A0-9669-4D08-9CE5-C6546533DD5A}.Debug|x86.Build.0 = Debug|Any CPU
+		{298B17A0-9669-4D08-9CE5-C6546533DD5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{298B17A0-9669-4D08-9CE5-C6546533DD5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{298B17A0-9669-4D08-9CE5-C6546533DD5A}.Release|x64.ActiveCfg = Release|Any CPU
+		{298B17A0-9669-4D08-9CE5-C6546533DD5A}.Release|x64.Build.0 = Release|Any CPU
+		{298B17A0-9669-4D08-9CE5-C6546533DD5A}.Release|x86.ActiveCfg = Release|Any CPU
+		{298B17A0-9669-4D08-9CE5-C6546533DD5A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

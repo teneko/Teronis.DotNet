@@ -11,11 +11,11 @@ namespace Teronis.Microsoft.JSInterop
         IJSObjectReference JSObjectReference { get; }
 
         ValueTask<TValue> InvokeAsync<TValue>(string identifier, [Accommodatable] object?[] arguments);
-        ValueTask<TValue> InvokeAsync<TValue>(string identifier, [Cancellable] CancellationToken cancellationToken, [Accommodatable] object?[] args);
-        ValueTask<TValue> InvokeAsync<TValue>(string identifier, [Cancellable] TimeSpan timeout, [Accommodatable] object?[] args);
+        ValueTask<TValue> InvokeAsync<TValue>(string identifier, [Cancellable] CancellationToken cancellationToken, [Accommodatable] object?[] arguments);
+        ValueTask<TValue> InvokeAsync<TValue>(string identifier, [Cancellable] TimeSpan timeout, [Accommodatable] object?[] arguments);
 
-        ValueTask InvokeVoidAsync(string identifier, [Accommodatable] object?[] args);
-        ValueTask InvokeVoidAsync(string identifier, [Cancellable] CancellationToken cancellationToken, [Accommodatable] object?[] args);
-        ValueTask InvokeVoidAsync(string identifier, [Cancellable] TimeSpan timeout, [Accommodatable] object?[] args);
+        ValueTask InvokeVoidAsync(string identifier, [Accommodatable] object?[] arguments);
+        ValueTask InvokeVoidAsync(string identifier, [Cancellable] CancellationToken cancellationToken, [Accommodatable] object?[] arguments);
+        ValueTask InvokeVoidAsync(string identifier, [Cancellable] TimeSpan timeout, [Accommodatable] object?[] arguments);
     }
 }

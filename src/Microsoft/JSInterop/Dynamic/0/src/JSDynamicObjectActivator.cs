@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using ImpromptuInterface;
+using Castle.DynamicProxy;
 using Microsoft.JSInterop;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic
@@ -57,9 +57,18 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             where T : class, IJSDynamicObject
         {
             var mainInterfaceType = typeof(T);
-            var methods = CreateMethodDictionary(mainInterfaceType, typeof(IJSObjectReferenceFacade));
-            var jsDynamicObject = new JSDynamicObject(jsObjectReference, methods, getOrBuildJSFunctionalObjectDelegate());
-            return jsDynamicObject.ActLike<T>(/*other interfaces*/);
+            var methodDictionary = CreateMethodDictionary(mainInterfaceType); // The idea is to forward all not lookup methods
+            var jsDynamicObjectProxy = new JSDynamicObjectProxy(jsObjectReference, getOrBuildJSFunctionalObjectDelegate());
+            var proxyGenerator = new ProxyGenerator();
+
+            var jsDynamicObjectInterceptor = new JSDynamicObjectInterceptor(
+                jsDynamicObjectProxy,
+                methodDictionary,
+                getOrBuildJSFunctionalObjectDelegate());
+
+            return (T)proxyGenerator.CreateInterfaceProxyWithoutTarget(
+                mainInterfaceType,
+                jsDynamicObjectInterceptor);
         }
     }
 }

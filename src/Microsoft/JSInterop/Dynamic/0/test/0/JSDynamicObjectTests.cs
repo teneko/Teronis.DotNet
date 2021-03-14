@@ -17,7 +17,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             JSDynamicObjectActivator = new JSDynamicObjectActivator();
 
         [Fact]
-        public async Task Should_dispose()
+        public async Task Proxy_Dispose()
         {
             // Arrange
             var jsObjectReference = new IdentifierPromisingObjectReference();
@@ -31,23 +31,23 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         }
 
         [Fact]
-        public async Task Should_expect_equal_input_output()
+        public async Task Proxy_Expect_equal_input_output()
         {
             // Arrange
             var jsObjectReference = new JSArgumentsPromisingObjectReference();
             var emptyDynamicObject = JSDynamicObjectActivator.CreateInstance<IEmptyDynamicObject>(jsObjectReference);
 
             // Act
-            var expectedContent = nameof(Should_expect_equal_input_output);
-            // The extension methods get precedence over dynamic object method calls.
-            var resultedArguments = await emptyDynamicObject.InvokeAsync<object[]>(expectedContent);
+            var expectedContent = nameof(Proxy_Expect_equal_input_output);
+            // The extension methods get precedence over target method calls.
+            var resultedArguments = await emptyDynamicObject.InvokeAsync<object[]>(identifier: string.Empty, expectedContent);
 
             // Assert
             Assert.Equal(new object[] { expectedContent }, resultedArguments);
         }
 
         [Fact]
-        public void Should_throw_not_of_type_value_task_exception()
+        public void Activation_Throw_not_of_type_value_task_exception()
         {
             // Arrange
             var jsObjectReference = new JSEmptyObjectReference();
@@ -58,7 +58,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         }
 
         [Fact]
-        public async Task Should_expect_identifier_equal_invoked_method()
+        public async Task Dynamic_Expect_identifier_equal_invoked_method()
         {
             // Arrange
             var jsObjectReference = new IdentifierPromisingObjectReference();
@@ -73,7 +73,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         }
 
         [Fact]
-        public async Task Should_throw_token_cancellation()
+        public async Task Proxy_Throw_token_cancellation()
         {
             // Arrange
             var jsObjectReference = new CancellableObjectReference();
@@ -86,8 +86,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
 
             // Assert
             await Assert.ThrowsAsync<ObjectReferenceInvocationCanceledException>(async () =>
-                //await jsDynamicObject.InvokeAsync<string>(nameof(Should_expect_cancellation_through_cancellation_token), cancellationToken, args: null));
-                await jsDynamicObject.InvokeAsync<string>(nameof(Should_throw_token_cancellation), cancellationToken));
+                await jsDynamicObject.InvokeAsync<string>(nameof(Proxy_Throw_token_cancellation), cancellationToken));
         }
 
         public async Task AssertCancellableObjectIsCancelledAsync<SecondArgumentType>(
@@ -114,7 +113,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         }
 
         [Fact]
-        public async Task Should_throw_token_cancellation_via_annotation()
+        public async Task Dynamic_Throw_token_cancellation_via_annotation()
         {
             // Arrange
             using var cancellationTokenSource = new CancellationTokenSource();
@@ -126,7 +125,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         }
 
         [Fact]
-        public async Task Should_throw_timeout_cancellation_via_annotation()
+        public async Task Dynamic_Throw_timeout_cancellation_via_annotation()
         {
             // Arrange
             var timeout = TimeSpan.Zero;
@@ -136,7 +135,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         }
 
         [Fact]
-        public async Task Should_expect_accommodated_arguments()
+        public async Task Dynamic_Expect_accommodated_arguments()
         {
             // Arrange
             var jsObjectReference = new JSArgumentsPromisingObjectReference();
@@ -154,7 +153,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         }
 
         [Fact]
-        public void Should_throw_parameter_after_accommodatable_annotated_parameter_exception()
+        public void Activation_Throw_parameter_after_accommodatable_annotated_parameter_exception()
         {
             // Arrange
             var jsObjectReference = new JSEmptyObjectReference();
@@ -164,7 +163,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         }
 
         [Fact]
-        public void Should_throw_too_many_cancellable_annotated_parameter_exception()
+        public void Activation_Throw_too_many_cancellable_annotated_parameter_exception()
         {
             // Arrange
             var jsObjectReference = new JSEmptyObjectReference();
@@ -174,7 +173,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         }
 
         [Fact]
-        public async Task Should_get_identifier_via_annotation()
+        public async Task Dynamic_Get_identifier_via_annotation()
         {
             // Arrange
             var jsObjectReference = new IdentifierPromisingObjectReference();

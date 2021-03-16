@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Teronis.Microsoft.JSInterop.LocalObject;
+using Teronis.Microsoft.JSInterop.Locality;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
@@ -20,7 +20,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
             services.AddJSLocalObject();
             services.TryAddSingleton<IJSFacadeResolver, JSFacadeResolver>();
             services.TryAddSingleton<IJSFunctionalFacadesActivator, JSFunctionalFacadesActivator>();
-            services.TryAddSingleton<IJSComponentFacadesActivator, JSComponentFacadesActivator>();
+            services.TryAddSingleton<IJSFacadesActivator, JSFacadesActivator>();
             return services;
         }
 

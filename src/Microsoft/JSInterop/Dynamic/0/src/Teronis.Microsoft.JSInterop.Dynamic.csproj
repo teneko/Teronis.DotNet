@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\..\Stakx.Castle.Core\src\Castle.Core\Castle.Core.csproj" />
     <ProjectReference Include="..\..\..\..\..\NetStandard\Collections\Collections\src\Teronis.NetStandard.Collections.csproj" />
+    <ProjectReference Include="..\..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj" />
     <ProjectReference Include="..\..\..\0.Abstractions\src\Teronis.Microsoft.JSInterop.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\0.Core\src\Teronis.Microsoft.JSInterop.Core.csproj" />
   </ItemGroup>

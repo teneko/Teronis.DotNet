@@ -12,7 +12,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
 
             foreach (var methodInfo in methodInfos) {
                 if (methodInfo.IsSpecialName) {
-                    continue;
+                    continue; // Skips getter and setter methods of properties.
                 }
 
                 yield return methodInfo;

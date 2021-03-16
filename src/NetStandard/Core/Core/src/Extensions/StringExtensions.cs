@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Security;
 using System.Text;
 
@@ -52,6 +53,7 @@ namespace Teronis.Extensions
             return new string(a);
         }
 
+        [return: NotNullIfNotNull("source")]
         public static string? TrimEnd(this string source, string value, StringComparison comparisonType)
         {
             if (source?.EndsWith(value, comparisonType) ?? false) {
@@ -61,9 +63,11 @@ namespace Teronis.Extensions
             }
         }
 
+        [return: NotNullIfNotNull("source")]
         public static string? TrimEnd(this string source, string value) =>
             TrimEnd(source, value, StringComparison.Ordinal);
 
+        [return: NotNullIfNotNull("source")]
         public static string? TrimStart(this string source, string value, StringComparison comparisonType)
         {
             if (source?.StartsWith(value, comparisonType) ?? false) {
@@ -73,6 +77,7 @@ namespace Teronis.Extensions
             }
         }
 
+        [return: NotNullIfNotNull("source")]
         public static string? TrimStart(this string source, string value) =>
             TrimStart(source, value, StringComparison.Ordinal);
 

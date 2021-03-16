@@ -7,9 +7,6 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
 {
     internal class AccommodatableAnnotatedParameter : ParameterBase<AccommodatableAttribute>
     {
-        public bool IsCancellationToken { get; private set; }
-        public bool IsTimeSpan { get; private set; }
-
         public AccommodatableAnnotatedParameter(ParameterInfo parameterInfo, AccommodatableAttribute attribute)
             : base(parameterInfo, attribute) { }
 

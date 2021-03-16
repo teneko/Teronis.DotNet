@@ -1,0 +1,20 @@
+﻿using Microsoft.JSInterop;
+using Teronis.Microsoft.JSInterop.Locality;
+
+namespace Teronis.Microsoft.JSInterop.Modules
+{
+    public class JSModule : JSLocalObject, IJSModule
+    {
+        /// <summary>
+        /// Module name or path of the module.
+        /// </summary>
+        public string ModuleNameOrPath { get; }
+
+        public JSModule(
+            IJSFunctionalObject jsFunctionalObject, 
+            IJSObjectReference jsObjectReference,
+            string moduleName)
+            : base(jsFunctionalObject, jsObjectReference) =>
+            ModuleNameOrPath = moduleName ?? throw new System.ArgumentNullException(nameof(moduleName));
+    }
+}

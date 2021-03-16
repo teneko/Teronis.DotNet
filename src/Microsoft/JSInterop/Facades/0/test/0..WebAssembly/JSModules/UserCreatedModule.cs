@@ -1,4 +1,4 @@
-﻿using Teronis.Microsoft.JSInterop.LocalObject;
+﻿using Teronis.Microsoft.JSInterop.Locality;
 
 namespace Teronis_._Microsoft.JSInterop.Facades.JSModules
 {

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop.Facades.Annotiations.Design;
-using Teronis.Microsoft.JSInterop.LocalObject;
+using Teronis.Microsoft.JSInterop.Locality;
 
 namespace Teronis_._Microsoft.JSInterop.Facades.JSModules
 {

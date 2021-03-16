@@ -1,5 +1,5 @@
 ﻿using System;
-using Teronis.Microsoft.JSInterop.LocalObject;
+using Teronis.Microsoft.JSInterop.Locality;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {

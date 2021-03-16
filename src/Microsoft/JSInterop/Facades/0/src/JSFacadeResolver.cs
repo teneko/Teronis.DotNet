@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
-using Teronis.Microsoft.JSInterop.LocalObject;
+using Teronis.Microsoft.JSInterop.Locality;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
@@ -10,21 +10,21 @@ namespace Teronis.Microsoft.JSInterop.Facades
     {
         private readonly IJSRuntime jsRuntime;
         private readonly IJSFacadeDictionary jsFacadeDictionary;
-        private readonly IJSLocalObjectActivator jsObjectActivator;
+        private readonly IJSLocalObjectActivator jsLocalObjectActivator;
         private readonly IServiceProvider serviceProvider;
 
-        public JSFacadeResolver(IJSRuntime jsRuntime, IJSFacadeDictionary jsFacadeDictionary, IJSLocalObjectActivator jsObjectActivator, IServiceProvider serviceProvider)
+        public JSFacadeResolver(IJSRuntime jsRuntime, IJSFacadeDictionary jsFacadeDictionary, IJSLocalObjectActivator jsLocalObjectActivator, IServiceProvider serviceProvider)
         {
             this.jsRuntime = jsRuntime ?? throw new ArgumentNullException(nameof(jsRuntime));
             this.jsFacadeDictionary = jsFacadeDictionary ?? throw new ArgumentNullException(nameof(jsFacadeDictionary));
-            this.jsObjectActivator = jsObjectActivator;
+            this.jsLocalObjectActivator = jsLocalObjectActivator;
             this.serviceProvider = serviceProvider;
         }
 
         public async ValueTask<IJSLocalObject> CreateModuleAsync(string relativeWwwRootPath)
         {
             var jsObjectReference = await jsRuntime.InvokeAsync<IJSObjectReference>("import", relativeWwwRootPath);
-            return jsObjectActivator.CreateLocalObject(jsObjectReference);
+            return jsLocalObjectActivator.CreateInstance(jsObjectReference);
         }
 
         public virtual async ValueTask<IAsyncDisposable> ResolveModuleAsync(string pathRelativeToWwwRoot, Type jsFacadeType)
@@ -43,6 +43,6 @@ namespace Teronis.Microsoft.JSInterop.Facades
         }
 
         public ValueTask<IJSLocalObject> CreateObjectAsync(string objectName) =>
-            jsObjectActivator.CreateLocalObjectAsync(objectName);
+            jsLocalObjectActivator.CreateInstanceAsync(objectName);
     }
 }

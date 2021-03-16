@@ -6,7 +6,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
 {
     public class JSFunctionalFacadesActivator : IJSFunctionalFacadesActivator
     {
-        public async ValueTask<IJSComponentFacades> CreateInstanceAsync(object component, IJSFacadeResolver jsFacadeResolver)
+        public async ValueTask<IJSFacades> CreateInstanceAsync(object component, IJSFacadeResolver jsFacadeResolver)
         {
             if (component is null) {
                 throw new ArgumentNullException(nameof(component));
@@ -23,10 +23,10 @@ namespace Teronis.Microsoft.JSInterop.Facades
                 propertyInfo.SetValue(component, jsModule);
             }
 
-            return new JSComponentFacades(jsFacades, jsFacadeResolver);
+            return new JSFacades(jsFacades, jsFacadeResolver);
         }
 
-        public IJSComponentFacades CreateEmptyInstance(IJSFacadeResolver jsFacadeResolver) =>
-            new JSComponentFacades(new List<IAsyncDisposable>(), jsFacadeResolver);
+        public IJSFacades CreateEmptyInstance(IJSFacadeResolver jsFacadeResolver) =>
+            new JSFacades(new List<IAsyncDisposable>(), jsFacadeResolver);
     }
 }

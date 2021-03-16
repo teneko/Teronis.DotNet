@@ -7,12 +7,12 @@
 @code {
     [JSModuleFacade] ServiceProviderCreatedModule Module { get; set; } = null!;
 
-    IJSComponentFacades jsFacades;
+    IJSFacades jsFacades;
     string tonyHawk;
 
     protected override async Task OnParametersSetAsync()
     {
-        jsFacades = await jsFacadesActivator.CreateInstance(this);
+        jsFacades = await jsFacadesActivator.CreateInstanceAsync(this);
         tonyHawk = await Module.GetTonyHawkAsync();
         await base.OnParametersSetAsync();
     }

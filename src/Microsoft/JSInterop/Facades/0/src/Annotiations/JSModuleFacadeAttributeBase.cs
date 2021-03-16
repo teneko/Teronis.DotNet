@@ -12,14 +12,14 @@ namespace Teronis.Microsoft.JSInterop.Facades.Annotiations
 
         /// <summary>
         /// The properties (owned by component - see 
-        /// <see cref="JSComponentFacadesActivator.CreateInstance(object)"/>) of type <see cref="IJSObjectReference"/>
+        /// <see cref="JSFacadesActivator.CreateInstanceAsync(object)"/>) of type <see cref="IJSObjectReference"/>
         /// gets initialized when decorated with this attribute.
         /// </summary>
         public JSModuleFacadeAttributeBase() { }
 
         /// <summary>
         /// The properties (owned by component - see 
-        /// <see cref="JSComponentFacadesActivator.CreateInstance(object)"/>) of type <see cref="IJSObjectReference"/>
+        /// <see cref="JSFacadesActivator.CreateInstanceAsync(object)"/>) of type <see cref="IJSObjectReference"/>
         /// gets initialized when decorated with this attribute.
         /// </summary>
         /// <param name="pathRelativeToWwwRoot">Relative path where the working directoy is typcially wwwroot.</param>

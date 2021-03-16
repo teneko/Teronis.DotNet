@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using Teronis.Microsoft.JSInterop.Dynamic;
 using Teronis.Microsoft.JSInterop.Dynamic.Annotations;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic

@@ -4,7 +4,7 @@ namespace Teronis.Microsoft.JSInterop
 {
     public interface IJSFunctionalObjectInterceptor
     {
-        void TryInvokeAsync<TValue>(ref JSFunctionalObjectInvocation<TValue> invocation);
-        void TryInvokeVoidAsync(ref JSFunctionalObjectInvocation invocation);
+        ValueTask InterceptInvokeAsync<TValue>(IJSFunctionalObjectInvocation<TValue> invocation);
+        ValueTask InterceptInvokeVoidAsync(IJSFunctionalObjectInvocation invocation);
     }
 }

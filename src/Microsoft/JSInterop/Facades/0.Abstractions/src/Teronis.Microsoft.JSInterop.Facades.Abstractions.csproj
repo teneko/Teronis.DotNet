@@ -12,7 +12,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\..\LocalObject\0.Abstraction\src\Teronis.Microsoft.JSInterop.LocalObject.Abstraction.csproj" />
+    <ProjectReference Include="..\..\..\Locality\0.Abstraction\src\Teronis.Microsoft.JSInterop.Locality.Abstraction.csproj" />
   </ItemGroup>
 
 </Project>

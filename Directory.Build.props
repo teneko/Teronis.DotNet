@@ -13,6 +13,7 @@
     <DebugType Condition="'$(DebugType)' == ''">portable</DebugType>
     <GeneratePackageOnBuild Condition="'$(GeneratePackageOnBuild)' == ''">false</GeneratePackageOnBuild>
     <LangVersion Condition="'$(LangVersion)' == ''">8.0</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <!-- <ItemGroup>

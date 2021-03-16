@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Teronis.Microsoft.JSInterop.Dynamic.JSDynamicObjects;
-using Teronis.Microsoft.JSInterop.Dynamic.JSObjectReferences;
+using Teronis.Microsoft.JSInterop.Infrastructure;
+using Teronis.Microsoft.JSInterop.Infrastructure.JSObjectReferences;
 using Xunit;
 using static Teronis.Utils.ICollectionGenericUtils;
 
@@ -44,6 +45,17 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
 
             // Assert
             Assert.Equal(new object[] { expectedContent }, resultedArguments);
+        }
+
+        [Fact]
+        public async Task Proxy_Get_property()
+        {
+            // Arrange
+            var jsObjectReference = new IdentifierPromisingObjectReference();
+            var emptyDynamicObject = JSDynamicObjectActivator.CreateInstance<IEmptyDynamicObject>(jsObjectReference);
+
+            // Act
+            Assert.True(ReferenceEquals(jsObjectReference, emptyDynamicObject.JSObjectReference));
         }
 
         [Fact]

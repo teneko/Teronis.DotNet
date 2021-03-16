@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
-using Teronis.Microsoft.JSInterop.Dynamic.Annotations;
 
 namespace Teronis.Microsoft.JSInterop
 {
@@ -10,12 +9,12 @@ namespace Teronis.Microsoft.JSInterop
     {
         IJSObjectReference JSObjectReference { get; }
 
-        ValueTask<TValue> InvokeAsync<TValue>(string identifier, [Accommodatable] object?[] arguments);
-        ValueTask<TValue> InvokeAsync<TValue>(string identifier, [Cancellable] CancellationToken cancellationToken, [Accommodatable] object?[] arguments);
-        ValueTask<TValue> InvokeAsync<TValue>(string identifier, [Cancellable] TimeSpan timeout, [Accommodatable] object?[] arguments);
+        ValueTask<TValue> InvokeAsync<TValue>(string identifier, object?[] arguments);
+        ValueTask<TValue> InvokeAsync<TValue>(string identifier, CancellationToken cancellationToken, object?[] arguments);
+        ValueTask<TValue> InvokeAsync<TValue>(string identifier, TimeSpan timeout, object?[] arguments);
 
-        ValueTask InvokeVoidAsync(string identifier, [Accommodatable] object?[] arguments);
-        ValueTask InvokeVoidAsync(string identifier, [Cancellable] CancellationToken cancellationToken, [Accommodatable] object?[] arguments);
-        ValueTask InvokeVoidAsync(string identifier, [Cancellable] TimeSpan timeout, [Accommodatable] object?[] arguments);
+        ValueTask InvokeVoidAsync(string identifier, object?[] arguments);
+        ValueTask InvokeVoidAsync(string identifier, CancellationToken cancellationToken, object?[] arguments);
+        ValueTask InvokeVoidAsync(string identifier, TimeSpan timeout, object?[] arguments);
     }
 }

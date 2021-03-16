@@ -24,6 +24,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\0.Core\test\0\Teronis.Microsoft.JSInterop.Core.Test.csproj" />
+    <ProjectReference Include="..\..\..\..\0.Extensions\Teronis.Microsoft.JSInterop.Extensions.csproj" />
     <ProjectReference Include="..\..\src\Teronis.Microsoft.JSInterop.Dynamic.csproj" />
   </ItemGroup>
 

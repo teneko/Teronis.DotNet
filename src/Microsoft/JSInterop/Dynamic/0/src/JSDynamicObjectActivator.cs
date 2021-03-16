@@ -10,7 +10,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         private GetOrBuildJSFunctionalObjectDelegate getOrBuildJSFunctionalObjectDelegate;
 
         public JSDynamicObjectActivator(JSDynamicObjectActivatorOptions? options) =>
-            getOrBuildJSFunctionalObjectDelegate = options?.GetOrBuildJSFunctionalObjectDelegate ?? JSFunctionalObject.GetDefault;
+            getOrBuildJSFunctionalObjectDelegate = options?.GetOrBuildJSFunctionalObject ?? JSFunctionalObject.GetDefault;
 
         public JSDynamicObjectActivator()
             : this(options: null) { }
@@ -58,13 +58,14 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         {
             var mainInterfaceType = typeof(T);
             var methodDictionary = CreateMethodDictionary(mainInterfaceType); // The idea is to forward all not lookup methods
-            var jsDynamicObjectProxy = new JSDynamicObjectProxy(jsObjectReference, getOrBuildJSFunctionalObjectDelegate());
+            var jsFunctionalObject = getOrBuildJSFunctionalObjectDelegate();
+            var jsDynamicObjectProxy = new JSDynamicObjectProxy(jsObjectReference, jsFunctionalObject);
             var proxyGenerator = new ProxyGenerator();
 
-            var jsDynamicObjectInterceptor = new JSDynamicObjectInterceptor(
+            var jsDynamicObjectInterceptor = new JSDynamicObjectProxyInterceptor(
                 jsDynamicObjectProxy,
                 methodDictionary,
-                getOrBuildJSFunctionalObjectDelegate());
+                jsFunctionalObject);
 
             return (T)proxyGenerator.CreateInterfaceProxyWithoutTarget(
                 mainInterfaceType,

@@ -1,8 +1,9 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Teronis.Microsoft.JSInterop.Dynamic;
 
-namespace Teronis.Microsoft.JSInterop.Modules.Dynamic
+namespace Teronis.Microsoft.JSInterop.Module.Dynamic
 {
     public static class IServiceCollectionExtensions
     {
@@ -18,15 +19,16 @@ namespace Teronis.Microsoft.JSInterop.Modules.Dynamic
         }
 
         /// <summary>
-        /// Calls <see cref="Modules.IServiceCollectionExtensions.AddJSModuleActivator(IServiceCollection, Action{JSModuleActivatorOptions}?)"/>
+        /// Calls <see cref="Module.IServiceCollectionExtensions.AddJSModuleActivator(IServiceCollection, Action{JSModuleActivatorOptions}?)"/>
         /// and <see cref="AddJSDynamicModuleActivator(IServiceCollection)"/>.
         /// </summary>
         /// <param name="services"></param>
         /// <param name="configureOptions"></param>
         /// <returns></returns>
-        public static IServiceCollection AddJSDynamicModules(this IServiceCollection services, Action<JSModuleActivatorOptions>? configureOptions = null)
+        public static IServiceCollection AddJSModuleProxy(this IServiceCollection services, Action<JSModuleActivatorOptions>? configureOptions = null)
         {
             services.AddJSModuleActivator(configureOptions);
+            services.AddJSDynamic();
             AddJSDynamicModuleActivator(services);
             return services;
         }

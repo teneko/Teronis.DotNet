@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.JSInterop;
 
-namespace Teronis.Microsoft.JSInterop.Modules
+namespace Teronis.Microsoft.JSInterop.Module
 {
     public class JSModuleActivator : IJSModuleActivator
     {

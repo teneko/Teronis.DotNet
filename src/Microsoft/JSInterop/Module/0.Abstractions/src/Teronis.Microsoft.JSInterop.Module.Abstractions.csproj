@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>Teronis.Microsoft.JSInterop.Modules</RootNamespace>
+    <RootNamespace>Teronis.Microsoft.JSInterop.Module</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

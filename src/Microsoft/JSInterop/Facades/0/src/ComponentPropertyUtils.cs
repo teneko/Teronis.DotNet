@@ -12,15 +12,15 @@ namespace Teronis.Microsoft.JSInterop.Facades
                 goto exit;
             }
 
-            if (propertyModuleAttribute.PathRelativeToWwwRoot == null) {
+            if (propertyModuleAttribute.ModuleNameOrPath == null) {
                 if (!(Attribute.GetCustomAttribute(propertyInfo.PropertyType, classModuleAttributeType) is Annotiations.Design.JSModuleFacadeAttribute moduleWrapperModuleAttribute)
-                    || moduleWrapperModuleAttribute.PathRelativeToWwwRoot == null) {
+                    || moduleWrapperModuleAttribute.ModuleNameOrPath == null) {
                     throw new InvalidOperationException("Neither the module attribute from property nor a module attribute from class has a path to script.");
                 }
 
-                pathRelativeToWwwRoot = moduleWrapperModuleAttribute.PathRelativeToWwwRoot;
+                pathRelativeToWwwRoot = moduleWrapperModuleAttribute.ModuleNameOrPath;
             } else {
-                pathRelativeToWwwRoot = propertyModuleAttribute.PathRelativeToWwwRoot;
+                pathRelativeToWwwRoot = propertyModuleAttribute.ModuleNameOrPath;
             }
 
             return true;

@@ -13,7 +13,11 @@ namespace Teronis.Microsoft.JSInterop.Facades
         private readonly IJSLocalObjectActivator jsLocalObjectActivator;
         private readonly IServiceProvider serviceProvider;
 
-        public JSFacadeResolver(IJSRuntime jsRuntime, IJSFacadeDictionary jsFacadeDictionary, IJSLocalObjectActivator jsLocalObjectActivator, IServiceProvider serviceProvider)
+        public JSFacadeResolver(
+            IJSRuntime jsRuntime,
+            IJSFacadeDictionary jsFacadeDictionary,
+            IJSLocalObjectActivator jsLocalObjectActivator,
+            IServiceProvider serviceProvider)
         {
             this.jsRuntime = jsRuntime ?? throw new ArgumentNullException(nameof(jsRuntime));
             this.jsFacadeDictionary = jsFacadeDictionary ?? throw new ArgumentNullException(nameof(jsFacadeDictionary));
@@ -27,7 +31,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
             return jsLocalObjectActivator.CreateInstance(jsObjectReference);
         }
 
-        public virtual async ValueTask<IAsyncDisposable> ResolveModuleAsync(string pathRelativeToWwwRoot, Type jsFacadeType)
+        public virtual async ValueTask<IAsyncDisposable> CreateModuleFacadeAsync(string pathRelativeToWwwRoot, Type jsFacadeType)
         {
             if (!jsFacadeDictionary.TryGetValue(jsFacadeType, out var jsFacadeCreatorHandler)) {
                 throw new NotSupportedException($"Type {jsFacadeType} is not supported.");
@@ -42,7 +46,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
             return (IAsyncDisposable)ActivatorUtilities.CreateInstance(serviceProvider, jsFacadeType, jsModule);
         }
 
-        public ValueTask<IJSLocalObject> CreateObjectAsync(string objectName) =>
+        public ValueTask<IJSLocalObject> CreateLocalObjectAsync(string objectName) =>
             jsLocalObjectActivator.CreateInstanceAsync(objectName);
     }
 }

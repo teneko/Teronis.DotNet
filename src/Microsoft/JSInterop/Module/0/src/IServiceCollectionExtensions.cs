@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
-namespace Teronis.Microsoft.JSInterop.Modules
+namespace Teronis.Microsoft.JSInterop.Module
 {
     public static class IServiceCollectionExtensions
     {
@@ -34,7 +34,7 @@ namespace Teronis.Microsoft.JSInterop.Modules
         /// <param name="services"></param>
         /// <param name="configureOptions"></param>
         /// <returns></returns>
-        public static IServiceCollection AddJSModules(this IServiceCollection services, Action<JSModuleActivatorOptions>? configureOptions = null)
+        public static IServiceCollection AddJSModule(this IServiceCollection services, Action<JSModuleActivatorOptions>? configureOptions = null)
         {
             AddJSModuleActivator(services, configureOptions);
             return services;

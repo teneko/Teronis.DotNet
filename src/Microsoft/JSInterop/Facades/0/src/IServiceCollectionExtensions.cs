@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Teronis.Microsoft.JSInterop.Locality.Dynamic;
+using Teronis.Microsoft.JSInterop.Module.Dynamic;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
@@ -9,7 +10,8 @@ namespace Teronis.Microsoft.JSInterop.Facades
     {
         public static IServiceCollection AddJSFacades(this IServiceCollection services)
         {
-            services.AddJSDynamicLocalObjects();
+            services.AddJSLocalObjectProxy();
+            services.AddJSModuleProxy();
 
             services.TryAdd(
                 new ServiceDescriptor(

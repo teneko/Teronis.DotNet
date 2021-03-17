@@ -1,7 +1,7 @@
 ﻿using Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop.Locality;
 
-namespace Teronis.Microsoft.JSInterop.Modules
+namespace Teronis.Microsoft.JSInterop.Module
 {
     public class JSModule : JSLocalObject, IJSModule
     {

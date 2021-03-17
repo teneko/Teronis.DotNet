@@ -19,7 +19,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
                     continue;
                 }
 
-                var jsModule = await jsFacadeResolver.ResolveModuleAsync(pathRelativeToWwwRoot, propertyInfo.PropertyType);
+                var jsModule = await jsFacadeResolver.CreateModuleFacadeAsync(pathRelativeToWwwRoot, propertyInfo.PropertyType);
                 propertyInfo.SetValue(component, jsModule);
             }
 

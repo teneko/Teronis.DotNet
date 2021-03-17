@@ -8,7 +8,7 @@
     <ProjectReference Include="..\..\..\0.Core\src\Teronis.Microsoft.JSInterop.Core.csproj" />
     <ProjectReference Include="..\..\..\Dynamic\0.Abstractions\src\Teronis.Microsoft.JSInterop.Dynamic.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\Locality\0.Abstraction\src\Teronis.Microsoft.JSInterop.Locality.Abstraction.csproj" />
-    <ProjectReference Include="..\..\0.Abstractions\src\Teronis.Microsoft.JSInterop.Modules.Abstractions.csproj" />
+    <ProjectReference Include="..\..\0.Abstractions\src\Teronis.Microsoft.JSInterop.Module.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

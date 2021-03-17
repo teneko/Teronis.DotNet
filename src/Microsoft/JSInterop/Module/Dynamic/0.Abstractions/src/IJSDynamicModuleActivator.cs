@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Teronis.Microsoft.JSInterop.Modules.Dynamic
+namespace Teronis.Microsoft.JSInterop.Module.Dynamic
 {
     public interface IJSDynamicModuleActivator : IJSModuleActivator
     {

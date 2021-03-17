@@ -10,7 +10,7 @@ namespace Teronis.Microsoft.JSInterop.Facades.Annotiations
         { }
 
         /// <inheritdoc/>
-        public JSModuleFacadeAttribute(string pathRelativeToWwwRoot)
-            : base(pathRelativeToWwwRoot) { }
+        public JSModuleFacadeAttribute(string moduleNameOrPath)
+            : base(moduleNameOrPath) { }
     }
 }

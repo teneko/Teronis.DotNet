@@ -26,7 +26,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             return services;
         }
 
-        public static IServiceCollection AddJSDynamicProxies(this IServiceCollection services, Action<JSDynamicProxyActivatorOptions>? configureOptions = null) {
+        public static IServiceCollection AddJSDynamic(this IServiceCollection services, Action<JSDynamicProxyActivatorOptions>? configureOptions = null) {
             AddJSDynamicProxyActivator(services, configureOptions);
             return services;
         }

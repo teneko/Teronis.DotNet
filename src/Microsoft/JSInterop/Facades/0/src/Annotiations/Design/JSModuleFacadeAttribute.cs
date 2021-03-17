@@ -4,7 +4,7 @@ namespace Teronis.Microsoft.JSInterop.Facades.Annotiations.Design
 {
     /// <summary>
     /// Decoratable on class it provides
-    /// <see cref="JSModuleFacadeAttributeBase.PathRelativeToWwwRoot"/>
+    /// <see cref="JSModuleFacadeAttributeBase.ModuleNameOrPath"/>
     /// to those properties with facade attribute that are using
     /// <see cref="Annotiations.JSModuleFacadeAttribute.JSModuleFacadeAttribute"/>
     /// but not

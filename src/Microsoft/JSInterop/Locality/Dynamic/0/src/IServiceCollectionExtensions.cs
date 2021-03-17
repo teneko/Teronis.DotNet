@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Teronis.Microsoft.JSInterop.Modules.Dynamic;
+using Teronis.Microsoft.JSInterop.Dynamic;
 
 namespace Teronis.Microsoft.JSInterop.Locality.Dynamic
 {
@@ -21,15 +21,15 @@ namespace Teronis.Microsoft.JSInterop.Locality.Dynamic
 
         /// <summary>
         /// Calls <see cref="Locality.IServiceCollectionExtensions.AddJSLocalObject(IServiceCollection)"/>
-        /// and <see cref="AddJSDynamicLocalObjects(IServiceCollection, Action{JSLocalObjectActivatorOptions}?)"/>.
+        /// and <see cref="AddJSLocalObjectProxy(IServiceCollection, Action{JSLocalObjectActivatorOptions}?)"/>.
         /// </summary>
         /// <param name="services"></param>
         /// <param name="configureOptions"></param>
         /// <returns></returns>
-        public static IServiceCollection AddJSDynamicLocalObjects(this IServiceCollection services, Action<JSLocalObjectActivatorOptions>? configureOptions = null) {
+        public static IServiceCollection AddJSLocalObjectProxy(this IServiceCollection services, Action<JSLocalObjectActivatorOptions>? configureOptions = null) {
             
-            services.AddJSLocalObjects();
-            //services.AddJSDynamicProxy
+            services.AddJSLocalObject();
+            services.AddJSDynamic();
             AddJSDynamicLocalObjectActivator(services, configureOptions);
             return services;
         }

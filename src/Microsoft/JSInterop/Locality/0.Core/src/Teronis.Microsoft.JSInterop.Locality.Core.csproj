@@ -12,5 +12,9 @@
     <ProjectReference Include="..\..\..\Dynamic\0.Abstractions\src\Teronis.Microsoft.JSInterop.Dynamic.Abstractions.csproj" />
     <ProjectReference Include="..\..\0.Abstraction\src\Teronis.Microsoft.JSInterop.Locality.Abstraction.csproj" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="Dynamic\" />
+  </ItemGroup>
 
 </Project>

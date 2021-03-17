@@ -46,16 +46,16 @@ namespace Teronis.Microsoft.JSInterop.Facades
             return module;
         }
 
-        public async ValueTask<IAsyncDisposable> ResolveModuleAsync(string pathRelativeToWwwRoot, Type jsFacadeType)
+        public async ValueTask<IAsyncDisposable> CreateModuleFacadeAsync(string pathRelativeToWwwRoot, Type jsFacadeType)
         {
-            var module = await jsFacadeResolver.ResolveModuleAsync(pathRelativeToWwwRoot, jsFacadeType);
+            var module = await jsFacadeResolver.CreateModuleFacadeAsync(pathRelativeToWwwRoot, jsFacadeType);
             jsFacades.Add(module);
             return module;
         }
 
-        public async ValueTask<IJSLocalObject> CreateObjectAsync(string objectName)
+        public async ValueTask<IJSLocalObject> CreateLocalObjectAsync(string objectName)
         {
-            var @object = await jsFacadeResolver.CreateObjectAsync(objectName);
+            var @object = await jsFacadeResolver.CreateLocalObjectAsync(objectName);
             jsFacades.Add(@object);
             return @object;
         }

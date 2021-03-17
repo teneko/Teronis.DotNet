@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Teronis.Microsoft.JSInterop.Locality.WebAssets;
-using Teronis.Microsoft.JSInterop.Modules;
+using Teronis.Microsoft.JSInterop.Module;
 
 namespace Teronis.Microsoft.JSInterop.Locality
 {
@@ -39,9 +39,9 @@ namespace Teronis.Microsoft.JSInterop.Locality
         /// <param name="services"></param>
         /// <param name="configureOptions"></param>
         /// <returns></returns>
-        public static IServiceCollection AddJSLocalObjects(this IServiceCollection services, Action<JSLocalObjectActivatorOptions>? configureOptions = null)
+        public static IServiceCollection AddJSLocalObject(this IServiceCollection services, Action<JSLocalObjectActivatorOptions>? configureOptions = null)
         {
-            services.AddJSModules();
+            services.AddJSModule();
             services.AddJSLocalObjectInterop();
             AddJSLocalObjectActivator(services, configureOptions);
             return services;

@@ -136,11 +136,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Core.Test", "src\Microsoft\JSInterop\0.Core\test\0\Teronis.Microsoft.JSInterop.Core.Test.csproj", "{4635D9F7-6655-422B-9FCC-D2E61BF84381}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Modules", "src\Microsoft\JSInterop\Modules\0\src\Teronis.Microsoft.JSInterop.Modules.csproj", "{D61D96D9-2CBA-4A4E-BD2C-04981AF2183A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Module", "src\Microsoft\JSInterop\Module\0\src\Teronis.Microsoft.JSInterop.Module.csproj", "{D61D96D9-2CBA-4A4E-BD2C-04981AF2183A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Modules.Abstractions", "src\Microsoft\JSInterop\Modules\0.Abstractions\src\Teronis.Microsoft.JSInterop.Modules.Abstractions.csproj", "{E9E8FC6A-C779-4D68-BEEE-274068FD3B5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Module.Abstractions", "src\Microsoft\JSInterop\Module\0.Abstractions\src\Teronis.Microsoft.JSInterop.Module.Abstractions.csproj", "{E9E8FC6A-C779-4D68-BEEE-274068FD3B5A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Dynamic.Abstractions", "src\Microsoft\JSInterop\Dynamic\0.Abstractions\src\Teronis.Microsoft.JSInterop.Dynamic.Abstractions.csproj", "{39C86910-46A3-4AAE-9B6E-7D1E5506F8F1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Module.Dynamic", "src\Microsoft\JSInterop\Module\Dynamic\0\src\Teronis.Microsoft.JSInterop.Module.Dynamic.csproj", "{9FC14C60-64ED-419D-A364-65668B92DDD1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Module.Dynamic.Abstractions", "src\Microsoft\JSInterop\Module\Dynamic\0.Abstractions\src\Teronis.Microsoft.JSInterop.Module.Dynamic.Abstractions.csproj", "{D6D0153E-D37A-40D3-93BF-D6B1E8896B2D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Locality.Dynamic", "src\Microsoft\JSInterop\Locality\Dynamic\0\src\Teronis.Microsoft.JSInterop.Locality.Dynamic.csproj", "{5F7C8955-B59A-4AAD-A2EA-749B322B66C3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.Locality.Dynamic.Abstractions", "src\Microsoft\JSInterop\Locality\Dynamic\0.Abstractions\src\Teronis.Microsoft.JSInterop.Locality.Dynamic.Abstractions.csproj", "{EE51D9AA-C551-47DE-913F-043C1E5C4484}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -918,6 +926,54 @@ Global
 		{39C86910-46A3-4AAE-9B6E-7D1E5506F8F1}.Release|x64.Build.0 = Release|x64
 		{39C86910-46A3-4AAE-9B6E-7D1E5506F8F1}.Release|x86.ActiveCfg = Release|x86
 		{39C86910-46A3-4AAE-9B6E-7D1E5506F8F1}.Release|x86.Build.0 = Release|x86
+		{9FC14C60-64ED-419D-A364-65668B92DDD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FC14C60-64ED-419D-A364-65668B92DDD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FC14C60-64ED-419D-A364-65668B92DDD1}.Debug|x64.ActiveCfg = Debug|x64
+		{9FC14C60-64ED-419D-A364-65668B92DDD1}.Debug|x64.Build.0 = Debug|x64
+		{9FC14C60-64ED-419D-A364-65668B92DDD1}.Debug|x86.ActiveCfg = Debug|x86
+		{9FC14C60-64ED-419D-A364-65668B92DDD1}.Debug|x86.Build.0 = Debug|x86
+		{9FC14C60-64ED-419D-A364-65668B92DDD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FC14C60-64ED-419D-A364-65668B92DDD1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FC14C60-64ED-419D-A364-65668B92DDD1}.Release|x64.ActiveCfg = Release|x64
+		{9FC14C60-64ED-419D-A364-65668B92DDD1}.Release|x64.Build.0 = Release|x64
+		{9FC14C60-64ED-419D-A364-65668B92DDD1}.Release|x86.ActiveCfg = Release|x86
+		{9FC14C60-64ED-419D-A364-65668B92DDD1}.Release|x86.Build.0 = Release|x86
+		{D6D0153E-D37A-40D3-93BF-D6B1E8896B2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6D0153E-D37A-40D3-93BF-D6B1E8896B2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6D0153E-D37A-40D3-93BF-D6B1E8896B2D}.Debug|x64.ActiveCfg = Debug|x64
+		{D6D0153E-D37A-40D3-93BF-D6B1E8896B2D}.Debug|x64.Build.0 = Debug|x64
+		{D6D0153E-D37A-40D3-93BF-D6B1E8896B2D}.Debug|x86.ActiveCfg = Debug|x86
+		{D6D0153E-D37A-40D3-93BF-D6B1E8896B2D}.Debug|x86.Build.0 = Debug|x86
+		{D6D0153E-D37A-40D3-93BF-D6B1E8896B2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6D0153E-D37A-40D3-93BF-D6B1E8896B2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6D0153E-D37A-40D3-93BF-D6B1E8896B2D}.Release|x64.ActiveCfg = Release|x64
+		{D6D0153E-D37A-40D3-93BF-D6B1E8896B2D}.Release|x64.Build.0 = Release|x64
+		{D6D0153E-D37A-40D3-93BF-D6B1E8896B2D}.Release|x86.ActiveCfg = Release|x86
+		{D6D0153E-D37A-40D3-93BF-D6B1E8896B2D}.Release|x86.Build.0 = Release|x86
+		{5F7C8955-B59A-4AAD-A2EA-749B322B66C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F7C8955-B59A-4AAD-A2EA-749B322B66C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F7C8955-B59A-4AAD-A2EA-749B322B66C3}.Debug|x64.ActiveCfg = Debug|x64
+		{5F7C8955-B59A-4AAD-A2EA-749B322B66C3}.Debug|x64.Build.0 = Debug|x64
+		{5F7C8955-B59A-4AAD-A2EA-749B322B66C3}.Debug|x86.ActiveCfg = Debug|x86
+		{5F7C8955-B59A-4AAD-A2EA-749B322B66C3}.Debug|x86.Build.0 = Debug|x86
+		{5F7C8955-B59A-4AAD-A2EA-749B322B66C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F7C8955-B59A-4AAD-A2EA-749B322B66C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F7C8955-B59A-4AAD-A2EA-749B322B66C3}.Release|x64.ActiveCfg = Release|x64
+		{5F7C8955-B59A-4AAD-A2EA-749B322B66C3}.Release|x64.Build.0 = Release|x64
+		{5F7C8955-B59A-4AAD-A2EA-749B322B66C3}.Release|x86.ActiveCfg = Release|x86
+		{5F7C8955-B59A-4AAD-A2EA-749B322B66C3}.Release|x86.Build.0 = Release|x86
+		{EE51D9AA-C551-47DE-913F-043C1E5C4484}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE51D9AA-C551-47DE-913F-043C1E5C4484}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE51D9AA-C551-47DE-913F-043C1E5C4484}.Debug|x64.ActiveCfg = Debug|x64
+		{EE51D9AA-C551-47DE-913F-043C1E5C4484}.Debug|x64.Build.0 = Debug|x64
+		{EE51D9AA-C551-47DE-913F-043C1E5C4484}.Debug|x86.ActiveCfg = Debug|x86
+		{EE51D9AA-C551-47DE-913F-043C1E5C4484}.Debug|x86.Build.0 = Debug|x86
+		{EE51D9AA-C551-47DE-913F-043C1E5C4484}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE51D9AA-C551-47DE-913F-043C1E5C4484}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE51D9AA-C551-47DE-913F-043C1E5C4484}.Release|x64.ActiveCfg = Release|x64
+		{EE51D9AA-C551-47DE-913F-043C1E5C4484}.Release|x64.Build.0 = Release|x64
+		{EE51D9AA-C551-47DE-913F-043C1E5C4484}.Release|x86.ActiveCfg = Release|x86
+		{EE51D9AA-C551-47DE-913F-043C1E5C4484}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

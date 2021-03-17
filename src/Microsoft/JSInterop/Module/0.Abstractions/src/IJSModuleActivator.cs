@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Teronis.Microsoft.JSInterop.Modules
+namespace Teronis.Microsoft.JSInterop.Module
 {
     public interface IJSModuleActivator
     {

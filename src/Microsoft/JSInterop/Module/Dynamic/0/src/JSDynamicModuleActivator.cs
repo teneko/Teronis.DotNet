@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Teronis.Microsoft.JSInterop.Dynamic;
-using Teronis.Microsoft.JSInterop.Modules.Dynamic;
+using Teronis.Microsoft.JSInterop.Module.Dynamic;
 
-namespace Teronis.Microsoft.JSInterop.Modules
+namespace Teronis.Microsoft.JSInterop.Module
 {
     public class JSDynamicModuleActivator : IJSDynamicModuleActivator
     {

@@ -11,14 +11,14 @@ namespace Teronis.Microsoft.JSInterop
 
         protected virtual IJSFunctionalObject JSFunctionalObject { get; }
 
-        public JSObjectReferenceFacade(IJSFunctionalObject? jsFunctionalObject, IJSObjectReference jsObjectReference)
+        public JSObjectReferenceFacade(IJSObjectReference jsObjectReference, IJSFunctionalObject? jsFunctionalObject)
         {
-            JSFunctionalObject = jsFunctionalObject ?? JSInterop.JSFunctionalObject.Default;
             JSObjectReference = jsObjectReference ?? throw new ArgumentNullException(nameof(jsObjectReference));
+            JSFunctionalObject = jsFunctionalObject ?? JSInterop.JSFunctionalObject.Default;
         }
 
         public JSObjectReferenceFacade(IJSObjectReference jsObjectReference)
-            : this(jsFunctionalObject: null, jsObjectReference) { }
+            : this(jsObjectReference, jsFunctionalObject: null) { }
 
         public virtual ValueTask<TValue> InvokeAsync<TValue>(string identifier, params object?[] args) =>
             JSFunctionalObject.InvokeAsync<TValue>(JSObjectReference, identifier, args);
@@ -37,5 +37,11 @@ namespace Teronis.Microsoft.JSInterop
 
         public virtual ValueTask InvokeVoidAsync(string identifier, TimeSpan timeout, params object?[] args) =>
             JSFunctionalObject.InvokeVoidAsync(JSObjectReference, identifier, timeout, args);
+
+        protected virtual ValueTask DisposeAsyncCore() =>
+            JSObjectReference.DisposeAsync();
+
+        public ValueTask DisposeAsync() =>
+            DisposeAsyncCore();
     }
 }

@@ -12,7 +12,11 @@ namespace Teronis.Microsoft.JSInterop
         static JSFunctionalObject() =>
             Default = new JSFunctionalObject();
 
-        internal static JSFunctionalObject GetDefault() =>
+        /// <summary>
+        /// It simply returns <see cref="Default"/>. Internally used as right operand in null-coercion expressions.
+        /// </summary>
+        /// <returns><see cref="Default"/></returns>
+        public static JSFunctionalObject GetDefault() =>
             Default;
 
         protected virtual ValueTask InterceptInvokeAsync<TValue>(IJSFunctionalObjectInvocation<TValue> jsObjectReference) =>

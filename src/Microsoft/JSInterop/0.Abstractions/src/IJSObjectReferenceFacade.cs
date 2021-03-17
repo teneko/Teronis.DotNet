@@ -5,7 +5,7 @@ using Microsoft.JSInterop;
 
 namespace Teronis.Microsoft.JSInterop
 {
-    public interface IJSObjectReferenceFacade
+    public interface IJSObjectReferenceFacade : IAsyncDisposable
     {
         IJSObjectReference JSObjectReference { get; }
 

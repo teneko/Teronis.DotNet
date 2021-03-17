@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Teronis.Microsoft.JSInterop.Dynamic;
 using Teronis.Microsoft.JSInterop.Facades;
+using Teronis.Microsoft.JSInterop.Modules.Dynamic;
 using Teronis_._Microsoft.JSInterop.Facades.JSModules;
 
 namespace Teronis_._Microsoft.JSInterop.Facades
@@ -20,13 +21,13 @@ namespace Teronis_._Microsoft.JSInterop.Facades
 
             services.AddScoped(serviceProvider => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
+            services.AddJSDynamicProxies(); // temporary
+            services.AddJSDynamicModules(); // temporary
             services.AddJSFacades();
 
             services.AddJSFacadeDictionary(builder => builder
                 .AddFacade(objectReference => new UserCreatedModule(objectReference))
                 .AddFacade<ServiceProviderCreatedModule>());
-
-            services.AddJSDynamicObject();
 
             await builder.Build().RunAsync();
         }

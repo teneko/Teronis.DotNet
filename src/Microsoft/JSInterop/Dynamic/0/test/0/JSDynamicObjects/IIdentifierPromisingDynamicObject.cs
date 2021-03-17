@@ -2,7 +2,7 @@
 
 namespace Teronis.Microsoft.JSInterop.Dynamic.JSDynamicObjects
 {
-    public interface IIdentifierPromisingDynamicObject : IJSDynamicObject
+    public interface IIdentifierPromisingDynamicObject : IJSObjectReferenceFacade
     {
         ValueTask<string> GetIdentifier();
     }

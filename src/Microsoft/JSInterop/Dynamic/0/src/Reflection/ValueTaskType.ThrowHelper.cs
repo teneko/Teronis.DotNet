@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic
 {
-    partial class ValueTaskReturnType
+    partial class ValueTaskType
     {
         internal class ThrowHelper
         {

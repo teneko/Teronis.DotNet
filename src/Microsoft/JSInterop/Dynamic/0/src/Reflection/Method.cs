@@ -30,12 +30,12 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
 
         public MethodInfo MethodInfo { get; }
         public ParameterList ParameterList { get; }
-        public ValueTaskReturnType ValueTaskReturnType { get; }
+        public ValueTaskType ValueTaskReturnType { get; }
 
         public string Name =>
             MethodInfo.Name;
 
-        public Method(MethodInfo methodInfo, ParameterList parameterList, ValueTaskReturnType valueTaskType)
+        public Method(MethodInfo methodInfo, ParameterList parameterList, ValueTaskType valueTaskType)
         {
             MethodInfo = methodInfo ?? throw new ArgumentNullException(nameof(methodInfo));
             ParameterList = parameterList ?? throw new ArgumentNullException(nameof(parameterList));
@@ -57,7 +57,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         /// 
         /// </summary>
         /// <param name="objectReference"></param>
-        /// <returns><see cref="ValueTask"/> or <see cref="ValueTask{TResult}"/> with a generic parameter of type <see cref="ValueTaskReturnType.GenericParameterType"/>.</returns>
+        /// <returns><see cref="ValueTask"/> or <see cref="ValueTask{TResult}"/> with a generic parameter of type <see cref="ValueTaskType.GenericParameterType"/>.</returns>
         public object Invoke(
             IJSFunctionalObject jsFunctionalObject,
             IJSObjectReference jsObjectReference,
@@ -76,11 +76,11 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
                 alternativeValueTaskGenericTypeParameter = null;
             }
 
-            ValueTaskReturnType valueTaskReturnType;
+            ValueTaskType valueTaskReturnType;
 
             if (alternativeValueTaskGenericTypeParameter != null) {
                 var genericValueTask = GetClosedGenericValueTaskType(alternativeValueTaskGenericTypeParameter);
-                valueTaskReturnType = new ValueTaskReturnType(genericValueTask, alternativeValueTaskGenericTypeParameter);
+                valueTaskReturnType = new ValueTaskType(genericValueTask, alternativeValueTaskGenericTypeParameter);
             } else {
                 valueTaskReturnType = ValueTaskReturnType;
             }

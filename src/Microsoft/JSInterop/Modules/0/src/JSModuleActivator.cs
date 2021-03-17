@@ -6,18 +6,18 @@ namespace Teronis.Microsoft.JSInterop.Modules
     public class JSModuleActivator : IJSModuleActivator
     {
         private readonly IJSRuntime jsRuntime;
-        private readonly JSModuleActivatorOptions options;
+        private readonly GetOrBuildJSFunctionalObjectDelegate getOrBuildJSFunctionalObject;
 
-        public JSModuleActivator(IJSRuntime jsRuntime, JSModuleActivatorOptions options)
+        public JSModuleActivator(IJSRuntime jsRuntime, JSModuleActivatorOptions? options)
         {
             this.jsRuntime = jsRuntime;
-            this.options = options;
+            getOrBuildJSFunctionalObject = options?.GetOrBuildJSFunctionalObject ?? JSFunctionalObject.GetDefault;
         }
 
-        public async ValueTask<IJSModule> CreateInstanceAsync(string moduleNameOrPath)
+        public virtual async ValueTask<IJSModule> CreateInstanceAsync(string moduleNameOrPath)
         {
             var jsObjectReference = await jsRuntime.InvokeAsync<IJSObjectReference>("import", moduleNameOrPath);
-            return new JSModule(options.GetOrBuildJSFunctionalObject(), jsObjectReference, moduleNameOrPath);
+            return new JSModule(getOrBuildJSFunctionalObject(), jsObjectReference, moduleNameOrPath);
         }
     }
 }

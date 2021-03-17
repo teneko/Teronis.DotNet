@@ -3,7 +3,7 @@ using Teronis.Microsoft.JSInterop.Dynamic.Annotations;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic.JSDynamicObjects
 {
-    public interface IIdentifierAnnotatedDynamicObject : IJSDynamicObject
+    public interface IIdentifierAnnotatedDynamicObject : IJSObjectReferenceFacade
     {
         public const string javaScriptTypicalMethodName = nameof(javaScriptTypicalMethodName);
 

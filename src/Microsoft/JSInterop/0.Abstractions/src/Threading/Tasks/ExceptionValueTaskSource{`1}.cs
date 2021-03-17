@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks.Sources;
 
-namespace Teronis.Microsoft.JSInterop
+namespace Teronis.Microsoft.JSInterop.Threading.Tasks
 {
     public class ExceptionValueTaskSource<T> : ExceptionValueTaskSource, IValueTaskSource<T>
     {

@@ -5,7 +5,7 @@ using Teronis.Microsoft.JSInterop.Dynamic.Annotations;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic.JSDynamicObjects
 {
-    public interface ICancellableAnnotatedDynamicObject : IJSDynamicObject
+    public interface ICancellableAnnotatedDynamicObject : IJSObjectReferenceFacade
     {
         ValueTask CancelViaCancellationToken(string cancellationReadon, [Cancellable] CancellationToken cancellationToken, object? ballast);
         ValueTask CancelViaTimeSpan(string cancellationReadon, [Cancellable] TimeSpan timeout, object? ballast);

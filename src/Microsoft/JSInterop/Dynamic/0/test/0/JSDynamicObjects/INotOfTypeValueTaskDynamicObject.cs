@@ -1,6 +1,6 @@
 ﻿namespace Teronis.Microsoft.JSInterop.Dynamic.JSDynamicObjects
 {
-    public interface INotOfTypeValueTaskDynamicObject : IJSDynamicObject
+    public interface INotOfTypeValueTaskDynamicObject : IJSObjectReferenceFacade
     {
         string ProvoceNotOfTypeValueTaskException();
     }

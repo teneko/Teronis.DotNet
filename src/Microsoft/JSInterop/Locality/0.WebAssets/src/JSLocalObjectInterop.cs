@@ -1,31 +1,21 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
-using Teronis.Microsoft.JSInterop;
+using Teronis.Microsoft.JSInterop.Modules;
 
 namespace Teronis.Microsoft.JSInterop.Locality.WebAssets
 {
     public sealed class JSLocalObjectInterop : IAsyncDisposable, IJSLocalObjectInterop
     {
-        private readonly Lazy<Task<IJSObjectReference>> lazyModuleTask;
+        private readonly Lazy<ValueTask<IJSModule>> lazyModuleTask;
 
-        public JSLocalObjectInterop(IJSRuntime jsRuntime)
+        public JSLocalObjectInterop(IJSModuleActivator jsModuleActivator)
         {
-            if (jsRuntime is null) {
-                throw new ArgumentNullException(nameof(jsRuntime));
-            }
-
-            lazyModuleTask = new Lazy<Task<IJSObjectReference>>(() => jsRuntime.InvokeAsync<IJSObjectReference>(
-                "import", "./_content/Teronis.Microsoft.JSInterop.Facades.WebAssets/objectInterop.js").AsTask());
+            lazyModuleTask = new Lazy<ValueTask<IJSModule>>(() => 
+                jsModuleActivator.CreateInstanceAsync("./_content/Teronis.Microsoft.JSInterop.Facades.WebAssets/objectInterop.js"));
         }
 
-        /// <summary>
-        /// Creates a object reference. If <paramref name="objectName"/> is null
-        /// or equals "window" then an object reference to window gets returned.
-        /// </summary>
-        /// <param name="objectName">The object name.</param>
-        /// <returns>A JavaScript object reference.</returns>
-        public async ValueTask<IJSObjectReference> CreateObjectReferenceAsync(string? objectName)
+        public async ValueTask<IJSObjectReference> GetGlobalObjectReference(string? objectName)
         {
             var module = await lazyModuleTask.Value;
 
@@ -36,7 +26,7 @@ namespace Teronis.Microsoft.JSInterop.Locality.WebAssets
             return await module.InvokeAsync<IJSObjectReference>("getGlobalObject", objectName);
         }
 
-        public async ValueTask<IJSObjectReference> CreateObjectReferenceAsync(IJSObjectReference objectReference, string objectName)
+        public async ValueTask<IJSObjectReference> GetLocalObjectReference(IJSObjectReference objectReference, string objectName)
         {
             var module = await lazyModuleTask.Value;
             var nestedObjectReference = await module.InvokeAsync<IJSObjectReference>("getLocalObject", objectReference, objectName);

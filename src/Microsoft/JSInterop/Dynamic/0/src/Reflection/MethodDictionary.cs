@@ -17,7 +17,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             methodByMethodNameDictionary = new LinkedBucketList<string, Method>();
         }
 
-        public void AddMethod(MethodInfo methodInfo, ParameterList parameterList, ValueTaskReturnType valueTaskType) =>
+        public void AddMethod(MethodInfo methodInfo, ParameterList parameterList, ValueTaskType valueTaskType) =>
             methodByMethodNameDictionary.Add(methodInfo.Name, new Method(methodInfo, parameterList, valueTaskType));
 
         public bool TryFindMethod(string name, IEnumerable<string?> argumentNames, [MaybeNullWhen(false)] out Method method) {

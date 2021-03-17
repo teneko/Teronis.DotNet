@@ -37,7 +37,10 @@ namespace Teronis.Microsoft.JSInterop.Locality
         public ValueTask InvokeVoidAsync(string identifier, TimeSpan timeout, params object?[] args) =>
             jsFunctionalObject.InvokeVoidAsync(JSObjectReference, identifier, timeout, args);
 
-        public ValueTask DisposeAsync() =>
+        protected virtual ValueTask DisposeAsyncCore() =>
             JSObjectReference.DisposeAsync();
+
+        public ValueTask DisposeAsync() =>
+            DisposeAsyncCore();
     }
 }

@@ -12,10 +12,10 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
 {
     public class JSDynamicObjectTests
     {
-        public JSDynamicObjectActivator JSDynamicObjectActivator { get; }
+        public JSDynamicProxyActivator JSDynamicObjectActivator { get; }
 
         public JSDynamicObjectTests() =>
-            JSDynamicObjectActivator = new JSDynamicObjectActivator();
+            JSDynamicObjectActivator = new JSDynamicProxyActivator();
 
         [Fact]
         public async Task Proxy_Dispose()
@@ -66,7 +66,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
 
             // Act & Assert
             var error = Assert.Throws<NotSupportedException>(() => JSDynamicObjectActivator.CreateInstance<INotOfTypeValueTaskDynamicObject>(jsObjectReference));
-            Assert.Equal(ValueTaskReturnType.ThrowHelper.CreateNotOfTypeValueTaskException(typeof(string)).Message, error.Message);
+            Assert.Equal(ValueTaskType.ThrowHelper.CreateNotOfTypeValueTaskException(typeof(string)).Message, error.Message);
         }
 
         [Fact]
@@ -189,7 +189,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         {
             // Arrange
             var jsObjectReference = new IdentifierPromisingObjectReference();
-            var jsDynamicObjectActivator = new JSDynamicObjectActivator();
+            var jsDynamicObjectActivator = new JSDynamicProxyActivator();
             var jsDynamicObject = jsDynamicObjectActivator.CreateInstance<IIdentifierAnnotatedDynamicObject>(jsObjectReference);
 
             // Act

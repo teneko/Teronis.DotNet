@@ -9,7 +9,7 @@ using Teronis.Microsoft.JSInterop.Dynamic;
 
 namespace Teronis.Microsoft.JSInterop
 {
-    internal class JSFunctionalObjectDelegateCache
+    internal sealed class JSFunctionalObjectDelegateCache
     {
         public static JSFunctionalObjectDelegateCache Instance = new JSFunctionalObjectDelegateCache();
 
@@ -28,7 +28,7 @@ namespace Teronis.Microsoft.JSInterop
 
         private static DelegateType CreateDelegate<DelegateType>(
             MethodInfo methodInfo,
-            ValueTaskReturnType valueTaskType)
+            ValueTaskType valueTaskType)
             where DelegateType : Delegate
         {
             var parameters = methodInfo
@@ -107,7 +107,7 @@ namespace Teronis.Microsoft.JSInterop
                 });
             }
 
-            public DelegateType GetDelegate(ValueTaskReturnType valueTaskReturnType)
+            public DelegateType GetDelegate(ValueTaskType valueTaskReturnType)
             {
                 if (delegateByReturnTypeDictionary.TryGetValue(valueTaskReturnType.Type, out var invocableFunction)) {
                     return invocableFunction;

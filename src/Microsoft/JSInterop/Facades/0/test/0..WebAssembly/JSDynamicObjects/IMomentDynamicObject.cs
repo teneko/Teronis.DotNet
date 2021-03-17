@@ -1,11 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.JSInterop;
-using Teronis.Microsoft.JSInterop.Dynamic;
+using Teronis.Microsoft.JSInterop.Modules;
 
 namespace Teronis_._Microsoft.JSInterop.Facades.JSDynamicObjects
 {
-    public interface IMomentDynamicObject : IAsyncDisposable, IJSDynamicObject
+    public interface IMomentDynamicObject : IJSModule
     {
         ValueTask<IJSObjectReference> moment(string date);
     }

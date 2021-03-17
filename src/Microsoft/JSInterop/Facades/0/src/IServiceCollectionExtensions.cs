@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Teronis.Microsoft.JSInterop.Locality;
+using Teronis.Microsoft.JSInterop.Locality.Dynamic;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
@@ -9,6 +9,8 @@ namespace Teronis.Microsoft.JSInterop.Facades
     {
         public static IServiceCollection AddJSFacades(this IServiceCollection services)
         {
+            services.AddJSDynamicLocalObjects();
+
             services.TryAdd(
                 new ServiceDescriptor(
                     typeof(IJSFacadeDictionary),
@@ -17,7 +19,6 @@ namespace Teronis.Microsoft.JSInterop.Facades
                         .Build(),
                     ServiceLifetime.Singleton));
 
-            services.AddJSLocalObject();
             services.TryAddSingleton<IJSFacadeResolver, JSFacadeResolver>();
             services.TryAddSingleton<IJSFunctionalFacadesActivator, JSFunctionalFacadesActivator>();
             services.TryAddSingleton<IJSFacadesActivator, JSFacadesActivator>();

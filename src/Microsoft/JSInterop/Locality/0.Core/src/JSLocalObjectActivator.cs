@@ -17,19 +17,19 @@ namespace Teronis.Microsoft.JSInterop.Locality
         public JSLocalObjectActivator(IJSLocalObjectInterop jsLocalObjectInterop)
             : this(jsLocalObjectInterop, options: null) { }
 
-        public IJSLocalObject CreateInstance(IJSObjectReference jsObjectReference) =>
+        public virtual IJSLocalObject CreateInstance(IJSObjectReference jsObjectReference) =>
             new JSLocalObject(getOrBuildJSFunctionalObjectDelegate(), jsObjectReference);
 
-        public async ValueTask<IJSLocalObject> CreateInstanceAsync(string objectName) =>
-            CreateInstance(await jsLocalObjectInterop.CreateObjectReferenceAsync(objectName));
+        public virtual async ValueTask<IJSLocalObject> CreateInstanceAsync(string objectName) =>
+            CreateInstance(await jsLocalObjectInterop.GetGlobalObjectReference(objectName));
 
-        public async ValueTask<IJSLocalObject> CreateInstanceAsync(IJSObjectReference objectReference, string objectName)
+        public virtual async ValueTask<IJSLocalObject> CreateInstanceAsync(IJSObjectReference objectReference, string objectName)
         {
-            var nestedObjectReference = await jsLocalObjectInterop.CreateObjectReferenceAsync(objectReference, objectName);
+            var nestedObjectReference = await jsLocalObjectInterop.GetLocalObjectReference(objectReference, objectName);
             return CreateInstance(nestedObjectReference);
         }
 
-        public ValueTask<IJSLocalObject> CreateInstanceAsync(IJSLocalObject jsLocalObject, string objectName) =>
+        public virtual ValueTask<IJSLocalObject> CreateInstanceAsync(IJSLocalObject jsLocalObject, string objectName) =>
             CreateInstanceAsync(jsLocalObject.JSObjectReference, objectName);
     }
 }

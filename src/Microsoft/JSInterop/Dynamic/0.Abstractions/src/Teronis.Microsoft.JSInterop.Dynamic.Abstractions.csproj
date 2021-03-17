@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>Teronis.Microsoft.JSInterop.Dynamic</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\0.Abstractions\src\Teronis.Microsoft.JSInterop.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

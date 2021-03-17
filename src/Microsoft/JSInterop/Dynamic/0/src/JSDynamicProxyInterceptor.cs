@@ -6,17 +6,20 @@ using DynamiteyDynamic = Dynamitey.Dynamic;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic
 {
-    public class JSDynamicObjectProxyInterceptor : IInterceptor
+    internal class JSDynamicProxyInterceptor : IInterceptor
     {
-        private readonly JSDynamicObjectProxy jsDynamicObjectProxy;
+        private readonly IJSObjectReferenceFacade jsDynamicObjectProxy;
         private readonly MethodDictionary methodDictionary;
         private readonly IJSFunctionalObject jsFunctionalObject;
 
-        internal JSDynamicObjectProxyInterceptor(JSDynamicObjectProxy jsDynamicObjectProxy, MethodDictionary methodDictionary, IJSFunctionalObject jsFunctionalObject)
+        public JSDynamicProxyInterceptor(
+            IJSObjectReferenceFacade jsDynamicObjectProxy,
+            MethodDictionary methodDictionary,
+            IJSFunctionalObject jsFunctionalObject)
         {
             this.jsDynamicObjectProxy = jsDynamicObjectProxy ?? throw new ArgumentNullException(nameof(jsDynamicObjectProxy));
             this.methodDictionary = methodDictionary ?? throw new ArgumentNullException(nameof(methodDictionary));
-            this.jsFunctionalObject = jsFunctionalObject;
+            this.jsFunctionalObject = jsFunctionalObject ?? throw new ArgumentNullException(nameof(jsFunctionalObject));
         }
 
         public void Intercept(IInvocation invocation)

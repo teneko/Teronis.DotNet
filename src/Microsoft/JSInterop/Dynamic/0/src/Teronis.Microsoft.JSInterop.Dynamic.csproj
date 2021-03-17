@@ -18,6 +18,7 @@
     <ProjectReference Include="..\..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj" />
     <ProjectReference Include="..\..\..\0.Abstractions\src\Teronis.Microsoft.JSInterop.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\0.Core\src\Teronis.Microsoft.JSInterop.Core.csproj" />
+    <ProjectReference Include="..\..\0.Abstractions\src\Teronis.Microsoft.JSInterop.Dynamic.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

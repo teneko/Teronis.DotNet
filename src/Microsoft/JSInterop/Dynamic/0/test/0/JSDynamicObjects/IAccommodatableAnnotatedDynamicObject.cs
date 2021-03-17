@@ -4,7 +4,7 @@ using Teronis.Microsoft.JSInterop.Dynamic.Annotations;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic.JSDynamicObjects
 {
-    public interface IAccommodatableAnnotatedDynamicObject : IJSDynamicObject
+    public interface IAccommodatableAnnotatedDynamicObject : IJSObjectReferenceFacade
     {
         ValueTask<object?[]> GetJavaScriptArguments(object? ballast, [Cancellable] CancellationToken cancellationToken, [Accommodatable] params object?[] jsArguments);
     }

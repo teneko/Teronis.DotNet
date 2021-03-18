@@ -69,7 +69,7 @@ namespace Teronis.Collections.Generic
 
         public ValueType this[YetNullable<KeyType> key] {
             get {
-                if (!key.HasValue) {
+                if (key.IsNull) {
                     if (!nullableKeyValuePair.HasValue) {
                         throw new KeyNotFoundException();
                     }
@@ -85,7 +85,7 @@ namespace Teronis.Collections.Generic
                     throw NullableKeyDictionaryExceptionHelper.CreateNotSupportedException();
                 }
 
-                if (!key.HasValue) {
+                if (key.IsNull) {
                     nullableKeyValuePair = new KeyValuePair<YetNullable<KeyType>, ValueType>(key, value);
                 } else {
                     dictionary[key.value] = value;
@@ -104,7 +104,7 @@ namespace Teronis.Collections.Generic
                 throw new NotSupportedException("");
             }
 
-            if (!key.HasValue) {
+            if (key.IsNull) {
                 if (nullableKeyValuePair.HasValue) {
                     throw new ArgumentException();
                 }
@@ -123,7 +123,7 @@ namespace Teronis.Collections.Generic
 
         public bool ContainsKey(YetNullable<KeyType> key)
         {
-            if (!key.HasValue) {
+            if (key.IsNull) {
                 return nullableKeyValuePair.HasValue;
             }
 
@@ -132,7 +132,7 @@ namespace Teronis.Collections.Generic
 
         public bool TryGetValue(YetNullable<KeyType> key, [MaybeNullWhen(false)] out ValueType value)
         {
-            if (!key.HasValue) {
+            if (key.IsNull) {
                 if (nullableKeyValuePair.HasValue) {
                     value = nullableKeyValuePair.Value.Value;
                     return true;
@@ -160,7 +160,7 @@ namespace Teronis.Collections.Generic
                 throw NullableKeyDictionaryExceptionHelper.CreateNotSupportedException();
             }
 
-            if (!key.HasValue) {
+            if (key.IsNull) {
                 if (nullableKeyValuePair.HasValue) {
                     nullableKeyValuePair = null;
                     return true;
@@ -309,7 +309,7 @@ namespace Teronis.Collections.Generic
         {
             var (nullableKey, value) = item;
 
-            if (!nullableKey.HasValue) {
+            if (nullableKey.IsNull) {
                 if (nullableKeyValuePair.HasValue) {
                     return EqualityComparer<ValueType>.Default.Equals(item.Value, nullableKeyValuePair.Value.Value);
                 }
@@ -374,7 +374,7 @@ namespace Teronis.Collections.Generic
 
         ValueType IReadOnlyDictionary<YetNullable<KeyType>, ValueType>.this[YetNullable<KeyType> key] {
             get {
-                if (!key.HasValue) {
+                if (key.IsNull) {
                     if (!nullableKeyValuePair.HasValue) {
                         throw new KeyNotFoundException("The key does not exist in the collection.");
                     }

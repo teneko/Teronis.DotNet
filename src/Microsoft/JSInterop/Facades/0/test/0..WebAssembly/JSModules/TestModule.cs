@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
-using Teronis.Microsoft.JSInterop.Facades.Annotiations.Design;
+using Teronis.Microsoft.JSInterop.Facades.Annotiations;
 
 namespace Teronis_._Microsoft.JSInterop.Facades.JSModules
 {
@@ -11,7 +11,7 @@ namespace Teronis_._Microsoft.JSInterop.Facades.JSModules
         private readonly IJSObjectReference objectReference;
 
         public TestModule(IJSObjectReference objectReference) => 
-            this.objectReference = objectReference ?? throw new System.ArgumentNullException(nameof(objectReference));
+            this.objectReference = objectReference ?? throw new ArgumentNullException(nameof(objectReference));
 
         public ValueTask<string> getCurrentTime()
         {

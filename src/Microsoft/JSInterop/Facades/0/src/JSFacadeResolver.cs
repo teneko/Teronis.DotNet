@@ -3,50 +3,61 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop.Locality;
+using Teronis.Microsoft.JSInterop.Module;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
     public class JSFacadeResolver : IJSFacadeResolver
     {
-        private readonly IJSRuntime jsRuntime;
-        private readonly IJSFacadeDictionary jsFacadeDictionary;
+        private readonly IJSModuleActivator jsModuleActivator;
         private readonly IJSLocalObjectActivator jsLocalObjectActivator;
         private readonly IServiceProvider serviceProvider;
+        private readonly IJSFacadeDictionary jsFacadeDictionary;
 
         public JSFacadeResolver(
-            IJSRuntime jsRuntime,
-            IJSFacadeDictionary jsFacadeDictionary,
+            IJSModuleActivator jsModuleActivator,
             IJSLocalObjectActivator jsLocalObjectActivator,
-            IServiceProvider serviceProvider)
+            IServiceProvider serviceProvider,
+            JSFacadeResolverOptions options)
         {
-            this.jsRuntime = jsRuntime ?? throw new ArgumentNullException(nameof(jsRuntime));
-            this.jsFacadeDictionary = jsFacadeDictionary ?? throw new ArgumentNullException(nameof(jsFacadeDictionary));
-            this.jsLocalObjectActivator = jsLocalObjectActivator;
-            this.serviceProvider = serviceProvider;
+            this.jsModuleActivator = jsModuleActivator ?? throw new ArgumentNullException(nameof(jsModuleActivator));
+            this.jsLocalObjectActivator = jsLocalObjectActivator ?? throw new ArgumentNullException(nameof(jsLocalObjectActivator));
+            this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+
+            if (options is null) {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            jsFacadeDictionary = options.JSFacadeDictionaryBuilder.Build();
         }
 
-        public async ValueTask<IJSLocalObject> CreateModuleAsync(string relativeWwwRootPath)
+        protected virtual IAsyncDisposable CreateFacade(IJSObjectReferenceFacade facadeConstructorParameter, Type jsFacadeType)
         {
-            var jsObjectReference = await jsRuntime.InvokeAsync<IJSObjectReference>("import", relativeWwwRootPath);
-            return jsLocalObjectActivator.CreateInstance(jsObjectReference);
-        }
+            if (facadeConstructorParameter is null) {
+                throw new ArgumentNullException(nameof(facadeConstructorParameter));
+            }
 
-        public virtual async ValueTask<IAsyncDisposable> CreateModuleFacadeAsync(string pathRelativeToWwwRoot, Type jsFacadeType)
-        {
             if (!jsFacadeDictionary.TryGetValue(jsFacadeType, out var jsFacadeCreatorHandler)) {
                 throw new NotSupportedException($"Type {jsFacadeType} is not supported.");
             }
 
-            var jsModule = await CreateModuleAsync(pathRelativeToWwwRoot);
-
             if (!(jsFacadeCreatorHandler is null)) {
-                return jsFacadeCreatorHandler.Invoke(jsModule);
+                return jsFacadeCreatorHandler.Invoke(facadeConstructorParameter);
             }
 
-            return (IAsyncDisposable)ActivatorUtilities.CreateInstance(serviceProvider, jsFacadeType, jsModule);
+            return (IAsyncDisposable)ActivatorUtilities.CreateInstance(serviceProvider, jsFacadeType, facadeConstructorParameter);
         }
 
-        public ValueTask<IJSLocalObject> CreateLocalObjectAsync(string objectName) =>
-            jsLocalObjectActivator.CreateInstanceAsync(objectName);
+        public async ValueTask<IAsyncDisposable> CreateModuleFacadeAsync(string moduleNameOrPath, Type jsFacadeType) =>
+            CreateFacade(await jsModuleActivator.CreateInstanceAsync(moduleNameOrPath), jsFacadeType);
+
+        public IAsyncDisposable CreateLocalObjectFacade(IJSObjectReference jsObjectReference, Type jsFacadeType) =>
+            CreateFacade(jsLocalObjectActivator.CreateInstance(jsObjectReference), jsFacadeType);
+
+        public async ValueTask<IAsyncDisposable> CreateLocalObjectFacadeAsync(string objectName, Type jsFacadeType) =>
+            CreateFacade(await jsLocalObjectActivator.CreateInstanceAsync(objectName), jsFacadeType);
+
+        public async ValueTask<IAsyncDisposable> CreateLocalObjectFacadeAsync(IJSObjectReference jsObjectReference, string objectName, Type jsFacadeType) =>
+            CreateFacade(await jsLocalObjectActivator.CreateInstanceAsync(jsObjectReference, objectName), jsFacadeType);
     }
 }

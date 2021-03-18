@@ -6,7 +6,7 @@ namespace Teronis.Microsoft.JSInterop.Facades.Annotiations
     public abstract class JSModuleFacadeAttributeBase : Attribute
     {
         /// <summary>
-        /// The path of a JavaScript ESM module relative to "wwwroot" (if not changed)
+        /// The path of a JavaScript ESM module relative to "wwwroot" (if not changed).
         /// </summary>
         public string? ModuleNameOrPath { get; }
 

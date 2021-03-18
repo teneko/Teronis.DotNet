@@ -12,7 +12,9 @@
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj" />
     <ProjectReference Include="..\..\..\Locality\0.Abstraction\src\Teronis.Microsoft.JSInterop.Locality.Abstraction.csproj" />
+    <ProjectReference Include="..\..\..\Module\0.Abstractions\src\Teronis.Microsoft.JSInterop.Module.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

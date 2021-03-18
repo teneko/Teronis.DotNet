@@ -25,10 +25,10 @@ namespace Teronis.Microsoft.JSInterop.Module.Dynamic
         /// <param name="services"></param>
         /// <param name="configureOptions"></param>
         /// <returns></returns>
-        public static IServiceCollection AddJSModuleProxy(this IServiceCollection services, Action<JSModuleActivatorOptions>? configureOptions = null)
+        public static IServiceCollection AddJSDynamicModule(this IServiceCollection services)
         {
-            services.AddJSModuleActivator(configureOptions);
-            services.AddJSDynamic();
+            services.AddJSModuleActivator();
+            services.AddJSDynamicProxy();
             AddJSDynamicModuleActivator(services);
             return services;
         }

@@ -8,8 +8,14 @@ namespace Teronis
         public static YetNullable<T> Null = new YetNullable<T>(default, true);
 
         [MaybeNull]
-        public readonly T Value => value;
-        public readonly bool HasValue => isNotNull;
+        public readonly T Value =>
+            value;
+
+        public readonly bool IsNull =>
+            !isNotNull;
+
+        public readonly bool IsNotNull =>
+            isNotNull;
 
         internal readonly T value;
 
@@ -26,7 +32,7 @@ namespace Teronis
 
         public override bool Equals(object? other)
         {
-            if (!HasValue) {
+            if (IsNull) {
                 return other == null;
             }
 
@@ -42,7 +48,7 @@ namespace Teronis
 
         public override int GetHashCode()
         {
-            if (HasValue) {
+            if (IsNotNull) {
                 return Value!.GetHashCode();
             }
 

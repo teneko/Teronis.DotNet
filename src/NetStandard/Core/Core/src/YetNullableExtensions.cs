@@ -5,7 +5,7 @@
         public static KeyType? ToNullable<KeyType>(this YetNullable<KeyType> nullableKey)
             where KeyType : struct
         {
-            if (!nullableKey.HasValue) {
+            if (nullableKey.IsNull) {
                 return null;
             }
 

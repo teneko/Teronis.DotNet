@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using Teronis.Collections.Generic;
 
 namespace Teronis.Collections.Specialized

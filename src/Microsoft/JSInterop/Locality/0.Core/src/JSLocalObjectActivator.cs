@@ -23,13 +23,10 @@ namespace Teronis.Microsoft.JSInterop.Locality
         public virtual async ValueTask<IJSLocalObject> CreateInstanceAsync(string objectName) =>
             CreateInstance(await jsLocalObjectInterop.GetGlobalObjectReference(objectName));
 
-        public virtual async ValueTask<IJSLocalObject> CreateInstanceAsync(IJSObjectReference objectReference, string objectName)
+        public virtual async ValueTask<IJSLocalObject> CreateInstanceAsync(IJSObjectReference jsObjectReference, string objectName)
         {
-            var nestedObjectReference = await jsLocalObjectInterop.GetLocalObjectReference(objectReference, objectName);
+            var nestedObjectReference = await jsLocalObjectInterop.GetLocalObjectReference(jsObjectReference, objectName);
             return CreateInstance(nestedObjectReference);
         }
-
-        public virtual ValueTask<IJSLocalObject> CreateInstanceAsync(IJSLocalObject jsLocalObject, string objectName) =>
-            CreateInstanceAsync(jsLocalObject.JSObjectReference, objectName);
     }
 }

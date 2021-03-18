@@ -41,7 +41,7 @@ namespace Teronis.EntityFrameworkCore.Query
             var whereExpression = CollectionConstantPredicateBuilder<IMappableCompositeOneToManyKey<OneType, FlatManyType>>
                 .CreateFromCollection(keyOneKeyManyEnumerablePairs!)
                 .DefinePredicatePerItem(Expression.OrElse,
-                    (source, comparisonValue) => !comparisonValue.Key.HasValue || Equals(comparisonValue.Key.Value, source.KeyOne))
+                    (source, comparisonValue) => comparisonValue.Key.IsNull || Equals(comparisonValue.Key.Value, source.KeyOne))
                 .ThenCreateFromCollection(Expression.AndAlso, x => x.Value,
                         comparisonItemsBehaviourFlags: keyManyEnumerableBehvaiourFlags)
                 .ThenDefinePredicatePerItem(Expression.OrElse,

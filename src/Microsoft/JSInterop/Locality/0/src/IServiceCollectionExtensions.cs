@@ -39,11 +39,11 @@ namespace Teronis.Microsoft.JSInterop.Locality
         /// <param name="services"></param>
         /// <param name="configureOptions"></param>
         /// <returns></returns>
-        public static IServiceCollection AddJSLocalObject(this IServiceCollection services, Action<JSLocalObjectActivatorOptions>? configureOptions = null)
+        public static IServiceCollection AddJSLocalObject(this IServiceCollection services)
         {
             services.AddJSModule();
             services.AddJSLocalObjectInterop();
-            AddJSLocalObjectActivator(services, configureOptions);
+            AddJSLocalObjectActivator(services);
             return services;
         }
     }

@@ -13,7 +13,7 @@ namespace Teronis.Microsoft.JSInterop.Locality.Dynamic
         /// <param name="services"></param>
         /// <param name="configureOptions"></param>
         /// <returns></returns>
-        public static IServiceCollection AddJSDynamicLocalObjectActivator(this IServiceCollection services, Action<JSLocalObjectActivatorOptions>? configureOptions = null)
+        public static IServiceCollection AddJSDynamicLocalObjectActivator(this IServiceCollection services)
         {
             services.TryAddSingleton<IJSDynamicLocalObjectActivator, JSDynamicLocalObjectActivator>();
             return services;
@@ -26,11 +26,11 @@ namespace Teronis.Microsoft.JSInterop.Locality.Dynamic
         /// <param name="services"></param>
         /// <param name="configureOptions"></param>
         /// <returns></returns>
-        public static IServiceCollection AddJSLocalObjectProxy(this IServiceCollection services, Action<JSLocalObjectActivatorOptions>? configureOptions = null) {
+        public static IServiceCollection AddJSDynamicLocalObject(this IServiceCollection services) {
             
             services.AddJSLocalObject();
-            services.AddJSDynamic();
-            AddJSDynamicLocalObjectActivator(services, configureOptions);
+            services.AddJSDynamicProxy();
+            AddJSDynamicLocalObjectActivator(services);
             return services;
         }
     }

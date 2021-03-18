@@ -1,42 +1,57 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Teronis.Microsoft.JSInterop.Locality.Dynamic;
-using Teronis.Microsoft.JSInterop.Module.Dynamic;
+using Microsoft.Extensions.Options;
+using Teronis.Microsoft.JSInterop.Locality;
+using Teronis.Microsoft.JSInterop.Module;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
     public static class IServiceCollectionExtensions
     {
-        public static IServiceCollection AddJSFacades(this IServiceCollection services)
+        public static IServiceCollection AddJSFacadeResolver(this IServiceCollection services, Action<JSFacadeResolverOptions>? configureOptions = null)
         {
-            services.AddJSLocalObjectProxy();
-            services.AddJSModuleProxy();
+            if (!(configureOptions is null)) {
+                services.Configure(configureOptions);
+            }
 
-            services.TryAdd(
-                new ServiceDescriptor(
-                    typeof(IJSFacadeDictionary),
-                    serviceProvider => new JSFacadeDictionaryBuilder()
-                        .AddDefault()
-                        .Build(),
-                    ServiceLifetime.Singleton));
-
+            services.TryAddSingleton(sp => sp.GetRequiredService<IOptions<JSFacadeResolverOptions>>().Value);
             services.TryAddSingleton<IJSFacadeResolver, JSFacadeResolver>();
-            services.TryAddSingleton<IJSFunctionalFacadesActivator, JSFunctionalFacadesActivator>();
+            return services;
+        }
+
+        public static IServiceCollection AddJSFacadesActivator(this IServiceCollection services, Action<JSFacadesActivatorOptions>? configureOptions = null)
+        {
+            if (!(configureOptions is null)) {
+                services.Configure(configureOptions);
+            }
+
+            services.AddSingleton<IPostConfigureOptions<JSFacadesActivatorOptions>>(sp => new PostConfigureOptions<JSFacadesActivatorOptions>(
+                name: string.Empty,
+                options => {
+                    foreach (var componentPropertyAssignmentFactory in options.ComponentPropertyAssignmentFactories.Values) {
+                        var componentPropertyAssignment = componentPropertyAssignmentFactory(sp);
+                        options.ComponentPropertyAssignments.Add(componentPropertyAssignment);
+                    }
+                }));
+
+            services.TryAddSingleton(sp => sp.GetRequiredService<IOptions<JSFacadesActivatorOptions>>().Value);
             services.TryAddSingleton<IJSFacadesActivator, JSFacadesActivator>();
             return services;
         }
 
-        public static IServiceCollection AddJSFacadeDictionary(this IServiceCollection services, Action<IJSFacadeDictionaryBuilder> configureDictionaryBuilder)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddJSFacades(this IServiceCollection services)
         {
-            var dictionaryBuilder = new JSFacadeDictionaryBuilder();
-            configureDictionaryBuilder?.Invoke(dictionaryBuilder);
-
-            return services.Replace(
-                new ServiceDescriptor(
-                    typeof(IJSFacadeDictionary),
-                    serviceProvider => dictionaryBuilder.Build(),
-                ServiceLifetime.Singleton));
+            services.AddJSLocalObject();
+            services.AddJSModule();
+            AddJSFacadeResolver(services);
+            services.AddJSFacadesActivator();
+            return services;
         }
     }
 }

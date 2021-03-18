@@ -34,9 +34,9 @@ namespace Teronis.Microsoft.JSInterop.Module
         /// <param name="services"></param>
         /// <param name="configureOptions"></param>
         /// <returns></returns>
-        public static IServiceCollection AddJSModule(this IServiceCollection services, Action<JSModuleActivatorOptions>? configureOptions = null)
+        public static IServiceCollection AddJSModule(this IServiceCollection services)
         {
-            AddJSModuleActivator(services, configureOptions);
+            AddJSModuleActivator(services);
             return services;
         }
     }

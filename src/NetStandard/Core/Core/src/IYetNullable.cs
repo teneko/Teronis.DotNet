@@ -6,6 +6,7 @@ namespace Teronis
     {
         [MaybeNull]
         T Value { get; }
-        bool HasValue { get; }
+        bool IsNull { get; }
+        bool IsNotNull { get; }
     }
 }

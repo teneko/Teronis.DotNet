@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Teronis.Microsoft.JSInterop.Locality;
+using Microsoft.JSInterop;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
     public interface IJSFacadeResolver
     {
-        ValueTask<IJSLocalObject> CreateModuleAsync(string moduleNameOrPath);
         ValueTask<IAsyncDisposable> CreateModuleFacadeAsync(string moduleNameOrPath, Type jsFacadeType);
-        ValueTask<IJSLocalObject> CreateLocalObjectAsync(string objectName);
+
+        IAsyncDisposable CreateLocalObjectFacade(IJSObjectReference jsObjectReference, Type jsFacadeType);
+        ValueTask<IAsyncDisposable> CreateLocalObjectFacadeAsync(string objectName, Type jsFacadeType);
+        ValueTask<IAsyncDisposable> CreateLocalObjectFacadeAsync(IJSObjectReference jsObjectReference, string objectName, Type jsFacadeType);
     }
 }

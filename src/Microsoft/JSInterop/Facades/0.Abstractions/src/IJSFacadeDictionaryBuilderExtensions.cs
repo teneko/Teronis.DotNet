@@ -2,7 +2,7 @@
 {
     public static class IJSFacadeDictionaryBuilderExtensions
     {
-        public static IJSFacadeDictionaryBuilder AddDefault(this IJSFacadeDictionaryBuilder builder) =>
-            builder.AddFacade(module => module);
+        public static IJSFacadeDictionaryConfiguration AddDefault(this IJSFacadeDictionaryConfiguration builder) =>
+            builder.Add(module => module);
     }
 }

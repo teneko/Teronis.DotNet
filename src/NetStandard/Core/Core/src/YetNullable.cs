@@ -23,15 +23,15 @@ namespace Teronis
 
         public static bool Equals<T>(YetNullable<T> left, YetNullable<T> right)
         {
-            if (left.HasValue) {
-                if (right.HasValue) {
+            if (left.IsNotNull) {
+                if (right.IsNotNull) {
                     return EqualityComparer<T>.Default.Equals(left.value, right.value);
                 }
 
                 return false;
             }
 
-            if (right.HasValue) {
+            if (right.IsNotNull) {
                 return false;
             }
 
@@ -40,14 +40,14 @@ namespace Teronis
 
         public static int Compare<T>(YetNullable<T> left, YetNullable<T> right)
         {
-            if (left.HasValue) {
-                if (right.HasValue) {
+            if (left.IsNotNull) {
+                if (right.IsNotNull) {
                     return Comparer<T>.Default.Compare(left.value, right.value);
                 }
 
                 return 1;
             }
-            if (right.HasValue) {
+            if (right.IsNotNull) {
                 return -1;
             }
 

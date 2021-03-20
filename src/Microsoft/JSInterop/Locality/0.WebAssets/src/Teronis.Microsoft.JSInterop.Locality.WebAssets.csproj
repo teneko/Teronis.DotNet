@@ -16,9 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\0.Abstractions\src\Teronis.Microsoft.JSInterop.Abstractions.csproj" />
-    <ProjectReference Include="..\..\..\0.Extensions\Teronis.Microsoft.JSInterop.Extensions.csproj" />
-    <ProjectReference Include="..\..\..\Module\0.Abstractions\src\Teronis.Microsoft.JSInterop.Module.Abstractions.csproj" />
-    <ProjectReference Include="..\..\0.Abstraction\src\Teronis.Microsoft.JSInterop.Locality.Abstraction.csproj" />
   </ItemGroup>
 
 </Project>

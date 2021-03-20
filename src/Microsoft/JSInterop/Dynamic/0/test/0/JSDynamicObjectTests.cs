@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Teronis.Microsoft.JSInterop.Dynamic.JSDynamicObjects;
+using Teronis.Microsoft.JSInterop.Dynamic.Reflection;
 using Teronis.Microsoft.JSInterop.Infrastructure;
 using Teronis.Microsoft.JSInterop.Infrastructure.JSObjectReferences;
 using Xunit;
@@ -16,6 +17,37 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
 
         public JSDynamicObjectTests() =>
             JSDynamicObjectActivator = new JSDynamicProxyActivator();
+
+        [Fact]
+        public void Activation_Throw_not_of_type_value_task_exception()
+        {
+            // Arrange
+            var jsObjectReference = new JSEmptyObjectReference();
+
+            // Act & Assert
+            var error = Assert.Throws<NotSupportedException>(() => JSDynamicObjectActivator.CreateInstance<INotOfTypeValueTaskDynamicObject>(jsObjectReference));
+            Assert.Equal(ValueTaskType.ThrowHelper.CreateNotOfTypeValueTaskException(typeof(string)).Message, error.Message);
+        }
+
+        [Fact]
+        public void Activation_Throw_parameter_after_accommodatable_annotated_parameter_exception()
+        {
+            // Arrange
+            var jsObjectReference = new JSEmptyObjectReference();
+
+            // Act & Assert
+            Assert.Throws<ParameterListException>(() => JSDynamicObjectActivator.CreateInstance<IMisuedAccommodatableAnnotatedDynamicObject>(jsObjectReference));
+        }
+
+        [Fact]
+        public void Activation_Throw_too_many_cancellable_annotated_parameter_exception()
+        {
+            // Arrange
+            var jsObjectReference = new JSEmptyObjectReference();
+
+            // Act & Assert
+            Assert.Throws<ParameterListException>(() => JSDynamicObjectActivator.CreateInstance<IMisuedCancellableAnnotatedDynamicObject>(jsObjectReference));
+        }
 
         [Fact]
         public async Task Proxy_Dispose()
@@ -59,14 +91,20 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         }
 
         [Fact]
-        public void Activation_Throw_not_of_type_value_task_exception()
+        public async Task Proxy_Throw_token_cancellation()
         {
             // Arrange
-            var jsObjectReference = new JSEmptyObjectReference();
+            var jsObjectReference = new CancellableObjectReference();
+            var jsDynamicObject = JSDynamicObjectActivator.CreateInstance<IEmptyDynamicObject>(jsObjectReference);
 
-            // Act & Assert
-            var error = Assert.Throws<NotSupportedException>(() => JSDynamicObjectActivator.CreateInstance<INotOfTypeValueTaskDynamicObject>(jsObjectReference));
-            Assert.Equal(ValueTaskType.ThrowHelper.CreateNotOfTypeValueTaskException(typeof(string)).Message, error.Message);
+            // Act
+            using var cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = cancellationTokenSource.Token; // Get token before cancel.
+            cancellationTokenSource.Cancel();
+
+            // Assert
+            await Assert.ThrowsAsync<ObjectReferenceInvocationCanceledException>(async () =>
+                await jsDynamicObject.InvokeAsync<string>(nameof(Proxy_Throw_token_cancellation), cancellationToken));
         }
 
         [Fact]
@@ -82,23 +120,6 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
 
             // Assert
             Assert.Equal(expectedIdentifier, resultedIdentifier);
-        }
-
-        [Fact]
-        public async Task Proxy_Throw_token_cancellation()
-        {
-            // Arrange
-            var jsObjectReference = new CancellableObjectReference();
-            var jsDynamicObject = JSDynamicObjectActivator.CreateInstance<IEmptyDynamicObject>(jsObjectReference);
-
-            // Act
-            using var cancellationTokenSource = new CancellationTokenSource();
-            var cancellationToken = cancellationTokenSource.Token; // Get token before cancel.
-            cancellationTokenSource.Cancel();
-
-            // Assert
-            await Assert.ThrowsAsync<ObjectReferenceInvocationCanceledException>(async () =>
-                await jsDynamicObject.InvokeAsync<string>(nameof(Proxy_Throw_token_cancellation), cancellationToken));
         }
 
         public async Task AssertCancellableObjectIsCancelledAsync<SecondArgumentType>(
@@ -162,26 +183,6 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             Assert.Equal(
                 expected: AddItemRangeAndReturnList(new List<object?>() { { ballast } }, accommodatedArguments),
                 actual: jsArguments); // Checks sequence equality.
-        }
-
-        [Fact]
-        public void Activation_Throw_parameter_after_accommodatable_annotated_parameter_exception()
-        {
-            // Arrange
-            var jsObjectReference = new JSEmptyObjectReference();
-
-            // Act & Assert
-            Assert.Throws<ParameterListException>(() => JSDynamicObjectActivator.CreateInstance<IMisuedAccommodatableAnnotatedDynamicObject>(jsObjectReference));
-        }
-
-        [Fact]
-        public void Activation_Throw_too_many_cancellable_annotated_parameter_exception()
-        {
-            // Arrange
-            var jsObjectReference = new JSEmptyObjectReference();
-
-            // Act & Assert
-            Assert.Throws<ParameterListException>(() => JSDynamicObjectActivator.CreateInstance<IMisuedCancellableAnnotatedDynamicObject>(jsObjectReference));
         }
 
         [Fact]

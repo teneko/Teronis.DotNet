@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Teronis.Microsoft.JSInterop.Interception;
-using Teronis.Microsoft.JSInterop.Interception.Interceptors;
 using Xunit;
 
 namespace Teronis.Microsoft.JSInterop.Interceptions

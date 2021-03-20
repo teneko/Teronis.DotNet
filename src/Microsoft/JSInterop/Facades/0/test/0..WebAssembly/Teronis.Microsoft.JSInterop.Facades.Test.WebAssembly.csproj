@@ -13,9 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Locality\Dynamic\0\src\Teronis.Microsoft.JSInterop.Locality.Dynamic.csproj" />
-    <ProjectReference Include="..\..\..\..\Module\Dynamic\0\src\Teronis.Microsoft.JSInterop.Module.Dynamic.csproj" />
-    <ProjectReference Include="..\..\src\Teronis.Microsoft.JSInterop.Facades.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\..\..\Teronis.DotNet\src\Microsoft\JSInterop\0\src\Teronis.Microsoft.JSInterop.csproj" />
+    <ProjectReference Include="..\..\..\..\Dynamic\0\src\Teronis.Microsoft.JSInterop.Dynamic.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

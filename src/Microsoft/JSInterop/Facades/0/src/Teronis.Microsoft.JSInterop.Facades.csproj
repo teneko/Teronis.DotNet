@@ -12,10 +12,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\NetStandard\Collections\Collections\src\Teronis.NetStandard.Collections.csproj" />
+    <ProjectReference Include="..\..\..\0.Abstractions\src\Teronis.Microsoft.JSInterop.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\Locality\0\src\Teronis.Microsoft.JSInterop.Locality.csproj" />
-    <ProjectReference Include="..\..\..\Module\0\src\Teronis.Microsoft.JSInterop.Module.csproj" />
-    <ProjectReference Include="..\..\0.Abstractions\src\Teronis.Microsoft.JSInterop.Facades.Abstractions.csproj" />
-    <ProjectReference Include="..\..\0.Core\src\Teronis.Microsoft.JSInterop.Facades.Core.csproj" />
   </ItemGroup>
 
 </Project>

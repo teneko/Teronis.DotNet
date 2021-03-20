@@ -3,9 +3,9 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Teronis.Microsoft.JSInterop.Dynamic.Locality;
+using Teronis.Microsoft.JSInterop.Dynamic.Module;
 using Teronis.Microsoft.JSInterop.Facades;
-using Teronis.Microsoft.JSInterop.Locality.Dynamic;
-using Teronis.Microsoft.JSInterop.Module.Dynamic;
 using Teronis_._Microsoft.JSInterop.Facades.JSModules;
 
 namespace Teronis_._Microsoft.JSInterop.Facades
@@ -24,7 +24,7 @@ namespace Teronis_._Microsoft.JSInterop.Facades
             services.AddJSDynamicModule(); // temporary
             services.AddJSDynamicLocalObject();
 
-            services.AddJSFacadeResolver(options => {
+            services.AddJSCustomFacadeActivator(options => {
                 options.JSFacadeDictionaryConfiguration
                     .Add(jsObjectReference => new UserCreatedModule(jsObjectReference))
                     .Add<ServiceProviderCreatedModule>();

@@ -7,8 +7,8 @@ using Teronis.AspNetCore.Identity.Bearer.Authentication;
 namespace Teronis.AspNetCore.Identity.Bearer.SignInManaging.Controllers
 {
     [ApiController]
-    public class BearerSignInController<TSingleton> : Controller
-        where TSingleton : ISingleton
+    public class BearerSignInController<TMakesMeGeneric> : Controller
+        where TMakesMeGeneric : ISingleton
     {
         private readonly IBearerSignInManager signInManager;
 

@@ -11,7 +11,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Module\0\src\Teronis.Microsoft.JSInterop.Module.csproj" />
-    <ProjectReference Include="..\..\0.Core\src\Teronis.Microsoft.JSInterop.Locality.Core.csproj" />
     <ProjectReference Include="..\..\0.WebAssets\src\Teronis.Microsoft.JSInterop.Locality.WebAssets.csproj" />
   </ItemGroup>
 

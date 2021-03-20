@@ -75,7 +75,7 @@ class Build : NukeBuild
     Target Test => _ => _
         .DependsOn(Compile)
         .Executes(() => {
-            SourceDirectory.GlobFiles("**/*.Test.csproj")
+            SourceDirectory.GlobFiles("**/*.Test.csproj", "**/*.E2ETest.csproj")
                 .ForEach(testProjectPath => {
                     DotNetTest(s => s
                         .SetProjectFile(testProjectPath)

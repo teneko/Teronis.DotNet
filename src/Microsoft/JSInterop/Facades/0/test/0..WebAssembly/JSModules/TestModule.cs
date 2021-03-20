@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
-using Teronis.Microsoft.JSInterop.Facades.Annotiations;
+using Teronis.Microsoft.JSInterop.Facades.Annotations;
 
 namespace Teronis_._Microsoft.JSInterop.Facades.JSModules
 {
-    [JSModuleFacade("./js/Teronis.Microsoft.JSInterop.Facades.Test.WebAssembly.js")]
+    [JSModuleClass("./js/Teronis.Microsoft.JSInterop.Facades.Test.WebAssembly.js")]
     public class TestModule : IAsyncDisposable
     {
         private readonly IJSObjectReference objectReference;

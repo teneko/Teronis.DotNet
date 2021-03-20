@@ -2,11 +2,11 @@
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop;
-using Teronis.Microsoft.JSInterop.Facades.Annotiations;
+using Teronis.Microsoft.JSInterop.Facades.Annotations;
 
 namespace Teronis_._Microsoft.JSInterop.Facades.JSModules
 {
-    [JSModuleFacade("./js/es-modules/getTonyHawk.js")]
+    [JSModuleClass("./js/es-modules/getTonyHawk.js")]
     public class ServiceProviderCreatedModule : IAsyncDisposable
     {
         private readonly IJSObjectReferenceFacade jsObjectReferenceFacade;

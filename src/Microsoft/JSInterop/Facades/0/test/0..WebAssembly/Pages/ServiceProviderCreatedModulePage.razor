@@ -5,14 +5,14 @@
 <h1 id="@ShoudlyPagesDefaults.TonyHawkId">Hello @tonyHawk</h1>
 
 @code {
-    [JSModuleFacadeProperty] ServiceProviderCreatedModule Module { get; set; } = null!;
+    [JSModuleProperty] ServiceProviderCreatedModule Module { get; set; } = null!;
 
-    IJSFacades jsFacades;
-    string tonyHawk;
+    IJSFacades<JSFacadeActivators> jsFacades = null!;
+    string? tonyHawk;
 
     protected override async Task OnParametersSetAsync()
     {
-        jsFacades = await jsFacadesActivator.CreateInstanceAsync(this);
+        jsFacades = await jsFacadesActivator.CreateInstanceAsync<JSFacadeActivators>(this);
         tonyHawk = await Module.GetTonyHawkAsync();
         await base.OnParametersSetAsync();
     }

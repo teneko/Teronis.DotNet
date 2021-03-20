@@ -9,9 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Dynamic\0\src\Teronis.Microsoft.JSInterop.Dynamic.csproj" />
-    <ProjectReference Include="..\..\..\0\src\Teronis.Microsoft.JSInterop.Locality.csproj" />
-    <ProjectReference Include="..\..\0.Abstractions\src\Teronis.Microsoft.JSInterop.Locality.Dynamic.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

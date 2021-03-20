@@ -9,5 +9,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.JSInterop" Version="5.0.3" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj" />
+  </ItemGroup>
   
 </Project>

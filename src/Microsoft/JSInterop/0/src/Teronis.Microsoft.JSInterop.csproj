@@ -8,10 +8,10 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
   </ItemGroup>
-  
+
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Teronis.DotNet-js-facades\src\Microsoft\JSInterop\0.Core\src\Teronis.Microsoft.JSInterop.Core.csproj" />
-    <ProjectReference Include="..\..\..\..\..\..\Teronis.DotNet-js-facades\src\Microsoft\JSInterop\Locality\0.WebAssets\src\Teronis.Microsoft.JSInterop.Locality.WebAssets.csproj" />
+    <ProjectReference Include="..\..\0.Core\src\Teronis.Microsoft.JSInterop.Core.csproj" />
+    <ProjectReference Include="..\..\Locality\0.WebAssets\src\Teronis.Microsoft.JSInterop.Locality.WebAssets.csproj" />
   </ItemGroup>
 
 </Project>

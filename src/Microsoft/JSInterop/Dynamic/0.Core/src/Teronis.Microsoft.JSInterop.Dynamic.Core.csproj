@@ -6,14 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!--<PackageReference Include="Castle.Core" Version="4.4.1" />-->
+    <PackageReference Include="Teronis.Castle.Core" Version="4.4.2" />
     <PackageReference Include="Dynamitey" Version="2.0.10.189" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\..\Stakx.Castle.Core\src\Castle.Core\Castle.Core.csproj" />
-    <ProjectReference Include="..\..\..\..\..\..\..\Teronis.DotNet-js-facades\src\Microsoft\JSInterop\0.Core\src\Teronis.Microsoft.JSInterop.Core.csproj" />
-    <ProjectReference Include="..\..\..\..\..\..\..\Teronis.DotNet-js-facades\src\NetStandard\Collections\Collections\src\Teronis.NetStandard.Collections.csproj" />
+    <ProjectReference Include="..\..\..\0.Core\src\Teronis.Microsoft.JSInterop.Core.csproj" />
   </ItemGroup>
 
 </Project>

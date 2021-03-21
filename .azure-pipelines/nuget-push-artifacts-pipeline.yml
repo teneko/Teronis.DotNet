@@ -151,29 +151,29 @@ jobs:
           VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: '$(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)'
         displayName: Push NuGet Symbol Packages
 
-  ##############################
-  - job: NuGetGitHubPushArtifacts
-    dependsOn: PrepareNuGetPush
-    condition: and(succeeded(), eq(dependencies.PrepareNuGetPush.outputs['nugetGitHub.canPush'], 'TRUE'))
-    variables:
-      - name: nugetSourceName
-        value: "nuget.github"
-      - name: nugetArguments
-        value: '-Source $(nugetSourceName) -SkipDuplicate -Verbosity detailed'
-    displayName: 'Push "nuget.github" Artifacts'
-    pool:
-      vmImage: ${{ variables.vmImage }}
-    steps:
-      - task: DownloadBuildArtifacts@0
-        displayName: Download NuGet Packages
-        inputs:
-          buildType: current
-          artifactName: '${{ variables.publishBuildArtifactsArtifactName }}'
-          downloadPath: '$(Build.StagingDirectory)'
+  ###############################
+  # - job: NuGetGitHubPushArtifacts
+  #   dependsOn: PrepareNuGetPush
+  #   condition: and(succeeded(), eq(dependencies.PrepareNuGetPush.outputs['nugetGitHub.canPush'], 'TRUE'))
+  #   variables:
+  #     - name: nugetSourceName
+  #       value: "nuget.github"
+  #     - name: nugetArguments
+  #       value: '-Source $(nugetSourceName) -SkipDuplicate -Verbosity detailed'
+  #   displayName: 'Push "nuget.github" Artifacts'
+  #   pool:
+  #     vmImage: ${{ variables.vmImage }}
+  #   steps:
+  #     - task: DownloadBuildArtifacts@0
+  #       displayName: Download NuGet Packages
+  #       inputs:
+  #         buildType: current
+  #         artifactName: '${{ variables.publishBuildArtifactsArtifactName }}'
+  #         downloadPath: '$(Build.StagingDirectory)'
       
-      - task: NuGetToolInstaller@1
-      - script: nuget sources Update -Name $(nugetSourceName) -UserName teroneko -Password $(GITHUB_TOKEN)
+  #     - task: NuGetToolInstaller@1
+  #     - script: nuget sources Update -Name $(nugetSourceName) -UserName teroneko -Password $(GITHUB_TOKEN)
 
-      - script: nuget push $(Build.StagingDirectory)\${{ variables.publishBuildArtifactsArtifactName }}\**\*.nupkg $(nugetArguments) -NoSymbols
-        workingDirectory: ${{ variables.nuGetPushWorkingDirectory }}
-        displayName: Push NuGet Packages
+  #     - script: nuget push $(Build.StagingDirectory)\${{ variables.publishBuildArtifactsArtifactName }}\**\*.nupkg $(nugetArguments) -NoSymbols
+  #       workingDirectory: ${{ variables.nuGetPushWorkingDirectory }}
+  #       displayName: Push NuGet Packages

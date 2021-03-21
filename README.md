@@ -6,38 +6,13 @@
 
 Teronis.DotNet is a collection of some of my projects I've come up since 2018.
 
-## List of Projects
+## Packages
 
-All my projects are uploaded to [NuGet](https://www.nuget.org/packages?q=Teroneko+Teronis). You can view them here on [GitHub](https://github.com/teroneko/Teronis.DotNet/packages) too.
+All my projects are uploaded to [NuGet](https://www.nuget.org/packages?q=Teronis).
 
-Here a list of the project folders:
-- [Teronis.AspNetCore.Identity](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/AspNetCore/Identity/Identity) Teronis ASP.NET Core Identity provides you a better integration for ASP.NET Core Identity.
-- [Teronis.AspNetCore.Identity.Abstractions](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/AspNetCore/Identity/Identity.Abstractions) Teronis ASP.NET Core Identity provides you a better integration for ASP.NET Core Identity.
-- [Teronis.AspNetCore.Identity.Bearer](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/AspNetCore/Identity/Bearer) Teronis ASP.NET Core Identity Bearer provides you a bearer token integration for ASP.NET Core Identity.
-- [Teronis.AspNetCore.Identity.Bearer.Abstractions](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/AspNetCore/Identity/Bearer.Abstractions) Teronis ASP.NET Core Identity Bearer provides you a bearer token integration for ASP.NET Core Identity.
-- [Teronis.AspNetCore.Mvc](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/AspNetCore/Mvc/Mvc) An extension to the native function range of Microsoft.AspNetCore.Mvc.Core.
-- [Teronis.GitVersion.CommandLine.Library](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/GitVersion/CommandLine/Library) A wrapper to use the executable of GitVersion (https://chocolatey.org/packages/GitVersion.Portable) in C# programmatically.
-- [Teronis.Microsoft.AspNetCore.Authorization](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/AspNetCore/Authorization/Microsoft) Provides extension methods for Microsoft.AspNetCore.Authorization.
-- [Teronis.ModuleInitializer.AssemblyLoader](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/ModuleInitializer/AssemblyLoader/0) Provides an assembly loader injector that injects IL code representing calls to foreign assembly ModuleInitializer.Initialize() methods in an target assembly that forces these foreign assembly to load AND initialize.
-- [Teronis.ModuleInitializer.AssemblyLoader.Executable](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/ModuleInitializer/AssemblyLoader/0.Executable) Provides an assembly loader injector executable that can inject IL code representing calls to foreign assembly ModuleInitializer.Initialize() methods in an target assembly that forces these foreign assembly to load AND initialize.
-- [Teronis.ModuleInitializer.AssemblyLoader.MSBuild](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/ModuleInitializer/AssemblyLoader/0.MSBuild) Provides the MSBuild interface for using the assembly loader injector exectuable.
-- [Teronis.MSBuild.Core](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/MSBuild/Core/Core) Some special targets and tasks. See comments in source code.
-- [Teronis.MSBuild.GitVersionCache](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/MSBuild/Packaging/GitVersionCache/0) GitVersionCache uses GitVersion.exe (https://chocolatey.org/packages/GitVersion.Portable) by using Teronis.GitVersion.CommandLine.Library and surrounds each call to GitVersion.exe with a file lock to allow concurrency. It supports nested GitVersion.yml-files relative to your .git folder.
-- [Teronis.MSBuild.Packaging.Pack](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/MSBuild/Packaging/Pack) An addition to NuGet.Build.Tasks.Pack that adds more package types beside of existing ones like DotNetCli and Dependency.
-      You just need to set-up PackSourceAs and PackageSourceReference and depending on scenario creating a synthetic project.
-- [Teronis.MSBuild.ProjectBuildInPackage](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/MSBuild/Packaging/ProjectBuildInPackage) Allows project reference content to be added to the NuGet-package during pack process.
-- [Teronis.NetStandard.Collections](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Collections/Collections) Provides classes that define generic collections.
-- [Teronis.NetStandard.Collections.Algorithms](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Collections/Algorithms) Provides algorithm to calculate collection differences between two collection.
-- [Teronis.NetStandard.Collections.Synchronization](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Collections/Synchronization) Provides classes for collection synchronization.
-- [Teronis.NetStandard.Core](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Core/Core) A collection of utilities, extensions and classes for the .NET Standard implementation.
-- [Teronis.NetStandard.ObjectModel.TreeColumn](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/ObjectModel/TreeColumn) Provides TreeColumnSeeker for complex data structures.
-- [Teronis.NetStandard.Drawing](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Drawing/Drawing) Some simplifications for System.Drawing.Common.
-- [Teronis.NetStandard.EntityFrameworkCore.Query](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/EntityFrameworkCore/Query) Provides expression builder to increase query ability in Entity Framework Core.
-- [Teronis.NetStandard.Json](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Json/Json) An extension to the native function range of Newtonsoft.Json.
-- [Teronis.NetStandard.Linq.Expressions](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/NetStandard/Linq/Expressions/Expressions) Provides expression builder, expression visitor and everything around LINQ Expressions.
-- [Teronis.Windows.Core](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/Windows/Core) A collection of utilities, extensions, classes and platform invokes for the Windows platform.
-- [Teronis.Windows.Forms](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/Windows/Forms) A collection of utilities, extensions and classes for Windows Forms.
-- [Teronis.Windows.PresentationFoundation](https://github.com/teroneko/Teronis.DotNet/tree/develop/src/Windows/PresentationFoundation) A collection of utilities, extensions and classes for Windows Presentation Foundation.
+# Documentation
+
+You can view the documentation of the projects at [https://teroneko.de/docs/Teronis.DotNet/](https://teroneko.de/docs/Teronis.DotNet/Microsoft.Extensions.DependencyInjection.html)
 
 ## Build Script
 

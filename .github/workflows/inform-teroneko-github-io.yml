@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: InformTeronekoGithubIO
+name: Inform teroneko.github.io
 
 # Controls when the action will run. 
 on:
@@ -32,8 +32,10 @@ jobs:
           ref: develop # can be commit SHA or tag too
           check-name: NuGetPushArtifacts (Publish Build Artifacts) # name of the existing check - omit to wait for all checks
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 10 # seconds
+          wait-interval: 20 # seconds
 
-      # Runs a single command using the runners shell
-      - name: Write to console
-        run: echo "repository_dispatch -> teroneko.github.io (TBD)"
+      - name: Dispatch repository event
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.TERONEKO_GITHUB_IO_TOKEN }}
+          event-type: generate-docs

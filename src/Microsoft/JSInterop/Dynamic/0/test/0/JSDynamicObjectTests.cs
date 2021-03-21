@@ -199,5 +199,22 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             // Assert
             Assert.Equal(IIdentifierAnnotatedDynamicObject.javaScriptTypicalMethodName, javaScriptIdentifier);
         }
+
+        // Redundant test because IJSObjectReferenceFacade has already generic constrained method definitions.
+        [Fact]
+        public async Task Dynamic_Get_explicit_generic_constrained_ballast()
+        {
+            // Arrange
+            var jsObjectReference = new FirstParameterReturningObjectReference();
+            var jsDynamicObjectActivator = new JSDynamicProxyActivator();
+            var jsDynamicObject = jsDynamicObjectActivator.CreateInstance<IExplicitGenericConstrainedDynamicObject>(jsObjectReference);
+
+            // Act
+            var expectedBallast = nameof(Dynamic_Get_explicit_generic_constrained_ballast);
+            var resultingBallast = await jsDynamicObject.TakeAndReturnBallast(expectedBallast);
+
+            // Assert
+            Assert.Equal(expectedBallast, resultingBallast);
+        }
     }
 }

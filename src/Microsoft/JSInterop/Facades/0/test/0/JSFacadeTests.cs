@@ -5,6 +5,11 @@ using System;
 using PlaywrightSharp;
 using Teronis_._Microsoft.JSInterop.Facades;
 
+// When building in Azure we don't want test this because Playwright fails.
+#if !DEBUG
+using FactAttribute = System.Runtime.CompilerServices.CompilerGeneratedAttribute;
+#endif
+
 namespace Teronis.Microsoft.JSInterop.Facades
 {
     public class JSFacadeTests : IClassFixture<TestWebHostFixture<WebHostStartup>>, IClassFixture<PlaywrightFixture>
@@ -18,7 +23,8 @@ namespace Teronis.Microsoft.JSInterop.Facades
             this.playwright = playwright ?? throw new ArgumentNullException(nameof(playwright));
         }
 
-        private async Task TestPageRegardingModuleResolution(string relativePath) {
+        private async Task TestPageRegardingModuleResolution(string relativePath)
+        {
             var applicationUrl = server.ApplicationUrl;
             await using var browser = await playwright.Instance.Chromium.LaunchAsync();
             var page = await browser.NewPageAsync();

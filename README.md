@@ -57,11 +57,11 @@ Parameters:
   --verbosity          Logging verbosity during build execution. Default is
                        'Normal'.
 ```
-*The build project has been created with [Nuke](https://github.com/nuke-build/nuke). Please visit and stare their awesome project. <3
+*The build project has been created with [Nuke](https://github.com/nuke-build/nuke). Please visit and stare their awesome project. 🧡
 
 ## Contributing
 
-Feel free to open an issue if you encounter any problems. Pull requests should be only applied if they are well described. I will do my best to answer as fast as I can. :)
+Feel free to open an issue if you encounter any problems. Pull requests should be only applied if they are well described. I will do my best to answer as fast as I can. 🙂
 
 ## Versioning
 

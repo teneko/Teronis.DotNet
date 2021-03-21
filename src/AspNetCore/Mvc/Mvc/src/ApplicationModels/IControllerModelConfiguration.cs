@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 namespace Teronis.Mvc.ApplicationModels
 {
     /// <summary>
-    /// Interface provides configuration options for customizing <see cref="ControllerModel"/>.
+    /// Provides configuration for <see cref="ControllerModel"/> by adding conventions.
     /// </summary>
     public interface ISelectedControllerModelConfiguration
     {

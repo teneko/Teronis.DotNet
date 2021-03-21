@@ -20,13 +20,12 @@ namespace Teronis.Mvc.ApplicationModels
         /// <returns></returns>
         public static ISelectedControllerModelConfiguration AddScopedRouteConvention(this ISelectedControllerModelConfiguration configuration,
             string? defaultRouteTemplate, bool forceDefaultRoute, string? prefixRouteTemplate,
-            Action<DelegatedControllerModelConfiguration, ScopedRouteConvention> addConvention,
+            Action<ISelectedControllerModelConfiguration, ScopedRouteConvention> addConvention,
             TypeInfo? controllerType = null)
         {
             var controllerFilter = new ControllerTypeFilter(controllerType ?? configuration.SelectedControllerType);
             var convention = new ScopedRouteConvention(defaultRouteTemplate, forceDefaultRoute, prefixRouteTemplate, controllerFilter: controllerFilter);
-            var delegatedConfiguration = new DelegatedControllerModelConfiguration(configuration);
-            addConvention(delegatedConfiguration, convention);
+            addConvention(configuration, convention);
             return configuration;
         }
 
@@ -40,12 +39,11 @@ namespace Teronis.Mvc.ApplicationModels
         /// <param name="forceDefaultRoute"></param>
         /// <returns></returns>
         public static ISelectedControllerModelConfiguration AddScopedRouteConvention(this ISelectedControllerModelConfiguration configuration,
-            string? defaultRouteTemplate, bool forceDefaultRoute, Action<DelegatedControllerModelConfiguration, ScopedRouteConvention> addConvention)
+            string? defaultRouteTemplate, bool forceDefaultRoute, Action<ISelectedControllerModelConfiguration, ScopedRouteConvention> addConvention)
         {
             var controllerFilter = new ControllerTypeFilter(configuration.SelectedControllerType);
             var convention = new ScopedRouteConvention(defaultRouteTemplate, forceDefaultRoute, controllerFilter: controllerFilter);
-            var delegatedConfiguration = new DelegatedControllerModelConfiguration(configuration);
-            addConvention(delegatedConfiguration, convention);
+            addConvention(configuration, convention);
             return configuration;
         }
 
@@ -58,12 +56,11 @@ namespace Teronis.Mvc.ApplicationModels
         /// <param name="defaultRouteTemplate"></param>
         /// <returns></returns>
         public static ISelectedControllerModelConfiguration AddScopedRouteConvention(this ISelectedControllerModelConfiguration configuration,
-            string? defaultRouteTemplate, Action<DelegatedControllerModelConfiguration, ScopedRouteConvention> addConvention)
+            string? defaultRouteTemplate, Action<ISelectedControllerModelConfiguration, ScopedRouteConvention> addConvention)
         {
             var controllerFilter = new ControllerTypeFilter(configuration.SelectedControllerType);
             var convention = new ScopedRouteConvention(defaultRouteTemplate, controllerFilter: controllerFilter);
-            var delegatedConfiguration = new DelegatedControllerModelConfiguration(configuration);
-            addConvention(delegatedConfiguration, convention);
+            addConvention(configuration, convention);
             return configuration;
         }
 
@@ -77,12 +74,11 @@ namespace Teronis.Mvc.ApplicationModels
         /// <param name="prefixRouteTemplate"></param>
         /// <returns></returns>
         public static ISelectedControllerModelConfiguration AddScopedRouteConvention(this ISelectedControllerModelConfiguration configuration,
-            string? defaultRouteTemplate, string? prefixRouteTemplate, Action<DelegatedControllerModelConfiguration, ScopedRouteConvention> addConvention)
+            string? defaultRouteTemplate, string? prefixRouteTemplate, Action<ISelectedControllerModelConfiguration, ScopedRouteConvention> addConvention)
         {
             var controllerFilter = new ControllerTypeFilter(configuration.SelectedControllerType);
             var convention = new ScopedRouteConvention(defaultRouteTemplate, prefixRouteTemplate, controllerFilter: controllerFilter);
-            var delegatedConfiguration = new DelegatedControllerModelConfiguration(configuration);
-            addConvention(delegatedConfiguration, convention);
+            addConvention(configuration, convention);
             return configuration;
         }
 
@@ -94,12 +90,11 @@ namespace Teronis.Mvc.ApplicationModels
         /// <param name="routeTemplateFormatter"></param>
         /// <returns></returns>
         public static ISelectedControllerModelConfiguration AddScopedRouteTemplateConvention(this ISelectedControllerModelConfiguration configuration,
-            IStringFormatter routeTemplateFormatter, Action<DelegatedControllerModelConfiguration, ScopedRouteTemplateConvention> addConvention)
+            IStringFormatter routeTemplateFormatter, Action<ISelectedControllerModelConfiguration, ScopedRouteTemplateConvention> addConvention)
         {
             var controllerFilter = new ControllerTypeFilter(configuration.SelectedControllerType);
             var convention = new ScopedRouteTemplateConvention(routeTemplateFormatter, controllerFilter: controllerFilter);
-            var delegatedConfiguration = new DelegatedControllerModelConfiguration(configuration);
-            addConvention(delegatedConfiguration, convention);
+            addConvention(configuration, convention);
             return configuration;
         }
 
@@ -111,7 +106,7 @@ namespace Teronis.Mvc.ApplicationModels
         /// <param name="caseType"></param>
         /// <returns></returns>
         public static ISelectedControllerModelConfiguration AddScopedRouteTemplateConvention(this ISelectedControllerModelConfiguration configuration, CaseType caseType,
-            Action<DelegatedControllerModelConfiguration, ScopedRouteTemplateConvention> addConvention)
+            Action<ISelectedControllerModelConfiguration, ScopedRouteTemplateConvention> addConvention)
         {
             var formatter = new RouteTemplateCaseFormatter(caseType);
             return AddScopedRouteTemplateConvention(configuration, formatter, addConvention);

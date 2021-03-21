@@ -6,14 +6,23 @@ namespace Teronis.Mvc.ApplicationModels
 {
     public static class IServiceCollectionExtensions
     {
+        /// <summary>
+        /// Adds the configured conventions in <see cref="ControllerModelConfiguration"/> to <see cref="MvcOptions"/>.
+        /// </summary>
         public static void ApplyControllerModelConfiguration(this IServiceCollection services, ControllerModelConfiguration controllerModelConfiguration,
             Action<IServiceCollection, Action<MvcOptions>> configureOptions) =>
             configureOptions(services, new MvcOptionsConfigurator(controllerModelConfiguration).ConfigureMvcOptions);
 
+        /// <summary>
+        /// Adds the configured conventions in <see cref="ControllerModelConfiguration"/> to <see cref="MvcOptions"/>.
+        /// </summary>
         public static void ApplyControllerModelConfiguration(this IServiceCollection _, ControllerModelConfiguration controllerModelConfiguration,
             Action<Action<MvcOptions>> configureOptions) =>
             configureOptions(new MvcOptionsConfigurator(controllerModelConfiguration).ConfigureMvcOptions);
 
+        /// <summary>
+        /// Adds the configured conventions in <see cref="ControllerModelConfiguration"/> to <see cref="MvcOptions"/>.
+        /// </summary>
         public static void ApplyControllerModelConfiguration(this IServiceCollection services, ControllerModelConfiguration controllerModelConfiguration) =>
             ApplyControllerModelConfiguration(services, controllerModelConfiguration, configurator => services.Configure(configurator));
 

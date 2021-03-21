@@ -13,7 +13,7 @@ namespace Teronis.Mvc.ApplicationModels
         public IActionModelFilter? ActionFilter { get; }
 
         /// <summary>
-        /// Creates an action route template convention that formats route names.
+        /// Creates a route template convention for controller that formats route template of <see cref="ActionModel"/>s.
         /// </summary>
         /// <param name="routeTemplateFormatter">Formats route template.</param>
         /// <param name="controllerFilter">Filters on controller type.</param>

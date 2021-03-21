@@ -33,17 +33,39 @@ namespace Teronis.AspNetCore.Identity.Bearer.Stores
             await dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<bool> TryDeleteAsync(BearerTokenType refreshTokenEntity, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Deletes refresh token.
+        /// </summary>
+        public Task DeleteAsync(BearerTokenType refreshTokenEntity, CancellationToken cancellationToken = default)
         {
-            try {
-                bearerTokenSet.Remove(refreshTokenEntity);
-                await dbContext.SaveChangesAsync(cancellationToken);
-                return true;
-            } catch {
-                return false;
-            }
+            bearerTokenSet.Remove(refreshTokenEntity);
+            return dbContext.SaveChangesAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// Deletes refresh token by identifier.
+        /// </summary>
+        /// <param name="refreshTokenId">The refresh token identifier.</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException">Token by token identifier not found.</exception>
+        public async Task DeleteAsync(Guid refreshTokenId, CancellationToken cancellationToken = default)
+        {
+            var entity = await FindAsync(refreshTokenId, cancellationToken);
+
+            if (entity is null) {
+                throw new InvalidOperationException("The refresh token does not exist.");
+            }
+
+            dbContext.Remove(entity);
+        }
+
+        /// <summary>
+        /// Deletes refresh token by identifier but skips when the bearer token identifier does not exist.
+        /// </summary>
+        /// <param name="refreshTokenId">The refresh token identifier.</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async Task<bool> TryDeleteAsync(Guid refreshTokenId, CancellationToken cancellationToken = default)
         {
             var entity = await FindAsync(refreshTokenId, cancellationToken);
@@ -56,6 +78,11 @@ namespace Teronis.AspNetCore.Identity.Bearer.Stores
             return false;
         }
 
+        /// <summary>
+        /// Deletes expired bearer tokens.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async Task DeleteExpiredOnesAsync(CancellationToken cancellationToken = default)
         {
             var entities = await bearerTokenSet.AsAsyncEnumerable()

@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using Teronis.Extensions;
 
 namespace Teronis.Mvc
 {
     /// <summary>
-    /// Enables you to inject custom controllers to application that are not regarded.
+    /// Enables you to inject custom controllers to application that are not auto-discovered.
     /// </summary>
     public class TypesProvidingApplicationPart : ApplicationPart, IApplicationPartTypeProvider
     {

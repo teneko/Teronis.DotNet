@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Teronis.AspNetCore.Identity.AccountManaging.Controllers.Datransjects;
 using Teronis.AspNetCore.Identity.AccountManaging.Controllers.Datransjects.Converters;
@@ -11,7 +12,26 @@ namespace Teronis.AspNetCore.Identity.AccountManaging.Controllers
 {
     public static partial class IMvcBuilderExtensions
     {
-        public static AccountManagerBuilder<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType> AddAccountControllers<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>(
+        /// <summary>
+        /// <para>
+        /// Registers the non-auto-discovered <see cref="AccountController{UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType}"/> 
+        /// to <see cref="IMvcBuilder"/>.
+        /// </para>
+        /// <para>
+        /// Adds default route "api/account" by adding a <see cref="ScopedRouteConvention"/> to <see cref="MvcOptions.Conventions"/>.
+        /// <br/>You can override it by providing a <see cref="ScopedRouteConvention"/> yourself and enable forced default route.
+        /// </para>
+        /// </summary>
+        /// <typeparam name="UserDescriptorType">Type of user descriptor.</typeparam>
+        /// <typeparam name="UserType">Type of user entity.</typeparam>
+        /// <typeparam name="UserCreationType">Type of user view.</typeparam>
+        /// <typeparam name="RoleDescriptorType">Type of role descriptor.</typeparam>
+        /// <typeparam name="RoleType">Type of role entity.</typeparam>
+        /// <typeparam name="RoleCreationType">Type of role view.</typeparam>
+        /// <param name="mvcBuilder">The MVC builder.</param>
+        /// <param name="configureControllerModel">Configures controller.</param>
+        /// <returns></returns>
+        public static AccountConfigurator<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType> AddAccountControllers<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>(
             this IMvcBuilder mvcBuilder, Action<ISelectedControllerModelConfiguration>? configureControllerModel = null)
             where UserDescriptorType : IUserDescriptor
             where UserType : IAccountUserEntity
@@ -35,13 +55,39 @@ namespace Teronis.AspNetCore.Identity.AccountManaging.Controllers
 
             configureControllerModel?.Invoke(controllerModelConfiguration);
             mvcBuilder.Services.ApplyControllerModelConfiguration(controllerModelConfiguration);
-            return new AccountManagerBuilder<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>(mvcBuilder);
+            return new AccountConfigurator<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>(mvcBuilder);
         }
 
-        public static AccountManagerBuilder<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType> AddAccountControllersWithConverters<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>(
+        /// <summary>
+        /// <para>
+        /// Adds the user/role converters as singletons to the services.
+        /// </para>
+        /// <para>
+        /// Registers the non-auto-discovered <see cref="AccountController{UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType}"/> 
+        /// to <see cref="IMvcBuilder"/>.
+        /// </para>
+        /// <para>
+        /// Adds default route "api/account" by adding a <see cref="ScopedRouteConvention"/> to <see cref="MvcOptions.Conventions"/>.
+        /// <br/>You can override it by providing a <see cref="ScopedRouteConvention"/> yourself and enable forced default route.
+        /// </para>
+        /// </summary>
+        /// <typeparam name="UserDescriptorType">Type of user descriptor.</typeparam>
+        /// <typeparam name="UserType">Type of user entity.</typeparam>
+        /// <typeparam name="UserCreationType">Type of user view.</typeparam>
+        /// <typeparam name="RoleDescriptorType">Type of role descriptor.</typeparam>
+        /// <typeparam name="RoleType">Type of role entity.</typeparam>
+        /// <typeparam name="RoleCreationType">Type of role view.</typeparam>
+        /// <param name="mvcBuilder"></param>
+        /// <param name="userDescriptorUserConverter"></param>
+        /// <param name="userUserCreationConverter"></param>
+        /// <param name="roleDescriptorRoleConverter"></param>
+        /// <param name="roleRoleCreationConverter"></param>
+        /// <returns></returns>
+        public static AccountConfigurator<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType> AddAccountControllersWithConverters<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>(
             this IMvcBuilder mvcBuilder,
             IConvertUserDescriptor<UserDescriptorType, UserType> userDescriptorUserConverter, IConvertUser<UserType, UserCreationType> userUserCreationConverter,
-            IConvertRoleDescriptor<RoleDescriptorType, RoleType> roleDescriptorRoleConverter, IConvertRole<RoleType, RoleCreationType> roleRoleCreationConverter)
+            IConvertRoleDescriptor<RoleDescriptorType, RoleType> roleDescriptorRoleConverter, IConvertRole<RoleType, RoleCreationType> roleRoleCreationConverter,
+            Action<ISelectedControllerModelConfiguration>? configureControllerModel = null)
             where UserDescriptorType : IUserDescriptor
             where UserType : IAccountUserEntity
             where RoleDescriptorType : IRoleDescriptor
@@ -51,10 +97,29 @@ namespace Teronis.AspNetCore.Identity.AccountManaging.Controllers
             services.AddSingleton(userUserCreationConverter);
             services.AddSingleton(roleDescriptorRoleConverter);
             services.AddSingleton(roleRoleCreationConverter);
-            var builder = mvcBuilder.AddAccountControllers<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>();
+
+            var builder = mvcBuilder.AddAccountControllers<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>(
+                configureControllerModel: configureControllerModel);
+
             return builder;
         }
 
+        /// <summary>
+        /// <para>
+        /// Adds default user/role converters as singletons to the services.
+        /// </para>
+        /// <para>
+        /// Registers the non-auto-discovered and default <see cref="AccountController{UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType}"/> 
+        /// to <see cref="IMvcBuilder"/>.
+        /// </para>
+        /// <para>
+        /// Adds default route "api/account" by adding a <see cref="ScopedRouteConvention"/> to <see cref="MvcOptions.Conventions"/>.
+        /// <br/>You can override it by providing a <see cref="ScopedRouteConvention"/> yourself and enable forced default route.
+        /// </para>
+        /// </summary>
+        /// <param name="mvcBuilder"></param>
+        /// <param name="configureControllerModel"></param>
+        /// <returns></returns>
         public static IMvcBuilder AddAccountControllers(this IMvcBuilder mvcBuilder, Action<ISelectedControllerModelConfiguration>? configureControllerModel = null)
         {
             var services = mvcBuilder.Services;
@@ -62,7 +127,10 @@ namespace Teronis.AspNetCore.Identity.AccountManaging.Controllers
             services.AddSingleton<IConvertUser<UserEntity, UserCreationDatatransject>, UserUserCreationConverter>();
             services.AddSingleton<IConvertRoleDescriptor<RoleDescriptorDatatransject, RoleEntity>, RoleDescriptorRoleConverter>();
             services.AddSingleton<IConvertRole<RoleEntity, RoleCreationDatatransject>, RoleRoleCreationConverter>();
-            mvcBuilder.AddAccountControllers<UserDescriptorDatatransject, UserEntity, UserCreationDatatransject, RoleDescriptorDatatransject, RoleEntity, RoleCreationDatatransject>(configureControllerModel: configureControllerModel);
+
+            mvcBuilder.AddAccountControllers<UserDescriptorDatatransject, UserEntity, UserCreationDatatransject, RoleDescriptorDatatransject, RoleEntity, RoleCreationDatatransject>(
+                configureControllerModel: configureControllerModel);
+
             return mvcBuilder;
         }
     }

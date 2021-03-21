@@ -77,6 +77,16 @@ namespace Teronis.AspNetCore.Identity.Bearer.SignInManaging
             });
         }
 
+        /// <summary>
+        /// Adds <see cref="IBearerSignInManager"/> created from <paramref name="bearerSignInManagerFactory"/> to services.
+        /// </summary>
+        /// <typeparam name="DbContextType">Type of database context.</typeparam>
+        /// <typeparam name="UserType">Type of user entity.</typeparam>
+        /// <typeparam name="RoleType">Type of role entity.</typeparam>
+        /// <param name="identityBuilder">The identity builder.</param>
+        /// <param name="bearerSignInManagerFactory">A <see cref="IBearerSignInManager"/> factory.</param>
+        /// <param name="configureOptions">Configures options.</param>
+        /// <returns></returns>
         public static IdentityBuilder AddBearerSignInManager<DbContextType, UserType, RoleType>(this IdentityBuilder identityBuilder, Func<IServiceProvider, IBearerSignInManager> bearerSignInManagerFactory,
             Action<BearerSignInManagerOptions>? configureOptions = null)
             where DbContextType : DbContext

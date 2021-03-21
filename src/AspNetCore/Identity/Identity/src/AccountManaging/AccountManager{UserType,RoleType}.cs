@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Teronis.AspNetCore.Identity.AccountManaging.Extensions;
 using Teronis.AspNetCore.Identity.Entities;
 using ComponentDataValidationContext = System.ComponentModel.DataAnnotations.ValidationContext;
@@ -23,7 +22,6 @@ namespace Teronis.AspNetCore.Identity.AccountManaging
         private readonly ILogger<AccountManager<DbContextType, UserType, RoleType>>? logger;
 
         public AccountManager(
-            IOptions<AccountManagerOptions> _,
             DbContextType dbContext,
             UserManager<UserType> userManager,
             RoleManager<RoleType> roleManager,

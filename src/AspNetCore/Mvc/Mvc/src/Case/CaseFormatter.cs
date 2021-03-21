@@ -9,7 +9,7 @@ namespace Teronis.Mvc.Case
         public CaseFormatter(CaseType caseType)
         {
             if (!Enum.IsDefined(typeof(CaseType), caseType)) {
-                throw new ArgumentException("Bad case type.");
+                throw new ArgumentException("Case type does not exist.");
             }
 
             CaseType = caseType;

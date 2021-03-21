@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 namespace Teronis.Mvc.ApplicationModels
 {
+    /// <summary>
+    /// Provides configuration for <see cref="ControllerModel"/> by adding conventions.
+    /// </summary>
     public class ControllerModelConfiguration : ISelectedControllerModelConfiguration
     {
         public TypeInfo SelectedControllerType { get; }

@@ -6,7 +6,7 @@ using Teronis.Mvc.ServiceResulting;
 
 namespace Teronis.AspNetCore.Identity.AccountManaging.Extensions
 {
-    public static class IdentityResultExtensions
+    internal static class IdentityResultExtensions
     {
         private static IEnumerable<IdentityError>? getIdentityResultErrorsOrThrow(IdentityResult? identityResult)
         {

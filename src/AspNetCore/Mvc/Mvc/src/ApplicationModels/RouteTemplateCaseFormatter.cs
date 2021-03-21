@@ -3,13 +3,21 @@ using Teronis.Mvc.Case;
 
 namespace Teronis.Mvc.ApplicationModels
 {
+    /// <summary>
+    /// A route template case formatter.
+    /// </summary>
     public class RouteTemplateCaseFormatter : CaseFormatter
     {
         public RouteTemplateCaseFormatter(CaseType caseType)
             : base(caseType) { }
 
-        public override string Format(string source) =>
-            Regex.Replace(source, @"(?>[\w ]+)(?!\]|\})", 
+        /// <summary>
+        /// Formats the case of <paramref name="routeTemplate"/>.
+        /// </summary>
+        /// <param name="routeTemplate"></param>
+        /// <returns></returns>
+        public override string Format(string routeTemplate) =>
+            Regex.Replace(routeTemplate, @"(?>[\w ]+)(?!\]|\})", 
                 match => match.Value.ToCase(CaseType));
     }
 }

@@ -11,8 +11,9 @@ namespace Teronis.AspNetCore.Identity.Bearer.Stores
     {
         ValueTask<List<BearerTokenType>> GetUserTokensAsync(string userId, CancellationToken cancellationToken = default);
         ValueTask<BearerTokenType> FindAsync(Guid bearerTokenId, CancellationToken cancellationToken = default);
+        Task DeleteAsync(BearerTokenType refreshTokenEntity, CancellationToken cancellationToken = default);
+        Task DeleteAsync(Guid refreshTokenId, CancellationToken cancellationToken = default);
         Task InsertAsync(BearerTokenType refreshTokenEntity, bool throwOnDuplication = true, CancellationToken cancellationToken = default);
-        Task<bool> TryDeleteAsync(BearerTokenType refreshTokenEntity, CancellationToken cancellationToken = default);
         Task<bool> TryDeleteAsync(Guid refreshTokenId, CancellationToken cancellationToken = default);
         Task DeleteExpiredOnesAsync(CancellationToken cancellationToken = default);
     }

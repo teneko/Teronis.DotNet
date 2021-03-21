@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using Teronis.AspNetCore.Identity.Bearer.SignInManaging;
 using Teronis.AspNetCore.Identity.Bearer.Stores;
 using Teronis.AspNetCore.Identity.Bearer.Utils;
 using Teronis.AspNetCore.Identity.Entities;

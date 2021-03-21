@@ -38,4 +38,5 @@ jobs:
         uses: peter-evans/repository-dispatch@v1
         with:
           token: ${{ secrets.TERONEKO_GITHUB_IO_TOKEN }}
+          repository: teroneko/teroneko.github.io
           event-type: generate-docs

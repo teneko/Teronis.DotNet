@@ -63,8 +63,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Identity
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Identity.Bearer.Example", "src\AspNetCore\Identity\Bearer\example\Teronis.AspNetCore.Identity.Bearer.Example.csproj", "{0D97861F-2F56-415E-843B-C6207D0E3C9E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Core", "src\AspNetCore\Core\Core\src\Teronis.AspNetCore.Core\Teronis.AspNetCore.Core.csproj", "{D523E587-B282-4DD3-A40F-0D3219389EBD}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.AspNetCore.Authorization", "src\AspNetCore\Authorization\Microsoft\src\Teronis.Microsoft.AspNetCore.Authorization.csproj", "{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Identity.Bearer.Abstractions", "src\AspNetCore\Identity\Bearer.Abstractions\src\Teronis.AspNetCore.Identity.Bearer.Abstractions.csproj", "{258279A1-6C92-486C-B819-57F953DCD27A}"
@@ -494,18 +492,6 @@ Global
 		{0D97861F-2F56-415E-843B-C6207D0E3C9E}.Release|x64.Build.0 = Release|x64
 		{0D97861F-2F56-415E-843B-C6207D0E3C9E}.Release|x86.ActiveCfg = Release|x86
 		{0D97861F-2F56-415E-843B-C6207D0E3C9E}.Release|x86.Build.0 = Release|x86
-		{D523E587-B282-4DD3-A40F-0D3219389EBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D523E587-B282-4DD3-A40F-0D3219389EBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D523E587-B282-4DD3-A40F-0D3219389EBD}.Debug|x64.ActiveCfg = Debug|x64
-		{D523E587-B282-4DD3-A40F-0D3219389EBD}.Debug|x64.Build.0 = Debug|x64
-		{D523E587-B282-4DD3-A40F-0D3219389EBD}.Debug|x86.ActiveCfg = Debug|x86
-		{D523E587-B282-4DD3-A40F-0D3219389EBD}.Debug|x86.Build.0 = Debug|x86
-		{D523E587-B282-4DD3-A40F-0D3219389EBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D523E587-B282-4DD3-A40F-0D3219389EBD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D523E587-B282-4DD3-A40F-0D3219389EBD}.Release|x64.ActiveCfg = Release|x64
-		{D523E587-B282-4DD3-A40F-0D3219389EBD}.Release|x64.Build.0 = Release|x64
-		{D523E587-B282-4DD3-A40F-0D3219389EBD}.Release|x86.ActiveCfg = Release|x86
-		{D523E587-B282-4DD3-A40F-0D3219389EBD}.Release|x86.Build.0 = Release|x86
 		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Debug|x64.ActiveCfg = Debug|x64

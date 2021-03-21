@@ -80,7 +80,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         }
 
         [Fact]
-        public async Task Proxy_Get_property()
+        public void Proxy_Get_property()
         {
             // Arrange
             var jsObjectReference = new IdentifierPromisingObjectReference();

@@ -4,8 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Teronis.Microsoft.JSInterop.Dynamic.JSDynamicObjects;
 using Teronis.Microsoft.JSInterop.Dynamic.Reflection;
-using Teronis.Microsoft.JSInterop.Infrastructure;
-using Teronis.Microsoft.JSInterop.Infrastructure.JSObjectReferences;
+using Teronis.Microsoft.JSInterop.JSObjectReferences;
 using Xunit;
 using static Teronis.Utils.ICollectionGenericUtils;
 

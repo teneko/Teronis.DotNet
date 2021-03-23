@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 using System.Threading;
 
-namespace Teronis.Microsoft.JSInterop.Infrastructure
+namespace Teronis.Microsoft.JSInterop
 {
     public class ObjectReferenceInvocationCanceledException : OperationCanceledException
     {

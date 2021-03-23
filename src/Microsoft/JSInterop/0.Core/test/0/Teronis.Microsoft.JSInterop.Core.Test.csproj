@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\0\test\0..Common\Teronis.Microsoft.JSInterop.Test.Common.csproj" />
     <ProjectReference Include="..\..\src\Teronis.Microsoft.JSInterop.Core.csproj" />
   </ItemGroup>
 

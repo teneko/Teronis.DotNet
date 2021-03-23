@@ -4,6 +4,8 @@ using Xunit;
 using System;
 using PlaywrightSharp;
 using Teronis_._Microsoft.JSInterop.Facades;
+using Teronis_._Microsoft.JSInterop.Facades.JSModules;
+using Teronis.AspNetCore.Components.NUnit;
 
 // When building in Azure we don't want test this because Playwright fails.
 #if !DEBUG
@@ -23,24 +25,36 @@ namespace Teronis.Microsoft.JSInterop.Facades
             this.playwright = playwright ?? throw new ArgumentNullException(nameof(playwright));
         }
 
-        private async Task TestPageRegardingModuleResolution(string relativePath)
-        {
+        //private async Task TestPageRegardingModuleResolution(string relativePath)
+        //{
+        //    var applicationUrl = server.ApplicationUrl;
+        //    await using var browser = await playwright.Instance.Chromium.LaunchAsync();
+        //    var page = await browser.NewPageAsync();
+        //    var applicationUri = new Uri(applicationUrl);
+        //    var pageUri = new Uri(applicationUri, relativePath);
+        //    await page.GoToAsync(pageUri.AbsoluteUri, LifecycleEvent.Networkidle);
+        //    var tonyHawkContent = await page.GetTextContentAsync(ShoudlyPagesDefaults.TonyHawkIdSelector);
+        //    Assert.Contains(ModuleActivationViaDependencyInjection.ExpectedTonyHawkContent, tonyHawkContent);
+        //}
+
+        //[Fact]
+        //public Task Should_resolve_service_provider_created_module() =>
+        //    TestPageRegardingModuleResolution(ShoudlyPages.should_resolve_service_provider_created_module);
+
+        //[Fact]
+        //public Task Should_resolve_user_created_module() =>
+        //    TestPageRegardingModuleResolution(ShoudlyPages.should_resolve_user_created_module);
+
+        [Fact]
+        public async Task Should_have_empty_nunit_report() {
             var applicationUrl = server.ApplicationUrl;
             await using var browser = await playwright.Instance.Chromium.LaunchAsync();
             var page = await browser.NewPageAsync();
             var applicationUri = new Uri(applicationUrl);
-            var pageUri = new Uri(applicationUri, relativePath);
+            var pageUri = new Uri(applicationUri, "/");
             await page.GoToAsync(pageUri.AbsoluteUri, LifecycleEvent.Networkidle);
-            var tonyHawkContent = await page.GetTextContentAsync(ShoudlyPagesDefaults.TonyHawkIdSelector);
-            Assert.Contains(ShoudlyPagesDefaults.ExpectedTonyHawkContent, tonyHawkContent);
+            var nunitXmlReport = await page.GetTextContentAsync(NUnitTestsReportDefaults.XML_REPORT_DIV_ID_HASHED);
+            Assert.Equal(string.Empty, nunitXmlReport);
         }
-
-        [Fact]
-        public Task Should_resolve_service_provider_created_module() =>
-            TestPageRegardingModuleResolution(ShoudlyPages.should_resolve_service_provider_created_module);
-
-        [Fact]
-        public Task Should_resolve_user_created_module() =>
-            TestPageRegardingModuleResolution(ShoudlyPages.should_resolve_user_created_module);
     }
 }

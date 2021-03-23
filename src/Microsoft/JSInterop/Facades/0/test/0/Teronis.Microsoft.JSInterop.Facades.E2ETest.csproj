@@ -22,8 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\AspNetCore\Components\NUnit\0\src\Teronis.AspNetCore.Components.NUnit.csproj" />
     <ProjectReference Include="..\..\..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj" />
-    <ProjectReference Include="..\0..WebAssembly\Teronis.Microsoft.JSInterop.Facades.Test.WebAssembly.csproj" />
+    <ProjectReference Include="..\0..WebAssembly\Teronis.Microsoft.JSInterop.Facades.E2ETest.WebAssembly.csproj" />
   </ItemGroup>
 
 </Project>

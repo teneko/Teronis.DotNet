@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 
-namespace Teronis.Microsoft.JSInterop.Infrastructure.JSObjectReferences
+namespace Teronis.Microsoft.JSInterop.JSObjectReferences
 {
     public class JSEmptyObjectReference : IJSObjectReference
     {

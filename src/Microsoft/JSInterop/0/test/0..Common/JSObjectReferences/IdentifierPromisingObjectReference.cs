@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Teronis.Microsoft.JSInterop.Infrastructure.JSObjectReferences
+namespace Teronis.Microsoft.JSInterop.JSObjectReferences
 {
     public class IdentifierPromisingObjectReference : JSEmptyObjectReference
     {

@@ -5,7 +5,7 @@ using Teronis.Microsoft.JSInterop.Facades.Annotations;
 
 namespace Teronis_._Microsoft.JSInterop.Facades.JSModules
 {
-    [JSModuleClass("./js/Teronis.Microsoft.JSInterop.Facades.Test.WebAssembly.js")]
+    [JSModuleClass("./js/Teronis.Microsoft.JSInterop.Facades.E2ETest.WebAssembly.js")]
     public class TestModule : IAsyncDisposable
     {
         private readonly IJSObjectReference objectReference;

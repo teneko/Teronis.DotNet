@@ -7,11 +7,13 @@ using Teronis.Microsoft.JSInterop.Facades.Annotations;
 namespace Teronis_._Microsoft.JSInterop.Facades.JSModules
 {
     [JSModuleClass("./js/es-modules/getTonyHawk.js")]
-    public class ServiceProviderCreatedModule : IAsyncDisposable
+    public class ModuleActivationViaDependencyInjection : IAsyncDisposable
     {
+        public const string ExpectedTonyHawkContent = "Tony Hawk";
+
         private readonly IJSObjectReferenceFacade jsObjectReferenceFacade;
 
-        public ServiceProviderCreatedModule(IJSObjectReferenceFacade jsObject) => 
+        public ModuleActivationViaDependencyInjection(IJSObjectReferenceFacade jsObject) => 
             this.jsObjectReferenceFacade = jsObject ?? throw new ArgumentNullException(nameof(jsObject));
 
         public ValueTask<string> GetTonyHawkAsync() =>

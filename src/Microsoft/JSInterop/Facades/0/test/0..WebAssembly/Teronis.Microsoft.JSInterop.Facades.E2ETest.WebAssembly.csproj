@@ -9,10 +9,15 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.1" PrivateAssets="all" />
+    <PackageReference Include="Nito.AsyncEx" Version="5.1.0" />
+    <PackageReference Include="NUnitLite" Version="3.13.1" />
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\AspNetCore\Components\NUnit\0\src\Teronis.AspNetCore.Components.NUnit.csproj" />
+    <ProjectReference Include="..\..\..\..\0.Abstractions\src\Teronis.Microsoft.JSInterop.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\..\0\test\0..Common\Teronis.Microsoft.JSInterop.Test.Common.csproj" />
     <ProjectReference Include="..\..\..\..\Dynamic\0\src\Teronis.Microsoft.JSInterop.Dynamic.csproj" />
   </ItemGroup>
 

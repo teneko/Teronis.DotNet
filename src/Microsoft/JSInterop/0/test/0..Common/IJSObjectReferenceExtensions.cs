@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using Teronis.Microsoft.JSInterop.Infrastructure.JSObjectReferences;
+using Teronis.Microsoft.JSInterop.JSObjectReferences;
 
 namespace Teronis.Microsoft.JSInterop
 {
-    internal static class IJSObjectReferenceExtensions
+    public static class IJSObjectReferenceExtensions
     {
         public static ValueTask InvokeVoidAsync(this IJSFunctionalObject jsFunctionalObject) =>
             jsFunctionalObject.InvokeVoidAsync(new JSEmptyObjectReference(), string.Empty, new object[0]);

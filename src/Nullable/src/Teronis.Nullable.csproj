@@ -1,20 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    
+
     <TargetFrameworks>netstandard1.0;net20;netstandard2.0;net40;netstandard2.1;net5.0</TargetFrameworks>
     <RootNamespace>System.Diagnostics.CodeAnalysis</RootNamespace>
-    <LangVersion>8.0</LangVersion>
-    <Nullable>enable</Nullable>
+    <!-- Handled by root Directory.Build.props -->
+    <!--<LangVersion>8.0</LangVersion>-->
+    <!-- Handled by root Directory.Build.props -->
+    <!--<Nullable>enable</Nullable>-->
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    
+
     <!-- Prevent any kind of magic. -->
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
-    
+
     <!-- 
-      Let's get rid of:
+      Get rid of:
         Some target frameworks declared in the dependencies group of the nuspec and the lib/ref 
         folder do not have exact matches in the other location. Consult the list of actions below:
         - Add lib or ref assemblies for the net20 target framework- Add lib or ref assemblies for the net40 target framework
@@ -24,14 +26,14 @@
         - Add lib or ref assemblies for the netstandard2.1 target framework
     -->
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
-    
+
     <!-- Do not introduce our package as transient dependency. -->
     <DevelopmentDependency>true</DevelopmentDependency>
     <!-- Do not add build output to package. -->
     <IncludeBuildOutput>false</IncludeBuildOutput>
-    <!-- TODO: Can we deliver any kind of symbols support? -->
-    <IncludeSymbols>true</IncludeSymbols>
-    
+    <!-- Handled by root Directory.Build.props -->
+    <!--<IncludeSymbols>false</IncludeSymbols>-->
+
   </PropertyGroup>
 
   <!-- THIS AREA IS FOR DEVELOPMENT -->

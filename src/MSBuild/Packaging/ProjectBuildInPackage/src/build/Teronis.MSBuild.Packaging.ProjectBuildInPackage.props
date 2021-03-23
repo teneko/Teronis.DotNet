@@ -2,6 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   
   <PropertyGroup>
+    <!-- Accepts targets. Default value is our target CopyProjectBuildInPackage. -->
     <ProjectBuildInPackageTargetsForTfmSpecificBuildOutput Condition="'$(ProjectBuildInPackageTargetsForTfmSpecificBuildOutput)' == ''">CopyProjectBuildInPackage</ProjectBuildInPackageTargetsForTfmSpecificBuildOutput>
     <NoProjectBuildInPackageWelcome Condition="'$(NoProjectBuildInPackageWelcome)' == ''">false</NoProjectBuildInPackageWelcome>
     <ProjectBuildInPackageVerbosity Condition="'$(ProjectBuildInPackageVerbosity)' == ''">normal</ProjectBuildInPackageVerbosity>

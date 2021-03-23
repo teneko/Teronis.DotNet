@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project InitialTargets="CopyToCSPPFilesFolder" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory).., Directory.Build.props))\Directory.Build.props" />
+  
+  <PropertyGroup>
+    <ImportDirectoryBuildTargets>false</ImportDirectoryBuildTargets>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <NonCSPPFiles Include="$(MSBuildThisFileDirectory)**/*.cs">
+      <CSPPFilePath>$(MSBuildThisFileDirectory)content/%(RecursiveDir)/%(Filename).cs.pp</CSPPFilePath>
+      
+      <AnnotatedWithExcludeFromCodeCoverage>false</AnnotatedWithExcludeFromCodeCoverage>
+      <AnnotatedWithExcludeFromCodeCoverage Condition="$([System.String]::Copy(%(Filename)).Contains('ExcludeFromCodeCoverage'))">true</AnnotatedWithExcludeFromCodeCoverage>
+
+      <IsMemberNotNullOrWhenAttribute>false</IsMemberNotNullOrWhenAttribute>
+      <IsMemberNotNullOrWhenAttribute Condition="$([System.String]::Copy(%(Filename)).Contains('MemberNotNullAttribute'))
+                                Or $([System.String]::Copy(%(Filename)).Contains('IsMemberNotNullWhenAttribute'))">true</IsMemberNotNullOrWhenAttribute>
+    </NonCSPPFiles> 
+
+    <NonCSPPFiles Remove="obj/**/*.cs" />
+
+    <NetStandard1_0CompliantNonCSPPFiles Include="@(NonCSPPFiles->WithMetadataValue('AnnotatedWithExcludeFromCodeCoverage','false'))"/>
+
+    <Net20CompliantNonCSPPFiles Include="@(NetStandard1_0CompliantNonCSPPFiles)" />
+
+    <NetStandard2_0CompliantNonCSPPFiles Include="@(NonCSPPFiles)" />
+    <Net40CompliantNonCSPPFiles Include="@(NonCSPPFiles)" />
+
+    <NetStandard2_1CompliantNonCSPPFiles Include="@(NonCSPPFiles->WithMetadataValue('IsMemberNotNullOrWhenAttribute','true'))" />
+
+    <Net5_0CompliantNonCSPPFiles Include="_._">
+      <CSPPFilePath>%(FullPath)</CSPPFilePath>
+    </Net5_0CompliantNonCSPPFiles>
+  </ItemGroup>
+
+  <Target Name="CopyToCSPPFilesFolder"
+          Inputs="@(NonCSPPFiles)"
+          Outputs="@(NonCSPPFiles->'%(CSPPFilePath)')">
+
+    <Copy SourceFiles="@(NonCSPPFiles)" DestinationFiles="%(CSPPFilePath)"></Copy>
+  </Target>
+
+</Project>

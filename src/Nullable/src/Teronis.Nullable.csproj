@@ -1,0 +1,114 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    
+    <TargetFrameworks>netstandard1.0;net20;netstandard2.0;net40;netstandard2.1;net5.0</TargetFrameworks>
+    <RootNamespace>System.Diagnostics.CodeAnalysis</RootNamespace>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    
+    <!-- Prevent any kind of magic. -->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    
+    <!-- 
+      Let's get rid of:
+        Some target frameworks declared in the dependencies group of the nuspec and the lib/ref 
+        folder do not have exact matches in the other location. Consult the list of actions below:
+        - Add lib or ref assemblies for the net20 target framework- Add lib or ref assemblies for the net40 target framework
+        - Add lib or ref assemblies for the netstandard1.0 target framework
+        - Add lib or ref assemblies for the net5.0 target framework
+        - Add lib or ref assemblies for the netstandard2.0 target framework
+        - Add lib or ref assemblies for the netstandard2.1 target framework
+    -->
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    
+    <!-- Do not introduce our package as transient dependency. -->
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <!-- Do not add build output to package. -->
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <!-- TODO: Can we deliver any kind of symbols support? -->
+    <IncludeSymbols>true</IncludeSymbols>
+    
+  </PropertyGroup>
+
+  <!-- THIS AREA IS FOR DEVELOPMENT -->
+
+  <ItemGroup>
+    <!-- Let's add them all, but do no compile. -->
+    <None Include="@(NonCSPPFiles)" />
+  </ItemGroup>
+
+  <!-- Now compile them dependent on framework. -->
+
+  <ItemGroup>
+    <Compile Include="@(NetStandard1_0CompliantNonCSPPFiles)" Condition="'$(TargetFramework)' == 'netstandard1.0'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="@(Net20CompliantNonCSPPFiles)" Condition="'$(TargetFramework)' == 'net20'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="@(NetStandard2_0CompliantNonCSPPFiles)" Condition="'$(TargetFramework)' == 'netstandard2.0'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="@(Net40CompliantNonCSPPFiles)" Condition="'$(TargetFramework)' == 'net40'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="@(NetStandard2_1CompliantNonCSPPFiles)" Condition="'$(TargetFramework)' == 'netstandard2.1'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="@(Net5_0CompliantNonCSPPFiles)" Condition="'$(TargetFramework)' == 'net5.0'" />
+  </ItemGroup>
+
+  <!-- THIS AREA IS FOR PACKAGE CREATION -->
+
+  <ItemGroup>
+    <Content Include="@(NetStandard1_0CompliantNonCSPPFiles->'%(CSPPFilePath)')">
+      <Pack>true</Pack>
+      <PackagePath>contentFiles/cs/netstandard1.0;content/netstandard1.0</PackagePath>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="@(Net20CompliantNonCSPPFiles->'%(CSPPFilePath)')">
+      <Pack>true</Pack>
+      <PackagePath>contentFiles/cs/net20;content/net20</PackagePath>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="@(NetStandard2_0CompliantNonCSPPFiles->'%(CSPPFilePath)')">
+      <Pack>true</Pack>
+      <PackagePath>contentFiles/cs/netstandard2.0;content/netstandard2.0</PackagePath>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="@(Net40CompliantNonCSPPFiles->'%(CSPPFilePath)')">
+      <Pack>true</Pack>
+      <PackagePath>contentFiles/cs/net40;content/net40</PackagePath>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="@(NetStandard2_1CompliantNonCSPPFiles->'%(CSPPFilePath)')">
+      <Pack>true</Pack>
+      <PackagePath>contentFiles/cs/netstandard2.1;content/netstandard2.1</PackagePath>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="@(Net5_0CompliantNonCSPPFiles->'%(CSPPFilePath)')">
+      <Pack>true</Pack>
+      <PackagePath>contentFiles/cs/net5.0;content/net5.0</PackagePath>
+    </Content>
+  </ItemGroup>
+
+</Project>

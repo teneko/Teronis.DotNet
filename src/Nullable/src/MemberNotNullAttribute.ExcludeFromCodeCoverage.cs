@@ -46,38 +46,15 @@ namespace System.Diagnostics.CodeAnalysis
 
 #if DEBUG
     /// <summary>
-    ///     Specifies that when a method returns <see cref="ReturnValue"/>, 
-    ///     the parameter may be <see langword="null"/> even if the corresponding type disallows it.
+    ///     Specifies that the method or property will ensure that the listed field and property members have
+    ///     not-<see langword="null"/> values.
     /// </summary>
 #endif
-    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
 #if !NULLABLE_ATTRIBUTES_INCLUDE_IN_CODE_COVERAGE
-    [DebuggerNonUserCode]
+    [ExcludeFromCodeCoverage]
 #endif
-    internal sealed partial class MaybeNullWhenAttribute : Attribute
-    {
-#if DEBUG
-        /// <summary>
-        ///     Gets the return value condition.
-        ///     If the method returns this value, the associated parameter may be <see langword="null"/>.
-        /// </summary>
-#endif
-        public bool ReturnValue { get; }
-
-#if DEBUG
-        /// <summary>
-        ///      Initializes the attribute with the specified return value condition.
-        /// </summary>
-        /// <param name="returnValue">
-        ///     The return value condition.
-        ///     If the method returns this value, the associated parameter may be <see langword="null"/>.
-        /// </param>
-#endif
-        public MaybeNullWhenAttribute(bool returnValue)
-        {
-            ReturnValue = returnValue;
-        }
-    }
+    internal sealed partial class MemberNotNullAttribute : Attribute
+    { }
 }
 
 #pragma warning restore

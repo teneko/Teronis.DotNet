@@ -22,7 +22,7 @@ namespace Teronis.AspNetCore.Components.NUnit
         /// Parameter <see cref="Assembly"/> has precedence.
         /// </summary>
         [Parameter] public Type? AssemblyType { get; set; } = null!;
-        [Parameter] public EventCallback<IServiceProvider> BeforeTaskAssertions { get; set; }
+        [Parameter] public EventCallback<IServiceProvider> BeforeAssertingTasks { get; set; }
         [Parameter] public ITestListener? TestListener { get; set; }
         [Parameter] public ITestFilter? TestFilter { get; set; }
         [Parameter] public string XmlReportDivId { get; set; } = NUnitTestsReportDefaults.XML_REPORT_DIV_ID;
@@ -36,8 +36,8 @@ namespace Teronis.AspNetCore.Components.NUnit
                 ?? AssemblyType?.Assembly
                 ?? throw new ArgumentException($"You must set either {nameof(Assembly)} or {nameof(AssemblyType)}.");
 
-            if (BeforeTaskAssertions.HasDelegate) {
-                await BeforeTaskAssertions.InvokeAsync(serviceProvider);
+            if (BeforeAssertingTasks.HasDelegate) {
+                await BeforeAssertingTasks.InvokeAsync(serviceProvider);
             }
 
             try {

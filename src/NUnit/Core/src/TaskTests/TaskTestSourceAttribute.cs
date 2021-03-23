@@ -95,9 +95,9 @@ namespace Teronis.NUnit.TaskTests
             return false;
         }
 
-        private void AddTestAssertionsToTestCaseParametersList(ITaskTests testAssertions)
+        private void AddTestAssertionsToTestCaseParametersList(ITaskTests taskTestsInstance)
         {
-            foreach (var testAssertion in testAssertions.GetAwaitableTasksToBeTested()) {
+            foreach (var testAssertion in taskTestsInstance.GetAwaitableTasksToBeTested()) {
                 var testCaseParameters = new TestCaseParameters(new object[] { testAssertion });
                 testCaseParametersList.Add(testCaseParameters);
             }

@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Teronis.NUnit.TaskTests;
 
 namespace Teronis.AspNetCore.Components.NUnit
 {
-    public static class WebAssemblyHostExtensions
+    public static class IServiceProviderExtensions
     {
         private static List<TaskTestsClassInstanceCollectorEntry> CollectTaskTestsClassInstance(Assembly assembly)
         {
@@ -50,12 +49,11 @@ namespace Teronis.AspNetCore.Components.NUnit
         /// </summary>
         /// <param name="webAssemblyHost"></param>
         /// <returns><paramref name="webAssemblyHost"/></returns>
-        public static WebAssemblyHost AssignTaskTestsClassInstances(this WebAssemblyHost webAssemblyHost, Assembly assembly)
+        public static IServiceProvider AssignTaskTestsClassInstances(this IServiceProvider serviceProvider, Assembly assembly)
         {
-            var serviceProvider = webAssemblyHost.Services;
             var collectorEntries = CollectTaskTestsClassInstance(assembly);
             AssignTaskTestsClassInstances(collectorEntries, serviceProvider);
-            return webAssemblyHost;
+            return serviceProvider;
         }
 
         /// <summary>
@@ -75,9 +73,8 @@ namespace Teronis.AspNetCore.Components.NUnit
         /// Represents the list of finished but assertable tasks. Store it in static
         /// scope and use it in combination with NUnit's TestCaseSource attribute.
         /// </returns>
-        public static async Task<IEnumerable<Task>> AssignAndInitTaskTestsClassInstancesAsync(this WebAssemblyHost webAssemblyHost, Assembly assembly)
+        public static async Task<IEnumerable<Task>> AssignAndInitTaskTestsClassInstancesAsync(this IServiceProvider serviceProvider, Assembly assembly)
         {
-            var serviceProvider = webAssemblyHost.Services;
             var collectorEntries = CollectTaskTestsClassInstance(assembly);
             AssignTaskTestsClassInstances(collectorEntries, serviceProvider);
             await AwaitTaskTestsWhileIgnoringExceptionsAsync(collectorEntries);

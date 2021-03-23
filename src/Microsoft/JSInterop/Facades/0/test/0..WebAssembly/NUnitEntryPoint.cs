@@ -1,14 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using NUnit.Framework;
 using Teronis.NUnit.TaskTests;
 
 namespace Teronis_._Microsoft.JSInterop.Facades
 {
     public class NUnitEntryPoint
     {
+        // Is set in index page.
         public static IEnumerable<Task> AssertableTasks = null!;
 
-        [TaskTestSource(typeof(JSFacadesTests), nameof(JSFacadesTests.Instance))]
+        [TestCaseSource(nameof(AssertableTasks))]
         public void ProcessTaskTests(Task assertableTask) =>
             assertableTask.AssertIsNotErroneous();
     }

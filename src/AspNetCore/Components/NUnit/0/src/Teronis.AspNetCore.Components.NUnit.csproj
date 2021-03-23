@@ -19,7 +19,6 @@
     <ProjectReference Include="..\..\..\..\..\NUnit\Core\src\Teronis.NUnit.Core.csproj">
       <SetTargetFramework>TargetFramework=netstandard2.0</SetTargetFramework>
     </ProjectReference>
-    <ProjectReference Include="..\..\0.Abstractions\src\Teronis.AspNetCore.Components.NUnit.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

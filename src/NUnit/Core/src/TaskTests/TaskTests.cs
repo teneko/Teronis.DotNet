@@ -35,8 +35,11 @@ namespace Teronis.NUnit.TaskTests
         public static LazyTask AddTest(Func<Task> testProvider, [CallerMemberName] string? callerName = null) =>
             AddTest(temporaryAwaitableTestList, testProvider, callerName: callerName);
 
-        protected virtual void InitializeInstance() =>
+        protected virtual void InitializeInstance()
+        {
             awaitableTestList.AddRange(temporaryAwaitableTestList);
+            temporaryAwaitableTestList.Clear();
+        }
 
         /// <summary>
         /// Copies temporary, static and to be tested lazy tasks over to instance scoped 

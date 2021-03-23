@@ -3,7 +3,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Teronis.AspNetCore.Components.NUnit;
 using Teronis.Microsoft.JSInterop.Dynamic.Locality;
 using Teronis.Microsoft.JSInterop.Dynamic.Module;
 using Teronis.Microsoft.JSInterop.Facades;
@@ -35,9 +34,7 @@ namespace Teronis_._Microsoft.JSInterop.Facades
             services.AddScoped<ITaskTests>(serviceProvider => JSFacadesTests.Instance);
             services.AddJSFacades();
 
-            var host = builder.Build();
-            NUnitEntryPoint.AssertableTasks = await host.AssignAndInitTaskTestsClassInstancesAsync(typeof(Program).Assembly);
-            await host.RunAsync();
+            await builder.Build().RunAsync();
         }
     }
 }

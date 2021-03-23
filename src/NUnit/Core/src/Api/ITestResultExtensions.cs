@@ -32,6 +32,15 @@ namespace Teronis.NUnit.Api
             return stringWriter.GetStringBuilder().ToString();
         }
 
+        /// <summary>
+        /// Generates an human readable errors, failures and warnings report. It may be empty when
+        /// no such error, failures or warnings are part of the result.
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns>
+        /// The result report generated from 
+        /// <see cref="TextUI.DisplayErrorsFailuresAndWarningsReport(ITestResult)"/>.
+        /// </returns>
         [return: NotNullIfNotNull("result")]
         public static string? GenerateErrorsFailuresAndWarningsReport(this ITestResult? result) {
             if (result is null) {

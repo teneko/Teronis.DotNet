@@ -8,27 +8,34 @@ using NUnit.Framework.Interfaces;
 namespace Teronis.NUnit.Api
 {
     /// <summary>
+    /// <para></para>
     /// Creates a runner with following hardcoded settings:
     /// <br/>[FrameworkPackageSettings.NumberOfTestWorkers] = 0,
     /// <br/>[FrameworkPackageSettings.SynchronousEvents] = true,
     /// <br/>[FrameworkPackageSettings.RunOnMainThread] = true
+    /// <para>
+    /// Uses <see cref="NUnitTestAssemblyRunner"/> internally.
+    /// </para>
     /// </summary>
     public class NUnitSingleThreadAssemblyRunner
     {
         private NUnitTestAssemblyRunner runner;
         private Dictionary<string, object> settings;
 
-        public NUnitSingleThreadAssemblyRunner()
+        public NUnitSingleThreadAssemblyRunner(IDictionary<string, object>? settings)
         {
             runner = new NUnitTestAssemblyRunner(new DefaultTestAssemblyBuilder());
 
-            settings = new Dictionary<string, object>() {
+            this.settings = new Dictionary<string, object>(settings) {
                 // https://github.com/nunit/nunit/issues/2922
                 [FrameworkPackageSettings.NumberOfTestWorkers] = 0,
                 [FrameworkPackageSettings.SynchronousEvents] = true,
                 [FrameworkPackageSettings.RunOnMainThread] = true
             };
         }
+
+        public NUnitSingleThreadAssemblyRunner()
+            : this(settings: null) { }
 
         public void LoadTestsInAssembly(Assembly assembly) =>
             runner.Load(assembly, settings);
@@ -40,7 +47,7 @@ namespace Teronis.NUnit.Api
             return runner.Run(listener, filter);
         }
 
-        internal class FunctionlessTestListener : ITestListener
+        private class FunctionlessTestListener : ITestListener
         {
             public static FunctionlessTestListener Instance = new FunctionlessTestListener();
 
@@ -50,7 +57,7 @@ namespace Teronis.NUnit.Api
             public void TestStarted(ITest test) { }
         }
 
-        internal class FunctionlessTestFilter : ITestFilter
+        private class FunctionlessTestFilter : ITestFilter
         {
             public static FunctionlessTestFilter Instance = new FunctionlessTestFilter();
 

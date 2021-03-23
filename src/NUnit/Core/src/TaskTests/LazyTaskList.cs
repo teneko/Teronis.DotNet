@@ -7,7 +7,7 @@ namespace Teronis.NUnit.TaskTests
 {
     public class LazyTaskList : Collection<SlimLazy<Task>>
     {
-        public async Task AwaitEachTaskWhileIgnoringExceptionsAsync()
+        public async Task AwaitEachTaskButIgnoreExceptionsAsync()
         {
             foreach (var inlineLazy in Items) {
                 try {

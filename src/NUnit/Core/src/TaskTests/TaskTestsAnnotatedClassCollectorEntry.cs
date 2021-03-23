@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Teronis.NUnit.TaskTests
 {
-    public class TaskTestsClassInstanceCollectorEntry
+    public class TaskTestsAnnotatedClassCollectorEntry
     {
         public MemberInfo MemberInfo { get; }
         /// <summary>
@@ -11,7 +11,7 @@ namespace Teronis.NUnit.TaskTests
         /// </summary>
         public ITaskTests? Instance { get; private set; }
 
-        public TaskTestsClassInstanceCollectorEntry(MemberInfo memberInfo, ITaskTests? taskTestsInstance)
+        public TaskTestsAnnotatedClassCollectorEntry(MemberInfo memberInfo, ITaskTests? taskTestsInstance)
         {
             MemberInfo = memberInfo ?? throw new ArgumentNullException(nameof(memberInfo));
 

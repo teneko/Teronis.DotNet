@@ -1,4 +1,12 @@
 ﻿@page "/"
 
-<NUnitTests AssemblyType="typeof(Index)" 
-            BeforeAssertingTasks="async (sp) => NUnitEntryPoint.AssertableTasks = await sp.AssignAndInitTaskTestsClassInstancesAsync(typeof(Program).Assembly)" />
+<NUnitTests AssemblyType="typeof(Index)" BeforeAssertingTasks="BeforeAssertingTasks" />
+
+@code {
+    private async Task BeforeAssertingTasks(IServiceProvider serviceProvider)
+    {
+        NUnitEntryPoint.AssertableTasks = await serviceProvider
+            .ToTasksTestsAnnotatedClasses()
+            .AssignInstancesAndPrepareTasksAssertion(typeof(Program).Assembly);
+    }
+} 

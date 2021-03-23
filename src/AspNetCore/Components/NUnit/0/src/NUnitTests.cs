@@ -62,10 +62,11 @@ namespace Teronis.AspNetCore.Components.NUnit
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            /* By calling it in OnAfterRenderAsync we should support Blazor App. */
+            /* By calling it in OnAfterRenderAsync we should support Blazor Server. */
 
             if (firstRender) {
                 await RunTestsAsync();
+                // Is now supported in OnAfterRenderAsync cycle.
                 StateHasChanged();
             }
 

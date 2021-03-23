@@ -15,7 +15,7 @@ namespace Teronis.NUnit.TaskTests
     /// a single instance of <see cref="ITaskTests"/>.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-    public class TaskTestSourceAttribute : NUnitAttribute, ITestBuilder, IImplyFixture
+    public class TaskTestsSourceAttribute : NUnitAttribute, ITestBuilder, IImplyFixture
     {
         public Type TaskTestsClassType { get; }
         public string TaskTestsInstanceName { get; }
@@ -23,7 +23,7 @@ namespace Teronis.NUnit.TaskTests
         private List<TestCaseParameters> skipReasonedParametersList;
         private List<TestCaseParameters> testCaseParametersList;
 
-        public TaskTestSourceAttribute(Type taskTestsClassType, string taskTestsInstanceName)
+        public TaskTestsSourceAttribute(Type taskTestsClassType, string taskTestsInstanceName)
         {
             skipReasonedParametersList = new List<TestCaseParameters>();
             testCaseParametersList = new List<TestCaseParameters>();
@@ -97,7 +97,7 @@ namespace Teronis.NUnit.TaskTests
 
         private void AddTestAssertionsToTestCaseParametersList(ITaskTests taskTestsInstance)
         {
-            foreach (var testAssertion in taskTestsInstance.GetAwaitableTasksToBeTested()) {
+            foreach (var testAssertion in taskTestsInstance.GetAssertableTasks()) {
                 var testCaseParameters = new TestCaseParameters(new object[] { testAssertion });
                 testCaseParametersList.Add(testCaseParameters);
             }

@@ -4,14 +4,14 @@ using System.Reflection;
 
 namespace Teronis.NUnit.TaskTests
 {
-    public class TaskTestsClassInstanceCollector
+    public class TaskTestsAnnotatedClassCollector
     {
         private readonly Assembly assembly;
 
-        public TaskTestsClassInstanceCollector(Assembly assembly) =>
+        public TaskTestsAnnotatedClassCollector(Assembly assembly) =>
             this.assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
 
-        public IEnumerable<TaskTestsClassInstanceCollectorEntry> Collect()
+        public IEnumerable<TaskTestsAnnotatedClassCollectorEntry> Collect()
         {
             var attributeType = typeof(TaskTestsAttribute);
 
@@ -51,7 +51,7 @@ namespace Teronis.NUnit.TaskTests
                     throw new InvalidOperationException($"Member by name \"{instanceMemberName}\" was already assigned but it is not of type {typeof(ITaskTests)}.");
                 }
 
-                yield return new TaskTestsClassInstanceCollectorEntry(member, taskTestsInstance);
+                yield return new TaskTestsAnnotatedClassCollectorEntry(member, taskTestsInstance);
             }
         }
     }

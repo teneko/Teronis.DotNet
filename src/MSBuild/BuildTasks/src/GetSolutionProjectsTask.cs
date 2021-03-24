@@ -36,10 +36,10 @@ using Microsoft.Build.Framework;
 namespace MSBuild.Community.Tasks
 {
     /// <summary>
-    /// Retrieves the list of Projects contained within a Visual Studio Solution (.sln) file 
+    /// Retrieves the list of Projects contained within a Visual Studio Solution (.sln) file .
     /// </summary>
     /// <example>
-    /// Returns project name, GUID, and path information from test solution
+    /// Returns project name, GUID, and path information from test solution.
     /// <code><![CDATA[
     ///   <Target Name="Test">
     ///       <GetSolutionProjects Solution="TestSolution.sln">
@@ -64,10 +64,10 @@ namespace MSBuild.Community.Tasks
         private const string SolutionFolderProjectType = "{2150E333-8FDC-42A3-9474-1A3956D46DE8}";
         private const string ExtractProjectsFromSolutionRegex = @"Project\(""(?<ProjectTypeGUID>.+?)""\)\s*=\s*""(?<ProjectName>.+?)""\s*,\s*""(?<ProjectFile>.+?)""\s*,\s*""(?<ProjectGUID>.+?)""";
         private string solutionFile = "";
-        private ITaskItem[] output = null;
+        private ITaskItem[]? output = null;
 
         /// <summary>
-        /// A list of the project files found in <see cref="Solution" />
+        /// A list of the project files found in <see cref="Solution" />.
         /// </summary>
         /// <remarks>
         /// The name of the project can be retrieved by reading metadata tag <c>ProjectName</c>.
@@ -79,13 +79,13 @@ namespace MSBuild.Community.Tasks
         /// </para>
         /// </remarks>
         [Output]
-        public ITaskItem[] Output {
+        public ITaskItem[]? Output {
             get { return output; }
             set { output = value; }
         }
 
         /// <summary>
-        /// Name of Solution to get Projects from
+        /// Name of Solution to get the projects from.
         /// </summary>
         [Required]
         public string Solution {
@@ -94,7 +94,7 @@ namespace MSBuild.Community.Tasks
         }
 
         /// <summary>
-        /// Perform task
+        /// Performs the task.
         /// </summary>
         /// <returns>true on success</returns>
         public override bool Execute()
@@ -127,14 +127,12 @@ namespace MSBuild.Community.Tasks
                 project.SetMetadata("ProjectPath", projectFile);
                 project.SetMetadata("ProjectName", projectName);
                 project.SetMetadata("ProjectGUID", projectGUID);
-                project.SetMetadata("ProjectTypeGUID", projectGUID);
+                project.SetMetadata("ProjectTypeGUID", projectTypeGUID);
                 taskItems.Add(project);
             }
 
             output = taskItems.ToArray();
             return true;
         }
-
-
     }
 }

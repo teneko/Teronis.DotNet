@@ -21,7 +21,7 @@
       And '$(IsGitVersionCacheRelated)' != 'true'
       And '$(DisableGitVersionCache)' != 'true'" />
 
-  <ItemGroup>
+  <!-- <ItemGroup>
     <PackageReference Include="Nullable" Version="1.3.0"
       Condition="'$(NullableWorkaround)' != 'disable' And '$(Nullable)' == 'enable' And ('$(TargetFramework)' == 'netstandard2.0'
         Or '$(TargetFramework)' == 'netstandard2.1'
@@ -29,7 +29,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  </ItemGroup>
+  </ItemGroup> -->
 
   <PropertyGroup>
     <PackageDescription Condition="'$(PackageDescription)' == '' And '$(Description)' != ''">$(Description)</PackageDescription>

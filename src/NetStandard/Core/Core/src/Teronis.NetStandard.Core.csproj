@@ -6,7 +6,6 @@
     <Description>A collection of utilities, extensions and classes for the .NET Standard implementation.</Description>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Nullable>enable</Nullable>
-    <NullableWorkaround>disable</NullableWorkaround>
   </PropertyGroup>
 
   <ItemGroup>

@@ -38,7 +38,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <NonCSPPFiles Remove="Properties\AssemblyInfo.cs" />
+    <None Remove="Properties\**" />
   </ItemGroup>
 
   <!-- THIS AREA IS FOR DEVELOPMENT -->
@@ -94,52 +94,54 @@
 
   </Choose>
 
-  <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-
   <!-- THIS AREA IS FOR PACKAGE CREATION -->
 
   <ItemGroup>
-    <Content Include="@(NetStandard1_0CompliantNonCSPPFiles->'%(CSPPFilePath)')">
+    <None Include="@(NetStandard1_0CompliantNonCSPPFiles->'%(CSPPFilePath)')">
       <Pack>true</Pack>
       <PackagePath>contentFiles/cs/netstandard1.0;content/netstandard1.0</PackagePath>
-    </Content>
+      <BuildAction>Content</BuildAction>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="@(Net20CompliantNonCSPPFiles->'%(CSPPFilePath)')">
+    <None Include="@(Net20CompliantNonCSPPFiles->'%(CSPPFilePath)')">
       <Pack>true</Pack>
       <PackagePath>contentFiles/cs/net20;content/net20</PackagePath>
-    </Content>
+      <BuildAction>Content</BuildAction>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="@(NetStandard2_0CompliantNonCSPPFiles->'%(CSPPFilePath)')">
+    <None Include="@(NetStandard2_0CompliantNonCSPPFiles->'%(CSPPFilePath)')">
       <Pack>true</Pack>
       <PackagePath>contentFiles/cs/netstandard2.0;content/netstandard2.0</PackagePath>
-    </Content>
+      <BuildAction>Content</BuildAction>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="@(Net40CompliantNonCSPPFiles->'%(CSPPFilePath)')">
+    <None Include="@(Net40CompliantNonCSPPFiles->'%(CSPPFilePath)')">
       <Pack>true</Pack>
       <PackagePath>contentFiles/cs/net40;content/net40</PackagePath>
-    </Content>
+      <BuildAction>Content</BuildAction>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="@(NetStandard2_1CompliantNonCSPPFiles->'%(CSPPFilePath)')">
+    <None Include="@(NetStandard2_1CompliantNonCSPPFiles->'%(CSPPFilePath)')">
       <Pack>true</Pack>
       <PackagePath>contentFiles/cs/netstandard2.1;content/netstandard2.1</PackagePath>
-    </Content>
+      <BuildAction>Content</BuildAction>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="C:\Users\christoph\source\repos\Teronis.DotNet\src\Nullable\src\content\_._">
+    <None Include="C:\Users\christoph\source\repos\Teronis.DotNet\src\Nullable\src\content\_._">
       <Pack>true</Pack>
       <PackagePath>contentFiles/cs/net5.0;content/net5.0</PackagePath>
-    </Content>
+      <BuildAction>Content</BuildAction>
+    </None>
   </ItemGroup>
 
   <!-- THIS IS FOR TERONIS.DOTNET -->

@@ -52,7 +52,7 @@
   <UsingTask TaskName="GetSolutionProjects" AssemblyFile="$(MSBuildBuildTasksAssemblyFile)" />
 
   <!-- No Inputs/Outputs needed: autogeneration of AssemblyInfo supports already cache. -->
-  <Target Name="GenerateInternalsVisibleTo">
+  <Target Name="GenerateInternalsVisibleTo" Condition="Exists($(MSBuildBuildTasksAssemblyFile))">
 
     <GetSolutionProjects Solution="$(TeronisDotNetSolutionPath)">
       <Output ItemName="ProjectFiles" TaskParameter="Output"/>

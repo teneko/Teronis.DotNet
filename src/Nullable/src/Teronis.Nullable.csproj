@@ -11,9 +11,10 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
     <!-- Prevent any kind of magic. -->
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <!-- See at section "THIS IS FOR TERONIS.DOTNET" below. -->
+    <!--<GenerateAssemblyInfo>false</GenerateAssemblyInfo>-->
 
     <!-- 
       Get rid of:
@@ -50,10 +51,10 @@
   <!-- Now compile them dependent on framework. -->
 
   <Choose>
-    
+
     <When Condition="'$(TargetFramework)' == 'netstandard1.0'">
       <ItemGroup>
-      <Compile Include="@(NetStandard1_0CompliantNonCSPPFiles)" />
+        <Compile Include="@(NetStandard1_0CompliantNonCSPPFiles)" />
       </ItemGroup>
     </When>
 
@@ -65,7 +66,7 @@
 
     <When Condition="'$(TargetFramework)' == 'netstandard2.0'">
       <ItemGroup>
-      <Compile Include="@(NetStandard2_0CompliantNonCSPPFiles)" />
+        <Compile Include="@(NetStandard2_0CompliantNonCSPPFiles)" />
       </ItemGroup>
     </When>
 
@@ -135,14 +136,29 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="@(Net5_0CompliantNonCSPPFiles->'%(CSPPFilePath)')">
+    <Content Include="C:\Users\christoph\source\repos\Teronis.DotNet\src\Nullable\src\content\_._">
       <Pack>true</Pack>
       <PackagePath>contentFiles/cs/net5.0;content/net5.0</PackagePath>
     </Content>
   </ItemGroup>
 
   <!-- THIS IS FOR TERONIS.DOTNET -->
-  
-  
-  
+
+  <!-- 
+    It is by default true, but for documentation:
+      We use assembly info autogeneration to generate
+      InternalsVisibleTo for each project in Teronis.DotNet.sln.
+      So we are eligable to use this project as project reference.
+      
+      Just a thought but important: We could allow that this
+      project reference is picked up as NuGet-dependency in
+      .nuspec file of package of project references that use
+      this project because we publish this project as package
+      too. But such a small library is not worth to be listed
+      as NuGet-dependency. It has only ~10kb.
+  -->
+  <PropertyGroup>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+  </PropertyGroup>
+
 </Project>

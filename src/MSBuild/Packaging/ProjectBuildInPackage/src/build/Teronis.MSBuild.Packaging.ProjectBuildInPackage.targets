@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project InitialTargets="ApplyProjectBuildInPackageTargetsForTfmSpecificBuildOutput" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
+  
   <Target Name="ApplyProjectBuildInPackageTargetsForTfmSpecificBuildOutput">
 
     <ItemGroup>
@@ -23,7 +23,7 @@
       <IsVerbosityNormal Condition="'$(IsVerbosityDetailed)' == 'true' Or '$(ProjectBuildInPackageVerbosity)' == 'normal' Or '$(ProjectBuildInPackageVerbosity)' == 'n'">true</IsVerbosityNormal>
     </PropertyGroup>
 
-    <Message Condition="'$(NoProjectBuildInPackageWelcome)' != 'true'" Text="[$(MSBuildThisFileName)] Thanks for using my package &lt;3" Importance="high" />
+    <Message Condition="'$(NoProjectBuildInPackageWelcome)' != 'true'" Text="[$(MSBuildThisFileName)] Thanks for using my package. &lt;3" Importance="high" />
 
     <ItemGroup>
       <!-- Filter out unnecessary files -->
@@ -31,13 +31,21 @@
     </ItemGroup>
 
     <!-- Print batches for debug purposes -->
-    <Message Condition="'$(IsVerbosityDetailed)' == 'true' And '@(_ReferenceCopyLocalPaths)' != ''" Text="[$(MSBuildThisFileName)] Copy $([MSBuild]::MakeRelative('$(MSBuildProjectDirectory)','%(_ReferenceCopyLocalPaths.FullPath)')) (local) to .\%(_ReferenceCopyLocalPaths.DestinationSubDirectory) (package)" Importance="high" />
-    <Message Condition="'$(IsVerbosityNormal)' == 'true' And '@(_ReferenceCopyLocalPaths)' != ''" Text="[$(MSBuildThisFileName)] @(_ReferenceCopyLocalPaths->Count()) local files have been copied to package" Importance="high" />
+    <Message Condition="'$(IsVerbosityDetailed)' == 'true' And '@(_ReferenceCopyLocalPaths)' != ''"
+             Text="[$(MSBuildThisFileName)] Copy $([MSBuild]::MakeRelative('$(MSBuildProjectDirectory)','%(_ReferenceCopyLocalPaths.FullPath)')) (local) to .\%(_ReferenceCopyLocalPaths.DestinationSubDirectory) (package)" Importance="high" />
+    
+    <Message Condition="'$(IsVerbosityNormal)' == 'true' And '@(_ReferenceCopyLocalPaths)' != ''"
+             Text="[$(MSBuildThisFileName)] @(_ReferenceCopyLocalPaths->Count()) local files have been copied to package. (TargetFramework=$(TargetFramework))" Importance="high" />
 
-    <Message Condition="'$(IsVerbosityDetailed)' == 'true' And '@(_ReferenceCopyLocalPaths)' == ''" Text="[$(MSBuildThisFileName)] There are no copy operations. You need to specify PrivateAssets=&quot;all&quot; to to those projects which build output you want to to have copied to the package." Importance="high" />
+    <Message Condition="'$(IsVerbosityDetailed)' == 'true' And '@(_ReferenceCopyLocalPaths)' == ''"
+             Text="[$(MSBuildThisFileName)] There are no copy operations. You need to specify PrivateAssets=&quot;all&quot; to to those projects which build output you want to to have copied to the package." Importance="high" />
 
     <ItemGroup>
-      <!-- Add file to package with consideration of sub folder. If sub folder is empty, the root folder is chosen. -->
+      <!-- 
+        Instruct to add files to package with consideration of their individual sub folder. 
+        
+        If sub folder is empty, the root folder of specific target framework in package is chosen.
+      -->
       <BuildOutputInPackage Include="@(_ReferenceCopyLocalPaths)" TargetPath="%(_ReferenceCopyLocalPaths.DestinationSubDirectory)" />
     </ItemGroup>
 

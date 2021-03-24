@@ -6,9 +6,7 @@
   <Import Project="$(TeronisMSBuildPackagingProjectBuildInPackageTargetsFile)" />
   <Import Project="$(TeronisMSBuildPackagingPackTargetsFile)" Condition="Exists($(TeronisMSBuildPackagingPackTargetsFile))" />
 
-  <!--
-  GitVersionCache
-  -->
+  <!-- GIT_VERSION_CACHE: Replacement for GitVersion because it had some lock file issues. -->
 
   <Import Project="$(TeronisMSBuildPackagingGitVersionCachePropsFile)" 
     Condition="Exists('$(TeronisMSBuildPackagingGitVersionCachePropsFile)')
@@ -22,10 +20,6 @@
     Condition="Exists('$(TeronisMSBuildPackagingGitVersionCacheTargetsFile)') 
       And '$(IsGitVersionCacheRelated)' != 'true'
       And '$(DisableGitVersionCache)' != 'true'" />
-  
-  <!-- <ItemGroup>
-    <Compile Remove="$(MSBuildThisFileDirectory)/Nullable.cs" Condition="'$(Nullable)' != 'enable' Or '$(DisallowNullableAttributes)' == 'true'" />
-  </ItemGroup> -->
 
   <ItemGroup>
     <PackageReference Include="Nullable" Version="1.3.0"
@@ -52,9 +46,13 @@
     <NoWarn Condition="'$(TargetFramework)' == 'netstandard2.0'">$(NoWarn);CS8767;CS8769;0436</NoWarn>
   </PropertyGroup>
 
+  <!-- LINKS SOURCE CODE TO CODE UPLOADED TO GITHUB -->
+
   <ItemGroup>
 
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" Conditions="'$(DisableGitVersionCache)' != 'true' And $(IsPackable)" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0"
+      PrivateAssets="All"
+      Conditions="'$(DisableGitVersionCache)' != 'true' And $(IsPackable)" />
     
   </ItemGroup>
 

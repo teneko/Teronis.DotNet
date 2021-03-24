@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project InitialTargets="CopyToCSPPFilesFolder" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project InitialTargets="CopyToCSPPFilesFolder; GenerateInternalsVisibleTo" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory).., Directory.Build.props))\Directory.Build.props" />
+
+  <!-- FOR DEVELOPEMENT AND PACKAGE CREATION -->
 
   <PropertyGroup>
     <ImportDirectoryBuildTargets>false</ImportDirectoryBuildTargets>
   </PropertyGroup>
 
   <ItemGroup>
-    <NonCSPPFiles Include="$(MSBuildThisFileDirectory)**/*.cs">
-      <CSPPFilePath>$(MSBuildThisFileDirectory)content/%(RecursiveDir)/%(Filename).cs.pp</CSPPFilePath>
+    <!-- Search for .cs-files one level deep. Otherwise we would have to exclude Properties/* manually. -->
+    <NonCSPPFiles Include="$(MSBuildThisFileDirectory)*.cs">
+      <CSPPFilePath>$(MSBuildThisFileDirectory)obj/StaticAnalysisAttributes/%(RecursiveDir)/%(Filename).cs.pp</CSPPFilePath>
 
       <AnnotatedWithExcludeFromCodeCoverage>false</AnnotatedWithExcludeFromCodeCoverage>
       <AnnotatedWithExcludeFromCodeCoverage Condition="$([System.String]::Copy(%(Filename)).Contains('ExcludeFromCodeCoverage'))">true</AnnotatedWithExcludeFromCodeCoverage>
@@ -19,7 +22,9 @@
                                 Or $([System.String]::Copy(%(Filename)).Contains('IsMemberNotNullWhenAttribute'))">true</IsMemberNotNullOrWhenAttribute>
     </NonCSPPFiles>
 
-    <NonCSPPFiles Remove="obj/**/*.cs" />
+    <!-- Needed when we search more than one level deep (globbing). -->
+    <!--<NonCSPPFiles Remove="obj/**/*.cs" />-->
+    <!--<NonCSPPFiles Remove="Properties/**/*.cs" />-->
 
     <NetStandard1_0CompliantNonCSPPFiles Include="@(NonCSPPFiles->WithMetadataValue('AnnotatedWithExcludeFromCodeCoverage','false'))"/>
 
@@ -30,7 +35,7 @@
 
     <NetStandard2_1CompliantNonCSPPFiles Include="@(NonCSPPFiles->WithMetadataValue('IsMemberNotNullOrWhenAttribute','true'))" />
 
-    <Net5_0CompliantNonCSPPFiles Include="_._">
+    <Net5_0CompliantNonCSPPFiles Include="$(MSBuildThisFileDirectory)content/_._">
       <CSPPFilePath>%(FullPath)</CSPPFilePath>
     </Net5_0CompliantNonCSPPFiles>
   </ItemGroup>
@@ -40,6 +45,25 @@
           Outputs="@(NonCSPPFiles->'%(CSPPFilePath)')">
 
     <Copy SourceFiles="@(NonCSPPFiles)" DestinationFiles="%(CSPPFilePath)"></Copy>
+  </Target>
+
+  <!-- THIS IS FOR TERONIS.DOTNET -->
+  
+  <UsingTask TaskName="GetSolutionProjects" AssemblyFile="$(MSBuildBuildTasksAssemblyFile)" />
+
+  <!-- No Inputs/Outputs needed: autogeneration of AssemblyInfo supports already cache. -->
+  <Target Name="GenerateInternalsVisibleTo">
+
+    <GetSolutionProjects Solution="$(TeronisDotNetSolutionPath)">
+      <Output ItemName="ProjectFiles" TaskParameter="Output"/>
+    </GetSolutionProjects>
+
+    <ItemGroup>
+      <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+        <_Parameter1>%(ProjectFiles.ProjectName)</_Parameter1> 
+      </AssemblyAttribute>
+    </ItemGroup>
+
   </Target>
 
 </Project>

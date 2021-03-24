@@ -6,7 +6,7 @@
     <Description>A collection of utilities, extensions and classes for the .NET Standard implementation.</Description>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Nullable>enable</Nullable>
-    <!--<NullableWorkaround>disable</NullableWorkaround>-->
+    <NullableWorkaround>disable</NullableWorkaround>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,8 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!--<ProjectReference Include="..\..\..\..\Nullable\src\Teronis.Nullable.csproj" />-->
     <ProjectReference Include="..\..\Core.Localization\src\Teronis.NetStandard.Core.Localization.csproj" PrivateAssets="all" />
+    <!--<ProjectReference Include="..\..\Core.Localization\src\Teronis.NetStandard.Core.Localization.csproj" />-->
   </ItemGroup>
 
 </Project>

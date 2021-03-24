@@ -7,6 +7,7 @@
 
     <!-- / (root) -->
     <RootDirectory Condition="'$(RootDirectory)' == ''">$(MSBuildThisFileDirectory)</RootDirectory>
+    <TeronisDotNetSolutionPath>$(RootDirectory)Teronis.DotNet.sln</TeronisDotNetSolutionPath>
     <RootIntermediateDirectory>$(RootDirectory)obj\</RootIntermediateDirectory>
     <PackagePublishmentsDirectory>$(RootIntermediateDirectory)package-publishments\</PackagePublishmentsDirectory>
     <RootBuildPropsPath Condition="'$(RootBuildPropsPath)' == ''">$(RootDirectory)\Directory.Build.props</RootBuildPropsPath>

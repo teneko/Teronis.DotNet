@@ -87,7 +87,7 @@ class Build : NukeBuild
                      .SetConfiguration(Configuration.Release)
                      .SetOutput(binaryDirectory)
                      // We assume that every local binary project supports net5.0.
-                     .SetFramework("net5.0")
+                     .SetFramework("net472")
                      .EnableNoRestore());
              });
          });

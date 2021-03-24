@@ -5,17 +5,16 @@
   -->
   
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net5.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
     <Nullable>enable</Nullable>
+    <Description>Some special targets and tasks. See comments in source code.</Description>
     
-    <!--<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>-->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <!-- We do not want a package that is transitive. -->
     <DevelopmentDependency>true</DevelopmentDependency>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IncludeSymbols>false</IncludeSymbols>
-    <RootNamespace>Teronis.MSBuild</RootNamespace>
-    <Description>Some special targets and tasks. See comments in source code.</Description>
     <LocalBinary>true</LocalBinary>
 
   </PropertyGroup>

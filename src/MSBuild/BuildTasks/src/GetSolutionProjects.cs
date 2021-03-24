@@ -33,7 +33,7 @@ using System.IO;
 using Microsoft.Build.Utilities;
 using Microsoft.Build.Framework;
 
-namespace MSBuild.Community.Tasks
+namespace Teronis.MSBuild.BuildTasks
 {
     /// <summary>
     /// Retrieves the list of Projects contained within a Visual Studio Solution (.sln) file .

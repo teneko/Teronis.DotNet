@@ -2,12 +2,12 @@
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
-namespace Teronis.MSBuild
+namespace Teronis.MSBuild.BuildTasks
 {
     /// <summary>
     /// First level metadata are transformed to semicolon separated key value pairs.
     /// </summary>
-    public class MetadataToStringTask : Task
+    public class MetadataToString : Task
     {
         [Required]
         public ITaskItem[] Item { get; set; } = null!;

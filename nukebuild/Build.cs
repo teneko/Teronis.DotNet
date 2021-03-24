@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Linq;
-using Nuke.Common;
+﻿using Nuke.Common;
 using Nuke.Common.CI;
 using Nuke.Common.Execution;
 using Nuke.Common.Git;
@@ -39,11 +37,13 @@ class Build : NukeBuild
 
     [GitRepository] readonly GitRepository GitRepository;
 
-    [GitVersion(Framework = "netcoreapp3.1")] 
+    [GitVersion(Framework = "netcoreapp3.1")]
     readonly GitVersion GitVersion;
 
     AbsolutePath SourceDirectory => RootDirectory / "src";
     AbsolutePath PackagesDirectory => RootDirectory / "obj" / "packages";
+    AbsolutePath LocalDirectory => RootDirectory / "local";
+    AbsolutePath LocalBinDirectory => LocalDirectory / "bin";
 
     Target Clean => _ => _
         .Before(Restore)
@@ -64,6 +64,33 @@ class Build : NukeBuild
                 .SetProjectFile(Solution)
                 .SetVerbosity(DotNetVerbosity));
         });
+
+    Target CleanBinary => _ => _
+        .Executes(() => {
+            DeleteDirectory(LocalDirectory);
+        });
+
+    Target CompileBinary => _ => _
+         .DependsOn(Restore)
+         .Executes(() => {
+             Solution.AllProjects.ForEach(project => {
+                 var isLocalBinary = project.GetMSBuildProject().GetPropertyValue("LocalBinary");
+
+                 if (string.IsNullOrEmpty(isLocalBinary) || isLocalBinary != "true") {
+                     return;
+                 }
+
+                 var binaryDirectory = LocalBinDirectory / project.Name;
+
+                 DotNetPublish(s => s
+                     .SetProject(project)
+                     .SetConfiguration(Configuration.Release)
+                     .SetOutput(binaryDirectory)
+                     // We assume that every local binary project supports net5.0.
+                     .SetFramework("net5.0")
+                     .EnableNoRestore());
+             });
+         });
 
     Target Compile => _ => _
         .DependsOn(Restore)

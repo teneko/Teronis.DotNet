@@ -1,11 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <!--
+    Caution: The assembly is not in package. This may change in future.
+  -->
+  
   <PropertyGroup>
-
-    <TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net5.0</TargetFrameworks>
     <Nullable>enable</Nullable>
-
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    
+    <!--<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>-->
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <!-- We do not want a package that is transitive. -->
     <DevelopmentDependency>true</DevelopmentDependency>
@@ -13,6 +16,7 @@
     <IncludeSymbols>false</IncludeSymbols>
     <RootNamespace>Teronis.MSBuild</RootNamespace>
     <Description>Some special targets and tasks. See comments in source code.</Description>
+    <LocalBinary>true</LocalBinary>
 
   </PropertyGroup>
 

@@ -19,6 +19,7 @@
     <TeronisNetStandardCoreDirectory Condition="'$(TeronisNetStandardCoreDirectory)' == ''">$(RootDirectory)\src\NetStandard\Core\Core\</TeronisNetStandardCoreDirectory>
 
     <!-- Teronis.MSBuild.BuildTasks -->
+    <MSBuildBuildTasksAssemblyFile>$(RootDirectory)local\bin\Teronis.MSBuild.BuildTasks\Teronis.MSBuild.BuildTasks.dll</MSBuildBuildTasksAssemblyFile>
     <TeronisMSBuildBuildTasksTargetTasksTargetsFile>$(RootDirectory)src\MSBuild\BuildTasks\src\build\TargetTasks.targets</TeronisMSBuildBuildTasksTargetTasksTargetsFile>
 
     <!-- Teronis.MSBuild.BuildTasks -->

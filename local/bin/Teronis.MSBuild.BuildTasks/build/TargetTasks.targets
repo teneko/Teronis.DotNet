@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <IsTeronisMSBuildBuildTasksTargetTasksImported>true</IsTeronisMSBuildBuildTasksTargetTasksImported>
+  </PropertyGroup>
+
+  <!-- 
+  # Target searches for single package.
+  # It does not support searching recursively.
+  # It needs the following properties:
+  # - SearchPackageDirectory: The location where to search.
+  # - SearchPackageId: The base package name without '-<version>'.
+  # Target returns a single package represented as a collection (ItemGroup) of _FoundPackage.
+  -->
+  <Target Name="SearchPackage" Returns="@(_FoundPackage)">
+
+    <Message Text="[$(MSBuildThisFileName)] Try to find package $(SearchPackageId) in $(SearchPackageDirectory)" Importance="high" />
+
+    <ItemGroup>
+      <__FoundPackageFiles Include="$(SearchPackageDirectory)\$(SearchPackageId)*.nupkg" />
+    </ItemGroup>
+
+    <Message Text="[$(MSBuildThisFileName)] - Found package file -&gt; %(__FoundPackageFiles.Identity)" Importance="high" />
+
+    <Error Condition="@(__FoundPackageFiles-&gt;Count()) == 0" Text="[$(MSBuildThisFileName)] An error occured: In the folder $(SearchPackageDirectory) is no package. Please pack project." />
+    <Error Condition="@(__FoundPackageFiles-&gt;Count()) &gt; 1" Text="[$(MSBuildThisFileName)] An error occured: In the folder $(SearchPackageDirectory) is more than one package. Please delete relicts." />
+
+    <ItemGroup>
+      <_FoundPackage Include="@(__FoundPackageFiles)">
+        <Id>$(SearchPackageId)</Id>
+        <Version>$([System.String]::Copy('%(Filename)').Replace('$(SearchPackageId).',''))</Version>
+      </_FoundPackage>
+    </ItemGroup>
+
+    <Message Text="[$(MSBuildThisFileName)] - Evaluated package version -&gt; %(_FoundPackage.Version)" Importance="high" />
+
+  </Target>
+
+  <!-- 
+  # Please take a look at the description of Target SearchPackage above.
+  # Target does unzip package that has been found by Target SearchPackage
+  # It needs the following properties:
+  # - UnzipPackageDirectory: The location where to search.
+  # - UnzipPackageId: The base package name without '-<version>'.
+  # - UnzipPackageDestinationDirectory: The location where to unzip.
+  -->
+  <Target Name="UnzipPackage" Returns="@(_FoundPackage)">
+
+    <PropertyGroup>
+      <_UnzipPackageDestinationDirectory>$(UnzipPackageDestinationDirectory)</_UnzipPackageDestinationDirectory>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <_SearchPackageProperties>
+        SearchPackageId=$(UnzipPackageId);
+        SearchPackageDirectory=$(UnzipPackageDirectory)
+      </_SearchPackageProperties>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_FoundPackage Remove="@(_FoundPackage)" />
+    </ItemGroup>
+
+    <MSBuild Projects="$(MSBuildThisFile)" Targets="SearchPackage" Properties="$(_SearchPackageProperties)">
+      <Output TaskParameter="TargetOutputs" ItemName="_FoundPackage" />
+    </MSBuild>
+
+    <PropertyGroup>
+      <_UnzipPackageDestinationDirectory Condition="'$(_UnzipPackageDestinationDirectory)' == ''">%(_FoundPackage.RootDir)%(_FoundPackage.Directory)%(_FoundPackage.FileName)</_UnzipPackageDestinationDirectory>
+    </PropertyGroup>
+
+    <Unzip SourceFiles="@(_FoundPackage)" DestinationFolder="$(_UnzipPackageDestinationDirectory)" Condition="'@(_FoundPackage)' != ''" />
+    <Message Text="[$(MSBuildThisFileName)] Package @(_FoundPackage) has been unzipped to $(_UnzipPackageDestinationDirectory)" Importance="high" Condition="'@(_FoundPackage)' != ''" />
+
+  </Target>
+
+  <Target Name="_RetryDeleteDirectory">
+    
+    <Message Text="[$(MSBuildThisFileName)] Retry $(_CurrentRetry): Delete directory '$(Directory)'" Importance="high" />
+    <MSBuild Projects="$(MSBuildThisFile)" Targets="DeleteDirectory" />
+  </Target>
+  
+  <!--
+  # Required parameters:
+  # - Directory: The directory that gets deleted.
+  # Optional parameters:
+  # - Retries: Number of retries. Default is '0'.
+  -->
+  <Target Name="DeleteDirectory" Condition="'$(Directory)' != '' And Exists('$(Directory)')">
+    
+    <ItemGroup>
+      <_Files Include="$(Directory)\**\*" />
+      <_Directories Include="$([System.IO.Directory]::GetDirectories(`$(Directory)`, `*`, System.IO.SearchOption.AllDirectories))" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <_TaskOnceFailed>false</_TaskOnceFailed>
+    </PropertyGroup>
+
+    <Delete Files="@(_Files)" ContinueOnError="true" />
+
+    <PropertyGroup>
+      <_TaskOnceFailed Condition="'$(MSBuildLastTaskResult)' == 'false'">true</_TaskOnceFailed>
+    </PropertyGroup>
+
+    <RemoveDir Directories="@(_Directories)" ContinueOnError="true" Condition="'$(_TaskOnceFailed)' != 'true'" />
+
+    <PropertyGroup>
+      <_TaskOnceFailed Condition="'$(MSBuildLastTaskResult)' == 'false'">true</_TaskOnceFailed>
+    </PropertyGroup>
+    
+    <RemoveDir Directories="$(Directory)" ContinueOnError="true" Condition="'$(_TaskOnceFailed)' != 'true'" />
+
+    <PropertyGroup>
+      <_TaskOnceFailed Condition="'$(MSBuildLastTaskResult)' == 'false'">true</_TaskOnceFailed>
+    </PropertyGroup>
+
+    <PropertyGroup>
+
+      <_CurrentRetry Condition="'$(_CurrentRetry)' == ''">0</_CurrentRetry>
+      <_CurrentRetry>$([MSBuild]::Add($(_CurrentRetry), 1))</_CurrentRetry>
+      
+      <Retries Condition="'$(Retries)' == ''">0</Retries>
+      <Retries>$([MSBuild]::Subtract($(Retries), 1))</Retries>
+
+      <RetryDeleteDirectoryMSBuildPropertes>
+        Retries=$(Retries);
+        _CurrentRetry=$(_CurrentRetry)
+      </RetryDeleteDirectoryMSBuildPropertes>
+      
+    </PropertyGroup>
+    
+    <MSBuild Projects="$(MSBuildThisFileDirectory)$(MSBuildThisFile)" ContinueOnError="true" Targets="_RetryDeleteDirectory" Properties="$(RetryDeleteDirectoryMSBuildPropertes)" Condition="'$(_TaskOnceFailed)' == 'true' And $(Retries) >= 0" />
+
+    <!-- Throw error when last result in last procedure failed. -->
+    <Error Text="[$(MSBuildThisFileName)] The task failed to delete the directory $(Directory)." Condition="'$(_TaskOnceFailed)' == 'true' And $(Retries) &lt; 0" />
+    
+  </Target>
+
+</Project>

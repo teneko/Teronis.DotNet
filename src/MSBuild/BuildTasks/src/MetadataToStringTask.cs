@@ -5,7 +5,7 @@ using Microsoft.Build.Utilities;
 namespace Teronis.MSBuild
 {
     /// <summary>
-    /// First level metadata are transformed to semicolon separated key valu pairs.
+    /// First level metadata are transformed to semicolon separated key value pairs.
     /// </summary>
     public class MetadataToStringTask : Task
     {

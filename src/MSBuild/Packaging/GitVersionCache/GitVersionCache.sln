@@ -14,7 +14,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.MSBuild.Packaging.P
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.MSBuild.Packaging.ProjectBuildInPackage.Test.Localization", "..\ProjectBuildInPackage\test\Test.Localization\Teronis.MSBuild.Packaging.ProjectBuildInPackage.Test.Localization.csproj", "{B9B2F59D-1EE1-437D-87E6-8961ABEF838C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.MSBuild.Core", "..\..\Core\Core\src\Teronis.MSBuild.Core.csproj", "{11505814-F44F-4F90-BAB3-7144B3087AF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.MSBuild.BuildTasks", "..\..\BuildTasks\src\Teronis.MSBuild.BuildTasks.csproj", "{11505814-F44F-4F90-BAB3-7144B3087AF7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.MSBuild.Packaging.ProjectBuildInPackage", "..\ProjectBuildInPackage\src\Teronis.MSBuild.Packaging.ProjectBuildInPackage.csproj", "{92CF9E3B-E651-44C4-864B-2E0EF376075D}"
 EndProject

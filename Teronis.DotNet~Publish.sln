@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.MSBuild.Packaging.P
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.MSBuild.Packaging.GitVersionCache", "src\MSBuild\Packaging\GitVersionCache\0\src\Teronis.MSBuild.Packaging.GitVersionCache.csproj", "{FCE7412B-50BB-426E-BFCC-70A33791A8EC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.MSBuild.Core", "src\MSBuild\Core\Core\src\Teronis.MSBuild.Core.csproj", "{D4D94EE1-3B7E-463D-BC1B-CFC6557D936F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.MSBuild.BuildTasks", "src\MSBuild\BuildTasks\src\Teronis.MSBuild.BuildTasks.csproj", "{D4D94EE1-3B7E-463D-BC1B-CFC6557D936F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.ObjectModel.TreeColumn", "src\NetStandard\ObjectModel\TreeColumn\src\Teronis.NetStandard.ObjectModel.TreeColumn.csproj", "{BD1B9AA3-E929-4520-AE25-E5014C8E5D06}"
 EndProject
@@ -56,6 +56,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{46D55981-C725-48D2-BCC1-7B93D8BB6902}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		.msbuild-projects\IgnoresAccessChecksToAttribute.cs = .msbuild-projects\IgnoresAccessChecksToAttribute.cs
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.ModuleInitializer.AssemblyLoader.Executable~ExecutablePackage", "src\ModuleInitializer\AssemblyLoader\0.Executable\ref\ExecutablePackage\Teronis.ModuleInitializer.AssemblyLoader.Executable~ExecutablePackage.csproj", "{0284866F-5228-4F82-8FA7-7218B0D9DDF2}"

@@ -5,7 +5,7 @@
   <Import Project="$(MSBuildThisDirectory)Teronis.MSBuild.Packaging.GitVersionCache.props" Condition="'$(TeronisMSBuildPackagingGitVersionCacheHasBeenLoaded)' != 'true'" />
 
   <UsingTask AssemblyFile="$(GitVersionCacheAssemblyFile)" TaskName="GetVersionCacheTask" />
-  <UsingTask AssemblyFile="$(MSBuildCoreAssemblyFile)" TaskName="MetadataToStringTask" />
+  <UsingTask AssemblyFile="$(MSBuildBuildTasksAssemblyFile)" TaskName="MetadataToStringTask" />
 
   <!--
   # Optional parameters:

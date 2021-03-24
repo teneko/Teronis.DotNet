@@ -9,7 +9,7 @@
     <TeronisMSBuildPackagingGitVersionCacheHasBeenLoaded>true</TeronisMSBuildPackagingGitVersionCacheHasBeenLoaded>
 
     <GitVersionCacheAssemblyFile Condition="$(GitVersionCacheAssemblyFile) == ''">$(MSBuildThisFileDirectory)..\exe\any\netstandard2.0\Teronis.MSBuild.Packaging.GitVersionCache.dll</GitVersionCacheAssemblyFile>
-    <MSBuildCoreAssemblyFile Condition="$(MSBuildCoreAssemblyFile) == ''">$(MSBuildThisFileDirectory)..\exe\any\netstandard2.0\Teronis.MSBuild.Core.dll</MSBuildCoreAssemblyFile>
+    <MSBuildBuildTasksAssemblyFile Condition="$(MSBuildBuildTasksAssemblyFile) == ''">$(MSBuildThisFileDirectory)..\exe\any\netstandard2.0\Teronis.MSBuild.BuildTasks.dll</MSBuildBuildTasksAssemblyFile>
     
     <DisableGitVersionCache Condition="'$(DisableGitVersionCache)' == ''">false</DisableGitVersionCache>
     

@@ -36,6 +36,10 @@
 
   </PropertyGroup>
 
+  <ItemGroup>
+    <NonCSPPFiles Remove="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+
   <!-- THIS AREA IS FOR DEVELOPMENT -->
 
   <ItemGroup>
@@ -45,28 +49,52 @@
 
   <!-- Now compile them dependent on framework. -->
 
-  <ItemGroup>
-    <Compile Include="@(NetStandard1_0CompliantNonCSPPFiles)" Condition="'$(TargetFramework)' == 'netstandard1.0'" />
-  </ItemGroup>
+  <Choose>
+    
+    <When Condition="'$(TargetFramework)' == 'netstandard1.0'">
+      <ItemGroup>
+      <Compile Include="@(NetStandard1_0CompliantNonCSPPFiles)" />
+      </ItemGroup>
+    </When>
+
+    <When Condition="'$(TargetFramework)' == 'net20'">
+      <ItemGroup>
+        <Compile Include="@(Net20CompliantNonCSPPFiles)" />
+      </ItemGroup>
+    </When>
+
+    <When Condition="'$(TargetFramework)' == 'netstandard2.0'">
+      <ItemGroup>
+      <Compile Include="@(NetStandard2_0CompliantNonCSPPFiles)" />
+      </ItemGroup>
+    </When>
+
+    <When Condition="'$(TargetFramework)' == 'netstandard1.0'">
+      <ItemGroup>
+        <Compile Include="@(NetStandard1_0CompliantNonCSPPFiles)" />
+      </ItemGroup>
+    </When>
+
+    <When Condition="'$(TargetFramework)' == 'net40'">
+      <ItemGroup>
+        <Compile Include="@(Net40CompliantNonCSPPFiles)" />
+      </ItemGroup>
+    </When>
+
+    <When Condition="'$(TargetFramework)' == 'netstandard2.1'">
+      <ItemGroup>
+        <Compile Include="@(NetStandard2_1CompliantNonCSPPFiles)" />
+      </ItemGroup>
+    </When>
+
+    <Otherwise>
+      <!-- We simply do nothing. -->
+    </Otherwise>
+
+  </Choose>
 
   <ItemGroup>
-    <Compile Include="@(Net20CompliantNonCSPPFiles)" Condition="'$(TargetFramework)' == 'net20'" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="@(NetStandard2_0CompliantNonCSPPFiles)" Condition="'$(TargetFramework)' == 'netstandard2.0'" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="@(Net40CompliantNonCSPPFiles)" Condition="'$(TargetFramework)' == 'net40'" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="@(NetStandard2_1CompliantNonCSPPFiles)" Condition="'$(TargetFramework)' == 'netstandard2.1'" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="@(Net5_0CompliantNonCSPPFiles)" Condition="'$(TargetFramework)' == 'net5.0'" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
 
   <!-- THIS AREA IS FOR PACKAGE CREATION -->
@@ -113,4 +141,8 @@
     </Content>
   </ItemGroup>
 
+  <!-- THIS IS FOR TERONIS.DOTNET -->
+  
+  
+  
 </Project>

@@ -29,7 +29,7 @@
 
   <ItemGroup>
     <PackageReference Include="Nullable" Version="1.3.0"
-      Condition="'$(Nullable)' == 'enable' And ('$(TargetFramework)' == 'netstandard2.0'
+      Condition="'$(NullableWorkaround)' != 'disable' And '$(Nullable)' == 'enable' And ('$(TargetFramework)' == 'netstandard2.0'
         Or '$(TargetFramework)' == 'netstandard2.1'
         Or '$(TargetFramework)' == 'netstandard2.2')">
       <PrivateAssets>all</PrivateAssets>

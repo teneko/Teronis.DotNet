@@ -30,7 +30,7 @@
       </LocalPackageSearchProperties>
     </PropertyGroup>
     
-    <MSBuild Projects="$(TeronisMSBuildCoreTargetTasksTargetsFile)" Targets="UnzipPackage" Properties="$(LocalPackageSearchProperties)">
+    <MSBuild Projects="$(TeronisMSBuildBuildTasksTargetTasksTargetsFile)" Targets="UnzipPackage" Properties="$(LocalPackageSearchProperties)">
       <Output TaskParameter="TargetOutputs" ItemName="_FoundPackage" />
     </MSBuild>
 

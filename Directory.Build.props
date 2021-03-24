@@ -20,6 +20,16 @@
 	  <Compile Include="$(MSBuildThisFileDirectory)/Nullable.cs" />
   </ItemGroup> -->
 
+  <ItemGroup>
+
+    <!-- <Compile Include="$(MSBuildThisFileDirectory).msbuild-projects/IgnoresAccessChecksToAttribute.cs"/>
+
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.IgnoresAccessChecksTo">
+      <_Parameter1>Teronis.Nullable</_Parameter1>
+    </AssemblyAttribute> -->
+
+  </ItemGroup>
+
   <PropertyGroup>
     <Authors Condition="'$(Authors)' == ''">Teroneko</Authors>
     <Company Condition="'$(Company)' == ''">$(MSBuildProjectName)</Company>

@@ -18,10 +18,10 @@
     <!-- Teronis.NetStandard.Core -->
     <TeronisNetStandardCoreDirectory Condition="'$(TeronisNetStandardCoreDirectory)' == ''">$(RootDirectory)\src\NetStandard\Core\Core\</TeronisNetStandardCoreDirectory>
 
-    <!-- Teronis.MSBuild.Core -->
-    <TeronisMSBuildCoreTargetTasksTargetsFile>$(RootDirectory)src\MSBuild\Core\Core\src\build\TargetTasks.targets</TeronisMSBuildCoreTargetTasksTargetsFile>
+    <!-- Teronis.MSBuild.BuildTasks -->
+    <TeronisMSBuildBuildTasksTargetTasksTargetsFile>$(RootDirectory)src\MSBuild\BuildTasks\src\build\TargetTasks.targets</TeronisMSBuildBuildTasksTargetTasksTargetsFile>
 
-    <!-- Teronis.MSBuild.Core -->
+    <!-- Teronis.MSBuild.BuildTasks -->
 
     <!-- Teronis.MSBuild.ProjectBuildInPackage -->
     <TeronisMSBuildPackagingProjectBuildInPackagePropsFile Condition="'$(TeronisMSBuildPackagingProjectBuildInPackagePropsFile)' == ''">$(RootDirectory)\src\MSBuild\Packaging\ProjectBuildInPackage\src\build\Teronis.MSBuild.Packaging.ProjectBuildInPackage.props</TeronisMSBuildPackagingProjectBuildInPackagePropsFile>

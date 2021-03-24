@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.IO;
 using System.Linq;
 using Nuke.Common;
 using Nuke.Common.CI;
@@ -6,11 +6,9 @@ using Nuke.Common.Execution;
 using Nuke.Common.Git;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
-using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.GitVersion;
 using Nuke.Common.Utilities.Collections;
-using static Nuke.Common.EnvironmentInfo;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.IO.PathConstruction;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
@@ -29,6 +27,8 @@ class Build : NukeBuild
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
+    // https://stackoverflow.com/questions/52635056/why-teamcity-build-fails-with-because-it-is-being-used-by-another-process-doe/55694056
+    readonly DotNetVerbosity DotNetVerbosity = IsLocalBuild ? DotNetVerbosity.Detailed : DotNetVerbosity.Normal;
 
     [Solution("Teronis.DotNet.sln")]
     readonly Solution Solution;
@@ -49,15 +49,20 @@ class Build : NukeBuild
         .Before(Restore)
         .Executes(() => {
             SourceDirectory
-                .GlobDirectories("**/bin", "**/obj")
-                .Append(RootDirectory / "obj")
-                .ForEach(DeleteDirectory);
+                .GlobFiles("**/*.csproj")
+                .ForEach(path => {
+                    DeleteDirectory(path.Parent / "bin");
+                    DeleteDirectory(path.Parent / "obj");
+                });
+
+            DeleteDirectory(RootDirectory / "obj");
         });
 
     Target Restore => _ => _
         .Executes(() => {
             DotNetRestore(s => s
-                .SetProjectFile(Solution));
+                .SetProjectFile(Solution)
+                .SetVerbosity(DotNetVerbosity));
         });
 
     Target Compile => _ => _
@@ -70,8 +75,7 @@ class Build : NukeBuild
                 .SetFileVersion(GitVersion.AssemblySemFileVer)
                 .SetInformationalVersion(GitVersion.InformationalVersion)
                 .EnableNoRestore()
-                // https://stackoverflow.com/questions/52635056/why-teamcity-build-fails-with-because-it-is-being-used-by-another-process-doe/55694056
-                .SetVerbosity(DotNetVerbosity.Normal));
+                .SetVerbosity(DotNetVerbosity));
         });
 
     Target Test => _ => _
@@ -94,7 +98,8 @@ class Build : NukeBuild
                 .SetAssemblyVersion(GitVersion.AssemblySemVer)
                 .SetFileVersion(GitVersion.AssemblySemFileVer)
                 .SetInformationalVersion(GitVersion.InformationalVersion)
-                .SetConfiguration(Configuration));
+                .SetConfiguration(Configuration)
+                .SetVerbosity(DotNetVerbosity));
 
             PublishSolution.Projects.ForEach(project => {
                 project.Directory.GlobFiles("**/*.nupkg")

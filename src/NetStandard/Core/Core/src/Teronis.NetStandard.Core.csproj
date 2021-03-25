@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core.Localization\src\Teronis.NetStandard.Core.Localization.csproj" PrivateAssets="all" />
-    <!--<ProjectReference Include="..\..\Core.Localization\src\Teronis.NetStandard.Core.Localization.csproj" />-->
   </ItemGroup>
 
 </Project>

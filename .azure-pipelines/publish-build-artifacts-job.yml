@@ -19,6 +19,12 @@ jobs:
   # For better visualization we go through each step 
   # instead of just defining the steps [test, pack].
 
+  - task: UseDotNet@2
+    inputs:
+      packageType: 'sdk'
+      version: '5.0.201'
+
+
   - task: PowerShell@2
     displayName: 'Restore'
     inputs:

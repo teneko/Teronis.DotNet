@@ -43,10 +43,17 @@
 
   <!-- ESSENTIAL VARIABLES -->
 
+  <PropertyGroup>
+    <_PackagePathSubFolder>StaticAnalyseAttributes</_PackagePathSubFolder>
+    <_PackagePath>contentFiles/cs/$(TargetFramework)/$(_PackagePathSubFolder);content/$(TargetFramework)/$(_PackagePathSubFolder)</_PackagePath>
+  </PropertyGroup>
+
   <ItemGroup>
     <!-- Search for .cs-files one level deep. Otherwise we would have to exclude Properties/* manually. -->
     <StaticAnalyseAttributeCSFiles Include="$(MSBuildThisFileDirectory)*.cs">
       <StaticAnalyseAttributeCSPPFilePath>$(MSBuildThisFileDirectory)obj/StaticAnalysisAttributes/%(RecursiveDir)/%(Filename).cs.pp</StaticAnalyseAttributeCSPPFilePath>
+      <_PackagePath>$(_PackagePath)</_PackagePath>
+      <_PackageBuildAction>Compile</_PackageBuildAction>
 
       <AnnotatedWithExcludeFromCodeCoverage>false</AnnotatedWithExcludeFromCodeCoverage>
       <AnnotatedWithExcludeFromCodeCoverage Condition="$([System.String]::Copy(%(Filename)).Contains('ExcludeFromCodeCoverage'))">true</AnnotatedWithExcludeFromCodeCoverage>
@@ -71,6 +78,8 @@
 
     <Net5_0CompliantStaticAnalyseAttributeCSFiles Include="$(MSBuildThisFileDirectory)content/_._">
       <StaticAnalyseAttributeCSPPFilePath>%(FullPath)</StaticAnalyseAttributeCSPPFilePath>
+      <_PackagePath>$(_PackagePath)</_PackagePath>
+      <_PackageBuildAction>Content</_PackageBuildAction>
     </Net5_0CompliantStaticAnalyseAttributeCSFiles>
   </ItemGroup>
 
@@ -161,48 +170,48 @@
                               Condition="'$(TargetFramework)' == 'netstandard1.0'">
         <!-- Only needed in <ItemGroup><Content></Content></ItemGroup> or aquivalent. -->
         <!--<Pack>true</Pack>-->
-        <PackagePath>contentFiles/cs/netstandard1.0;content/netstandard1.0</PackagePath>
-        <BuildAction>Content</BuildAction>
+        <PackagePath>%(_PackagePath)</PackagePath>
+        <BuildAction>%(_PackageBuildAction)</BuildAction>
       </TfmSpecificPackageFile>
     </ItemGroup>
 
     <ItemGroup>
       <TfmSpecificPackageFile Include="@(Net20CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSPPFilePath)')"
                               Condition="'$(TargetFramework)' == 'net20'">
-        <PackagePath>contentFiles/cs/net20;content/net20</PackagePath>
-        <BuildAction>Content</BuildAction>
+        <PackagePath>%(_PackagePath)</PackagePath>
+        <BuildAction>%(_PackageBuildAction)</BuildAction>
       </TfmSpecificPackageFile>
     </ItemGroup>
 
     <ItemGroup>
       <TfmSpecificPackageFile Include="@(NetStandard2_0CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSPPFilePath)')"
                               Condition="'$(TargetFramework)' == 'netstandard2.0'">
-        <PackagePath>contentFiles/cs/netstandard2.0;content/netstandard2.0</PackagePath>
-        <BuildAction>Content</BuildAction>
+        <PackagePath>%(_PackagePath)</PackagePath>
+        <BuildAction>%(_PackageBuildAction)</BuildAction>
       </TfmSpecificPackageFile>
     </ItemGroup>
 
     <ItemGroup>
       <TfmSpecificPackageFile Include="@(Net40CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSPPFilePath)')"
                               Condition="'$(TargetFramework)' == 'net40'">
-        <PackagePath>contentFiles/cs/net40;content/net40</PackagePath>
-        <BuildAction>Content</BuildAction>
+        <PackagePath>%(_PackagePath)</PackagePath>
+        <BuildAction>%(_PackageBuildAction)</BuildAction>
       </TfmSpecificPackageFile>
     </ItemGroup>
 
     <ItemGroup>
       <TfmSpecificPackageFile Include="@(NetStandard2_1CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSPPFilePath)')"
                               Condition="'$(TargetFramework)' == 'netstandard2.1'">
-        <PackagePath>contentFiles/cs/netstandard2.1;content/netstandard2.1</PackagePath>
-        <BuildAction>Content</BuildAction>
+        <PackagePath>%(_PackagePath)</PackagePath>
+        <BuildAction>%(_PackageBuildAction)</BuildAction>
       </TfmSpecificPackageFile>
     </ItemGroup>
 
     <ItemGroup>
       <TfmSpecificPackageFile Include="@(Net5_0CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSPPFilePath)')"
                               Condition="'$(TargetFramework)' == 'net5.0'">
-        <PackagePath>contentFiles/cs/net5.0;content/net5.0</PackagePath>
-        <BuildAction>Content</BuildAction>
+        <PackagePath>%(_PackagePath)</PackagePath>
+        <BuildAction>%(_PackageBuildAction)</BuildAction>
       </TfmSpecificPackageFile>
     </ItemGroup>
 

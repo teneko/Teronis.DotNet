@@ -23,8 +23,8 @@
   <!-- NULLABLE STATIC ANALYSE ATTRIBUTES SUPPORT FOR OLDER FRAMEWORKS -->
 
   <ItemGroup>
+    <!-- PrivateAssets="all" -->
     <ProjectReference Include="$(MSBuildThisFileDirectory)src\Nullable\src\Teronis.Nullable.csproj" 
-      PrivateAssets="all"
       Condition="'$(MSBuildProjectName)' != 'Teronis.Nullable'
         And '$(Nullable)' == 'enable'
         And ('$(TargetFramework)' == 'netstandard2.0'

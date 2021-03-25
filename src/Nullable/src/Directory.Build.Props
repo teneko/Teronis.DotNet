@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project InitialTargets="CopyToCSPPFilesFolder; GenerateInternalsVisibleTo" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project InitialTargets="" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory).., Directory.Build.props))\Directory.Build.props" />
 
@@ -8,62 +8,5 @@
   <PropertyGroup>
     <ImportDirectoryBuildTargets>false</ImportDirectoryBuildTargets>
   </PropertyGroup>
-
-  <ItemGroup>
-    <!-- Search for .cs-files one level deep. Otherwise we would have to exclude Properties/* manually. -->
-    <StaticAnalyseAttributeCSFiles Include="$(MSBuildThisFileDirectory)*.cs">
-      <StaticAnalyseAttributeCSPPFilePath>$(MSBuildThisFileDirectory)../obj/StaticAnalysisAttributes/%(RecursiveDir)/%(Filename).cs.pp</StaticAnalyseAttributeCSPPFilePath>
-
-      <AnnotatedWithExcludeFromCodeCoverage>false</AnnotatedWithExcludeFromCodeCoverage>
-      <AnnotatedWithExcludeFromCodeCoverage Condition="$([System.String]::Copy(%(Filename)).Contains('ExcludeFromCodeCoverage'))">true</AnnotatedWithExcludeFromCodeCoverage>
-
-      <IsMemberNotNullOrWhenAttribute>false</IsMemberNotNullOrWhenAttribute>
-      <IsMemberNotNullOrWhenAttribute Condition="$([System.String]::Copy(%(Filename)).Contains('MemberNotNullAttribute'))
-                                Or $([System.String]::Copy(%(Filename)).Contains('IsMemberNotNullWhenAttribute'))">true</IsMemberNotNullOrWhenAttribute>
-    </StaticAnalyseAttributeCSFiles>
-
-    <!-- Needed when we search more than one level deep (globbing). -->
-    <!--<StaticAnalyseAttributeCSFiles Remove="obj/**/*.cs" />-->
-    <!--<StaticAnalyseAttributeCSFiles Remove="Properties/**/*.cs" />-->
-
-    <NetStandard1_0CompliantStaticAnalyseAttributeCSFiles Include="@(StaticAnalyseAttributeCSFiles->WithMetadataValue('AnnotatedWithExcludeFromCodeCoverage','false'))"/>
-
-    <Net20CompliantStaticAnalyseAttributeCSFiles Include="@(NetStandard1_0CompliantStaticAnalyseAttributeCSFiles)" />
-
-    <NetStandard2_0CompliantStaticAnalyseAttributeCSFiles Include="@(StaticAnalyseAttributeCSFiles)" />
-    <Net40CompliantStaticAnalyseAttributeCSFiles Include="@(StaticAnalyseAttributeCSFiles)" />
-
-    <NetStandard2_1CompliantStaticAnalyseAttributeCSFiles Include="@(StaticAnalyseAttributeCSFiles->WithMetadataValue('IsMemberNotNullOrWhenAttribute','true'))" />
-
-    <Net5_0CompliantStaticAnalyseAttributeCSFiles Include="$(MSBuildThisFileDirectory)content/_._">
-      <StaticAnalyseAttributeCSPPFilePath>%(FullPath)</StaticAnalyseAttributeCSPPFilePath>
-    </Net5_0CompliantStaticAnalyseAttributeCSFiles>
-  </ItemGroup>
-
-  <Target Name="CopyToCSPPFilesFolder"
-          Inputs="@(StaticAnalyseAttributeCSFiles)"
-          Outputs="@(StaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSPPFilePath)')">
-
-    <Copy SourceFiles="@(StaticAnalyseAttributeCSFiles)" DestinationFiles="%(StaticAnalyseAttributeCSPPFilePath)"></Copy>
-  </Target>
-
-  <!-- THIS IS FOR TERONIS.DOTNET -->
-  
-  <UsingTask TaskName="GetSolutionProjects" AssemblyFile="$(MSBuildBuildTasksAssemblyFile)" />
-
-  <!-- No Inputs/Outputs needed: autogeneration of AssemblyInfo supports already cache. -->
-  <Target Name="GenerateInternalsVisibleTo" Condition="Exists($(MSBuildBuildTasksAssemblyFile))">
-
-    <GetSolutionProjects Solution="$(TeronisDotNetSolutionPath)">
-      <Output ItemName="ProjectFiles" TaskParameter="Output"/>
-    </GetSolutionProjects>
-
-    <ItemGroup>
-      <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-        <_Parameter1>%(ProjectFiles.ProjectName)</_Parameter1> 
-      </AssemblyAttribute>
-    </ItemGroup>
-
-  </Target>
 
 </Project>

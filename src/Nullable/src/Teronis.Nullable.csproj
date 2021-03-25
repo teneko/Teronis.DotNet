@@ -11,8 +11,12 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
     <!-- Prevent any kind of magic. -->
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <!-- 
+      We won't use this because we explictily remove pre-selected files
+      and include them manually dependent on framework.
+    -->
+    <!--<EnableDefaultCompileItems>false</EnableDefaultCompileItems>-->
     <!-- See at section "THIS IS FOR TERONIS.DOTNET" below. -->
     <!--<GenerateAssemblyInfo>false</GenerateAssemblyInfo>-->
 
@@ -37,12 +41,54 @@
 
   </PropertyGroup>
 
-  <!-- THIS AREA IS FOR DEVELOPMENT -->
+  <!-- ESSENTIAL VARIABLES -->
 
-  <!-- <ItemGroup> -->
-    <!-- Let's add them all, but do no compile. -->
-    <!-- <None Include="@(StaticAnalyseAttributeCSFiles)" />
-  </ItemGroup> -->
+  <ItemGroup>
+    <!-- Search for .cs-files one level deep. Otherwise we would have to exclude Properties/* manually. -->
+    <StaticAnalyseAttributeCSFiles Include="$(MSBuildThisFileDirectory)*.cs">
+      <StaticAnalyseAttributeCSPPFilePath>$(MSBuildThisFileDirectory)obj/StaticAnalysisAttributes/%(RecursiveDir)/%(Filename).cs.pp</StaticAnalyseAttributeCSPPFilePath>
+
+      <AnnotatedWithExcludeFromCodeCoverage>false</AnnotatedWithExcludeFromCodeCoverage>
+      <AnnotatedWithExcludeFromCodeCoverage Condition="$([System.String]::Copy(%(Filename)).Contains('ExcludeFromCodeCoverage'))">true</AnnotatedWithExcludeFromCodeCoverage>
+
+      <IsMemberNotNullOrWhenAttribute>false</IsMemberNotNullOrWhenAttribute>
+      <IsMemberNotNullOrWhenAttribute Condition="$([System.String]::Copy(%(Filename)).Contains('MemberNotNullAttribute'))
+                                Or $([System.String]::Copy(%(Filename)).Contains('IsMemberNotNullWhenAttribute'))">true</IsMemberNotNullOrWhenAttribute>
+    </StaticAnalyseAttributeCSFiles>
+
+    <!-- Needed when we search more than one level deep (globbing). -->
+    <!--<StaticAnalyseAttributeCSFiles Remove="obj/**/*.cs" />-->
+    <!--<StaticAnalyseAttributeCSFiles Remove="Properties/**/*.cs" />-->
+
+    <NetStandard1_0CompliantStaticAnalyseAttributeCSFiles Include="@(StaticAnalyseAttributeCSFiles->WithMetadataValue('AnnotatedWithExcludeFromCodeCoverage','false'))"/>
+
+    <Net20CompliantStaticAnalyseAttributeCSFiles Include="@(NetStandard1_0CompliantStaticAnalyseAttributeCSFiles)" />
+
+    <NetStandard2_0CompliantStaticAnalyseAttributeCSFiles Include="@(StaticAnalyseAttributeCSFiles)" />
+    <Net40CompliantStaticAnalyseAttributeCSFiles Include="@(StaticAnalyseAttributeCSFiles)" />
+
+    <NetStandard2_1CompliantStaticAnalyseAttributeCSFiles Include="@(StaticAnalyseAttributeCSFiles->WithMetadataValue('IsMemberNotNullOrWhenAttribute','true'))" />
+
+    <Net5_0CompliantStaticAnalyseAttributeCSFiles Include="$(MSBuildThisFileDirectory)content/_._">
+      <StaticAnalyseAttributeCSPPFilePath>%(FullPath)</StaticAnalyseAttributeCSPPFilePath>
+    </Net5_0CompliantStaticAnalyseAttributeCSFiles>
+  </ItemGroup>
+
+  <!-- THIS AREA IS FOR OTHER PROJECTS THAT REFERENCE THIS PROJECT -->
+
+  <ItemGroup>
+    <!--
+      We add them all as None, because otherwise some files are hidden.
+      
+      The downside is that we only have the view with
+      TargetFramework=netstandard2.0 in Visual Studio.
+      It does not conflict with <Compile></Compile>.
+     -->
+    <None Include="@(StaticAnalyseAttributeCSFiles->'%(Identity)')" />
+    <!-- As described above we remove all pre-selected files manually. -->
+    <Compile Remove="@(StaticAnalyseAttributeCSFiles->'%(Identity)')" />
+    <Compile Remove="@(StaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSPPFilePath)')" />
+  </ItemGroup>
 
   <!-- Now compile them dependent on framework. -->
 
@@ -79,7 +125,7 @@
     </When>
 
     <Otherwise>
-      <!-- We simply do nothing. -->
+      <!-- Other frameworks do not need any further attributes. -->
     </Otherwise>
 
   </Choose>
@@ -87,10 +133,14 @@
   <!-- THIS AREA IS FOR PACKAGE CREATION -->
 
   <PropertyGroup>
-    <!-- <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);AddStaticAnalyseAttributesCSPPFilesToPackage</TargetsForTfmSpecificContentInPackage> -->
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);CopyToStaticAnalyseAttributeCSPPFilesFolder;AddStaticAnalyseAttributesCSPPFilesToPackage</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
 
-  <!-- We do not do this because it confuses the compilation of projects that has this project referenced. -->
+  <Target Name="CopyToStaticAnalyseAttributeCSPPFilesFolder" Inputs="@(StaticAnalyseAttributeCSFiles)" Outputs="@(StaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSPPFilePath)')">
+    <Copy SourceFiles="@(StaticAnalyseAttributeCSFiles)" DestinationFiles="%(StaticAnalyseAttributeCSPPFilePath)"></Copy>
+  </Target>
+
+  <!-- We do not do this. -->
 
   <!--<ItemGroup>
     <None Include="@(NetStandard1_0CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSPPFilePath)')">
@@ -158,10 +208,11 @@
 
   </Target>
 
-  <!-- THIS IS FOR TERONIS.DOTNET -->
+  <!-- THESE ARE TERONIS.DOTNET SPECIFIC SETTINGS -->
 
-  <!--
-    It is by default true, but for documentation:
+  <PropertyGroup>
+    <!--
+      It is by default true, but for documentation:
       We use assembly info autogeneration to generate
       InternalsVisibleTo for each project in Teronis.DotNet.sln.
       So we are eligable to use this project as project reference.
@@ -172,9 +223,25 @@
       this project because we publish this project as package
       too. But such a small library is not worth to be listed
       as NuGet-dependency. It has only ~10kb.
-  -->
-  <PropertyGroup>
+    -->
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
   </PropertyGroup>
+
+  <UsingTask TaskName="GetSolutionProjects" AssemblyFile="$(MSBuildBuildTasksAssemblyFile)" />
+
+  <!-- No Inputs/Outputs needed: autogeneration of AssemblyInfo supports already cache. -->
+  <Target Name="GenerateInternalsVisibleTo" BeforeTargets="GenerateAdditionalSources" Condition="Exists($(MSBuildBuildTasksAssemblyFile))">
+
+    <GetSolutionProjects Solution="$(TeronisDotNetSolutionPath)">
+      <Output ItemName="ProjectFiles" TaskParameter="Output" />
+    </GetSolutionProjects>
+
+    <ItemGroup>
+      <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+        <_Parameter1>%(ProjectFiles.ProjectName)</_Parameter1>
+      </AssemblyAttribute>
+    </ItemGroup>
+
+  </Target>
 
 </Project>

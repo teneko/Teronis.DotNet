@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Core", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Core.Localization", "Core.Localization\src\Teronis.NetStandard.Core.Localization.csproj", "{1A5CC765-B70B-43EF-BF73-91A2F4C6CEBC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Nullable", "..\..\Nullable\src\Teronis.Nullable.csproj", "{1EE26205-97E2-4705-AF93-1B229B33B0F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,18 @@ Global
 		{1A5CC765-B70B-43EF-BF73-91A2F4C6CEBC}.Release|x64.Build.0 = Release|x64
 		{1A5CC765-B70B-43EF-BF73-91A2F4C6CEBC}.Release|x86.ActiveCfg = Release|x86
 		{1A5CC765-B70B-43EF-BF73-91A2F4C6CEBC}.Release|x86.Build.0 = Release|x86
+		{1EE26205-97E2-4705-AF93-1B229B33B0F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EE26205-97E2-4705-AF93-1B229B33B0F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EE26205-97E2-4705-AF93-1B229B33B0F8}.Debug|x64.ActiveCfg = Debug|x64
+		{1EE26205-97E2-4705-AF93-1B229B33B0F8}.Debug|x64.Build.0 = Debug|x64
+		{1EE26205-97E2-4705-AF93-1B229B33B0F8}.Debug|x86.ActiveCfg = Debug|x86
+		{1EE26205-97E2-4705-AF93-1B229B33B0F8}.Debug|x86.Build.0 = Debug|x86
+		{1EE26205-97E2-4705-AF93-1B229B33B0F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EE26205-97E2-4705-AF93-1B229B33B0F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EE26205-97E2-4705-AF93-1B229B33B0F8}.Release|x64.ActiveCfg = Release|x64
+		{1EE26205-97E2-4705-AF93-1B229B33B0F8}.Release|x64.Build.0 = Release|x64
+		{1EE26205-97E2-4705-AF93-1B229B33B0F8}.Release|x86.ActiveCfg = Release|x86
+		{1EE26205-97E2-4705-AF93-1B229B33B0F8}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

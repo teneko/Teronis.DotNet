@@ -1,7 +1,6 @@
 ﻿using Nuke.Common;
 using Nuke.Common.CI;
 using Nuke.Common.Execution;
-using Nuke.Common.Git;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
@@ -27,7 +26,7 @@ class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
     // https://stackoverflow.com/questions/52635056/why-teamcity-build-fails-with-because-it-is-being-used-by-another-process-doe/55694056
-    readonly DotNetVerbosity DotNetVerbosity = IsLocalBuild ? DotNetVerbosity.Detailed : DotNetVerbosity.Quiet;
+    readonly DotNetVerbosity DotNetVerbosity = IsLocalBuild ? DotNetVerbosity.Detailed : DotNetVerbosity.Normal;
 
     [Solution("Teronis.DotNet.sln")]
     readonly Solution Solution;
@@ -36,10 +35,11 @@ class Build : NukeBuild
     readonly Solution PublishSolution;
 
 
-    [GitRepository] readonly GitRepository GitRepository;
+    //[GitRepository] readonly GitRepository GitRepository;
 
-    [GitVersion(Framework = "netcoreapp3.1")]
-    readonly GitVersion GitVersion;
+    // GITVERSION... Forces "... process is used by another process"...
+    //[GitVersion(Framework = "netcoreapp3.1")]
+    //readonly GitVersion GitVersion;
 
     AbsolutePath SourceDirectory => RootDirectory / "src";
     AbsolutePath PackagesDirectory => RootDirectory / "obj" / "packages";
@@ -100,9 +100,10 @@ class Build : NukeBuild
                 return dotNetBuildSettings
                     .SetProjectFile(Solution)
                     .SetConfiguration(Configuration)
-                    .SetAssemblyVersion(GitVersion.AssemblySemVer)
-                    .SetFileVersion(GitVersion.AssemblySemFileVer)
-                    .SetInformationalVersion(GitVersion.InformationalVersion)
+                    // See above comment.
+                    //.SetAssemblyVersion(GitVersion.AssemblySemVer)
+                    //.SetFileVersion(GitVersion.AssemblySemFileVer)
+                    //.SetInformationalVersion(GitVersion.InformationalVersion)
                     .EnableNoRestore()
                     .SetVerbosity(DotNetVerbosity)
                     .SetProcessArgumentConfigurator(arguments => arguments.Add("-nodeReuse:false"));
@@ -126,9 +127,10 @@ class Build : NukeBuild
         .Executes(() => {
             DotNetPack(s => s
                 .SetProject(PublishSolution)
-                .SetAssemblyVersion(GitVersion.AssemblySemVer)
-                .SetFileVersion(GitVersion.AssemblySemFileVer)
-                .SetInformationalVersion(GitVersion.InformationalVersion)
+                // See above comment.
+                //.SetAssemblyVersion(GitVersion.AssemblySemVer)
+                //.SetFileVersion(GitVersion.AssemblySemFileVer)
+                //.SetInformationalVersion(GitVersion.InformationalVersion)
                 .SetConfiguration(Configuration)
                 .SetVerbosity(DotNetVerbosity)
                 .SetProcessArgumentConfigurator(arguments => arguments.Add("-nodeReuse:false")));

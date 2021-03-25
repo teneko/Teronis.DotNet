@@ -16,18 +16,20 @@ jobs:
     verbosity: 'normal'
   steps:
 
-  # For better visualization we go through each step 
-  # instead of just defining the steps [test, pack].
+  # # For better visualization we go through each step 
+  # # instead of just defining the steps [test, pack].
 
-  - task: UseDotNet@2
-    inputs:
-      packageType: 'sdk'
-      version: '5.0.201'
+  # - task: UseDotNet@2
+  #   inputs:
+  #     packageType: 'sdk'
+  #     version: '5.0.201'
 
-  - task: UseDotNet@2
-    inputs:
-      packageType: 'sdk'
-      version: '3.1.407'
+  # # Used when GitVersion is used internally by Nuke
+  # # Used by NUnit
+  # - task: UseDotNet@2
+  #   inputs:
+  #     packageType: 'sdk'
+  #     version: '3.1.407'
 
 
   - task: PowerShell@2

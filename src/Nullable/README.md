@@ -1,6 +1,8 @@
 # Teronis.Nullable [![Nuget](https://img.shields.io/nuget/v/Teronis.Nullable)](https://www.nuget.org/packages/Teronis.Nullable)
 
-> :warning: The project Teronis.Nullable is a fork of [Nullable](https://github.com/manuelroemer/Nullable). I have transformed this project in a way that it is fully 
+> :warning: The project Teronis.Nullable is a fork of [Nullable][Nullable]. In fact the project Nullable is in the SDK format but the package creation is not in the SDK format and uses nuget.exe directly. This fork has just moved the NuGet part to the new SDK format. Morover is the the unattractive and separate build process obsolete now. The project Teronis.Nullable is in such a way designed to be includable by ProjectReference and is heavily used by Teronis.Dotnet.
+>
+> **When you face any issues with Teronis.Nullable please do not open an issue in [Nullable][Nullable] but open an issue here.**
 
 _Use .NET Core 3.0's new nullable attributes in older target frameworks._
 
@@ -148,22 +150,22 @@ attributes are not applied and the nullable attributes may therefore appear in c
 
 ## Building
 
-Because the package consists of source files, building works differently than a normal .NET project.
-In essence, no build has to be made at all. Instead, the `*.cs` files are renamed to `*.cs.pp`
-(because otherwise, Visual Studio's solution explorer would display the files in a project which
-references the package) and then packaged into a NuGet package via a `.nuspec` file.
+No outer build process needed, just run:
 
-The solution contains a `_build` project which automatically performs these tasks though. You can then
-find the resulting NuGet package file in the `artifacts` folder.
+```
+dotnet build Teronis.Nullable.csproj
+```
 
+The MSBuild-target **CopyToStaticAnalyseAttributeCSPPFilesFolder** is running before MSBuild-target `AddStaticAnalyseAttributesCSPPFilesToPackage` and copies the .cs-files to folder `obj/StaticAnalysisAttributes` with new extension ".cs.pp".
+
+The MSBuild-target **AddStaticAnalyseAttributesCSPPFilesToPackage** is running before `Pack` and adds dependent on framework the necessary files in their respective framework folders; once for folder content (package) and once for folder contentFiles (package).
 
 ## Contributing
 
-I don't expect this package to require many changes, but if something is not working for you or
-if you think that the source file should change, feel free to create an issue or Pull Request.
-I will be happy to discuss and potentially integrate your ideas!
-
+As the Author of [Nullable][Nullable] stated, the source files itself won't change much, but when you have ideas, features or bug fixes, feel free to send me pull request.
 
 ## License
 
 See the [LICENSE](./LICENSE) file for details.
+
+[Nullable]: https://github.com/manuelroemer/Nullable

@@ -15,8 +15,8 @@
 #region License
 // MIT License
 // 
-// Copyright (c) Manuel Römer
-// Copyright (c) Teroneko
+// Copyright 2021 Manuel Römer
+// Copyright 2021 Teroneko
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal

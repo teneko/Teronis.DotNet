@@ -70,12 +70,6 @@
       </ItemGroup>
     </When>
 
-    <When Condition="'$(TargetFramework)' == 'netstandard1.0'">
-      <ItemGroup>
-        <Compile Include="@(NetStandard1_0CompliantNonCSPPFiles)" />
-      </ItemGroup>
-    </When>
-
     <When Condition="'$(TargetFramework)' == 'net40'">
       <ItemGroup>
         <Compile Include="@(Net40CompliantNonCSPPFiles)" />
@@ -96,57 +90,81 @@
 
   <!-- THIS AREA IS FOR PACKAGE CREATION -->
 
-  <ItemGroup>
+  <PropertyGroup>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);AddStaticAnalyseAttributesCSPPFilesToPackage</TargetsForTfmSpecificContentInPackage>
+  </PropertyGroup>
+
+  <!-- We do not do this because it confuses the compilation of projects that has this project referenced. -->
+
+  <!--<ItemGroup>
     <None Include="@(NetStandard1_0CompliantNonCSPPFiles->'%(CSPPFilePath)')">
       <Pack>true</Pack>
       <PackagePath>contentFiles/cs/netstandard1.0;content/netstandard1.0</PackagePath>
       <BuildAction>Content</BuildAction>
     </None>
-  </ItemGroup>
+  </ItemGroup>-->
 
-  <ItemGroup>
-    <None Include="@(Net20CompliantNonCSPPFiles->'%(CSPPFilePath)')">
-      <Pack>true</Pack>
-      <PackagePath>contentFiles/cs/net20;content/net20</PackagePath>
-      <BuildAction>Content</BuildAction>
-    </None>
-  </ItemGroup>
+  <!-- ... -->
 
-  <ItemGroup>
-    <None Include="@(NetStandard2_0CompliantNonCSPPFiles->'%(CSPPFilePath)')">
-      <Pack>true</Pack>
-      <PackagePath>contentFiles/cs/netstandard2.0;content/netstandard2.0</PackagePath>
-      <BuildAction>Content</BuildAction>
-    </None>
-  </ItemGroup>
+  <!-- Instead we do this: -->
 
-  <ItemGroup>
-    <None Include="@(Net40CompliantNonCSPPFiles->'%(CSPPFilePath)')">
-      <Pack>true</Pack>
-      <PackagePath>contentFiles/cs/net40;content/net40</PackagePath>
-      <BuildAction>Content</BuildAction>
-    </None>
-  </ItemGroup>
+  <Target Name="AddStaticAnalyseAttributesCSPPFilesToPackage">
 
-  <ItemGroup>
-    <None Include="@(NetStandard2_1CompliantNonCSPPFiles->'%(CSPPFilePath)')">
-      <Pack>true</Pack>
-      <PackagePath>contentFiles/cs/netstandard2.1;content/netstandard2.1</PackagePath>
-      <BuildAction>Content</BuildAction>
-    </None>
-  </ItemGroup>
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="@(NetStandard1_0CompliantNonCSPPFiles->'%(CSPPFilePath)')"
+                              Condition="'$(TargetFramework)' == 'netstandard1.0'">
+        <!-- Only needed in <ItemGroup><Content></Content></ItemGroup> or aquivalent. -->
+        <!--<Pack>true</Pack>-->
+        <PackagePath>contentFiles/cs/netstandard1.0;content/netstandard1.0</PackagePath>
+        <BuildAction>Content</BuildAction>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
 
-  <ItemGroup>
-    <None Include="C:\Users\christoph\source\repos\Teronis.DotNet\src\Nullable\src\content\_._">
-      <Pack>true</Pack>
-      <PackagePath>contentFiles/cs/net5.0;content/net5.0</PackagePath>
-      <BuildAction>Content</BuildAction>
-    </None>
-  </ItemGroup>
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="@(Net20CompliantNonCSPPFiles->'%(CSPPFilePath)')"
+                              Condition="'$(TargetFramework)' == 'net20'">
+        <PackagePath>contentFiles/cs/net20;content/net20</PackagePath>
+        <BuildAction>Content</BuildAction>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="@(NetStandard2_0CompliantNonCSPPFiles->'%(CSPPFilePath)')"
+                              Condition="'$(TargetFramework)' == 'netstandard2.0'">
+        <PackagePath>contentFiles/cs/netstandard2.0;content/netstandard2.0</PackagePath>
+        <BuildAction>Content</BuildAction>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="@(Net40CompliantNonCSPPFiles->'%(CSPPFilePath)')"
+                              Condition="'$(TargetFramework)' == 'net40'">
+        <PackagePath>contentFiles/cs/net40;content/net40</PackagePath>
+        <BuildAction>Content</BuildAction>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="@(NetStandard2_1CompliantNonCSPPFiles->'%(CSPPFilePath)')"
+                              Condition="'$(TargetFramework)' == 'netstandard2.1'">
+        <PackagePath>contentFiles/cs/netstandard2.1;content/netstandard2.1</PackagePath>
+        <BuildAction>Content</BuildAction>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="C:\Users\christoph\source\repos\Teronis.DotNet\src\Nullable\src\content\_._"
+                              Condition="'$(TargetFramework)' == 'net5.0'">
+        <PackagePath>contentFiles/cs/net5.0;content/net5.0</PackagePath>
+        <BuildAction>Content</BuildAction>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+
+  </Target>
 
   <!-- THIS IS FOR TERONIS.DOTNET -->
 
-  <!-- 
+  <!--
     It is by default true, but for documentation:
       We use assembly info autogeneration to generate
       InternalsVisibleTo for each project in Teronis.DotNet.sln.

@@ -4,6 +4,7 @@ using Nuke.Common.Execution;
 using Nuke.Common.Git;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
+using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.GitVersion;
 using Nuke.Common.Utilities.Collections;
@@ -26,7 +27,7 @@ class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
     // https://stackoverflow.com/questions/52635056/why-teamcity-build-fails-with-because-it-is-being-used-by-another-process-doe/55694056
-    readonly DotNetVerbosity DotNetVerbosity = IsLocalBuild ? DotNetVerbosity.Detailed : DotNetVerbosity.Normal;
+    readonly DotNetVerbosity DotNetVerbosity = IsLocalBuild ? DotNetVerbosity.Detailed : DotNetVerbosity.Quiet;
 
     [Solution("Teronis.DotNet.sln")]
     readonly Solution Solution;
@@ -95,14 +96,17 @@ class Build : NukeBuild
     Target Compile => _ => _
         .DependsOn(Restore)
         .Executes(() => {
-            DotNetBuild(s => s
-                .SetProjectFile(Solution)
-                .SetConfiguration(Configuration)
-                .SetAssemblyVersion(GitVersion.AssemblySemVer)
-                .SetFileVersion(GitVersion.AssemblySemFileVer)
-                .SetInformationalVersion(GitVersion.InformationalVersion)
-                .EnableNoRestore()
-                .SetVerbosity(DotNetVerbosity));
+            DotNetBuild(dotNetBuildSettings => {
+                return dotNetBuildSettings
+                    .SetProjectFile(Solution)
+                    .SetConfiguration(Configuration)
+                    .SetAssemblyVersion(GitVersion.AssemblySemVer)
+                    .SetFileVersion(GitVersion.AssemblySemFileVer)
+                    .SetInformationalVersion(GitVersion.InformationalVersion)
+                    .EnableNoRestore()
+                    .SetVerbosity(DotNetVerbosity)
+                    .SetProcessArgumentConfigurator(arguments => arguments.Add("-nodeReuse:false"));
+            });
         });
 
     Target Test => _ => _
@@ -126,7 +130,8 @@ class Build : NukeBuild
                 .SetFileVersion(GitVersion.AssemblySemFileVer)
                 .SetInformationalVersion(GitVersion.InformationalVersion)
                 .SetConfiguration(Configuration)
-                .SetVerbosity(DotNetVerbosity));
+                .SetVerbosity(DotNetVerbosity)
+                .SetProcessArgumentConfigurator(arguments => arguments.Add("-nodeReuse:false")));
 
             PublishSolution.Projects.ForEach(project => {
                 project.Directory.GlobFiles("**/*.nupkg")

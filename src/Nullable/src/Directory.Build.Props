@@ -11,8 +11,8 @@
 
   <ItemGroup>
     <!-- Search for .cs-files one level deep. Otherwise we would have to exclude Properties/* manually. -->
-    <NonCSPPFiles Include="$(MSBuildThisFileDirectory)*.cs">
-      <CSPPFilePath>$(MSBuildThisFileDirectory)obj/StaticAnalysisAttributes/%(RecursiveDir)/%(Filename).cs.pp</CSPPFilePath>
+    <StaticAnalyseAttributeCSFiles Include="$(MSBuildThisFileDirectory)*.cs">
+      <StaticAnalyseAttributeCSPPFilePath>$(MSBuildThisFileDirectory)../obj/StaticAnalysisAttributes/%(RecursiveDir)/%(Filename).cs.pp</StaticAnalyseAttributeCSPPFilePath>
 
       <AnnotatedWithExcludeFromCodeCoverage>false</AnnotatedWithExcludeFromCodeCoverage>
       <AnnotatedWithExcludeFromCodeCoverage Condition="$([System.String]::Copy(%(Filename)).Contains('ExcludeFromCodeCoverage'))">true</AnnotatedWithExcludeFromCodeCoverage>
@@ -20,31 +20,31 @@
       <IsMemberNotNullOrWhenAttribute>false</IsMemberNotNullOrWhenAttribute>
       <IsMemberNotNullOrWhenAttribute Condition="$([System.String]::Copy(%(Filename)).Contains('MemberNotNullAttribute'))
                                 Or $([System.String]::Copy(%(Filename)).Contains('IsMemberNotNullWhenAttribute'))">true</IsMemberNotNullOrWhenAttribute>
-    </NonCSPPFiles>
+    </StaticAnalyseAttributeCSFiles>
 
     <!-- Needed when we search more than one level deep (globbing). -->
-    <!--<NonCSPPFiles Remove="obj/**/*.cs" />-->
-    <!--<NonCSPPFiles Remove="Properties/**/*.cs" />-->
+    <!--<StaticAnalyseAttributeCSFiles Remove="obj/**/*.cs" />-->
+    <!--<StaticAnalyseAttributeCSFiles Remove="Properties/**/*.cs" />-->
 
-    <NetStandard1_0CompliantNonCSPPFiles Include="@(NonCSPPFiles->WithMetadataValue('AnnotatedWithExcludeFromCodeCoverage','false'))"/>
+    <NetStandard1_0CompliantStaticAnalyseAttributeCSFiles Include="@(StaticAnalyseAttributeCSFiles->WithMetadataValue('AnnotatedWithExcludeFromCodeCoverage','false'))"/>
 
-    <Net20CompliantNonCSPPFiles Include="@(NetStandard1_0CompliantNonCSPPFiles)" />
+    <Net20CompliantStaticAnalyseAttributeCSFiles Include="@(NetStandard1_0CompliantStaticAnalyseAttributeCSFiles)" />
 
-    <NetStandard2_0CompliantNonCSPPFiles Include="@(NonCSPPFiles)" />
-    <Net40CompliantNonCSPPFiles Include="@(NonCSPPFiles)" />
+    <NetStandard2_0CompliantStaticAnalyseAttributeCSFiles Include="@(StaticAnalyseAttributeCSFiles)" />
+    <Net40CompliantStaticAnalyseAttributeCSFiles Include="@(StaticAnalyseAttributeCSFiles)" />
 
-    <NetStandard2_1CompliantNonCSPPFiles Include="@(NonCSPPFiles->WithMetadataValue('IsMemberNotNullOrWhenAttribute','true'))" />
+    <NetStandard2_1CompliantStaticAnalyseAttributeCSFiles Include="@(StaticAnalyseAttributeCSFiles->WithMetadataValue('IsMemberNotNullOrWhenAttribute','true'))" />
 
-    <Net5_0CompliantNonCSPPFiles Include="$(MSBuildThisFileDirectory)content/_._">
-      <CSPPFilePath>%(FullPath)</CSPPFilePath>
-    </Net5_0CompliantNonCSPPFiles>
+    <Net5_0CompliantStaticAnalyseAttributeCSFiles Include="$(MSBuildThisFileDirectory)content/_._">
+      <StaticAnalyseAttributeCSPPFilePath>%(FullPath)</StaticAnalyseAttributeCSPPFilePath>
+    </Net5_0CompliantStaticAnalyseAttributeCSFiles>
   </ItemGroup>
 
   <Target Name="CopyToCSPPFilesFolder"
-          Inputs="@(NonCSPPFiles)"
-          Outputs="@(NonCSPPFiles->'%(CSPPFilePath)')">
+          Inputs="@(StaticAnalyseAttributeCSFiles)"
+          Outputs="@(StaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSPPFilePath)')">
 
-    <Copy SourceFiles="@(NonCSPPFiles)" DestinationFiles="%(CSPPFilePath)"></Copy>
+    <Copy SourceFiles="@(StaticAnalyseAttributeCSFiles)" DestinationFiles="%(StaticAnalyseAttributeCSPPFilePath)"></Copy>
   </Target>
 
   <!-- THIS IS FOR TERONIS.DOTNET -->

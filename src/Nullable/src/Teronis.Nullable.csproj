@@ -37,16 +37,12 @@
 
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Properties\**" />
-  </ItemGroup>
-
   <!-- THIS AREA IS FOR DEVELOPMENT -->
 
-  <ItemGroup>
+  <!-- <ItemGroup> -->
     <!-- Let's add them all, but do no compile. -->
-    <None Include="@(NonCSPPFiles)" />
-  </ItemGroup>
+    <!-- <None Include="@(StaticAnalyseAttributeCSFiles)" />
+  </ItemGroup> -->
 
   <!-- Now compile them dependent on framework. -->
 
@@ -54,31 +50,31 @@
 
     <When Condition="'$(TargetFramework)' == 'netstandard1.0'">
       <ItemGroup>
-        <Compile Include="@(NetStandard1_0CompliantNonCSPPFiles)" />
+        <Compile Include="@(NetStandard1_0CompliantStaticAnalyseAttributeCSFiles->'%(Identity)')" />
       </ItemGroup>
     </When>
 
     <When Condition="'$(TargetFramework)' == 'net20'">
       <ItemGroup>
-        <Compile Include="@(Net20CompliantNonCSPPFiles)" />
+        <Compile Include="@(Net20CompliantStaticAnalyseAttributeCSFiles->'%(Identity)')" />
       </ItemGroup>
     </When>
 
     <When Condition="'$(TargetFramework)' == 'netstandard2.0'">
       <ItemGroup>
-        <Compile Include="@(NetStandard2_0CompliantNonCSPPFiles)" />
+        <Compile Include="@(NetStandard2_0CompliantStaticAnalyseAttributeCSFiles->'%(Identity)')" />
       </ItemGroup>
     </When>
 
     <When Condition="'$(TargetFramework)' == 'net40'">
       <ItemGroup>
-        <Compile Include="@(Net40CompliantNonCSPPFiles)" />
+        <Compile Include="@(Net40CompliantStaticAnalyseAttributeCSFiles->'%(Identity)')" />
       </ItemGroup>
     </When>
 
     <When Condition="'$(TargetFramework)' == 'netstandard2.1'">
       <ItemGroup>
-        <Compile Include="@(NetStandard2_1CompliantNonCSPPFiles)" />
+        <Compile Include="@(NetStandard2_1CompliantStaticAnalyseAttributeCSFiles->'%(Identity)')" />
       </ItemGroup>
     </When>
 
@@ -91,13 +87,13 @@
   <!-- THIS AREA IS FOR PACKAGE CREATION -->
 
   <PropertyGroup>
-    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);AddStaticAnalyseAttributesCSPPFilesToPackage</TargetsForTfmSpecificContentInPackage>
+    <!-- <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);AddStaticAnalyseAttributesCSPPFilesToPackage</TargetsForTfmSpecificContentInPackage> -->
   </PropertyGroup>
 
   <!-- We do not do this because it confuses the compilation of projects that has this project referenced. -->
 
   <!--<ItemGroup>
-    <None Include="@(NetStandard1_0CompliantNonCSPPFiles->'%(CSPPFilePath)')">
+    <None Include="@(NetStandard1_0CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSPPFilePath)')">
       <Pack>true</Pack>
       <PackagePath>contentFiles/cs/netstandard1.0;content/netstandard1.0</PackagePath>
       <BuildAction>Content</BuildAction>
@@ -111,7 +107,7 @@
   <Target Name="AddStaticAnalyseAttributesCSPPFilesToPackage">
 
     <ItemGroup>
-      <TfmSpecificPackageFile Include="@(NetStandard1_0CompliantNonCSPPFiles->'%(CSPPFilePath)')"
+      <TfmSpecificPackageFile Include="@(NetStandard1_0CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSPPFilePath)')"
                               Condition="'$(TargetFramework)' == 'netstandard1.0'">
         <!-- Only needed in <ItemGroup><Content></Content></ItemGroup> or aquivalent. -->
         <!--<Pack>true</Pack>-->
@@ -121,7 +117,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <TfmSpecificPackageFile Include="@(Net20CompliantNonCSPPFiles->'%(CSPPFilePath)')"
+      <TfmSpecificPackageFile Include="@(Net20CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSPPFilePath)')"
                               Condition="'$(TargetFramework)' == 'net20'">
         <PackagePath>contentFiles/cs/net20;content/net20</PackagePath>
         <BuildAction>Content</BuildAction>
@@ -129,7 +125,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <TfmSpecificPackageFile Include="@(NetStandard2_0CompliantNonCSPPFiles->'%(CSPPFilePath)')"
+      <TfmSpecificPackageFile Include="@(NetStandard2_0CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSPPFilePath)')"
                               Condition="'$(TargetFramework)' == 'netstandard2.0'">
         <PackagePath>contentFiles/cs/netstandard2.0;content/netstandard2.0</PackagePath>
         <BuildAction>Content</BuildAction>
@@ -137,7 +133,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <TfmSpecificPackageFile Include="@(Net40CompliantNonCSPPFiles->'%(CSPPFilePath)')"
+      <TfmSpecificPackageFile Include="@(Net40CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSPPFilePath)')"
                               Condition="'$(TargetFramework)' == 'net40'">
         <PackagePath>contentFiles/cs/net40;content/net40</PackagePath>
         <BuildAction>Content</BuildAction>
@@ -145,7 +141,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <TfmSpecificPackageFile Include="@(NetStandard2_1CompliantNonCSPPFiles->'%(CSPPFilePath)')"
+      <TfmSpecificPackageFile Include="@(NetStandard2_1CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSPPFilePath)')"
                               Condition="'$(TargetFramework)' == 'netstandard2.1'">
         <PackagePath>contentFiles/cs/netstandard2.1;content/netstandard2.1</PackagePath>
         <BuildAction>Content</BuildAction>
@@ -153,7 +149,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <TfmSpecificPackageFile Include="C:\Users\christoph\source\repos\Teronis.DotNet\src\Nullable\src\content\_._"
+      <TfmSpecificPackageFile Include="@(Net5_0CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSPPFilePath)')"
                               Condition="'$(TargetFramework)' == 'net5.0'">
         <PackagePath>contentFiles/cs/net5.0;content/net5.0</PackagePath>
         <BuildAction>Content</BuildAction>

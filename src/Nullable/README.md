@@ -166,6 +166,6 @@ As the Author of [Nullable][Nullable] stated, the source files itself won't chan
 
 ## License
 
-The original project is licensed under the MIT license, this won't change. See updated [LICENSE.md](LICENSE.md) file for details.
+The original project is licensed under the MIT license, this won't change. See updated [LICENSE](LICENSE) file for details.
 
 [Nullable]: https://github.com/manuelroemer/Nullable

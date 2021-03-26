@@ -1,0 +1,16 @@
+﻿extensions: .xml .config .xsd
+extensions: designer.cs generated.cs
+extensions: .cs .cpp .h
+// Copyright (c) Teroneko.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+extensions: .razor
+@*
+Copyright (c) Teroneko.
+Licensed under the MIT license. See LICENSE file in the project root for full license information.
+*@
+extensions: .props .targets
+<!--
+Copyright (c) Teroneko.
+Licensed under the MIT license. See LICENSE file in the project root for full license information.
+-->

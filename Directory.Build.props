@@ -42,7 +42,7 @@
     <Authors Condition="'$(Authors)' == ''">Teroneko</Authors>
     <Company Condition="'$(Company)' == ''">$(MSBuildProjectName)</Company>
     <Product Condition="'$(Product)' == ''">$(MSBuildProjectName)</Product>
-    <PackageLicenseFile Condition="'$(PackageLicenseFile)' == ''">LICENSE.md</PackageLicenseFile>
+    <PackageLicenseFile Condition="'$(PackageLicenseFile)' == ''">LICENSE</PackageLicenseFile>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <Copyright Condition="'$(Copyright)' == ''">Teroneko</Copyright>
     <PackageIcon Condition="'$(PackageIcon)' == ''">icon.png</PackageIcon>
@@ -60,7 +60,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)\LICENSE.md">
+    <None Include="$(MSBuildThisFileDirectory)\LICENSE">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>

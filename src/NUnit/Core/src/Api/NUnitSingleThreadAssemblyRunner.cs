@@ -25,20 +25,26 @@ namespace Teronis.NUnit.Api
         private NUnitTestAssemblyRunner runner;
         private Dictionary<string, object> settings;
 
-        public NUnitSingleThreadAssemblyRunner(IDictionary<string, object>? settings)
+        public NUnitSingleThreadAssemblyRunner(IEnumerable<KeyValuePair<string, object>>? additionalSettings)
         {
             runner = new NUnitTestAssemblyRunner(new DefaultTestAssemblyBuilder());
 
-            this.settings = new Dictionary<string, object>(settings) {
+            settings = new Dictionary<string, object>() {
                 // https://github.com/nunit/nunit/issues/2922
                 [FrameworkPackageSettings.NumberOfTestWorkers] = 0,
                 [FrameworkPackageSettings.SynchronousEvents] = true,
                 [FrameworkPackageSettings.RunOnMainThread] = true
             };
+
+            if (!(additionalSettings is null)) {
+                foreach (var setting in additionalSettings) {
+                    settings.Add(setting.Key, setting.Value);
+                }
+            }
         }
 
         public NUnitSingleThreadAssemblyRunner()
-            : this(settings: null) { }
+            : this(additionalSettings: null) { }
 
         public void LoadTestsInAssembly(Assembly assembly) =>
             runner.Load(assembly, settings);

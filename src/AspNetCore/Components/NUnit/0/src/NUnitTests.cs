@@ -13,7 +13,7 @@ namespace Teronis.AspNetCore.Components.NUnit
 {
     public class NUnitTests : ComponentBase
     {
-        [Inject] IServiceProvider serviceProvider { get; set; } = null!;
+        [Inject] private IServiceProvider serviceProvider { get; set; } = null!;
 
         /// <summary>
         /// You must set either <see cref="Assembly"/> or <see cref="AssemblyType"/>.
@@ -31,7 +31,7 @@ namespace Teronis.AspNetCore.Components.NUnit
         [Parameter] public string XmlReportDivId { get; set; } = NUnitTestsReportDefaults.XML_REPORT_DIV_ID;
 
         private string? xmlReport { get; set; }
-        RenderTreeSequence sequence = new RenderTreeSequence();
+        private RenderTreeSequence sequence = new RenderTreeSequence();
 
         private async Task RunTestsAsync()
         {
@@ -51,12 +51,9 @@ namespace Teronis.AspNetCore.Components.NUnit
                     listener: TestListener,
                     filter: TestFilter);
 
-                Console.WriteLine($"All tests ({result?.TotalCount ?? 0}) have been processed");
-
-                if (!(result is null) && result.PassCount != result.TotalCount) {
-                    Console.WriteLine(result.GenerateErrorsFailuresAndWarningsReport());
-                }
-
+#if DEBUG
+                Console.WriteLine(result.GenerateSummaryReport());
+#endif
                 xmlReport = result.GenerateXmlReport();
             } catch (Exception e) {
                 xmlReport = e.ToString();

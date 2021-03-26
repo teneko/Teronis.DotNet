@@ -36,23 +36,23 @@ namespace Teronis.NUnit.Api
         }
 
         /// <summary>
-        /// Generates an human readable errors, failures and warnings report. It may be empty when
-        /// no such error, failures or warnings are part of the result.
+        /// Generates an human readable summary report.
         /// </summary>
         /// <param name="result"></param>
         /// <returns>
-        /// The result report generated from 
-        /// <see cref="TextUI.DisplayErrorsFailuresAndWarningsReport(ITestResult)"/>.
+        /// The result report generated from
+        /// <see cref="TextUI.DisplaySummaryReport(ResultSummary)"/>.
         /// </returns>
         [return: NotNullIfNotNull("result")]
-        public static string? GenerateErrorsFailuresAndWarningsReport(this ITestResult? result) {
+        public static string? GenerateSummaryReport(this ITestResult? result)
+        {
             if (result is null) {
                 return null;
             }
 
             using var stringWriter = new StringWriter();
             var textUI = new TextUI(new ExtendedTextWrapper(stringWriter), reader: null, new NUnitLiteOptions());
-            textUI.DisplayErrorsFailuresAndWarningsReport(result);
+            textUI.DisplaySummaryReport(new ResultSummary(result));
             return stringWriter.GetStringBuilder().ToString();
         }
     }

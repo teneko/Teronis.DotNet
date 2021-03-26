@@ -52,6 +52,6 @@ namespace Teronis.Microsoft.JSInterop.Facades.Infrastructure
             Task.CompletedTask;
 
         async Task IAsyncLifetime.DisposeAsync() =>
-            await testHost.CancelAsync();
+            await testHost.DisposeAsync();
     }
 }

@@ -120,7 +120,10 @@ class Build : NukeBuild
                     DotNetTest(s => s
                         .SetProjectFile(testProjectPath)
                         .SetConfiguration(Configuration)
-                        .EnableNoRestore());
+                        .EnableNoRestore()
+                        //.SetProcessArgumentConfigurator(arguments =>
+                        //    arguments.Add("--filter FullyQualifiedName!=Teronis.Microsoft.JSInterop.Facades.JSFacadeTests", IsServerBuild))
+                        );
                 });
         });
 

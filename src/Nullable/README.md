@@ -2,7 +2,7 @@
 
 _Use .NET Core 3.0's new nullable attributes in older target frameworks._
 
-[:running: Quickstart](#quickstart) &nbsp; | &nbsp; [:books: Guides](https://github.com/manuelroemer/Nullable/wiki) &nbsp; | &nbsp; [:package: NuGet](https://www.nuget.org/packages/nullable)
+[:running: Quickstart](#quickstart) &nbsp; | &nbsp; [:books: Guides](https://github.com/manuelroemer/Nullable/wiki) &nbsp; | &nbsp; [:package: NuGet Package][NuGet Package]
 
 ## Prologue
 
@@ -25,7 +25,7 @@ Luckily, this problem can be solved by re-declaring the attributes as `internal 
 compiler will still use them for generating warnings, even though the target framework doesn't
 support these attributes by itself.
 
-This repository hosts the code for the ["Nullable" NuGet Package](https://www.nuget.org/packages/Nullable)
+This repository hosts the code for the ["Nullable" NuGet Package][NuGet Package]
 which, when referenced, adds support for these attributes.
 
 The code for these attributes is added **at compile time** and gets **built into the referencing project**.
@@ -128,7 +128,7 @@ You should now be ready to play with nullable references and the attributes even
 
 ## Compiler Constants
 
-The [included C# file](https://github.com/manuelroemer/Nullable/blob/master/src/Nullable.ExcludeFromCodeCoverage/NullableAttributes.cs)
+The [included C# files](src/)
 makes use of some compiler constants that can be used to enable or disable certain features.
 
 ### `NULLABLE_ATTRIBUTES_DISABLE`
@@ -173,3 +173,4 @@ As the Author of [Nullable][Nullable] stated, the source files itself won't chan
 The original project is licensed under the MIT license, this won't change. See updated [LICENSE](LICENSE) file for details.
 
 [Nullable]: https://github.com/manuelroemer/Nullable
+[NuGet Package]: https://www.nuget.org/packages/Teronis.Nullable

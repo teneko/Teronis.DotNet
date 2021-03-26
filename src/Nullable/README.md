@@ -1,12 +1,16 @@
 # Teronis.Nullable [![Nuget](https://img.shields.io/nuget/v/Teronis.Nullable)](https://www.nuget.org/packages/Teronis.Nullable)
 
-> :warning: The project Teronis.Nullable is a fork of [Nullable][Nullable]. In fact the project Nullable is in the SDK format but the package creation is not in the SDK format and uses nuget.exe directly. This fork has just moved the NuGet part to the new SDK format. Morover is the the unattractive and separate build process obsolete now. The project Teronis.Nullable is in such a way designed to be includable by ProjectReference and is heavily used by Teronis.Dotnet.
->
-> **When you face any issues with Teronis.Nullable please do not open an issue in [Nullable][Nullable] but open an issue here.**
-
 _Use .NET Core 3.0's new nullable attributes in older target frameworks._
 
 [:running: Quickstart](#quickstart) &nbsp; | &nbsp; [:books: Guides](https://github.com/manuelroemer/Nullable/wiki) &nbsp; | &nbsp; [:package: NuGet](https://www.nuget.org/packages/nullable)
+
+## Prologue
+
+This project (Teronis.Nullable) is a fork of [Nullable][Nullable]. In fact the project Nullable is in the SDK format but the package creation is not in the SDK format and uses nuget.exe directly. This fork has just moved the NuGet part to the new SDK format. Morover is the the unattractive and separate build process obsolete now. The project Teronis.Nullable is in such a way designed to be includable by ProjectReference and is heavily used by Teronis.Dotnet.
+
+**When you face any issues with Teronis.Nullable please do not open an issue in the repository of Nullable but open an issue [here](https://github.com/teroneko/Teronis.DotNet/issues).**
+
+## About Teronis.Nullable
 
 With the release of C# 8.0, support for [nullable reference types](https://docs.microsoft.com/en-us/dotnet/csharp/tutorials/nullable-reference-types)
 has been added to the language.
@@ -39,7 +43,7 @@ code.
 
 | .NET Standard 2.0 | .NET Standard 2.1 |
 | ----------------- | ----------------- |
-| ![.NET Standard 2.0](.github/CompiledNetStandard2.0.png) | ![.NET Standard 2.1](.github/CompiledNetStandard2.1.png) |
+| ![.NET Standard 2.0](img/CompiledNetStandard2.0.png) | ![.NET Standard 2.1](img/CompiledNetStandard2.1.png) |
 
 
 ## Compatibility

@@ -14,7 +14,7 @@ $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent
 ###########################################################################
 
 $BuildProjectFile = "$PSScriptRoot\nukebuild\Teronis.Build.csproj"
-$TempDirectory = "$PSScriptRoot\\.tmp"
+$TempDirectory = "$PSScriptRoot\nukebuild\obj\.tmp"
 
 $DotNetGlobalFile = "$PSScriptRoot\\global.json"
 $DotNetInstallUrl = "https://dot.net/v1/dotnet-install.ps1"

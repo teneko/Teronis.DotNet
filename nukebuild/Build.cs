@@ -37,7 +37,6 @@ class Build : NukeBuild
     [Solution("Teronis.DotNet~Publish.sln")]
     readonly Solution PublishSolution;
 
-
     //[GitRepository] readonly GitRepository GitRepository;
 
     // GITVERSION... Forces "... process is used by another process"...
@@ -46,8 +45,7 @@ class Build : NukeBuild
 
     AbsolutePath SourceDirectory => RootDirectory / "src";
     AbsolutePath PackagesDirectory => RootDirectory / "obj" / "packages";
-    AbsolutePath LocalDirectory => RootDirectory / "local";
-    AbsolutePath LocalBinDirectory => LocalDirectory / "bin";
+    AbsolutePath LibBuiltDirectory => RootDirectory / "lib/built";
 
     Target Clean => _ => _
         .Before(Restore)
@@ -70,8 +68,9 @@ class Build : NukeBuild
         });
 
     Target CleanBinary => _ => _
+        .Before(CompileBinary)
         .Executes(() => {
-            DeleteDirectory(LocalDirectory);
+            DeleteDirectory(LibBuiltDirectory);
         });
 
     Target CompileBinary => _ => _
@@ -84,13 +83,13 @@ class Build : NukeBuild
                      return;
                  }
 
-                 var binaryDirectory = LocalBinDirectory / project.Name;
+                 var binaryDirectory = LibBuiltDirectory / project.Name;
 
                  DotNetPublish(s => s
                      .SetProject(project)
                      .SetConfiguration(Configuration.Release)
                      .SetOutput(binaryDirectory)
-                     // We assume that every local binary project supports net5.0.
+                     // We assume that every local binary project supports net472.
                      .SetFramework("net472")
                      .EnableNoRestore());
              });

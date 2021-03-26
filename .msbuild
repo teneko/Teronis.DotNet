@@ -18,13 +18,13 @@ Licensed under the MIT license. See LICENSE file in the project root for full li
     <RootBuildTargetsPath Condition="'$(RootBuildTargetsPath)' == ''">$(RootDirectory)\Directory.Build.targets</RootBuildTargetsPath>
 
     <!-- /.msbuild-projects/ -->
-    <RootCorePropsPath Condition="'$(RootCorePropsPath)' == ''">$(RootDirectory)\.msbuild-projects\Directory.Core.props</RootCorePropsPath>
+    <RootCorePropsPath Condition="'$(RootCorePropsPath)' == ''">$(RootDirectory)\Directory.Core.props</RootCorePropsPath>
 
     <!-- Teronis.NetStandard.Core -->
     <TeronisNetStandardCoreDirectory Condition="'$(TeronisNetStandardCoreDirectory)' == ''">$(RootDirectory)\src\NetStandard\Core\Core\</TeronisNetStandardCoreDirectory>
 
     <!-- Teronis.MSBuild.BuildTasks -->
-    <MSBuildBuildTasksAssemblyFile>$(RootDirectory)local\bin\Teronis.MSBuild.BuildTasks\Teronis.MSBuild.BuildTasks.dll</MSBuildBuildTasksAssemblyFile>
+    <MSBuildBuildTasksAssemblyFile>$(RootDirectory)lib\built\Teronis.MSBuild.BuildTasks\Teronis.MSBuild.BuildTasks.dll</MSBuildBuildTasksAssemblyFile>
     <TeronisMSBuildBuildTasksTargetTasksTargetsFile>$(RootDirectory)src\MSBuild\BuildTasks\src\build\TargetTasks.targets</TeronisMSBuildBuildTasksTargetTasksTargetsFile>
 
     <!-- Teronis.MSBuild.BuildTasks -->

@@ -1,4 +1,7 @@
-﻿namespace Teronis.Mvc.ServiceResulting.Generic
+﻿// Copyright (c) Teroneko.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+namespace Teronis.Mvc.ServiceResulting.Generic
 {
     public class ServiceResultPostConfiguration<ServiceResultType, ServiceResultContentType> : IServiceResultPostConfiguration<ServiceResultType, ServiceResultContentType>
         where ServiceResultType : IServiceResult<ServiceResultContentType>

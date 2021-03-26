@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Teroneko.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 using Teronis.AspNetCore.Identity.Bearer.Stores;
 
 namespace Teronis.AspNetCore.Identity.Bearer

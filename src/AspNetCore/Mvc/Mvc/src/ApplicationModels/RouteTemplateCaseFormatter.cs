@@ -1,4 +1,7 @@
-﻿using System.Text.RegularExpressions;
+﻿// Copyright (c) Teroneko.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System.Text.RegularExpressions;
 using Teronis.Mvc.Case;
 
 namespace Teronis.Mvc.ApplicationModels

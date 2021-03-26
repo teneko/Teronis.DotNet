@@ -1,4 +1,7 @@
-﻿using CommandLine;
+﻿// Copyright (c) Teroneko.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using CommandLine;
 
 namespace Teronis.ModuleInitializer.AssemblyLoader
 {

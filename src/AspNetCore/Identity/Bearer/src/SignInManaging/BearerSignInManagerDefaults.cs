@@ -1,4 +1,7 @@
-﻿using Teronis.AspNetCore.Identity.Bearer.SignInManaging;
+﻿// Copyright (c) Teroneko.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using Teronis.AspNetCore.Identity.Bearer.SignInManaging;
 
 namespace Teronis.AspNetCore.Identity.Bearer
 {

@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿// Copyright (c) Teroneko.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Teronis.AspNetCore.Identity.Entities;

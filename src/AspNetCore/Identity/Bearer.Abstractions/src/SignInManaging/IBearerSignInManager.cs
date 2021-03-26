@@ -1,4 +1,7 @@
-﻿using System.Security.Claims;
+﻿// Copyright (c) Teroneko.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Teronis.AspNetCore.Identity.Bearer

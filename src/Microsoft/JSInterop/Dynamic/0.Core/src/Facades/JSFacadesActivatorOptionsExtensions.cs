@@ -1,4 +1,7 @@
-﻿using Teronis.Microsoft.JSInterop.Dynamic.Facades.ComponentPropertyAssignments;
+﻿// Copyright (c) Teroneko.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using Teronis.Microsoft.JSInterop.Dynamic.Facades.ComponentPropertyAssignments;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {

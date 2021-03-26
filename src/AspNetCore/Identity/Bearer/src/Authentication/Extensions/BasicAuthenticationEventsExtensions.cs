@@ -1,4 +1,7 @@
-﻿using Teronis.AspNetCore.Identity.Authentication.Utils;
+﻿// Copyright (c) Teroneko.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using Teronis.AspNetCore.Identity.Authentication.Utils;
 using Teronis.AspNetCore.Identity.Entities;
 using ZNetCS.AspNetCore.Authentication.Basic.Events;
 

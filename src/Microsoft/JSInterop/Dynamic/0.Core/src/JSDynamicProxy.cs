@@ -1,4 +1,7 @@
-﻿using Microsoft.JSInterop;
+﻿// Copyright (c) Teroneko.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using Microsoft.JSInterop;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic
 {

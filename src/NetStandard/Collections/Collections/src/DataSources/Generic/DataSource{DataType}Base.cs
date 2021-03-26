@@ -1,4 +1,7 @@
-﻿
+﻿// Copyright (c) Teroneko.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+
 /* Nicht gemergte Änderung aus Projekt "GitVersionCache.NetStandard.Core (netstandard2.0)"
 Vor:
 using Microsoft.Extensions.Logging;

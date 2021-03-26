@@ -1,4 +1,7 @@
-﻿#if !NET5_0
+﻿// Copyright (c) Teroneko.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+#if !NET5_0
 using System;
 using System.Collections.Generic;
 using System.Threading;

@@ -1,4 +1,7 @@
-﻿using System.Windows.Input;
+﻿// Copyright (c) Teroneko.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System.Windows.Input;
 using Teronis.Models;
 using Teronis.ViewModels;
 using Teronis.Windows.PresentationFoundation.Input;

@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿// Copyright (c) Teroneko.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
 namespace Teronis.AspNetCore.Components.NUnit

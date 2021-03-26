@@ -19,7 +19,7 @@ Teronis.DotNet consists of many projects. These are projects to solve common pro
 
 ## Building
 
-The build script `./build.(cmd|ps1|sh)` is a small application to assist in restoring, compiling, testing and packing all projects that can be found in this repository.
+The build script `./build.(cmd|ps1|sh)` is a small application to assist in restoring, compiling, testing and packing projects that can be found in this repository.
 
 ## Contributing
 

@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 using Teronis.Microsoft.JSInterop.Facades.Infrastructure;
 using Xunit;
 using System;
-using PlaywrightSharp;
 using Teronis.AspNetCore.Components.NUnit;
+using System.Xml.Linq;
+using System.Linq;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
@@ -22,15 +23,29 @@ namespace Teronis.Microsoft.JSInterop.Facades
         }
 
         [Fact]
-        public async Task Should_have_empty_nunit_report() {
+        public async Task Should_have_empty_nunit_report()
+        {
             var applicationUrl = server.ApplicationUrl;
             await using var browser = await playwright.Instance.Chromium.LaunchAsync();
             var page = await browser.NewPageAsync();
             var applicationUri = new Uri(applicationUrl);
             var pageUri = new Uri(applicationUri, "/");
-            await page.GoToAsync(pageUri.AbsoluteUri, LifecycleEvent.Networkidle);
-            var nunitXmlReport = await page.GetTextContentAsync(NUnitTestsReportDefaults.XML_REPORT_DIV_ID_HASHED);
-            Assert.Equal(string.Empty, nunitXmlReport);
+            await page.GoToAsync(pageUri.AbsoluteUri);
+            await page.WaitForSelectorAsync(NUnitTestsReportDefaults.NUnitXmlReportRenderedAttributeSelector);
+            var nunitXmlReport = await page.GetTextContentAsync(NUnitTestsReportDefaults.NUnitXmlReportIdSelector);
+
+            Assert.True(
+                XDocument.Parse(nunitXmlReport)
+                    .Descendants("test-suite")
+                    .All(x => {
+                        var attribute = x.Attribute("result");
+
+                        if (attribute is null) {
+                            throw new ArgumentNullException(nameof(attribute));
+                        }
+
+                        return attribute.Value.ToLower() == "passed";
+                    }));
         }
     }
 }

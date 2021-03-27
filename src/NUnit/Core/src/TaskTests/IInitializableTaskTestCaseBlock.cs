@@ -3,11 +3,11 @@
 
 namespace Teronis.NUnit.TaskTests
 {
-    public interface IInitializableTaskTests
+    public interface IInitializableTaskTestCaseBlock
     {
         /// <summary>
-        /// Initializes the instance. (Compare <see cref="TaskTests{TDerived}"/>).
-        /// Used only in <see cref="TaskTestsAnnotatedClasses"/> when assigning instances.
+        /// Initializes the instance. (Compare <see cref="TaskTestCaseBlock{TDerived}"/>).
+        /// Used only in <see cref="TaskTestCaseBlockMemberAssigner"/> when assigning instance.
         /// </summary>
         public void Initialize();
     }

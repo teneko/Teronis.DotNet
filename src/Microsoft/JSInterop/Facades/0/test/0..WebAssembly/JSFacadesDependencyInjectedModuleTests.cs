@@ -11,26 +11,23 @@ using Teronis_._Microsoft.JSInterop.Facades.JSModules;
 
 namespace Teronis_._Microsoft.JSInterop.Facades
 {
-    [TaskTests(nameof(Instance))]
-    public class JSFacadesDependencyInjectedModuleTests : TaskTests<JSFacadesTests>
+    [TaskTestCaseBlockStaticMemberProvider(nameof(Instance))]
+    public class JSFacadesDependencyInjectedModuleTests : TaskTestCaseBlock<JSFacadesTests>
     {
         public readonly static JSFacadesDependencyInjectedModuleTests Instance = null!;
 
-        public IServiceProvider ServiceProvider { get; set; } = null!;
+        public IJSFacadesActivator jsFacadesActivator { get; set; } = null!;
 
-        [ActivatorUtilitiesConstructor]
-        public JSFacadesDependencyInjectedModuleTests(IServiceProvider serviceProvider) =>
-            ServiceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+        public JSFacadesDependencyInjectedModuleTests(IJSFacadesActivator jsFacadesActivator) =>
+            this.jsFacadesActivator = jsFacadesActivator ?? throw new ArgumentNullException(nameof(jsFacadesActivator));
 
         [JSModuleProperty] ModuleActivationViaDependencyInjection Module { get; set; } = null!;
 
-        private T GetService<T>() =>
-            ActivatorUtilities.GetServiceOrCreateInstance<T>(Instance.ServiceProvider);
-
-        public LazyTask Should_resolve_module_via_dependency_injection = AddTest(async () => {
-            var jsFacadesActivator = Instance.GetService<IJSFacadesActivator>();
-            var jsFacades = await jsFacadesActivator.CreateInstanceAsync<JSFacadeActivators>(Instance);
+        public TaskTestCase Should_resolve_module_via_dependency_injection = AddTest(async (_) => {
+            var jsFacades = await Instance.jsFacadesActivator.CreateInstanceAsync<JSFacadeActivators>(Instance);
             var tonyHawk = await Instance.Module.GetTonyHawkAsync();
+
+            // Assert
             Assert.AreEqual(ModuleActivationViaDependencyInjection.ExpectedTonyHawkContent, tonyHawk);
         });
     }

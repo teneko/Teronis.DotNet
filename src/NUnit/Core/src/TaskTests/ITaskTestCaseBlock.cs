@@ -2,21 +2,22 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Teronis.NUnit.TaskTests
 {
-    public interface ITaskTests
+    public interface ITaskTestCaseBlock
     {
         /// <summary>
         /// Gets the list of assertable tasks.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<Task> GetAssertableTasks();
+        IEnumerable<TaskTestCase> GetTestCases();
         /// <summary>
         /// Awaits each assertable tasks while ignoring occuring exceptions.
         /// </summary>
         /// <returns>Represents the operation.</returns>
-        Task PrepareTasksAssertion();
+        Task PrepareTasksAssertion(CancellationToken cancellationToken = default);
     }
 }

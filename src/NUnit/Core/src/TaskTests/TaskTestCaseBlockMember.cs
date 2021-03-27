@@ -6,15 +6,15 @@ using System.Reflection;
 
 namespace Teronis.NUnit.TaskTests
 {
-    public class TaskTestsAnnotatedClassCollectorEntry
+    public class TaskTestCaseBlockMember
     {
         public MemberInfo MemberInfo { get; }
         /// <summary>
-        /// Not null if the value of <see cref="MemberInfo"/> was not null at time of collection.
+        /// If null it can be set by calling <see cref="SetInstance(ITaskTestCaseBlock)"/>.
         /// </summary>
-        public ITaskTests? Instance { get; private set; }
+        public ITaskTestCaseBlock? Instance { get; private set; }
 
-        public TaskTestsAnnotatedClassCollectorEntry(MemberInfo memberInfo, ITaskTests? taskTestsInstance)
+        public TaskTestCaseBlockMember(MemberInfo memberInfo, ITaskTestCaseBlock? taskTestsInstance)
         {
             MemberInfo = memberInfo ?? throw new ArgumentNullException(nameof(memberInfo));
 
@@ -26,7 +26,13 @@ namespace Teronis.NUnit.TaskTests
             Instance = taskTestsInstance;
         }
 
-        public void SetInstance(ITaskTests taskTestsInstance)
+        /// <summary>
+        /// Sets <paramref name="taskTestsInstance"/> as value of
+        /// <see cref="MemberInfo"/>. After that it is stored to
+        /// <see cref="Instance"/> too.
+        /// </summary>
+        /// <param name="taskTestsInstance">The new instance.</param>
+        public void SetInstance(ITaskTestCaseBlock taskTestsInstance)
         {
             if (MemberInfo.MemberType == MemberTypes.Field) {
                 ((FieldInfo)MemberInfo).SetValue(null, taskTestsInstance);
@@ -37,6 +43,10 @@ namespace Teronis.NUnit.TaskTests
             Instance = taskTestsInstance;
         }
 
+        /// <summary>
+        /// Gets the concrete instance type of <see cref="MemberInfo"/>.
+        /// </summary>
+        /// <returns></returns>
         public Type GetInstanceType() =>
             MemberInfo.MemberType switch {
                 MemberTypes.Field => ((FieldInfo)MemberInfo).FieldType,

@@ -8,14 +8,24 @@ namespace Teronis.AspNetCore.Components.NUnit
     /// https://gist.github.com/SteveSandersonMS/ec232992c2446ab9a0059dd0fbc5d0c3
     /// before using this helper class.
     /// </summary>
-    internal class RenderTreeSequence
+    internal struct RenderTreeSequence
     {
         public int Sequence { get; set; }
 
-        public void Reset(int sequence = 0) =>
+        public RenderTreeSequence(int sequence) =>
             Sequence = sequence;
 
-        public static implicit operator int(RenderTreeSequence sequence) =>
-            sequence.Sequence++;
+        public int Reset(int sequence = 0) =>
+            Sequence = sequence;
+
+        public int Increment(int operand = 1) =>
+            Sequence += operand;
+
+        public RenderTreeSequence PlanIncrement(int operand = 1)
+        {
+            var temporarySequence = Sequence;
+            Sequence += operand;
+            return new RenderTreeSequence(temporarySequence);
+        }
     }
 }

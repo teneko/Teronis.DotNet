@@ -10,13 +10,14 @@ namespace Teronis.NUnit.TaskTests
     {
         /// <summary>
         /// <para>
-        /// Asserts that task is not erroneous, otherwise the
-        /// inner exception is thrown.
+        /// Asserts that task is not erroneous, otherwise
+        /// the inner exceptions are thrown within 
+        /// <see cref="Assert.Multiple(TestDelegate)"/>.
         /// </para>
         /// <para>
         /// You may call it in a
         /// test case that is decorated with 
-        /// <see cref="TaskTestsSourceAttribute"/> or
+        /// <see cref="TaskTestCaseBlockStaticMemberSourceAttribute"/> or
         /// <see cref="TestCaseSourceAttribute"/> that provides 
         /// assertable task as first parameter.
         /// </para>

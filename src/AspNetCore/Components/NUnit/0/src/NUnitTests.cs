@@ -13,34 +13,42 @@ namespace Teronis.AspNetCore.Components.NUnit
 {
     public class NUnitTests : ComponentBase
     {
-        [Inject] private IServiceProvider serviceProvider { get; set; } = null!;
-
         /// <summary>
-        /// You must set either <see cref="Assembly"/> or <see cref="AssemblyType"/>.
-        /// Parameter <see cref="Assembly"/> has precedence.
+        /// The assembly where test fixtures are going to be searched.
+        /// You must set either <see cref="TestExplorationAssembly"/> or <see cref="TestExplorationAssemblyType"/>.
+        /// Parameter <see cref="TestExplorationAssembly"/> has precedence.
         /// </summary>
-        [Parameter] public Assembly? Assembly { get; set; } = null!;
+        [Parameter] public Assembly? TestExplorationAssembly { get; set; } = null!;
         /// <summary>
-        /// You must set either <see cref="Assembly"/> or <see cref="AssemblyType"/>.
-        /// Parameter <see cref="Assembly"/> has precedence.
+        /// The assembly of specified type where test fixtures are going to be searched.
+        /// You must set either <see cref="TestExplorationAssembly"/> or <see cref="TestExplorationAssemblyType"/>.
+        /// Parameter <see cref="TestExplorationAssembly"/> has precedence.
         /// </summary>
-        [Parameter] public Type? AssemblyType { get; set; } = null!;
-        [Parameter] public EventCallback<IServiceProvider> BeforeAssertingTasks { get; set; }
+        [Parameter] public Type? TestExplorationAssemblyType { get; set; } = null!;
+        [Parameter] public EventCallback<IServiceProvider> BeforeRunningTests { get; set; }
         [Parameter] public ITestListener? TestListener { get; set; }
         [Parameter] public ITestFilter? TestFilter { get; set; }
-        [Parameter] public string XmlReportDivId { get; set; } = NUnitTestsReportDefaults.XML_REPORT_DIV_ID;
+        [Parameter] public string XmlReportDivId { get; set; } = NUnitTestsReportDefaults.NUnitXmlReportIdName;
+        [Parameter] public bool IdentXmlReport { get; set; }
+        /// <summary>
+        /// The attribute gets passed through to <see cref="NUnitTestsReport"/> after the test XML report has been
+        /// calculated.
+        /// </summary>
+        [Parameter] public string? XmlReportRenderedAttributeName { get; set; } = NUnitTestsReportDefaults.NUnitXmlReportRenderedAttributeName;
 
+
+        [Inject] internal protected IServiceProvider ServiceProvider { get; set; } = null!;
         private string? xmlReport { get; set; }
-        private RenderTreeSequence sequence = new RenderTreeSequence();
+        private bool xmlReportRendered;
 
         private async Task RunTestsAsync()
         {
-            var assembly = Assembly
-                ?? AssemblyType?.Assembly
-                ?? throw new ArgumentException($"You must set either {nameof(Assembly)} or {nameof(AssemblyType)}.");
+            var assembly = TestExplorationAssembly
+                ?? TestExplorationAssemblyType?.Assembly
+                ?? throw new ArgumentException($"You must set either {nameof(TestExplorationAssembly)} or {nameof(TestExplorationAssemblyType)}.");
 
-            if (BeforeAssertingTasks.HasDelegate) {
-                await BeforeAssertingTasks.InvokeAsync(serviceProvider);
+            if (BeforeRunningTests.HasDelegate) {
+                await BeforeRunningTests.InvokeAsync(ServiceProvider);
             }
 
             try {
@@ -54,7 +62,7 @@ namespace Teronis.AspNetCore.Components.NUnit
 #if DEBUG
                 Console.WriteLine(result.GenerateSummaryReport());
 #endif
-                xmlReport = result.GenerateXmlReport();
+                xmlReport = result.GenerateXmlReport(ident: IdentXmlReport);
             } catch (Exception e) {
                 xmlReport = e.ToString();
             }
@@ -66,6 +74,7 @@ namespace Teronis.AspNetCore.Components.NUnit
 
             if (firstRender) {
                 await RunTestsAsync();
+                xmlReportRendered = true;
                 // Is now supported in OnAfterRenderAsync cycle.
                 StateHasChanged();
             }
@@ -75,10 +84,16 @@ namespace Teronis.AspNetCore.Components.NUnit
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
-            sequence.Reset();
-            builder.OpenComponent<NUnitTestsReport>(sequence);
-            builder.AddAttribute(sequence, nameof(NUnitTestsReport.XmlReportDivId), XmlReportDivId);
-            builder.AddAttribute(sequence, nameof(NUnitTestsReport.XmlReport), xmlReport);
+            var sequence = new RenderTreeSequence();
+            builder.OpenComponent<NUnitTestsReport>(sequence.Increment());
+            builder.AddAttribute(sequence.Increment(), nameof(NUnitTestsReport.XmlReportDivId), XmlReportDivId);
+            builder.AddAttribute(sequence.Increment(), nameof(NUnitTestsReport.XmlReport), xmlReport);
+
+            var xmlReportRenderedAttributeName = xmlReportRendered
+                ? XmlReportRenderedAttributeName
+                : null;
+
+            builder.AddAttribute(sequence.Increment(), nameof(NUnitTestsReport.XmlReportRenderedAttributeName), xmlReportRenderedAttributeName);
             builder.CloseComponent();
         }
     }

@@ -3,7 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Xml;
+using System.Xml.Linq;
 using NUnit.Common;
 using NUnit.Framework.Interfaces;
 using NUnitLite;
@@ -13,26 +13,25 @@ namespace Teronis.NUnit.Api
     public static class ITestResultExtensions
     {
         /// <summary>
-        /// Generates the xml report of <paramref name="result"/>.
+        /// Generates the XML report of <paramref name="result"/>.
         /// </summary>
         /// <param name="result">The test result.</param>
+        /// <param name="ident">Idents XML output.</param>
         /// <returns>
-        /// The result of <see cref="IXmlNodeBuilder.ToXml(bool)"/>
-        /// of <see cref="ITestResult"/>. Null if 
-        /// <paramref name="result"/> is null. Empty
-        /// if no skip or failure has been occured.
+        /// The result of <see cref="IXmlNodeBuilder.AddToXml(TNode, bool)"/>
+        /// of <see cref="ITestResult"/>. The root node is &lt;tests/&gt;.
         /// </returns>
-        [return: NotNullIfNotNull("result")]
-        public static string? GenerateXmlReport(this ITestResult? result)
+        public static string GenerateXmlReport(this ITestResult? result, bool ident = false)
         {
-            if (result is null) {
-                return null;
+            var node = new TNode("tests");
+
+            if (!(result is null)) {
+                result.AddToXml(node, recursive: true);
             }
 
-            using var stringWriter = new StringWriter();
-            using var xmlWriter = XmlWriter.Create(stringWriter);
-            result.ToXml(recursive: true).WriteTo(xmlWriter);
-            return stringWriter.GetStringBuilder().ToString();
+            return ident
+                ? XDocument.Parse(node.OuterXml).ToString()
+                : node.OuterXml;
         }
 
         /// <summary>

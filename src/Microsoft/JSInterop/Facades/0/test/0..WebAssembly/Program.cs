@@ -34,7 +34,7 @@ namespace Teronis_._Microsoft.JSInterop.Facades
                     .Add<ModuleActivationViaDependencyInjection>();
             });
 
-            services.AddScoped<ITaskTests>(serviceProvider => JSFacadesTests.Instance);
+            services.AddScoped<ITaskTestCaseBlock>(serviceProvider => JSFacadesTests.Instance);
             services.AddJSFacades();
 
             await builder.Build().RunAsync();

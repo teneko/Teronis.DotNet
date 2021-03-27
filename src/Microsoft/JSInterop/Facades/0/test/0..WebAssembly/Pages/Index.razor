@@ -1,12 +1,15 @@
 ﻿@page "/"
 
-<NUnitTests AssemblyType="typeof(Index)" BeforeAssertingTasks="BeforeAssertingTasks" />
+<NUnitTests TestExplorationAssemblyType="typeof(TaskTestCaseSourceTestFixture)" BeforeRunningTests="BeforeRunningTasks" IdentXmlReport="true" />
 
 @code {
-    private async Task BeforeAssertingTasks(IServiceProvider serviceProvider)
+    private async Task BeforeRunningTasks(IServiceProvider serviceProvider)
     {
-        NUnitEntryPoint.AssertableTasks = await serviceProvider
-            .ToTasksTestsAnnotatedClasses()
-            .AssignInstancesAndPrepareTasksAssertion(typeof(Program).Assembly);
+        TaskTestCaseSourceTestFixture.TaskTestCases = await
+            new AssemblyTaskTestCaseBlockStaticMemberCollector(typeof(Program).Assembly)
+                .CollectMembers()
+                .AssignInstances(new TaskTestCaseBlockMemberAssigner(), serviceProvider)
+                .PrepareTasksAssertion(new TaskTestCaseBlockPreparer())
+            .ToListAsync();
     }
-} 
+}

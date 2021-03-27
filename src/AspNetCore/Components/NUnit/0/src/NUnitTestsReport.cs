@@ -8,17 +8,23 @@ namespace Teronis.AspNetCore.Components.NUnit
 {
     public class NUnitTestsReport : ComponentBase
     {
-        [Parameter] public string XmlReportDivId { get; set; } = NUnitTestsReportDefaults.XML_REPORT_DIV_ID;
+        [Parameter] public string XmlReportDivId { get; set; } = NUnitTestsReportDefaults.NUnitXmlReportIdName;
         [Parameter] public string? XmlReport { get; set; } = null!;
-
-        private RenderTreeSequence sequence = new RenderTreeSequence();
+        [Parameter] public string? XmlReportRenderedAttributeName { get; set; } = NUnitTestsReportDefaults.NUnitXmlReportRenderedAttributeName;
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
-            sequence.Reset();
-            builder.OpenElement(sequence, "div");
-            builder.AddAttribute(sequence, "id", XmlReportDivId);
-            builder.AddContent(sequence, XmlReport);
+            var sequence = new RenderTreeSequence();
+            builder.OpenElement(sequence.Increment(), "pre");
+            builder.AddAttribute(sequence.Increment(), "lang", "xml");
+            builder.AddAttribute(sequence.Increment(), "id", XmlReportDivId);
+
+            var subSequence = sequence.PlanIncrement();
+            if (XmlReportRenderedAttributeName != null) {
+                builder.AddAttribute(subSequence.Increment(), XmlReportRenderedAttributeName);
+            }
+
+            builder.AddContent(sequence.Increment(), XmlReport);
             builder.CloseElement();
         }
     }

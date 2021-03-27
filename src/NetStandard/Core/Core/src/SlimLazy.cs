@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Teronis.Microsoft.JSInterop
+namespace Teronis
 {
     public class SlimLazy<T>
     {
@@ -18,8 +18,7 @@ namespace Teronis.Microsoft.JSInterop
         public T Value {
             get {
                 if (!IsValueCreated) {
-                    value = valueProvider!();
-                    IsValueCreated = true;
+                    SetValueIfNotCreated(valueProvider!());
                 }
 
                 return value;
@@ -43,6 +42,20 @@ namespace Teronis.Microsoft.JSInterop
         {
             IsValueCreated = true;
             this.value = value;
+        }
+
+        /// <summary>
+        /// Sets the value if it has been not created so far.
+        /// </summary>
+        /// <param name="value"></param>
+        protected void SetValueIfNotCreated(T value)
+        {
+            if (IsValueCreated) {
+                return;
+            }
+
+            this.value = value;
+            IsValueCreated = true;
         }
     }
 }

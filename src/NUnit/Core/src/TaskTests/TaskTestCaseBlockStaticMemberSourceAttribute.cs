@@ -14,25 +14,30 @@ using NUnitTest = NUnit.Framework.Internal.Test;
 namespace Teronis.NUnit.TaskTests
 {
     /// <summary>
-    /// Use this attribute when you only want to test 
-    /// a single instance of <see cref="ITaskTests"/>.
+    /// Use this attribute when you only want to test
+    /// a single static instance member of <see cref="ITaskTestCaseBlock"/>.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-    public class TaskTestsSourceAttribute : NUnitAttribute, ITestBuilder, IImplyFixture
+    public class TaskTestCaseBlockStaticMemberSourceAttribute : NUnitAttribute, ITestBuilder, IImplyFixture
     {
         public Type TaskTestsClassType { get; }
-        public string TaskTestsInstanceName { get; }
+        public string TaskTestsMemberName { get; }
 
         private List<TestCaseParameters> skipReasonedParametersList;
         private List<TestCaseParameters> testCaseParametersList;
 
-        public TaskTestsSourceAttribute(Type taskTestsClassType, string taskTestsInstanceName)
+        /// <summary>
+        /// Creates an attribute that is recognized by NUnit.
+        /// </summary>
+        /// <param name="taskTestsClassType">The <see cref="TaskTestCaseBlock"/> class type that has a static member of type <see cref="ITaskTestCaseBlock"/>.</param>
+        /// <param name="staticMemberName">The name of the static member that implements <see cref="ITaskTestCaseBlock"/>.</param>
+        public TaskTestCaseBlockStaticMemberSourceAttribute(Type taskTestsClassType, string staticMemberName)
         {
             skipReasonedParametersList = new List<TestCaseParameters>();
             testCaseParametersList = new List<TestCaseParameters>();
 
             TaskTestsClassType = taskTestsClassType;
-            TaskTestsInstanceName = taskTestsInstanceName;
+            TaskTestsMemberName = staticMemberName;
 
             if (!TryGetStaticMemberType(out var testAssertions)) {
                 return;
@@ -51,57 +56,57 @@ namespace Teronis.NUnit.TaskTests
 
         private bool IsTypeAssignableToTestAssertionsType(Type type)
         {
-            if (!typeof(ITaskTests).IsAssignableFrom(type)) {
-                AddSkipReason($"Source type has to be assignable to {typeof(ITaskTests)}.");
+            if (!typeof(ITaskTestCaseBlock).IsAssignableFrom(type)) {
+                AddSkipReason($"Source type has to be assignable to {typeof(ITaskTestCaseBlock)}.");
                 return false;
             }
 
             return true;
         }
 
-        private bool TryGetStaticMemberType([MaybeNullWhen(false)] out ITaskTests testAssertions)
+        private bool TryGetStaticMemberType([MaybeNullWhen(false)] out ITaskTestCaseBlock taskTests)
         {
-            var members = TaskTestsClassType.GetMember(TaskTestsInstanceName, MemberTypes.Field | MemberTypes.Property, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+            var taskTestsMemberInfos = TaskTestsClassType.GetMember(TaskTestsMemberName, MemberTypes.Field | MemberTypes.Property, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
 
-            if (members.Length != 1) {
-                AddSkipReason($"More than one member by name \"{TaskTestsInstanceName}\" exist.");
+            if (taskTestsMemberInfos.Length != 1) {
+                AddSkipReason($"More than one member by name \"{TaskTestsMemberName}\" exist.");
                 goto @return;
             }
 
-            var testAssertionsMember = members[0];
-            object? testAssertionsObject;
+            var taskTestsMemberInfo = taskTestsMemberInfos[0];
+            object? taskTestsInstanceObject;
 
-            if (testAssertionsMember.MemberType == MemberTypes.Field) {
-                testAssertionsObject = ((FieldInfo)testAssertionsMember).GetValue(null);
-            } else if (testAssertionsMember.MemberType == MemberTypes.Property) {
-                testAssertionsObject = ((PropertyInfo)testAssertionsMember).GetValue(null);
+            if (taskTestsMemberInfo.MemberType == MemberTypes.Field) {
+                taskTestsInstanceObject = ((FieldInfo)taskTestsMemberInfo).GetValue(null);
+            } else if (taskTestsMemberInfo.MemberType == MemberTypes.Property) {
+                taskTestsInstanceObject = ((PropertyInfo)taskTestsMemberInfo).GetValue(null);
             } else {
-                AddSkipReason($"Member by name \"{TaskTestsInstanceName}\" is not field or property.");
+                AddSkipReason($"Member by name \"{TaskTestsMemberName}\" is not field or property.");
                 goto @return;
             }
 
-            if (testAssertionsObject is null) {
-                AddSkipReason($"Member by name \"{TaskTestsInstanceName}\" is null.");
+            if (taskTestsInstanceObject is null) {
+                AddSkipReason($"Member by name \"{TaskTestsMemberName}\" is null.");
                 goto @return;
             }
 
-            if (!IsTypeAssignableToTestAssertionsType(testAssertionsObject.GetType())) {
-                AddSkipReason($"Member by name \"{TaskTestsInstanceName}\" is not of type \"{typeof(ITaskTests)}\".");
+            if (!IsTypeAssignableToTestAssertionsType(taskTestsInstanceObject.GetType())) {
+                AddSkipReason($"Member by name \"{TaskTestsMemberName}\" is not of type \"{typeof(ITaskTestCaseBlock)}\".");
                 goto @return;
             }
 
-            testAssertions = (ITaskTests)testAssertionsObject;
+            taskTests = (ITaskTestCaseBlock)taskTestsInstanceObject;
             return true;
 
             @return:
-            testAssertions = null;
+            taskTests = null;
             return false;
         }
 
-        private void AddTestAssertionsToTestCaseParametersList(ITaskTests taskTestsInstance)
+        private void AddTestAssertionsToTestCaseParametersList(ITaskTestCaseBlock taskTestsInstance)
         {
-            foreach (var testAssertion in taskTestsInstance.GetAssertableTasks()) {
-                var testCaseParameters = new TestCaseParameters(new object[] { testAssertion });
+            foreach (var testCase in taskTestsInstance.GetTestCases()) {
+                var testCaseParameters = new TestCaseParameters(testCase);
                 testCaseParametersList.Add(testCaseParameters);
             }
         }

@@ -50,6 +50,8 @@ Licensed under the MIT license. See LICENSE file in the project root for full li
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <Copyright Condition="'$(Copyright)' == ''">Teroneko</Copyright>
     <PackageIcon Condition="'$(PackageIcon)' == ''">icon.png</PackageIcon>
+    <!-- Generates the documentation file that is packed too. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <!-- <IncludeSymbols Condition="'$(IncludeSymbols)' == ''">true</IncludeSymbols>
     <SymbolPackageFormat Condition="'$(SymbolPackageFormat)' == ''">snupkg</SymbolPackageFormat> -->
     <!-- <EmbedAllSources>true</EmbedAllSources> -->

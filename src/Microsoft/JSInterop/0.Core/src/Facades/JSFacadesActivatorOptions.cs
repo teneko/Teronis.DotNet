@@ -4,8 +4,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
-using Teronis.Collections.Specialized;
-using Teronis.Microsoft.JSInterop.Facades.ComponentPropertyAssigners;
+using Teronis.Microsoft.JSInterop.Facades.PropertyAssigners;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
@@ -14,31 +13,47 @@ namespace Teronis.Microsoft.JSInterop.Facades
         /// <summary>
         /// Contains factories for component property assignments.
         /// </summary>
-        public OrderedDictionary<Type, Func<IServiceProvider, IComponentPropertyAssigner>?> ComponentPropertyAssignerFactories {
+        public PropertyAssignerFactories PropertyAssignerFactories {
             get {
-                if (componentPropertyAssignerFactories is null) {
-                    componentPropertyAssignerFactories = new OrderedDictionary<Type, Func<IServiceProvider, IComponentPropertyAssigner>?>();
+                if (propertyAssignerFactories is null) {
+                    propertyAssignerFactories = new PropertyAssignerFactories();
+                    arePropertyAssignersDefault = false;
                 }
 
-                return componentPropertyAssignerFactories;
+                return propertyAssignerFactories;
             }
         }
 
-        internal List<IComponentPropertyAssigner> ComponentPropertyAssigners {
+        internal List<IPropertyAssigner> PropertyAssigners {
             get {
-                CheckForAddableCollectibleComponentPropertyAssigners();
-                EnsureCreatedComponentPropertyAssignersFromFactories();
-                return componentPropertyAssigners;
+                EnsureCreatedPropertyAssignersFromFactories();
+                return propertyAssigners;
             }
         }
 
-        private OrderedDictionary<Type, Func<IServiceProvider, IComponentPropertyAssigner>?>? componentPropertyAssignerFactories;
-        private List<IComponentPropertyAssigner> componentPropertyAssigners;
+        private PropertyAssignerFactories? propertyAssignerFactories;
+        private List<IPropertyAssigner> propertyAssigners;
         private IServiceProvider? serviceProvider;
-        private bool areComponentPropertyAssignersCreatedFromFactories;
+        private bool arePropertyAssignersCreated;
+        private bool arePropertyAssignersDefault;
 
-        public JSFacadesActivatorOptions() =>
-            componentPropertyAssigners = new List<IComponentPropertyAssigner>();
+        public JSFacadesActivatorOptions()
+        {
+            propertyAssigners = new List<IPropertyAssigner>();
+            arePropertyAssignersDefault = true;
+        }
+
+        internal bool AreDefaultPropertyAssigners() {
+            if (!arePropertyAssignersDefault) {
+                return false;
+            }
+
+            if (propertyAssigners is null) {
+                propertyAssignerFactories = new PropertyAssignerFactories();
+            }
+
+            return true;
+        }
 
         internal void SetServiceProvider(IServiceProvider serviceProvider) =>
             this.serviceProvider = serviceProvider;
@@ -52,43 +67,44 @@ namespace Teronis.Microsoft.JSInterop.Facades
             return serviceProvider;
         }
 
-        private void CheckForAddableCollectibleComponentPropertyAssigners()
+        ///// <summary>
+        ///// Adds only collectible assigners when <see cref="PropertyAssignerFactories"/>
+        ///// has not been request by user.
+        ///// </summary>
+        //private void CheckForCollectiblePropertyAssignersToBeAdded()
+        //{
+        //    if (!(this.propertyAssignerFactories is null)) {
+        //        return;
+        //    }
+
+        //    var serviceProvider = GetServiceProviderOrThrow();
+        //    var propertyAssignerFactories = PropertyAssignerFactories;
+
+            
+        //}
+
+        private void EnsureCreatedPropertyAssignersFromFactories()
         {
-            if (!(componentPropertyAssignerFactories is null)) {
+            if (arePropertyAssignersCreated) {
                 return;
             }
 
             var serviceProvider = GetServiceProviderOrThrow();
-            var collectibleComponentPropertyAssignments = serviceProvider.GetServices<ICollectibleComponentPropertyAssigner>();
-            var componentPropertyAssignmentFactoryDictionary = ComponentPropertyAssignerFactories;
 
-            foreach (var collectibleComponentPropertyAssignment in collectibleComponentPropertyAssignments) {
-                componentPropertyAssignmentFactoryDictionary.Add(collectibleComponentPropertyAssignment.ImplementationType, value: null);
-            }
-        }
-
-        private void EnsureCreatedComponentPropertyAssignersFromFactories()
-        {
-            if (areComponentPropertyAssignersCreatedFromFactories) {
-                return;
-            }
-
-            var serviceProvider = GetServiceProviderOrThrow();
-
-            foreach (var typeAndFactory in ComponentPropertyAssignerFactories) {
+            foreach (var typeAndFactory in PropertyAssignerFactories) {
                 var (componentPropertyAssignmentType, componentPropertyAssignmentFactory) = typeAndFactory;
-                IComponentPropertyAssigner componentPropertyAssignment;
+                IPropertyAssigner componentPropertyAssignment;
 
                 if (componentPropertyAssignmentFactory is null) {
-                    componentPropertyAssignment = (IComponentPropertyAssigner)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, componentPropertyAssignmentType);
+                    componentPropertyAssignment = (IPropertyAssigner)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, componentPropertyAssignmentType);
                 } else {
                     componentPropertyAssignment = componentPropertyAssignmentFactory.Invoke(serviceProvider);
                 }
 
-                componentPropertyAssigners.Add(componentPropertyAssignment);
+                propertyAssigners.Add(componentPropertyAssignment);
             }
 
-            areComponentPropertyAssignersCreatedFromFactories = true;
+            arePropertyAssignersCreated = true;
         }
 
         internal JSFacades<TJSFacadeActivators> CreateJSFacades<TJSFacadeActivators>()

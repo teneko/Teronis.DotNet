@@ -13,7 +13,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
     /// to use it in <see cref="IJSFacadesActivator"/> to create a concrete
     /// <see cref="IJSFacades{TJSFacadeActivators}"/>.
     /// </summary>
-    public class JSFacadeActivators : JSFacadeActivatorsBase, IJSFacadeActivators
+    public class JSFacadeActivators : JSFacadeActivatorsBase
     {
         public IJSModuleActivator JSModuleActivator { get; }
         public IJSLocalObjectActivator JSLocalObjectActivator { get; }

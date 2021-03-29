@@ -33,8 +33,8 @@ namespace Teronis.Microsoft.JSInterop.Dynamic.Reflection
         public bool HasCancellationTokenParameter =>
             cancellableAnnotatedParameter?.IsCancellationToken ?? false;
 
-        public bool HasTimeSpanParameter =>
-            cancellableAnnotatedParameter?.IsTimeSpan ?? false;
+        public bool HasTimeoutParameter =>
+            cancellableAnnotatedParameter?.IsTimeout ?? false;
 
         public bool HasAccommodatableAnnotatedParameter =>
             !(accommodatableAnnotatedParameter is null);
@@ -175,7 +175,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic.Reflection
 
         public TimeSpan GetTimeSpan(object?[] arguments)
         {
-            if (!HasTimeSpanParameter) {
+            if (!HasTimeoutParameter) {
                 throw new InvalidOperationException("Parameter list does not have a time span parameter.");
             }
 

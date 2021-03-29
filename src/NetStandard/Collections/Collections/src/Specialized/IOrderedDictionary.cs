@@ -10,11 +10,13 @@ namespace Teronis.Collections.Specialized
     public interface IOrderedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IOrderedDictionary, IReadOnlyDictionary<TKey, TValue>
         where TKey : notnull
     {
-        new KeyValuePair<TKey, TValue> this[int index] { get; set; }
-        new TValue this[TKey key] { get; set; }
         new int Count { get; }
         new ICollection<TKey> Keys { get; }
         new ICollection<TValue> Values { get; }
+
+        new KeyValuePair<TKey, TValue> this[int index] { get; set; }
+        new TValue this[TKey key] { get; set; }
+
         new void Add(TKey key, TValue value);
         new void Clear();
         void Insert(int index, TKey key, TValue value);

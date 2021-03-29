@@ -11,7 +11,7 @@ using Teronis_._Microsoft.JSInterop.Facades.JSModules;
 namespace Teronis_._Microsoft.JSInterop.Facades
 {
     // Compare Program.cs.
-    [TaskTestCaseBlockStaticMemberProvider(nameof(Instance))]
+    //[TaskTestCaseBlockStaticMemberProvider(nameof(Instance))]
     public class JSFacadesManualConstrcutedModuleTests : TaskTestCaseBlock
     {
         public readonly static JSFacadesManualConstrcutedModuleTests Instance = null!;

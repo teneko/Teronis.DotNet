@@ -2,13 +2,12 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Threading.Tasks;
-using Microsoft.JSInterop;
-using Teronis.Microsoft.JSInterop.Module;
+using Teronis.Microsoft.JSInterop.Locality;
 
 namespace Teronis_._Microsoft.JSInterop.Facades.JSDynamicObjects
 {
-    public interface IMomentDynamicObject : IJSModule
+    public interface IMomentDynamicObject : IJSLocalObject
     {
-        ValueTask<IJSObjectReference> moment(string date);
+        ValueTask<string> format();
     }
 }

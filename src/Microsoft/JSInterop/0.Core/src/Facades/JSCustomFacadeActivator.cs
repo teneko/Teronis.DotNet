@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
@@ -13,7 +14,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
 
         public JSCustomFacadeActivator(
             IServiceProvider serviceProvider,
-            JSCustomFacadeActivatorOptions options)
+            IOptions<JSCustomFacadeActivatorOptions> options)
         {
             this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 
@@ -21,7 +22,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
                 throw new ArgumentNullException(nameof(options));
             }
 
-            jsFacadeDictionary = options.JSFacadeDictionaryBuilder.Build();
+            jsFacadeDictionary = options.Value.JSFacadeDictionaryBuilder.Build();
         }
 
         public virtual IAsyncDisposable CreateCustomFacade(IJSObjectReferenceFacade customFacadeConstructorParameter, Type jsCustomFacadeType)

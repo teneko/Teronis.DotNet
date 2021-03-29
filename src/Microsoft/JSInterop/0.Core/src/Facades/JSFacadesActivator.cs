@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
@@ -11,8 +12,8 @@ namespace Teronis.Microsoft.JSInterop.Facades
     {
         private readonly JSFacadesActivatorOptions options;
 
-        public JSFacadesActivator(JSFacadesActivatorOptions options) =>
-            this.options = options ?? throw new ArgumentNullException(nameof(options));
+        public JSFacadesActivator(IOptions<JSFacadesActivatorOptions> options) =>
+            this.options = options.Value ?? throw new ArgumentNullException(nameof(options));
 
         private JSFacades<TJSFacadeActivators> CreateFacades<TJSFacadeActivators>()
             where TJSFacadeActivators : IJSFacadeActivators
@@ -36,9 +37,9 @@ namespace Teronis.Microsoft.JSInterop.Facades
             var jsFacadesDisposables = new List<IAsyncDisposable>();
 
             foreach (var componentProperty in ComponentPropertyCollection.Create(component.GetType())) {
-                foreach (var componentPropertyAssignment in options.ComponentPropertyAssigners) {
+                foreach (var componentPropertyAssignment in options.PropertyAssigners) {
                     if ((await componentPropertyAssignment
-                            .TryAssignComponentProperty(componentProperty))
+                            .TryAssignProperty(componentProperty))
                                 .TryGetNotNull(out var jsFacade)) {
                         jsFacadesDisposables.Add(jsFacade);
                         componentProperty.PropertyInfo.SetValue(component, jsFacade);

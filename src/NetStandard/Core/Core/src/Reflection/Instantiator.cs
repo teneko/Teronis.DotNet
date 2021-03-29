@@ -33,7 +33,7 @@ namespace Teronis.Reflection
         /// Instantiates an object of type <typeparamref name="T"/>. If it has no default 
         /// constructor the object will be created uninitialized/without constructor.
         /// </summary>
-        /// <param name="type">The type you want to instantiate.</param>
+        /// <typeparam name="T">The type you want to have instantiated.</typeparam>
         /// <returns>The object that has been instantiated.</returns>
         [return: MaybeNull]
         public static T Instantiate<T>()

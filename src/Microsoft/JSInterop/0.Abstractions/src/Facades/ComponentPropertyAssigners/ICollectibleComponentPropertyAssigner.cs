@@ -3,15 +3,15 @@
 
 using System;
 
-namespace Teronis.Microsoft.JSInterop.Facades.ComponentPropertyAssigners
+namespace Teronis.Microsoft.JSInterop.Facades.PropertyAssigners
 {
-    /// <summary>
-    /// Used in post configuration. Intendeted to be registered 
-    /// as <see cref="ICollectibleComponentPropertyAssigner"/>.
-    /// in dependency injection.
-    /// </summary>
-    internal interface ICollectibleComponentPropertyAssigner
-    {
-        Type ImplementationType { get; }
-    }
+    ///// <summary>
+    ///// Used in post configuration. Intendeted to be registered 
+    ///// as <see cref="ICollectibleComponentPropertyAssigner"/>.
+    ///// in dependency injection.
+    ///// </summary>
+    //internal interface ICollectibleComponentPropertyAssigner
+    //{
+    //    Type ImplementationType { get; }
+    //}
 }

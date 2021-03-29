@@ -5,14 +5,45 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
+using Dynamitey;
 using Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop.Dynamic.Annotations;
+using Teronis.Microsoft.JSInterop.Interception;
+using Teronis.Microsoft.JSInterop.Reflection;
+using DynamiteyDynamic = Dynamitey.Dynamic;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic.Reflection
 {
     internal class Method
     {
+        private static InvokeContext methodStaticContext;
+
+        static Method() =>
+            methodStaticContext = InvokeContext.CreateStatic(typeof(Method));
+
+        private static async ValueTask<TValue> InterceptAndGetDeterminedValue<TValue>(
+            IJSObjectInterceptor jsObjectInterceptor,
+            IJSObjectReference jsObjectReference,
+            string identifier,
+            CancellationToken? cancellationToken,
+            TimeSpan? timeout,
+            object?[] arguments,
+            ICustomAttributes methodAttributes)
+        {
+            var invocation = new JSObjectInvocation<TValue>(
+                jsObjectReference,
+                identifier,
+                cancellationToken,
+                timeout,
+                arguments,
+                methodAttributes);
+
+            await jsObjectInterceptor.InterceptInvokeAsync(invocation);
+            return await invocation.GetDeterminedResult();
+        }
+
         private static Dictionary<Type, Type> closedGenericValueTaskTypeByGenericArgumentType = new Dictionary<Type, Type>();
         private static Type openGenericValueTaskType = typeof(ValueTask<>);
 
@@ -33,16 +64,16 @@ namespace Teronis.Microsoft.JSInterop.Dynamic.Reflection
 
         public MethodInfo MethodInfo { get; }
         public ParameterList ParameterList { get; }
-        public ValueTaskType ValueTaskReturnType { get; }
+        public ValueTaskType ResultingValueTaskType { get; }
 
         public string Name =>
             MethodInfo.Name;
 
-        public Method(MethodInfo methodInfo, ParameterList parameterList, ValueTaskType valueTaskType)
+        public Method(MethodInfo methodInfo, ParameterList parameterList, ValueTaskType resultingValueTaskType)
         {
             MethodInfo = methodInfo ?? throw new ArgumentNullException(nameof(methodInfo));
             ParameterList = parameterList ?? throw new ArgumentNullException(nameof(parameterList));
-            ValueTaskReturnType = valueTaskType ?? throw new ArgumentNullException(nameof(valueTaskType));
+            ResultingValueTaskType = resultingValueTaskType ?? throw new ArgumentNullException(nameof(resultingValueTaskType));
         }
 
         public string GetJavaScriptFunctionIdentifier()
@@ -56,16 +87,12 @@ namespace Teronis.Microsoft.JSInterop.Dynamic.Reflection
             return MethodInfo.Name;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="objectReference"></param>
-        /// <returns><see cref="ValueTask"/> or <see cref="ValueTask{TResult}"/> with a generic parameter of type <see cref="ValueTaskType.GenericParameterType"/>.</returns>
-        public object Invoke(
-            IJSFunctionalObject jsFunctionalObject,
+        public object GetReturnValue(
+            IJSObjectInterceptor jsObjectInterceptor,
             IJSObjectReference jsObjectReference,
             IReadOnlyList<Type>? genericTypeArguments,
-            object?[] arguments)
+            object?[] arguments,
+            ICustomAttributes memberInfoAttributes)
         {
             Type? alternativeValueTaskGenericTypeParameter;
 
@@ -85,24 +112,47 @@ namespace Teronis.Microsoft.JSInterop.Dynamic.Reflection
                 var genericValueTask = GetClosedGenericValueTaskType(alternativeValueTaskGenericTypeParameter);
                 valueTaskReturnType = new ValueTaskType(genericValueTask, alternativeValueTaskGenericTypeParameter);
             } else {
-                valueTaskReturnType = ValueTaskReturnType;
+                valueTaskReturnType = ResultingValueTaskType;
             }
 
             var javaScriptFunctionArguments = ParameterList.GetJavaScriptFunctionArguments(arguments);
             var javaScriptFunctionIdentifier = GetJavaScriptFunctionIdentifier();
 
-            if (ParameterList.HasCancellationTokenParameter) {
-                return JSFunctionalObjectDelegateCache.Instance.TokenCancellableInvokeDelegateCache.GetDelegate(valueTaskReturnType)(
-                    jsFunctionalObject, jsObjectReference, javaScriptFunctionIdentifier, ParameterList.GetCancellationToken(arguments), javaScriptFunctionArguments);
-            }
+            CancellationToken? javaScriptCancellationToken = ParameterList.HasCancellationTokenParameter
+                ? (CancellationToken?)ParameterList.GetCancellationToken(arguments)
+                : null;
 
-            if (ParameterList.HasTimeSpanParameter) {
-                return JSFunctionalObjectDelegateCache.Instance.TimeSpanCancellableInvokeDelegateCache.GetDelegate(valueTaskReturnType)(
-                    jsFunctionalObject, jsObjectReference, javaScriptFunctionIdentifier, ParameterList.GetTimeSpan(arguments), javaScriptFunctionArguments);
-            }
+            TimeSpan? javaScriptTimeout = ParameterList.HasTimeoutParameter
+                ? (TimeSpan?)ParameterList.GetTimeSpan(arguments)
+                : null;
 
-            return JSFunctionalObjectDelegateCache.Instance.InvokeDelegateCache.GetDelegate(valueTaskReturnType)(
-                jsFunctionalObject, jsObjectReference, javaScriptFunctionIdentifier, javaScriptFunctionArguments);
+            if (ResultingValueTaskType.HasGenericParameterType) {
+                return DynamiteyDynamic.InvokeMember(
+                    methodStaticContext,
+                    new InvokeMemberName(nameof(InterceptAndGetDeterminedValue), new Type[] { valueTaskReturnType.GenericParameterType! }),
+                    args: new object?[] {
+                        jsObjectInterceptor,
+                        jsObjectReference,
+                        javaScriptFunctionIdentifier,
+                        javaScriptCancellationToken,
+                        javaScriptTimeout,
+                        javaScriptFunctionArguments,
+                        memberInfoAttributes
+                    });
+            } else {
+                var jsObjectInvocation = new JSObjectInvocation(
+                    jsObjectReference,
+                    javaScriptFunctionIdentifier,
+                    javaScriptCancellationToken,
+                    javaScriptTimeout,
+                    javaScriptFunctionArguments,
+                    memberInfoAttributes);
+
+                return new ValueTask(new Func<Task>(async () => {
+                    await jsObjectInterceptor.InterceptInvokeVoidAsync(jsObjectInvocation);
+                    await jsObjectInvocation.GetDeterminedResult();
+                })());
+            }
         }
     }
 }

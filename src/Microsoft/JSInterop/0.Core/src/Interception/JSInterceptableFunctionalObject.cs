@@ -5,17 +5,17 @@ using System.Threading.Tasks;
 
 namespace Teronis.Microsoft.JSInterop.Interception
 {
-    public class JSInterceptableFunctionalObject : JSFunctionalObject
+    public class JSInterceptableFunctionalObject : JSFunctionalObject, IJSObjectInterceptor
     {
-        private readonly IJSFunctionalObjectInterceptor jsFunctionalObjectInterceptor;
+        private readonly IJSObjectInterceptor jsFunctionalObjectInterceptor;
 
-        public JSInterceptableFunctionalObject(IJSFunctionalObjectInterceptor jsFunctionalObjectInterceptor) =>
+        public JSInterceptableFunctionalObject(IJSObjectInterceptor jsFunctionalObjectInterceptor) =>
             this.jsFunctionalObjectInterceptor = jsFunctionalObjectInterceptor;
 
-        protected override ValueTask InterceptInvokeAsync<TValue>(IJSFunctionalObjectInvocation<TValue> invocation) =>
+        protected override ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation) =>
             jsFunctionalObjectInterceptor.InterceptInvokeAsync(invocation);
 
-        protected override ValueTask InterceptInvokeVoidAsync(IJSFunctionalObjectInvocation invocation) =>
+        protected override ValueTask InterceptInvokeVoidAsync(IJSObjectInvocation invocation) =>
             jsFunctionalObjectInterceptor.InterceptInvokeVoidAsync(invocation);
     }
 }

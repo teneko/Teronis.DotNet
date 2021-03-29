@@ -9,19 +9,22 @@ namespace Teronis.Microsoft.JSInterop.Locality
     public class JSLocalObjectActivator : IInstanceActivatorBase<IJSLocalObject>, IJSLocalObjectActivator
     {
         private readonly IJSLocalObjectInterop jsLocalObjectInterop;
-        private readonly GetOrBuildJSFunctionalObjectDelegate getOrBuildJSFunctionalObjectDelegate;
+        private readonly GetOrBuildJSInterceptableFunctionalObjectDelegate? getOrBuildJSFunctionalObjectDelegate;
 
         public JSLocalObjectActivator(IJSLocalObjectInterop jsLocalObjectInterop, JSLocalObjectActivatorOptions? options)
         {
             this.jsLocalObjectInterop = jsLocalObjectInterop ?? throw new System.ArgumentNullException(nameof(jsLocalObjectInterop));
-            getOrBuildJSFunctionalObjectDelegate = options?.GetOrBuildJSFunctionalObject ?? JSFunctionalObject.GetDefault;
+            getOrBuildJSFunctionalObjectDelegate = options?.GetOrBuildJSInterceptableFunctionalObject;
         }
 
         public JSLocalObjectActivator(IJSLocalObjectInterop jsLocalObjectInterop)
             : this(jsLocalObjectInterop, options: null) { }
 
-        public virtual IJSLocalObject CreateInstance(IJSObjectReference jsObjectReference) =>
-            new JSLocalObject(getOrBuildJSFunctionalObjectDelegate(), jsObjectReference);
+        public virtual IJSLocalObject CreateInstance(IJSObjectReference jsObjectReference)
+        {
+            var jsFunctionalObject = getOrBuildJSFunctionalObjectDelegate?.Invoke(configureInterceptorWalkerBuilder: null) ?? JSFunctionalObject.Default;
+            return new JSLocalObject(jsFunctionalObject, jsObjectReference);
+        }
 
         public virtual async ValueTask<IJSLocalObject> CreateInstanceAsync(string objectName)
         {

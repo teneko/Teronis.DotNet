@@ -4,3 +4,4 @@
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Teronis.Microsoft.JSInterop")]
+[assembly: InternalsVisibleTo("Teronis.Microsoft.JSInterop.Dynamic.Core")]

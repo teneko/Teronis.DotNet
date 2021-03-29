@@ -3,10 +3,11 @@
 
 using System;
 using System.Reflection;
+using Teronis.Microsoft.JSInterop.Reflection;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
-    public sealed class ComponentProperty : MemberInfoAttributeLookup, IComponentProperty
+    public sealed class ComponentProperty : CustomAttributeLookup, IComponentProperty
     {
         public PropertyInfo PropertyInfo =>
             propertyInfo;

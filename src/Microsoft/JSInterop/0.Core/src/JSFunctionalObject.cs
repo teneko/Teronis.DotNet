@@ -6,77 +6,71 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop.Interception;
+using Teronis.Microsoft.JSInterop.Reflection;
 
 namespace Teronis.Microsoft.JSInterop
 {
-    public class JSFunctionalObject : IJSFunctionalObject, IJSFunctionalObjectInterceptor
+    public class JSFunctionalObject : IJSFunctionalObject, IJSObjectInterceptor
     {
         public static JSFunctionalObject Default;
 
         static JSFunctionalObject() =>
             Default = new JSFunctionalObject();
 
-        /// <summary>
-        /// It simply returns <see cref="Default"/>. Internally used as right operand in null-coercion expressions.
-        /// </summary>
-        /// <returns><see cref="Default"/></returns>
-        public static JSFunctionalObject GetDefault() =>
-            Default;
-
-        protected virtual ValueTask InterceptInvokeAsync<TValue>(IJSFunctionalObjectInvocation<TValue> jsObjectReference) =>
+        protected virtual ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> jsObjectReference) =>
             ValueTask.CompletedTask;
 
         public virtual ValueTask<TValue> InvokeAsync<TValue>(IJSObjectReference jsObjectReference, string identifier, params object?[] arguments)
         {
-            var invocation = new JSFunctionalObjectInvocation<TValue>(jsObjectReference, identifier, cancellationToken: null, timeout: null, arguments);
+            var invocation = new JSObjectInvocation<TValue>(jsObjectReference, identifier, cancellationToken: null, timeout: null, arguments, EmptyCustomAttributeLookup.Instance);
             InterceptInvokeAsync(invocation);
-            return invocation.GetResult();
+            return invocation.GetDeterminedResult();
         }
 
         public virtual ValueTask<TValue> InvokeAsync<TValue>(IJSObjectReference jsObjectReference, string identifier, CancellationToken cancellationToken, params object?[] arguments)
         {
-            var invocation = new JSFunctionalObjectInvocation<TValue>(jsObjectReference, identifier, cancellationToken: cancellationToken, timeout: null, arguments);
+            var invocation = new JSObjectInvocation<TValue>(jsObjectReference, identifier, cancellationToken: cancellationToken, timeout: null, arguments, EmptyCustomAttributeLookup.Instance);
             InterceptInvokeAsync(invocation);
-            return invocation.GetResult();
+            return invocation.GetDeterminedResult();
         }
 
         public virtual ValueTask<TValue> InvokeAsync<TValue>(IJSObjectReference jsObjectReference, string identifier, TimeSpan timeout, params object?[] arguments)
         {
-            var invocation = new JSFunctionalObjectInvocation<TValue>(jsObjectReference, identifier, cancellationToken: null, timeout: timeout, arguments);
+            var invocation = new JSObjectInvocation<TValue>(jsObjectReference, identifier, cancellationToken: null, timeout: timeout, arguments, EmptyCustomAttributeLookup.Instance);
             InterceptInvokeAsync(invocation);
-            return invocation.GetResult();
+            return invocation.GetDeterminedResult();
         }
 
-        protected virtual ValueTask InterceptInvokeVoidAsync(IJSFunctionalObjectInvocation invocation) =>
+        protected virtual ValueTask InterceptInvokeVoidAsync(IJSObjectInvocation invocation) =>
             ValueTask.CompletedTask;
 
         public virtual ValueTask InvokeVoidAsync(IJSObjectReference jsObjectReference, string identifier, params object?[] arguments)
         {
-            var invocation = new JSFunctionalObjectInvocation(jsObjectReference, identifier, cancellationToken: null, timeout: null, arguments);
+            var invocation = new JSObjectInvocation(jsObjectReference, identifier, cancellationToken: null, timeout: null, arguments, EmptyCustomAttributeLookup.Instance);
             InterceptInvokeVoidAsync(invocation);
-            return invocation.GetResult();
+            return invocation.GetDeterminedResult();
         }
 
         public virtual ValueTask InvokeVoidAsync(IJSObjectReference jsObjectReference, string identifier, CancellationToken cancellationToken, params object?[] arguments)
         {
-            var invocation = new JSFunctionalObjectInvocation(jsObjectReference, identifier, cancellationToken: cancellationToken, timeout: null, arguments);
+            var invocation = new JSObjectInvocation(jsObjectReference, identifier, cancellationToken: cancellationToken, timeout: null, arguments, EmptyCustomAttributeLookup.Instance);
             InterceptInvokeVoidAsync(invocation);
-            return invocation.GetResult();
+            return invocation.GetDeterminedResult();
         }
 
         public virtual ValueTask InvokeVoidAsync(IJSObjectReference jsObjectReference, string identifier, TimeSpan timeout, params object?[] arguments)
         {
-            var invocation = new JSFunctionalObjectInvocation(jsObjectReference, identifier, cancellationToken: null, timeout: timeout, arguments);
+            var invocation = new JSObjectInvocation(jsObjectReference, identifier, cancellationToken: null, timeout: timeout, arguments, EmptyCustomAttributeLookup.Instance);
             InterceptInvokeVoidAsync(invocation);
-            return invocation.GetResult();
+            return invocation.GetDeterminedResult();
         }
 
         #region IJSFunctionalObjectInterception
 
-        ValueTask IJSFunctionalObjectInterceptor.InterceptInvokeAsync<TValue>(IJSFunctionalObjectInvocation<TValue> invocation) =>
+        ValueTask IJSObjectInterceptor.InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation) =>
             InterceptInvokeAsync(invocation);
 
-        ValueTask IJSFunctionalObjectInterceptor.InterceptInvokeVoidAsync(IJSFunctionalObjectInvocation invocation) =>
+        ValueTask IJSObjectInterceptor.InterceptInvokeVoidAsync(IJSObjectInvocation invocation) =>
             InterceptInvokeVoidAsync(invocation);
 
         #endregion

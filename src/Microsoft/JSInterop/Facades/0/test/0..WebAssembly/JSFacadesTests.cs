@@ -3,11 +3,9 @@
 
 using System;
 using NUnit.Framework;
-using Teronis.Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop.Facades;
 using Teronis.Microsoft.JSInterop.Dynamic.Module;
 using Teronis_._Microsoft.JSInterop.Facades.JSDynamicObjects;
-using Microsoft.JSInterop;
 using Teronis.NUnit.TaskTests;
 
 namespace Teronis_._Microsoft.JSInterop.Facades
@@ -24,10 +22,10 @@ namespace Teronis_._Microsoft.JSInterop.Facades
 
         public TaskTestCase Should_first_call_dynamic_invoke_and_then_call_inbuilt_invoke = AddTest(async (_) => {
             var jsFacades = Instance.jsFacadesActivator.CreateInstance<JSDynamicFacadeActivators>();
-            var jsModule = await jsFacades.Activators.JSDynamicModuleActivator.CreateInstanceAsync<IMomentDynamicObject>("./js/esm-bundle.js");
+            var jsModule = await jsFacades.Activators.JSDynamicModuleActivator.CreateInstanceAsync<IMomentDynamicModule>("./js/esm-bundle.js");
 
             var moment = await jsModule.moment("2013-02-08 09");
-            var formattedDate = await moment.InvokeAsync<string>("format");
+            var formattedDate = await moment.format();
             StringAssert.StartsWith("2013-02-08", formattedDate);
         });
     }

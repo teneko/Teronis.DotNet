@@ -5,6 +5,10 @@
 @code {
     private async Task BeforeRunningTasks(IServiceProvider serviceProvider)
     {
+#if DEBUG
+        await Task.Delay(3000);
+#endif
+
         TaskTestCaseSourceTestFixture.TaskTestCases = await
             new AssemblyTaskTestCaseBlockStaticMemberCollector(typeof(Program).Assembly)
                 .CollectMembers()

@@ -3,10 +3,11 @@
 
 using System;
 using System.Reflection;
+using Teronis.Microsoft.JSInterop.Reflection;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
-    public interface IComponentProperty : IMemberInfoAttributes
+    public interface IComponentProperty : ICustomAttributes
     {
         PropertyInfo PropertyInfo { get; }
         Type PropertyType { get; }

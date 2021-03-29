@@ -8,6 +8,7 @@ using System;
 using Teronis.AspNetCore.Components.NUnit;
 using System.Xml.Linq;
 using System.Linq;
+using Xunit.Abstractions;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
@@ -15,11 +16,13 @@ namespace Teronis.Microsoft.JSInterop.Facades
     {
         private readonly TestWebHostFixture<WebHostStartup> server;
         private readonly PlaywrightFixture playwright;
+        private readonly ITestOutputHelper output;
 
-        public JSFacadeTests(TestWebHostFixture<WebHostStartup> server, PlaywrightFixture playwright)
+        public JSFacadeTests(TestWebHostFixture<WebHostStartup> server, PlaywrightFixture playwright, ITestOutputHelper output)
         {
             this.server = server ?? throw new ArgumentNullException(nameof(server));
             this.playwright = playwright ?? throw new ArgumentNullException(nameof(playwright));
+            this.output = output ?? throw new ArgumentNullException(nameof(output));
         }
 
         [Fact]
@@ -33,6 +36,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
             await page.GoToAsync(pageUri.AbsoluteUri);
             await page.WaitForSelectorAsync(NUnitTestsReportDefaults.NUnitXmlReportRenderedAttributeSelector);
             var nunitXmlReport = await page.GetTextContentAsync(NUnitTestsReportDefaults.NUnitXmlReportIdSelector);
+            output.WriteLine(nunitXmlReport);
 
             Assert.True(
                 XDocument.Parse(nunitXmlReport)

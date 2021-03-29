@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using Teronis.Microsoft.JSInterop.Interception;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic
 {
@@ -14,5 +15,10 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         /// </summary>
         public IReadOnlySet<string>? MethodsNotProxied { get; set; }
         public IReadOnlySet<Type>? InterfaceTypesNotProxied { get; set; }
+        /// <summary>
+        /// Configures the <see cref="IJSObjectInterceptorWalkerBuilder"/> for this proxy creation.
+        /// Contains global configured interceptors.
+        /// </summary>
+        public Action<IJSObjectInterceptorWalkerBuilder>? ConfigureInterceptorWalkerBuilder { get; }
     }
 }

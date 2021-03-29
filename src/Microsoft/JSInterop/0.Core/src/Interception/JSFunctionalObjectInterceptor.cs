@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace Teronis.Microsoft.JSInterop.Interception
 {
-    public abstract class JSFunctionalObjectInterceptor : IJSFunctionalObjectInterceptor
+    public abstract class JSFunctionalObjectInterceptor : IJSObjectInterceptor
     {
-        public abstract ValueTask InterceptInvokeAsync<TValue>(IJSFunctionalObjectInvocation<TValue> invocation);
-        public abstract ValueTask InterceptInvokeVoidAsync(IJSFunctionalObjectInvocation invocation);
+        public abstract ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation);
+        public abstract ValueTask InterceptInvokeVoidAsync(IJSObjectInvocation invocation);
     }
 }

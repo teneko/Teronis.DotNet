@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Concurrent.FastReflection.NetStandard" Version="1.2.1.1" />
     <PackageReference Include="Teronis.Castle.Core" Version="4.4.2" />
     <PackageReference Include="Dynamitey" Version="2.0.10.189" />
   </ItemGroup>

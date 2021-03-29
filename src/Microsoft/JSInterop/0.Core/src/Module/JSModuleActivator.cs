@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 
 namespace Teronis.Microsoft.JSInterop.Module
@@ -9,18 +10,19 @@ namespace Teronis.Microsoft.JSInterop.Module
     public class JSModuleActivator : IInstanceActivatorBase<IJSModule>, IJSModuleActivator
     {
         private readonly IJSRuntime jsRuntime;
-        private readonly GetOrBuildJSFunctionalObjectDelegate getOrBuildJSFunctionalObject;
+        private readonly GetOrBuildJSInterceptableFunctionalObjectDelegate? getOrBuildJSInterceptableFunctionalObject;
 
-        public JSModuleActivator(IJSRuntime jsRuntime, JSModuleActivatorOptions? options)
+        public JSModuleActivator(IJSRuntime jsRuntime, IOptions<JSModuleActivatorOptions>? options)
         {
             this.jsRuntime = jsRuntime;
-            getOrBuildJSFunctionalObject = options?.GetOrBuildJSFunctionalObject ?? JSFunctionalObject.GetDefault;
+            getOrBuildJSInterceptableFunctionalObject = options?.Value.GetOrBuildJSInterceptableFunctionalObject;
         }
 
         public virtual async ValueTask<IJSModule> CreateInstanceAsync(string moduleNameOrPath)
         {
             var jsObjectReference = await jsRuntime.InvokeAsync<IJSObjectReference>("import", moduleNameOrPath);
-            var jsModule = new JSModule(getOrBuildJSFunctionalObject(), jsObjectReference, moduleNameOrPath);
+            var jsFunctionalObject = getOrBuildJSInterceptableFunctionalObject?.Invoke(configureInterceptorWalkerBuilder: null) ?? JSFunctionalObject.Default;
+            var jsModule = new JSModule(jsFunctionalObject, jsObjectReference, moduleNameOrPath);
             DispatchInstanceActicated(jsModule);
             return jsModule;
         }

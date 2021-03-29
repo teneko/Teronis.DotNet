@@ -8,16 +8,16 @@ namespace Teronis.Microsoft.JSInterop.Interception
 {
     public class JSCallingBackFunctionalObjectInterceptor : JSFunctionalObjectInterceptor
     {
-        private readonly Func<IJSFunctionalObjectInvocation, ValueTask>? invokeVoidInvocationCallback;
+        private readonly Func<IJSObjectInvocation, ValueTask>? invokeVoidInvocationCallback;
 
         public JSCallingBackFunctionalObjectInterceptor(
-            Func<IJSFunctionalObjectInvocation, ValueTask>? invokeVoidInvocationCallback) =>
+            Func<IJSObjectInvocation, ValueTask>? invokeVoidInvocationCallback) =>
             this.invokeVoidInvocationCallback = invokeVoidInvocationCallback;
 
-        public override ValueTask InterceptInvokeAsync<TValue>(IJSFunctionalObjectInvocation<TValue> invocation) =>
+        public override ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation) =>
             ValueTask.CompletedTask;
 
-        public override ValueTask InterceptInvokeVoidAsync(IJSFunctionalObjectInvocation invocation) =>
+        public override ValueTask InterceptInvokeVoidAsync(IJSObjectInvocation invocation) =>
             invokeVoidInvocationCallback?.Invoke(invocation) ?? ValueTask.CompletedTask;
     }
 }

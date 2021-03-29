@@ -11,7 +11,7 @@ namespace Teronis.Microsoft.JSInterop
     {
         /// <summary>
         /// This instance will be used if it is not null. If it is not null the configuration made by 
-        /// <see cref="ConfigureInterceptorWalkerBuilder(Action{IJSFunctionalObjectInterceptorWalkerBuilder})"/>
+        /// <see cref="ConfigureInterceptorWalkerBuilder(Action{IJSObjectInterceptorWalkerBuilder})"/>
         /// won't be taken into account.
         /// </summary>
         public IJSFunctionalObject? JSFunctionalObject { get; set; }
@@ -20,7 +20,7 @@ namespace Teronis.Microsoft.JSInterop
             set => serviceProvider = value;
         }
 
-        public GetOrBuildJSFunctionalObjectDelegate GetOrBuildJSFunctionalObject { get; }
+        public GetOrBuildJSInterceptableFunctionalObjectDelegate GetOrBuildJSInterceptableFunctionalObject { get; }
 
         protected JSFunctionalObjectInterceptorWalkerBuilder InterceptorWalkerBuilder { get; }
 
@@ -29,16 +29,16 @@ namespace Teronis.Microsoft.JSInterop
         public JSFunctionalObjectOptions()
         {
             InterceptorWalkerBuilder = new JSFunctionalObjectInterceptorWalkerBuilder();
-            GetOrBuildJSFunctionalObject = GetOrBuildJSFunctionalObject_Implementation;
+            GetOrBuildJSInterceptableFunctionalObject = GetOrBuildJSFunctionalObject_Implementation;
         }
 
         /// <summary>
-        /// Configures an implementation of <see cref="IJSFunctionalObjectInterceptorWalkerBuilder"/>
+        /// Configures an implementation of <see cref="IJSObjectInterceptorWalkerBuilder"/>
         /// to create an implementation of <see cref="IJSFunctionalObject"/> for being used as 
         /// <see cref="JSFunctionalObject"/> when it is null.
         /// </summary>
         /// <param name="configure"></param>
-        public DerivedType ConfigureInterceptorWalkerBuilder(Action<IJSFunctionalObjectInterceptorWalkerBuilder> configure)
+        public DerivedType ConfigureInterceptorWalkerBuilder(Action<IJSObjectInterceptorWalkerBuilder> configure)
         {
             configure?.Invoke(InterceptorWalkerBuilder);
             return (DerivedType)this;
@@ -47,7 +47,16 @@ namespace Teronis.Microsoft.JSInterop
         private IServiceProvider GetServiceProvider() =>
             serviceProvider ?? throw new InvalidOperationException("Service provider has not been set.");
 
-        private IJSFunctionalObject GetOrBuildJSFunctionalObject_Implementation() =>
-            JSFunctionalObject ??= InterceptorWalkerBuilder.BuildInterceptableFunctionalObject(GetServiceProvider());
+        private IJSFunctionalObject GetOrBuildJSFunctionalObject_Implementation(
+            Action<IJSObjectInterceptorWalkerBuilder>? configureInterceptorWalkerBuilder)
+        {
+            if (configureInterceptorWalkerBuilder is null) {
+                return JSFunctionalObject ??= InterceptorWalkerBuilder.BuildInterceptableFunctionalObject(GetServiceProvider());
+            }
+
+            var additiveInterceptorWalkerBuilder = new JSFunctionalObjectInterceptorWalkerBuilder(InterceptorWalkerBuilder.InterceptorDescriptors);
+            configureInterceptorWalkerBuilder(additiveInterceptorWalkerBuilder);
+            return additiveInterceptorWalkerBuilder.BuildInterceptableFunctionalObject(GetServiceProvider());
+        }
     }
 }

@@ -7,27 +7,30 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Teronis.Microsoft.JSInterop.Interception
 {
-    public sealed class JSFunctionalObjectInterceptorWalkerBuilder : IJSFunctionalObjectInterceptorWalkerBuilder
+    public sealed class JSFunctionalObjectInterceptorWalkerBuilder : IJSObjectInterceptorWalkerBuilder
     {
-        public IReadOnlyList<JSFunctionalObjectInterceptorDescriptor> InterceptorDescriptors =>
+        public IReadOnlyList<JSObjectInterceptorDescriptor> InterceptorDescriptors =>
             interceptorDescriptors;
 
-        private List<JSFunctionalObjectInterceptorDescriptor> interceptorDescriptors;
+        private List<JSObjectInterceptorDescriptor> interceptorDescriptors;
 
         public JSFunctionalObjectInterceptorWalkerBuilder() =>
-            interceptorDescriptors = new List<JSFunctionalObjectInterceptorDescriptor>();
+            interceptorDescriptors = new List<JSObjectInterceptorDescriptor>();
 
-        private Type GetInterceptorType(IJSFunctionalObjectInterceptor interceptor) =>
+        public JSFunctionalObjectInterceptorWalkerBuilder(IEnumerable<JSObjectInterceptorDescriptor> interceptorDescriptors) =>
+            this.interceptorDescriptors = new List<JSObjectInterceptorDescriptor>(interceptorDescriptors);
+
+        private Type GetInterceptorType(IJSObjectInterceptor interceptor) =>
             interceptor?.GetType() ?? throw new ArgumentNullException(nameof(interceptor));
 
-        private void InsertInterceptor(int index, Type interceptorType, IJSFunctionalObjectInterceptor? interceptor)
+        private void InsertInterceptor(int index, Type interceptorType, IJSObjectInterceptor? interceptor)
         {
-            JSFunctionalObjectInterceptorDescriptor interceptorDescriptor;
+            JSObjectInterceptorDescriptor interceptorDescriptor;
 
             if (interceptor is null) {
-                interceptorDescriptor = new JSFunctionalObjectInterceptorDescriptor(interceptorType);
+                interceptorDescriptor = new JSObjectInterceptorDescriptor(interceptorType);
             } else {
-                interceptorDescriptor = new JSFunctionalObjectInterceptorDescriptor(interceptor, interceptorType);
+                interceptorDescriptor = new JSObjectInterceptorDescriptor(interceptor, interceptorType);
             }
 
             interceptorDescriptors.Insert(index, interceptorDescriptor);
@@ -39,7 +42,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
             return this;
         }
 
-        public JSFunctionalObjectInterceptorWalkerBuilder InsertInterceptor(int index, IJSFunctionalObjectInterceptor interceptor)
+        public JSFunctionalObjectInterceptorWalkerBuilder InsertInterceptor(int index, IJSObjectInterceptor interceptor)
         {
             var interceptorType = GetInterceptorType(interceptor);
             InsertInterceptor(index, interceptorType, interceptor);
@@ -49,19 +52,19 @@ namespace Teronis.Microsoft.JSInterop.Interception
         public JSFunctionalObjectInterceptorWalkerBuilder AddInterceptor(Type interceptorType) =>
             InsertInterceptor(interceptorDescriptors.Count, interceptorType);
 
-        public JSFunctionalObjectInterceptorWalkerBuilder AddInterceptor(IJSFunctionalObjectInterceptor interceptor) =>
+        public JSFunctionalObjectInterceptorWalkerBuilder AddInterceptor(IJSObjectInterceptor interceptor) =>
             InsertInterceptor(interceptorDescriptors.Count, interceptor);
 
         public JSFunctionalObjectInterceptorWalkerBuilder RemoveInterceptor(Type interceptorType)
         {
-            var interceptorDescriptor = new JSFunctionalObjectInterceptorDescriptor(interceptorType);
+            var interceptorDescriptor = new JSObjectInterceptorDescriptor(interceptorType);
             interceptorDescriptors.Remove(interceptorDescriptor);
             return this;
         }
 
-        public JSFunctionalObjectInterceptorWalkerBuilder RemoveInterceptor(IJSFunctionalObjectInterceptor interceptor)
+        public JSFunctionalObjectInterceptorWalkerBuilder RemoveInterceptor(IJSObjectInterceptor interceptor)
         {
-            var interceptorDescriptor = new JSFunctionalObjectInterceptorDescriptor(interceptor, implementationType: null);
+            var interceptorDescriptor = new JSObjectInterceptorDescriptor(interceptor, implementationType: null);
             interceptorDescriptors.Remove(interceptorDescriptor);
             return this;
         }
@@ -72,7 +75,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
         /// <returns></returns>
         public JSFunctionalObjectInterceptorWalker BuildInterceptorWalker()
         {
-            var interceptors = new List<IJSFunctionalObjectInterceptor>();
+            var interceptors = new List<IJSObjectInterceptor>();
 
             foreach (var interceptorDescriptor in InterceptorDescriptors) {
                 if (interceptorDescriptor.HasImplementation) {
@@ -85,13 +88,13 @@ namespace Teronis.Microsoft.JSInterop.Interception
 
         public JSFunctionalObjectInterceptorWalker BuildInterceptorWalker(IServiceProvider serviceProvider)
         {
-            var interceptors = new List<IJSFunctionalObjectInterceptor>();
+            var interceptors = new List<IJSObjectInterceptor>();
 
             foreach (var interceptorDescriptor in InterceptorDescriptors) {
                 if (interceptorDescriptor.HasImplementation) {
                     interceptors.Add(interceptorDescriptor.Implementation!);
                 } else {
-                    var interceptor = ActivatorUtilities.CreateInstance<IJSFunctionalObjectInterceptor>(serviceProvider, interceptorDescriptor.ImplementationType);
+                    var interceptor = (IJSObjectInterceptor)ActivatorUtilities.CreateInstance(serviceProvider, interceptorDescriptor.ImplementationType);
                     interceptors.Add(interceptor);
                 }
             }
@@ -99,22 +102,22 @@ namespace Teronis.Microsoft.JSInterop.Interception
             return new JSFunctionalObjectInterceptorWalker(interceptors);
         }
 
-        IJSFunctionalObjectInterceptorWalkerBuilder IJSFunctionalObjectInterceptorWalkerBuilder.InsertInterceptor(int index, Type interceptorType) =>
+        IJSObjectInterceptorWalkerBuilder IJSObjectInterceptorWalkerBuilder.InsertInterceptor(int index, Type interceptorType) =>
             InsertInterceptor(index, interceptorType);
 
-        IJSFunctionalObjectInterceptorWalkerBuilder IJSFunctionalObjectInterceptorWalkerBuilder.InsertInterceptor(int index, IJSFunctionalObjectInterceptor interceptor) =>
+        IJSObjectInterceptorWalkerBuilder IJSObjectInterceptorWalkerBuilder.InsertInterceptor(int index, IJSObjectInterceptor interceptor) =>
             InsertInterceptor(index, interceptor);
 
-        IJSFunctionalObjectInterceptorWalkerBuilder IJSFunctionalObjectInterceptorWalkerBuilder.AddInterceptor(Type interceptorType) =>
+        IJSObjectInterceptorWalkerBuilder IJSObjectInterceptorWalkerBuilder.AddInterceptor(Type interceptorType) =>
             AddInterceptor(interceptorType);
 
-        IJSFunctionalObjectInterceptorWalkerBuilder IJSFunctionalObjectInterceptorWalkerBuilder.AddInterceptor(IJSFunctionalObjectInterceptor interceptor) =>
+        IJSObjectInterceptorWalkerBuilder IJSObjectInterceptorWalkerBuilder.AddInterceptor(IJSObjectInterceptor interceptor) =>
             AddInterceptor(interceptor);
 
-        IJSFunctionalObjectInterceptorWalkerBuilder IJSFunctionalObjectInterceptorWalkerBuilder.RemoveInterceptor(Type interceptorType) =>
+        IJSObjectInterceptorWalkerBuilder IJSObjectInterceptorWalkerBuilder.RemoveInterceptor(Type interceptorType) =>
             RemoveInterceptor(interceptorType);
 
-        IJSFunctionalObjectInterceptorWalkerBuilder IJSFunctionalObjectInterceptorWalkerBuilder.RemoveInterceptor(IJSFunctionalObjectInterceptor interceptor) =>
+        IJSObjectInterceptorWalkerBuilder IJSObjectInterceptorWalkerBuilder.RemoveInterceptor(IJSObjectInterceptor interceptor) =>
             RemoveInterceptor(interceptor);
     }
 }

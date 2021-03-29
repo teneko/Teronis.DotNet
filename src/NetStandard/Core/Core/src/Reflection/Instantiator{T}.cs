@@ -4,7 +4,6 @@
 using System;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
-using Teronis.Extensions;
 using Teronis.Utils;
 
 namespace Teronis.Reflection
@@ -34,7 +33,6 @@ namespace Teronis.Reflection
         /// Instantiates an object of type <typeparamref name="T"/>. If it has no default 
         /// constructor the object will be created uninitialized/without constructor.
         /// </summary>
-        /// <param name="type">The type you want to instantiate.</param>
         /// <returns>The object that has been instantiated.</returns>
         public static T Instantiate()
         {

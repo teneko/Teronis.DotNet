@@ -13,7 +13,7 @@ namespace Teronis.Microsoft.JSInterop.Internals.Utils
     {
         /// <summary>
         /// Ensures that <paramref name="interfaceType"/> is assignable to 
-        /// <typeparamref name="TAssignableTo"/>,otherwise an excpetion is
+        /// <typeparamref name="TAssignableTo"/>, otherwise an excpetion is
         /// thrown.
         /// </summary>
         /// <exception cref="ArgumentException"></exception>

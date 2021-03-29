@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Teronis.Microsoft.JSInterop.Facades;
 using Teronis.Microsoft.JSInterop.Facades.Annotations;
@@ -11,8 +10,9 @@ using Teronis_._Microsoft.JSInterop.Facades.JSModules;
 
 namespace Teronis_._Microsoft.JSInterop.Facades
 {
+    // Compare Program.cs.
     [TaskTestCaseBlockStaticMemberProvider(nameof(Instance))]
-    public class JSFacadesDependencyInjectedModuleTests : TaskTestCaseBlock<JSFacadesTests>
+    public class JSFacadesDependencyInjectedModuleTests : TaskTestCaseBlock
     {
         public readonly static JSFacadesDependencyInjectedModuleTests Instance = null!;
 

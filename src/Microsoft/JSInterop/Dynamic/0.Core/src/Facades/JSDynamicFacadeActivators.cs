@@ -12,8 +12,8 @@ namespace Teronis.Microsoft.JSInterop.Facades
     /// <inheritdoc/>
     public class JSDynamicFacadeActivators : JSFacadeActivators, IJSFacadeActivators
     {
-        public IJSDynamicModuleActivator JsDynamicModuleActivator { get; }
-        public IJSDynamicLocalObjectActivator JsDynamicLocalObjectActivator { get; }
+        public IJSDynamicModuleActivator JSDynamicModuleActivator { get; }
+        public IJSDynamicLocalObjectActivator JSDynamicLocalObjectActivator { get; }
 
         public JSDynamicFacadeActivators(
             IJSModuleActivator jsModuleActivator,
@@ -23,8 +23,8 @@ namespace Teronis.Microsoft.JSInterop.Facades
             IJSDynamicLocalObjectActivator jsDynamicLocalObjectActivator)
             : base(jsModuleActivator, jsLocalObjectActivator, jsFacadesActivator)
         {
-            JsDynamicModuleActivator = jsDynamicModuleActivator ?? throw new ArgumentNullException(nameof(jsDynamicModuleActivator));
-            JsDynamicLocalObjectActivator = jsDynamicLocalObjectActivator ?? throw new ArgumentNullException(nameof(jsDynamicLocalObjectActivator));
+            JSDynamicModuleActivator = jsDynamicModuleActivator ?? throw new ArgumentNullException(nameof(jsDynamicModuleActivator));
+            JSDynamicLocalObjectActivator = jsDynamicLocalObjectActivator ?? throw new ArgumentNullException(nameof(jsDynamicLocalObjectActivator));
 
             // Prepare instance activators.
             PrepareInstanceActivators(

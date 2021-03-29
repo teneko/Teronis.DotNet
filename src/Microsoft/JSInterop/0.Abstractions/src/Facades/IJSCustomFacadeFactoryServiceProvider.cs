@@ -5,6 +5,8 @@ using System;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
-    public delegate TCustomFacade JSCustomFacadeFactoryDelegate<out TCustomFacade>(IJSCustomFacadeFactoryServiceProvider serviceProvider)
-        where TCustomFacade : class, IAsyncDisposable;
+    public interface IJSCustomFacadeFactoryServiceProvider : IServiceProvider
+    {
+        IJSObjectReferenceFacade JSObjectReferenceFacade { get; }
+    }
 }

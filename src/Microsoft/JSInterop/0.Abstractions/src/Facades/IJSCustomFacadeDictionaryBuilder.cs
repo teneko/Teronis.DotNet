@@ -10,8 +10,8 @@ namespace Teronis.Microsoft.JSInterop.Facades
     {
         IJSCustomFacadeDictionaryBuilder Add(Type jsFacadeType, JSCustomFacadeFactoryDelegate<IAsyncDisposable>? jsFacadeCreatorDelegate = null);
 
-        IJSCustomFacadeDictionaryBuilder Add<T>(JSCustomFacadeFactoryDelegate<T>? jsFacadeCreatorHandler = null)
-            where T : class, IAsyncDisposable;
+        IJSCustomFacadeDictionaryBuilder Add<TCustomFacade>(JSCustomFacadeFactoryDelegate<TCustomFacade>? jsFacadeCreatorHandler = null)
+            where TCustomFacade : class, IAsyncDisposable;
 
         IJSCustomFacadeDictionaryBuilder Remove(Type jsFacadeType);
 

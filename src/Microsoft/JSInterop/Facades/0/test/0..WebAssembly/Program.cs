@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Teronis.Microsoft.JSInterop.Dynamic.Locality;
 using Teronis.Microsoft.JSInterop.Dynamic.Module;
 using Teronis.Microsoft.JSInterop.Facades;
-using Teronis.NUnit.TaskTests;
+using Teronis.Microsoft.JSInterop.Module;
 using Teronis_._Microsoft.JSInterop.Facades.JSModules;
 
 namespace Teronis_._Microsoft.JSInterop.Facades
@@ -30,11 +30,10 @@ namespace Teronis_._Microsoft.JSInterop.Facades
 
             services.AddJSCustomFacadeActivator(options => {
                 options.JSFacadeDictionaryConfiguration
-                    .Add(jsObjectReference => new ModuleActivationViaManualConstruction(jsObjectReference))
+                    .Add(serviceProvider => new ModuleActivationViaManualConstruction(serviceProvider.GetRequiredService<IJSModule>()))
                     .Add<ModuleActivationViaDependencyInjection>();
             });
 
-            services.AddScoped<ITaskTestCaseBlock>(serviceProvider => JSFacadesTests.Instance);
             services.AddJSFacades();
 
             await builder.Build().RunAsync();

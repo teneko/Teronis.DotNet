@@ -13,7 +13,7 @@ using Teronis.NUnit.TaskTests;
 namespace Teronis_._Microsoft.JSInterop.Facades
 {
     [TaskTestCaseBlockStaticMemberProvider(nameof(Instance))]
-    public class JSFacadesTests : TaskTestCaseBlock<JSFacadesTests>
+    public class JSFacadesTests : TaskTestCaseBlock
     {
         public readonly static JSFacadesTests Instance = null!;
 
@@ -24,7 +24,7 @@ namespace Teronis_._Microsoft.JSInterop.Facades
 
         public TaskTestCase Should_first_call_dynamic_invoke_and_then_call_inbuilt_invoke = AddTest(async (_) => {
             var jsFacades = Instance.jsFacadesActivator.CreateInstance<JSDynamicFacadeActivators>();
-            var jsModule = await jsFacades.Activators.JsDynamicModuleActivator.CreateInstanceAsync<IMomentDynamicObject>("./js/esm-bundle.js");
+            var jsModule = await jsFacades.Activators.JSDynamicModuleActivator.CreateInstanceAsync<IMomentDynamicObject>("./js/esm-bundle.js");
 
             var moment = await jsModule.moment("2013-02-08 09");
             var formattedDate = await moment.InvokeAsync<string>("format");

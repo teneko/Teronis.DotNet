@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop.Facades.Annotations;
+using Teronis.Microsoft.JSInterop.Module;
 
 namespace Teronis_._Microsoft.JSInterop.Facades.JSModules
 {
@@ -16,7 +17,7 @@ namespace Teronis_._Microsoft.JSInterop.Facades.JSModules
 
         private readonly IJSObjectReferenceFacade jsObjectReferenceFacade;
 
-        public ModuleActivationViaDependencyInjection(IJSObjectReferenceFacade jsObject) => 
+        public ModuleActivationViaDependencyInjection(IJSModule jsObject) => 
             this.jsObjectReferenceFacade = jsObject ?? throw new ArgumentNullException(nameof(jsObject));
 
         public ValueTask<string> GetTonyHawkAsync() =>

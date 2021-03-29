@@ -33,10 +33,10 @@ namespace Teronis.Microsoft.JSInterop.Facades
         }
 
         /// <summary>
-        /// Adds <paramref name="instanceActivator"/> to list. Must be called within constructor. List will be iterated later for 
+        /// Adds <paramref name="instanceActivators"/> to list. Must be called within constructor. List will be iterated later for 
         /// <see cref="IJSFacadeActivators.PrepareInstanceActivatedCapableActivators(InstanceActivatedDelegate{IAsyncDisposable})"/>
         /// </summary>
-        /// <param name="instanceActivator"></param>
+        /// <param name="instanceActivators"></param>
         protected void PrepareInstanceActivators(params IInstanceActivator<IAsyncDisposable>[] instanceActivators)
         {
             foreach (var instanceActivator in instanceActivators) {

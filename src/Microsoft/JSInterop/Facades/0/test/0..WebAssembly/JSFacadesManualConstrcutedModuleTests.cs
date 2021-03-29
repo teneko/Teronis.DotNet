@@ -10,15 +10,16 @@ using Teronis_._Microsoft.JSInterop.Facades.JSModules;
 
 namespace Teronis_._Microsoft.JSInterop.Facades
 {
+    // Compare Program.cs.
     [TaskTestCaseBlockStaticMemberProvider(nameof(Instance))]
-    public class JSFacadesManualConstrcutedModuleTests : TaskTestCaseBlock<JSFacadesTests>
+    public class JSFacadesManualConstrcutedModuleTests : TaskTestCaseBlock
     {
         public readonly static JSFacadesManualConstrcutedModuleTests Instance = null!;
 
         public IJSFacadesActivator jsFacadesActivator { get; set; } = null!;
 
-        public JSFacadesManualConstrcutedModuleTests(IJSFacadesActivator serviceProvider) =>
-            jsFacadesActivator = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+        public JSFacadesManualConstrcutedModuleTests(IJSFacadesActivator jsFacadesActivator) =>
+            this.jsFacadesActivator = jsFacadesActivator ?? throw new ArgumentNullException(nameof(jsFacadesActivator));
 
         [JSModuleProperty] ModuleActivationViaManualConstruction Module { get; set; } = null!;
 

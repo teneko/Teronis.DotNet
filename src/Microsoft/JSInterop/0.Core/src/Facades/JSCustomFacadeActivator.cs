@@ -34,11 +34,13 @@ namespace Teronis.Microsoft.JSInterop.Facades
                 throw new NotSupportedException($"Type {jsCustomFacadeType} is not supported.");
             }
 
+            var jsCustomFacadeFactoryServiceProvider = new JSCustomFacadeFactoryServiceProvider(serviceProvider, customFacadeConstructorParameter);
+
             if (!(jsFacadeCreatorHandler is null)) {
-                return jsFacadeCreatorHandler.Invoke(customFacadeConstructorParameter);
+                return jsFacadeCreatorHandler.Invoke(jsCustomFacadeFactoryServiceProvider);
             }
 
-            return (IAsyncDisposable)ActivatorUtilities.CreateInstance(serviceProvider, jsCustomFacadeType, customFacadeConstructorParameter);
+            return (IAsyncDisposable)ActivatorUtilities.CreateInstance(jsCustomFacadeFactoryServiceProvider, jsCustomFacadeType);
         }
     }
 }

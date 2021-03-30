@@ -4,9 +4,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Teronis.Microsoft.JSInterop.JSObjectReferences
+namespace Teronis.Microsoft.JSInterop.ObjectReferences
 {
-    public class CancellableObjectReference : JSEmptyObjectReference
+    public class CancellableObjectReference : EmptyObjectReference
     {
         public override ValueTask<TValue> InvokeAsync<TValue>(string identifier, CancellationToken cancellationToken, object?[]? args)
         {

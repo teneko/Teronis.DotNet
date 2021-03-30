@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Teronis.Microsoft.JSInterop.Dynamic.Annotations;
 
-namespace Teronis.Microsoft.JSInterop.Dynamic.JSDynamicObjects
+namespace Teronis.Microsoft.JSInterop.Dynamic.DynamicObjects
 {
     public interface IAccommodatableAnnotatedDynamicObject : IJSObjectReferenceFacade
     {

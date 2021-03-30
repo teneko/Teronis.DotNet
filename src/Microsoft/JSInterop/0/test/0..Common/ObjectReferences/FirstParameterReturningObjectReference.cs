@@ -4,9 +4,9 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Teronis.Microsoft.JSInterop.JSObjectReferences
+namespace Teronis.Microsoft.JSInterop.ObjectReferences
 {
-    public class FirstParameterReturningObjectReference : JSEmptyObjectReference
+    public class FirstParameterReturningObjectReference : EmptyObjectReference
     {
         public override ValueTask<TValue> InvokeAsync<TValue>(string identifier, object?[]? args)
         {

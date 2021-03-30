@@ -23,7 +23,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             IJSObjectReferenceFacade jsObjectFacadeToBeProxied,
             IJSFunctionalObject? jsFunctionalObject = null,
             DynamicProxyCreationOptions? creationOptions = null)
-            where T : class, IJSObjectReferenceFacade =>
+            where T : class =>
             (T)jsDynamicProxyActivator.CreateInstance(
                 interfaceToBeProxied: typeof(T),
                 jsObjectFacadeToBeProxied,
@@ -34,7 +34,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             this IJSDynamicProxyActivator jsDynamicProxyActivator,
             IJSObjectReference jsObjectReference,
             DynamicProxyCreationOptions? creationOptions = null)
-            where T : class, IJSObjectReferenceFacade =>
+            where T : class =>
             (T)jsDynamicProxyActivator.CreateInstance(
                 interfaceToBeProxied: typeof(T),
                 jsObjectReference,

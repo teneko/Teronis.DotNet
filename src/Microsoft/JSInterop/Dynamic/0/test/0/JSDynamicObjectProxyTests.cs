@@ -3,8 +3,8 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using Teronis.Microsoft.JSInterop.Dynamic.JSDynamicObjects;
-using Teronis.Microsoft.JSInterop.JSObjectReferences;
+using Teronis.Microsoft.JSInterop.Dynamic.DynamicObjects;
+using Teronis.Microsoft.JSInterop.ObjectReferences;
 using Xunit;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic
@@ -12,7 +12,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
     public class JSDynamicObjectProxyTests : JSDynamicObjectTestsBase
     {
         [Fact]
-        public async Task Proxy_Dispose()
+        public async Task Should_dispose()
         {
             // Arrange
             var jsObjectReference = new IdentifierPromisingObjectReference();
@@ -26,14 +26,14 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         }
 
         [Fact]
-        public async Task Proxy_Expect_equal_input_output()
+        public async Task Expect_equal_input_output()
         {
             // Arrange
             var jsObjectReference = new JSArgumentsPromisingObjectReference();
             var emptyDynamicObject = JSDynamicObjectActivator.CreateInstance<IEmptyDynamicObject>(jsObjectReference);
 
             // Act
-            var expectedContent = nameof(Proxy_Expect_equal_input_output);
+            var expectedContent = nameof(Expect_equal_input_output);
             // The extension methods get precedence over target method calls.
             var resultedArguments = await emptyDynamicObject.InvokeAsync<object[]>(identifier: string.Empty, expectedContent);
 
@@ -42,7 +42,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         }
 
         [Fact]
-        public void Proxy_Get_property()
+        public void Get_property()
         {
             // Arrange
             var jsObjectReference = new IdentifierPromisingObjectReference();
@@ -53,7 +53,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         }
 
         [Fact]
-        public async Task Proxy_Throw_token_cancellation()
+        public async Task Throw_token_cancellation()
         {
             // Arrange
             var jsObjectReference = new CancellableObjectReference();
@@ -66,7 +66,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
 
             // Assert
             await Assert.ThrowsAsync<ObjectReferenceInvocationCanceledException>(async () =>
-                await jsDynamicObject.InvokeAsync<string>(nameof(Proxy_Throw_token_cancellation), cancellationToken));
+                await jsDynamicObject.InvokeAsync<string>(nameof(Throw_token_cancellation), cancellationToken));
         }
     }
 }

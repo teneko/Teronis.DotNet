@@ -3,7 +3,7 @@
 
 using System.Threading.Tasks;
 
-namespace Teronis.Microsoft.JSInterop.Dynamic.JSDynamicObjects
+namespace Teronis.Microsoft.JSInterop.Dynamic.DynamicObjects
 {
     public interface IIdentifierPromisingDynamicObject : IJSObjectReferenceFacade
     {

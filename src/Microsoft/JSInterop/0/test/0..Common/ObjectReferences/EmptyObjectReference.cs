@@ -5,9 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 
-namespace Teronis.Microsoft.JSInterop.JSObjectReferences
+namespace Teronis.Microsoft.JSInterop.ObjectReferences
 {
-    public class JSEmptyObjectReference : IJSObjectReference
+    public class EmptyObjectReference : IJSObjectReference
     {
         public bool IsDisposed { get; private set; }
 

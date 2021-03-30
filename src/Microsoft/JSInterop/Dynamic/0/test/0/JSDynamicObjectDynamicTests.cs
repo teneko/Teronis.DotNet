@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Teronis.Microsoft.JSInterop.Dynamic.JSDynamicObjects;
-using Teronis.Microsoft.JSInterop.JSObjectReferences;
+using Teronis.Microsoft.JSInterop.Dynamic.DynamicObjects;
+using Teronis.Microsoft.JSInterop.ObjectReferences;
 using Xunit;
 using static Teronis.Utils.ICollectionGenericUtils;
 
@@ -15,7 +15,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
     public class JSDynamicObjectDynamicTests : JSDynamicObjectTestsBase
     {
         [Fact]
-        public async Task Dynamic_Expect_identifier_equal_invoked_method()
+        public async Task Expect_identifier_equal_invoked_method()
         {
             // Arrange
             var jsObjectReference = new IdentifierPromisingObjectReference();
@@ -29,7 +29,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             Assert.Equal(expectedIdentifier, resultedIdentifier);
         }
 
-        public async Task AssertCancellableObjectIsCancelledAsync<SecondArgumentType>(
+        public async Task Assert_cancellable_object_is_cancelled_async<SecondArgumentType>(
             SecondArgumentType secondArgument,
             Func<ICancellableAnnotatedDynamicObject, Func<string, SecondArgumentType, object?, ValueTask>> getCallback)
         {
@@ -40,20 +40,20 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             // Assert
             var error = await Assert.ThrowsAsync<ObjectReferenceInvocationCanceledException>(async () =>
                 await getCallback(jsDynamicObject)(
-                    nameof(AssertCancellableObjectIsCancelledAsync),
+                    nameof(Assert_cancellable_object_is_cancelled_async),
                     secondArgument,
-                    nameof(AssertCancellableObjectIsCancelledAsync)));
+                    nameof(Assert_cancellable_object_is_cancelled_async)));
 
             Assert.Equal(
                 new object[] {
-                    nameof(AssertCancellableObjectIsCancelledAsync),
-                    nameof(AssertCancellableObjectIsCancelledAsync)
+                    nameof(Assert_cancellable_object_is_cancelled_async),
+                    nameof(Assert_cancellable_object_is_cancelled_async)
                 },
                 error.JavaScriptArguments);
         }
 
         [Fact]
-        public async Task Dynamic_Throw_token_cancellation_via_annotation()
+        public async Task Throw_token_cancellation_via_annotation()
         {
             // Arrange
             using var cancellationTokenSource = new CancellationTokenSource();
@@ -61,21 +61,21 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             cancellationTokenSource.Cancel();
 
             // Assert
-            await AssertCancellableObjectIsCancelledAsync(cancellationToken, jsDynamicObject => jsDynamicObject.CancelViaCancellationToken);
+            await Assert_cancellable_object_is_cancelled_async(cancellationToken, jsDynamicObject => jsDynamicObject.CancelViaCancellationToken);
         }
 
         [Fact]
-        public async Task Dynamic_Throw_timeout_cancellation_via_annotation()
+        public async Task Throw_timeout_cancellation_via_annotation()
         {
             // Arrange
             var timeout = TimeSpan.Zero;
 
             // Assert
-            await AssertCancellableObjectIsCancelledAsync(timeout, jsDynamicObject => jsDynamicObject.CancelViaTimeSpan);
+            await Assert_cancellable_object_is_cancelled_async(timeout, jsDynamicObject => jsDynamicObject.CancelViaTimeSpan);
         }
 
         [Fact]
-        public async Task Dynamic_Expect_accommodated_arguments()
+        public async Task Expect_accommodated_arguments()
         {
             // Arrange
             var jsObjectReference = new JSArgumentsPromisingObjectReference();
@@ -93,7 +93,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         }
 
         [Fact]
-        public async Task Dynamic_Get_identifier_via_annotation()
+        public async Task Get_identifier_via_annotation()
         {
             // Arrange
             var jsObjectReference = new IdentifierPromisingObjectReference();
@@ -109,7 +109,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
 
         // Redundant test because IJSObjectReferenceFacade has already generic constrained method definitions.
         [Fact]
-        public async Task Dynamic_Get_explicit_generic_constrained_ballast()
+        public async Task Get_explicit_generic_constrained_ballast()
         {
             // Arrange
             var jsObjectReference = new FirstParameterReturningObjectReference();
@@ -117,7 +117,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             var jsDynamicObject = jsDynamicObjectActivator.CreateInstance<IExplicitGenericConstrainedDynamicObject>(jsObjectReference);
 
             // Act
-            var expectedBallast = nameof(Dynamic_Get_explicit_generic_constrained_ballast);
+            var expectedBallast = nameof(Get_explicit_generic_constrained_ballast);
             var resultingBallast = await jsDynamicObject.TakeAndReturnBallast(expectedBallast);
 
             // Assert

@@ -15,7 +15,7 @@ Teronis.DotNet consists of many projects. These are projects to solve common pro
 - ... (TBD)
   
 :book: [Source Documentation](https://teroneko.de/docs/Teronis.DotNet/Microsoft.Extensions.DependencyInjection.html)
-<br/>:1234: [Project Structure](/docs/ProjectStructure.md)
+<br/>:1234: [Repository Structure](/docs/ProjectStructure.md)
 
 ## Building
 

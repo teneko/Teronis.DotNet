@@ -43,7 +43,7 @@ namespace Teronis.Microsoft.JSInterop.Reflection
         public bool IsAttributeDefined<T>() =>
             IsAttributeDefined(typeof(T));
 
-        public bool TryGetAttribtue<T>([MaybeNullWhen(false)] out T attribute)
+        public bool TryGetAttribute<T>([MaybeNullWhen(false)] out T attribute)
             where T : Attribute
         {
             var attributeType = typeof(T);

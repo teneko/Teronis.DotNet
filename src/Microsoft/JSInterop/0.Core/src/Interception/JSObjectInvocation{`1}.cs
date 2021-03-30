@@ -11,8 +11,20 @@ namespace Teronis.Microsoft.JSInterop.Interception
 {
     public class JSObjectInvocation<TValue> : JSObjectInvocationBase<ValueTask<TValue>>, IJSObjectInvocation<TValue>
     {
-        public override Type GenericTaskArgumentType =>
-            base.GenericTaskArgumentType!;
+        public override Type TaskArgumentType =>
+            base.TaskArgumentType!;
+
+        public ICustomAttributes TaskArgumentTypeAttributes {
+            get {
+                if (taskArgumentTypeAttributes is null) {
+                    taskArgumentTypeAttributes = new CustomAttributeLookup(TaskArgumentType);
+                }
+
+                return taskArgumentTypeAttributes;
+            }
+        }
+
+        private ICustomAttributes? taskArgumentTypeAttributes;
 
         internal JSObjectInvocation(JSObjectInvocationInception<ValueTask<TValue>> invocationInception)
             : base(invocationInception) { }

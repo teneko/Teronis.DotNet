@@ -39,7 +39,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
         public object?[] JavaScriptArguments =>
             InvocationInception.JavaScriptArguments;
 
-        public virtual Type? GenericTaskArgumentType =>
+        public virtual Type? TaskArgumentType =>
             InvocationInception.GenericTaskArgumentType;
 
         public ICustomAttributes MemberAttributes =>

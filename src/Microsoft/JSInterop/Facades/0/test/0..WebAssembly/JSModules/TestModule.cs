@@ -4,7 +4,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
-using Teronis.Microsoft.JSInterop.Facades.Annotations;
+using Teronis.Microsoft.JSInterop.Annotations;
 
 namespace Teronis_._Microsoft.JSInterop.Facades.JSModules
 {

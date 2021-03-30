@@ -4,6 +4,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
+using Teronis.Microsoft.JSInterop.Dynamic.Annotations;
 using Teronis.Microsoft.JSInterop.Interception;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic.Interceptors
@@ -19,7 +20,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic.Interceptors
         {
             if (invocation.MemberAttributes.IsAttributeDefined(typeof(JSDynamicProxyActivatingInterceptorAttribute))) {
                 var result = await invocation.GetNonDeterminingResult<IJSObjectReference>();
-                var determinedResult = (TValue)jsDynamicProxyActivator.CreateInstance(invocation.GenericTaskArgumentType, result);
+                var determinedResult = (TValue)jsDynamicProxyActivator.CreateInstance(invocation.TaskArgumentType, result);
                 invocation.SetDeterminedResult(new ValueTask<TValue>(determinedResult));
             }
         }

@@ -4,9 +4,9 @@
 using System;
 using NUnit.Framework;
 using Teronis.Microsoft.JSInterop.Facades;
-using Teronis.Microsoft.JSInterop.Dynamic.Module;
 using Teronis_._Microsoft.JSInterop.Facades.JSDynamicObjects;
 using Teronis.NUnit.TaskTests;
+using Teronis.Microsoft.JSInterop.Dynamic.Activators;
 
 namespace Teronis_._Microsoft.JSInterop.Facades
 {

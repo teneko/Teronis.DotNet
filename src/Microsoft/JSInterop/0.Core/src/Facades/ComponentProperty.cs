@@ -12,7 +12,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
         public PropertyInfo PropertyInfo =>
             propertyInfo;
 
-        public Type PropertyType =>
+        public Type OrignatingType =>
             PropertyInfo.PropertyType;
 
         public ComponentPropertyType ComponentPropertyType {
@@ -32,7 +32,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
             : base(propertyInfo) =>
             this.propertyInfo = propertyInfo;
 
-        IComponentPropertyType IComponentProperty.ComponentPropertyType =>
+        IComponentPropertyType IComponentProperty.PropertyType =>
             ComponentPropertyType;
     }
 }

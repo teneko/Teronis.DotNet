@@ -3,7 +3,7 @@
 
 using System;
 using System.Threading.Tasks;
-using Teronis.Microsoft.JSInterop.Facades.Annotations;
+using Teronis.Microsoft.JSInterop.Annotations;
 using Teronis.Microsoft.JSInterop.Module;
 
 namespace Teronis.Microsoft.JSInterop.Facades.PropertyAssigners
@@ -32,7 +32,7 @@ namespace Teronis.Microsoft.JSInterop.Facades.PropertyAssigners
             }
 
             var jsModule = await jsModuleActivator.CreateInstanceAsync(moduleNameOrPath);
-            var jsFacade = jsCustomFacadeActivator.CreateCustomFacade(jsModule, componentProperty.PropertyType);
+            var jsFacade = jsCustomFacadeActivator.CreateCustomFacade(jsModule, componentProperty.OrignatingType);
             return new YetNullable<IAsyncDisposable>(jsFacade);
         }
     }

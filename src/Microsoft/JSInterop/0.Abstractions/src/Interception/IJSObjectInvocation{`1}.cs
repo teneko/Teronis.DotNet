@@ -3,12 +3,15 @@
 
 using System;
 using System.Threading.Tasks;
+using Teronis.Microsoft.JSInterop.Reflection;
 
 namespace Teronis.Microsoft.JSInterop.Interception
 {
     public interface IJSObjectInvocation<TValue> : IJSObjectInvocationBase<ValueTask<TValue>>
     {
-        Type GenericTaskArgumentType { get; }
+
+        Type TaskArgumentType { get; }
+        ICustomAttributes TaskArgumentTypeAttributes { get; }
 
         /// <summary>
         /// Gets the value that that won't be considered as determined (cached).

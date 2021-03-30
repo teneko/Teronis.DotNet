@@ -10,7 +10,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
     public interface IComponentProperty : ICustomAttributes
     {
         PropertyInfo PropertyInfo { get; }
-        Type PropertyType { get; }
-        IComponentPropertyType ComponentPropertyType { get; }
+        Type OrignatingType { get; }
+        IComponentPropertyType PropertyType { get; }
     }
 }

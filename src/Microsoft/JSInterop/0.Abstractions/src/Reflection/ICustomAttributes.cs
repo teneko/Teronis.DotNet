@@ -14,7 +14,7 @@ namespace Teronis.Microsoft.JSInterop.Reflection
         bool IsAttributeDefined(Type attributeType);
         bool IsAttributeDefined<T>();
 
-        bool TryGetAttribtue<T>([MaybeNullWhen(false)] out T attribute)
+        bool TryGetAttribute<T>([MaybeNullWhen(false)] out T attribute)
             where T : Attribute;
     }
 }

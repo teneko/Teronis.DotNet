@@ -3,6 +3,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Teronis.Microsoft.JSInterop.Dynamic.Activators;
 using Teronis.Microsoft.JSInterop.Module;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic.Module

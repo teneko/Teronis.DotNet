@@ -8,11 +8,12 @@ namespace Teronis.Microsoft.JSInterop.Facades
     public interface IJSFacadeActivators
     {
         /// <summary>
-        /// A hook called in constructor of class that implements <see cref="IJSFacades{TJSFacadeActivators}"/>. Expects all
-        /// member that implement <see cref="IInstanceActivator{T}"/> to add <paramref name="registerAsyncDisposableFacade"/>
-        /// to <see cref="IInstanceActivator{T}.InstanceActivated"/>.
+        /// A hook called in constructor of class that implements <see cref="IJSFacades{TJSFacadeActivators}"/>. This method injects
+        /// the delegate that can be called in derived classes of <see cref="IJSFacadeActivators"/>. It is expected that every activated
+        /// instance of an activator (implements most of times <see cref="IInstanceActivator{T}"/>) is passed to
+        /// <paramref name="registerAsyncDisposableFacade"/>.
         /// </summary>
-        /// <param name="registerAsyncDisposableFacade"></param>
+        /// <param name="registerAsyncDisposableFacade">The method that registers an disposable instance to be disposed.</param>
         void PrepareInstanceActivatedCapableActivators(InstanceActivatedDelegate<IAsyncDisposable> registerAsyncDisposableFacade);
     }
 }

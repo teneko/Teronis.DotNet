@@ -5,6 +5,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using Teronis.Microsoft.JSInterop.Interception;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic
 {
@@ -13,7 +14,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         public static IServiceCollection AddJSDynamicProxyActivator(this IServiceCollection services, Action<JSDynamicProxyActivatorOptions>? configureOptions = null)
         {
             services.TryAddSingleton<IConfigureOptions<JSDynamicProxyActivatorOptions>>(serviceProvider =>
-                JSFunctionalObjectOptionsConfiguration<JSDynamicProxyActivatorOptions>.Create(serviceProvider));
+                JSObjectInterceptorBuilderOptionsConfiguration<JSDynamicProxyActivatorOptions>.Create(serviceProvider));
 
             if (!(configureOptions is null)) {
                 services.Configure(configureOptions);

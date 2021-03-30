@@ -3,21 +3,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using Castle.DynamicProxy;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop.Dynamic.Reflection;
+using Teronis.Microsoft.JSInterop.Interception;
 using Teronis.Microsoft.JSInterop.Internals.Utils;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic
 {
-    public class JSDynamicProxyActivator : IJSDynamicProxyActivator
+    public class JSDynamicProxyActivator : InstanceActivatorBase<IJSObjectReferenceFacade>, IJSDynamicProxyActivator
     {
-        private GetOrBuildJSInterceptableFunctionalObjectDelegate? getOrBuildJSInterceptableFunctionalObject;
+        private GetOrBuildInterceptorDelegate? getOrBuildInterceptor;
 
-        public JSDynamicProxyActivator(IOptions<JSDynamicProxyActivatorOptions>? options) =>
-            getOrBuildJSInterceptableFunctionalObject = options?.Value.GetOrBuildJSInterceptableFunctionalObject;
+        public JSDynamicProxyActivator(IOptionsSnapshot<JSDynamicProxyActivatorOptions>? options) =>
+            getOrBuildInterceptor = options?.Value.GetOrBuildInterceptorMethod;
 
         public JSDynamicProxyActivator()
             : this(options: null) { }
@@ -33,11 +33,6 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             }
         }
 
-        private void CheckMethodInfo(MethodInfo methodInfo)
-        {
-            // TODO
-        }
-
         private MethodDictionary CreateMethodDictionary(IEnumerable<Type> interfaceTypes, IReadOnlySet<string>? methodsNotProxied = null)
         {
             var methodDictionary = new MethodDictionary();
@@ -49,8 +44,6 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
                     if (!(methodsNotProxied is null) && methodsNotProxied.Contains(methodInfo.Name)) {
                         continue;
                     }
-
-                    CheckMethodInfo(methodInfo);
 
                     var parameterList = ParameterList.Parse(methodInfo.GetParameters());
                     parameterList.ThrowParameterListExceptionWhenHavingErrors();
@@ -64,18 +57,18 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             return methodDictionary;
         }
 
-        private IJSFunctionalObject createJSFunctionalObject(DynamicProxyCreationOptions? creationOptions) =>
-            getOrBuildJSInterceptableFunctionalObject
+        private IJSObjectInterceptor createObjectInterceptor(DynamicProxyCreationOptions? creationOptions) =>
+            getOrBuildInterceptor
                 ?.Invoke(creationOptions?.ConfigureInterceptorWalkerBuilder)
-                ?? JSFunctionalObject.Default;
+                ?? JSObjectInterceptor.Default;
 
         public object CreateInstance(
             Type interfaceToBeProxied,
             IJSObjectReferenceFacade jsObjectFacadeToBeProxied,
-            IJSFunctionalObject? jsFunctionalObject = null,
+            IJSObjectInterceptor? jsObjectInterceptor = null,
             DynamicProxyCreationOptions? creationOptions = null)
         {
-            jsFunctionalObject ??= createJSFunctionalObject(creationOptions);
+            jsObjectInterceptor ??= createObjectInterceptor(creationOptions);
             var derivedInterfaceTypeSet = TypeUtils.GetInterfaces(interfaceToBeProxied);
             var notDerivedInterfaceTypeSet = TypeUtils.GetInterfaces(typeof(IJSObjectReferenceFacade));
             derivedInterfaceTypeSet.ExceptWith(notDerivedInterfaceTypeSet);
@@ -90,7 +83,9 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             var jsDynamicObjectInterceptor = new JSDynamicProxyInterceptor(
                 jsObjectFacadeToBeProxied,
                 methodDictionary,
-                jsFunctionalObject);
+                jsObjectInterceptor);
+
+            DispatchInstanceActicated(jsObjectFacadeToBeProxied);
 
             return proxyGenerator.CreateInterfaceProxyWithoutTarget(
                 interfaceToBeProxied,
@@ -99,9 +94,9 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
 
         public object CreateInstance(Type interfaceToBeProxied, IJSObjectReference jSObjectReference, DynamicProxyCreationOptions? creationOptions = null)
         {
-            var jsFunctionalObject = createJSFunctionalObject(creationOptions);
-            var jsDynamicObject = new JSDynamicProxy(jSObjectReference, jsFunctionalObject);
-            return CreateInstance(interfaceToBeProxied, jsDynamicObject, jsFunctionalObject: jsFunctionalObject, creationOptions: creationOptions);
+            var jsObjectInterceptor = createObjectInterceptor(creationOptions);
+            var jsDynamicObject = new JSDynamicProxy(jSObjectReference, jsObjectInterceptor);
+            return CreateInstance(interfaceToBeProxied, jsDynamicObject, jsObjectInterceptor: jsObjectInterceptor, creationOptions: creationOptions);
         }
     }
 }

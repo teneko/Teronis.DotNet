@@ -4,25 +4,26 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
+using Teronis.Microsoft.JSInterop.Interception;
 
 namespace Teronis.Microsoft.JSInterop.Module
 {
-    public class JSModuleActivator : IInstanceActivatorBase<IJSModule>, IJSModuleActivator
+    public class JSModuleActivator : InstanceActivatorBase<IJSModule>, IJSModuleActivator
     {
         private readonly IJSRuntime jsRuntime;
-        private readonly GetOrBuildJSInterceptableFunctionalObjectDelegate? getOrBuildJSInterceptableFunctionalObject;
+        private readonly GetOrBuildInterceptorDelegate? getOrBuildJSInterceptableFunctionalObject;
 
         public JSModuleActivator(IJSRuntime jsRuntime, IOptions<JSModuleActivatorOptions>? options)
         {
             this.jsRuntime = jsRuntime;
-            getOrBuildJSInterceptableFunctionalObject = options?.Value.GetOrBuildJSInterceptableFunctionalObject;
+            getOrBuildJSInterceptableFunctionalObject = options?.Value.GetOrBuildInterceptorMethod;
         }
 
         public virtual async ValueTask<IJSModule> CreateInstanceAsync(string moduleNameOrPath)
         {
             var jsObjectReference = await jsRuntime.InvokeAsync<IJSObjectReference>("import", moduleNameOrPath);
-            var jsFunctionalObject = getOrBuildJSInterceptableFunctionalObject?.Invoke(configureInterceptorWalkerBuilder: null) ?? JSFunctionalObject.Default;
-            var jsModule = new JSModule(jsFunctionalObject, jsObjectReference, moduleNameOrPath);
+            var jsObjectInterceptor = getOrBuildJSInterceptableFunctionalObject?.Invoke(configureBuilder: null) ?? JSObjectInterceptor.Default;
+            var jsModule = new JSModule(jsObjectInterceptor, jsObjectReference, moduleNameOrPath);
             DispatchInstanceActicated(jsModule);
             return jsModule;
         }

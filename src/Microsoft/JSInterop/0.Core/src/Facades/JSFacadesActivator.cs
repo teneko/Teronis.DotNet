@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
-    public class JSFacadesActivator : IInstanceActivatorBase<IJSFacades<IJSFacadeActivators>>, IJSFacadesActivator
+    public class JSFacadesActivator : InstanceActivatorBase<IJSFacades<IJSFacadeActivators>>, IJSFacadesActivator
     {
         private readonly JSFacadesActivatorOptions options;
 

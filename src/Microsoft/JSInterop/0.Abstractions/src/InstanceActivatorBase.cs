@@ -5,7 +5,7 @@ using System;
 
 namespace Teronis.Microsoft.JSInterop
 {
-    public class IInstanceActivatorBase<T> : IInstanceActivator<T>
+    public class InstanceActivatorBase<T> : IInstanceActivator<T>
         where T : IAsyncDisposable
     {
         public event InstanceActivatedDelegate<T>? InstanceActivated;

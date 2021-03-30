@@ -8,7 +8,7 @@ using Teronis.Microsoft.JSInterop.Module;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic.Activators
 {
-    public class JSDynamicModuleActivator : IInstanceActivatorBase<IJSModule>, IJSDynamicModuleActivator
+    public class JSDynamicModuleActivator : InstanceActivatorBase<IJSModule>, IJSDynamicModuleActivator
     {
         private readonly IJSModuleActivator jsModuleActivator;
         private readonly IJSDynamicProxyActivator jSDynamicProxyActivator;

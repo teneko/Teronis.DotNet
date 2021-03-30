@@ -8,8 +8,6 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Teronis.Microsoft.JSInterop.Dynamic;
 using Teronis.Microsoft.JSInterop.Dynamic.Interceptors;
-using Teronis.Microsoft.JSInterop.Dynamic.Locality;
-using Teronis.Microsoft.JSInterop.Dynamic.Module;
 using Teronis.Microsoft.JSInterop.Facades;
 using Teronis.Microsoft.JSInterop.Module;
 using Teronis_._Microsoft.JSInterop.Facades.JSModules;
@@ -28,7 +26,7 @@ namespace Teronis_._Microsoft.JSInterop.Facades
             services.AddScoped(serviceProvider => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
             services.AddJSDynamicProxyActivator(options => {
-                options.ConfigureInterceptorWalkerBuilder(builder =>
+                options.ConfigureInterceptorBuilder(builder =>
                     builder.AddInterceptor(typeof(JSDynamicProxyActivatingInterceptor)));
             });
 

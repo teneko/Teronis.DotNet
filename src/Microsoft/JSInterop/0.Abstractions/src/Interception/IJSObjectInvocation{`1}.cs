@@ -9,8 +9,10 @@ namespace Teronis.Microsoft.JSInterop.Interception
 {
     public interface IJSObjectInvocation<TValue> : IJSObjectInvocationBase<ValueTask<TValue>>
     {
-
         Type TaskArgumentType { get; }
+        /// <summary>
+        /// The cacheable attributes of <see cref="TaskArgumentType"/>.
+        /// </summary>
         ICustomAttributes TaskArgumentTypeAttributes { get; }
 
         /// <summary>

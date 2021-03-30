@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.JSInterop;
+using Teronis.Microsoft.JSInterop.Interception;
 using Teronis.Microsoft.JSInterop.Locality;
 
 namespace Teronis.Microsoft.JSInterop.Module
@@ -14,10 +15,10 @@ namespace Teronis.Microsoft.JSInterop.Module
         public string ModuleNameOrPath { get; }
 
         public JSModule(
-            IJSFunctionalObject jsFunctionalObject, 
+            IJSObjectInterceptor jsObjectInterceptor, 
             IJSObjectReference jsObjectReference,
             string moduleName)
-            : base(jsFunctionalObject, jsObjectReference) =>
+            : base(jsObjectInterceptor, jsObjectReference) =>
             ModuleNameOrPath = moduleName ?? throw new System.ArgumentNullException(nameof(moduleName));
     }
 }

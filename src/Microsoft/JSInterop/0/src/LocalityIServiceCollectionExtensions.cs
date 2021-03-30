@@ -5,6 +5,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using Teronis.Microsoft.JSInterop.Interception;
 using Teronis.Microsoft.JSInterop.Locality;
 using Teronis.Microsoft.JSInterop.Locality.WebAssets;
 
@@ -23,7 +24,7 @@ namespace Teronis.Microsoft.JSInterop
         public static IServiceCollection AddJSLocalObjectActivator(this IServiceCollection services, Action<JSLocalObjectActivatorOptions>? configureOptions = null)
         {
             services.TryAddSingleton<IConfigureOptions<JSLocalObjectActivatorOptions>>(serviceProvider =>
-                JSFunctionalObjectOptionsConfiguration<JSLocalObjectActivatorOptions>.Create(serviceProvider));
+                JSObjectInterceptorBuilderOptionsConfiguration<JSLocalObjectActivatorOptions>.Create(serviceProvider));
 
             services.TryAddSingleton(sp => sp.GetRequiredService<IOptions<JSLocalObjectActivatorOptions>>().Value);
 

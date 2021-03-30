@@ -5,6 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
+using Teronis.Microsoft.JSInterop.Interception;
 
 namespace Teronis.Microsoft.JSInterop.Locality
 {
@@ -12,10 +13,10 @@ namespace Teronis.Microsoft.JSInterop.Locality
     {
         public IJSObjectReference JSObjectReference { get; }
 
-        private readonly IJSFunctionalObject jsObjectInterceptor;
+        private readonly IJSObjectInterceptor jsObjectInterceptor;
 
         public JSLocalObject(
-            IJSFunctionalObject jsObjectInterceptor,
+            IJSObjectInterceptor jsObjectInterceptor,
             IJSObjectReference jsObjectReference)
         {
             this.jsObjectInterceptor = jsObjectInterceptor ?? throw new ArgumentNullException(nameof(jsObjectInterceptor));

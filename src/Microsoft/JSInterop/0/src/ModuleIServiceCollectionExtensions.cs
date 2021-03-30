@@ -5,6 +5,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using Teronis.Microsoft.JSInterop.Interception;
 using Teronis.Microsoft.JSInterop.Module;
 
 namespace Teronis.Microsoft.JSInterop
@@ -20,7 +21,7 @@ namespace Teronis.Microsoft.JSInterop
         public static IServiceCollection AddJSModuleActivator(this IServiceCollection services, Action<JSModuleActivatorOptions>? configureOptions = null)
         {
             services.TryAddSingleton<IConfigureOptions<JSModuleActivatorOptions>>(serviceProvider =>
-                JSFunctionalObjectOptionsConfiguration<JSModuleActivatorOptions>.Create(serviceProvider));
+                JSObjectInterceptorBuilderOptionsConfiguration<JSModuleActivatorOptions>.Create(serviceProvider));
 
             if (!(configureOptions is null)) {
                 services.Configure(configureOptions);

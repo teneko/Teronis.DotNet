@@ -18,7 +18,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             var services = new ServiceCollection();
             services.AddJSDynamicProxy();
 
-            services.AddJSDynamicProxyActivator(options => options.ConfigureInterceptorWalkerBuilder(builder =>
+            services.AddJSDynamicProxyActivator(options => options.ConfigureInterceptorBuilder(builder =>
                 builder.AddInterceptor(typeof(JSDynamicProxyActivatingInterceptor))));
 
             var serviceProvider = services.BuildServiceProvider();

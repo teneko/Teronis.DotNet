@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Teronis.Microsoft.JSInterop.Dynamic.Activators;
 using Teronis.Microsoft.JSInterop.Module;
 
-namespace Teronis.Microsoft.JSInterop.Dynamic.Module
+namespace Teronis.Microsoft.JSInterop.Dynamic
 {
     public static class DynamicModuleIServiceCollectionExtensions
     {

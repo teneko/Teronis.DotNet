@@ -9,7 +9,7 @@ using Teronis.Microsoft.JSInterop.Locality;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic.Activators
 {
-    public class JSDynamicLocalObjectActivator : IInstanceActivatorBase<IJSLocalObject>, IJSDynamicLocalObjectActivator
+    public class JSDynamicLocalObjectActivator : InstanceActivatorBase<IJSLocalObject>, IJSDynamicLocalObjectActivator
     {
         private readonly IJSLocalObjectActivator jsLocalObjectActivator;
         private readonly IJSDynamicProxyActivator jSDynamicProxyActivator;

@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Teronis.Microsoft.JSInterop.Interception
 {
-    public sealed class JSFunctionalObjectInterceptorWalker : IJSObjectInterceptor
+    public sealed class JSIteratingObjectInterceptor : IJSObjectInterceptor
     {
         private readonly IReadOnlyList<IJSObjectInterceptor> interceptors;
 
-        public JSFunctionalObjectInterceptorWalker(IReadOnlyList<IJSObjectInterceptor> interceptors) =>
+        public JSIteratingObjectInterceptor(IReadOnlyList<IJSObjectInterceptor> interceptors) =>
             this.interceptors = interceptors;
 
-        public async ValueTask WalkThroughInterceptorsAsync<TValue>(IJSObjectInvocation<TValue> invocation)
+        public async ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation)
         {
             foreach (var interception in interceptors) {
                 await interception.InterceptInvokeAsync(invocation);
@@ -24,7 +24,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
             }
         }
 
-        public async ValueTask WalkThroughInterceptorsAsync(IJSObjectInvocation invocation)
+        public async ValueTask InterceptInvokeVoidAsync(IJSObjectInvocation invocation)
         {
             foreach (var interception in interceptors) {
                 await interception.InterceptInvokeVoidAsync(invocation);
@@ -36,11 +36,5 @@ namespace Teronis.Microsoft.JSInterop.Interception
 
             return;
         }
-
-        ValueTask IJSObjectInterceptor.InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation) =>
-            WalkThroughInterceptorsAsync(invocation);
-
-        ValueTask IJSObjectInterceptor.InterceptInvokeVoidAsync(IJSObjectInvocation invocation) =>
-            WalkThroughInterceptorsAsync(invocation);
     }
 }

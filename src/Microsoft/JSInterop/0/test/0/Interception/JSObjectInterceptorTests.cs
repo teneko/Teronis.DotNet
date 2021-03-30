@@ -8,28 +8,28 @@ using Xunit;
 
 namespace Teronis.Microsoft.JSInterop.Interceptions
 {
-    public class JSFunctionalObjectInterceptorTests
+    public class JSObjectInterceptorTests
     {
         [Fact]
         public async Task Should_intercept_in_order()
         {
             var numbers = new List<int>();
 
-            var jsFunctionalObject = new JSFunctionalObjectInterceptorWalkerBuilder()
-                .AddInterceptor(new JSCallingBackFunctionalObjectInterceptor(
+            var jsObjectInterceptor = new JSIteratingObjectInterceptorBuilder()
+                .AddInterceptor(new JSCallingBackObjectInterceptor(
                     invocation => {
                         numbers.Add(0);
                         return ValueTask.CompletedTask;
                     }))
-                .AddInterceptor(new JSCallingBackFunctionalObjectInterceptor(
+                .AddInterceptor(new JSCallingBackObjectInterceptor(
                     invocation => {
                         numbers.Add(1);
                         return ValueTask.CompletedTask;
                     }))
-                .BuildInterceptableFunctionalObject();
+                .BuildInterceptor();
 
             // Act
-            await jsFunctionalObject.InvokeVoidAsync();
+            await jsObjectInterceptor.InvokeVoidAsync();
 
             // Assert
             Assert.Equal(new[] { 0, 1 }, numbers);
@@ -38,27 +38,27 @@ namespace Teronis.Microsoft.JSInterop.Interceptions
         public async Task Should_cancel_interception() {
             var numbers = new List<int>();
 
-            var jsFunctionalObject = new JSFunctionalObjectInterceptorWalkerBuilder()
-                .AddInterceptor(new JSCallingBackFunctionalObjectInterceptor(
+            var jsObjectInterceptor = new JSIteratingObjectInterceptorBuilder()
+                .AddInterceptor(new JSCallingBackObjectInterceptor(
                     invocation => {
                         numbers.Add(0);
                         return ValueTask.CompletedTask;
                     }))
-                .AddInterceptor(new JSCallingBackFunctionalObjectInterceptor(
+                .AddInterceptor(new JSCallingBackObjectInterceptor(
                     invocation => {
                         numbers.Add(1);
                         invocation.StopInterception();
                         return ValueTask.CompletedTask;
                     }))
-                .AddInterceptor(new JSCallingBackFunctionalObjectInterceptor(
+                .AddInterceptor(new JSCallingBackObjectInterceptor(
                     invocation => {
                         numbers.Clear();
                         return ValueTask.CompletedTask;
                     }))
-                .BuildInterceptableFunctionalObject();
+                .BuildInterceptor();
 
             // Act
-            await jsFunctionalObject.InvokeVoidAsync();
+            await jsObjectInterceptor.InvokeVoidAsync();
 
             // Assert
             Assert.Equal(new[] { 0, 1 }, numbers);

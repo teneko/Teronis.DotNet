@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 using Teronis.Microsoft.JSInterop.Dynamic.Facades.PropertyAssigners;
 using Teronis.Microsoft.JSInterop.Facades;
 
-namespace Teronis.Microsoft.JSInterop.Dynamic.Facades
+namespace Teronis.Microsoft.JSInterop.Dynamic
 {
     public static class DynamicFacadesIServiceCollectionExtensions
     {

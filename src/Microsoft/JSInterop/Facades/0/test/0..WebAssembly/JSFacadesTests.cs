@@ -23,8 +23,7 @@ namespace Teronis_._Microsoft.JSInterop.Facades
         public TaskTestCase Should_first_call_dynamic_invoke_and_then_call_inbuilt_invoke = AddTest(async (_) => {
             var jsFacades = Instance.jsFacadesActivator.CreateInstance<JSDynamicFacadeActivators>();
             var jsModule = await jsFacades.Activators.JSDynamicModuleActivator.CreateInstanceAsync<IMomentDynamicModule>("./js/esm-bundle.js");
-
-            var moment = await jsModule.moment("2013-02-08 09");
+            await using var moment = await jsModule.moment("2013-02-08 09");
             var formattedDate = await moment.format();
             StringAssert.StartsWith("2013-02-08", formattedDate);
         });

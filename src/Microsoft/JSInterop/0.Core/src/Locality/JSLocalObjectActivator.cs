@@ -3,18 +3,19 @@
 
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
+using Teronis.Microsoft.JSInterop.Interception;
 
 namespace Teronis.Microsoft.JSInterop.Locality
 {
-    public class JSLocalObjectActivator : IInstanceActivatorBase<IJSLocalObject>, IJSLocalObjectActivator
+    public class JSLocalObjectActivator : InstanceActivatorBase<IJSLocalObject>, IJSLocalObjectActivator
     {
         private readonly IJSLocalObjectInterop jsLocalObjectInterop;
-        private readonly GetOrBuildJSInterceptableFunctionalObjectDelegate? getOrBuildJSFunctionalObjectDelegate;
+        private readonly GetOrBuildInterceptorDelegate? getOrBuildInterceptorDelegate;
 
         public JSLocalObjectActivator(IJSLocalObjectInterop jsLocalObjectInterop, JSLocalObjectActivatorOptions? options)
         {
             this.jsLocalObjectInterop = jsLocalObjectInterop ?? throw new System.ArgumentNullException(nameof(jsLocalObjectInterop));
-            getOrBuildJSFunctionalObjectDelegate = options?.GetOrBuildJSInterceptableFunctionalObject;
+            getOrBuildInterceptorDelegate = options?.GetOrBuildInterceptorMethod;
         }
 
         public JSLocalObjectActivator(IJSLocalObjectInterop jsLocalObjectInterop)
@@ -22,8 +23,8 @@ namespace Teronis.Microsoft.JSInterop.Locality
 
         public virtual IJSLocalObject CreateInstance(IJSObjectReference jsObjectReference)
         {
-            var jsFunctionalObject = getOrBuildJSFunctionalObjectDelegate?.Invoke(configureInterceptorWalkerBuilder: null) ?? JSFunctionalObject.Default;
-            return new JSLocalObject(jsFunctionalObject, jsObjectReference);
+            var jsObjectInterceptor = getOrBuildInterceptorDelegate?.Invoke(configureBuilder: null) ?? JSObjectInterceptor.Default;
+            return new JSLocalObject(jsObjectInterceptor, jsObjectReference);
         }
 
         public virtual async ValueTask<IJSLocalObject> CreateInstanceAsync(string objectName)

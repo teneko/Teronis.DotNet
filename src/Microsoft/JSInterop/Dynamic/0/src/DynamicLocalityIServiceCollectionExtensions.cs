@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Teronis.Microsoft.JSInterop.Dynamic.Activators;
 
-namespace Teronis.Microsoft.JSInterop.Dynamic.Locality
+namespace Teronis.Microsoft.JSInterop.Dynamic
 {
     public static class DynamicLocalityIServiceCollectionExtensions
     {

@@ -7,6 +7,7 @@ using System.Linq;
 using Castle.DynamicProxy;
 using Concurrent.FastReflection.NetStandard;
 using Teronis.Microsoft.JSInterop.Dynamic.Reflection;
+using Teronis.Microsoft.JSInterop.Interception;
 using Teronis.Microsoft.JSInterop.Reflection;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic
@@ -27,16 +28,16 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         private readonly IJSObjectReferenceFacade jsDynamicObjectProxy;
         private readonly MethodDictionary methodDictionary;
         // This object walks through all interceptors.
-        private readonly IJSFunctionalObject jsFunctionalObject;
+        private readonly IJSObjectInterceptor jsObjectInterceptor;
 
         public JSDynamicProxyInterceptor(
             IJSObjectReferenceFacade jsDynamicObjectProxy,
             MethodDictionary methodDictionary,
-            IJSFunctionalObject jsFunctionalObject)
+            IJSObjectInterceptor jsObjectInterceptor)
         {
             this.jsDynamicObjectProxy = jsDynamicObjectProxy ?? throw new ArgumentNullException(nameof(jsDynamicObjectProxy));
             this.methodDictionary = methodDictionary ?? throw new ArgumentNullException(nameof(methodDictionary));
-            this.jsFunctionalObject = jsFunctionalObject ?? throw new ArgumentNullException(nameof(jsFunctionalObject));
+            this.jsObjectInterceptor = jsObjectInterceptor ?? throw new ArgumentNullException(nameof(jsObjectInterceptor));
         }
 
         public void Intercept(IInvocation invocation)
@@ -56,27 +57,27 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
                 goto setMember;
             }
 
-            var name = invocation.Method.Name;
+            var memberName = invocation.Method.Name;
             var genericParameterTypes = invocation.GenericArguments;
             var positionalArgumentNames = invocation.Method.GetParameters().Select(x => x.Name);
 
             // user interface methods
             if (methodDictionary.TryFindMethod(methodInfo.Name, positionalArgumentNames, out var method)) {
                 var methodAttributes = new CustomAttributeLookup(methodInfo);
-                invocation.ReturnValue = method.GetReturnValue(jsFunctionalObject, jsDynamicObjectProxy.JSObjectReference, genericParameterTypes, arguments, methodAttributes);
+                invocation.ReturnValue = method.GetReturnValue(jsObjectInterceptor, jsDynamicObjectProxy.JSObjectReference, genericParameterTypes, arguments, methodAttributes);
                 return;
             }
             // proxy properties
             else if (invocation.Method.IsSpecialName) {
-                var propertyName = name.Substring(4);
+                var propertyName = memberName.Substring(4);
                 var methodDeclaringType = methodInfo.DeclaringType ?? throw new InvalidOperationException();
 
-                if (name.StartsWith("get_")) {
+                if (memberName.StartsWith("get_")) {
                     //invocation.ReturnValue = DynamiteyDynamic.InvokeGet(jsDynamicObjectProxy, propertyName);
                     memberGetterDelegate = methodDeclaringType.GetProperty(propertyName).DelegateForGet();
                     proxyMemberGetterDelegates.Add(methodInfo.MethodHandle, memberGetterDelegate);
                     goto getMember;
-                } else if (name.StartsWith("set_") && arguments.Length == 1) {
+                } else if (memberName.StartsWith("set_") && arguments.Length == 1) {
                     //DynamiteyDynamic.InvokeSet(jsDynamicObjectProxy, propertyName, arguments[0]);
                     memberSetterDelegate = methodDeclaringType.GetProperty(propertyName).DelegateForSet();
                     proxyMemberSetterDelegates.Add(methodInfo.MethodHandle, memberSetterDelegate);

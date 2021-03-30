@@ -3,15 +3,16 @@
 
 using System;
 using Microsoft.JSInterop;
+using Teronis.Microsoft.JSInterop.Interception;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic
 {
-    public interface IJSDynamicProxyActivator
+    public interface IJSDynamicProxyActivator : IInstanceActivator<IJSObjectReferenceFacade>
     {
         object CreateInstance(
             Type interfaceToBeProxied,
             IJSObjectReferenceFacade jsObjectFacadeToBeProxied,
-            IJSFunctionalObject? jsFunctionalObject = null,
+            IJSObjectInterceptor? jsObjectInterceptor = null,
             DynamicProxyCreationOptions? creationOptions = null);
 
         object CreateInstance(Type interfaceToBeProxied, IJSObjectReference jSObjectReference, DynamicProxyCreationOptions? creationOptions = null);

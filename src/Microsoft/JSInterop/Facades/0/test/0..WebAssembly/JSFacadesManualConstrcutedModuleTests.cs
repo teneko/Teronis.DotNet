@@ -16,15 +16,15 @@ namespace Teronis_._Microsoft.JSInterop.Facades
     {
         public readonly static JSFacadesManualConstrcutedModuleTests Instance = null!;
 
-        public IJSFacadesActivator jsFacadesActivator { get; set; } = null!;
+        public IJSFacadeHubActivator jsFacadesActivator { get; set; } = null!;
 
-        public JSFacadesManualConstrcutedModuleTests(IJSFacadesActivator jsFacadesActivator) =>
+        public JSFacadesManualConstrcutedModuleTests(IJSFacadeHubActivator jsFacadesActivator) =>
             this.jsFacadesActivator = jsFacadesActivator ?? throw new ArgumentNullException(nameof(jsFacadesActivator));
 
         [JSModuleProperty] ModuleActivationViaManualConstruction Module { get; set; } = null!;
 
         public TaskTestCase Should_resolve_module_via_manual_construction = AddTest(async (_) => {
-            var jsFacades = await Instance.jsFacadesActivator.CreateInstanceAsync<JSFacadeActivators>(Instance);
+            var jsFacadeHub = await Instance.jsFacadesActivator.CreateInstanceAsync<JSFacadeActivators>(Instance);
             var tonyHawk = await Instance.Module.GetTonyHawkAsync();
 
             // Assert

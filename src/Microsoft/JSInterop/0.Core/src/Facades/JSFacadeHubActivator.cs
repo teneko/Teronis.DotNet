@@ -8,26 +8,26 @@ using Microsoft.Extensions.Options;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
-    public class JSFacadesActivator : InstanceActivatorBase<IJSFacades<IJSFacadeActivators>>, IJSFacadesActivator
+    public class JSFacadeHubActivator : InstanceActivatorBase<IJSFacadeHub<IJSFacadeActivators>>, IJSFacadeHubActivator
     {
-        private readonly JSFacadesActivatorOptions options;
+        private readonly JSFacadeHubActivatorOptions options;
 
-        public JSFacadesActivator(IOptions<JSFacadesActivatorOptions> options) =>
+        public JSFacadeHubActivator(IOptions<JSFacadeHubActivatorOptions> options) =>
             this.options = options.Value ?? throw new ArgumentNullException(nameof(options));
 
-        private JSFacades<TJSFacadeActivators> CreateFacades<TJSFacadeActivators>()
+        private JSFacadeHub<TJSFacadeActivators> CreateFacades<TJSFacadeActivators>()
             where TJSFacadeActivators : IJSFacadeActivators
         {
-            var jsFacades = options.CreateJSFacades<TJSFacadeActivators>();
-            DispatchInstanceActicated((IJSFacades<IJSFacadeActivators>)jsFacades);
-            return jsFacades;
+            var jsFacadeHub = options.CreateFacadeHub<TJSFacadeActivators>();
+            DispatchInstanceActicated((IJSFacadeHub<IJSFacadeActivators>)jsFacadeHub);
+            return jsFacadeHub;
         }
 
-        public IJSFacades<TJSFacadeActivators> CreateInstance<TJSFacadeActivators>()
+        public IJSFacadeHub<TJSFacadeActivators> CreateInstance<TJSFacadeActivators>()
             where TJSFacadeActivators : IJSFacadeActivators =>
             CreateFacades<TJSFacadeActivators>();
 
-        public async ValueTask<IJSFacades<TJSFacadeActivators>> CreateInstanceAsync<TJSFacadeActivators>(object component)
+        public async ValueTask<IJSFacadeHub<TJSFacadeActivators>> CreateInstanceAsync<TJSFacadeActivators>(object component)
             where TJSFacadeActivators : IJSFacadeActivators
         {
             if (component is null) {
@@ -48,9 +48,9 @@ namespace Teronis.Microsoft.JSInterop.Facades
                 }
             }
 
-            var jsFacades = CreateFacades<TJSFacadeActivators>();
-            jsFacades.RegisterAsyncDisposables(jsFacadesDisposables);
-            return jsFacades;
+            var jsFacadeHub = CreateFacades<TJSFacadeActivators>();
+            jsFacadeHub.RegisterAsyncDisposables(jsFacadesDisposables);
+            return jsFacadeHub;
         }
     }
 }

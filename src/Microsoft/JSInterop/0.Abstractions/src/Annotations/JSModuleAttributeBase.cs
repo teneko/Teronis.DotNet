@@ -16,14 +16,14 @@ namespace Teronis.Microsoft.JSInterop.Annotations
 
         /// <summary>
         /// The properties (owned by component - see 
-        /// <see cref="IJSFacadesActivator.CreateInstanceAsync(object)"/>) of type <see cref="IJSObjectReference"/>
+        /// <see cref="IJSFacadeHubActivator.CreateInstanceAsync(object)"/>) of type <see cref="IJSObjectReference"/>
         /// gets initialized when decorated with this attribute.
         /// </summary>
         public JSModuleAttributeBase() { }
 
         /// <summary>
         /// The properties (owned by component - see 
-        /// <see cref="IJSFacadesActivator.CreateInstanceAsync(object)"/>) of type <see cref="IJSObjectReference"/>
+        /// <see cref="IJSFacadeHubActivator.CreateInstanceAsync(object)"/>) of type <see cref="IJSObjectReference"/>
         /// gets initialized when decorated with this attribute.
         /// </summary>
         /// <param name="moduleNameOrPath">Relative path where the working directoy is typcially wwwroot.</param>

@@ -21,15 +21,15 @@ namespace Teronis.Microsoft.JSInterop.Facades
             return services;
         }
 
-        public static IServiceCollection AddJSFacadesActivator(this IServiceCollection services, Action<JSFacadesActivatorOptions>? configureOptions = null)
+        public static IServiceCollection AddJSFacadesActivator(this IServiceCollection services, Action<JSFacadeHubActivatorOptions>? configureOptions = null)
         {
             if (!(configureOptions is null)) {
                 services.Configure(configureOptions);
             }
 
-            services.AddSingleton<IPostConfigureOptions<JSFacadesActivatorOptions>, DefaultPropertyAssignersPostConfiguration>();
-            services.AddSingleton<IPostConfigureOptions<JSFacadesActivatorOptions>, JSFacadesActivatorOptionsPostConfiguration>();
-            services.TryAddSingleton<IJSFacadesActivator, JSFacadesActivator>();
+            services.AddSingleton<IPostConfigureOptions<JSFacadeHubActivatorOptions>, DefaultPropertyAssignersPostConfiguration>();
+            services.AddSingleton<IPostConfigureOptions<JSFacadeHubActivatorOptions>, JSFacadesActivatorOptionsPostConfiguration>();
+            services.TryAddSingleton<IJSFacadeHubActivator, JSFacadeHubActivator>();
             return services;
         }
 

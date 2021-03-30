@@ -13,7 +13,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         public static IServiceCollection AddJSDynamicFacadesActivator(IServiceCollection services)
         {
             services.AddJSFacadesActivator();
-            services.AddSingleton<IPostConfigureOptions<JSFacadesActivatorOptions>, DefaultPropertyAssignersPostConfiguration>();
+            services.AddSingleton<IPostConfigureOptions<JSFacadeHubActivatorOptions>, DefaultPropertyAssignersPostConfiguration>();
             return services;
         }
 

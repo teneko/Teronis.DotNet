@@ -17,7 +17,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic.Activators
         public JSDynamicFacadeActivators(
             IJSModuleActivator jsModuleActivator,
             IJSLocalObjectActivator jsLocalObjectActivator,
-            IJSFacadesActivator jsFacadesActivator,
+            IJSFacadeHubActivator jsFacadesActivator,
             IJSDynamicModuleActivator jsDynamicModuleActivator,
             IJSDynamicLocalObjectActivator jsDynamicLocalObjectActivator)
             : base(jsModuleActivator, jsLocalObjectActivator, jsFacadesActivator)

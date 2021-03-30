@@ -5,9 +5,9 @@ using Microsoft.Extensions.Options;
 
 namespace Teronis.Microsoft.JSInterop.Facades.PropertyAssigners
 {
-    internal class DefaultPropertyAssignersPostConfiguration : IPostConfigureOptions<JSFacadesActivatorOptions>
+    internal class DefaultPropertyAssignersPostConfiguration : IPostConfigureOptions<JSFacadeHubActivatorOptions>
     {
-        public void PostConfigure(string name, JSFacadesActivatorOptions options) {
+        public void PostConfigure(string name, JSFacadeHubActivatorOptions options) {
             if (!options.AreDefaultPropertyAssigners()) {
                 return;
             }

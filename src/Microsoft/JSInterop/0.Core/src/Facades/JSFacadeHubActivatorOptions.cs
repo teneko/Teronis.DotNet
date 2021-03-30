@@ -8,7 +8,7 @@ using Teronis.Microsoft.JSInterop.Facades.PropertyAssigners;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
-    public class JSFacadesActivatorOptions
+    public class JSFacadeHubActivatorOptions
     {
         /// <summary>
         /// Contains factories for component property assignments.
@@ -37,7 +37,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
         private bool arePropertyAssignersCreated;
         private bool arePropertyAssignersDefault;
 
-        public JSFacadesActivatorOptions()
+        public JSFacadeHubActivatorOptions()
         {
             propertyAssigners = new List<IPropertyAssigner>();
             arePropertyAssignersDefault = true;
@@ -67,22 +67,6 @@ namespace Teronis.Microsoft.JSInterop.Facades
             return serviceProvider;
         }
 
-        ///// <summary>
-        ///// Adds only collectible assigners when <see cref="PropertyAssignerFactories"/>
-        ///// has not been request by user.
-        ///// </summary>
-        //private void CheckForCollectiblePropertyAssignersToBeAdded()
-        //{
-        //    if (!(this.propertyAssignerFactories is null)) {
-        //        return;
-        //    }
-
-        //    var serviceProvider = GetServiceProviderOrThrow();
-        //    var propertyAssignerFactories = PropertyAssignerFactories;
-
-            
-        //}
-
         private void EnsureCreatedPropertyAssignersFromFactories()
         {
             if (arePropertyAssignersCreated) {
@@ -107,12 +91,12 @@ namespace Teronis.Microsoft.JSInterop.Facades
             arePropertyAssignersCreated = true;
         }
 
-        internal JSFacades<TJSFacadeActivators> CreateJSFacades<TJSFacadeActivators>()
+        internal JSFacadeHub<TJSFacadeActivators> CreateFacadeHub<TJSFacadeActivators>()
             where TJSFacadeActivators : IJSFacadeActivators
         {
             var serviceProvider = GetServiceProviderOrThrow();
             var jsFacadeActivators = ActivatorUtilities.GetServiceOrCreateInstance<TJSFacadeActivators>(serviceProvider);
-            return ActivatorUtilities.CreateInstance<JSFacades<TJSFacadeActivators>>(serviceProvider, jsFacadeActivators);
+            return ActivatorUtilities.CreateInstance<JSFacadeHub<TJSFacadeActivators>>(serviceProvider, jsFacadeActivators);
         }
     }
 }

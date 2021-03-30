@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
-    public class JSFacades<TJSFacadeActivators> : IJSFacades<TJSFacadeActivators>
+    public class JSFacadeHub<TJSFacadeActivators> : IJSFacadeHub<TJSFacadeActivators>
         where TJSFacadeActivators : IJSFacadeActivators
     {
         public IReadOnlyList<IAsyncDisposable> JSFacadeList =>
@@ -18,7 +18,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
         private readonly List<IAsyncDisposable> jsFacadesDisposables;
         private readonly IJSCustomFacadeActivator jsCustomFacadeActivator;
 
-        public JSFacades(
+        public JSFacadeHub(
             IJSCustomFacadeActivator jsFacadeResolver,
             TJSFacadeActivators jsFacadeActivators)
         {

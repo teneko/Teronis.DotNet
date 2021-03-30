@@ -5,7 +5,7 @@ using System;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
-    public interface IJSFacades<out TJSFacadeActivators> : IAsyncDisposable
+    public interface IJSFacadeHub<out TJSFacadeActivators> : IAsyncDisposable
         where TJSFacadeActivators : IJSFacadeActivators
     {
         TJSFacadeActivators Activators { get; }

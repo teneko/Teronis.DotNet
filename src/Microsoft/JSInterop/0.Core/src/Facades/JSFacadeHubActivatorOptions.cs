@@ -17,7 +17,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
             get {
                 if (propertyAssignerFactories is null) {
                     propertyAssignerFactories = new PropertyAssignerFactories();
-                    arePropertyAssignersUserTouched = false;
+                    arePropertyAssignersUserTouched = true;
                 }
 
                 return propertyAssignerFactories;
@@ -40,10 +40,11 @@ namespace Teronis.Microsoft.JSInterop.Facades
         public JSFacadeHubActivatorOptions()
         {
             propertyAssigners = new List<IPropertyAssigner>();
-            arePropertyAssignersUserTouched = true;
+            arePropertyAssignersUserTouched = false;
         }
 
-        internal bool ArePropertyAssignersUserUntouched() {
+        internal bool ArePropertyAssignersUserUntouched()
+        {
             if (arePropertyAssignersUserTouched) {
                 return false;
             }
@@ -91,11 +92,17 @@ namespace Teronis.Microsoft.JSInterop.Facades
             arePropertyAssignersCreated = true;
         }
 
+        internal TJSFacadeActivators CreateFacadeActivators<TJSFacadeActivators>(IServiceProvider? serviceProvider)
+        {
+            serviceProvider ??= serviceProvider ?? GetServiceProviderOrThrow();
+            return ActivatorUtilities.GetServiceOrCreateInstance<TJSFacadeActivators>(serviceProvider);
+        }
+
         internal JSFacadeHub<TJSFacadeActivators> CreateFacadeHub<TJSFacadeActivators>()
             where TJSFacadeActivators : class
         {
             var serviceProvider = GetServiceProviderOrThrow();
-            var jsFacadeActivators = ActivatorUtilities.GetServiceOrCreateInstance<TJSFacadeActivators>(serviceProvider);
+            var jsFacadeActivators = CreateFacadeActivators<TJSFacadeActivators>(serviceProvider);
             return ActivatorUtilities.CreateInstance<JSFacadeHub<TJSFacadeActivators>>(serviceProvider, jsFacadeActivators);
         }
     }

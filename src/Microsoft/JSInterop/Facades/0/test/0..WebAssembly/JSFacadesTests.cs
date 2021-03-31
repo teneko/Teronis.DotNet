@@ -15,13 +15,13 @@ namespace Teronis_._Microsoft.JSInterop.Facades
     {
         public readonly static JSFacadesTests Instance = null!;
 
-        private IJSFacadeHubActivator jsFacadesActivator;
+        private readonly IJSFacadeHub<JSDynamicFacadeActivators> jsFacadeHub;
 
-        public JSFacadesTests(IJSFacadeHubActivator serviceProvider) =>
-            jsFacadesActivator = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+        public JSFacadesTests(IJSFacadeHub<JSDynamicFacadeActivators> jsFacadeHub) =>
+            this.jsFacadeHub = jsFacadeHub ?? throw new ArgumentNullException(nameof(jsFacadeHub));
 
         public TaskTestCase Should_first_call_dynamic_invoke_and_then_call_inbuilt_invoke = AddTest(async (_) => {
-            var jsFacadeHub = Instance.jsFacadesActivator.CreateInstance<JSDynamicFacadeActivators>();
+            var jsFacadeHub = Instance.jsFacadeHub;
             var jsModule = await jsFacadeHub.Activators.JSDynamicModuleActivator.CreateInstanceAsync<IMomentDynamicModule>("./js/esm-bundle.js");
             await using var moment = await jsModule.moment("2013-02-08 09");
             var formattedDate = await moment.format();

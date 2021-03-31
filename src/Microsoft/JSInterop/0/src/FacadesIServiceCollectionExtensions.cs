@@ -29,6 +29,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
             services.ConfigureOptions<DefaultPropertyAssignersPostConfiguration>();
             services.ConfigureOptions<JSFacadeHubActivatorOptionsPostConfiguration>();
             services.TryAddSingleton<IJSFacadeHubActivator, JSFacadeHubActivator>();
+            services.TryAddTransient(typeof(IJSFacadeHub<>), typeof(JSFacadeHubService<>));
             return services;
         }
 

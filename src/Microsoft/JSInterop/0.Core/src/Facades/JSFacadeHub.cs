@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
@@ -18,12 +19,10 @@ namespace Teronis.Microsoft.JSInterop.Facades
         private readonly List<IAsyncDisposable> disposables;
         private readonly IJSCustomFacadeActivator jsCustomFacadeActivator;
 
-        public JSFacadeHub(
-            IJSCustomFacadeActivator jsFacadeResolver,
-            TJSFacadeActivators jsFacadeActivators)
+        public JSFacadeHub(IJSCustomFacadeActivator jsCustomFacadeResolver,TJSFacadeActivators jsFacadeActivators)
         {
             disposables = new List<IAsyncDisposable>();
-            jsCustomFacadeActivator = jsFacadeResolver ?? throw new ArgumentNullException(nameof(jsFacadeResolver));
+            jsCustomFacadeActivator = jsCustomFacadeResolver ?? throw new ArgumentNullException(nameof(jsCustomFacadeResolver));
             Activators = jsFacadeActivators ?? throw new ArgumentNullException(nameof(Activators));
         }
 

@@ -26,7 +26,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
         }
 
         [Fact]
-        public async Task Should_have_empty_nunit_report()
+        public async Task Should_have_passed_nunit_report()
         {
             var applicationUrl = server.ApplicationUrl;
             await using var browser = await playwright.Instance.Chromium.LaunchAsync();

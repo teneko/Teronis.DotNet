@@ -13,11 +13,12 @@ using Xunit;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic
 {
-    public class JSDynamicObjectInterceptionTests : JSDynamicObjectTestsBase
+    public class JSDynamicObjectInterceptorTests : JSDynamicObjectTestsBase
     {
         private readonly IServiceProvider serviceProvider;
 
-        public JSDynamicObjectInterceptionTests() {
+        public JSDynamicObjectInterceptorTests()
+        {
             var services = new ServiceCollection();
             services.AddSingleton<IJSRuntime, TestRuntime>();
             services.AddJSDynamicFacadeHub();
@@ -32,7 +33,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         public async Task Should_create_operable_nested_proxy()
         {
             var nestedOwningObjectReference = new NestedOwningObjectReference();
-            var facadeHub = serviceProvider.GetRequiredService<IJSFacadeHubActivator>().CreateInstance<JSDynamicFacadeActivators>();
+            var facadeHub = serviceProvider.GetRequiredService<IJSFacadeHub<JSDynamicFacadeActivators>>();
             var dynamicProxyActivator = facadeHub.Activators.JSDynamicProxyActivator;
 
             {

@@ -27,12 +27,6 @@ namespace Teronis.Microsoft.JSInterop.Dynamic.Activators
             JSDynamicProxyActivator = jsDynamicProxyActivator ?? throw new ArgumentNullException(nameof(jsDynamicProxyActivator));
             JSDynamicModuleActivator = jsDynamicModuleActivator ?? throw new ArgumentNullException(nameof(jsDynamicModuleActivator));
             JSDynamicLocalObjectActivator = jsDynamicLocalObjectActivator ?? throw new ArgumentNullException(nameof(jsDynamicLocalObjectActivator));
-
-            // Prepare instance activators.
-            PrepareInstanceActivators(
-                jsDynamicProxyActivator,
-                jsDynamicModuleActivator,
-                jsDynamicLocalObjectActivator);
         }
     }
 }

@@ -12,11 +12,11 @@ using Teronis.Microsoft.JSInterop.Internals.Utils;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic
 {
-    public class JSDynamicProxyActivator : FacadeActivatorBase<IJSObjectReferenceFacade>, IJSDynamicProxyActivator
+    public class JSDynamicProxyActivator : IJSDynamicProxyActivator
     {
         private BuildInterceptorDelegate? buildInterceptor;
 
-        public JSDynamicProxyActivator(IOptionsSnapshot<JSDynamicProxyInterceptorBuilderOptions>? options) =>
+        public JSDynamicProxyActivator(IOptions<JSDynamicProxyInterceptorBuilderOptions>? options) =>
             buildInterceptor = options is null ? null : (BuildInterceptorDelegate?)options.Value.BuildInterceptor;
 
         public JSDynamicProxyActivator()
@@ -60,8 +60,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         private IJSObjectInterceptor buildInterceptorOrDefault(DynamicProxyCreationOptions? creationOptions) =>
             buildInterceptor
                 ?.Invoke(
-                    creationOptions?.ConfigureInterceptorBuilder,
-                    DispatchAnyInstanceActivated)
+                    creationOptions?.ConfigureInterceptorBuilder)
                 ?? JSObjectInterceptor.Default;
 
         public object CreateInstance(
@@ -86,8 +85,6 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
                 jsObjectFacadeToBeProxied,
                 methodDictionary,
                 jsObjectInterceptor);
-
-            DispatchFacadeActicated(jsObjectFacadeToBeProxied);
 
             return proxyGenerator.CreateInterfaceProxyWithoutTarget(
                 interfaceToBeProxied,

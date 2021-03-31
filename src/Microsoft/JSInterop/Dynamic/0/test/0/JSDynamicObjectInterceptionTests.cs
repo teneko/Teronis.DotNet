@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Teroneko.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
@@ -10,17 +11,14 @@ using Teronis.Microsoft.JSInterop.Dynamic.Interefaces.Interception;
 using Teronis.Microsoft.JSInterop.Dynamic.ObjectReferences;
 using Teronis.Microsoft.JSInterop.Facades;
 using Xunit;
-using Xunit.Repeat;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic
 {
     public class JSDynamicObjectInterceptionTests : JSDynamicObjectTestsBase
     {
-        //[Fact]
-        [Theory]
-        [Repeat(10)]
-        public async Task Should_create_operable_nested_proxy(int iterationNumber)
-        {
+        private readonly IServiceProvider serviceProvider;
+
+        public JSDynamicObjectInterceptionTests() {
             var services = new ServiceCollection();
             services.AddSingleton<IJSRuntime, TestRuntime>();
             services.AddJSDynamicFacadeHub();
@@ -28,21 +26,30 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             services.AddJSDynamicProxyActivator(options => options.ConfigureInterceptorBuilder(builder =>
                 builder.Add(typeof(JSDynamicProxyActivatingInterceptor))));
 
-            var serviceProvider = services.BuildServiceProvider();
-            var jsObjectReference = new NestedOwningObjectReference();
+            serviceProvider = services.BuildServiceProvider();
+        }
+
+        [Fact]
+        public async Task Should_create_operable_nested_proxy()
+        {
+            var nestedOwningObjectReference = new NestedOwningObjectReference();
             var facadeHub = serviceProvider.GetRequiredService<IJSFacadeHubActivator>().CreateInstance<JSDynamicFacadeActivators>();
-            var activator = facadeHub.Activators.JSDynamicProxyActivator;
-            var nestedOwningObject = activator.CreateInstance<INestedOwningDynamicObject>(jsObjectReference);
-            var nestedObject = await nestedOwningObject.GetNestedObjectAsync();
+            var dynamicProxyActivator = facadeHub.Activators.JSDynamicProxyActivator;
 
-            // Act
-            var identifier = await nestedObject.ReturnsThisNameAsync();
-            await facadeHub.DisposeAsync();
+            {
+                await using var nestedOwningObject = dynamicProxyActivator.CreateInstance<INestedOwningDynamicObject>(nestedOwningObjectReference);
+                await using var nestedObject = await nestedOwningObject.GetNestedObjectAsync();
 
-            // Assert
-            Assert.Equal(nameof(INestedDynamicObject.ReturnsThisNameAsync), identifier);
-            Assert.Equal(2, facadeHub.Disposables.Count);
-            Assert.All(jsObjectReference.ObjectReferences, objectReference => Assert.True(objectReference.IsDisposed));
+                // Act
+                var identifier = await nestedObject.ReturnsThisNameAsync();
+                await facadeHub.DisposeAsync();
+
+                // Assert
+                Assert.Equal(nameof(INestedDynamicObject.ReturnsThisNameAsync), identifier);
+            }
+
+            Assert.True(nestedOwningObjectReference.IsDisposed);
+            Assert.True(nestedOwningObjectReference.ObjectReferences[0].IsDisposed);
         }
     }
 }

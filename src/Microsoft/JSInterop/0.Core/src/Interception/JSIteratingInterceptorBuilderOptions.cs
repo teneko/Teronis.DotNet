@@ -36,32 +36,22 @@ namespace Teronis.Microsoft.JSInterop.Interception
             serviceProvider ?? throw new InvalidOperationException("Service provider has not been set.");
 
         public IJSObjectInterceptor BuildInterceptor(
-            Action<IJSIteratingInterceptorBuilder>? configureBuilder,
-            InstanceActivatedDelegate<IAsyncDisposable> anyFacadeActivatedCallback)
+            Action<IJSIteratingInterceptorBuilder>? configureBuilder)
         {
             if (configureBuilder is null && !(interceptor is null)) {
                 return interceptor;
             }
 
-            var serviceProvider = new FacadeActivatorCallingBackServiceProvider(GetServiceProvider(), anyFacadeActivatedCallback);
-            IJSObjectInterceptor returningInterceptor;
+            var serviceProvider = GetServiceProvider();
 
             if (configureBuilder is null) {
-                returningInterceptor = InterceptorBuilder.Build(serviceProvider);
-                goto returnInterceptor;
+                return InterceptorBuilder.Build(serviceProvider);
             }
 
             var mutatingInterceptorBuilder = new JSIteratingInterceptorBuilder(InterceptorBuilder.InterceptorDescriptors);
             mutatingInterceptorBuilder.SetRegistrationPhase(InterceptorDescriptorRegistrationPhase.FacadeActivation);
             configureBuilder(mutatingInterceptorBuilder);
-            returningInterceptor = mutatingInterceptorBuilder.Build(serviceProvider);
-
-            returnInterceptor:
-            if (serviceProvider.FacadeActivators.Count > 0) {
-                anyFacadeActivatedCallback(serviceProvider);
-            }
-
-            return returningInterceptor;
+            return mutatingInterceptorBuilder.Build(serviceProvider);
         }
     }
 }

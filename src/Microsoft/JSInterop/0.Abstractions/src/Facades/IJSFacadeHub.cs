@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace Teronis.Microsoft.JSInterop.Facades
 {
     public interface IJSFacadeHub<out TJSFacadeActivators> : IAsyncDisposable
-        where TJSFacadeActivators : IJSFacadeActivators
+        where TJSFacadeActivators : class
     {
         IReadOnlyList<IAsyncDisposable> Disposables { get; }
         TJSFacadeActivators Activators { get; }

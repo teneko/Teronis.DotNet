@@ -8,12 +8,12 @@ using Teronis.Microsoft.JSInterop.Interception;
 
 namespace Teronis.Microsoft.JSInterop.Module
 {
-    public class JSModuleActivator : FacadeActivatorBase<IJSModule>, IJSModuleActivator
+    public class JSModuleActivator : IJSModuleActivator
     {
         private readonly IJSRuntime jsRuntime;
         private readonly BuildInterceptorDelegate? buildInterceptor;
 
-        public JSModuleActivator(IJSRuntime jsRuntime, IOptionsSnapshot<JSModuleInterceptorBuilderOptions>? options)
+        public JSModuleActivator(IJSRuntime jsRuntime, IOptions<JSModuleInterceptorBuilderOptions>? options)
         {
             this.jsRuntime = jsRuntime;
             buildInterceptor = options is null ? null : (BuildInterceptorDelegate?)options.Value.BuildInterceptor;
@@ -25,12 +25,10 @@ namespace Teronis.Microsoft.JSInterop.Module
 
             var jsObjectInterceptor = buildInterceptor
                 ?.Invoke(
-                    configureBuilder: null,
-                    DispatchAnyInstanceActivated)
+                    configureBuilder: null)
                 ?? JSObjectInterceptor.Default;
 
             var jsModule = new JSModule(jsObjectReference, moduleNameOrPath, jsObjectInterceptor);
-            DispatchFacadeActicated(jsModule);
             return jsModule;
         }
     }

@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
-    public class JSFacadeHubActivator : FacadeActivatorBase<IJSFacadeHub<IJSFacadeActivators>>, IJSFacadeHubActivator
+    public class JSFacadeHubActivator : IJSFacadeHubActivator
     {
         private readonly JSFacadeHubActivatorOptions options;
 
@@ -16,19 +16,18 @@ namespace Teronis.Microsoft.JSInterop.Facades
             this.options = options.Value ?? throw new ArgumentNullException(nameof(options));
 
         private JSFacadeHub<TJSFacadeActivators> CreateFacades<TJSFacadeActivators>()
-            where TJSFacadeActivators : IJSFacadeActivators
+            where TJSFacadeActivators : class
         {
             var jsFacadeHub = options.CreateFacadeHub<TJSFacadeActivators>();
-            DispatchFacadeActicated((IJSFacadeHub<IJSFacadeActivators>)jsFacadeHub);
             return jsFacadeHub;
         }
 
         public IJSFacadeHub<TJSFacadeActivators> CreateInstance<TJSFacadeActivators>()
-            where TJSFacadeActivators : IJSFacadeActivators =>
+            where TJSFacadeActivators : class =>
             CreateFacades<TJSFacadeActivators>();
 
         public async ValueTask<IJSFacadeHub<TJSFacadeActivators>> CreateInstanceAsync<TJSFacadeActivators>(object component)
-            where TJSFacadeActivators : IJSFacadeActivators
+            where TJSFacadeActivators : class
         {
             if (component is null) {
                 throw new ArgumentNullException(nameof(component));

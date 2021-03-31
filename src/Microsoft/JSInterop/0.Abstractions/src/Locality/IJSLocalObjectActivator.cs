@@ -6,7 +6,7 @@ using Microsoft.JSInterop;
 
 namespace Teronis.Microsoft.JSInterop.Locality
 {
-    public interface IJSLocalObjectActivator : IInstanceActivator<IJSLocalObject>
+    public interface IJSLocalObjectActivator
     {
         IJSLocalObject CreateInstance(IJSObjectReference jsObjectReference);
         ValueTask<IJSLocalObject> CreateInstanceAsync(string objectName);

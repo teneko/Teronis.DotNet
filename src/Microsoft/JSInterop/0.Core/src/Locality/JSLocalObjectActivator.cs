@@ -8,7 +8,7 @@ using Teronis.Microsoft.JSInterop.Interception;
 
 namespace Teronis.Microsoft.JSInterop.Locality
 {
-    public class JSLocalObjectActivator : FacadeActivatorBase<IJSLocalObject>, IJSLocalObjectActivator
+    public class JSLocalObjectActivator : IJSLocalObjectActivator
     {
         private readonly IJSLocalObjectInterop jsLocalObjectInterop;
         private readonly BuildInterceptorDelegate? buildInterceptor;
@@ -26,17 +26,15 @@ namespace Teronis.Microsoft.JSInterop.Locality
         {
             var jsObjectInterceptor = buildInterceptor
                 ?.Invoke(
-                    configureBuilder: null,
-                    DispatchAnyInstanceActivated)
+                    configureBuilder: null)
                 ?? JSObjectInterceptor.Default;
 
-            return new JSLocalObject(jsObjectInterceptor, jsObjectReference);
+            return new JSLocalObject(jsObjectReference, jsObjectInterceptor);
         }
 
         public virtual async ValueTask<IJSLocalObject> CreateInstanceAsync(string objectName)
         {
             var jsLocalObject = CreateInstance(await jsLocalObjectInterop.GetGlobalObjectReference(objectName));
-            DispatchFacadeActicated(jsLocalObject);
             return jsLocalObject;
         }
 
@@ -44,7 +42,6 @@ namespace Teronis.Microsoft.JSInterop.Locality
         {
             var nestedObjectReference = await jsLocalObjectInterop.GetLocalObjectReference(jsObjectReference, objectName);
             var jsLocalObject = CreateInstance(nestedObjectReference);
-            DispatchFacadeActicated(jsLocalObject);
             return jsLocalObject;
         }
     }

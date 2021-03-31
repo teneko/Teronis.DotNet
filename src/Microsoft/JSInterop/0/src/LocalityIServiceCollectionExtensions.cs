@@ -15,7 +15,7 @@ namespace Teronis.Microsoft.JSInterop
     {
         /// <summary>
         /// Tries to configure options for <see cref="JSLocalObjectInterceptorBuilderOptions"/>.
-        /// Tries to add transient <see cref="JSLocalObjectActivator"/> as <see cref="IJSLocalObjectActivator"/>.
+        /// Tries to add <see cref="JSLocalObjectActivator"/> as <see cref="IJSLocalObjectActivator"/>.
         /// </summary>
         /// <param name="services"></param>
         /// <param name="configureOptions"></param>
@@ -29,7 +29,7 @@ namespace Teronis.Microsoft.JSInterop
                 services.Configure(configureOptions);
             }
 
-            services.TryAddTransient<IJSLocalObjectActivator, JSLocalObjectActivator>();
+            services.TryAddSingleton<IJSLocalObjectActivator, JSLocalObjectActivator>();
             return services;
         }
 

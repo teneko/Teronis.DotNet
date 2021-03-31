@@ -7,7 +7,7 @@ using Teronis.Microsoft.JSInterop.Interception;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic
 {
-    public interface IJSDynamicProxyActivator : IInstanceActivator<IJSObjectReferenceFacade>
+    public interface IJSDynamicProxyActivator
     {
         object CreateInstance(
             Type interfaceToBeProxied,

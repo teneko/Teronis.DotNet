@@ -11,13 +11,13 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
     public static class DynamicModuleIServiceCollectionExtensions
     {
         /// <summary>
-        /// Tries to add transient <see cref="JSDynamicModuleActivator"/> as <see cref="IJSModuleActivator"/>.
+        /// Tries to add <see cref="JSDynamicModuleActivator"/> as <see cref="IJSModuleActivator"/>.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
         public static IServiceCollection AddJSDynamicModuleActivator(this IServiceCollection services)
         {
-            services.TryAddTransient<IJSDynamicModuleActivator, JSDynamicModuleActivator>();
+            services.TryAddSingleton<IJSDynamicModuleActivator, JSDynamicModuleActivator>();
             return services;
         }
 

@@ -7,7 +7,7 @@ using Teronis.Microsoft.JSInterop.Module;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic.Activators
 {
-    public interface IJSDynamicModuleActivator : IInstanceActivator<IJSModule>
+    public interface IJSDynamicModuleActivator
     {
         ValueTask<IJSModule> CreateInstanceAsync(Type interfaceToBeProxied, string moduleNameOrPath);
     }

@@ -8,7 +8,7 @@ using Teronis.Microsoft.JSInterop.Locality;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic.Activators
 {
-    public interface IJSDynamicLocalObjectActivator : IInstanceActivator<IJSLocalObject>
+    public interface IJSDynamicLocalObjectActivator
     {
         ValueTask<IJSLocalObject> CreateInstanceAsync(Type interfaceToBeProxied, string objectName);
         ValueTask<IJSLocalObject> CreateInstanceAsync(Type interfaceToBeProxied, IJSObjectReference jsObjectReference, string objectName);

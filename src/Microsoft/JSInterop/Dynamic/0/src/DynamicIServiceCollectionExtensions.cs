@@ -20,7 +20,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
                 services.Configure(configureOptions);
             }
 
-            services.TryAddTransient<IJSDynamicProxyActivator, JSDynamicProxyActivator>();
+            services.TryAddSingleton<IJSDynamicProxyActivator, JSDynamicProxyActivator>();
             return services;
         }
 

@@ -9,7 +9,7 @@ using Teronis.Microsoft.JSInterop.Locality;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic.Activators
 {
-    public class JSDynamicLocalObjectActivator : FacadeActivatorBase<IJSLocalObject>, IJSDynamicLocalObjectActivator
+    public class JSDynamicLocalObjectActivator : IJSDynamicLocalObjectActivator
     {
         private readonly IJSLocalObjectActivator jsLocalObjectActivator;
         private readonly IJSDynamicProxyActivator jSDynamicProxyActivator;
@@ -25,7 +25,6 @@ namespace Teronis.Microsoft.JSInterop.Dynamic.Activators
             TypeUtils.EnsureInterfaceTypeIsAssignaleTo<IJSLocalObject>(interfaceToBeProxied);
             var jsLocalObject = await jsLocalObjectActivator.CreateInstanceAsync(objectName);
             var jsDynamicLocalObject = (IJSLocalObject)jSDynamicProxyActivator.CreateInstance(interfaceToBeProxied, jsLocalObject);
-            DispatchFacadeActicated(jsDynamicLocalObject);
             return jsDynamicLocalObject;
         }
 
@@ -34,7 +33,6 @@ namespace Teronis.Microsoft.JSInterop.Dynamic.Activators
             TypeUtils.EnsureInterfaceTypeIsAssignaleTo<IJSLocalObject>(interfaceToBeProxied);
             var jsLocalObject = await jsLocalObjectActivator.CreateInstanceAsync(jsObjectReference, objectName);
             var jsDynamicLocalObject = (IJSLocalObject)jSDynamicProxyActivator.CreateInstance(interfaceToBeProxied, jsLocalObject);
-            DispatchFacadeActicated(jsDynamicLocalObject);
             return jsDynamicLocalObject;
         }
     }

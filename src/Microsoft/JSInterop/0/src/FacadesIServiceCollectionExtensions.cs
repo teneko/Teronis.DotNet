@@ -16,8 +16,6 @@ namespace Teronis.Microsoft.JSInterop.Facades
                 services.Configure(configureOptions);
             }
 
-            // Does not implement InstanceActivated interface and is a dependency for facade
-            // hub so no need to be registered as transient.
             services.TryAddSingleton<IJSCustomFacadeActivator, JSCustomFacadeActivator>();
             return services;
         }
@@ -30,7 +28,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
 
             services.ConfigureOptions<DefaultPropertyAssignersPostConfiguration>();
             services.ConfigureOptions<JSFacadeHubActivatorOptionsPostConfiguration>();
-            services.TryAddTransient<IJSFacadeHubActivator, JSFacadeHubActivator>();
+            services.TryAddSingleton<IJSFacadeHubActivator, JSFacadeHubActivator>();
             return services;
         }
 

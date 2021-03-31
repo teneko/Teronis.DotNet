@@ -13,7 +13,7 @@ namespace Teronis.Microsoft.JSInterop
     public static class ModuleIServiceCollectionExtensions
     {
         /// <summary>
-        /// Tries to add transient <see cref="JSModuleActivator"/> as <see cref="IJSModuleActivator"/>.
+        /// Tries to add <see cref="JSModuleActivator"/> as <see cref="IJSModuleActivator"/>.
         /// </summary>
         /// <param name="services"></param>
         /// <param name="configureOptions"></param>
@@ -27,7 +27,7 @@ namespace Teronis.Microsoft.JSInterop
                 services.Configure(configureOptions);
             }
 
-            services.TryAddTransient<IJSModuleActivator, JSModuleActivator>();
+            services.TryAddSingleton<IJSModuleActivator, JSModuleActivator>();
             return services;
         }
 

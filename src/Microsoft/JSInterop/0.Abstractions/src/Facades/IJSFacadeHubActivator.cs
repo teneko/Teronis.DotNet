@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
-    public interface IJSFacadeHubActivator : IInstanceActivator<IJSFacadeHub<IJSFacadeActivators>>
+    public interface IJSFacadeHubActivator 
     {
         /// <summary>
         /// Initializes the properties of the component that are decorated with a facade attribute.
@@ -13,13 +13,13 @@ namespace Teronis.Microsoft.JSInterop.Facades
         /// <param name="component"></param>
         /// <returns></returns>
         ValueTask<IJSFacadeHub<TJSFacadeActivators>> CreateInstanceAsync<TJSFacadeActivators>(object component)
-            where TJSFacadeActivators : IJSFacadeActivators;
+            where TJSFacadeActivators : class;
 
         /// <summary>
         /// Creates an empty container for facades.
         /// </summary>
         /// <returns></returns>
         IJSFacadeHub<TJSFacadeActivators> CreateInstance<TJSFacadeActivators>()
-            where TJSFacadeActivators : IJSFacadeActivators;
+            where TJSFacadeActivators : class;
     }
 }

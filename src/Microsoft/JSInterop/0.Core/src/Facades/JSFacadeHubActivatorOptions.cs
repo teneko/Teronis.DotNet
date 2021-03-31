@@ -92,7 +92,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
         }
 
         internal JSFacadeHub<TJSFacadeActivators> CreateFacadeHub<TJSFacadeActivators>()
-            where TJSFacadeActivators : IJSFacadeActivators
+            where TJSFacadeActivators : class
         {
             var serviceProvider = GetServiceProviderOrThrow();
             var jsFacadeActivators = ActivatorUtilities.GetServiceOrCreateInstance<TJSFacadeActivators>(serviceProvider);

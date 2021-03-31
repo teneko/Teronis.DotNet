@@ -4,7 +4,6 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 using Teronis.Microsoft.JSInterop.Dynamic;
 using Teronis.Microsoft.JSInterop.Interception;
 
@@ -12,21 +11,19 @@ namespace Teronis.Microsoft.JSInterop
 {
     public static class DynamicIServiceCollectionExtensions
     {
-        public static IServiceCollection AddJSDynamicProxyActivator(this IServiceCollection services, Action<JSDynamicProxyInterceptorBuilderOptions>? configureOptions = null)
+        public static IServiceCollection AddJSDynamicProxyActivator(this IServiceCollection services, 
+            Action<JSDynamicProxyPropertyAssignerOptions>? configurePropertyAssignerOptions = null,
+            Action<JSDynamicProxyInterceptorBuilderOptions>? configureInterceptorBuilderOptions = null,
+            LateConfigureInterceptorBuilderDelegate<JSDynamicProxyInterceptorBuilderOptions, JSDynamicProxyPropertyAssignerOptions>? lateConfigureInterceptorBuilderOptions = null)
         {
-            services.TryAddSingleton<IConfigureOptions<JSDynamicProxyInterceptorBuilderOptions>>(serviceProvider =>
-                JSObjectInterceptorBuilderOptionsConfiguration<JSDynamicProxyInterceptorBuilderOptions>.Create(serviceProvider));
-
-            if (!(configureOptions is null)) {
-                services.Configure(configureOptions);
-            }
-
+            services.AddDynamicInterceptorBuilderOptions<JSDynamicProxyInterceptorBuilderOptions, JSDynamicProxyPropertyAssignerOptions>();
+            services.ConfigureInterceptorBuilderOptions(configurePropertyAssignerOptions, configureInterceptorBuilderOptions, lateConfigureInterceptorBuilderOptions);
             services.TryAddSingleton<IJSDynamicProxyActivator, JSDynamicProxyActivator>();
             return services;
         }
 
         /// <summary>
-        /// Calls <see cref="AddJSDynamicProxyActivator(IServiceCollection, Action{JSDynamicProxyInterceptorBuilderOptions}?)"/>.
+        /// Calls <see cref="AddJSDynamicProxyActivator(IServiceCollection, Action{JSDynamicProxyPropertyAssignerOptions}?, Action{JSDynamicProxyInterceptorBuilderOptions}?, LateConfigureInterceptorBuilderDelegate{JSDynamicProxyInterceptorBuilderOptions, JSDynamicProxyPropertyAssignerOptions}?)"/>.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>

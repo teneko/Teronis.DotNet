@@ -40,10 +40,10 @@ namespace Teronis.Microsoft.JSInterop.Interception
             InvocationInception.JavaScriptArguments;
 
         public virtual Type? TaskArgumentType =>
-            InvocationInception.GenericTaskArgumentType;
+            InvocationInception.TaskArgumentType;
 
-        public ICustomAttributes MemberAttributes =>
-            InvocationInception.MemberAttributes;
+        public ICustomAttributes DefinitionAttributes =>
+            InvocationInception.DefinitionAttributes;
 
         internal ReturnType? AlternativeResult;
 
@@ -78,7 +78,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
             CancellationToken? cancellationToken,
             TimeSpan? timeout,
             object?[] arguments,
-            ICustomAttributes methodAttributes,
+            ICustomAttributes definitionAttributes,
             Type valueTaskGenericType)
         {
             InvocationInception = new JSObjectInvocationInception<ReturnType>(
@@ -87,7 +87,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
                 cancellationToken,
                 timeout,
                 arguments,
-                methodAttributes,
+                definitionAttributes,
                 valueTaskGenericType);
         }
 

@@ -63,7 +63,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
 
             // user interface methods
             if (methodDictionary.TryFindMethod(methodInfo.Name, positionalArgumentNames, out var method)) {
-                var methodAttributes = new CustomAttributeLookup(methodInfo);
+                var methodAttributes = new CustomAttributes(methodInfo);
                 invocation.ReturnValue = method.GetReturnValue(jsObjectInterceptor, jsDynamicObjectProxy.JSObjectReference, genericParameterTypes, arguments, methodAttributes);
                 return;
             }

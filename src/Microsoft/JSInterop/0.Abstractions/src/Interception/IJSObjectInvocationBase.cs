@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop.Reflection;
 
@@ -15,7 +14,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
         object?[] JavaScriptArguments { get; }
         CancellationToken? JavaScriptCancellationToken { get; }
         string JavaScriptIdentifier { get; }
-        ICustomAttributes MemberAttributes { get; }
+        ICustomAttributes DefinitionAttributes { get; }
 
         /// <summary>
         /// Indicates whether the value task is set and can be awaited.

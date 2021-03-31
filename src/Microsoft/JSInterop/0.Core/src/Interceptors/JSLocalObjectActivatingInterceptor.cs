@@ -19,7 +19,7 @@ namespace Teronis.Microsoft.JSInterop.Interceptors
 
         public virtual async ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation)
         {
-            if (invocation.MemberAttributes.IsAttributeDefined(typeof(JSLocalObjectActivatingInterceptorAttribute))) {
+            if (invocation.DefinitionAttributes.IsAttributeDefined(typeof(JSLocalObjectActivatingInterceptorAttribute))) {
                 var result = await invocation.GetNonDeterminingResult<IJSObjectReference>();
                 var determinedResult = (ValueTask<TValue>)(object)jsLocalObjectActivator.CreateInstanceAsync(result, invocation.JavaScriptIdentifier);
                 invocation.SetDeterminedResult(determinedResult);

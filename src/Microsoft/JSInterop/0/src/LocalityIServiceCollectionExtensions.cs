@@ -4,7 +4,6 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 using Teronis.Microsoft.JSInterop.Interception;
 using Teronis.Microsoft.JSInterop.Locality;
 using Teronis.Microsoft.JSInterop.Locality.WebAssets;
@@ -18,17 +17,18 @@ namespace Teronis.Microsoft.JSInterop
         /// Tries to add <see cref="JSLocalObjectActivator"/> as <see cref="IJSLocalObjectActivator"/>.
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="configureOptions"></param>
+        /// <param name="configureInterceptorBuilderOptions"></param>
+        /// <param name="configurePropertyAssignerOptions"></param>
+        /// <param name="lateConfigureInterceptorBuilderOptions"></param>
         /// <returns></returns>
-        public static IServiceCollection AddJSLocalObjectActivator(this IServiceCollection services, Action<JSLocalObjectInterceptorBuilderOptions>? configureOptions = null)
+        public static IServiceCollection AddJSLocalObjectActivator(
+            this IServiceCollection services, 
+            Action<JSLocalPropertyAssignerOptions>? configurePropertyAssignerOptions = null,
+            Action<JSLocalObjectInterceptorBuilderOptions>? configureInterceptorBuilderOptions = null,
+            LateConfigureInterceptorBuilderDelegate<JSLocalObjectInterceptorBuilderOptions, JSLocalPropertyAssignerOptions>? lateConfigureInterceptorBuilderOptions = null)
         {
-            services.TryAddSingleton<IConfigureOptions<JSLocalObjectInterceptorBuilderOptions>>(serviceProvider =>
-                JSObjectInterceptorBuilderOptionsConfiguration<JSLocalObjectInterceptorBuilderOptions>.Create(serviceProvider));
-
-            if (!(configureOptions is null)) {
-                services.Configure(configureOptions);
-            }
-
+            services.AddInterceptorBuilderOptions<JSLocalObjectInterceptorBuilderOptions, JSLocalPropertyAssignerOptions>();
+            services.ConfigureInterceptorBuilderOptions(configurePropertyAssignerOptions, configureInterceptorBuilderOptions, lateConfigureInterceptorBuilderOptions);
             services.TryAddSingleton<IJSLocalObjectActivator, JSLocalObjectActivator>();
             return services;
         }
@@ -36,7 +36,7 @@ namespace Teronis.Microsoft.JSInterop
         /// <summary>
         /// Calls <see cref="ModuleIServiceCollectionExtensions.AddJSModule(IServiceCollection)"/>,
         /// <see cref="LocalityWebAssetsIServiceCollectionExtensions.AddJSLocalObjectInterop(IServiceCollection)"/>>
-        /// and <see cref="AddJSLocalObjectActivator(IServiceCollection, Action{JSLocalObjectInterceptorBuilderOptions}?)"/>.
+        /// and <see cref="AddJSLocalObjectActivator(IServiceCollection, Action{JSLocalPropertyAssignerOptions}?, Action{JSLocalObjectInterceptorBuilderOptions}?, LateConfigureInterceptorBuilderDelegate{JSLocalObjectInterceptorBuilderOptions, JSLocalPropertyAssignerOptions}?)"/>.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>

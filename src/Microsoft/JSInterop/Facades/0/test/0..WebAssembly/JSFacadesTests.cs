@@ -3,7 +3,7 @@
 
 using System;
 using NUnit.Framework;
-using Teronis.Microsoft.JSInterop.Facades;
+using Teronis.Microsoft.JSInterop.Facade;
 using Teronis_._Microsoft.JSInterop.Facades.JSDynamicObjects;
 using Teronis.NUnit.TaskTests;
 using Teronis.Microsoft.JSInterop.Module;

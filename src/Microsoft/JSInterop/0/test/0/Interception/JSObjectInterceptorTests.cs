@@ -15,7 +15,7 @@ namespace Teronis.Microsoft.JSInterop.Interceptions
         {
             var numbers = new List<int>();
 
-            var jsObjectInterceptor = new JSIteratingInterceptorBuilder()
+            var jsObjectInterceptor = new JSInterceptorBuilder()
                 .Add(new JSCallingBackObjectInterceptor(
                     invocation => {
                         numbers.Add(0);
@@ -38,7 +38,7 @@ namespace Teronis.Microsoft.JSInterop.Interceptions
         public async Task Should_cancel_interception() {
             var numbers = new List<int>();
 
-            var jsObjectInterceptor = new JSIteratingInterceptorBuilder()
+            var jsObjectInterceptor = new JSInterceptorBuilder()
                 .Add(new JSCallingBackObjectInterceptor(
                     invocation => {
                         numbers.Add(0);

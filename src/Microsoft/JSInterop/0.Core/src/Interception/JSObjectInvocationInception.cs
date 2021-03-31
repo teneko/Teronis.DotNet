@@ -15,8 +15,8 @@ namespace Teronis.Microsoft.JSInterop.Interception
         public readonly CancellationToken? JavaScriptCancellationToken { get; }
         public readonly TimeSpan? JavaScriptTimeout { get; }
         public readonly object?[] JavaScriptArguments { get; }
-        public readonly Type? GenericTaskArgumentType { get; }
-        public readonly ICustomAttributes MemberAttributes { get; }
+        public readonly Type? TaskArgumentType { get; }
+        public readonly ICustomAttributes DefinitionAttributes { get; }
 
         public JSObjectInvocationInception(
             IJSObjectReference jSObjectReference,
@@ -24,16 +24,16 @@ namespace Teronis.Microsoft.JSInterop.Interception
             CancellationToken? javaScriptCancellationToken,
             TimeSpan? javaScriptTimeout,
             object?[] javaScriptArguments,
-            ICustomAttributes memberAttributes,
-            Type genericTaskArgumentType)
+            ICustomAttributes definitionAttributes,
+            Type taskArgumentType)
         {
             JSObjectReference = jSObjectReference ?? throw new ArgumentNullException(nameof(jSObjectReference));
             JavaScriptIdentifier = javaScriptIdentifier ?? throw new ArgumentNullException(nameof(javaScriptIdentifier));
             JavaScriptCancellationToken = javaScriptCancellationToken;
             JavaScriptTimeout = javaScriptTimeout;
             JavaScriptArguments = javaScriptArguments ?? throw new ArgumentNullException(nameof(javaScriptArguments));
-            GenericTaskArgumentType = genericTaskArgumentType ?? throw new ArgumentNullException(nameof(genericTaskArgumentType));
-            MemberAttributes = memberAttributes ?? throw new ArgumentNullException(nameof(memberAttributes));
+            TaskArgumentType = taskArgumentType ?? throw new ArgumentNullException(nameof(taskArgumentType));
+            DefinitionAttributes = definitionAttributes ?? throw new ArgumentNullException(nameof(definitionAttributes));
         }
 
         public JSObjectInvocationInception(
@@ -42,15 +42,15 @@ namespace Teronis.Microsoft.JSInterop.Interception
             CancellationToken? javaScriptCancellationToken,
             TimeSpan? javaScriptTimeout,
             object?[] javaScriptArguments,
-            ICustomAttributes methodAttributes)
+            ICustomAttributes definitionAttributes)
         {
             JSObjectReference = jSObjectReference ?? throw new ArgumentNullException(nameof(jSObjectReference));
             JavaScriptIdentifier = javaScriptIdentifier ?? throw new ArgumentNullException(nameof(javaScriptIdentifier));
             JavaScriptCancellationToken = javaScriptCancellationToken;
             JavaScriptTimeout = javaScriptTimeout;
             JavaScriptArguments = javaScriptArguments ?? throw new ArgumentNullException(nameof(javaScriptArguments));
-            GenericTaskArgumentType = null;
-            MemberAttributes = methodAttributes ?? throw new ArgumentNullException(nameof(methodAttributes));
+            TaskArgumentType = null;
+            DefinitionAttributes = definitionAttributes ?? throw new ArgumentNullException(nameof(definitionAttributes));
         }
     }
 }

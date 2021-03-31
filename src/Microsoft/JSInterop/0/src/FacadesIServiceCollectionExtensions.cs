@@ -4,48 +4,43 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Teronis.Microsoft.JSInterop.Facades.PropertyAssigners;
+using Microsoft.Extensions.Options;
+using Teronis.Microsoft.JSInterop.Component;
 
-namespace Teronis.Microsoft.JSInterop.Facades
+namespace Teronis.Microsoft.JSInterop.Facade
 {
     public static class FacadesIServiceCollectionExtensions
     {
-        public static IServiceCollection AddJSCustomFacadeActivator(this IServiceCollection services, Action<JSCustomFacadeActivatorOptions>? configureOptions = null)
+        public static IServiceCollection AddJSFacadeHubActivator(
+            this IServiceCollection services, 
+            Action<JSFacadeHubActivatorOptions>? configureOptions = null,
+             Action<JSFacadeHubActivatorPropertyAssignerOptions>? configurePropertyAssigner = null)
         {
             if (!(configureOptions is null)) {
                 services.Configure(configureOptions);
             }
 
-            services.TryAddSingleton<IJSCustomFacadeActivator, JSCustomFacadeActivator>();
-            return services;
-        }
-
-        public static IServiceCollection AddJSFacadeHubActivator(this IServiceCollection services, Action<JSFacadeHubActivatorOptions>? configureOptions = null)
-        {
-            if (!(configureOptions is null)) {
-                services.Configure(configureOptions);
-            }
-
-            services.ConfigureOptions<DefaultPropertyAssignersPostConfiguration>();
-            services.ConfigureOptions<JSFacadeHubActivatorOptionsPostConfiguration>();
+            services.TryAddTypeUniqueSingleton<IConfigureOptions<JSFacadeHubActivatorOptions>, JSFacadeHubActivatorOptionsPostConfiguration>();
+            services.AddPropertyAssignerOptions<JSFacadeHubActivatorPropertyAssignerOptions>();
+            services.ConfigurePropertyAssignerOptions(configurePropertyAssigner);
             services.TryAddSingleton<IJSFacadeHubActivator, JSFacadeHubActivator>();
             services.TryAddTransient(typeof(IJSFacadeHub<>), typeof(JSFacadeHubService<>));
             return services;
         }
 
         /// <summary>
-        /// Calls <see cref="LocalityIServiceCollectionExtensions.AddJSLocalObject(IServiceCollection)"/>,
+        /// Calls <see cref="CustomFacadeIServiceCollectionExtensions.AddJSCustomFacade(IServiceCollection)"/>,
+        /// <see cref="LocalityIServiceCollectionExtensions.AddJSLocalObject(IServiceCollection)"/>,
         /// <see cref="ModuleIServiceCollectionExtensions.AddJSModule(IServiceCollection)"/>,
-        /// <see cref="AddJSCustomFacadeActivator(IServiceCollection, Action{JSCustomFacadeActivatorOptions}?)"/>
-        /// and <see cref="AddJSFacadeHubActivator(IServiceCollection, Action{JSFacadeHubActivatorOptions}?)"/>.
+        /// and <see cref="AddJSFacadeHubActivator(IServiceCollection, Action{JSFacadeHubActivatorOptions}?, Action{JSFacadeHubActivatorPropertyAssignerOptions}?)"/>.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
         public static IServiceCollection AddJSFacadeHub(this IServiceCollection services)
         {
+            services.AddJSCustomFacade();
             services.AddJSLocalObject();
             services.AddJSModule();
-            AddJSCustomFacadeActivator(services);
             services.AddJSFacadeHubActivator();
             return services;
         }

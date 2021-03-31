@@ -2,28 +2,25 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Threading.Tasks;
-using Teronis.Microsoft.JSInterop.Annotations;
+using Teronis.Microsoft.JSInterop.Component;
 using Teronis.Microsoft.JSInterop.Interception;
-using Teronis.Microsoft.JSInterop.Module;
 
 namespace Teronis.Microsoft.JSInterop.Interceptors
 {
     public class JSDynamicModuleActivatingInterceptor : JSObjectInterceptor
     {
-        private readonly IJSDynamicModuleActivator jsDynamicModuleActivator;
+        private readonly IJSDynamicModulePropertyAssigner propertyAssigner;
 
-        public JSDynamicModuleActivatingInterceptor(IJSDynamicModuleActivator jsDynamicModuleActivator) =>
-            this.jsDynamicModuleActivator = jsDynamicModuleActivator ?? throw new System.ArgumentNullException(nameof(jsDynamicModuleActivator));
+        public JSDynamicModuleActivatingInterceptor(IJSDynamicModulePropertyAssigner propertyAssigner) =>
+            this.propertyAssigner = propertyAssigner ?? throw new System.ArgumentNullException(nameof(propertyAssigner));
 
-        public override async ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation)
+        public override async ValueTask InterceptInvokeAsync<TTaskArgument>(IJSObjectInvocation<TTaskArgument> invocation)
         {
-            if (!invocation.MemberAttributes.TryGetAttribute<JSDynamicModuleActivatingInterceptorAttribute>(out var propertyAttribute)) {
+            if (!(await propertyAssigner.TryAssignProperty(invocation.Definition)).TryGetNotNull(out var jsModule)) {
                 return;
             }
 
-            var moduleNameOrPath = JSModuleAttributeUtils.GetModuleNameOrPath<JSModuleClassAttribute>(propertyAttribute, invocation.TaskArgumentTypeAttributes);
-            var module = (TValue)await jsDynamicModuleActivator.CreateInstanceAsync(typeof(TValue), moduleNameOrPath);
-            invocation.SetDeterminedResult(new ValueTask<TValue>(module));
+            invocation.SetDeterminedResult(new ValueTask<TTaskArgument>((TTaskArgument)jsModule));
         }
     }
 }

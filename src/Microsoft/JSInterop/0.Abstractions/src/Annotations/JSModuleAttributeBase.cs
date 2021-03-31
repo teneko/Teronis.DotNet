@@ -3,7 +3,7 @@
 
 using System;
 using Microsoft.JSInterop;
-using Teronis.Microsoft.JSInterop.Facades;
+using Teronis.Microsoft.JSInterop.Facade;
 
 namespace Teronis.Microsoft.JSInterop.Annotations
 {

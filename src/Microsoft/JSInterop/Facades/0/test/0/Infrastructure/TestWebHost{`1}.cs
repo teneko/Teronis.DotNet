@@ -3,7 +3,7 @@
 
 using Microsoft.AspNetCore.Hosting;
 
-namespace Teronis.Microsoft.JSInterop.Facades.Infrastructure
+namespace Teronis.Microsoft.JSInterop.Facade.Infrastructure
 {
     public class TestWebHost<StartupClass> : TestWebHost
         where StartupClass : class

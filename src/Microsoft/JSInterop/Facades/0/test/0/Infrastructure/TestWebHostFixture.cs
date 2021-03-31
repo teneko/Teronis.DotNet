@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Xunit;
 
-namespace Teronis.Microsoft.JSInterop.Facades.Infrastructure
+namespace Teronis.Microsoft.JSInterop.Facade.Infrastructure
 {
     public class TestWebHostFixture<StartupType> : IAsyncLifetime
         where StartupType : class

@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Threading.Tasks;
-using Teronis.Microsoft.JSInterop.Facades.Infrastructure;
+using Teronis.Microsoft.JSInterop.Facade.Infrastructure;
 using Xunit;
 using System;
 using Teronis.AspNetCore.Components.NUnit;
@@ -10,7 +10,7 @@ using System.Xml.Linq;
 using System.Linq;
 using Xunit.Abstractions;
 
-namespace Teronis.Microsoft.JSInterop.Facades
+namespace Teronis.Microsoft.JSInterop.Facade
 {
     public class JSFacadeTests : IClassFixture<TestWebHostFixture<WebHostStartup>>, IClassFixture<PlaywrightFixture>
     {

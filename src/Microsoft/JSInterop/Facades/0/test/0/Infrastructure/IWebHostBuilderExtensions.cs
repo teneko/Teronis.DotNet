@@ -10,7 +10,7 @@ using Microsoft.Build.Construction;
 using Microsoft.Extensions.FileSystemGlobbing;
 using Teronis.IO;
 
-namespace Teronis.Microsoft.JSInterop.Facades.Infrastructure
+namespace Teronis.Microsoft.JSInterop.Facade.Infrastructure
 {
     public static class IWebHostBuilderExtensions
     {

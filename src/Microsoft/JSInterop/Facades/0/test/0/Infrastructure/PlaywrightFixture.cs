@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using PlaywrightSharp;
 using Xunit;
 
-namespace Teronis.Microsoft.JSInterop.Facades.Infrastructure
+namespace Teronis.Microsoft.JSInterop.Facade.Infrastructure
 {
     public class PlaywrightFixture : IAsyncLifetime
     {

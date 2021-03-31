@@ -13,42 +13,42 @@ namespace Teronis.Microsoft.JSInterop.Interception
     {
         public static ValueTask<TValue> InvokeAsync<TValue>(this IJSObjectInterceptor interceptor, IJSObjectReference jsObjectReference, string identifier, params object?[] arguments)
         {
-            var invocation = new JSObjectInvocation<TValue>(jsObjectReference, identifier, cancellationToken: null, timeout: null, arguments, EmptyCustomAttributeLookup.Instance);
+            var invocation = new JSObjectInvocation<TValue>(jsObjectReference, identifier, cancellationToken: null, timeout: null, arguments, CustomAttributes.Empty);
             interceptor.InterceptInvokeAsync(invocation);
             return invocation.GetDeterminedResult();
         }
 
         public static ValueTask<TValue> InvokeAsync<TValue>(this IJSObjectInterceptor interceptor, IJSObjectReference jsObjectReference, string identifier, CancellationToken cancellationToken, params object?[] arguments)
         {
-            var invocation = new JSObjectInvocation<TValue>(jsObjectReference, identifier, cancellationToken: cancellationToken, timeout: null, arguments, EmptyCustomAttributeLookup.Instance);
+            var invocation = new JSObjectInvocation<TValue>(jsObjectReference, identifier, cancellationToken: cancellationToken, timeout: null, arguments, CustomAttributes.Empty);
             interceptor.InterceptInvokeAsync(invocation);
             return invocation.GetDeterminedResult();
         }
 
         public static ValueTask<TValue> InvokeAsync<TValue>(this IJSObjectInterceptor interceptor, IJSObjectReference jsObjectReference, string identifier, TimeSpan timeout, params object?[] arguments)
         {
-            var invocation = new JSObjectInvocation<TValue>(jsObjectReference, identifier, cancellationToken: null, timeout: timeout, arguments, EmptyCustomAttributeLookup.Instance);
+            var invocation = new JSObjectInvocation<TValue>(jsObjectReference, identifier, cancellationToken: null, timeout: timeout, arguments, CustomAttributes.Empty);
             interceptor.InterceptInvokeAsync(invocation);
             return invocation.GetDeterminedResult();
         }
 
         public static ValueTask InvokeVoidAsync(this IJSObjectInterceptor interceptor, IJSObjectReference jsObjectReference, string identifier, params object?[] arguments)
         {
-            var invocation = new JSObjectInvocation(jsObjectReference, identifier, cancellationToken: null, timeout: null, arguments, EmptyCustomAttributeLookup.Instance);
+            var invocation = new JSObjectInvocation(jsObjectReference, identifier, cancellationToken: null, timeout: null, arguments, CustomAttributes.Empty);
             interceptor.InterceptInvokeVoidAsync(invocation);
             return invocation.GetDeterminedResult();
         }
 
         public static ValueTask InvokeVoidAsync(this IJSObjectInterceptor interceptor, IJSObjectReference jsObjectReference, string identifier, CancellationToken cancellationToken, params object?[] arguments)
         {
-            var invocation = new JSObjectInvocation(jsObjectReference, identifier, cancellationToken: cancellationToken, timeout: null, arguments, EmptyCustomAttributeLookup.Instance);
+            var invocation = new JSObjectInvocation(jsObjectReference, identifier, cancellationToken: cancellationToken, timeout: null, arguments, CustomAttributes.Empty);
             interceptor.InterceptInvokeVoidAsync(invocation);
             return invocation.GetDeterminedResult();
         }
 
         public static ValueTask InvokeVoidAsync(this IJSObjectInterceptor interceptor, IJSObjectReference jsObjectReference, string identifier, TimeSpan timeout, params object?[] arguments)
         {
-            var invocation = new JSObjectInvocation(jsObjectReference, identifier, cancellationToken: null, timeout: timeout, arguments, EmptyCustomAttributeLookup.Instance);
+            var invocation = new JSObjectInvocation(jsObjectReference, identifier, cancellationToken: null, timeout: timeout, arguments, CustomAttributes.Empty);
             interceptor.InterceptInvokeVoidAsync(invocation);
             return invocation.GetDeterminedResult();
         }

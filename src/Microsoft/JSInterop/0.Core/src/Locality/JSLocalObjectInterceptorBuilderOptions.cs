@@ -5,6 +5,6 @@ using Teronis.Microsoft.JSInterop.Interception;
 
 namespace Teronis.Microsoft.JSInterop.Locality
 {
-    public class JSLocalObjectInterceptorBuilderOptions : JSIteratingInterceptorBuilderOptions<JSLocalObjectInterceptorBuilderOptions>
+    public class JSLocalObjectInterceptorBuilderOptions : JSInterceptorBuilderOptions<JSLocalObjectInterceptorBuilderOptions>
     { }
 }

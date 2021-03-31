@@ -3,7 +3,7 @@
 
 using System.Threading.Tasks;
 
-namespace Teronis.Microsoft.JSInterop.Facades
+namespace Teronis.Microsoft.JSInterop.Facade
 {
     public interface IJSFacadeHubActivator 
     {

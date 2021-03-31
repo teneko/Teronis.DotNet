@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Teronis.Microsoft.JSInterop.Facades.Infrastructure
+namespace Teronis.Microsoft.JSInterop.Facade.Infrastructure
 {
     public abstract class TestHost : IAsyncDisposable
     {

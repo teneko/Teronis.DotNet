@@ -3,12 +3,12 @@
 
 using Microsoft.Extensions.Options;
 
-namespace Teronis.Microsoft.JSInterop.Facades
+namespace Teronis.Microsoft.JSInterop.Facade
 {
     internal class JSFacadeHubService<TJSFacadeActivators> : JSFacadeHub<TJSFacadeActivators>
         where TJSFacadeActivators : class
     {
-        public JSFacadeHubService(IJSCustomFacadeActivator jsCustomFacadeActivator, IOptions<JSFacadeHubActivatorOptions> options)
-            : base(jsCustomFacadeActivator, options.Value.CreateFacadeActivators<TJSFacadeActivators>(serviceProvider: null)) { }
+        public JSFacadeHubService(IOptions<JSFacadeHubActivatorOptions> options)
+            : base(options.Value.CreateFacadeActivators<TJSFacadeActivators>(serviceProvider: null)) { }
     }
 }

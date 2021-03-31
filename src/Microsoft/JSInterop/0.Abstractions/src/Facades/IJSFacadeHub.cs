@@ -4,14 +4,12 @@
 using System;
 using System.Collections.Generic;
 
-namespace Teronis.Microsoft.JSInterop.Facades
+namespace Teronis.Microsoft.JSInterop.Facade
 {
     public interface IJSFacadeHub<out TJSFacadeActivators> : IAsyncDisposable
         where TJSFacadeActivators : class
     {
-        IReadOnlyList<IAsyncDisposable> Disposables { get; }
+        IReadOnlyList<IAsyncDisposable> ComponentDisposables { get; }
         TJSFacadeActivators Activators { get; }
-
-        IAsyncDisposable CreateCustomFacade(Func<TJSFacadeActivators, IJSObjectReferenceFacade> getCustomFacadeConstructorParameter, Type jsCustomFacadeType);
     }
 }

@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Teronis.Microsoft.JSInterop;
-using Teronis.Microsoft.JSInterop.Facades;
 using Teronis.Microsoft.JSInterop.Interceptors;
 using Teronis.Microsoft.JSInterop.Module;
 using Teronis_._Microsoft.JSInterop.Facades.JSModules;
@@ -25,13 +24,10 @@ namespace Teronis_._Microsoft.JSInterop.Facades
 
             services.AddScoped(serviceProvider => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-            services.AddJSDynamicProxyActivator(options => {
+            services.AddJSDynamicProxyActivator(configureInterceptorBuilderOptions: options => {
                 options.ConfigureInterceptorBuilder(builder =>
                     builder.Add(typeof(JSDynamicProxyActivatingInterceptor)));
             });
-
-            services.AddJSDynamicModule(); // temporary
-            services.AddJSDynamicLocalObject();
 
             services.AddJSCustomFacadeActivator(options => {
                 options.JSFacadeDictionaryConfiguration
@@ -39,8 +35,7 @@ namespace Teronis_._Microsoft.JSInterop.Facades
                     .Add<ModuleActivationViaDependencyInjection>();
             });
 
-            services.AddJSFacadeHub();
-
+            services.AddJSDynamicFacadeHub();
             await builder.Build().RunAsync();
         }
     }

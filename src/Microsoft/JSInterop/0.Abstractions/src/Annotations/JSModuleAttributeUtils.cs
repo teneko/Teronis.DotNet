@@ -3,7 +3,6 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Teronis.Microsoft.JSInterop.Facades;
 using Teronis.Microsoft.JSInterop.Reflection;
 
 namespace Teronis.Microsoft.JSInterop.Annotations
@@ -38,7 +37,7 @@ namespace Teronis.Microsoft.JSInterop.Annotations
         /// Thrown when JavaScrit module facade attribute is 
         /// given but module name or path could not been found.
         /// </exception>
-        public static bool TryGetModuleNameOrPath<TPropertyAttribute, TClassAttribute>(IComponentProperty componentProperty, [MaybeNullWhen(false)] out string moduleNameOrPath)
+        public static bool TryGetModuleNameOrPath<TPropertyAttribute, TClassAttribute>(IDefinition componentProperty, [MaybeNullWhen(false)] out string moduleNameOrPath)
             where TPropertyAttribute : JSModulePropertyAttribute
             where TClassAttribute : JSModuleClassAttribute
         {
@@ -47,7 +46,7 @@ namespace Teronis.Microsoft.JSInterop.Annotations
                 return false;
             }
 
-            moduleNameOrPath = GetModuleNameOrPath<TClassAttribute>(propertyModuleAttribute, componentProperty.PropertyType);
+            moduleNameOrPath = GetModuleNameOrPath<TClassAttribute>(propertyModuleAttribute, componentProperty.DefinitionMemberType);
             return true;
         }
     }

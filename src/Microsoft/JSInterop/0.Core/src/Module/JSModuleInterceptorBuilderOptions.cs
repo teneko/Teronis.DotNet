@@ -5,6 +5,6 @@ using Teronis.Microsoft.JSInterop.Interception;
 
 namespace Teronis.Microsoft.JSInterop.Module
 {
-    public class JSModuleInterceptorBuilderOptions : JSIteratingInterceptorBuilderOptions<JSModuleInterceptorBuilderOptions>
+    public class JSModuleInterceptorBuilderOptions : JSInterceptorBuilderOptions<JSModuleInterceptorBuilderOptions>
     { }
 }

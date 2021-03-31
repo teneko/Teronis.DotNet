@@ -17,14 +17,28 @@ namespace Teronis.Microsoft.JSInterop.Interception
         public ICustomAttributes TaskArgumentTypeAttributes {
             get {
                 if (taskArgumentTypeAttributes is null) {
-                    taskArgumentTypeAttributes = new CustomAttributeLookup(TaskArgumentType);
+                    taskArgumentTypeAttributes = new CustomAttributes(TaskArgumentType);
                 }
 
                 return taskArgumentTypeAttributes;
             }
         }
 
+        public IDefinition Definition {
+            get {
+                if (definition is null) {
+                    definition = new InvocationDefinition(
+                        TaskArgumentType, 
+                        DefinitionAttributes, 
+                        new ManagedMemberType(TaskArgumentType, TaskArgumentTypeAttributes));
+                }
+
+                return definition;
+            }
+        }
+
         private ICustomAttributes? taskArgumentTypeAttributes;
+        private InvocationDefinition? definition;
 
         internal JSObjectInvocation(JSObjectInvocationInception<ValueTask<TValue>> invocationInception)
             : base(invocationInception) { }
@@ -35,14 +49,14 @@ namespace Teronis.Microsoft.JSInterop.Interception
             CancellationToken? cancellationToken,
             TimeSpan? timeout,
             object?[] arguments,
-            ICustomAttributes memberAttributes)
+            ICustomAttributes definitionAttributes)
             : base(
                   jSObjectReference,
                   identifier,
                   cancellationToken,
                   timeout,
                   arguments,
-                  memberAttributes,
+                  definitionAttributes,
                   typeof(TValue))
         { }
 

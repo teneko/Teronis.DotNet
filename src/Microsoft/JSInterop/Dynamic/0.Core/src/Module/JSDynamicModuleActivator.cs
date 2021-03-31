@@ -3,10 +3,10 @@
 
 using System;
 using System.Threading.Tasks;
+using Teronis.Microsoft.JSInterop.Dynamic;
 using Teronis.Microsoft.JSInterop.Internals.Utils;
-using Teronis.Microsoft.JSInterop.Module;
 
-namespace Teronis.Microsoft.JSInterop.Dynamic.Activators
+namespace Teronis.Microsoft.JSInterop.Module
 {
     public class JSDynamicModuleActivator : IJSDynamicModuleActivator
     {

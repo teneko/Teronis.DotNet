@@ -5,11 +5,10 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
-using Teronis.Microsoft.JSInterop.Dynamic.Activators;
-using Teronis.Microsoft.JSInterop.Dynamic.Interceptors;
 using Teronis.Microsoft.JSInterop.Dynamic.Interefaces.Interception;
 using Teronis.Microsoft.JSInterop.Dynamic.ObjectReferences;
 using Teronis.Microsoft.JSInterop.Facades;
+using Teronis.Microsoft.JSInterop.Interceptors;
 using Xunit;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic

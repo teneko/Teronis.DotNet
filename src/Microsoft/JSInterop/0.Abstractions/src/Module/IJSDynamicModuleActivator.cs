@@ -3,9 +3,8 @@
 
 using System;
 using System.Threading.Tasks;
-using Teronis.Microsoft.JSInterop.Module;
 
-namespace Teronis.Microsoft.JSInterop.Dynamic.Activators
+namespace Teronis.Microsoft.JSInterop.Module
 {
     public interface IJSDynamicModuleActivator
     {

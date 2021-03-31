@@ -4,7 +4,7 @@
 using System;
 using Teronis.Microsoft.JSInterop.Interception;
 
-namespace Teronis.Microsoft.JSInterop.Dynamic.Annotations
+namespace Teronis.Microsoft.JSInterop.Annotations
 {
     /// <summary>
     /// This attribute should only applied on a method in an interface that

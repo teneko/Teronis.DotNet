@@ -3,11 +3,10 @@
 
 using System.Threading.Tasks;
 using Teronis.Microsoft.JSInterop.Annotations;
-using Teronis.Microsoft.JSInterop.Dynamic.Activators;
-using Teronis.Microsoft.JSInterop.Dynamic.Annotations;
 using Teronis.Microsoft.JSInterop.Interception;
+using Teronis.Microsoft.JSInterop.Module;
 
-namespace Teronis.Microsoft.JSInterop.Dynamic.Interceptors
+namespace Teronis.Microsoft.JSInterop.Interceptors
 {
     public class JSDynamicModuleActivatingInterceptor : JSObjectInterceptor
     {

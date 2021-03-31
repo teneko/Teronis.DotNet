@@ -2,17 +2,17 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Extensions.DependencyInjection;
-using Teronis.Microsoft.JSInterop.Dynamic.Facades.PropertyAssigners;
 using Teronis.Microsoft.JSInterop.Facades;
+using Teronis.Microsoft.JSInterop.Facades.PropertyAssigners;
 
-namespace Teronis.Microsoft.JSInterop.Dynamic
+namespace Teronis.Microsoft.JSInterop
 {
     public static class DynamicFacadesIServiceCollectionExtensions
     {
         public static IServiceCollection AddJSDynamicFacadeHubActivator(IServiceCollection services)
         {
             services.AddJSFacadeHubActivator();
-            services.ConfigureOptions<DefaultPropertyAssignersPostConfiguration>();
+            services.ConfigureOptions<DynamicDefaultPropertyAssignersPostConfiguration>();
             return services;
         }
 

@@ -4,10 +4,10 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
+using Teronis.Microsoft.JSInterop.Dynamic;
 using Teronis.Microsoft.JSInterop.Internals.Utils;
-using Teronis.Microsoft.JSInterop.Locality;
 
-namespace Teronis.Microsoft.JSInterop.Dynamic.Activators
+namespace Teronis.Microsoft.JSInterop.Locality
 {
     public class JSDynamicLocalObjectActivator : IJSDynamicLocalObjectActivator
     {

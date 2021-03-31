@@ -4,10 +4,11 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
-using Teronis.Microsoft.JSInterop.Dynamic.Annotations;
+using Teronis.Microsoft.JSInterop.Annotations;
+using Teronis.Microsoft.JSInterop.Dynamic;
 using Teronis.Microsoft.JSInterop.Interception;
 
-namespace Teronis.Microsoft.JSInterop.Dynamic.Interceptors
+namespace Teronis.Microsoft.JSInterop.Interceptors
 {
     public class JSDynamicProxyActivatingInterceptor : IJSObjectInterceptor
     {

@@ -2,9 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Threading.Tasks;
-using Teronis.Microsoft.JSInterop.Module;
 
-namespace Teronis.Microsoft.JSInterop.Dynamic.Activators
+namespace Teronis.Microsoft.JSInterop.Module
 {
     public static class IJSDynamicModuleActivatorExtensions
     {

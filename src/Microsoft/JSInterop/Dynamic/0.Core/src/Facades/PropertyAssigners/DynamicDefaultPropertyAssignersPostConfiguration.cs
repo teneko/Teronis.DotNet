@@ -2,11 +2,10 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Extensions.Options;
-using Teronis.Microsoft.JSInterop.Facades;
 
-namespace Teronis.Microsoft.JSInterop.Dynamic.Facades.PropertyAssigners
+namespace Teronis.Microsoft.JSInterop.Facades.PropertyAssigners
 {
-    internal class DefaultPropertyAssignersPostConfiguration : IPostConfigureOptions<JSFacadeHubActivatorOptions>
+    internal class DynamicDefaultPropertyAssignersPostConfiguration : IPostConfigureOptions<JSFacadeHubActivatorOptions>
     {
         public void PostConfigure(string name, JSFacadeHubActivatorOptions options)
         {

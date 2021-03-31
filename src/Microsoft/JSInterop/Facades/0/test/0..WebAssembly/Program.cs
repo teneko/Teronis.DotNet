@@ -6,9 +6,9 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Teronis.Microsoft.JSInterop.Dynamic;
-using Teronis.Microsoft.JSInterop.Dynamic.Interceptors;
+using Teronis.Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop.Facades;
+using Teronis.Microsoft.JSInterop.Interceptors;
 using Teronis.Microsoft.JSInterop.Module;
 using Teronis_._Microsoft.JSInterop.Facades.JSModules;
 

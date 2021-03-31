@@ -3,8 +3,7 @@
 
 using System;
 using System.Threading.Tasks;
-using Teronis.Microsoft.JSInterop.Dynamic.Annotations;
-using Teronis.Microsoft.JSInterop.Dynamic.Interceptors;
+using Teronis.Microsoft.JSInterop.Annotations;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic.Interefaces.Interception
 {

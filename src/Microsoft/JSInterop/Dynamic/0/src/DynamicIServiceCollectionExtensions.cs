@@ -5,9 +5,10 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using Teronis.Microsoft.JSInterop.Dynamic;
 using Teronis.Microsoft.JSInterop.Interception;
 
-namespace Teronis.Microsoft.JSInterop.Dynamic
+namespace Teronis.Microsoft.JSInterop
 {
     public static class DynamicIServiceCollectionExtensions
     {
@@ -29,8 +30,9 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection AddJSDynamicProxy(this IServiceCollection services) {
-            AddJSDynamicProxyActivator(services);
+        public static IServiceCollection AddJSDynamicProxy(this IServiceCollection services)
+        {
+            services.AddJSDynamicProxyActivator();
             return services;
         }
     }

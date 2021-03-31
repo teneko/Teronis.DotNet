@@ -4,12 +4,9 @@
 using System;
 using System.Threading.Tasks;
 using Teronis.Microsoft.JSInterop.Annotations;
-using Teronis.Microsoft.JSInterop.Dynamic.Activators;
-using Teronis.Microsoft.JSInterop.Dynamic.Annotations;
-using Teronis.Microsoft.JSInterop.Facades;
-using Teronis.Microsoft.JSInterop.Facades.PropertyAssigners;
+using Teronis.Microsoft.JSInterop.Module;
 
-namespace Teronis.Microsoft.JSInterop.Dynamic.Facades.PropertyAssigners
+namespace Teronis.Microsoft.JSInterop.Facades.PropertyAssigners
 {
     public class JSDynamicModulePropertyAssigner : IPropertyAssigner
     {

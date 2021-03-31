@@ -9,9 +9,9 @@ namespace Teronis.Microsoft.JSInterop.Dynamic.Activators
 {
     public static class IJSDynamicLocalObjectActivatorExtensions
     {
-        public static async ValueTask<T> CreateInstanceAsync<T>(this IJSDynamicLocalObjectActivator jsDynamicLocalObjectActivator, string moduleNameOrPath)
+        public static async ValueTask<T> CreateInstanceAsync<T>(this IJSDynamicLocalObjectActivator jsDynamicLocalObjectActivator, string objectName)
             where T : class, IJSLocalObject =>
-            (T)await jsDynamicLocalObjectActivator.CreateInstanceAsync(typeof(T), moduleNameOrPath);
+            (T)await jsDynamicLocalObjectActivator.CreateInstanceAsync(typeof(T), objectName);
 
         public static async ValueTask<T> CreateInstanceAsync<T>(this IJSDynamicLocalObjectActivator jsDynamicLocalObjectActivator, IJSObjectReference jsObjectReference, string objectName)
             where T : class, IJSLocalObject =>

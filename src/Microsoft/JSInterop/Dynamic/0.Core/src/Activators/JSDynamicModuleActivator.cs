@@ -8,7 +8,7 @@ using Teronis.Microsoft.JSInterop.Module;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic.Activators
 {
-    public class JSDynamicModuleActivator : InstanceActivatorBase<IJSModule>, IJSDynamicModuleActivator
+    public class JSDynamicModuleActivator : FacadeActivatorBase<IJSModule>, IJSDynamicModuleActivator
     {
         private readonly IJSModuleActivator jsModuleActivator;
         private readonly IJSDynamicProxyActivator jSDynamicProxyActivator;
@@ -24,7 +24,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic.Activators
             TypeUtils.EnsureInterfaceTypeIsAssignaleTo<IJSModule>(interfaceToBeProxied);
             var jsModule = await jsModuleActivator.CreateInstanceAsync(moduleNameOrPath);
             var jsDynamicModule = (IJSModule)jSDynamicProxyActivator.CreateInstance(interfaceToBeProxied, jsModule);
-            DispatchInstanceActicated(jsDynamicModule);
+            DispatchFacadeActicated(jsDynamicModule);
             return jsDynamicModule;
         }
     }

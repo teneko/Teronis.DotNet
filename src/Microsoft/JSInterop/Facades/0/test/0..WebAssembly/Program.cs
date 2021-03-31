@@ -27,7 +27,7 @@ namespace Teronis_._Microsoft.JSInterop.Facades
 
             services.AddJSDynamicProxyActivator(options => {
                 options.ConfigureInterceptorBuilder(builder =>
-                    builder.AddInterceptor(typeof(JSDynamicProxyActivatingInterceptor)));
+                    builder.Add(typeof(JSDynamicProxyActivatingInterceptor)));
             });
 
             services.AddJSDynamicModule(); // temporary
@@ -39,7 +39,7 @@ namespace Teronis_._Microsoft.JSInterop.Facades
                     .Add<ModuleActivationViaDependencyInjection>();
             });
 
-            services.AddJSFacades();
+            services.AddJSFacadeHub();
 
             await builder.Build().RunAsync();
         }

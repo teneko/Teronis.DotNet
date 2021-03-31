@@ -15,10 +15,10 @@ namespace Teronis.Microsoft.JSInterop.Module
         public string ModuleNameOrPath { get; }
 
         public JSModule(
-            IJSObjectInterceptor jsObjectInterceptor, 
             IJSObjectReference jsObjectReference,
-            string moduleName)
-            : base(jsObjectInterceptor, jsObjectReference) =>
+            string moduleName,
+            IJSObjectInterceptor? jsObjectInterceptor)
+            : base(jsObjectReference, jsObjectInterceptor) =>
             ModuleNameOrPath = moduleName ?? throw new System.ArgumentNullException(nameof(moduleName));
     }
 }

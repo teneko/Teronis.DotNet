@@ -14,34 +14,31 @@ namespace Teronis.Microsoft.JSInterop
     public static class LocalityIServiceCollectionExtensions
     {
         /// <summary>
-        /// Tries to configure options for <see cref="JSLocalObjectActivatorOptions"/> and 
-        /// tries to add <see cref="JSLocalObjectActivatorOptions"/> as singleton.
-        /// Tries to adds <see cref="JSLocalObjectActivator"/> as <see cref="IJSLocalObjectActivator"/>.
+        /// Tries to configure options for <see cref="JSLocalObjectInterceptorBuilderOptions"/>.
+        /// Tries to add transient <see cref="JSLocalObjectActivator"/> as <see cref="IJSLocalObjectActivator"/>.
         /// </summary>
         /// <param name="services"></param>
         /// <param name="configureOptions"></param>
         /// <returns></returns>
-        public static IServiceCollection AddJSLocalObjectActivator(this IServiceCollection services, Action<JSLocalObjectActivatorOptions>? configureOptions = null)
+        public static IServiceCollection AddJSLocalObjectActivator(this IServiceCollection services, Action<JSLocalObjectInterceptorBuilderOptions>? configureOptions = null)
         {
-            services.TryAddSingleton<IConfigureOptions<JSLocalObjectActivatorOptions>>(serviceProvider =>
-                JSObjectInterceptorBuilderOptionsConfiguration<JSLocalObjectActivatorOptions>.Create(serviceProvider));
-
-            services.TryAddSingleton(sp => sp.GetRequiredService<IOptions<JSLocalObjectActivatorOptions>>().Value);
+            services.TryAddSingleton<IConfigureOptions<JSLocalObjectInterceptorBuilderOptions>>(serviceProvider =>
+                JSObjectInterceptorBuilderOptionsConfiguration<JSLocalObjectInterceptorBuilderOptions>.Create(serviceProvider));
 
             if (!(configureOptions is null)) {
                 services.Configure(configureOptions);
             }
 
-            services.AddTransient<IJSLocalObjectActivator, JSLocalObjectActivator>();
+            services.TryAddTransient<IJSLocalObjectActivator, JSLocalObjectActivator>();
             return services;
         }
 
         /// <summary>
-        /// Calls <see cref="WebAssets.IServiceCollectionExtensions.AddJSLocalObjectInterop(IServiceCollection)"/>>
-        /// and <see cref="AddJSLocalObjectActivator(IServiceCollection, Action{JSLocalObjectActivatorOptions}?)"/>.
+        /// Calls <see cref="ModuleIServiceCollectionExtensions.AddJSModule(IServiceCollection)"/>,
+        /// <see cref="LocalityWebAssetsIServiceCollectionExtensions.AddJSLocalObjectInterop(IServiceCollection)"/>>
+        /// and <see cref="AddJSLocalObjectActivator(IServiceCollection, Action{JSLocalObjectInterceptorBuilderOptions}?)"/>.
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="configureOptions"></param>
         /// <returns></returns>
         public static IServiceCollection AddJSLocalObject(this IServiceCollection services)
         {

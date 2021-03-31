@@ -10,59 +10,52 @@ namespace Teronis.Microsoft.JSInterop.Facades
     public class JSFacadeHub<TJSFacadeActivators> : IJSFacadeHub<TJSFacadeActivators>
         where TJSFacadeActivators : IJSFacadeActivators
     {
-        public IReadOnlyList<IAsyncDisposable> JSFacadeList =>
-            jsFacadesDisposables;
+        public IReadOnlyList<IAsyncDisposable> Disposables =>
+            disposables;
 
         public TJSFacadeActivators Activators { get; }
 
-        private readonly List<IAsyncDisposable> jsFacadesDisposables;
+        private readonly List<IAsyncDisposable> disposables;
         private readonly IJSCustomFacadeActivator jsCustomFacadeActivator;
 
         public JSFacadeHub(
             IJSCustomFacadeActivator jsFacadeResolver,
             TJSFacadeActivators jsFacadeActivators)
         {
-            jsFacadesDisposables = new List<IAsyncDisposable>();
+            disposables = new List<IAsyncDisposable>();
             jsCustomFacadeActivator = jsFacadeResolver ?? throw new ArgumentNullException(nameof(jsFacadeResolver));
             Activators = jsFacadeActivators ?? throw new ArgumentNullException(nameof(Activators));
-            jsFacadeActivators.PrepareInstanceActivatedCapableActivators(RegisterAsyncDisposableFacade);
+            jsFacadeActivators.HookAnyInstanceActivated(RegisterDisposable);
         }
 
         public IAsyncDisposable this[int index] =>
-            jsFacadesDisposables[index];
+            disposables[index];
 
-        protected virtual void RegisterAsyncDisposableFacade(IAsyncDisposable jsFacadesDisposable) =>
-            jsFacadesDisposables.Add(jsFacadesDisposable);
+        protected virtual void RegisterDisposable(IAsyncDisposable disposable) =>
+            disposables.Add(disposable);
 
-        protected internal void RegisterAsyncDisposables(IEnumerable<IAsyncDisposable> jsFacadesDisposables)
+        protected internal void RegisterDisposables(IEnumerable<IAsyncDisposable> disposables)
         {
-            foreach (var jsFacadesDisposable in jsFacadesDisposables) {
-                RegisterAsyncDisposableFacade(jsFacadesDisposable);
+            foreach (var disposableInstance in disposables) {
+                RegisterDisposable(disposableInstance);
             }
-        }
-
-        protected T RegisterAsyncDisposable<T>(T jsFacadesDisposable)
-            where T : IAsyncDisposable
-        {
-            RegisterAsyncDisposableFacade(jsFacadesDisposable);
-            return jsFacadesDisposable;
         }
 
         public virtual IAsyncDisposable CreateCustomFacade(Func<TJSFacadeActivators, IJSObjectReferenceFacade> getCustomFacadeConstructorParameter, Type jsCustomFacadeType)
         {
             var customFacadeConstructorParameter = getCustomFacadeConstructorParameter(Activators);
             var jsCustomFacade = jsCustomFacadeActivator.CreateCustomFacade(customFacadeConstructorParameter, jsCustomFacadeType);
-            RegisterAsyncDisposableFacade(jsCustomFacade);
+            RegisterDisposable(jsCustomFacade);
             return jsCustomFacade;
         }
 
         protected virtual async ValueTask DisposeAsyncCore()
         {
-            if (jsFacadesDisposables is null) {
+            if (disposables is null) {
                 return;
             }
 
-            foreach (var moduleWrapper in jsFacadesDisposables) {
+            foreach (var moduleWrapper in disposables) {
                 await moduleWrapper.DisposeAsync();
             }
         }

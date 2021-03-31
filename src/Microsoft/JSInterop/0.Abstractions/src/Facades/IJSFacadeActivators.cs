@@ -14,6 +14,6 @@ namespace Teronis.Microsoft.JSInterop.Facades
         /// <paramref name="registerAsyncDisposableFacade"/>.
         /// </summary>
         /// <param name="registerAsyncDisposableFacade">The method that registers an disposable instance to be disposed.</param>
-        void PrepareInstanceActivatedCapableActivators(InstanceActivatedDelegate<IAsyncDisposable> registerAsyncDisposableFacade);
+        void HookAnyInstanceActivated(InstanceActivatedDelegate<IAsyncDisposable> registerAsyncDisposableFacade);
     }
 }

@@ -7,11 +7,11 @@ using Teronis.Microsoft.JSInterop.Facades;
 
 namespace Teronis.Microsoft.JSInterop
 {
-    internal class JSFacadesActivatorOptionsPostConfiguration : IPostConfigureOptions<JSFacadeHubActivatorOptions>
+    internal class JSFacadeHubActivatorOptionsPostConfiguration : IPostConfigureOptions<JSFacadeHubActivatorOptions>
     {
         private readonly IServiceProvider serviceProvider;
 
-        public JSFacadesActivatorOptionsPostConfiguration(IServiceProvider serviceProvider) =>
+        public JSFacadeHubActivatorOptionsPostConfiguration(IServiceProvider serviceProvider) =>
             this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 
         public void PostConfigure(string name, JSFacadeHubActivatorOptions options)

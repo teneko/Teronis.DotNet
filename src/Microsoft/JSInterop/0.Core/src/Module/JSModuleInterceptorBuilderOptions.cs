@@ -3,8 +3,8 @@
 
 using Teronis.Microsoft.JSInterop.Interception;
 
-namespace Teronis.Microsoft.JSInterop.Dynamic
+namespace Teronis.Microsoft.JSInterop.Module
 {
-    public class JSDynamicProxyActivatorOptions : JSIteratingObjectInterceptorBuilderOptions<JSDynamicProxyActivatorOptions>
+    public class JSModuleInterceptorBuilderOptions : JSIteratingInterceptorBuilderOptions<JSModuleInterceptorBuilderOptions>
     { }
 }

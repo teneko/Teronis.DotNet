@@ -10,7 +10,7 @@ namespace Teronis.NUnit.TaskTests
     /// where <see cref="IServiceProvider.GetService(Type)"/> activates the
     /// requested service by using <see cref="Activator.CreateInstance(Type)"/>.
     /// </summary>
-    public sealed class EmptyServiceProvider : IServiceProvider
+    internal sealed class EmptyServiceProvider : IServiceProvider
     {
         public static EmptyServiceProvider Instance = new EmptyServiceProvider();
 

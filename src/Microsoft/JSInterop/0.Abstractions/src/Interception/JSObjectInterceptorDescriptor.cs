@@ -7,18 +7,26 @@ namespace Teronis.Microsoft.JSInterop.Interception
 {
     public class JSObjectInterceptorDescriptor : IEquatable<JSObjectInterceptorDescriptor>
     {
+        public InterceptorDescriptorRegistrationPhase RegistrationPhase { get; }
         public IJSObjectInterceptor? Implementation { get; }
         public bool HasImplementation => !(Implementation is null);
         public Type ImplementationType { get; }
 
-        internal JSObjectInterceptorDescriptor(IJSObjectInterceptor implementation, Type? implementationType)
+        internal JSObjectInterceptorDescriptor(
+            InterceptorDescriptorRegistrationPhase registrationPhase,
+            IJSObjectInterceptor implementation,
+            Type? implementationType)
         {
+            RegistrationPhase = registrationPhase;
             Implementation = implementation ?? throw new ArgumentNullException(nameof(implementation));
             ImplementationType = implementationType ?? implementation.GetType();
         }
 
-        internal JSObjectInterceptorDescriptor(Type implementationType) =>
+        internal JSObjectInterceptorDescriptor(InterceptorDescriptorRegistrationPhase registrationPhase, Type implementationType)
+        {
+            RegistrationPhase = registrationPhase;
             ImplementationType = implementationType ?? throw new ArgumentNullException(nameof(implementationType));
+        }
 
         public bool Equals(JSObjectInterceptorDescriptor? other)
         {

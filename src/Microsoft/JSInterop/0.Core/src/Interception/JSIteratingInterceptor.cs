@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace Teronis.Microsoft.JSInterop.Interception
 {
-    public sealed class JSIteratingObjectInterceptor : IJSObjectInterceptor
+    public sealed class JSIteratingInterceptor : IJSObjectInterceptor
     {
-        private readonly IReadOnlyList<IJSObjectInterceptor> interceptors;
+        public IReadOnlyList<IJSObjectInterceptor> Interceptors { get; }
 
-        public JSIteratingObjectInterceptor(IReadOnlyList<IJSObjectInterceptor> interceptors) =>
-            this.interceptors = interceptors;
+        public JSIteratingInterceptor(IReadOnlyList<IJSObjectInterceptor> interceptors) =>
+            Interceptors = interceptors;
 
         public async ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation)
         {
-            foreach (var interception in interceptors) {
+            foreach (var interception in Interceptors) {
                 await interception.InterceptInvokeAsync(invocation);
 
                 if (invocation.IsInterceptionStopped) {
@@ -26,7 +26,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
 
         public async ValueTask InterceptInvokeVoidAsync(IJSObjectInvocation invocation)
         {
-            foreach (var interception in interceptors) {
+            foreach (var interception in Interceptors) {
                 await interception.InterceptInvokeVoidAsync(invocation);
 
                 if (invocation.IsInterceptionStopped) {

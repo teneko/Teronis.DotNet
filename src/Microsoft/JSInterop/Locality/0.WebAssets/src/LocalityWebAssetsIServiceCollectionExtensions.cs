@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Teronis.Microsoft.JSInterop.Locality.WebAssets
 {
-    public static class IServiceCollectionExtensions
+    public static class LocalityWebAssetsIServiceCollectionExtensions
     {
         /// <summary>
         /// Tries to add <see cref="JSLocalObjectInterop"/> as <see cref="IJSLocalObjectInterop"/>.

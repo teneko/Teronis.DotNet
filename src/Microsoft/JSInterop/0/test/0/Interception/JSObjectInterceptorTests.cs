@@ -15,18 +15,18 @@ namespace Teronis.Microsoft.JSInterop.Interceptions
         {
             var numbers = new List<int>();
 
-            var jsObjectInterceptor = new JSIteratingObjectInterceptorBuilder()
-                .AddInterceptor(new JSCallingBackObjectInterceptor(
+            var jsObjectInterceptor = new JSIteratingInterceptorBuilder()
+                .Add(new JSCallingBackObjectInterceptor(
                     invocation => {
                         numbers.Add(0);
                         return ValueTask.CompletedTask;
                     }))
-                .AddInterceptor(new JSCallingBackObjectInterceptor(
+                .Add(new JSCallingBackObjectInterceptor(
                     invocation => {
                         numbers.Add(1);
                         return ValueTask.CompletedTask;
                     }))
-                .BuildInterceptor();
+                .Build(serviceProvider: null);
 
             // Act
             await jsObjectInterceptor.InvokeVoidAsync();
@@ -38,24 +38,24 @@ namespace Teronis.Microsoft.JSInterop.Interceptions
         public async Task Should_cancel_interception() {
             var numbers = new List<int>();
 
-            var jsObjectInterceptor = new JSIteratingObjectInterceptorBuilder()
-                .AddInterceptor(new JSCallingBackObjectInterceptor(
+            var jsObjectInterceptor = new JSIteratingInterceptorBuilder()
+                .Add(new JSCallingBackObjectInterceptor(
                     invocation => {
                         numbers.Add(0);
                         return ValueTask.CompletedTask;
                     }))
-                .AddInterceptor(new JSCallingBackObjectInterceptor(
+                .Add(new JSCallingBackObjectInterceptor(
                     invocation => {
                         numbers.Add(1);
                         invocation.StopInterception();
                         return ValueTask.CompletedTask;
                     }))
-                .AddInterceptor(new JSCallingBackObjectInterceptor(
+                .Add(new JSCallingBackObjectInterceptor(
                     invocation => {
                         numbers.Clear();
                         return ValueTask.CompletedTask;
                     }))
-                .BuildInterceptor();
+                .Build(serviceProvider: null);
 
             // Act
             await jsObjectInterceptor.InvokeVoidAsync();

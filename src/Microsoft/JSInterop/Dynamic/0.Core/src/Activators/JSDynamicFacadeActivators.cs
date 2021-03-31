@@ -9,8 +9,9 @@ using Teronis.Microsoft.JSInterop.Module;
 namespace Teronis.Microsoft.JSInterop.Dynamic.Activators
 {
     /// <inheritdoc/>
-    public class JSDynamicFacadeActivators : JSFacadeActivators, IJSFacadeActivators
+    public class JSDynamicFacadeActivators : JSFacadeActivators
     {
+        public IJSDynamicProxyActivator JSDynamicProxyActivator { get; }
         public IJSDynamicModuleActivator JSDynamicModuleActivator { get; }
         public IJSDynamicLocalObjectActivator JSDynamicLocalObjectActivator { get; }
 
@@ -18,15 +19,18 @@ namespace Teronis.Microsoft.JSInterop.Dynamic.Activators
             IJSModuleActivator jsModuleActivator,
             IJSLocalObjectActivator jsLocalObjectActivator,
             IJSFacadeHubActivator jsFacadesActivator,
+            IJSDynamicProxyActivator jsDynamicProxyActivator,
             IJSDynamicModuleActivator jsDynamicModuleActivator,
             IJSDynamicLocalObjectActivator jsDynamicLocalObjectActivator)
             : base(jsModuleActivator, jsLocalObjectActivator, jsFacadesActivator)
         {
+            JSDynamicProxyActivator = jsDynamicProxyActivator ?? throw new ArgumentNullException(nameof(jsDynamicProxyActivator));
             JSDynamicModuleActivator = jsDynamicModuleActivator ?? throw new ArgumentNullException(nameof(jsDynamicModuleActivator));
             JSDynamicLocalObjectActivator = jsDynamicLocalObjectActivator ?? throw new ArgumentNullException(nameof(jsDynamicLocalObjectActivator));
 
             // Prepare instance activators.
             PrepareInstanceActivators(
+                jsDynamicProxyActivator,
                 jsDynamicModuleActivator,
                 jsDynamicLocalObjectActivator);
         }

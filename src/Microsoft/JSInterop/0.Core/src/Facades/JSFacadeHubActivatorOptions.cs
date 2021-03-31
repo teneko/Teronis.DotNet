@@ -17,7 +17,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
             get {
                 if (propertyAssignerFactories is null) {
                     propertyAssignerFactories = new PropertyAssignerFactories();
-                    arePropertyAssignersDefault = false;
+                    arePropertyAssignersUserTouched = false;
                 }
 
                 return propertyAssignerFactories;
@@ -35,16 +35,16 @@ namespace Teronis.Microsoft.JSInterop.Facades
         private List<IPropertyAssigner> propertyAssigners;
         private IServiceProvider? serviceProvider;
         private bool arePropertyAssignersCreated;
-        private bool arePropertyAssignersDefault;
+        private bool arePropertyAssignersUserTouched;
 
         public JSFacadeHubActivatorOptions()
         {
             propertyAssigners = new List<IPropertyAssigner>();
-            arePropertyAssignersDefault = true;
+            arePropertyAssignersUserTouched = true;
         }
 
-        internal bool AreDefaultPropertyAssigners() {
-            if (!arePropertyAssignersDefault) {
+        internal bool ArePropertyAssignersUserUntouched() {
+            if (arePropertyAssignersUserTouched) {
                 return false;
             }
 

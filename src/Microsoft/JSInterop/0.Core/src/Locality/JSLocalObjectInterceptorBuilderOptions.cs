@@ -3,8 +3,8 @@
 
 using Teronis.Microsoft.JSInterop.Interception;
 
-namespace Teronis.Microsoft.JSInterop.Module
+namespace Teronis.Microsoft.JSInterop.Locality
 {
-    public class JSModuleActivatorOptions : JSIteratingObjectInterceptorBuilderOptions<JSModuleActivatorOptions>
+    public class JSLocalObjectInterceptorBuilderOptions : JSIteratingInterceptorBuilderOptions<JSLocalObjectInterceptorBuilderOptions>
     { }
 }

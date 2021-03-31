@@ -10,7 +10,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic.Facades.PropertyAssigners
     {
         public void PostConfigure(string name, JSFacadeHubActivatorOptions options)
         {
-            if (!options.AreDefaultPropertyAssigners()) {
+            if (!options.ArePropertyAssignersUserUntouched()) {
                 return;
             }
 

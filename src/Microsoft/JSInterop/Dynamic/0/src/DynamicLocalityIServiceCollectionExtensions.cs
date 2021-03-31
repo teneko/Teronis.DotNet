@@ -10,13 +10,13 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
     public static class DynamicLocalityIServiceCollectionExtensions
     {
         /// <summary>
-        /// Tries to add <see cref="JSDynamicLocalObjectActivator"/> as <see cref="IJSDynamicLocalObjectActivator"/>.
+        /// Tries to add transient <see cref="JSDynamicLocalObjectActivator"/> as <see cref="IJSDynamicLocalObjectActivator"/>.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
         public static IServiceCollection AddJSDynamicLocalObjectActivator(this IServiceCollection services)
         {
-            services.TryAddSingleton<IJSDynamicLocalObjectActivator, JSDynamicLocalObjectActivator>();
+            services.TryAddTransient<IJSDynamicLocalObjectActivator, JSDynamicLocalObjectActivator>();
             return services;
         }
 

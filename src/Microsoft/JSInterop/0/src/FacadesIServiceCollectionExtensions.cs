@@ -4,7 +4,6 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 using Teronis.Microsoft.JSInterop.Facades.PropertyAssigners;
 
 namespace Teronis.Microsoft.JSInterop.Facades
@@ -17,33 +16,38 @@ namespace Teronis.Microsoft.JSInterop.Facades
                 services.Configure(configureOptions);
             }
 
+            // Does not implement InstanceActivated interface and is a dependency for facade
+            // hub so no need to be registered as transient.
             services.TryAddSingleton<IJSCustomFacadeActivator, JSCustomFacadeActivator>();
             return services;
         }
 
-        public static IServiceCollection AddJSFacadesActivator(this IServiceCollection services, Action<JSFacadeHubActivatorOptions>? configureOptions = null)
+        public static IServiceCollection AddJSFacadeHubActivator(this IServiceCollection services, Action<JSFacadeHubActivatorOptions>? configureOptions = null)
         {
             if (!(configureOptions is null)) {
                 services.Configure(configureOptions);
             }
 
-            services.AddSingleton<IPostConfigureOptions<JSFacadeHubActivatorOptions>, DefaultPropertyAssignersPostConfiguration>();
-            services.AddSingleton<IPostConfigureOptions<JSFacadeHubActivatorOptions>, JSFacadesActivatorOptionsPostConfiguration>();
-            services.TryAddSingleton<IJSFacadeHubActivator, JSFacadeHubActivator>();
+            services.ConfigureOptions<DefaultPropertyAssignersPostConfiguration>();
+            services.ConfigureOptions<JSFacadeHubActivatorOptionsPostConfiguration>();
+            services.TryAddTransient<IJSFacadeHubActivator, JSFacadeHubActivator>();
             return services;
         }
 
         /// <summary>
-        /// 
+        /// Calls <see cref="LocalityIServiceCollectionExtensions.AddJSLocalObject(IServiceCollection)"/>,
+        /// <see cref="ModuleIServiceCollectionExtensions.AddJSModule(IServiceCollection)"/>,
+        /// <see cref="AddJSCustomFacadeActivator(IServiceCollection, Action{JSCustomFacadeActivatorOptions}?)"/>
+        /// and <see cref="AddJSFacadeHubActivator(IServiceCollection, Action{JSFacadeHubActivatorOptions}?)"/>.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection AddJSFacades(this IServiceCollection services)
+        public static IServiceCollection AddJSFacadeHub(this IServiceCollection services)
         {
             services.AddJSLocalObject();
             services.AddJSModule();
             AddJSCustomFacadeActivator(services);
-            services.AddJSFacadesActivator();
+            services.AddJSFacadeHubActivator();
             return services;
         }
     }

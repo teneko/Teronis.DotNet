@@ -8,7 +8,7 @@ namespace Teronis.Microsoft.JSInterop.Facades.PropertyAssigners
     internal class DefaultPropertyAssignersPostConfiguration : IPostConfigureOptions<JSFacadeHubActivatorOptions>
     {
         public void PostConfigure(string name, JSFacadeHubActivatorOptions options) {
-            if (!options.AreDefaultPropertyAssigners()) {
+            if (!options.ArePropertyAssignersUserUntouched()) {
                 return;
             }
 

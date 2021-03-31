@@ -16,9 +16,9 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         public IReadOnlySet<string>? MethodsNotProxied { get; set; }
         public IReadOnlySet<Type>? InterfaceTypesNotProxied { get; set; }
         /// <summary>
-        /// Configures the <see cref="IJSIteratingObjectInterceptorBuilder"/> for this proxy creation.
+        /// Configures the <see cref="IJSIteratingInterceptorBuilder"/> for this proxy creation.
         /// Contains global configured interceptors.
         /// </summary>
-        public Action<IJSIteratingObjectInterceptorBuilder>? ConfigureInterceptorWalkerBuilder { get; }
+        public Action<IJSIteratingInterceptorBuilder>? ConfigureInterceptorBuilder { get; }
     }
 }

@@ -16,16 +16,16 @@ namespace Teronis.Microsoft.JSInterop.Facades
         public JSFacadeActivatorsBase() =>
             instanceActivatorList = new List<IInstanceActivator<IAsyncDisposable>>();
 
-        private void PrepareInstanceActivatedCapableActivators(InstanceActivatedDelegate<IAsyncDisposable> registerAsyncDisposableFacadeHandler)
+        private void HookAnyInstanceActivated(InstanceActivatedDelegate<IAsyncDisposable> anyInstanceActivatedCallback)
         {
             foreach (var instanceActivator in instanceActivatorList) {
-                instanceActivator.InstanceActivated += registerAsyncDisposableFacadeHandler;
+                instanceActivator.AnyInstanceActivated += anyInstanceActivatedCallback;
             }
         }
 
         /// <summary>
         /// Adds <paramref name="instanceActivator"/> to list. Must be called within constructor. List will be iterated later for 
-        /// <see cref="IJSFacadeActivators.PrepareInstanceActivatedCapableActivators(InstanceActivatedDelegate{IAsyncDisposable})"/>
+        /// <see cref="IJSFacadeActivators.HookAnyInstanceActivated(InstanceActivatedDelegate{IAsyncDisposable})"/>
         /// </summary>
         /// <param name="instanceActivator"></param>
         protected void AddInstanceActivator(IInstanceActivator<IAsyncDisposable> instanceActivator) {
@@ -34,7 +34,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
 
         /// <summary>
         /// Adds <paramref name="instanceActivators"/> to list. Must be called within constructor. List will be iterated later for 
-        /// <see cref="IJSFacadeActivators.PrepareInstanceActivatedCapableActivators(InstanceActivatedDelegate{IAsyncDisposable})"/>
+        /// <see cref="IJSFacadeActivators.HookAnyInstanceActivated(InstanceActivatedDelegate{IAsyncDisposable})"/>
         /// </summary>
         /// <param name="instanceActivators"></param>
         protected void PrepareInstanceActivators(params IInstanceActivator<IAsyncDisposable>[] instanceActivators)
@@ -44,7 +44,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
             }
         }
 
-        void IJSFacadeActivators.PrepareInstanceActivatedCapableActivators(InstanceActivatedDelegate<IAsyncDisposable> registerAsyncDisposableFacadeHandler) =>
-            PrepareInstanceActivatedCapableActivators(registerAsyncDisposableFacadeHandler);
+        void IJSFacadeActivators.HookAnyInstanceActivated(InstanceActivatedDelegate<IAsyncDisposable> registerAsyncDisposableFacadeHandler) =>
+            HookAnyInstanceActivated(registerAsyncDisposableFacadeHandler);
     }
 }

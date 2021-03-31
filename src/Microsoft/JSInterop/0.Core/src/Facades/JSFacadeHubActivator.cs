@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace Teronis.Microsoft.JSInterop.Facades
 {
-    public class JSFacadeHubActivator : InstanceActivatorBase<IJSFacadeHub<IJSFacadeActivators>>, IJSFacadeHubActivator
+    public class JSFacadeHubActivator : FacadeActivatorBase<IJSFacadeHub<IJSFacadeActivators>>, IJSFacadeHubActivator
     {
         private readonly JSFacadeHubActivatorOptions options;
 
@@ -19,7 +19,7 @@ namespace Teronis.Microsoft.JSInterop.Facades
             where TJSFacadeActivators : IJSFacadeActivators
         {
             var jsFacadeHub = options.CreateFacadeHub<TJSFacadeActivators>();
-            DispatchInstanceActicated((IJSFacadeHub<IJSFacadeActivators>)jsFacadeHub);
+            DispatchFacadeActicated((IJSFacadeHub<IJSFacadeActivators>)jsFacadeHub);
             return jsFacadeHub;
         }
 
@@ -37,19 +37,18 @@ namespace Teronis.Microsoft.JSInterop.Facades
             var jsFacadesDisposables = new List<IAsyncDisposable>();
 
             foreach (var componentProperty in ComponentPropertyCollection.Create(component.GetType())) {
-                foreach (var componentPropertyAssignment in options.PropertyAssigners) {
-                    if ((await componentPropertyAssignment
-                            .TryAssignProperty(componentProperty))
-                                .TryGetNotNull(out var jsFacade)) {
-                        jsFacadesDisposables.Add(jsFacade);
-                        componentProperty.PropertyInfo.SetValue(component, jsFacade);
+                foreach (var componentPropertyAssigner in options.PropertyAssigners) {
+                    if (!(await componentPropertyAssigner.TryAssignProperty(componentProperty)).TryGetNotNull(out var jsFacade)) {
                         continue;
                     }
+
+                    jsFacadesDisposables.Add(jsFacade);
+                    componentProperty.PropertyInfo.SetValue(component, jsFacade);
                 }
             }
 
             var jsFacadeHub = CreateFacades<TJSFacadeActivators>();
-            jsFacadeHub.RegisterAsyncDisposables(jsFacadesDisposables);
+            jsFacadeHub.RegisterDisposables(jsFacadesDisposables);
             return jsFacadeHub;
         }
     }

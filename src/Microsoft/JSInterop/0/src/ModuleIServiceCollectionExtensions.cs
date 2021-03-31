@@ -13,15 +13,15 @@ namespace Teronis.Microsoft.JSInterop
     public static class ModuleIServiceCollectionExtensions
     {
         /// <summary>
-        /// Tries to add <see cref="JSModuleActivator"/> as <see cref="IJSModuleActivator"/>.
+        /// Tries to add transient <see cref="JSModuleActivator"/> as <see cref="IJSModuleActivator"/>.
         /// </summary>
         /// <param name="services"></param>
         /// <param name="configureOptions"></param>
         /// <returns></returns>
-        public static IServiceCollection AddJSModuleActivator(this IServiceCollection services, Action<JSModuleActivatorOptions>? configureOptions = null)
+        public static IServiceCollection AddJSModuleActivator(this IServiceCollection services, Action<JSModuleInterceptorBuilderOptions>? configureOptions = null)
         {
-            services.TryAddSingleton<IConfigureOptions<JSModuleActivatorOptions>>(serviceProvider =>
-                JSObjectInterceptorBuilderOptionsConfiguration<JSModuleActivatorOptions>.Create(serviceProvider));
+            services.TryAddSingleton<IConfigureOptions<JSModuleInterceptorBuilderOptions>>(serviceProvider =>
+                JSObjectInterceptorBuilderOptionsConfiguration<JSModuleInterceptorBuilderOptions>.Create(serviceProvider));
 
             if (!(configureOptions is null)) {
                 services.Configure(configureOptions);
@@ -32,7 +32,7 @@ namespace Teronis.Microsoft.JSInterop
         }
 
         /// <summary>
-        /// Calls <see cref="AddJSModuleActivator(IServiceCollection, Action{JSModuleActivatorOptions}?)"/>.
+        /// Calls <see cref="AddJSModuleActivator(IServiceCollection, Action{JSModuleInterceptorBuilderOptions}?)"/>.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>

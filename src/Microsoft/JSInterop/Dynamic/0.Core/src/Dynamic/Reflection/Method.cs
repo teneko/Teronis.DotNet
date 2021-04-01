@@ -7,21 +7,27 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Dynamitey;
+using Concurrent.FastReflection.NetStandard;
 using Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop.Dynamic.Annotations;
 using Teronis.Microsoft.JSInterop.Interception;
 using Teronis.Microsoft.JSInterop.Reflection;
-using DynamiteyDynamic = Dynamitey.Dynamic;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic.Reflection
 {
     internal class Method
     {
-        private static InvokeContext methodStaticContext;
+        private static MethodInfo interceptAndGetDeterminedValueMethodInfo;
+        private static Dictionary<Type, MethodCaller<object?, object>> interceptAndGetDeterminedValueDelegates;
 
-        static Method() =>
-            methodStaticContext = InvokeContext.CreateStatic(typeof(Method));
+        static Method()
+        {
+            interceptAndGetDeterminedValueDelegates = new Dictionary<Type, MethodCaller<object?, object>>();
+
+            interceptAndGetDeterminedValueMethodInfo = typeof(Method)
+                .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
+                .First(method => method.Name == nameof(InterceptAndGetDeterminedValue));
+        }
 
         private static async ValueTask<TValue> InterceptAndGetDeterminedValue<TValue>(
             IJSInterceptor jsInterceptor,
@@ -94,25 +100,25 @@ namespace Teronis.Microsoft.JSInterop.Dynamic.Reflection
             object?[] arguments,
             ICustomAttributes memberInfoAttributes)
         {
-            Type? alternativeValueTaskGenericTypeParameter;
+            Type? alternativeTaskArgumentType;
 
             if (!(genericTypeArguments is null)) {
                 if (genericTypeArguments.Count > 1) {
                     throw new NotSupportedException("Only one generic type argument is allowed.");
                 }
 
-                alternativeValueTaskGenericTypeParameter = genericTypeArguments?.SingleOrDefault();
+                alternativeTaskArgumentType = genericTypeArguments?.SingleOrDefault();
             } else {
-                alternativeValueTaskGenericTypeParameter = null;
+                alternativeTaskArgumentType = null;
             }
 
-            ValueTaskType valueTaskReturnType;
+            ValueTaskType alternativeResultingValueTaskType;
 
-            if (alternativeValueTaskGenericTypeParameter != null) {
-                var genericValueTask = GetClosedGenericValueTaskType(alternativeValueTaskGenericTypeParameter);
-                valueTaskReturnType = new ValueTaskType(genericValueTask, alternativeValueTaskGenericTypeParameter);
+            if (alternativeTaskArgumentType != null) {
+                var genericValueTask = GetClosedGenericValueTaskType(alternativeTaskArgumentType);
+                alternativeResultingValueTaskType = new ValueTaskType(genericValueTask, alternativeTaskArgumentType);
             } else {
-                valueTaskReturnType = ResultingValueTaskType;
+                alternativeResultingValueTaskType = ResultingValueTaskType;
             }
 
             var javaScriptFunctionArguments = ParameterList.GetJavaScriptFunctionArguments(arguments);
@@ -126,10 +132,14 @@ namespace Teronis.Microsoft.JSInterop.Dynamic.Reflection
                 ? (TimeSpan?)ParameterList.GetTimeSpan(arguments)
                 : null;
 
-            if (ResultingValueTaskType.HasGenericParameterType) {
-                return DynamiteyDynamic.InvokeMember(
-                    methodStaticContext,
-                    new InvokeMemberName(nameof(InterceptAndGetDeterminedValue), new Type[] { valueTaskReturnType.GenericParameterType! }),
+            if (alternativeResultingValueTaskType.HasGenericParameterType) {
+                if (!interceptAndGetDeterminedValueDelegates.TryGetValue(alternativeResultingValueTaskType.GenericParameterType!, out var interceptAndGetDeterminedValueDelegate)) {
+                    interceptAndGetDeterminedValueDelegate = interceptAndGetDeterminedValueMethodInfo.MakeGenericMethod(alternativeResultingValueTaskType.GenericParameterType!).DelegateForCall();
+                    interceptAndGetDeterminedValueDelegates.Add(alternativeResultingValueTaskType.GenericParameterType!, interceptAndGetDeterminedValueDelegate);
+                }
+
+                return interceptAndGetDeterminedValueDelegate(
+                    target: null,
                     args: new object?[] {
                         jsInterceptor,
                         jsObjectReference,
@@ -138,7 +148,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic.Reflection
                         javaScriptTimeout,
                         javaScriptFunctionArguments,
                         memberInfoAttributes
-                    });
+                   });
             } else {
                 var jsObjectInvocation = new JSObjectInvocation(
                     jsObjectReference,

@@ -73,12 +73,10 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
                 var methodDeclaringType = methodInfo.DeclaringType ?? throw new InvalidOperationException();
 
                 if (memberName.StartsWith("get_")) {
-                    //invocation.ReturnValue = DynamiteyDynamic.InvokeGet(jsDynamicObjectProxy, propertyName);
                     memberGetterDelegate = methodDeclaringType.GetProperty(propertyName).DelegateForGet();
                     proxyMemberGetterDelegates.Add(methodInfo.MethodHandle, memberGetterDelegate);
                     goto getMember;
                 } else if (memberName.StartsWith("set_") && arguments.Length == 1) {
-                    //DynamiteyDynamic.InvokeSet(jsDynamicObjectProxy, propertyName, arguments[0]);
                     memberSetterDelegate = methodDeclaringType.GetProperty(propertyName).DelegateForSet();
                     proxyMemberSetterDelegates.Add(methodInfo.MethodHandle, memberSetterDelegate);
                     goto setMember;

@@ -5,6 +5,6 @@ using Teronis.Microsoft.JSInterop.Component;
 
 namespace Teronis.Microsoft.JSInterop.Locality
 {
-    public class JSLocalPropertyAssignerOptions : PropertyAssignerOptions<JSLocalPropertyAssignerOptions>
+    public class JSLocalObjectPropertyAssignerOptions : PropertyAssignerOptions<JSLocalObjectPropertyAssignerOptions>
     { }
 }

@@ -5,16 +5,16 @@ using System;
 
 namespace Teronis.Microsoft.JSInterop.Interception
 {
-    public class JSObjectInterceptorDescriptor : IEquatable<JSObjectInterceptorDescriptor>
+    public class JSInterceptorDescriptor : IEquatable<JSInterceptorDescriptor>
     {
         public InterceptorDescriptorRegistrationPhase RegistrationPhase { get; }
-        public IJSObjectInterceptor? Implementation { get; }
+        public IJSInterceptor? Implementation { get; }
         public bool HasImplementation => !(Implementation is null);
         public Type ImplementationType { get; }
 
-        internal JSObjectInterceptorDescriptor(
+        internal JSInterceptorDescriptor(
             InterceptorDescriptorRegistrationPhase registrationPhase,
-            IJSObjectInterceptor implementation,
+            IJSInterceptor implementation,
             Type? implementationType)
         {
             RegistrationPhase = registrationPhase;
@@ -22,13 +22,13 @@ namespace Teronis.Microsoft.JSInterop.Interception
             ImplementationType = implementationType ?? implementation.GetType();
         }
 
-        internal JSObjectInterceptorDescriptor(InterceptorDescriptorRegistrationPhase registrationPhase, Type implementationType)
+        internal JSInterceptorDescriptor(InterceptorDescriptorRegistrationPhase registrationPhase, Type implementationType)
         {
             RegistrationPhase = registrationPhase;
             ImplementationType = implementationType ?? throw new ArgumentNullException(nameof(implementationType));
         }
 
-        public bool Equals(JSObjectInterceptorDescriptor? other)
+        public bool Equals(JSInterceptorDescriptor? other)
         {
             if (other is null) {
                 return false;

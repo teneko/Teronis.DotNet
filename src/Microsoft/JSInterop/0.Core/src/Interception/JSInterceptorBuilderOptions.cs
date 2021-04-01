@@ -5,7 +5,7 @@ using System;
 
 namespace Teronis.Microsoft.JSInterop.Interception
 {
-    public class JSInterceptorBuilderOptions<DerivedType>
+    public class JSInterceptorBuilderOptions<DerivedType> : ILateInterceptorBuilder 
         where DerivedType : JSInterceptorBuilderOptions<DerivedType>
     {
         internal virtual JSInterceptorBuilder InterceptorBuilder {
@@ -21,13 +21,14 @@ namespace Teronis.Microsoft.JSInterop.Interception
 
         private IServiceProvider? serviceProvider;
         private JSInterceptorBuilder? interceptorBuilder;
-        private IJSObjectInterceptor? interceptor;
+        private IJSInterceptor? interceptor;
         private bool isInterceptorBuilderUserTouched;
 
         internal IServiceProvider SetServiceProvider(IServiceProvider serviceProvider) =>
             this.serviceProvider = serviceProvider;
 
-        internal bool IsInterceptorBuilderUserUntouched() {
+        internal bool TryCreateInterceptorBuilderUserUntouched()
+        {
             if (isInterceptorBuilderUserTouched) {
                 return false;
             }
@@ -40,12 +41,12 @@ namespace Teronis.Microsoft.JSInterop.Interception
         }
 
         /// <summary>
-        /// Configures an implementation of <see cref="IJSIteratingInterceptorBuilder"/>
-        /// to create an implementation of <see cref="IJSObjectInterceptor"/> for being used as 
+        /// Configures an implementation of <see cref="IJSInterceptorBuilder"/>
+        /// to create an implementation of <see cref="IJSInterceptor"/> for being used as 
         /// <see cref="interceptor"/> when it is null.
         /// </summary>
         /// <param name="configure"></param>
-        public DerivedType ConfigureInterceptorBuilder(Action<IJSIteratingInterceptorBuilder> configure)
+        public DerivedType ConfigureInterceptorBuilder(Action<IJSInterceptorBuilder> configure)
         {
             configure?.Invoke(InterceptorBuilder);
             return (DerivedType)this;
@@ -54,8 +55,8 @@ namespace Teronis.Microsoft.JSInterop.Interception
         private IServiceProvider GetServiceProvider() =>
             serviceProvider ?? throw new InvalidOperationException("Service provider has not been set.");
 
-        public IJSObjectInterceptor BuildInterceptor(
-            Action<IJSIteratingInterceptorBuilder>? configureBuilder)
+        public IJSInterceptor BuildInterceptor(
+            Action<IJSInterceptorBuilder>? configureBuilder)
         {
             if (configureBuilder is null && !(interceptor is null)) {
                 return interceptor;
@@ -64,7 +65,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
             var serviceProvider = GetServiceProvider();
 
             if (configureBuilder is null) {
-                return InterceptorBuilder.Build(serviceProvider);
+                return interceptor = InterceptorBuilder.Build(serviceProvider);
             }
 
             var mutatingInterceptorBuilder = new JSInterceptorBuilder(InterceptorBuilder.InterceptorDescriptors);

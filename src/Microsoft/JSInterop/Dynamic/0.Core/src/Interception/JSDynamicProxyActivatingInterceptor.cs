@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 using Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop.Annotations;
 using Teronis.Microsoft.JSInterop.Dynamic;
-using Teronis.Microsoft.JSInterop.Interception;
 
-namespace Teronis.Microsoft.JSInterop.Interceptors
+namespace Teronis.Microsoft.JSInterop.Interception
 {
-    public class JSDynamicProxyActivatingInterceptor : IJSObjectInterceptor
+    public class JSDynamicProxyActivatingInterceptor : IJSInterceptor
     {
         private readonly IJSDynamicProxyActivator jsDynamicProxyActivator;
 
@@ -19,7 +18,7 @@ namespace Teronis.Microsoft.JSInterop.Interceptors
 
         public virtual async ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation)
         {
-            if (invocation.DefinitionAttributes.IsAttributeDefined(typeof(JSDynamicProxyActivatingInterceptorAttribute))) {
+            if (invocation.DefinitionAttributes.IsAttributeDefined(typeof(ReturnsDynamicProxyAttribute))) {
                 var result = await invocation.GetNonDeterminingResult<IJSObjectReference>();
                 var determinedResult = (TValue)jsDynamicProxyActivator.CreateInstance(invocation.TaskArgumentType, result);
                 invocation.SetDeterminedResult(new ValueTask<TValue>(determinedResult));

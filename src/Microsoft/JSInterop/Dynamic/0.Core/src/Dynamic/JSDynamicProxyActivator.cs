@@ -12,12 +12,10 @@ using Teronis.Microsoft.JSInterop.Internals.Utils;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic
 {
-    public class JSDynamicProxyActivator : IJSDynamicProxyActivator
+    public class JSDynamicProxyActivator : InterceptableFacadeActivatorBase, IJSDynamicProxyActivator
     {
-        private BuildInterceptorDelegate? buildInterceptor;
-
-        public JSDynamicProxyActivator(IOptions<JSDynamicProxyInterceptorBuilderOptions>? options) =>
-            buildInterceptor = options is null ? null : (BuildInterceptorDelegate?)options.Value.BuildInterceptor;
+        public JSDynamicProxyActivator(IOptions<JSDynamicProxyInterceptorBuilderOptions>? options)
+            : base(options?.Value) { }
 
         public JSDynamicProxyActivator()
             : this(options: null) { }
@@ -57,19 +55,13 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             return methodDictionary;
         }
 
-        private IJSObjectInterceptor buildInterceptorOrDefault(DynamicProxyCreationOptions? creationOptions) =>
-            buildInterceptor
-                ?.Invoke(
-                    creationOptions?.ConfigureInterceptorBuilder)
-                ?? JSObjectInterceptor.Default;
-
         public object CreateInstance(
             Type interfaceToBeProxied,
             IJSObjectReferenceFacade jsObjectFacadeToBeProxied,
-            IJSObjectInterceptor? jsObjectInterceptor = null,
+            IJSInterceptor? jsInterceptor = null,
             DynamicProxyCreationOptions? creationOptions = null)
         {
-            jsObjectInterceptor ??= buildInterceptorOrDefault(creationOptions);
+            jsInterceptor ??= BuildInterceptor(creationOptions?.ConfigureInterceptorBuilder);
             var derivedInterfaceTypeSet = TypeUtils.GetInterfaces(interfaceToBeProxied);
             var notDerivedInterfaceTypeSet = TypeUtils.GetInterfaces(typeof(IJSObjectReferenceFacade));
             derivedInterfaceTypeSet.ExceptWith(notDerivedInterfaceTypeSet);
@@ -84,7 +76,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             var jsDynamicObjectInterceptor = new JSDynamicProxyInterceptor(
                 jsObjectFacadeToBeProxied,
                 methodDictionary,
-                jsObjectInterceptor);
+                jsInterceptor);
 
             return proxyGenerator.CreateInterfaceProxyWithoutTarget(
                 interfaceToBeProxied,
@@ -93,9 +85,9 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
 
         public object CreateInstance(Type interfaceToBeProxied, IJSObjectReference jSObjectReference, DynamicProxyCreationOptions? creationOptions = null)
         {
-            var jsObjectInterceptor = buildInterceptorOrDefault(creationOptions);
-            var jsDynamicObject = new JSDynamicProxy(jSObjectReference, jsObjectInterceptor);
-            return CreateInstance(interfaceToBeProxied, jsDynamicObject, jsObjectInterceptor: jsObjectInterceptor, creationOptions: creationOptions);
+            var jsInterceptor = BuildInterceptor(creationOptions?.ConfigureInterceptorBuilder);
+            var jsDynamicObject = new JSDynamicProxy(jSObjectReference, jsInterceptor);
+            return CreateInstance(interfaceToBeProxied, jsDynamicObject, jsInterceptor: jsInterceptor, creationOptions: creationOptions);
         }
     }
 }

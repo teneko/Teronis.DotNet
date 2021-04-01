@@ -8,8 +8,8 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
 {
     public class JSDynamicProxy : JSObjectReferenceFacade, IJSObjectReferenceFacade
     {
-        public JSDynamicProxy(IJSObjectReference jsObjectReference, IJSObjectInterceptor jsObjectInterceptor)
-            : base(jsObjectReference, jsObjectInterceptor) { }
+        public JSDynamicProxy(IJSObjectReference jsObjectReference, IJSInterceptor jsInterceptor)
+            : base(jsObjectReference, jsInterceptor) { }
 
         public JSDynamicProxy(IJSObjectReference jsObjectReference)
             : base(jsObjectReference) { }

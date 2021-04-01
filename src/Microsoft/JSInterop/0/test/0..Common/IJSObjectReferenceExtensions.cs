@@ -9,10 +9,10 @@ namespace Teronis.Microsoft.JSInterop
 {
     public static class IJSObjectReferenceExtensions
     {
-        public static ValueTask InvokeVoidAsync(this IJSObjectInterceptor jsObjectInterceptor) =>
-            jsObjectInterceptor.InvokeVoidAsync(new EmptyObjectReference(), string.Empty, new object[0]);
+        public static ValueTask InvokeVoidAsync(this IJSInterceptor jsInterceptor) =>
+            jsInterceptor.InvokeVoidAsync(new EmptyObjectReference(), string.Empty, new object[0]);
 
-        public static ValueTask<TValue> InvokeAsync<TValue>(this IJSObjectInterceptor jsObjectInterceptor) =>
-            jsObjectInterceptor.InvokeAsync<TValue>(new EmptyObjectReference(), string.Empty, new object[0]);
+        public static ValueTask<TValue> InvokeAsync<TValue>(this IJSInterceptor jsInterceptor) =>
+            jsInterceptor.InvokeAsync<TValue>(new EmptyObjectReference(), string.Empty, new object[0]);
     }
 }

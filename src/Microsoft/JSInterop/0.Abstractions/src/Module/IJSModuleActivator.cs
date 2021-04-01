@@ -7,6 +7,6 @@ namespace Teronis.Microsoft.JSInterop.Module
 {
     public interface IJSModuleActivator
     {
-        ValueTask<IJSModule> CreateInstanceAsync(string moduleNameOrPath);
+        ValueTask<IJSModule> CreateInstanceAsync(string moduleNameOrPath, JSModuleCreationOptions? creationOptions = null);
     }
 }

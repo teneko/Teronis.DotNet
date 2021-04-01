@@ -8,6 +8,6 @@ namespace Teronis.Microsoft.JSInterop.Module
 {
     public interface IJSDynamicModuleActivator
     {
-        ValueTask<IJSModule> CreateInstanceAsync(Type interfaceToBeProxied, string moduleNameOrPath);
+        ValueTask<IJSModule> CreateInstanceAsync(Type interfaceToBeProxied, string moduleNameOrPath, DynamicModuleCreationOptions? creationOptions = null);
     }
 }

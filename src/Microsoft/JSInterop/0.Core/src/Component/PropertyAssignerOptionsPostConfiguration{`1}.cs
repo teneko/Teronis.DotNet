@@ -17,7 +17,7 @@ namespace Teronis.Microsoft.JSInterop.Component
         public void PostConfigure(string name, TDerived options) {
             options.SetServiceProvider(serviceProvider);
 
-            if (!options.ArePropertyAssignersUserUntouched()) {
+            if (!options.TryCreatePropertyAssignerFactoriesUserUntouched()) {
                 return;
             }
 

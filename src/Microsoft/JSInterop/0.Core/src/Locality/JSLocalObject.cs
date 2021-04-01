@@ -8,7 +8,7 @@ namespace Teronis.Microsoft.JSInterop.Locality
 {
     public class JSLocalObject : JSObjectReferenceFacade, IJSLocalObject
     {
-        public JSLocalObject(IJSObjectReference jsObjectReference, IJSObjectInterceptor? jsObjectInterceptor)
-            : base(jsObjectReference, jsObjectInterceptor) { }
+        public JSLocalObject(IJSObjectReference jsObjectReference, IJSInterceptor? jsInterceptor)
+            : base(jsObjectReference, jsInterceptor) { }
     }
 }

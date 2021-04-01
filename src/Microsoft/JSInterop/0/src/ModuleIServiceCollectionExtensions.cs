@@ -26,7 +26,7 @@ namespace Teronis.Microsoft.JSInterop
             Action<JSModuleInterceptorBuilderOptions>? configureInterceptorBuilderOptions = null,
             LateConfigureInterceptorBuilderDelegate<JSModuleInterceptorBuilderOptions, JSModulePropertyAssignerOptions>? lateConfigureInterceptorBuilderOptions = null)
         {
-            services.AddInterceptorBuilderOptions<JSModuleInterceptorBuilderOptions, JSLocalPropertyAssignerOptions>();
+            services.AddInterceptorBuilderOptions<JSModuleInterceptorBuilderOptions, JSLocalObjectPropertyAssignerOptions>();
             services.ConfigureInterceptorBuilderOptions(configurePropertyAssignerOptions,configureInterceptorBuilderOptions, lateConfigureInterceptorBuilderOptions);
             services.TryAddSingleton<IJSModuleActivator, JSModuleActivator>();
             return services;

@@ -3,11 +3,10 @@
 
 using System;
 using System.Collections.Generic;
-using Teronis.Microsoft.JSInterop.Interception;
 
-namespace Teronis.Microsoft.JSInterop.Dynamic
+namespace Teronis.Microsoft.JSInterop
 {
-    public class DynamicProxyCreationOptions
+    public class DynamicProxyCreationOptions : FacadeCreationOptions
     {
         /// <summary>
         /// The methods you don't want to have proxied. Only members of a derived interface of <see cref="IJSObjectReferenceFacade"/>
@@ -15,10 +14,5 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         /// </summary>
         public IReadOnlySet<string>? MethodsNotProxied { get; set; }
         public IReadOnlySet<Type>? InterfaceTypesNotProxied { get; set; }
-        /// <summary>
-        /// Configures the <see cref="IJSIteratingInterceptorBuilder"/> for this proxy creation.
-        /// Contains global configured interceptors.
-        /// </summary>
-        public Action<IJSIteratingInterceptorBuilder>? ConfigureInterceptorBuilder { get; }
     }
 }

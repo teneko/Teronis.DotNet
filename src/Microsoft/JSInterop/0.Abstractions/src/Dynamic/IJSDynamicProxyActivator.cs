@@ -12,7 +12,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         object CreateInstance(
             Type interfaceToBeProxied,
             IJSObjectReferenceFacade jsObjectFacadeToBeProxied,
-            IJSObjectInterceptor? jsObjectInterceptor = null,
+            IJSInterceptor? jsInterceptor = null,
             DynamicProxyCreationOptions? creationOptions = null);
 
         object CreateInstance(Type interfaceToBeProxied, IJSObjectReference jSObjectReference, DynamicProxyCreationOptions? creationOptions = null);

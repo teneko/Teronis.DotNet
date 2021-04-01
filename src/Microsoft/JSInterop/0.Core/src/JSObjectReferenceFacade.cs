@@ -11,41 +11,44 @@ namespace Teronis.Microsoft.JSInterop
 {
     public class JSObjectReferenceFacade : IJSObjectReferenceFacade
     {
-        public IJSObjectReference JSObjectReference { get; }
+        public IJSObjectReference Reference { get; }
 
-        protected virtual IJSObjectInterceptor Interceptor { get; }
+        protected virtual IJSInterceptor Interceptor { get; }
 
-        public JSObjectReferenceFacade(IJSObjectReference jsObjectReference, IJSObjectInterceptor? jsObjectInterceptor)
+        public JSObjectReferenceFacade(IJSObjectReference jsObjectReference, IJSInterceptor? jsInterceptor)
         {
-            JSObjectReference = jsObjectReference ?? throw new ArgumentNullException(nameof(jsObjectReference));
-            Interceptor = jsObjectInterceptor ?? JSObjectInterceptor.Default;
+            Reference = jsObjectReference ?? throw new ArgumentNullException(nameof(jsObjectReference));
+            Interceptor = jsInterceptor ?? JSInterceptor.Default;
         }
 
         public JSObjectReferenceFacade(IJSObjectReference jsObjectReference)
-            : this(jsObjectReference, jsObjectInterceptor: null) { }
+            : this(jsObjectReference, jsInterceptor: null) { }
 
         public virtual ValueTask<TValue> InvokeAsync<TValue>(string identifier, params object?[] args) =>
-            Interceptor.InvokeAsync<TValue>(JSObjectReference, identifier, args);
+            Interceptor.InvokeAsync<TValue>(Reference, identifier, args);
 
         public virtual ValueTask<TValue> InvokeAsync<TValue>(string identifier, CancellationToken cancellationToken, params object?[] args) =>
-            Interceptor.InvokeAsync<TValue>(JSObjectReference, identifier, cancellationToken, args);
+            Interceptor.InvokeAsync<TValue>(Reference, identifier, cancellationToken, args);
 
         public virtual ValueTask<TValue> InvokeAsync<TValue>(string identifier, TimeSpan timeout, params object?[] args) =>
-            Interceptor.InvokeAsync<TValue>(JSObjectReference, identifier, timeout, args);
+            Interceptor.InvokeAsync<TValue>(Reference, identifier, timeout, args);
 
         public virtual ValueTask InvokeVoidAsync(string identifier, params object?[] args) =>
-            Interceptor.InvokeVoidAsync(JSObjectReference, identifier, args);
+            Interceptor.InvokeVoidAsync(Reference, identifier, args);
 
         public virtual ValueTask InvokeVoidAsync(string identifier, CancellationToken cancellationToken, params object?[] args) =>
-            Interceptor.InvokeVoidAsync(JSObjectReference, identifier, cancellationToken, args);
+            Interceptor.InvokeVoidAsync(Reference, identifier, cancellationToken, args);
 
         public virtual ValueTask InvokeVoidAsync(string identifier, TimeSpan timeout, params object?[] args) =>
-            Interceptor.InvokeVoidAsync(JSObjectReference, identifier, timeout, args);
+            Interceptor.InvokeVoidAsync(Reference, identifier, timeout, args);
 
         protected virtual ValueTask DisposeAsyncCore() =>
-            JSObjectReference.DisposeAsync();
+            Reference.DisposeAsync();
 
         public ValueTask DisposeAsync() =>
             DisposeAsyncCore();
+
+        IJSInterceptor IJSObjectReferenceFacade.Interceptor =>
+            Interceptor;
     }
 }

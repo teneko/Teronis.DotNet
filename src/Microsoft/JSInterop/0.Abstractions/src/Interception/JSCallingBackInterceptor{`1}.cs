@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace Teronis.Microsoft.JSInterop.Interception
 {
-    public class JSCallingBackObjectInterceptor<TaskArgumentType> : JSCallingBackObjectInterceptor
+    public class JSCallingBackInterceptor<TaskArgumentType> : JSCallingBackInterceptor
     {
         private readonly Func<IJSObjectInvocation<TaskArgumentType>, ValueTask>? invokeInvocationCallback;
 
-        public JSCallingBackObjectInterceptor(
+        public JSCallingBackInterceptor(
             Func<IJSObjectInvocation<TaskArgumentType>, ValueTask>? invokeInvocationCallback,
             Func<IJSObjectInvocation, ValueTask>? invokeVoidInvocationCallback)
             : base(invokeVoidInvocationCallback) =>
             this.invokeInvocationCallback = invokeInvocationCallback;
 
-        public JSCallingBackObjectInterceptor(
+        public JSCallingBackInterceptor(
             Func<IJSObjectInvocation<TaskArgumentType>, ValueTask>? invokeInvocationCallback)
             : base(invokeVoidInvocationCallback: null) =>
             this.invokeInvocationCallback = invokeInvocationCallback;

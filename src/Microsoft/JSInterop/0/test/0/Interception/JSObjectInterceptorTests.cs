@@ -15,13 +15,13 @@ namespace Teronis.Microsoft.JSInterop.Interceptions
         {
             var numbers = new List<int>();
 
-            var jsObjectInterceptor = new JSInterceptorBuilder()
-                .Add(new JSCallingBackObjectInterceptor(
+            var jsInterceptor = new JSInterceptorBuilder()
+                .Add(new JSCallingBackInterceptor(
                     invocation => {
                         numbers.Add(0);
                         return ValueTask.CompletedTask;
                     }))
-                .Add(new JSCallingBackObjectInterceptor(
+                .Add(new JSCallingBackInterceptor(
                     invocation => {
                         numbers.Add(1);
                         return ValueTask.CompletedTask;
@@ -29,7 +29,7 @@ namespace Teronis.Microsoft.JSInterop.Interceptions
                 .Build(serviceProvider: null);
 
             // Act
-            await jsObjectInterceptor.InvokeVoidAsync();
+            await jsInterceptor.InvokeVoidAsync();
 
             // Assert
             Assert.Equal(new[] { 0, 1 }, numbers);
@@ -38,19 +38,19 @@ namespace Teronis.Microsoft.JSInterop.Interceptions
         public async Task Should_cancel_interception() {
             var numbers = new List<int>();
 
-            var jsObjectInterceptor = new JSInterceptorBuilder()
-                .Add(new JSCallingBackObjectInterceptor(
+            var jsInterceptor = new JSInterceptorBuilder()
+                .Add(new JSCallingBackInterceptor(
                     invocation => {
                         numbers.Add(0);
                         return ValueTask.CompletedTask;
                     }))
-                .Add(new JSCallingBackObjectInterceptor(
+                .Add(new JSCallingBackInterceptor(
                     invocation => {
                         numbers.Add(1);
                         invocation.StopInterception();
                         return ValueTask.CompletedTask;
                     }))
-                .Add(new JSCallingBackObjectInterceptor(
+                .Add(new JSCallingBackInterceptor(
                     invocation => {
                         numbers.Clear();
                         return ValueTask.CompletedTask;
@@ -58,7 +58,7 @@ namespace Teronis.Microsoft.JSInterop.Interceptions
                 .Build(serviceProvider: null);
 
             // Act
-            await jsObjectInterceptor.InvokeVoidAsync();
+            await jsInterceptor.InvokeVoidAsync();
 
             // Assert
             Assert.Equal(new[] { 0, 1 }, numbers);

@@ -9,7 +9,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic.Interefaces.Interception
 {
     public interface INestedOwningDynamicObject : IAsyncDisposable
     {
-        [JSDynamicProxyActivatingInterceptor]
+        [ReturnsDynamicProxy]
         ValueTask<INestedDynamicObject> GetNestedObjectAsync();
     }
 }

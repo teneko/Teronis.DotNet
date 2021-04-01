@@ -7,19 +7,19 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Teronis.Microsoft.JSInterop.Interception
 {
-    internal sealed class JSInterceptorBuilder : IJSIteratingInterceptorBuilder
+    internal sealed class JSInterceptorBuilder : IJSInterceptorBuilder
     {
-        public IReadOnlyList<JSObjectInterceptorDescriptor> InterceptorDescriptors =>
+        public IReadOnlyList<JSInterceptorDescriptor> InterceptorDescriptors =>
             interceptorDescriptors;
 
-        private List<JSObjectInterceptorDescriptor> interceptorDescriptors;
+        private List<JSInterceptorDescriptor> interceptorDescriptors;
         private InterceptorDescriptorRegistrationPhase currentRegistrationPhase;
 
         public JSInterceptorBuilder() =>
-            interceptorDescriptors = new List<JSObjectInterceptorDescriptor>();
+            interceptorDescriptors = new List<JSInterceptorDescriptor>();
 
-        public JSInterceptorBuilder(IEnumerable<JSObjectInterceptorDescriptor> interceptorDescriptors) =>
-            this.interceptorDescriptors = new List<JSObjectInterceptorDescriptor>(interceptorDescriptors);
+        public JSInterceptorBuilder(IEnumerable<JSInterceptorDescriptor> interceptorDescriptors) =>
+            this.interceptorDescriptors = new List<JSInterceptorDescriptor>(interceptorDescriptors);
 
         /// <summary>
         /// Sets the current registration phase.
@@ -28,17 +28,17 @@ namespace Teronis.Microsoft.JSInterop.Interception
         public void SetRegistrationPhase(InterceptorDescriptorRegistrationPhase registrationPhase) =>
             currentRegistrationPhase = registrationPhase;
 
-        private Type GetInterceptorType(IJSObjectInterceptor interceptor) =>
+        private Type GetInterceptorType(IJSInterceptor interceptor) =>
             interceptor?.GetType() ?? throw new ArgumentNullException(nameof(interceptor));
 
-        private void InsertInterceptor(int index, Type interceptorType, IJSObjectInterceptor? interceptor)
+        private void InsertInterceptor(int index, Type interceptorType, IJSInterceptor? interceptor)
         {
-            JSObjectInterceptorDescriptor interceptorDescriptor;
+            JSInterceptorDescriptor interceptorDescriptor;
 
             if (interceptor is null) {
-                interceptorDescriptor = new JSObjectInterceptorDescriptor(currentRegistrationPhase, interceptorType);
+                interceptorDescriptor = new JSInterceptorDescriptor(currentRegistrationPhase, interceptorType);
             } else {
-                interceptorDescriptor = new JSObjectInterceptorDescriptor(currentRegistrationPhase, interceptor, interceptorType);
+                interceptorDescriptor = new JSInterceptorDescriptor(currentRegistrationPhase, interceptor, interceptorType);
             }
 
             interceptorDescriptors.Insert(index, interceptorDescriptor);
@@ -50,7 +50,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
             return this;
         }
 
-        public JSInterceptorBuilder Insert(int index, IJSObjectInterceptor interceptor)
+        public JSInterceptorBuilder Insert(int index, IJSInterceptor interceptor)
         {
             var interceptorType = GetInterceptorType(interceptor);
             InsertInterceptor(index, interceptorType, interceptor);
@@ -60,19 +60,19 @@ namespace Teronis.Microsoft.JSInterop.Interception
         public JSInterceptorBuilder Add(Type interceptorType) =>
             Insert(interceptorDescriptors.Count, interceptorType);
 
-        public JSInterceptorBuilder Add(IJSObjectInterceptor interceptor) =>
+        public JSInterceptorBuilder Add(IJSInterceptor interceptor) =>
             Insert(interceptorDescriptors.Count, interceptor);
 
         public JSInterceptorBuilder Remove(Type interceptorType)
         {
-            var interceptorDescriptor = new JSObjectInterceptorDescriptor(currentRegistrationPhase, interceptorType);
+            var interceptorDescriptor = new JSInterceptorDescriptor(currentRegistrationPhase, interceptorType);
             interceptorDescriptors.Remove(interceptorDescriptor);
             return this;
         }
 
-        public JSInterceptorBuilder Remove(IJSObjectInterceptor interceptor)
+        public JSInterceptorBuilder Remove(IJSInterceptor interceptor)
         {
-            var interceptorDescriptor = new JSObjectInterceptorDescriptor(currentRegistrationPhase, interceptor, implementationType: null);
+            var interceptorDescriptor = new JSInterceptorDescriptor(currentRegistrationPhase, interceptor, implementationType: null);
             interceptorDescriptors.Remove(interceptorDescriptor);
             return this;
         }
@@ -92,11 +92,11 @@ namespace Teronis.Microsoft.JSInterop.Interception
         /// </param>
         /// <param name="registrationPhaseServiceProvider">Provides service provider for each registration phase.</param>
         /// <returns></returns>
-        public JSIteratingInterceptor Build(
+        public JSIterativeInterceptor Build(
             IServiceProvider? serviceProvider,
             IReadOnlyDictionary<InterceptorDescriptorRegistrationPhase, IServiceProvider?>? registrationPhaseServiceProvider = null)
         {
-            var interceptors = new List<IJSObjectInterceptor>();
+            var interceptors = new List<IJSInterceptor>();
 
             foreach (var interceptorDescriptor in InterceptorDescriptors) {
                 if (interceptorDescriptor.HasImplementation) {
@@ -110,34 +110,34 @@ namespace Teronis.Microsoft.JSInterop.Interception
                     continue;
                 }
 
-                var interceptor = (IJSObjectInterceptor)ActivatorUtilities.CreateInstance(currentServiceProvider, interceptorDescriptor.ImplementationType);
+                var interceptor = (IJSInterceptor)ActivatorUtilities.CreateInstance(currentServiceProvider, interceptorDescriptor.ImplementationType);
                 interceptors.Add(interceptor);
             }
 
-            return new JSIteratingInterceptor(interceptors);
+            return new JSIterativeInterceptor(interceptors);
         }
 
         #region IJSObjectInterceptorWalkerBuilder
 
-        IJSIteratingInterceptorBuilder IJSIteratingInterceptorBuilder.Insert(int index, Type interceptorType) =>
+        IJSInterceptorBuilder IJSInterceptorBuilder.Insert(int index, Type interceptorType) =>
             Insert(index, interceptorType);
 
-        IJSIteratingInterceptorBuilder IJSIteratingInterceptorBuilder.Insert(int index, IJSObjectInterceptor interceptor) =>
+        IJSInterceptorBuilder IJSInterceptorBuilder.Insert(int index, IJSInterceptor interceptor) =>
             Insert(index, interceptor);
 
-        IJSIteratingInterceptorBuilder IJSIteratingInterceptorBuilder.Add(Type interceptorType) =>
+        IJSInterceptorBuilder IJSInterceptorBuilder.Add(Type interceptorType) =>
             Add(interceptorType);
 
-        IJSIteratingInterceptorBuilder IJSIteratingInterceptorBuilder.Add(IJSObjectInterceptor interceptor) =>
+        IJSInterceptorBuilder IJSInterceptorBuilder.Add(IJSInterceptor interceptor) =>
             Add(interceptor);
 
-        IJSIteratingInterceptorBuilder IJSIteratingInterceptorBuilder.Remove(Type interceptorType) =>
+        IJSInterceptorBuilder IJSInterceptorBuilder.Remove(Type interceptorType) =>
             Remove(interceptorType);
 
-        IJSIteratingInterceptorBuilder IJSIteratingInterceptorBuilder.Remove(IJSObjectInterceptor interceptor) =>
+        IJSInterceptorBuilder IJSInterceptorBuilder.Remove(IJSInterceptor interceptor) =>
             Remove(interceptor);
 
-        IJSIteratingInterceptorBuilder IJSIteratingInterceptorBuilder.RemoveAt(int index) =>
+        IJSInterceptorBuilder IJSInterceptorBuilder.RemoveAt(int index) =>
             RemoveAt(index);
 
         #endregion

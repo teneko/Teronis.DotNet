@@ -18,6 +18,6 @@ namespace Teronis.Microsoft.JSInterop.Locality
 
         public static ValueTask<T> CreateInstanceAsync<T>(this IJSDynamicLocalObjectActivator jsDynamicLocalObjectActivator, IJSLocalObject jsLocalObject, string objectName)
             where T : class, IJSLocalObject =>
-            jsDynamicLocalObjectActivator.CreateInstanceAsync<T>(jsLocalObject.JSObjectReference, objectName);
+            jsDynamicLocalObjectActivator.CreateInstanceAsync<T>(jsLocalObject.Reference, objectName);
     }
 }

@@ -17,8 +17,8 @@ namespace Teronis.Microsoft.JSInterop.Module
         public JSModule(
             IJSObjectReference jsObjectReference,
             string moduleName,
-            IJSObjectInterceptor? jsObjectInterceptor)
-            : base(jsObjectReference, jsObjectInterceptor) =>
+            IJSInterceptor? jsInterceptor)
+            : base(jsObjectReference, jsInterceptor) =>
             ModuleNameOrPath = moduleName ?? throw new System.ArgumentNullException(nameof(moduleName));
     }
 }

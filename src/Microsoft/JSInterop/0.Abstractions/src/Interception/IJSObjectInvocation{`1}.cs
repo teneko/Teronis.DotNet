@@ -17,7 +17,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
         IDefinition Definition { get; }
 
         /// <summary>
-        /// Gets the value that that won't be considered as determined (cached).
+        /// Gets the value that that won't be considered as determined. In other words, the value won't be cached.
         /// </summary>
         /// <typeparam name="TNonDeterminingValue">Type of value.</typeparam>
         /// <returns>The promise for the non-determining value.</returns>

@@ -8,27 +8,19 @@ using Teronis.Microsoft.JSInterop.Interception;
 
 namespace Teronis.Microsoft.JSInterop.Module
 {
-    public class JSModuleActivator : IJSModuleActivator
+    public class JSModuleActivator : InterceptableFacadeActivatorBase, IJSModuleActivator
     {
         private readonly IJSRuntime jsRuntime;
-        private readonly BuildInterceptorDelegate? buildInterceptor;
 
         public JSModuleActivator(IJSRuntime jsRuntime, IOptions<JSModuleInterceptorBuilderOptions>? options)
-        {
+            : base(options?.Value) =>
             this.jsRuntime = jsRuntime;
-            buildInterceptor = options is null ? null : (BuildInterceptorDelegate?)options.Value.BuildInterceptor;
-        }
 
-        public virtual async ValueTask<IJSModule> CreateInstanceAsync(string moduleNameOrPath)
+        public virtual async ValueTask<IJSModule> CreateInstanceAsync(string moduleNameOrPath, JSModuleCreationOptions? creationOptions = null)
         {
             var jsObjectReference = await jsRuntime.InvokeAsync<IJSObjectReference>("import", moduleNameOrPath);
-
-            var jsObjectInterceptor = buildInterceptor
-                ?.Invoke(
-                    configureBuilder: null)
-                ?? JSObjectInterceptor.Default;
-
-            var jsModule = new JSModule(jsObjectReference, moduleNameOrPath, jsObjectInterceptor);
+            var jsInterceptor = BuildInterceptor(creationOptions?.ConfigureInterceptorBuilder);
+            var jsModule = new JSModule(jsObjectReference, moduleNameOrPath, jsInterceptor);
             return jsModule;
         }
     }

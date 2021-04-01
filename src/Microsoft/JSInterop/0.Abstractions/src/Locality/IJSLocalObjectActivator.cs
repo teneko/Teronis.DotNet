@@ -8,8 +8,8 @@ namespace Teronis.Microsoft.JSInterop.Locality
 {
     public interface IJSLocalObjectActivator
     {
-        IJSLocalObject CreateInstance(IJSObjectReference jsObjectReference);
-        ValueTask<IJSLocalObject> CreateInstanceAsync(string objectName);
-        ValueTask<IJSLocalObject> CreateInstanceAsync(IJSObjectReference jsObjectReference, string objectName);
+        IJSLocalObject CreateInstance(IJSObjectReference jsObjectReference, JSLocalObjectCreationOptions? creationOptions = null);
+        ValueTask<IJSLocalObject> CreateInstanceAsync(string objectName, JSLocalObjectCreationOptions? creationOptions = null);
+        ValueTask<IJSLocalObject> CreateInstanceAsync(IJSObjectReference jsObjectReference, string objectName, JSLocalObjectCreationOptions? creationOptions = null);
     }
 }

@@ -17,7 +17,7 @@ namespace Teronis.Microsoft.JSInterop.Component
             get {
                 if (factories is null) {
                     factories = new PropertyAssignerFactories();
-                    arePropertyAssignersUserTouched = true;
+                    arePropertyAssignerFactoriesUserTouched = true;
                 }
 
                 return factories;
@@ -26,7 +26,7 @@ namespace Teronis.Microsoft.JSInterop.Component
 
         internal List<IPropertyAssigner> PropertyAssigners {
             get {
-                EnsureCreatedPropertyAssignersFromFactories();
+                EnsureCreatePropertyAssignersFromFactories();
                 return propertyAssigners;
             }
         }
@@ -35,21 +35,21 @@ namespace Teronis.Microsoft.JSInterop.Component
         private List<IPropertyAssigner> propertyAssigners;
         private IServiceProvider? serviceProvider;
         private bool arePropertyAssignersCreated;
-        private bool arePropertyAssignersUserTouched;
+        private bool arePropertyAssignerFactoriesUserTouched;
 
         public PropertyAssignerOptions()
         {
             propertyAssigners = new List<IPropertyAssigner>();
-            arePropertyAssignersUserTouched = false;
+            arePropertyAssignerFactoriesUserTouched = false;
         }
 
-        internal bool ArePropertyAssignersUserUntouched()
+        internal bool TryCreatePropertyAssignerFactoriesUserUntouched()
         {
-            if (arePropertyAssignersUserTouched) {
+            if (arePropertyAssignerFactoriesUserTouched) {
                 return false;
             }
 
-            if (propertyAssigners is null) {
+            if (factories is null) {
                 factories = new PropertyAssignerFactories();
             }
 
@@ -68,7 +68,7 @@ namespace Teronis.Microsoft.JSInterop.Component
             return serviceProvider;
         }
 
-        private void EnsureCreatedPropertyAssignersFromFactories()
+        private void EnsureCreatePropertyAssignersFromFactories()
         {
             if (arePropertyAssignersCreated) {
                 return;

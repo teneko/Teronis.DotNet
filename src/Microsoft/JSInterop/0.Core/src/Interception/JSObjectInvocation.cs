@@ -21,7 +21,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
             CancellationToken? cancellationToken,
             TimeSpan? timeout,
             object?[] arguments,
-            ICustomAttributes memberAttributes)
+            ICustomAttributes? memberAttributes)
             : base(
                   jsObjectReference,
                   identifier,

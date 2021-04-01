@@ -23,11 +23,11 @@ namespace Teronis.Microsoft.JSInterop
         /// <returns></returns>
         public static IServiceCollection AddJSLocalObjectActivator(
             this IServiceCollection services, 
-            Action<JSLocalPropertyAssignerOptions>? configurePropertyAssignerOptions = null,
+            Action<JSLocalObjectPropertyAssignerOptions>? configurePropertyAssignerOptions = null,
             Action<JSLocalObjectInterceptorBuilderOptions>? configureInterceptorBuilderOptions = null,
-            LateConfigureInterceptorBuilderDelegate<JSLocalObjectInterceptorBuilderOptions, JSLocalPropertyAssignerOptions>? lateConfigureInterceptorBuilderOptions = null)
+            LateConfigureInterceptorBuilderDelegate<JSLocalObjectInterceptorBuilderOptions, JSLocalObjectPropertyAssignerOptions>? lateConfigureInterceptorBuilderOptions = null)
         {
-            services.AddInterceptorBuilderOptions<JSLocalObjectInterceptorBuilderOptions, JSLocalPropertyAssignerOptions>();
+            services.AddInterceptorBuilderOptions<JSLocalObjectInterceptorBuilderOptions, JSLocalObjectPropertyAssignerOptions>();
             services.ConfigureInterceptorBuilderOptions(configurePropertyAssignerOptions, configureInterceptorBuilderOptions, lateConfigureInterceptorBuilderOptions);
             services.TryAddSingleton<IJSLocalObjectActivator, JSLocalObjectActivator>();
             return services;
@@ -36,7 +36,7 @@ namespace Teronis.Microsoft.JSInterop
         /// <summary>
         /// Calls <see cref="ModuleIServiceCollectionExtensions.AddJSModule(IServiceCollection)"/>,
         /// <see cref="LocalityWebAssetsIServiceCollectionExtensions.AddJSLocalObjectInterop(IServiceCollection)"/>>
-        /// and <see cref="AddJSLocalObjectActivator(IServiceCollection, Action{JSLocalPropertyAssignerOptions}?, Action{JSLocalObjectInterceptorBuilderOptions}?, LateConfigureInterceptorBuilderDelegate{JSLocalObjectInterceptorBuilderOptions, JSLocalPropertyAssignerOptions}?)"/>.
+        /// and <see cref="AddJSLocalObjectActivator(IServiceCollection, Action{JSLocalObjectPropertyAssignerOptions}?, Action{JSLocalObjectInterceptorBuilderOptions}?, LateConfigureInterceptorBuilderDelegate{JSLocalObjectInterceptorBuilderOptions, JSLocalObjectPropertyAssignerOptions}?)"/>.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>

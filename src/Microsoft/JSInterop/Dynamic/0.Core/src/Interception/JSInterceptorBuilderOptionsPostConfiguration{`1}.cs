@@ -10,7 +10,11 @@ namespace Teronis.Microsoft.JSInterop.Interception
     {
         public void PostConfigure(string _, TDerivedBuilderOptions options)
         {
-            // TODO: Add default interceptors (property assigner -> interceptor conversion)
+            if (!options.TryCreateInterceptorBuilderUserUntouched()) {
+                return;
+            }
+
+            options.ConfigureInterceptorBuilder(builder => builder.AddDefaultDynamicInterceptors());
         }
     }
 }

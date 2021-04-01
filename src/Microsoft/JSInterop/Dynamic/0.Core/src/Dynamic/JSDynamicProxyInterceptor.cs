@@ -28,16 +28,16 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         private readonly IJSObjectReferenceFacade jsDynamicObjectProxy;
         private readonly MethodDictionary methodDictionary;
         // This object walks through all interceptors.
-        private readonly IJSObjectInterceptor jsObjectInterceptor;
+        private readonly IJSInterceptor jsInterceptor;
 
         public JSDynamicProxyInterceptor(
             IJSObjectReferenceFacade jsDynamicObjectProxy,
             MethodDictionary methodDictionary,
-            IJSObjectInterceptor jsObjectInterceptor)
+            IJSInterceptor jsInterceptor)
         {
             this.jsDynamicObjectProxy = jsDynamicObjectProxy ?? throw new ArgumentNullException(nameof(jsDynamicObjectProxy));
             this.methodDictionary = methodDictionary ?? throw new ArgumentNullException(nameof(methodDictionary));
-            this.jsObjectInterceptor = jsObjectInterceptor ?? throw new ArgumentNullException(nameof(jsObjectInterceptor));
+            this.jsInterceptor = jsInterceptor ?? throw new ArgumentNullException(nameof(jsInterceptor));
         }
 
         public void Intercept(IInvocation invocation)
@@ -64,7 +64,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             // user interface methods
             if (methodDictionary.TryFindMethod(methodInfo.Name, positionalArgumentNames, out var method)) {
                 var methodAttributes = new CustomAttributes(methodInfo);
-                invocation.ReturnValue = method.GetReturnValue(jsObjectInterceptor, jsDynamicObjectProxy.JSObjectReference, genericParameterTypes, arguments, methodAttributes);
+                invocation.ReturnValue = method.GetReturnValue(jsInterceptor, jsDynamicObjectProxy.Reference, genericParameterTypes, arguments, methodAttributes);
                 return;
             }
             // proxy properties

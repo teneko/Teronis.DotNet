@@ -24,7 +24,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
             CancellationToken? javaScriptCancellationToken,
             TimeSpan? javaScriptTimeout,
             object?[] javaScriptArguments,
-            ICustomAttributes definitionAttributes,
+            ICustomAttributes? definitionAttributes,
             Type taskArgumentType)
         {
             JSObjectReference = jSObjectReference ?? throw new ArgumentNullException(nameof(jSObjectReference));
@@ -33,7 +33,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
             JavaScriptTimeout = javaScriptTimeout;
             JavaScriptArguments = javaScriptArguments ?? throw new ArgumentNullException(nameof(javaScriptArguments));
             TaskArgumentType = taskArgumentType ?? throw new ArgumentNullException(nameof(taskArgumentType));
-            DefinitionAttributes = definitionAttributes ?? throw new ArgumentNullException(nameof(definitionAttributes));
+            DefinitionAttributes = definitionAttributes ?? CustomAttributes.Empty;
         }
 
         public JSObjectInvocationInception(
@@ -42,7 +42,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
             CancellationToken? javaScriptCancellationToken,
             TimeSpan? javaScriptTimeout,
             object?[] javaScriptArguments,
-            ICustomAttributes definitionAttributes)
+            ICustomAttributes? definitionAttributes)
         {
             JSObjectReference = jSObjectReference ?? throw new ArgumentNullException(nameof(jSObjectReference));
             JavaScriptIdentifier = javaScriptIdentifier ?? throw new ArgumentNullException(nameof(javaScriptIdentifier));
@@ -50,7 +50,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
             JavaScriptTimeout = javaScriptTimeout;
             JavaScriptArguments = javaScriptArguments ?? throw new ArgumentNullException(nameof(javaScriptArguments));
             TaskArgumentType = null;
-            DefinitionAttributes = definitionAttributes ?? throw new ArgumentNullException(nameof(definitionAttributes));
+            DefinitionAttributes = definitionAttributes ?? CustomAttributes.Empty;
         }
     }
 }

@@ -6,6 +6,6 @@ using Teronis.Microsoft.JSInterop.Interception;
 
 namespace Teronis.Microsoft.JSInterop
 {
-    public delegate IJSObjectInterceptor BuildInterceptorDelegate(
-        Action<IJSIteratingInterceptorBuilder>? configureBuilder);
+    public delegate IJSInterceptor BuildInterceptorDelegate(
+        Action<IJSInterceptorBuilder>? configureBuilder);
 }

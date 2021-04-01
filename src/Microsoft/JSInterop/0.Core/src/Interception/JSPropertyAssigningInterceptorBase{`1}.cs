@@ -3,16 +3,15 @@
 
 using System.Threading.Tasks;
 using Teronis.Microsoft.JSInterop.Component;
-using Teronis.Microsoft.JSInterop.Interception;
 
-namespace Teronis.Microsoft.JSInterop.Interceptors
+namespace Teronis.Microsoft.JSInterop.Interception
 {
-    public abstract class InstanceActivatingInterceptor<TPropertyAssigner> : JSObjectInterceptor
+    public abstract class JSPropertyAssigningInterceptorBase<TPropertyAssigner> : JSInterceptor
         where TPropertyAssigner : IPropertyAssigner
     {
         private readonly TPropertyAssigner propertyAssigner;
 
-        public InstanceActivatingInterceptor(TPropertyAssigner propertyAssigner) =>
+        public JSPropertyAssigningInterceptorBase(TPropertyAssigner propertyAssigner) =>
             this.propertyAssigner = propertyAssigner ?? throw new System.ArgumentNullException(nameof(propertyAssigner));
 
         public override async ValueTask InterceptInvokeAsync<TTaskArgument>(IJSObjectInvocation<TTaskArgument> invocation)

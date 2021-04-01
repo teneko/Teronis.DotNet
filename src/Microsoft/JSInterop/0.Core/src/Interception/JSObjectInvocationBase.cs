@@ -61,7 +61,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
             CancellationToken? cancellationToken,
             TimeSpan? timeout,
             object?[] arguments,
-            ICustomAttributes memberAttributes)
+            ICustomAttributes? memberAttributes)
         {
             InvocationInception = new JSObjectInvocationInception<ReturnType>(
                 jSObjectReference,
@@ -78,7 +78,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
             CancellationToken? cancellationToken,
             TimeSpan? timeout,
             object?[] arguments,
-            ICustomAttributes definitionAttributes,
+            ICustomAttributes? definitionAttributes,
             Type valueTaskGenericType)
         {
             InvocationInception = new JSObjectInvocationInception<ReturnType>(

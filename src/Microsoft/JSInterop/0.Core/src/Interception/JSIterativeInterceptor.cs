@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Teronis.Microsoft.JSInterop.Interception
 {
-    public sealed class JSIteratingInterceptor : IJSObjectInterceptor
+    public sealed class JSIterativeInterceptor : IJSInterceptor
     {
-        public IReadOnlyList<IJSObjectInterceptor> Interceptors { get; }
+        public IReadOnlyList<IJSInterceptor> Interceptors { get; }
 
-        public JSIteratingInterceptor(IReadOnlyList<IJSObjectInterceptor> interceptors) =>
+        public JSIterativeInterceptor(IReadOnlyList<IJSInterceptor> interceptors) =>
             Interceptors = interceptors;
 
         public async ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation)

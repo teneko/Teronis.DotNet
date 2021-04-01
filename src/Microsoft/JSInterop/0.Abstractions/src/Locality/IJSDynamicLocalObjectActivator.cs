@@ -9,7 +9,7 @@ namespace Teronis.Microsoft.JSInterop.Locality
 {
     public interface IJSDynamicLocalObjectActivator
     {
-        ValueTask<IJSLocalObject> CreateInstanceAsync(Type interfaceToBeProxied, string objectName);
-        ValueTask<IJSLocalObject> CreateInstanceAsync(Type interfaceToBeProxied, IJSObjectReference jsObjectReference, string objectName);
+        ValueTask<IJSLocalObject> CreateInstanceAsync(Type interfaceToBeProxied, string objectName, JSDynamicLocalObjectCreationOptions? options = null);
+        ValueTask<IJSLocalObject> CreateInstanceAsync(Type interfaceToBeProxied, IJSObjectReference jsObjectReference, string objectName, JSDynamicLocalObjectCreationOptions? options = null);
     }
 }

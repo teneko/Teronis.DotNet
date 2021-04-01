@@ -4,44 +4,36 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
-using Teronis.Microsoft.JSInterop.Interception;
 
 namespace Teronis.Microsoft.JSInterop.Locality
 {
-    public class JSLocalObjectActivator : IJSLocalObjectActivator
+    public class JSLocalObjectActivator : InterceptableFacadeActivatorBase, IJSLocalObjectActivator
     {
         private readonly IJSLocalObjectInterop jsLocalObjectInterop;
-        private readonly BuildInterceptorDelegate? buildInterceptor;
 
         public JSLocalObjectActivator(IJSLocalObjectInterop jsLocalObjectInterop, IOptions<JSLocalObjectInterceptorBuilderOptions>? options)
-        {
+            : base(options?.Value) =>
             this.jsLocalObjectInterop = jsLocalObjectInterop ?? throw new System.ArgumentNullException(nameof(jsLocalObjectInterop));
-            buildInterceptor = options is null ? null : (BuildInterceptorDelegate?)options.Value.BuildInterceptor;
-        }
 
         public JSLocalObjectActivator(IJSLocalObjectInterop jsLocalObjectInterop)
             : this(jsLocalObjectInterop, options: null) { }
 
-        public virtual IJSLocalObject CreateInstance(IJSObjectReference jsObjectReference)
+        public virtual IJSLocalObject CreateInstance(IJSObjectReference jsObjectReference, JSLocalObjectCreationOptions? creationOptions = null)
         {
-            var jsObjectInterceptor = buildInterceptor
-                ?.Invoke(
-                    configureBuilder: null)
-                ?? JSObjectInterceptor.Default;
-
-            return new JSLocalObject(jsObjectReference, jsObjectInterceptor);
+            var jsInterceptor = BuildInterceptor(creationOptions?.ConfigureInterceptorBuilder);
+            return new JSLocalObject(jsObjectReference, jsInterceptor);
         }
 
-        public virtual async ValueTask<IJSLocalObject> CreateInstanceAsync(string objectName)
+        public virtual async ValueTask<IJSLocalObject> CreateInstanceAsync(string objectName, JSLocalObjectCreationOptions? creationOptions = null)
         {
             var jsLocalObject = CreateInstance(await jsLocalObjectInterop.GetGlobalObjectReference(objectName));
             return jsLocalObject;
         }
 
-        public virtual async ValueTask<IJSLocalObject> CreateInstanceAsync(IJSObjectReference jsObjectReference, string objectName)
+        public virtual async ValueTask<IJSLocalObject> CreateInstanceAsync(IJSObjectReference jsObjectReference, string objectName, JSLocalObjectCreationOptions? creationOptions = null)
         {
             var nestedObjectReference = await jsLocalObjectInterop.GetLocalObjectReference(jsObjectReference, objectName);
-            var jsLocalObject = CreateInstance(nestedObjectReference);
+            var jsLocalObject = CreateInstance(nestedObjectReference, creationOptions);
             return jsLocalObject;
         }
     }

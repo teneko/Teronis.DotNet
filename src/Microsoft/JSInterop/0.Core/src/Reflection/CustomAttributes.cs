@@ -11,7 +11,13 @@ namespace Teronis.Microsoft.JSInterop.Reflection
 {
     public class CustomAttributes : ICustomAttributes
     {
-        public readonly static CustomAttributes Empty = new CustomAttributes(new EmptyCustomAttributes());
+        public readonly static CustomAttributes Empty = new CustomAttributes(EnumerableCustomAttributes.Empty);
+
+        public static CustomAttributes FromEnumerable(IEnumerable<Attribute> attributes) =>
+            new CustomAttributes(new EnumerableCustomAttributes(attributes));
+
+        public static CustomAttributes FromEnumerable(params Attribute[] attributes) =>
+            FromEnumerable((IEnumerable<Attribute>)attributes);
 
         public ILookup<Type, Attribute> Attributes =>
             customAttributes.Attributes;
@@ -22,7 +28,7 @@ namespace Teronis.Microsoft.JSInterop.Reflection
             this.customAttributes = customAttributes;
 
         public CustomAttributes(ICustomAttributeProvider customAttributeProvider) =>
-            customAttributes = new CustomProvidedAttributes(customAttributeProvider);
+            customAttributes = new CustomProvidingAttributes(customAttributeProvider);
 
         public bool IsAttributeDefined(Type attributeType) =>
             customAttributes.IsAttributeDefined(attributeType);
@@ -34,7 +40,7 @@ namespace Teronis.Microsoft.JSInterop.Reflection
             where T : Attribute =>
             customAttributes.TryGetAttribute(out attribute);
 
-        private class CustomProvidedAttributes : ICustomAttributes {
+        private class CustomProvidingAttributes : ICustomAttributes {
             public ILookup<Type, Attribute> Attributes {
                 get {
                     if (attributes is null) {
@@ -50,7 +56,7 @@ namespace Teronis.Microsoft.JSInterop.Reflection
             private ILookup<Type, Attribute>? attributes;
             private readonly ICustomAttributeProvider customAttributeProvider;
 
-            public CustomProvidedAttributes(ICustomAttributeProvider customAttributeProvider) =>
+            public CustomProvidingAttributes(ICustomAttributeProvider customAttributeProvider) =>
                 this.customAttributeProvider = customAttributeProvider ?? throw new ArgumentNullException(nameof(customAttributeProvider));
 
             protected IEnumerable<Attribute> GetAttributes() =>
@@ -82,11 +88,18 @@ namespace Teronis.Microsoft.JSInterop.Reflection
             }
         }
 
-        private class EmptyCustomAttributes : ICustomAttributes {
+        private class EnumerableCustomAttributes : ICustomAttributes {
+            public static EnumerableCustomAttributes Empty = new EnumerableCustomAttributes(Enumerable.Empty<Attribute>());
+
             public ILookup<Type, Attribute> Attributes { get; }
 
-            public EmptyCustomAttributes() =>
-                Attributes = Enumerable.Empty<Attribute>().ToLookup(x => default(Type)!);
+            public EnumerableCustomAttributes(IEnumerable<Attribute> attributes) {
+                if (attributes is null) {
+                    throw new ArgumentNullException(nameof(attributes));
+                }
+
+                Attributes = attributes.ToLookup(x => default(Type)!);
+            }
 
             public bool IsAttributeDefined(Type attributeType) =>
                 false;

@@ -3,28 +3,23 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using Teronis.Microsoft.JSInterop.Dynamic;
-using Teronis.Microsoft.JSInterop.Internals.Utils;
 
 namespace Teronis.Microsoft.JSInterop.Module
 {
-    public class JSDynamicModuleActivator : IJSDynamicModuleActivator
+    public class JSDynamicModuleActivator : DynamicFacadeActivator<IJSModuleActivator, IJSModule, DynamicModuleCreationOptions>, IJSDynamicModuleActivator
     {
-        private readonly IJSModuleActivator jsModuleActivator;
-        private readonly IJSDynamicProxyActivator jSDynamicProxyActivator;
+        public JSDynamicModuleActivator(
+            IJSModuleActivator jsModuleActivator,
+            IJSDynamicProxyActivator jsDynamicProxyActivator,
+            IOptions<JSModuleInterceptorBuilderOptions>? interceptorBuilderOptions) 
+        : base(jsModuleActivator, jsDynamicProxyActivator, interceptorBuilderOptions?.Value){ }
 
-        public JSDynamicModuleActivator(IJSModuleActivator jsModuleActivator, IJSDynamicProxyActivator jSDynamicProxyActivator)
-        {
-            this.jsModuleActivator = jsModuleActivator;
-            this.jSDynamicProxyActivator = jSDynamicProxyActivator;
-        }
-
-        public virtual async ValueTask<IJSModule> CreateInstanceAsync(Type interfaceToBeProxied, string moduleNameOrPath)
-        {
-            TypeUtils.EnsureInterfaceTypeIsAssignaleTo<IJSModule>(interfaceToBeProxied);
-            var jsModule = await jsModuleActivator.CreateInstanceAsync(moduleNameOrPath);
-            var jsDynamicModule = (IJSModule)jSDynamicProxyActivator.CreateInstance(interfaceToBeProxied, jsModule);
-            return jsDynamicModule;
-        }
+        public virtual ValueTask<IJSModule> CreateInstanceAsync(Type interfaceToBeProxied, string moduleNameOrPath, DynamicModuleCreationOptions? creationOptions = null) =>
+            CreateInstanceAsync(
+                interfaceToBeProxied,
+                activator => activator.CreateInstanceAsync(moduleNameOrPath),
+                creationOptions);
     }
 }

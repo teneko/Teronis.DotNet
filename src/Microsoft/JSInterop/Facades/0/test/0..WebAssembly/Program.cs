@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Teronis.Microsoft.JSInterop;
-using Teronis.Microsoft.JSInterop.Interceptors;
+using Teronis.Microsoft.JSInterop.Interception;
 using Teronis.Microsoft.JSInterop.Module;
 using Teronis_._Microsoft.JSInterop.Facades.JSModules;
 

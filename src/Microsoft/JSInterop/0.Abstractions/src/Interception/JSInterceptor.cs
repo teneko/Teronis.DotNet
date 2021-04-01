@@ -5,16 +5,16 @@ using System.Threading.Tasks;
 
 namespace Teronis.Microsoft.JSInterop.Interception
 {
-    public class JSObjectInterceptor : IJSObjectInterceptor
+    public class JSInterceptor : IJSInterceptor
     {
-        public static JSObjectInterceptor Default = new JSObjectInterceptor();
+        public static JSInterceptor Default = new JSInterceptor();
 
-        protected virtual IJSObjectInterceptor Interceptor { get; }
+        protected virtual IJSInterceptor Interceptor { get; }
 
-        public JSObjectInterceptor() =>
+        public JSInterceptor() =>
             Interceptor = new DefaultInterceptor();
 
-        public JSObjectInterceptor(IJSObjectInterceptor interceptor) =>
+        public JSInterceptor(IJSInterceptor interceptor) =>
             Interceptor = interceptor ?? throw new System.ArgumentNullException(nameof(interceptor));
 
         public virtual ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation) =>
@@ -23,7 +23,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
         public virtual ValueTask InterceptInvokeVoidAsync(IJSObjectInvocation invocation) =>
             Interceptor.InterceptInvokeVoidAsync(invocation);
 
-        private class DefaultInterceptor : IJSObjectInterceptor
+        private class DefaultInterceptor : IJSInterceptor
         {
             public virtual ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation) =>
             ValueTask.CompletedTask;

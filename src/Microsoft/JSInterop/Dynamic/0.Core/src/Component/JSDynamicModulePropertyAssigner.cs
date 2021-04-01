@@ -9,7 +9,7 @@ using Teronis.Microsoft.JSInterop.Reflection;
 
 namespace Teronis.Microsoft.JSInterop.Component
 {
-    public class JSDynamicModulePropertyAssigner : IPropertyAssigner, IJSDynamicModulePropertyAssigner
+    public class JSDynamicModulePropertyAssigner : IPropertyAssigner
     {
         private readonly IJSDynamicModuleActivator jsDynamicModuleActivator;
 

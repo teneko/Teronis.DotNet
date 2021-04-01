@@ -18,7 +18,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
 
         public JSInterceptorBuilderOptionsPostConfiguration(
             IServiceProvider serviceProvider,
-            IOptions<TDerivedAssignerOptions> propertyAssignerOptions, 
+            IOptions<TDerivedAssignerOptions> propertyAssignerOptions,
             IEnumerable<LateConfigureInterceptorBuilderDelegate<TDerivedBuilderOptions, TDerivedAssignerOptions>> postConfigureInterceptorBuilderCallbacks)
         {
             this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
@@ -28,13 +28,22 @@ namespace Teronis.Microsoft.JSInterop.Interception
 
         public void PostConfigure(string _, TDerivedBuilderOptions options)
         {
-            options.SetServiceProvider(serviceProvider);
+            var buildingInterceptorServiceProvider = new BuildingInterceptorSeviceProvider(
+                serviceProvider, 
+                new SlimLazy<IEnumerable<IPropertyAssigner>>(() => 
+                    propertyAssignerOptions.PropertyAssigners));
+
+            options.SetServiceProvider(buildingInterceptorServiceProvider);
 
             foreach (var postConfigureBuilderCallback in postConfigureInterceptorBuilderCallbacks) {
                 postConfigureBuilderCallback(options, propertyAssignerOptions);
             }
 
-            // TODO: Add default interceptors (property assigner -> interceptor conversion)
+            if (!options.TryCreateInterceptorBuilderUserUntouched()) {
+                return;
+            }
+
+            options.ConfigureInterceptorBuilder(builder => builder.AddDefaultNonDynamicInterceptors());
         }
     }
 }

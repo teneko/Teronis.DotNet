@@ -3,37 +3,34 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop.Dynamic;
-using Teronis.Microsoft.JSInterop.Internals.Utils;
 
 namespace Teronis.Microsoft.JSInterop.Locality
 {
-    public class JSDynamicLocalObjectActivator : IJSDynamicLocalObjectActivator
+    public class JSDynamicLocalObjectActivator : DynamicFacadeActivator<IJSLocalObjectActivator, IJSLocalObject, JSDynamicLocalObjectCreationOptions>, IJSDynamicLocalObjectActivator
     {
-        private readonly IJSLocalObjectActivator jsLocalObjectActivator;
-        private readonly IJSDynamicProxyActivator jSDynamicProxyActivator;
+        public JSDynamicLocalObjectActivator(
+            IJSLocalObjectActivator jsLocalObjectActivator,
+            IJSDynamicProxyActivator jSDynamicProxyActivator,
+            IOptions<JSLocalObjectInterceptorBuilderOptions>? interceptorBuilderOptions)
+            : base(jsLocalObjectActivator, jSDynamicProxyActivator, interceptorBuilderOptions?.Value) { }
 
-        public JSDynamicLocalObjectActivator(IJSLocalObjectActivator jsLocalObjectActivator, IJSDynamicProxyActivator jSDynamicProxyActivator)
-        {
-            this.jsLocalObjectActivator = jsLocalObjectActivator;
-            this.jSDynamicProxyActivator = jSDynamicProxyActivator;
-        }
+        public virtual ValueTask<IJSLocalObject> CreateInstanceAsync(Type interfaceToBeProxied, string objectName, JSDynamicLocalObjectCreationOptions? options =null) =>
+            CreateInstanceAsync(
+                interfaceToBeProxied, 
+                activator => activator.CreateInstanceAsync(objectName),
+                options);
 
-        public virtual async ValueTask<IJSLocalObject> CreateInstanceAsync(Type interfaceToBeProxied, string objectName)
-        {
-            TypeUtils.EnsureInterfaceTypeIsAssignaleTo<IJSLocalObject>(interfaceToBeProxied);
-            var jsLocalObject = await jsLocalObjectActivator.CreateInstanceAsync(objectName);
-            var jsDynamicLocalObject = (IJSLocalObject)jSDynamicProxyActivator.CreateInstance(interfaceToBeProxied, jsLocalObject);
-            return jsDynamicLocalObject;
-        }
-
-        public virtual async ValueTask<IJSLocalObject> CreateInstanceAsync(Type interfaceToBeProxied, IJSObjectReference jsObjectReference, string objectName)
-        {
-            TypeUtils.EnsureInterfaceTypeIsAssignaleTo<IJSLocalObject>(interfaceToBeProxied);
-            var jsLocalObject = await jsLocalObjectActivator.CreateInstanceAsync(jsObjectReference, objectName);
-            var jsDynamicLocalObject = (IJSLocalObject)jSDynamicProxyActivator.CreateInstance(interfaceToBeProxied, jsLocalObject);
-            return jsDynamicLocalObject;
-        }
+        public virtual ValueTask<IJSLocalObject> CreateInstanceAsync(
+            Type interfaceToBeProxied,
+            IJSObjectReference jsObjectReference,
+            string objectName,
+            JSDynamicLocalObjectCreationOptions? options = null) =>
+            CreateInstanceAsync(
+                interfaceToBeProxied,
+                activator => activator.CreateInstanceAsync(jsObjectReference, objectName),
+                options);
     }
 }

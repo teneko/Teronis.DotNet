@@ -5,12 +5,14 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop.Annotations;
-using Teronis.Microsoft.JSInterop.Interception;
 using Teronis.Microsoft.JSInterop.Locality;
 
-namespace Teronis.Microsoft.JSInterop.Interceptors
+namespace Teronis.Microsoft.JSInterop.Interception
 {
-    public class JSLocalObjectActivatingInterceptor : IJSObjectInterceptor
+    /// <summary>
+    /// The interceptor wraps 
+    /// </summary>
+    public class JSLocalObjectActivatingInterceptor : IJSInterceptor
     {
         private readonly IJSLocalObjectActivator jsLocalObjectActivator;
 
@@ -19,7 +21,7 @@ namespace Teronis.Microsoft.JSInterop.Interceptors
 
         public virtual async ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation)
         {
-            if (invocation.DefinitionAttributes.IsAttributeDefined(typeof(JSLocalObjectActivatingInterceptorAttribute))) {
+            if (invocation.DefinitionAttributes.IsAttributeDefined(typeof(ReturnsLocalObjectAttribute))) {
                 var result = await invocation.GetNonDeterminingResult<IJSObjectReference>();
                 var determinedResult = (ValueTask<TValue>)(object)jsLocalObjectActivator.CreateInstanceAsync(result, invocation.JavaScriptIdentifier);
                 invocation.SetDeterminedResult(determinedResult);

@@ -24,7 +24,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic.Reflection
             methodStaticContext = InvokeContext.CreateStatic(typeof(Method));
 
         private static async ValueTask<TValue> InterceptAndGetDeterminedValue<TValue>(
-            IJSObjectInterceptor jsObjectInterceptor,
+            IJSInterceptor jsInterceptor,
             IJSObjectReference jsObjectReference,
             string identifier,
             CancellationToken? cancellationToken,
@@ -40,7 +40,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic.Reflection
                 arguments,
                 methodAttributes);
 
-            await jsObjectInterceptor.InterceptInvokeAsync(invocation);
+            await jsInterceptor.InterceptInvokeAsync(invocation);
             return await invocation.GetDeterminedResult();
         }
 
@@ -88,7 +88,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic.Reflection
         }
 
         public object GetReturnValue(
-            IJSObjectInterceptor jsObjectInterceptor,
+            IJSInterceptor jsInterceptor,
             IJSObjectReference jsObjectReference,
             IReadOnlyList<Type>? genericTypeArguments,
             object?[] arguments,
@@ -131,7 +131,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic.Reflection
                     methodStaticContext,
                     new InvokeMemberName(nameof(InterceptAndGetDeterminedValue), new Type[] { valueTaskReturnType.GenericParameterType! }),
                     args: new object?[] {
-                        jsObjectInterceptor,
+                        jsInterceptor,
                         jsObjectReference,
                         javaScriptFunctionIdentifier,
                         javaScriptCancellationToken,
@@ -149,7 +149,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic.Reflection
                     memberInfoAttributes);
 
                 return new ValueTask(new Func<Task>(async () => {
-                    await jsObjectInterceptor.InterceptInvokeVoidAsync(jsObjectInvocation);
+                    await jsInterceptor.InterceptInvokeVoidAsync(jsObjectInvocation);
                     await jsObjectInvocation.GetDeterminedResult();
                 })());
             }

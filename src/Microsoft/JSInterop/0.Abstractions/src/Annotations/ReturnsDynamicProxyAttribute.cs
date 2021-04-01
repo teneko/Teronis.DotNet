@@ -13,6 +13,6 @@ namespace Teronis.Microsoft.JSInterop.Annotations
     /// <see cref="IJSObjectInvocationBase{ReturnType}.GetDeterminedResult()"/>.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
-    public class JSDynamicProxyActivatingInterceptorAttribute : Attribute
+    public class ReturnsDynamicProxyAttribute : Attribute
     { }
 }

@@ -26,7 +26,7 @@ namespace Teronis.Microsoft.JSInterop.Component
         /// Assigns component property with returning non-null JavaScript module facade.
         /// </summary>
         /// <returns>null/default or the JavaScript module facade.</returns>
-        public virtual ValueTask AssignPropertyAsync(IDefinition componentProperty, PropertyAssignerContext context)
+        public virtual ValueTask AssignPropertyAsync(IDefinition componentMember, PropertyAssignerContext context)
         {
             if (context.MemberResult.TryGetNull(out var disposable)) {
                 goto @return;
@@ -36,11 +36,11 @@ namespace Teronis.Microsoft.JSInterop.Component
                 goto @return;
             }
 
-            if (!componentProperty.IsAttributeDefined<AssignCustomFacadeAttribute>()) {
+            if (!componentMember.IsAttributeDefined<AssignCustomFacadeAttribute>()) {
                 goto @return;
             }
 
-            var customFacade = jsCustomFacadeActivator.CreateInstance(jsObjectReferenceFacade, componentProperty.MemberType);
+            var customFacade = jsCustomFacadeActivator.CreateInstance(jsObjectReferenceFacade, componentMember.MemberType);
             context.MemberResult = new YetNullable<IAsyncDisposable>(customFacade);
 
             @return:

@@ -7,7 +7,7 @@ using System.Collections;
 
 namespace Teronis.Microsoft.JSInterop.Collections
 {
-    public class TreeIteratorEnumerator<TEntry> : IEnumerator<TEntry>
+    public class TreeIteratorEnumerator<TEntry> : ITreeIteratorEnumerator<TEntry>
         where TEntry : class, ITreeIteratorEntry
     {
         public int CurrentIndex =>

@@ -11,9 +11,9 @@ namespace Teronis.Microsoft.JSInterop.Component
         /// <summary>
         /// Assigns the component property with returning non-null JavaScript facade.
         /// </summary>
-        /// <param name="componentProperty">The component property.</param>
+        /// <param name="componentMember">The component property.</param>
         /// <param name="context"></param>
         /// <returns>"Null"/default or the JavaScript facade.</returns>
-        ValueTask AssignPropertyAsync(IDefinition componentProperty, PropertyAssignerContext context);
+        ValueTask AssignPropertyAsync(IDefinition componentMember, PropertyAssignerContext context);
     }
 }

@@ -30,23 +30,23 @@ namespace Teronis.Microsoft.JSInterop.Annotations
         /// to be provided either from property attribute or
         /// module attribute.
         /// </summary>
-        /// <param name="componentProperty"></param>
+        /// <param name="componentMember"></param>
         /// <param name="moduleNameOrPath"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException">
         /// Thrown when JavaScrit module facade attribute is 
         /// given but module name or path could not been found.
         /// </exception>
-        public static bool TryGetModuleNameOrPath<TPropertyAttribute, TClassAttribute>(IDefinition componentProperty, [MaybeNullWhen(false)] out string moduleNameOrPath)
+        public static bool TryGetModuleNameOrPath<TPropertyAttribute, TClassAttribute>(IDefinition componentMember, [MaybeNullWhen(false)] out string moduleNameOrPath)
             where TPropertyAttribute : AssignModuleAttribute
             where TClassAttribute : JSModuleClassAttribute
         {
-            if (!componentProperty.TryGetAttribute<TPropertyAttribute>(out var propertyModuleAttribute)) {
+            if (!componentMember.TryGetAttribute<TPropertyAttribute>(out var propertyModuleAttribute)) {
                 moduleNameOrPath = null;
                 return false;
             }
 
-            moduleNameOrPath = GetModuleNameOrPath<TClassAttribute>(propertyModuleAttribute, componentProperty.DefinitionMemberType);
+            moduleNameOrPath = GetModuleNameOrPath<TClassAttribute>(propertyModuleAttribute, componentMember.DefinitionMemberType);
             return true;
         }
     }

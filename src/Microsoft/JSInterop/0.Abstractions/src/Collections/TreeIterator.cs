@@ -9,7 +9,7 @@ namespace Teronis.Microsoft.JSInterop.Collections
 {
     public abstract class TreeIterator<T, TEntry, TEnumerator> : ITreeIterator<TEntry>
         where TEntry : class, ITreeIteratorEntry
-        where TEnumerator : TreeIteratorEnumerator<TEntry>
+        where TEnumerator : class, ITreeIteratorEnumerator<TEntry>
     {
         public TEntry Entry =>
             Enumerator.Current ?? throw new InvalidOperationException("The entry is not available.");

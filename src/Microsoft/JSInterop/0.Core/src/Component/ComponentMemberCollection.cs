@@ -34,8 +34,8 @@ namespace Teronis.Microsoft.JSInterop.Component
 
         private void AddMember(MemberInfo memberInfo)
         {
-            var componentProperty = ComponentMember.Create(memberInfo);
-            componentProperties.Add(componentProperty);
+            var componentMember = ComponentMember.Create(memberInfo);
+            componentProperties.Add(componentMember);
         }
 
         private void CollectComponentProperties(Type componentType)

@@ -77,16 +77,16 @@ namespace Teronis.Microsoft.JSInterop.Component
             var serviceProvider = GetServiceProviderOrThrow();
 
             foreach (var typeAndFactory in Factories) {
-                var (componentPropertyAssignmentType, componentPropertyAssignmentFactory) = typeAndFactory;
-                IPropertyAssigner componentPropertyAssignment;
+                var (componentMemberAssignmentType, componentMemberAssignmentFactory) = typeAndFactory;
+                IPropertyAssigner componentMemberAssignment;
 
-                if (componentPropertyAssignmentFactory is null) {
-                    componentPropertyAssignment = (IPropertyAssigner)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, componentPropertyAssignmentType);
+                if (componentMemberAssignmentFactory is null) {
+                    componentMemberAssignment = (IPropertyAssigner)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, componentMemberAssignmentType);
                 } else {
-                    componentPropertyAssignment = componentPropertyAssignmentFactory.Invoke(serviceProvider);
+                    componentMemberAssignment = componentMemberAssignmentFactory.Invoke(serviceProvider);
                 }
 
-                propertyAssigners.Add(componentPropertyAssignment);
+                propertyAssigners.Add(componentMemberAssignment);
             }
 
             arePropertyAssignersCreated = true;

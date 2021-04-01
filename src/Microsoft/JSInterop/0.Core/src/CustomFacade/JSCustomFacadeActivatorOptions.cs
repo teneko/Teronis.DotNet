@@ -11,7 +11,6 @@ namespace Teronis.Microsoft.JSInterop.CustomFacade
         internal readonly JSCustomFacadeDictionaryBuilder JSFacadeDictionaryBuilder;
 
         public JSCustomFacadeActivatorOptions() =>
-            JSFacadeDictionaryBuilder = new JSCustomFacadeDictionaryBuilder()
-                .AddDefault();
+            JSFacadeDictionaryBuilder = new JSCustomFacadeDictionaryBuilder();
     }
 }

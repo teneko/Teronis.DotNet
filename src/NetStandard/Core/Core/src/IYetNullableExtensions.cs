@@ -17,5 +17,16 @@ namespace Teronis
             value = default;
             return false;
         }
+
+        public static bool TryGetNull<T>(this IYetNullable<T> nullable, [MaybeNullWhen(true)] out T value)
+        {
+            if (nullable.IsNull) {
+                value = default;
+                return true;
+            }
+
+            value = nullable.Value!;
+            return false;
+        }
     }
 }

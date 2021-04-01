@@ -35,12 +35,6 @@ namespace Teronis.Microsoft.JSInterop.CustomFacade
         public bool TryGetValue(Type key, [MaybeNullWhen(false)] out JSCustomFacadeFactoryDelegate<IAsyncDisposable>? value) =>
             facadeByTypeDictionary.TryGetValue(key, out value);
 
-        public JSCustomFacadeDictionaryBuilder AddDefault()
-        {
-            ((IJSCustomFacadeDictionaryBuilder)this).AddDefault();
-            return this;
-        }
-
         public JSCustomFacadeDictionaryBuilder Add(Type jsFacadeType, JSCustomFacadeFactoryDelegate<IAsyncDisposable>? jsFacadeCreatorDelegate = null)
         {
             facadeByTypeDictionary.Add(jsFacadeType, jsFacadeCreatorDelegate);

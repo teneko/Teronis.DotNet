@@ -9,8 +9,6 @@ namespace Teronis.Microsoft.JSInterop.Interception
 {
     public interface IJSObjectInvocationBase
     {
-        bool IsInterceptionStopped { get; }
-
         object?[] JavaScriptArguments { get; }
         CancellationToken? JavaScriptCancellationToken { get; }
         string JavaScriptIdentifier { get; }
@@ -32,6 +30,5 @@ namespace Teronis.Microsoft.JSInterop.Interception
         IJSObjectReference JSObjectReferencePassed { get; }
 
         object GetDeterminedResult();
-        void StopInterception();
     }
 }

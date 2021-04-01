@@ -6,7 +6,7 @@ using Teronis.Microsoft.JSInterop.Reflection;
 
 namespace Teronis.Microsoft.JSInterop.Component
 {
-    public abstract class ComponentMemberBase : ManagedDefinitionBase, IComponentProperty
+    public abstract class ComponentMemberBase : ManagedDefinitionBase, IComponentMember
     {
         public ComponentMemberBase(ICustomAttributeProvider customAttributeProvider)
             : base(customAttributeProvider) { }

@@ -11,61 +11,61 @@ namespace Teronis.Microsoft.JSInterop.Interception
 {
     public static class IJSInterceptorExtensions
     {
-        public static ValueTask<TValue> InvokeAsync<TValue>(this IJSInterceptor jsInterceptor, IJSObjectReference jsObjectReference, string identifier, object?[] arguments, ICustomAttributes? customAttributes)
+        public static async ValueTask<TValue> InvokeAsync<TValue>(this IJSInterceptor jsInterceptor, IJSObjectReference jsObjectReference, string identifier, object?[] arguments, ICustomAttributes? customAttributes)
         {
             var invocation = new JSObjectInvocation<TValue>(jsObjectReference, identifier, cancellationToken: null, timeout: null, arguments, customAttributes);
-            jsInterceptor.InterceptInvokeAsync(invocation);
-            return invocation.GetDeterminedResult();
+            await jsInterceptor.InterceptInvokeAsync(invocation);
+            return await invocation.GetDeterminedResult();
         }
 
         public static ValueTask<TValue> InvokeAsync<TValue>(this IJSInterceptor jsInterceptor, IJSObjectReference jsObjectReference, string identifier, params object?[] arguments) =>
             InvokeAsync<TValue>(jsInterceptor, jsObjectReference, identifier, arguments, customAttributes: null);
 
-        public static ValueTask<TValue> InvokeAsync<TValue>(this IJSInterceptor jsInterceptor, IJSObjectReference jsObjectReference, string identifier, CancellationToken cancellationToken, object?[] arguments, ICustomAttributes? customAttributes)
+        public static async ValueTask<TValue> InvokeAsync<TValue>(this IJSInterceptor jsInterceptor, IJSObjectReference jsObjectReference, string identifier, CancellationToken cancellationToken, object?[] arguments, ICustomAttributes? customAttributes)
         {
             var invocation = new JSObjectInvocation<TValue>(jsObjectReference, identifier, cancellationToken: cancellationToken, timeout: null, arguments, customAttributes);
-            jsInterceptor.InterceptInvokeAsync(invocation);
-            return invocation.GetDeterminedResult();
+            await jsInterceptor.InterceptInvokeAsync(invocation);
+            return await invocation.GetDeterminedResult();
         }
 
         public static ValueTask<TValue> InvokeAsync<TValue>(this IJSInterceptor jsInterceptor, IJSObjectReference jsObjectReference, string identifier, CancellationToken cancellationToken, params object?[] arguments) =>
             InvokeAsync<TValue>(jsInterceptor, jsObjectReference, identifier, cancellationToken, arguments, customAttributes: null);
 
-        public static ValueTask<TValue> InvokeAsync<TValue>(this IJSInterceptor jsInterceptor, IJSObjectReference jsObjectReference, string identifier, TimeSpan timeout, object?[] arguments, ICustomAttributes? customAttributes)
+        public static async ValueTask<TValue> InvokeAsync<TValue>(this IJSInterceptor jsInterceptor, IJSObjectReference jsObjectReference, string identifier, TimeSpan timeout, object?[] arguments, ICustomAttributes? customAttributes)
         {
             var invocation = new JSObjectInvocation<TValue>(jsObjectReference, identifier, cancellationToken: null, timeout: timeout, arguments, customAttributes);
-            jsInterceptor.InterceptInvokeAsync(invocation);
-            return invocation.GetDeterminedResult();
+            await jsInterceptor.InterceptInvokeAsync(invocation);
+            return await invocation.GetDeterminedResult();
         }
 
         public static ValueTask<TValue> InvokeAsync<TValue>(this IJSInterceptor jsInterceptor, IJSObjectReference jsObjectReference, string identifier, TimeSpan timeout, params object?[] arguments) =>
             InvokeAsync<TValue>(jsInterceptor, jsObjectReference, identifier, timeout, arguments, customAttributes: null);
 
-        public static ValueTask InvokeVoidAsync(this IJSInterceptor jsInterceptor, IJSObjectReference jsObjectReference, string identifier, object?[] arguments, ICustomAttributes? customAttributes)
+        public static async ValueTask InvokeVoidAsync(this IJSInterceptor jsInterceptor, IJSObjectReference jsObjectReference, string identifier, object?[] arguments, ICustomAttributes? customAttributes)
         {
             var invocation = new JSObjectInvocation(jsObjectReference, identifier, cancellationToken: null, timeout: null, arguments, customAttributes);
-            jsInterceptor.InterceptInvokeVoidAsync(invocation);
-            return invocation.GetDeterminedResult();
+            await jsInterceptor.InterceptInvokeVoidAsync(invocation);
+            await invocation.GetDeterminedResult();
         }
 
         public static ValueTask InvokeVoidAsync(this IJSInterceptor jsInterceptor, IJSObjectReference jsObjectReference, string identifier, params object?[] arguments) =>
             InvokeVoidAsync(jsInterceptor, jsObjectReference, identifier, arguments, customAttributes: null);
 
-        public static ValueTask InvokeVoidAsync(this IJSInterceptor jsInterceptor, IJSObjectReference jsObjectReference, string identifier, CancellationToken cancellationToken, object?[] arguments, ICustomAttributes? customAttributes)
+        public static async ValueTask InvokeVoidAsync(this IJSInterceptor jsInterceptor, IJSObjectReference jsObjectReference, string identifier, CancellationToken cancellationToken, object?[] arguments, ICustomAttributes? customAttributes)
         {
             var invocation = new JSObjectInvocation(jsObjectReference, identifier, cancellationToken: cancellationToken, timeout: null, arguments, customAttributes);
-            jsInterceptor.InterceptInvokeVoidAsync(invocation);
-            return invocation.GetDeterminedResult();
+            await jsInterceptor.InterceptInvokeVoidAsync(invocation);
+            await invocation.GetDeterminedResult();
         }
 
         public static ValueTask InvokeVoidAsync(this IJSInterceptor jsInterceptor, IJSObjectReference jsObjectReference, string identifier, CancellationToken cancellationToken, params object?[] arguments) =>
             InvokeVoidAsync(jsInterceptor, jsObjectReference, identifier, cancellationToken, arguments, customAttributes: null);
 
-        public static ValueTask InvokeVoidAsync(this IJSInterceptor jsInterceptor, IJSObjectReference jsObjectReference, string identifier, TimeSpan timeout, object?[] arguments, ICustomAttributes? customAttributes)
+        public static async ValueTask InvokeVoidAsync(this IJSInterceptor jsInterceptor, IJSObjectReference jsObjectReference, string identifier, TimeSpan timeout, object?[] arguments, ICustomAttributes? customAttributes)
         {
             var invocation = new JSObjectInvocation(jsObjectReference, identifier, cancellationToken: null, timeout: timeout, arguments, customAttributes);
-            jsInterceptor.InterceptInvokeVoidAsync(invocation);
-            return invocation.GetDeterminedResult();
+            await jsInterceptor.InterceptInvokeVoidAsync(invocation);
+            await invocation.GetDeterminedResult();
         }
 
         public static ValueTask InvokeVoidAsync(this IJSInterceptor jsInterceptor, IJSObjectReference jsObjectReference, string identifier, TimeSpan timeout, params object?[] arguments) =>

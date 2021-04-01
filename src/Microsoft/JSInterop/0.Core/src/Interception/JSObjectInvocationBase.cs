@@ -11,8 +11,6 @@ namespace Teronis.Microsoft.JSInterop.Interception
     public abstract class JSObjectInvocationBase<ReturnType> : IJSObjectInvocationBase<ReturnType>
         where ReturnType : struct
     {
-        public bool IsInterceptionStopped { get; private set; }
-
         public bool HasDeterminedResult =>
             AlternativeResult.HasValue;
 
@@ -95,9 +93,6 @@ namespace Teronis.Microsoft.JSInterop.Interception
 
         public void SetDeterminedResult(ReturnType value) =>
             AlternativeResult = value;
-
-        public void StopInterception() =>
-            IsInterceptionStopped = true;
 
         object IJSObjectInvocationBase.GetDeterminedResult() =>
              GetDeterminedResult();

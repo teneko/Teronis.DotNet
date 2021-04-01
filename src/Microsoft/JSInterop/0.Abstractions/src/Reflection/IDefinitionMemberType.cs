@@ -5,6 +5,10 @@ using System;
 
 namespace Teronis.Microsoft.JSInterop.Reflection
 {
+    /// <summary>
+    /// May represents the field type of field-info,
+    /// property type of property-info or return type of method-info.
+    /// </summary>
     public interface IDefinitionMemberType : ICustomAttributes
     {
         Type MemberType { get; }

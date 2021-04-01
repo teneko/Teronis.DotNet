@@ -5,6 +5,9 @@ namespace Teronis.Microsoft.JSInterop.Component
 {
     public static class PropertyAssignerFactoriesExtensions
     {
+        public static void Add<TPropertyAssigner>(this PropertyAssignerFactories factories) =>
+            factories.Add(typeof(TPropertyAssigner));
+
         /// <summary>
         /// Adds the default property assigners that resides in this namespace.
         /// </summary>
@@ -12,7 +15,8 @@ namespace Teronis.Microsoft.JSInterop.Component
         /// <returns></returns>
         public static PropertyAssignerFactories AddDefaultPropertyAssigners(this PropertyAssignerFactories propertyAssignerFactories)
         {
-            propertyAssignerFactories.Add(typeof(JSModuleMemberAssigner), value: null);
+            propertyAssignerFactories.Add<JSModuleMemberAssigner>();
+            propertyAssignerFactories.Add<JSCustomFacadeAssigner>();
             return propertyAssignerFactories;
         }
     }

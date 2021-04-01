@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using Teronis.Microsoft.JSInterop.Collections;
 using Teronis.Microsoft.JSInterop.Component;
 
 namespace Teronis.Microsoft.JSInterop.Facade
@@ -42,15 +43,22 @@ namespace Teronis.Microsoft.JSInterop.Facade
 
             var jsFacadesDisposables = new List<IAsyncDisposable>();
 
-            foreach (var componentProperty in ComponentMemberCollection.Create(component.GetType())) {
-                foreach (var componentPropertyAssigner in propertyAssignerOptions.PropertyAssigners) {
-                    if (!(await componentPropertyAssigner.TryAssignProperty(componentProperty)).TryGetNotNull(out var jsFacade)) {
-                        continue;
-                    }
+            foreach (var componentMember in ComponentMemberCollection.Create(component.GetType())) {
+                var context = new PropertyAssignerContext(propertyAssignerOptions.PropertyAssigners);
 
-                    componentProperty.SetValue(component, jsFacade);
-                    jsFacadesDisposables.Add(jsFacade);
+                await TreeIteratorExecutor<PropertyAssignerContext.PropertyAssignerEntry>.Default.ExecuteIteratorAsync(
+                    context,
+                    handler: entry => entry.Item.AssignPropertyAsync(componentMember, context));
+
+                var nullableMemberResult = context.MemberResult;
+
+                if (nullableMemberResult.IsNull) {
+                    continue;
                 }
+
+                var memberResult = nullableMemberResult.Value!;
+                componentMember.SetValue(component, memberResult);
+                jsFacadesDisposables.Add(memberResult);
             }
 
             var jsFacadeHub = CreateFacades<TJSFacadeActivators>();

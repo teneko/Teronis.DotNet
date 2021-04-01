@@ -7,7 +7,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
 {
     public interface IJSInterceptor
     {
-        ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation);
-        ValueTask InterceptInvokeVoidAsync(IJSObjectInvocation invocation);
+        ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation, InterceptionContext context);
+        ValueTask InterceptInvokeVoidAsync(IJSObjectInvocation invocation, InterceptionContext context);
     }
 }

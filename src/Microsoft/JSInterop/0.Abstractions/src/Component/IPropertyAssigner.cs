@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Teroneko.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
 using System.Threading.Tasks;
 using Teronis.Microsoft.JSInterop.Reflection;
 
@@ -13,7 +12,8 @@ namespace Teronis.Microsoft.JSInterop.Component
         /// Assigns the component property with returning non-null JavaScript facade.
         /// </summary>
         /// <param name="componentProperty">The component property.</param>
+        /// <param name="context"></param>
         /// <returns>"Null"/default or the JavaScript facade.</returns>
-        ValueTask<YetNullable<IAsyncDisposable>> TryAssignProperty(IDefinition componentProperty);
+        ValueTask AssignPropertyAsync(IDefinition componentProperty, PropertyAssignerContext context);
     }
 }

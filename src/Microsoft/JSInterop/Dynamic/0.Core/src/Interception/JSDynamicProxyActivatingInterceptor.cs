@@ -16,7 +16,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
         public JSDynamicProxyActivatingInterceptor(IJSDynamicProxyActivator jsDynamicProxyActivator) =>
             this.jsDynamicProxyActivator = jsDynamicProxyActivator ?? throw new ArgumentNullException(nameof(jsDynamicProxyActivator));
 
-        public virtual async ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation)
+        public virtual async ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation, InterceptionContext context)
         {
             if (invocation.DefinitionAttributes.IsAttributeDefined(typeof(ReturnDynamicProxyAttribute))) {
                 var result = await invocation.GetNonDeterminingResult<IJSObjectReference>();
@@ -25,7 +25,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
             }
         }
 
-        public virtual ValueTask InterceptInvokeVoidAsync(IJSObjectInvocation invocation) =>
+        public virtual ValueTask InterceptInvokeVoidAsync(IJSObjectInvocation invocation, InterceptionContext context) =>
             ValueTask.CompletedTask;
     }
 }

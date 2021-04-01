@@ -17,18 +17,18 @@ namespace Teronis.Microsoft.JSInterop.Interception
         public JSInterceptor(IJSInterceptor interceptor) =>
             Interceptor = interceptor ?? throw new System.ArgumentNullException(nameof(interceptor));
 
-        public virtual ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation) =>
-            Interceptor.InterceptInvokeAsync(invocation);
+        public virtual ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation, InterceptionContext context) =>
+            Interceptor.InterceptInvokeAsync(invocation, context);
 
-        public virtual ValueTask InterceptInvokeVoidAsync(IJSObjectInvocation invocation) =>
-            Interceptor.InterceptInvokeVoidAsync(invocation);
+        public virtual ValueTask InterceptInvokeVoidAsync(IJSObjectInvocation invocation, InterceptionContext context) =>
+            Interceptor.InterceptInvokeVoidAsync(invocation, context);
 
         private class DefaultInterceptor : IJSInterceptor
         {
-            public virtual ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation) =>
-            ValueTask.CompletedTask;
+            public virtual ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation, InterceptionContext context) =>
+                ValueTask.CompletedTask;
 
-            public ValueTask InterceptInvokeVoidAsync(IJSObjectInvocation invocation) =>
+            public ValueTask InterceptInvokeVoidAsync(IJSObjectInvocation invocation, InterceptionContext context) =>
                 ValueTask.CompletedTask;
         }
     }

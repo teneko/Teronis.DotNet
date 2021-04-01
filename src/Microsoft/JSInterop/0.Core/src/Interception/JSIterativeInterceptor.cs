@@ -3,6 +3,8 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Teronis.Microsoft.JSInterop.Collections;
+using static Teronis.Microsoft.JSInterop.Interception.InterceptionContext;
 
 namespace Teronis.Microsoft.JSInterop.Interception
 {
@@ -13,28 +15,22 @@ namespace Teronis.Microsoft.JSInterop.Interception
         public JSIterativeInterceptor(IReadOnlyList<IJSInterceptor> interceptors) =>
             Interceptors = interceptors;
 
-        public async ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation)
+        public async ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation, InterceptionContext context)
         {
-            foreach (var interception in Interceptors) {
-                await interception.InterceptInvokeAsync(invocation);
+            var subContext = new InterceptionContext(Interceptors);
 
-                if (invocation.IsInterceptionStopped) {
-                    return;
-                }
-            }
+            await TreeIteratorExecutor<InterceptionEntry>.Default.ExecuteIteratorAsync(
+                subContext,
+                handler: entry => entry.Item.InterceptInvokeAsync(invocation));
         }
 
-        public async ValueTask InterceptInvokeVoidAsync(IJSObjectInvocation invocation)
+        public async ValueTask InterceptInvokeVoidAsync(IJSObjectInvocation invocation, InterceptionContext context)
         {
-            foreach (var interception in Interceptors) {
-                await interception.InterceptInvokeVoidAsync(invocation);
+            var subContext = new InterceptionContext(Interceptors);
 
-                if (invocation.IsInterceptionStopped) {
-                    return;
-                }
-            }
-
-            return;
+            await TreeIteratorExecutor<InterceptionEntry>.Default.ExecuteIteratorAsync(
+                subContext,
+                handler: entry => entry.Item.InterceptInvokeVoidAsync(invocation));
         }
     }
 }

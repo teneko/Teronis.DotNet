@@ -20,16 +20,16 @@ namespace Teronis.Microsoft.JSInterop.Component
         /// Assigns component property with returning non-null JavaScript module facade.
         /// </summary>
         /// <returns>null/default or the JavaScript module facade.</returns>
-        public virtual async ValueTask<YetNullable<IAsyncDisposable>> TryAssignProperty(IDefinition definition)
+        public virtual async ValueTask AssignPropertyAsync(IDefinition definition, PropertyAssignerContext context)
         {
             if (!JSModuleAttributeUtils.TryGetModuleNameOrPath<ReturnDynamicModuleAttribute, JSDynamicModuleClassAttribute>(
                 definition,
                 out var moduleNameOrPath)) {
-                return default;
+                return;
             }
 
             var jsFacade = (IAsyncDisposable)await jsDynamicModuleActivator.CreateInstanceAsync(definition.MemberType, moduleNameOrPath);
-            return new YetNullable<IAsyncDisposable>(jsFacade);
+            context.MemberResult = new YetNullable<IAsyncDisposable>(jsFacade);
         }
     }
 }

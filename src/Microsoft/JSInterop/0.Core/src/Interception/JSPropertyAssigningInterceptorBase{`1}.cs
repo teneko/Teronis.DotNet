@@ -14,9 +14,12 @@ namespace Teronis.Microsoft.JSInterop.Interception
         public JSPropertyAssigningInterceptorBase(TPropertyAssigner propertyAssigner) =>
             this.propertyAssigner = propertyAssigner ?? throw new System.ArgumentNullException(nameof(propertyAssigner));
 
-        public override async ValueTask InterceptInvokeAsync<TTaskArgument>(IJSObjectInvocation<TTaskArgument> invocation)
+        public override async ValueTask InterceptInvokeAsync<TTaskArgument>(IJSObjectInvocation<TTaskArgument> invocation, InterceptionContext context)
         {
-            if (!(await propertyAssigner.TryAssignProperty(invocation.Definition)).TryGetNotNull(out var instance)) {
+            var propertyAssignerContext = new PropertyAssignerContext(propertyAssigner);
+            await propertyAssigner.AssignPropertyAsync(invocation.Definition, propertyAssignerContext);
+
+            if (propertyAssignerContext.MemberResult.TryGetNull(out var instance)) {
                 return;
             }
 

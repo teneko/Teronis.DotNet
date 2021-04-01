@@ -21,7 +21,8 @@ namespace Teronis_._Microsoft.JSInterop.Facades
         public JSFacadesManualConstrcutedModuleTests(IJSFacadeHubActivator jsFacadesActivator) =>
             this.jsFacadesActivator = jsFacadesActivator ?? throw new ArgumentNullException(nameof(jsFacadesActivator));
 
-        [JSModuleProperty] ModuleActivationViaManualConstruction Module { get; set; } = null!;
+        [AssignModule, AssignCustomFacade]
+        ModuleActivationViaManualConstruction Module { get; set; } = null!;
 
         public TaskTestCase Should_resolve_module_via_manual_construction = AddTest(async (_) => {
             var jsFacadeHub = await Instance.jsFacadesActivator.CreateInstanceAsync<JSFacadeActivators>(Instance);

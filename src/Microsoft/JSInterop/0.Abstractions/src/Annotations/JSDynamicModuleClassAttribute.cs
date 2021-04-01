@@ -10,7 +10,7 @@ namespace Teronis.Microsoft.JSInterop.Annotations
     /// <see cref="JSModuleAttributeBase.ModuleNameOrPath"/>
     /// to those properties with facade attribute that are using
     /// parameterless constructor but not
-    /// <see cref="JSDynamicModulePropertyAttribute(string)"/>.
+    /// <see cref="ReturnDynamicModuleAttribute(string)"/>.
     /// </summary>
     [AttributeUsage(AttributeTargets.Interface, Inherited = true)]
     public class JSDynamicModuleClassAttribute : JSModuleClassAttribute

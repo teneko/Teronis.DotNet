@@ -5,6 +5,6 @@ using Teronis.Microsoft.JSInterop.Component;
 
 namespace Teronis.Microsoft.JSInterop.CustomFacade
 {
-    public class JSCustomFacadePropertyAssignerOptions : PropertyAssignerOptions<JSCustomFacadePropertyAssignerOptions>
+    public class JSCustomFacadeActivatorPropertyAssignerOptions : PropertyAssignerOptions<JSCustomFacadeActivatorPropertyAssignerOptions>
     { }
 }

@@ -12,7 +12,7 @@ namespace Teronis.Microsoft.JSInterop.Component
         /// <returns></returns>
         public static PropertyAssignerFactories AddDefaultPropertyAssigners(this PropertyAssignerFactories propertyAssignerFactories)
         {
-            propertyAssignerFactories.Add(typeof(JSModulePropertyAssigner), value: null);
+            propertyAssignerFactories.Add(typeof(JSModuleMemberAssigner), value: null);
             return propertyAssignerFactories;
         }
     }

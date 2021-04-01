@@ -22,7 +22,7 @@ namespace Teronis.Microsoft.JSInterop.Component
         /// <returns>null/default or the JavaScript module facade.</returns>
         public virtual async ValueTask<YetNullable<IAsyncDisposable>> TryAssignProperty(IDefinition definition)
         {
-            if (!JSModuleAttributeUtils.TryGetModuleNameOrPath<JSDynamicModulePropertyAttribute, JSDynamicModuleClassAttribute>(
+            if (!JSModuleAttributeUtils.TryGetModuleNameOrPath<ReturnDynamicModuleAttribute, JSDynamicModuleClassAttribute>(
                 definition,
                 out var moduleNameOrPath)) {
                 return default;

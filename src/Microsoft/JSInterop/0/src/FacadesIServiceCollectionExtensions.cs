@@ -6,13 +6,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Teronis.Microsoft.JSInterop.Component;
+using Teronis.Microsoft.JSInterop.Facade;
 
-namespace Teronis.Microsoft.JSInterop.Facade
+namespace Teronis.Microsoft.JSInterop
 {
     public static class FacadesIServiceCollectionExtensions
     {
         public static IServiceCollection AddJSFacadeHubActivator(
-            this IServiceCollection services, 
+            this IServiceCollection services,
             Action<JSFacadeHubActivatorOptions>? configureOptions = null,
              Action<JSFacadeHubActivatorPropertyAssignerOptions>? configurePropertyAssigner = null)
         {

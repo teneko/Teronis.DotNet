@@ -3,12 +3,12 @@
 
 namespace Teronis.Microsoft.JSInterop.Annotations
 {
-    public class JSDynamicModulePropertyAttribute : JSModulePropertyAttribute
+    public class ReturnDynamicModuleAttribute : AssignModuleAttribute
     {
-        public JSDynamicModulePropertyAttribute(string moduleNameOrPath)
+        public ReturnDynamicModuleAttribute(string moduleNameOrPath)
             : base(moduleNameOrPath) { }
 
-        public JSDynamicModulePropertyAttribute()
+        public ReturnDynamicModuleAttribute()
         { }
     }
 }

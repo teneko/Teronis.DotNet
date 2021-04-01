@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Teronis.Microsoft.JSInterop.Component
 {
-    internal class ComponentPropertyCollectionDefaults
+    internal class ComponentMemberCollectionDefaults
     {
         public const BindingFlags COMPONENT_PROPERTY_BINDING_FLAGS = BindingFlags.Instance
             | BindingFlags.Public

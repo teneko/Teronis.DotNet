@@ -10,12 +10,12 @@ using Teronis.Microsoft.JSInterop.Reflection;
 
 namespace Teronis.Microsoft.JSInterop.Component
 {
-    public class JSModulePropertyAssigner : IPropertyAssigner
+    public class JSModuleMemberAssigner : IPropertyAssigner
     {
         private readonly IJSModuleActivator jsModuleActivator;
         private readonly IJSCustomFacadeActivator jsCustomFacadeActivator;
 
-        public JSModulePropertyAssigner(
+        public JSModuleMemberAssigner(
             IJSModuleActivator jsModuleActivator,
             IJSCustomFacadeActivator jsCustomFacadeActivator)
         {
@@ -29,13 +29,20 @@ namespace Teronis.Microsoft.JSInterop.Component
         /// <returns>null/default or the JavaScript module facade.</returns>
         public virtual async ValueTask<YetNullable<IAsyncDisposable>> TryAssignProperty(IDefinition componentProperty)
         {
-            if (!JSModuleAttributeUtils.TryGetModuleNameOrPath<JSModulePropertyAttribute, JSModuleClassAttribute>(componentProperty, out var moduleNameOrPath)) {
+            if (!JSModuleAttributeUtils.TryGetModuleNameOrPath<AssignModuleAttribute, JSModuleClassAttribute>(componentProperty, out var moduleNameOrPath)) {
                 return default;
             }
 
             var jsModule = await jsModuleActivator.CreateInstanceAsync(moduleNameOrPath);
-            var jsFacade = jsCustomFacadeActivator.CreateInstance(jsModule, componentProperty.MemberType);
-            return new YetNullable<IAsyncDisposable>(jsFacade);
+            IAsyncDisposable disposable;
+
+            if (componentProperty.IsAttributeDefined<AssignCustomFacadeAttribute>()) {
+                disposable = jsCustomFacadeActivator.CreateInstance(jsModule, componentProperty.MemberType);
+            } else {
+                disposable = jsModule;
+            }
+
+            return new YetNullable<IAsyncDisposable>(disposable);
         }
     }
 }

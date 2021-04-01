@@ -8,15 +8,15 @@ using System.Reflection;
 
 namespace Teronis.Microsoft.JSInterop.Component
 {
-    internal sealed class ComponentPropertyCollection : IReadOnlyList<ComponentProperty>
+    internal sealed class ComponentMemberCollection : IReadOnlyList<ComponentMember>
     {
-        public static ComponentPropertyCollection Create(Type componentType)
+        public static ComponentMemberCollection Create(Type componentType)
         {
             if (componentType is null) {
                 throw new ArgumentNullException(nameof(componentType));
             }
 
-            var collection = new ComponentPropertyCollection();
+            var collection = new ComponentMemberCollection();
             collection.CollectComponentProperties(componentType);
             return collection;
         }
@@ -24,28 +24,28 @@ namespace Teronis.Microsoft.JSInterop.Component
         public int Count =>
             componentProperties.Count;
 
-        private List<ComponentProperty> componentProperties;
+        private List<ComponentMember> componentProperties;
 
-        public ComponentPropertyCollection() =>
-            componentProperties = new List<ComponentProperty>();
+        public ComponentMemberCollection() =>
+            componentProperties = new List<ComponentMember>();
 
-        public ComponentProperty this[int index] =>
+        public ComponentMember this[int index] =>
             componentProperties[index];
 
-        private void AddProperty(PropertyInfo propertyInfo)
+        private void AddMember(MemberInfo memberInfo)
         {
-            var componentProperty = new ComponentProperty(propertyInfo);
+            var componentProperty = ComponentMember.Create(memberInfo);
             componentProperties.Add(componentProperty);
         }
 
         private void CollectComponentProperties(Type componentType)
         {
-            foreach (var propertyInfo in ComponentPropertyCollectionUtils.GetComponentProperties(componentType)) {
-                AddProperty(propertyInfo);
+            foreach (var memberInfo in ComponentMemberCollectionUtils.GetComponentMembers(componentType)) {
+                AddMember(memberInfo);
             }
         }
 
-        public IEnumerator<ComponentProperty> GetEnumerator() =>
+        public IEnumerator<ComponentMember> GetEnumerator() =>
             componentProperties.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() =>

@@ -9,7 +9,7 @@ namespace Teronis_._Microsoft.JSInterop.Facades.JSDynamicObjects
 {
     public interface IMomentDynamicModule : IJSModule
     {
-        [ReturnsDynamicProxy]
+        [ReturnDynamicProxy]
         ValueTask<IMomentDynamicObject> moment(string date);
     }
 }

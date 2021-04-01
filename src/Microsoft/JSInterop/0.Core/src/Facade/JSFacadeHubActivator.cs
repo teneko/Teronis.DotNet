@@ -42,14 +42,14 @@ namespace Teronis.Microsoft.JSInterop.Facade
 
             var jsFacadesDisposables = new List<IAsyncDisposable>();
 
-            foreach (var componentProperty in ComponentPropertyCollection.Create(component.GetType())) {
+            foreach (var componentProperty in ComponentMemberCollection.Create(component.GetType())) {
                 foreach (var componentPropertyAssigner in propertyAssignerOptions.PropertyAssigners) {
                     if (!(await componentPropertyAssigner.TryAssignProperty(componentProperty)).TryGetNotNull(out var jsFacade)) {
                         continue;
                     }
 
+                    componentProperty.SetValue(component, jsFacade);
                     jsFacadesDisposables.Add(jsFacade);
-                    componentProperty.PropertyInfo.SetValue(component, jsFacade);
                 }
             }
 

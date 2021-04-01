@@ -21,7 +21,8 @@ namespace Teronis_._Microsoft.JSInterop.Facades
         public JSFacadesDependencyInjectedModuleTests(IJSFacadeHubActivator jsFacadesActivator) =>
             this.jsFacadesActivator = jsFacadesActivator ?? throw new ArgumentNullException(nameof(jsFacadesActivator));
 
-        [JSModuleProperty] ModuleActivationViaDependencyInjection Module { get; set; } = null!;
+        [AssignModule, AssignCustomFacade]
+        ModuleActivationViaDependencyInjection Module { get; set; } = null!;
 
         public TaskTestCase Should_resolve_module_via_dependency_injection = AddTest(async (_) => {
             var jsFacadeHub = await Instance.jsFacadesActivator.CreateInstanceAsync<JSFacadeActivators>(Instance);

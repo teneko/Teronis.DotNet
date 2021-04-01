@@ -35,7 +35,7 @@ namespace Teronis.Microsoft.JSInterop.CustomFacade
                 throw new NotSupportedException($"Type {jsCustomFacadeType} is not supported.");
             }
 
-            var jsCustomFacadeFactoryServiceProvider = new JSCustomFacadeFactoryServiceProvider(serviceProvider, customFacadeConstructorParameter);
+            var jsCustomFacadeFactoryServiceProvider = new JSObjectReferenceFacadeOrServiceProvider(serviceProvider, customFacadeConstructorParameter);
 
             if (!(jsFacadeCreatorHandler is null)) {
                 return jsFacadeCreatorHandler.Invoke(jsCustomFacadeFactoryServiceProvider);

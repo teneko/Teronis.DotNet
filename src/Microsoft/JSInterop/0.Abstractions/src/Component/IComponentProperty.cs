@@ -8,6 +8,8 @@ namespace Teronis.Microsoft.JSInterop.Component
 {
     public interface IComponentProperty : IDefinition
     {
-        PropertyInfo PropertyInfo { get; }
+        MemberInfo MemberInfo { get; }
+
+        public void SetValue(object? owner, object? value);
     }
 }

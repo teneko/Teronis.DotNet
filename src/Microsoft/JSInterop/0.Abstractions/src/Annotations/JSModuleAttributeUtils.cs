@@ -9,7 +9,7 @@ namespace Teronis.Microsoft.JSInterop.Annotations
 {
     public static class JSModuleAttributeUtils
     {
-        public static string GetModuleNameOrPath<TClassAttribute>(JSModulePropertyAttribute propertyAttribute, ICustomAttributes propertyTypeAttributes)
+        public static string GetModuleNameOrPath<TClassAttribute>(AssignModuleAttribute propertyAttribute, ICustomAttributes propertyTypeAttributes)
             where TClassAttribute : JSModuleClassAttribute
         {
             if (propertyAttribute.ModuleNameOrPath == null) {
@@ -38,7 +38,7 @@ namespace Teronis.Microsoft.JSInterop.Annotations
         /// given but module name or path could not been found.
         /// </exception>
         public static bool TryGetModuleNameOrPath<TPropertyAttribute, TClassAttribute>(IDefinition componentProperty, [MaybeNullWhen(false)] out string moduleNameOrPath)
-            where TPropertyAttribute : JSModulePropertyAttribute
+            where TPropertyAttribute : AssignModuleAttribute
             where TClassAttribute : JSModuleClassAttribute
         {
             if (!componentProperty.TryGetAttribute<TPropertyAttribute>(out var propertyModuleAttribute)) {

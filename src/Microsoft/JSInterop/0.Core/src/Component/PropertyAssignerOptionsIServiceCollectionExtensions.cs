@@ -13,6 +13,8 @@ namespace Teronis.Microsoft.JSInterop.Component
             this IServiceCollection services)
             where TDerivedAssignerOptions : PropertyAssignerOptions<TDerivedAssignerOptions>
         {
+            services.AddOptions();
+
             services.TryAddTypeUniqueSingleton<
                 IPostConfigureOptions<TDerivedAssignerOptions>,
                 PropertyAssignerOptionsPostConfiguration<TDerivedAssignerOptions>>();

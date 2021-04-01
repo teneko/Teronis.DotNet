@@ -18,7 +18,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
 
         public virtual async ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation)
         {
-            if (invocation.DefinitionAttributes.IsAttributeDefined(typeof(ReturnsDynamicProxyAttribute))) {
+            if (invocation.DefinitionAttributes.IsAttributeDefined(typeof(ReturnDynamicProxyAttribute))) {
                 var result = await invocation.GetNonDeterminingResult<IJSObjectReference>();
                 var determinedResult = (TValue)jsDynamicProxyActivator.CreateInstance(invocation.TaskArgumentType, result);
                 invocation.SetDeterminedResult(new ValueTask<TValue>(determinedResult));

@@ -5,6 +5,6 @@ using Teronis.Microsoft.JSInterop.Interception;
 
 namespace Teronis.Microsoft.JSInterop.CustomFacade
 {
-    public class JSCustomFacadeInterceptorBuilderOptions : JSInterceptorBuilderOptions<JSCustomFacadeInterceptorBuilderOptions>
+    public class JSCustomFacadeActivatorInterceptorBuilderOptions : JSInterceptorBuilderOptions<JSCustomFacadeActivatorInterceptorBuilderOptions>
     { }
 }

@@ -6,6 +6,6 @@ using System;
 namespace Teronis.Microsoft.JSInterop.Annotations
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class ReturnsLocalObjectAttribute : Attribute
+    public class ReturnLocalObjectAttribute : Attribute
     { }
 }

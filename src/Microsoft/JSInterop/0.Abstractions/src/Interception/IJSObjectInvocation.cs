@@ -7,7 +7,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
 {
     public interface IJSObjectInvocation : IJSObjectInvocationBase<ValueTask>
     {
-        ValueTask GetNonDeterminingResult();
+        ValueTask GetNonDeterminedResult();
         IJSObjectInvocation Clone();
     }
 }

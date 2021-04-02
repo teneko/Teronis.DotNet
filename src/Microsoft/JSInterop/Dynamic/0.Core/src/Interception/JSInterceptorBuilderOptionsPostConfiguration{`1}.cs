@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Extensions.Options;
+using Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder;
 
 namespace Teronis.Microsoft.JSInterop.Interception
 {
@@ -14,7 +15,10 @@ namespace Teronis.Microsoft.JSInterop.Interception
                 return;
             }
 
-            options.ConfigureInterceptorBuilder(builder => builder.AddDefaultDynamicInterceptors());
+            options.ConfigureInterceptorBuilder(builder => builder
+                .RemoveIterativeValueAssignerInterceptor()
+                .AddDefaultDynamicInterceptors()
+                .AddIterativeValueAssignerInterceptor());
         }
     }
 }

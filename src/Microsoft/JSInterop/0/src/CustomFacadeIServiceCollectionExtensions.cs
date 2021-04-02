@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Teronis.Microsoft.JSInterop.CustomFacade;
 using Teronis.Microsoft.JSInterop.Facade;
 using Teronis.Microsoft.JSInterop.Interception;
+using Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder;
 using Teronis.Microsoft.JSInterop.Locality.WebAssets;
 
 namespace Teronis.Microsoft.JSInterop
@@ -19,23 +20,23 @@ namespace Teronis.Microsoft.JSInterop
         /// </summary>
         /// <param name="services"></param>
         /// <param name="configureOptions"></param>
-        /// <param name="configurePropertyAssignerOptions"></param>
+        /// <param name="configureValueAssignerOptions"></param>
         /// <param name="configureInterceptorBuilderOptions"></param>
         /// <param name="lateConfigureInterceptorBuilderOptions"></param>
         /// <returns></returns>
         public static IServiceCollection AddJSCustomFacadeActivator(
             this IServiceCollection services,
             Action<JSCustomFacadeActivatorOptions>? configureOptions = null,
-            Action<JSFacadeHubActivatorPropertyAssignerOptions>? configurePropertyAssignerOptions = null,
+            Action<JSFacadeHubActivatorValueAssignerOptions>? configureValueAssignerOptions = null,
             Action<JSFacadeHubActivatorInterceptorBuilderOptions>? configureInterceptorBuilderOptions = null,
-            LateConfigureInterceptorBuilderDelegate<JSFacadeHubActivatorInterceptorBuilderOptions, JSFacadeHubActivatorPropertyAssignerOptions>? lateConfigureInterceptorBuilderOptions = null)
+            ConfigureMutableInterceptorBuilderDelegate<JSFacadeHubActivatorInterceptorBuilderOptions, JSFacadeHubActivatorValueAssignerOptions>? lateConfigureInterceptorBuilderOptions = null)
         {
             if (!(configureOptions is null)) {
                 services.Configure(configureOptions);
             }
 
-            services.AddInterceptorBuilderOptions<JSFacadeHubActivatorInterceptorBuilderOptions, JSFacadeHubActivatorPropertyAssignerOptions>();
-            services.ConfigureInterceptorBuilderOptions(configurePropertyAssignerOptions, configureInterceptorBuilderOptions, lateConfigureInterceptorBuilderOptions);
+            services.AddInterceptorBuilderOptions<JSFacadeHubActivatorInterceptorBuilderOptions, JSFacadeHubActivatorValueAssignerOptions>();
+            services.ConfigureInterceptorBuilderOptions(configureValueAssignerOptions, configureInterceptorBuilderOptions, lateConfigureInterceptorBuilderOptions);
             services.TryAddSingleton<IJSCustomFacadeActivator, JSCustomFacadeActivator>();
             return services;
         }
@@ -43,7 +44,7 @@ namespace Teronis.Microsoft.JSInterop
         /// <summary>
         /// Calls <see cref="ModuleIServiceCollectionExtensions.AddJSModule(IServiceCollection)"/>,
         /// <see cref="LocalityWebAssetsIServiceCollectionExtensions.AddJSLocalObjectInterop(IServiceCollection)"/>>
-        /// and <see cref="AddJSCustomFacadeActivator(IServiceCollection, Action{JSCustomFacadeActivatorOptions}?, Action{JSFacadeHubActivatorPropertyAssignerOptions}?, Action{JSFacadeHubActivatorInterceptorBuilderOptions}?, LateConfigureInterceptorBuilderDelegate{JSFacadeHubActivatorInterceptorBuilderOptions, JSFacadeHubActivatorPropertyAssignerOptions}?)"/>.
+        /// and <see cref="AddJSCustomFacadeActivator(IServiceCollection, Action{JSCustomFacadeActivatorOptions}?, Action{JSFacadeHubActivatorValueAssignerOptions}?, Action{JSFacadeHubActivatorInterceptorBuilderOptions}?, ConfigureMutableInterceptorBuilderDelegate{JSFacadeHubActivatorInterceptorBuilderOptions, JSFacadeHubActivatorValueAssignerOptions}?)"/>.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>

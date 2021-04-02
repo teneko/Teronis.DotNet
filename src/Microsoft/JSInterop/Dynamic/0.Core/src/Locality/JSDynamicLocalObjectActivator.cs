@@ -3,19 +3,19 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop.Dynamic;
+using Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder;
 
 namespace Teronis.Microsoft.JSInterop.Locality
 {
     public class JSDynamicLocalObjectActivator : DynamicFacadeActivator<IJSLocalObjectActivator, IJSLocalObject, JSDynamicLocalObjectCreationOptions>, IJSDynamicLocalObjectActivator
     {
         public JSDynamicLocalObjectActivator(
-            IJSLocalObjectActivator jsLocalObjectActivator,
-            IJSDynamicProxyActivator jSDynamicProxyActivator,
-            IOptions<JSLocalObjectInterceptorBuilderOptions>? interceptorBuilderOptions)
-            : base(jsLocalObjectActivator, jSDynamicProxyActivator, interceptorBuilderOptions?.Value) { }
+            IJSLocalObjectActivator localObjectActivator,
+            IJSDynamicProxyActivator dynamicProxyActivator,
+            JSMutableInterceptorBuilder<JSLocalObjectInterceptorBuilderOptions>? interceptorBuilder)
+            : base(localObjectActivator, dynamicProxyActivator, interceptorBuilder) { }
 
         public virtual ValueTask<IJSLocalObject> CreateInstanceAsync(Type interfaceToBeProxied, string objectName, JSDynamicLocalObjectCreationOptions? options =null) =>
             CreateInstanceAsync(
@@ -25,12 +25,12 @@ namespace Teronis.Microsoft.JSInterop.Locality
 
         public virtual ValueTask<IJSLocalObject> CreateInstanceAsync(
             Type interfaceToBeProxied,
-            IJSObjectReference jsObjectReference,
+            IJSObjectReference objectReference,
             string objectName,
             JSDynamicLocalObjectCreationOptions? options = null) =>
             CreateInstanceAsync(
                 interfaceToBeProxied,
-                activator => activator.CreateInstanceAsync(jsObjectReference, objectName),
+                activator => activator.CreateInstanceAsync(objectReference, objectName),
                 options);
     }
 }

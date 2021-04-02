@@ -10,6 +10,6 @@ namespace Teronis.Microsoft.JSInterop.Component
     {
         MemberInfo MemberInfo { get; }
 
-        public void SetValue(object? owner, object? value);
+        public void SetValue(object? value);
     }
 }

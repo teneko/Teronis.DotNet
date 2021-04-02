@@ -2,9 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
-using Teronis.Microsoft.JSInterop.Interception;
+using Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder;
 
 namespace Teronis.Microsoft.JSInterop.Module
 {
@@ -12,8 +11,8 @@ namespace Teronis.Microsoft.JSInterop.Module
     {
         private readonly IJSRuntime jsRuntime;
 
-        public JSModuleActivator(IJSRuntime jsRuntime, IOptions<JSModuleInterceptorBuilderOptions>? options)
-            : base(options?.Value) =>
+        public JSModuleActivator(IJSRuntime jsRuntime, JSMutableInterceptorBuilder<JSModuleInterceptorBuilderOptions>? jsInterceptorBuilder)
+            : base(jsInterceptorBuilder) =>
             this.jsRuntime = jsRuntime;
 
         public virtual async ValueTask<IJSModule> CreateInstanceAsync(string moduleNameOrPath, JSModuleCreationOptions? creationOptions = null)

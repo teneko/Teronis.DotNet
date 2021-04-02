@@ -3,27 +3,29 @@
 
 using System.Threading.Tasks;
 using Teronis.Microsoft.JSInterop.Component;
+using Teronis.Microsoft.JSInterop.Component.ValueAssigner;
+using Teronis.Microsoft.JSInterop.Interception.Interceptor;
 
 namespace Teronis.Microsoft.JSInterop.Interception
 {
-    public abstract class JSPropertyAssigningInterceptorBase<TPropertyAssigner> : JSInterceptor
-        where TPropertyAssigner : IPropertyAssigner
+    public abstract class JSPropertyAssigningInterceptorBase<TValueAssigner> : JSInterceptor
+        where TValueAssigner : IValueAssigner
     {
-        private readonly TPropertyAssigner propertyAssigner;
+        private readonly TValueAssigner propertyAssigner;
 
-        public JSPropertyAssigningInterceptorBase(TPropertyAssigner propertyAssigner) =>
+        public JSPropertyAssigningInterceptorBase(TValueAssigner propertyAssigner) =>
             this.propertyAssigner = propertyAssigner ?? throw new System.ArgumentNullException(nameof(propertyAssigner));
 
         public override async ValueTask InterceptInvokeAsync<TTaskArgument>(IJSObjectInvocation<TTaskArgument> invocation, InterceptionContext context)
         {
-            var propertyAssignerContext = new PropertyAssignerContext(propertyAssigner);
-            await propertyAssigner.AssignPropertyAsync(invocation.Definition, propertyAssignerContext);
+            var propertyAssignerContext = new ValueAssignerContext(propertyAssigner);
+            await propertyAssigner.AssignValueAsync(invocation.Definition, propertyAssignerContext);
 
-            if (propertyAssignerContext.MemberResult.TryGetNull(out var instance)) {
+            if (propertyAssignerContext.ValueResult.TryGetNull(out var instance)) {
                 return;
             }
 
-            invocation.SetDeterminedResult(new ValueTask<TTaskArgument>((TTaskArgument)instance));
+            invocation.SetAlternativeResult(new ValueTask<TTaskArgument>((TTaskArgument)instance));
         }
     }
 }

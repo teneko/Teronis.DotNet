@@ -7,6 +7,6 @@ namespace Teronis.Microsoft.JSInterop.Interception
         where ReturnType : struct
     {
         new ReturnType GetDeterminedResult();
-        void SetDeterminedResult(ReturnType value);
+        void SetAlternativeResult(ReturnType value);
     }
 }

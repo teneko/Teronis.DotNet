@@ -10,6 +10,10 @@ using static Teronis.Reflection.TeronisReflectionUtils;
 
 namespace Teronis.Json.Utils
 {
+    // TODO: Remove or refactor.
+    /// <summary>
+    /// Not intended to be used in 
+    /// </summary>
     public class TeronisJsonUtils
     {
         /// <summary>
@@ -30,7 +34,7 @@ namespace Teronis.Json.Utils
                 contractResolver.IncludeVariable(containerType, variableNameAndContentPair.Key);
             }
 
-            var deserializedDuckContainer = dummyDictionary.SerializeObject(settings);
+            var deserializedDuckContainer = JsonConvert.SerializeObject(dummyDictionary, settings);
 
             JsonSerializerSettings copiedSettings;
 

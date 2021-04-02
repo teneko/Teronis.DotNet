@@ -21,7 +21,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
         /// </summary>
         /// <typeparam name="TNonDeterminingValue">Type of value.</typeparam>
         /// <returns>The promise for the non-determining value.</returns>
-        ValueTask<TNonDeterminingValue> GetNonDeterminingResult<TNonDeterminingValue>();
+        ValueTask<TNonDeterminingValue> GetNonDeterminedResult<TNonDeterminingValue>();
         IJSObjectInvocation<TValue> Clone();
     }
 }

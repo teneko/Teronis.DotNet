@@ -4,21 +4,21 @@
 using System;
 using System.Collections.Generic;
 using Castle.DynamicProxy;
-using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop.Dynamic.Reflection;
-using Teronis.Microsoft.JSInterop.Interception;
-using Teronis.Microsoft.JSInterop.Internals.Utils;
+using Teronis.Microsoft.JSInterop.Interception.Interceptor;
+using Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder;
+using Teronis.Microsoft.JSInterop.Utils;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic
 {
     public class JSDynamicProxyActivator : InterceptableFacadeActivatorBase, IJSDynamicProxyActivator
     {
-        public JSDynamicProxyActivator(IOptions<JSDynamicProxyInterceptorBuilderOptions>? options)
-            : base(options?.Value) { }
+        public JSDynamicProxyActivator(JSMutableInterceptorBuilder<JSDynamicProxyInterceptorBuilderOptions>? interceptorBuilder)
+            : base(interceptorBuilder) { }
 
         public JSDynamicProxyActivator()
-            : this(options: null) { }
+            : this(interceptorBuilder: null) { }
 
         private void CheckInterfaceType(Type interfaceType)
         {

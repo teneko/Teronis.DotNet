@@ -49,7 +49,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             var emptyDynamicObject = JSDynamicObjectActivator.CreateInstance<IEmptyDynamicObject>(jsObjectReference);
 
             // Act
-            Assert.True(ReferenceEquals(jsObjectReference, emptyDynamicObject.Reference));
+            Assert.True(ReferenceEquals(jsObjectReference, emptyDynamicObject.ObjectReference));
         }
 
         [Fact]

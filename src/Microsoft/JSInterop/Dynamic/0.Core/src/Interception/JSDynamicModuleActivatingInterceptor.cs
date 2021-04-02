@@ -5,9 +5,9 @@ using Teronis.Microsoft.JSInterop.Component;
 
 namespace Teronis.Microsoft.JSInterop.Interception
 {
-    public class JSDynamicModuleActivatingInterceptor : JSPropertyAssigningInterceptorBase<JSDynamicModulePropertyAssigner>
+    public class JSDynamicModuleActivatingInterceptor : JSPropertyAssigningInterceptorBase<JSDynamicModuleValueAssigner>
     {
-        public JSDynamicModuleActivatingInterceptor(JSDynamicModulePropertyAssigner propertyAssigner)
+        public JSDynamicModuleActivatingInterceptor(JSDynamicModuleValueAssigner propertyAssigner)
             : base(propertyAssigner) { }
     }
 }

@@ -14,27 +14,27 @@ namespace Teronis.Microsoft.JSInterop.Interception
         public bool HasDeterminedResult =>
             AlternativeResult.HasValue;
 
-        public bool HasAlternativeJSObjectReference =>
+        public bool HasAlternativeObjectReference =>
             !(alternativeJSObjectReference is null);
 
-        public IJSObjectReference JSObjectReferenceResulting {
-            get => alternativeJSObjectReference ?? JSObjectReferencePassed;
+        public IJSObjectReference ObjectReference {
+            get => alternativeJSObjectReference ?? OriginalObjectReference;
             set => alternativeJSObjectReference = value;
         }
 
-        public IJSObjectReference JSObjectReferencePassed =>
+        public IJSObjectReference OriginalObjectReference =>
             InvocationInception.JSObjectReference;
 
-        public string JavaScriptIdentifier =>
+        public string Identifier =>
             InvocationInception.JavaScriptIdentifier;
 
-        public CancellationToken? JavaScriptCancellationToken =>
+        public CancellationToken? CancellationToken =>
             InvocationInception.JavaScriptCancellationToken;
 
         public TimeSpan? Timeout =>
             InvocationInception.JavaScriptTimeout;
 
-        public object?[] JavaScriptArguments =>
+        public object?[] Arguments =>
             InvocationInception.JavaScriptArguments;
 
         public virtual Type? TaskArgumentType =>
@@ -91,7 +91,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
 
         public abstract ReturnType GetDeterminedResult();
 
-        public void SetDeterminedResult(ReturnType value) =>
+        public void SetAlternativeResult(ReturnType value) =>
             AlternativeResult = value;
 
         object IJSObjectInvocationBase.GetDeterminedResult() =>

@@ -10,7 +10,7 @@ namespace Teronis.Microsoft.JSInterop
     public static class DynamicFacadesIServiceCollectionExtensions
     {
         /// <summary>
-        /// Calls <see cref="DynamicIPropertyAssignerOptionsIServiceCollectionExtensions.AddDynamicPropertyAssignerOptions{TDerivedAssignerOptions}(IServiceCollection)"/>,
+        /// Calls <see cref="DynamicIValueAssignerOptionsIServiceCollectionExtensions.AddDynamicValueAssignerOptions{TDerivedAssignerOptions}(IServiceCollection)"/>,
         /// <see cref="DynamicLocalityIServiceCollectionExtensions.AddJSDynamicLocalObject(IServiceCollection)"/>,
         /// <see cref="DynamicModuleIServiceCollectionExtensions.AddJSDynamicModule(IServiceCollection)"/>,
         /// and <see cref="FacadesIServiceCollectionExtensions.AddJSFacadeHub(IServiceCollection)"/>.
@@ -19,7 +19,7 @@ namespace Teronis.Microsoft.JSInterop
         /// <returns></returns>
         public static IServiceCollection AddJSDynamicFacadeHub(this IServiceCollection services)
         {
-            services.AddDynamicPropertyAssignerOptions<JSFacadeHubActivatorPropertyAssignerOptions>();
+            services.AddDynamicValueAssignerOptions<JSFacadeHubActivatorValueAssignerOptions>();
             services.AddJSDynamicLocalObject();
             services.AddJSDynamicModule();
             services.AddJSFacadeHub();

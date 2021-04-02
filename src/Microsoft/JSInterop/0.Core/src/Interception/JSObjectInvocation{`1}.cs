@@ -60,14 +60,14 @@ namespace Teronis.Microsoft.JSInterop.Interception
                   typeof(TValue))
         { }
 
-        public ValueTask<TNonDeterminingValue> GetNonDeterminingResult<TNonDeterminingValue>()
+        public ValueTask<TNonDeterminedValue> GetNonDeterminedResult<TNonDeterminedValue>()
         {
-            if (JavaScriptCancellationToken.HasValue) {
-                return JSObjectReferenceExtensions.InvokeAsync<TNonDeterminingValue>(JSObjectReferenceResulting, JavaScriptIdentifier, cancellationToken: JavaScriptCancellationToken.Value, JavaScriptArguments);
+            if (CancellationToken.HasValue) {
+                return JSObjectReferenceExtensions.InvokeAsync<TNonDeterminedValue>(ObjectReference, Identifier, cancellationToken: CancellationToken.Value, Arguments);
             } else if (Timeout.HasValue) {
-                return JSObjectReferenceExtensions.InvokeAsync<TNonDeterminingValue>(JSObjectReferenceResulting, JavaScriptIdentifier, timeout: Timeout.Value, JavaScriptArguments);
+                return JSObjectReferenceExtensions.InvokeAsync<TNonDeterminedValue>(ObjectReference, Identifier, timeout: Timeout.Value, Arguments);
             } else {
-                return JSObjectReferenceExtensions.InvokeAsync<TNonDeterminingValue>(JSObjectReferenceResulting, JavaScriptIdentifier, JavaScriptArguments);
+                return JSObjectReferenceExtensions.InvokeAsync<TNonDeterminedValue>(ObjectReference, Identifier, Arguments);
             }
         }
 
@@ -81,7 +81,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
         public override ValueTask<TValue> GetDeterminedResult()
         {
             if (!AlternativeResult.HasValue) {
-                AlternativeResult = GetNonDeterminingResult<TValue>();
+                AlternativeResult = GetNonDeterminedResult<TValue>();
             }
 
             return AlternativeResult.Value;

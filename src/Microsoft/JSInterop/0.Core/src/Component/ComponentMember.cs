@@ -11,16 +11,17 @@ namespace Teronis.Microsoft.JSInterop.Component
         /// <summary>
         /// Creates component member from property info or field info.
         /// </summary>
+        /// <param name="component">The owner.</param>
         /// <param name="memberInfo"></param>
         /// <returns></returns>
-        public static ComponentMember Create(MemberInfo memberInfo)
+        public static ComponentMember Create(object? component, MemberInfo memberInfo)
         {
             if (memberInfo is FieldInfo fieldInfo) {
-                return new ComponentMember(fieldInfo);
+                return new ComponentMember(component, fieldInfo);
             }
 
             if (memberInfo is PropertyInfo propertyInfo) {
-                return new ComponentMember(propertyInfo);
+                return new ComponentMember(component, propertyInfo);
             }
 
             throw new NotSupportedException("Unsupported member type.");
@@ -34,15 +35,17 @@ namespace Teronis.Microsoft.JSInterop.Component
 
         private readonly ComponentMemberBase componentMember;
 
-        public ComponentMember(PropertyInfo propertyInfo)
-            : base(propertyInfo) =>
-            componentMember = new ComponentProperty(propertyInfo);
+        public ComponentMember(object? component, PropertyInfo propertyInfo)
+            : base(propertyInfo)
+        {
+            componentMember = new ComponentProperty(component, propertyInfo);
+        }
 
-        public ComponentMember(FieldInfo fieldInfo)
+        public ComponentMember(object? component, FieldInfo fieldInfo)
             : base(fieldInfo) =>
-            componentMember = new ComponentField(fieldInfo);
+            componentMember = new ComponentField(component, fieldInfo);
 
-        public override void SetValue(object? owner, object? value)
+        public override void SetValue(object? value)
         {
             if (!(value is null)) {
                 var valueType = value.GetType();
@@ -52,7 +55,7 @@ namespace Teronis.Microsoft.JSInterop.Component
                 }
             }
 
-            componentMember.SetValue(owner, value);
+            componentMember.SetValue(value);
         }
 
         private class ComponentProperty : ComponentMemberBase
@@ -63,14 +66,18 @@ namespace Teronis.Microsoft.JSInterop.Component
             public override Type MemberType =>
                 propertyInfo.PropertyType;
 
+            private readonly object? component;
             private readonly PropertyInfo propertyInfo;
 
-            public ComponentProperty(PropertyInfo propertyInfo)
-                : base(propertyInfo) =>
+            public ComponentProperty(object? component, PropertyInfo propertyInfo)
+                : base(propertyInfo)
+            {
+                this.component = component;
                 this.propertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
+            }
 
-            public override void SetValue(object? owner, object? value) =>
-                propertyInfo.SetValue(owner, value);
+            public override void SetValue(object? value) =>
+                propertyInfo.SetValue(component, value);
         }
 
         private class ComponentField : ComponentMemberBase
@@ -81,14 +88,18 @@ namespace Teronis.Microsoft.JSInterop.Component
             public override Type MemberType =>
                 fieldInfo.FieldType;
 
+            private readonly object? component;
             private readonly FieldInfo fieldInfo;
 
-            public ComponentField(FieldInfo propertyInfo)
-                : base(propertyInfo) =>
-                this.fieldInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
+            public ComponentField(object? component, FieldInfo fieldInfo)
+                : base(fieldInfo)
+            {
+                this.component = component;
+                this.fieldInfo = fieldInfo ?? throw new ArgumentNullException(nameof(fieldInfo));
+            }
 
-            public override void SetValue(object? owner, object? value) =>
-                fieldInfo.SetValue(owner, value);
+            public override void SetValue(object? value) =>
+                fieldInfo.SetValue(component, value);
         }
     }
 }

@@ -4,8 +4,8 @@
 using System;
 using System.Threading.Tasks;
 using Teronis.Microsoft.JSInterop.Dynamic;
-using Teronis.Microsoft.JSInterop.Interception;
-using Teronis.Microsoft.JSInterop.Internals.Utils;
+using Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder;
+using Teronis.Microsoft.JSInterop.Utils;
 
 namespace Teronis.Microsoft.JSInterop
 {
@@ -14,7 +14,7 @@ namespace Teronis.Microsoft.JSInterop
     {
         private readonly IJSDynamicProxyActivator jSDynamicProxyActivator;
 
-        public DynamicFacadeActivatorBase(IJSDynamicProxyActivator jSDynamicProxyActivator, ILateInterceptorBuilder? interceptorBuilder)
+        public DynamicFacadeActivatorBase(IJSDynamicProxyActivator jSDynamicProxyActivator, IJSMutableInterceptorBuilder? interceptorBuilder)
             : base(interceptorBuilder) =>
             this.jSDynamicProxyActivator = jSDynamicProxyActivator;
 

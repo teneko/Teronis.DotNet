@@ -7,7 +7,7 @@ using System.Linq;
 using Castle.DynamicProxy;
 using Concurrent.FastReflection.NetStandard;
 using Teronis.Microsoft.JSInterop.Dynamic.Reflection;
-using Teronis.Microsoft.JSInterop.Interception;
+using Teronis.Microsoft.JSInterop.Interception.Interceptor;
 using Teronis.Microsoft.JSInterop.Reflection;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic
@@ -64,7 +64,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
             // user interface methods
             if (methodDictionary.TryFindMethod(methodInfo.Name, positionalArgumentNames, out var method)) {
                 var methodAttributes = new CustomAttributes(methodInfo);
-                invocation.ReturnValue = method.GetReturnValue(jsInterceptor, jsDynamicObjectProxy.Reference, genericParameterTypes, arguments, methodAttributes);
+                invocation.ReturnValue = method.GetReturnValue(jsInterceptor, jsDynamicObjectProxy.ObjectReference, genericParameterTypes, arguments, methodAttributes);
                 return;
             }
             // proxy properties

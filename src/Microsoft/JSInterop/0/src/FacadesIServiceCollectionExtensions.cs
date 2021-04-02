@@ -5,7 +5,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using Teronis.Microsoft.JSInterop.Component;
+using Teronis.Microsoft.JSInterop.Component.ValueAssigner.Builder;
 using Teronis.Microsoft.JSInterop.Facade;
 
 namespace Teronis.Microsoft.JSInterop
@@ -15,15 +15,15 @@ namespace Teronis.Microsoft.JSInterop
         public static IServiceCollection AddJSFacadeHubActivator(
             this IServiceCollection services,
             Action<JSFacadeHubActivatorOptions>? configureOptions = null,
-             Action<JSFacadeHubActivatorPropertyAssignerOptions>? configurePropertyAssigner = null)
+             Action<JSFacadeHubActivatorValueAssignerOptions>? configureValueAssigner = null)
         {
             if (!(configureOptions is null)) {
                 services.Configure(configureOptions);
             }
 
             services.TryAddTypeUniqueSingleton<IConfigureOptions<JSFacadeHubActivatorOptions>, JSFacadeHubActivatorOptionsPostConfiguration>();
-            services.AddPropertyAssignerOptions<JSFacadeHubActivatorPropertyAssignerOptions>();
-            services.ConfigurePropertyAssignerOptions(configurePropertyAssigner);
+            services.AddValueAssignerOptions<JSFacadeHubActivatorValueAssignerOptions>();
+            services.ConfigureValueAssignerOptions(configureValueAssigner);
             services.TryAddSingleton<IJSFacadeHubActivator, JSFacadeHubActivator>();
             services.TryAddTransient(typeof(IJSFacadeHub<>), typeof(JSFacadeHubService<>));
             return services;
@@ -33,7 +33,7 @@ namespace Teronis.Microsoft.JSInterop
         /// Calls <see cref="CustomFacadeIServiceCollectionExtensions.AddJSCustomFacade(IServiceCollection)"/>,
         /// <see cref="LocalityIServiceCollectionExtensions.AddJSLocalObject(IServiceCollection)"/>,
         /// <see cref="ModuleIServiceCollectionExtensions.AddJSModule(IServiceCollection)"/>,
-        /// and <see cref="AddJSFacadeHubActivator(IServiceCollection, Action{JSFacadeHubActivatorOptions}?, Action{JSFacadeHubActivatorPropertyAssignerOptions}?)"/>.
+        /// and <see cref="AddJSFacadeHubActivator(IServiceCollection, Action{JSFacadeHubActivatorOptions}?, Action{JSFacadeHubActivatorValueAssignerOptions}?)"/>.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>

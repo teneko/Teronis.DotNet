@@ -5,13 +5,13 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
-using Teronis.Microsoft.JSInterop.Interception;
+using Teronis.Microsoft.JSInterop.Interception.Interceptor;
 
 namespace Teronis.Microsoft.JSInterop
 {
     public interface IJSObjectReferenceFacade : IAsyncDisposable
     {
-        IJSObjectReference Reference { get; }
+        IJSObjectReference ObjectReference { get; }
         IJSInterceptor Interceptor { get; }
 
         ValueTask<TValue> InvokeAsync<TValue>(string identifier, object?[] arguments);

@@ -5,22 +5,23 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using Teronis.Microsoft.JSInterop.Collections;
 using Teronis.Microsoft.JSInterop.Component;
+using Teronis.Microsoft.JSInterop.Component.ValueAssigner;
+using Teronis.Microsoft.JSInterop.Component.ValueAssigner.Builder;
 
 namespace Teronis.Microsoft.JSInterop.Facade
 {
     public class JSFacadeHubActivator : IJSFacadeHubActivator
     {
         private readonly JSFacadeHubActivatorOptions options;
-        private readonly JSFacadeHubActivatorPropertyAssignerOptions propertyAssignerOptions;
+        private readonly ValueAssignerList<JSFacadeHubActivatorValueAssignerOptions> propertyAssignerList;
 
         public JSFacadeHubActivator(
             IOptions<JSFacadeHubActivatorOptions> options,
-            IOptions<JSFacadeHubActivatorPropertyAssignerOptions> propertyAssignerOptions)
+            ValueAssignerList<JSFacadeHubActivatorValueAssignerOptions> propertyAssignerList)
         {
             this.options = options?.Value ?? throw new ArgumentNullException(nameof(options));
-            this.propertyAssignerOptions = propertyAssignerOptions?.Value ?? throw new ArgumentNullException(nameof(propertyAssignerOptions));
+            this.propertyAssignerList = propertyAssignerList;
         }
 
         private JSFacadeHub<TJSFacadeActivators> CreateFacades<TJSFacadeActivators>()
@@ -43,22 +44,14 @@ namespace Teronis.Microsoft.JSInterop.Facade
 
             var jsFacadesDisposables = new List<IAsyncDisposable>();
 
-            foreach (var componentMember in ComponentMemberCollection.Create(component.GetType())) {
-                var context = new PropertyAssignerContext(propertyAssignerOptions.PropertyAssigners);
+            foreach (var componentMember in ComponentMemberCollection.Create(component, component.GetType())) {
+                var context = new ValueAssignerContext(propertyAssignerList);
 
-                await TreeIteratorExecutor<PropertyAssignerContext.PropertyAssignerEntry>.Default.ExecuteIteratorAsync(
-                    context,
-                    handler: entry => entry.Item.AssignPropertyAsync(componentMember, context));
-
-                var nullableMemberResult = context.MemberResult;
-
-                if (nullableMemberResult.IsNull) {
-                    continue;
+                if (await ValueAssignerIteratorExecutor.TryAssignValueAsync(componentMember, context)) {
+                    var memberResult = context.ValueResult.Value!;
+                    componentMember.SetValue(memberResult);
+                    jsFacadesDisposables.Add(memberResult);
                 }
-
-                var memberResult = nullableMemberResult.Value!;
-                componentMember.SetValue(component, memberResult);
-                jsFacadesDisposables.Add(memberResult);
             }
 
             var jsFacadeHub = CreateFacades<TJSFacadeActivators>();

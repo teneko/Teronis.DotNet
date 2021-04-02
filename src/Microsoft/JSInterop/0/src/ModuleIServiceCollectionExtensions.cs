@@ -5,6 +5,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Teronis.Microsoft.JSInterop.Interception;
+using Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder;
 using Teronis.Microsoft.JSInterop.Locality;
 using Teronis.Microsoft.JSInterop.Module;
 
@@ -16,24 +17,24 @@ namespace Teronis.Microsoft.JSInterop
         /// Tries to add <see cref="JSModuleActivator"/> as <see cref="IJSModuleActivator"/>.
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="configurePropertyAssignerOptions"></param>
+        /// <param name="configureValueAssignerOptions"></param>
         /// <param name="configureInterceptorBuilderOptions"></param>
         /// <param name="lateConfigureInterceptorBuilderOptions"></param>
         /// <returns></returns>
         public static IServiceCollection AddJSModuleActivator(
             this IServiceCollection services,
-            Action<JSModulePropertyAssignerOptions>? configurePropertyAssignerOptions = null,
+            Action<JSModuleValueAssignerOptions>? configureValueAssignerOptions = null,
             Action<JSModuleInterceptorBuilderOptions>? configureInterceptorBuilderOptions = null,
-            LateConfigureInterceptorBuilderDelegate<JSModuleInterceptorBuilderOptions, JSModulePropertyAssignerOptions>? lateConfigureInterceptorBuilderOptions = null)
+            ConfigureMutableInterceptorBuilderDelegate<JSModuleInterceptorBuilderOptions, JSModuleValueAssignerOptions>? lateConfigureInterceptorBuilderOptions = null)
         {
-            services.AddInterceptorBuilderOptions<JSModuleInterceptorBuilderOptions, JSLocalObjectPropertyAssignerOptions>();
-            services.ConfigureInterceptorBuilderOptions(configurePropertyAssignerOptions,configureInterceptorBuilderOptions, lateConfigureInterceptorBuilderOptions);
+            services.AddInterceptorBuilderOptions<JSModuleInterceptorBuilderOptions, JSLocalObjectValueAssignerOptions>();
+            services.ConfigureInterceptorBuilderOptions(configureValueAssignerOptions,configureInterceptorBuilderOptions, lateConfigureInterceptorBuilderOptions);
             services.TryAddSingleton<IJSModuleActivator, JSModuleActivator>();
             return services;
         }
 
         /// <summary>
-        /// Calls <see cref="AddJSModuleActivator(IServiceCollection, Action{JSModulePropertyAssignerOptions}?, Action{JSModuleInterceptorBuilderOptions}?, LateConfigureInterceptorBuilderDelegate{JSModuleInterceptorBuilderOptions, JSModulePropertyAssignerOptions}?)"/>.
+        /// Calls <see cref="AddJSModuleActivator(IServiceCollection, Action{JSModuleValueAssignerOptions}?, Action{JSModuleInterceptorBuilderOptions}?, ConfigureMutableInterceptorBuilderDelegate{JSModuleInterceptorBuilderOptions, JSModuleValueAssignerOptions}?)"/>.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>

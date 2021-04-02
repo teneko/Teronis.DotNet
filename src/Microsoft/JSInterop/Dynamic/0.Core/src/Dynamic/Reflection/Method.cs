@@ -11,6 +11,7 @@ using Concurrent.FastReflection.NetStandard;
 using Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop.Dynamic.Annotations;
 using Teronis.Microsoft.JSInterop.Interception;
+using Teronis.Microsoft.JSInterop.Interception.Interceptor;
 using Teronis.Microsoft.JSInterop.Reflection;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic.Reflection

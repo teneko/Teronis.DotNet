@@ -10,14 +10,14 @@ namespace Teronis.Microsoft.JSInterop.Component
 {
     internal sealed class ComponentMemberCollection : IReadOnlyList<ComponentMember>
     {
-        public static ComponentMemberCollection Create(Type componentType)
+        public static ComponentMemberCollection Create(object? component ,Type componentType)
         {
             if (componentType is null) {
                 throw new ArgumentNullException(nameof(componentType));
             }
 
             var collection = new ComponentMemberCollection();
-            collection.CollectComponentProperties(componentType);
+            collection.CollectComponentProperties(component, componentType);
             return collection;
         }
 
@@ -32,16 +32,16 @@ namespace Teronis.Microsoft.JSInterop.Component
         public ComponentMember this[int index] =>
             componentProperties[index];
 
-        private void AddMember(MemberInfo memberInfo)
+        private void AddMember(object? component, MemberInfo memberInfo)
         {
-            var componentMember = ComponentMember.Create(memberInfo);
+            var componentMember = ComponentMember.Create(component, memberInfo);
             componentProperties.Add(componentMember);
         }
 
-        private void CollectComponentProperties(Type componentType)
+        private void CollectComponentProperties(object? component, Type componentType)
         {
             foreach (var memberInfo in ComponentMemberCollectionUtils.GetComponentMembers(componentType)) {
-                AddMember(memberInfo);
+                AddMember(component, memberInfo);
             }
         }
 

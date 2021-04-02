@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Threading.Tasks;
-using Teronis.Microsoft.JSInterop.Interception;
+using Teronis.Microsoft.JSInterop.Interception.Interceptor;
 using Teronis.Microsoft.JSInterop.ObjectReferences;
 
 namespace Teronis.Microsoft.JSInterop

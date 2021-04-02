@@ -31,21 +31,21 @@ namespace Teronis.Microsoft.JSInterop.Interception
                   memberAttributes)
         { }
 
-        public ValueTask GetNonDeterminingResult()
+        public ValueTask GetNonDeterminedResult()
         {
-            if (JavaScriptCancellationToken.HasValue) {
-                return JSObjectReferenceResulting.InvokeVoidAsync(JavaScriptIdentifier, cancellationToken: JavaScriptCancellationToken.Value, JavaScriptArguments);
+            if (CancellationToken.HasValue) {
+                return ObjectReference.InvokeVoidAsync(Identifier, cancellationToken: CancellationToken.Value, Arguments);
             } else if (Timeout.HasValue) {
-                return JSObjectReferenceResulting.InvokeVoidAsync(JavaScriptIdentifier, timeout: Timeout.Value, JavaScriptArguments);
+                return ObjectReference.InvokeVoidAsync(Identifier, timeout: Timeout.Value, Arguments);
             } else {
-                return JSObjectReferenceResulting.InvokeVoidAsync(JavaScriptIdentifier, JavaScriptArguments);
+                return ObjectReference.InvokeVoidAsync(Identifier, Arguments);
             }
         }
 
         public override ValueTask GetDeterminedResult()
         {
             if (!AlternativeResult.HasValue) {
-                AlternativeResult = GetNonDeterminingResult();
+                AlternativeResult = GetNonDeterminedResult();
             }
 
             return AlternativeResult.Value;

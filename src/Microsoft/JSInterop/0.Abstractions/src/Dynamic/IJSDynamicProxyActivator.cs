@@ -3,7 +3,7 @@
 
 using System;
 using Microsoft.JSInterop;
-using Teronis.Microsoft.JSInterop.Interception;
+using Teronis.Microsoft.JSInterop.Interception.Interceptor;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic
 {

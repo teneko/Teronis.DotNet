@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Teronis.Microsoft.JSInterop.Collections
 {
-    public class TreeIteratorExecutor<TEntry>
+    public class TreeIteratorExecutor<TEntry> : ITreeIteratorExecutor<TEntry>
     {
         public static TreeIteratorExecutor<TEntry> Default = new TreeIteratorExecutor<TEntry>();
 

@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using Teronis.Microsoft.JSInterop.CustomFacade;
-using Teronis.Microsoft.JSInterop.Internals.Utils;
+using Teronis.Microsoft.JSInterop.Utils;
 
 namespace Teronis.Microsoft.JSInterop
 {

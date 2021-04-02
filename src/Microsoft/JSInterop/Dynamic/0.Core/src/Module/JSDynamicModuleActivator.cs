@@ -3,8 +3,8 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
 using Teronis.Microsoft.JSInterop.Dynamic;
+using Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder;
 
 namespace Teronis.Microsoft.JSInterop.Module
 {
@@ -13,8 +13,8 @@ namespace Teronis.Microsoft.JSInterop.Module
         public JSDynamicModuleActivator(
             IJSModuleActivator jsModuleActivator,
             IJSDynamicProxyActivator jsDynamicProxyActivator,
-            IOptions<JSModuleInterceptorBuilderOptions>? interceptorBuilderOptions) 
-        : base(jsModuleActivator, jsDynamicProxyActivator, interceptorBuilderOptions?.Value){ }
+            JSMutableInterceptorBuilder<JSModuleInterceptorBuilderOptions>? jsInterceptorBuilder) 
+        : base(jsModuleActivator, jsDynamicProxyActivator, jsInterceptorBuilder){ }
 
         public virtual ValueTask<IJSModule> CreateInstanceAsync(Type interfaceToBeProxied, string moduleNameOrPath, DynamicModuleCreationOptions? creationOptions = null) =>
             CreateInstanceAsync(

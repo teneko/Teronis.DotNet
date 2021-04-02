@@ -2,8 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
+using Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder;
 
 namespace Teronis.Microsoft.JSInterop.Locality
 {
@@ -11,12 +11,12 @@ namespace Teronis.Microsoft.JSInterop.Locality
     {
         private readonly IJSLocalObjectInterop jsLocalObjectInterop;
 
-        public JSLocalObjectActivator(IJSLocalObjectInterop jsLocalObjectInterop, IOptions<JSLocalObjectInterceptorBuilderOptions>? options)
-            : base(options?.Value) =>
+        public JSLocalObjectActivator(IJSLocalObjectInterop jsLocalObjectInterop, JSMutableInterceptorBuilder<JSLocalObjectInterceptorBuilderOptions>? interceptorBuilder)
+            : base(interceptorBuilder) =>
             this.jsLocalObjectInterop = jsLocalObjectInterop ?? throw new System.ArgumentNullException(nameof(jsLocalObjectInterop));
 
         public JSLocalObjectActivator(IJSLocalObjectInterop jsLocalObjectInterop)
-            : this(jsLocalObjectInterop, options: null) { }
+            : this(jsLocalObjectInterop, interceptorBuilder: null) { }
 
         public virtual IJSLocalObject CreateInstance(IJSObjectReference jsObjectReference, JSLocalObjectCreationOptions? creationOptions = null)
         {

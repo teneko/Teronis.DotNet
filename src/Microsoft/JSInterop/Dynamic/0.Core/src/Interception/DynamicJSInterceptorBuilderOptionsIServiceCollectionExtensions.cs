@@ -4,6 +4,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Teronis.Microsoft.JSInterop.Component;
+using Teronis.Microsoft.JSInterop.Component.ValueAssigner.Builder;
+using Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder;
 
 namespace Teronis.Microsoft.JSInterop.Interception
 {
@@ -12,10 +14,10 @@ namespace Teronis.Microsoft.JSInterop.Interception
         public static IServiceCollection AddDynamicInterceptorBuilderOptions<TDerivedBuilderOptions, TDerivedAssignerOptions>(
             this IServiceCollection services)
             where TDerivedBuilderOptions : JSInterceptorBuilderOptions<TDerivedBuilderOptions>
-            where TDerivedAssignerOptions : PropertyAssignerOptions<TDerivedAssignerOptions>
+            where TDerivedAssignerOptions : ValueAssignerOptions<TDerivedAssignerOptions>
         {
             services.AddInterceptorBuilderOptions<TDerivedBuilderOptions, TDerivedAssignerOptions>();
-            services.AddDynamicPropertyAssignerOptions<TDerivedAssignerOptions>();
+            services.AddDynamicValueAssignerOptions<TDerivedAssignerOptions>();
 
             services.TryAddTypeUniqueSingleton<
                 IPostConfigureOptions<TDerivedBuilderOptions>,

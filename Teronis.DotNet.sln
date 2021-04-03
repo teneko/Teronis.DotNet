@@ -129,6 +129,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.JSInterop.E2ETest.WebAssembly", "src\Microsoft\JSInterop\0\test\0.E2ETest.WebAssembly\Teronis.Microsoft.JSInterop.E2ETest.WebAssembly.csproj", "{EDB646E6-1E1B-466D-873A-65483E8E7DA3}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.DependencyInjection.Abstractions", "src\DependencyInjection\0.Abstractions\src\Teronis.DependencyInjection.Abstractions.csproj", "{9E902BB8-C333-4323-ACF3-5D1F293A46C4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.DependencyInjection", "src\DependencyInjection\0\src\Teronis.DependencyInjection.csproj", "{43FDC046-A496-49D8-866B-970ED0D229BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -819,6 +823,30 @@ Global
 		{EDB646E6-1E1B-466D-873A-65483E8E7DA3}.Release|x64.Build.0 = Release|x64
 		{EDB646E6-1E1B-466D-873A-65483E8E7DA3}.Release|x86.ActiveCfg = Release|x86
 		{EDB646E6-1E1B-466D-873A-65483E8E7DA3}.Release|x86.Build.0 = Release|x86
+		{9E902BB8-C333-4323-ACF3-5D1F293A46C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E902BB8-C333-4323-ACF3-5D1F293A46C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E902BB8-C333-4323-ACF3-5D1F293A46C4}.Debug|x64.ActiveCfg = Debug|x64
+		{9E902BB8-C333-4323-ACF3-5D1F293A46C4}.Debug|x64.Build.0 = Debug|x64
+		{9E902BB8-C333-4323-ACF3-5D1F293A46C4}.Debug|x86.ActiveCfg = Debug|x86
+		{9E902BB8-C333-4323-ACF3-5D1F293A46C4}.Debug|x86.Build.0 = Debug|x86
+		{9E902BB8-C333-4323-ACF3-5D1F293A46C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E902BB8-C333-4323-ACF3-5D1F293A46C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E902BB8-C333-4323-ACF3-5D1F293A46C4}.Release|x64.ActiveCfg = Release|x64
+		{9E902BB8-C333-4323-ACF3-5D1F293A46C4}.Release|x64.Build.0 = Release|x64
+		{9E902BB8-C333-4323-ACF3-5D1F293A46C4}.Release|x86.ActiveCfg = Release|x86
+		{9E902BB8-C333-4323-ACF3-5D1F293A46C4}.Release|x86.Build.0 = Release|x86
+		{43FDC046-A496-49D8-866B-970ED0D229BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43FDC046-A496-49D8-866B-970ED0D229BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43FDC046-A496-49D8-866B-970ED0D229BD}.Debug|x64.ActiveCfg = Debug|x64
+		{43FDC046-A496-49D8-866B-970ED0D229BD}.Debug|x64.Build.0 = Debug|x64
+		{43FDC046-A496-49D8-866B-970ED0D229BD}.Debug|x86.ActiveCfg = Debug|x86
+		{43FDC046-A496-49D8-866B-970ED0D229BD}.Debug|x86.Build.0 = Debug|x86
+		{43FDC046-A496-49D8-866B-970ED0D229BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43FDC046-A496-49D8-866B-970ED0D229BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43FDC046-A496-49D8-866B-970ED0D229BD}.Release|x64.ActiveCfg = Release|x64
+		{43FDC046-A496-49D8-866B-970ED0D229BD}.Release|x64.Build.0 = Release|x64
+		{43FDC046-A496-49D8-866B-970ED0D229BD}.Release|x86.ActiveCfg = Release|x86
+		{43FDC046-A496-49D8-866B-970ED0D229BD}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

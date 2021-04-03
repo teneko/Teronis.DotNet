@@ -83,40 +83,6 @@ namespace Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder
             return this;
         }
 
-        /// <summary>
-        /// Builds the interceptor.
-        /// </summary>
-        /// <param name="serviceProvider">
-        /// If null the interceptor descriptors without implementation are
-        /// skipped.
-        /// </param>
-        /// <param name="registrationPhaseServiceProvider">Provides service provider for each registration phase.</param>
-        /// <returns></returns>
-        public JSIterativeInterceptor Build(
-            IServiceProvider? serviceProvider,
-            IReadOnlyDictionary<InterceptorDescriptorRegistrationPhase, IServiceProvider?>? registrationPhaseServiceProvider = null)
-        {
-            var interceptors = new List<IJSInterceptor>();
-
-            foreach (var interceptorDescriptor in InterceptorDescriptors) {
-                if (interceptorDescriptor.HasImplementation) {
-                    interceptors.Add(interceptorDescriptor.Implementation!);
-                    continue;
-                }
-
-                var currentServiceProvider = registrationPhaseServiceProvider?.GetValueOrDefault(interceptorDescriptor.RegistrationPhase) ?? serviceProvider;
-
-                if (currentServiceProvider is null) {
-                    continue;
-                }
-
-                var interceptor = (IJSInterceptor)ActivatorUtilities.CreateInstance(currentServiceProvider, interceptorDescriptor.ImplementationType);
-                interceptors.Add(interceptor);
-            }
-
-            return new JSIterativeInterceptor(interceptors);
-        }
-
         #region IJSInterceptorBuilder
 
         IJSInterceptorBuilder IJSInterceptorBuilder.Insert(int index, Type interceptorType) =>

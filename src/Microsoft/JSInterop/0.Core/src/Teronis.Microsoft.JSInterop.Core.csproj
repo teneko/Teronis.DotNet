@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\DependencyInjection\0\src\Teronis.DependencyInjection.csproj" />
+    <ProjectReference Include="..\..\..\..\Microsoft\DependencyInjection\0\src\Teronis.Microsoft.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\..\..\NetStandard\Collections\Collections\src\Teronis.NetStandard.Collections.csproj" />
     <ProjectReference Include="..\..\0.Abstractions\src\Teronis.Microsoft.JSInterop.Abstractions.csproj" />
   </ItemGroup>

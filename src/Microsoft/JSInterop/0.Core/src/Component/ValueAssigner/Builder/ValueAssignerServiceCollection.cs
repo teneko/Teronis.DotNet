@@ -3,8 +3,8 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using Teronis.DependencyInjection;
-using Teronis.DependencyInjection.Extensions;
+using Teronis.Microsoft.DependencyInjection;
+using Teronis.Microsoft.DependencyInjection.Extensions;
 
 namespace Teronis.Microsoft.JSInterop.Component.ValueAssigner.Builder
 {

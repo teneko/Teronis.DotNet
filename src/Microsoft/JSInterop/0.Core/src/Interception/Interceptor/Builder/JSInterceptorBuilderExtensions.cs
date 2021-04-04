@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using Teronis.DependencyInjection;
+using Teronis.Microsoft.DependencyInjection;
 
 namespace Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder
 {

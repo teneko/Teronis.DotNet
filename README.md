@@ -12,7 +12,9 @@ Teronis.DotNet consists of many projects. These are projects to solve common pro
 <br />:briefcase: Projects
 
 - [Teronis.Nullable](/src/Nullable) &nbsp; | &nbsp; :package: [NuGet Package](https://www.nuget.org/packages/Teronis.Nullable)
+  <br/>_Use .NET Core 3.0's new nullable attributes in older target frameworks._
 - [Teronis.MSBuild.Packaging.ProjectBuildInPackage](/src/MSBuild/Packaging/ProjectBuildInPackage) &nbsp; | &nbsp; :package: [NuGet Package](https://www.nuget.org/packages/Teronis.MSBuild.Packaging.ProjectBuildInPackage)
+  <br/>_Allow project reference content to be added to the NuGet-package during pack process._
 - ... (TBD)
   
 :book: [Source Documentation](https://teroneko.de/docs/Teronis.DotNet/Microsoft.Extensions.DependencyInjection.html)

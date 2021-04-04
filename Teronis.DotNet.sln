@@ -63,8 +63,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Identity
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Identity.Bearer.Example", "src\AspNetCore\Identity\Bearer\example\Teronis.AspNetCore.Identity.Bearer.Example.csproj", "{0D97861F-2F56-415E-843B-C6207D0E3C9E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.AspNetCore.Authorization", "src\AspNetCore\Authorization\Microsoft\src\Teronis.Microsoft.AspNetCore.Authorization.csproj", "{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.AspNetCore.Identity.Bearer.Abstractions", "src\AspNetCore\Identity\Bearer.Abstractions\src\Teronis.AspNetCore.Identity.Bearer.Abstractions.csproj", "{258279A1-6C92-486C-B819-57F953DCD27A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Windows.Core", "src\Windows\Core\src\Teronis.Windows.Core.csproj", "{8ABE92A3-4A86-4D71-993E-AF0986B5E152}"
@@ -132,6 +130,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.DependencyInjection", "src\Microsoft\DependencyInjection\0\src\Teronis.Microsoft.DependencyInjection.csproj", "{7359B89D-B452-4CB0-84B5-B1481936EDB0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.DependencyInjection.Abstractions", "src\Microsoft\DependencyInjection\0.Abstractions\src\Teronis.Microsoft.DependencyInjection.Abstractions.csproj", "{0273F276-CA40-4125-8527-C64569D68A46}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.Microsoft.AspNetCore.Authorization.Extensions", "src\Microsoft\Authorization\Extensions\src\Teronis.Microsoft.AspNetCore.Authorization.Extensions.csproj", "{28134000-B20B-41E9-9DB6-3DB7F7BD38DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -503,18 +503,6 @@ Global
 		{0D97861F-2F56-415E-843B-C6207D0E3C9E}.Release|x64.Build.0 = Release|x64
 		{0D97861F-2F56-415E-843B-C6207D0E3C9E}.Release|x86.ActiveCfg = Release|x86
 		{0D97861F-2F56-415E-843B-C6207D0E3C9E}.Release|x86.Build.0 = Release|x86
-		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Debug|x64.ActiveCfg = Debug|x64
-		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Debug|x64.Build.0 = Debug|x64
-		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Debug|x86.ActiveCfg = Debug|x86
-		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Debug|x86.Build.0 = Debug|x86
-		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Release|x64.ActiveCfg = Release|x64
-		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Release|x64.Build.0 = Release|x64
-		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Release|x86.ActiveCfg = Release|x86
-		{F3EB7ED1-D881-4D24-A246-3C08A67C08DE}.Release|x86.Build.0 = Release|x86
 		{258279A1-6C92-486C-B819-57F953DCD27A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{258279A1-6C92-486C-B819-57F953DCD27A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{258279A1-6C92-486C-B819-57F953DCD27A}.Debug|x64.ActiveCfg = Debug|x64
@@ -847,6 +835,18 @@ Global
 		{0273F276-CA40-4125-8527-C64569D68A46}.Release|x64.Build.0 = Release|x64
 		{0273F276-CA40-4125-8527-C64569D68A46}.Release|x86.ActiveCfg = Release|x86
 		{0273F276-CA40-4125-8527-C64569D68A46}.Release|x86.Build.0 = Release|x86
+		{28134000-B20B-41E9-9DB6-3DB7F7BD38DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28134000-B20B-41E9-9DB6-3DB7F7BD38DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28134000-B20B-41E9-9DB6-3DB7F7BD38DF}.Debug|x64.ActiveCfg = Debug|x64
+		{28134000-B20B-41E9-9DB6-3DB7F7BD38DF}.Debug|x64.Build.0 = Debug|x64
+		{28134000-B20B-41E9-9DB6-3DB7F7BD38DF}.Debug|x86.ActiveCfg = Debug|x86
+		{28134000-B20B-41E9-9DB6-3DB7F7BD38DF}.Debug|x86.Build.0 = Debug|x86
+		{28134000-B20B-41E9-9DB6-3DB7F7BD38DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28134000-B20B-41E9-9DB6-3DB7F7BD38DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28134000-B20B-41E9-9DB6-3DB7F7BD38DF}.Release|x64.ActiveCfg = Release|x64
+		{28134000-B20B-41E9-9DB6-3DB7F7BD38DF}.Release|x64.Build.0 = Release|x64
+		{28134000-B20B-41E9-9DB6-3DB7F7BD38DF}.Release|x86.ActiveCfg = Release|x86
+		{28134000-B20B-41E9-9DB6-3DB7F7BD38DF}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

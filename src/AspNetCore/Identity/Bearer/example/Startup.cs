@@ -23,7 +23,7 @@ using Teronis.AspNetCore.Identity.Bearer.SignInManaging.Controllers;
 using Teronis.AspNetCore.Identity.Bearer.Stores;
 using Teronis.AspNetCore.Identity.AccountManaging;
 using Teronis.AspNetCore.Identity.Bearer.SignInManaging;
-using Teronis.Microsoft.AspNetCore.Authorization;
+using Teronis.Microsoft.AspNetCore.Authorization.Extensions;
 
 namespace Teronis.AspNetCore.Identity.Bearer
 {
@@ -85,9 +85,9 @@ namespace Teronis.AspNetCore.Identity.Bearer
             services.AddAuthorization(options => {
                 options.AddPolicy(
                     new AuthorizationPolicyBuilder(AuthenticationDefaults.AccessTokenBearerScheme)
-                    .RequireAuthenticatedUser()
-                    .RequireRole(TeronisIdentityBearerExampleDefaults.AdministratorRoleName)
-                    .Build(),
+                        .RequireAuthenticatedUser()
+                        .RequireRole(TeronisIdentityBearerExampleDefaults.AdministratorRoleName)
+                        .Build(),
                     AccountControllerDefaults.CanCreateRolePolicy,
                     AccountControllerDefaults.CanCreateUserPolicy);
             });

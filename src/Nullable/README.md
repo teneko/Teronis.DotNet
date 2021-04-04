@@ -25,11 +25,11 @@ Luckily, this problem can be solved by re-declaring the attributes as `internal 
 compiler will still use them for generating warnings, even though the target framework doesn't
 support these attributes by itself.
 
-This repository hosts the code for the ["Nullable" NuGet Package][NuGet Package]
+This repository hosts the code for the ["Teronis.Nullable" NuGet Package][NuGet Package]
 which, when referenced, adds support for these attributes.
 
 The code for these attributes is added **at compile time** and gets **built into the referencing project**.
-This means that the resulting project **does not have an explicit dependency** on the `Nullable`
+This means that the resulting project **does not have an explicit dependency** on the `Teronis.Nullable`
 package, because the attributes are not distributed as a library.
 
 Futhermore, the code only gets added to the project if the nullable attributes are not already
@@ -60,7 +60,7 @@ install the package for your target framework.
 ## Quickstart
 
 > :warning: **Important:** <br/>
-> You **must** use a C# version >= 8.0 with the `Nullable` package - otherwise, your project won't compile.
+> You **must** use a C# version >= 8.0 with the `Teronis.Nullable` package - otherwise, your project won't compile.
 
 The steps below assume that you are using the **new SDK `.csproj`** style.
 Please find installation guides and notes for other project types (for example `packages.config`)
@@ -70,23 +70,23 @@ Please find installation guides and notes for other project types (for example `
    Add the package to your project, for example via:
 
    ```sh
-   Install-Package Nullable
+   Install-Package Teronis.Nullable
 
    --or--
 
-   dotnet add package Nullable
+   dotnet add package Teronis.Nullable
    ```
 2. **Ensure that the package has been added as a development dependency** <br/>
    Open your `.csproj` file and ensure that the new package reference looks similar to this:
 
    ```xml
-   <PackageReference Include="Nullable" Version="<YOUR_VERSION>">
+   <PackageReference Include="Teronis.Nullable" Version="<YOUR_VERSION>">
      <PrivateAssets>all</PrivateAssets>
      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
    </PackageReference>
 
    <!-- This style also works, but is not automatically used by .NET: -->
-   <PackageReference Include="Nullable" Version="<YOUR_VERSION>" PrivateAssets="all" />
+   <PackageReference Include="Teronis.Nullable" Version="<YOUR_VERSION>" PrivateAssets="all" />
    ```
 
    This is especially important for libraries that are published to NuGet, because without this,

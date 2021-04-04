@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Authorization\Microsoft\src\Teronis.Microsoft.AspNetCore.Authorization.csproj" />
+    <ProjectReference Include="..\..\..\..\Microsoft\Authorization\Extensions\src\Teronis.Microsoft.AspNetCore.Authorization.Extensions.csproj" />
     <ProjectReference Include="..\..\Identity\src\Teronis.AspNetCore.Identity.csproj" />
     <ProjectReference Include="..\src\Teronis.AspNetCore.Identity.Bearer.csproj" />
   </ItemGroup>

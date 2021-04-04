@@ -26,8 +26,8 @@ namespace Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder
                 return interceptor;
             }
 
-            var interceptorBuilder = Options.InterceptorBuilder;
-            return interceptor = interceptorBuilder.Build(serviceProvider);
+            var interceptorServices = Options.InterceptorServices;
+            return interceptor = interceptorServices.Build(serviceProvider);
         }
     }
 }

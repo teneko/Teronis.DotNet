@@ -11,11 +11,11 @@ namespace Teronis.Microsoft.JSInterop.Interception
     {
         public void PostConfigure(string _, TDerivedBuilderOptions options)
         {
-            if (!options.TryCreateInterceptorBuilderUserUntouched()) {
+            if (!options.CreateInterceptorServicesWhenUserUntouched()) {
                 return;
             }
 
-            options.ConfigureInterceptorBuilder(builder => builder
+            options.ConfigureInterceptorServices(builder => builder
                 .RemoveIterativeValueAssignerInterceptor()
                 .AddDefaultDynamicInterceptors()
                 .AddIterativeValueAssignerInterceptor());

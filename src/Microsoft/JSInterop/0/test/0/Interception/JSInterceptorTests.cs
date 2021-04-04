@@ -23,7 +23,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
         {
             var numbers = new List<int>();
 
-            var jsInterceptor = new JSInterceptorBuilder()
+            var jsInterceptor = new JSInterceptorServiceCollection()
                 .UseExtension(extension => {
                     extension.AddScoped(sp => new JSCallingBackInterceptor(
                         (invocation, context) => {
@@ -50,7 +50,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
         {
             var numbers = new List<int>();
 
-            var jsInterceptor = new JSInterceptorBuilder()
+            var jsInterceptor = new JSInterceptorServiceCollection()
                 .UseExtension(extension => {
                     extension.AddScoped(sp => new JSCallingBackInterceptor(
                         (invocation, context) => {

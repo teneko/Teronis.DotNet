@@ -31,11 +31,11 @@ namespace Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder
             options.SetValueAssignerOptions(propertyAssignerList.Options);
             options.SetValueAssignerList(propertyAssignerList);
 
-            if (!options.TryCreateInterceptorBuilderUserUntouched()) {
+            if (!options.CreateInterceptorServicesWhenUserUntouched()) {
                 return;
             }
 
-            options.ConfigureInterceptorBuilder(builder => builder
+            options.ConfigureInterceptorServices(builder => builder
                 .AddDefaultNonDynamicInterceptors()
                 .AddIterativeValueAssignerInterceptor());
         }

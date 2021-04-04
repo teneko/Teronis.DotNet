@@ -19,7 +19,7 @@ namespace Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder
         /// </param>
         /// <returns></returns>
         internal static JSIterativeInterceptor Build(
-            this JSInterceptorBuilder interceptorBuilder,
+            this JSInterceptorServiceCollection interceptorBuilder,
             IServiceProvider serviceProvider)
         {
             var interceptors = new List<IJSInterceptor>();

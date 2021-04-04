@@ -9,14 +9,15 @@ using Teronis.Microsoft.DependencyInjection.Extensions;
 
 namespace Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder
 {
-    internal sealed class JSInterceptorBuilder : LifetimeServiceCollection<JSInterceptorDescriptor>, IJSInterceptorServiceCollection
+    internal sealed class JSInterceptorServiceCollection : LifetimeServiceCollection<JSInterceptorDescriptor>, IJSInterceptorServiceCollection
     {
         public override ServiceLifetime Lifetime =>
             ServiceLifetime.Scoped;
 
         protected override List<JSInterceptorDescriptor> Descriptors { get; }
 
-        public JSInterceptorBuilder(IEnumerable<JSInterceptorDescriptor>? descriptors)
+        public JSInterceptorServiceCollection(IEnumerable<JSInterceptorDescriptor>? descriptors)
+            : base(typeof(IJSInterceptor))
         {
             if (descriptors is null) {
                 Descriptors = new List<JSInterceptorDescriptor>();
@@ -25,12 +26,12 @@ namespace Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder
             }
         }
 
-        public JSInterceptorBuilder()
+        public JSInterceptorServiceCollection()
             : this(descriptors: null) { }
 
-        public JSInterceptorBuilder UseExtension(Action<ScopedServiceCollectionInstanceExtension<IJSInterceptor, JSInterceptorDescriptor, JSInterceptorBuilder>> callback)
+        public JSInterceptorServiceCollection UseExtension(Action<ScopedServiceCollectionInstanceExtension<IJSInterceptor, JSInterceptorDescriptor, JSInterceptorServiceCollection>> callback)
         {
-            callback?.Invoke(new ScopedServiceCollectionInstanceExtension<IJSInterceptor, JSInterceptorDescriptor, JSInterceptorBuilder>(this, JSInterceptorDescriptor.Activator));
+            callback?.Invoke(new ScopedServiceCollectionInstanceExtension<IJSInterceptor, JSInterceptorDescriptor, JSInterceptorServiceCollection>(this, JSInterceptorDescriptor.Activator));
             return this;
         }
 

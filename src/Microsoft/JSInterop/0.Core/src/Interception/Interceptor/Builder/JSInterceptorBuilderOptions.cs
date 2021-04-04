@@ -33,21 +33,21 @@ namespace Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder
             }
         }
 
-        internal virtual JSInterceptorBuilder InterceptorBuilder {
+        internal virtual JSInterceptorServiceCollection InterceptorServices {
             get {
-                if (interceptorBuilder is null) {
-                    interceptorBuilder = new JSInterceptorBuilder();
-                    isInterceptorBuilderUserTouched = true;
+                if (interceptorServices is null) {
+                    interceptorServices = new JSInterceptorServiceCollection();
+                    areInterceptorServicesUserTouched = true;
                 }
 
-                return interceptorBuilder;
+                return interceptorServices;
             }
         }
 
-        private JSInterceptorBuilder? interceptorBuilder;
+        private JSInterceptorServiceCollection? interceptorServices;
         private IValueAssignerOptions? propertyAssignerOptions;
         private IValueAssignerList? propertyAssigners;
-        private bool isInterceptorBuilderUserTouched;
+        private bool areInterceptorServicesUserTouched;
 
         internal void SetValueAssignerOptions(IValueAssignerOptions propertyAssignerOptions) =>
             this.propertyAssignerOptions = propertyAssignerOptions ?? throw new ArgumentNullException(nameof(propertyAssignerOptions));
@@ -55,14 +55,14 @@ namespace Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder
         internal void SetValueAssignerList(IValueAssignerList propertyAssigners) =>
             this.propertyAssigners = propertyAssigners ?? throw new ArgumentNullException(nameof(propertyAssigners));
 
-        internal bool TryCreateInterceptorBuilderUserUntouched()
+        internal bool CreateInterceptorServicesWhenUserUntouched()
         {
-            if (isInterceptorBuilderUserTouched) {
+            if (areInterceptorServicesUserTouched) {
                 return false;
             }
 
-            if (interceptorBuilder is null) {
-                interceptorBuilder = new JSInterceptorBuilder();
+            if (interceptorServices is null) {
+                interceptorServices = new JSInterceptorServiceCollection();
             }
 
             return true;
@@ -72,9 +72,9 @@ namespace Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder
         /// Configures an implementation of <see cref="IJSInterceptorServiceCollection"/>.
         /// </summary>
         /// <param name="configure"></param>
-        public DerivedType ConfigureInterceptorBuilder(Action<IJSInterceptorServiceCollection> configure)
+        public DerivedType ConfigureInterceptorServices(Action<IJSInterceptorServiceCollection> configure)
         {
-            configure?.Invoke(InterceptorBuilder);
+            configure?.Invoke(InterceptorServices);
             return (DerivedType)this;
         }
     }

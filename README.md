@@ -12,6 +12,7 @@ Teronis.DotNet consists of many projects. These are projects to solve common pro
 <br />:briefcase: Projects
 
 - [Teronis.Nullable](/src/Nullable) &nbsp; | &nbsp; :package: [NuGet Package](https://www.nuget.org/packages/Teronis.Nullable)
+- [Teronis.MSBuild.Packaging.ProjectBuildInPackage](/src/MSBuild/Packaging/ProjectBuildInPackage) &nbsp; | &nbsp; :package: [NuGet Package](https://www.nuget.org/packages/Teronis.MSBuild.Packaging.ProjectBuildInPackage)
 - ... (TBD)
   
 :book: [Source Documentation](https://teroneko.de/docs/Teronis.DotNet/Microsoft.Extensions.DependencyInjection.html)

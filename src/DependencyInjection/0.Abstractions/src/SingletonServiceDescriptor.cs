@@ -11,16 +11,16 @@ namespace Teronis.DependencyInjection
         internal SingletonServiceDescriptor(ServiceDescriptor serviceDescriptor)
             : base(serviceDescriptor) { }
 
-        public SingletonServiceDescriptor(Type singletonType)
-            : base(singletonType) { }
+        public SingletonServiceDescriptor(Type serviceType)
+            : base(serviceType) { }
 
-        public SingletonServiceDescriptor(Type singletonType, Type implementationType)
-            : base(singletonType, implementationType) { }
+        public SingletonServiceDescriptor(Type serviceType, Type implementationType)
+            : base(serviceType, implementationType) { }
 
-        public SingletonServiceDescriptor(Type singletonType, object instance)
-            : base(singletonType, instance) { }
+        public SingletonServiceDescriptor(Type serviceType, object instance)
+            : base(serviceType, instance) { }
 
-        public SingletonServiceDescriptor(Type singletonType, Func<IServiceProvider, object> factory)
-            : base(singletonType, factory) { }
+        public SingletonServiceDescriptor(Type serviceType, Func<IServiceProvider, object> factory)
+            : base(serviceType, factory) { }
     }
 }

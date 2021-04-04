@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Teroneko.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Teronis.Microsoft.JSInterop.Interception.Interceptor;
-
 namespace Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder
 {
     public static class InterceptorBuilderExtensions
@@ -12,9 +10,9 @@ namespace Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder
         /// </summary>
         /// <param name="interceptorBuilder"></param>
         /// <returns></returns>
-        public static IJSInterceptorBuilder AddDefaultNonDynamicInterceptors(this IJSInterceptorBuilder interceptorBuilder)
+        public static IJSInterceptorServiceCollection AddDefaultNonDynamicInterceptors(this IJSInterceptorServiceCollection interceptorBuilder)
         {
-            interceptorBuilder.Add(typeof(JSLocalObjectActivatingInterceptor));
+            interceptorBuilder.UseExtension(e => e.AddScoped<JSLocalObjectActivatingInterceptor>());
             return interceptorBuilder;
         }
 
@@ -23,9 +21,9 @@ namespace Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder
         /// </summary>
         /// <param name="interceptorBuilder"></param>
         /// <returns></returns>
-        public static IJSInterceptorBuilder AddIterativeValueAssignerInterceptor(this IJSInterceptorBuilder interceptorBuilder)
+        public static IJSInterceptorServiceCollection AddIterativeValueAssignerInterceptor(this IJSInterceptorServiceCollection interceptorBuilder)
         {
-            interceptorBuilder.Add(typeof(JSIterativeValueAssignerInterceptor));
+            interceptorBuilder.UseExtension(e => e.AddScoped<JSIterativeValueAssignerInterceptor>());
             return interceptorBuilder;
         }
 
@@ -34,9 +32,9 @@ namespace Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder
         /// </summary>
         /// <param name="interceptorBuilder"></param>
         /// <returns></returns>
-        public static IJSInterceptorBuilder RemoveIterativeValueAssignerInterceptor(this IJSInterceptorBuilder interceptorBuilder)
+        public static IJSInterceptorServiceCollection RemoveIterativeValueAssignerInterceptor(this IJSInterceptorServiceCollection interceptorBuilder)
         {
-            interceptorBuilder.Remove(typeof(JSIterativeValueAssignerInterceptor));
+            interceptorBuilder.UseExtension(e => e.RemoveAll<JSIterativeValueAssignerInterceptor>());
             return interceptorBuilder;
         }
     }

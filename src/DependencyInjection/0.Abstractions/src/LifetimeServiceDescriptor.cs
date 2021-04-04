@@ -13,7 +13,7 @@ namespace Teronis.DependencyInjection
         public object? ImplementationInstance { get; }
         public Func<IServiceProvider, object>? ImplementationFactory { get; }
 
-        internal LifetimeServiceDescriptor(ServiceDescriptor serviceDescriptor)
+        internal protected LifetimeServiceDescriptor(ServiceDescriptor serviceDescriptor)
         {
             ServiceType = serviceDescriptor.ServiceType;
             ImplementationType = serviceDescriptor.ImplementationType;

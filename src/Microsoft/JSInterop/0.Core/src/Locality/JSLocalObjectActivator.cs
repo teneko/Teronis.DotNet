@@ -11,7 +11,7 @@ namespace Teronis.Microsoft.JSInterop.Locality
     {
         private readonly IJSLocalObjectInterop jsLocalObjectInterop;
 
-        public JSLocalObjectActivator(IJSLocalObjectInterop jsLocalObjectInterop, JSMutableInterceptorBuilder<JSLocalObjectInterceptorBuilderOptions>? interceptorBuilder)
+        public JSLocalObjectActivator(IJSLocalObjectInterop jsLocalObjectInterop, JSInterceptorBuilder<JSLocalObjectInterceptorBuilderOptions>? interceptorBuilder)
             : base(interceptorBuilder) =>
             this.jsLocalObjectInterop = jsLocalObjectInterop ?? throw new System.ArgumentNullException(nameof(jsLocalObjectInterop));
 
@@ -20,7 +20,7 @@ namespace Teronis.Microsoft.JSInterop.Locality
 
         public virtual IJSLocalObject CreateInstance(IJSObjectReference jsObjectReference, JSLocalObjectCreationOptions? creationOptions = null)
         {
-            var jsInterceptor = BuildInterceptor(creationOptions?.ConfigureInterceptorBuilder);
+            var jsInterceptor = BuildInterceptor();
             return new JSLocalObject(jsObjectReference, jsInterceptor);
         }
 

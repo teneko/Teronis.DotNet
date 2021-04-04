@@ -6,7 +6,5 @@ using System.Collections.Generic;
 namespace Teronis.Microsoft.JSInterop.Component.ValueAssigner.Builder
 {
     public interface IValueAssignerList : IReadOnlyList<IValueAssigner>
-    {
-        //internal IValueAssignerOptions Options { get; }
-    }
+    { }
 }

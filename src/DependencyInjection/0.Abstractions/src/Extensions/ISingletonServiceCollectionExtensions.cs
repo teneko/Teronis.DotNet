@@ -3,42 +3,42 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Teronis.DependencyInjection.Extensions
 {
-    public static class ISingletonServiceCollectionExtensions
+    public static partial class ISingletonServiceCollectionExtensions
     {
-        private readonly static ILifetimeServiceCollectionExtensionsTemplate<SingletonServiceDescriptor, ISingletonServiceCollection> extensionsTemplate =
-            new ILifetimeServiceCollectionExtensionsTemplate<SingletonServiceDescriptor, ISingletonServiceCollection>(SingletonServiceDescriptorActivator.Instance);
+        internal readonly static LifetimeServiceCollectionExtension<object, SingletonServiceDescriptor, ISingletonServiceCollection> Extension =
+            new LifetimeServiceCollectionExtension<object, SingletonServiceDescriptor, ISingletonServiceCollection>(DescriptorActivator.Singleton);
 
         public static ISingletonServiceCollection Add(this ISingletonServiceCollection collection, SingletonServiceDescriptor descriptor) =>
-            extensionsTemplate.Add(collection, descriptor);
+            Extension.Add(collection, descriptor);
 
         public static ISingletonServiceCollection Add(this ISingletonServiceCollection collection, IEnumerable<SingletonServiceDescriptor> descriptors) =>
-            extensionsTemplate.Add(collection, descriptors);
+            Extension.Add(collection, descriptors);
 
         public static ISingletonServiceCollection RemoveAll(this ISingletonServiceCollection collection, Type serviceType) =>
-            extensionsTemplate.RemoveAll(collection, serviceType);
+            Extension.RemoveAll(collection, serviceType);
 
         public static ISingletonServiceCollection RemoveAll<TService>(this ISingletonServiceCollection collection)
             where TService : class =>
-            extensionsTemplate.RemoveAll<TService>(collection);
+            Extension.RemoveAll<TService>(collection);
 
         public static ISingletonServiceCollection Replace(this ISingletonServiceCollection collection, SingletonServiceDescriptor descriptor) =>
-            extensionsTemplate.Replace(collection, descriptor);
+            Extension.Replace(collection, descriptor);
 
         public static bool Contains(this ISingletonServiceCollection collection, Type serviceType) =>
-            extensionsTemplate.Contains(collection, serviceType);
+            Extension.Contains(collection, serviceType);
 
-        public static bool Contains<TService>(this ISingletonServiceCollection collection) =>
-            extensionsTemplate.Contains<TService>(collection);
+        public static bool Contains<TService>(this ISingletonServiceCollection collection)
+            where TService : class =>
+            Extension.Contains<TService>(collection);
 
         public static void TryAdd(this ISingletonServiceCollection collection, SingletonServiceDescriptor descriptor) =>
-            extensionsTemplate.TryAdd(collection, descriptor);
+            Extension.TryAdd(collection, descriptor);
 
         public static void TryAdd(this ISingletonServiceCollection collection, IEnumerable<SingletonServiceDescriptor> descriptors) =>
-            extensionsTemplate.TryAdd(collection, descriptors);
+            Extension.TryAdd(collection, descriptors);
 
         /// <summary>
         /// Adds <paramref name="descriptor"/> if an existing descriptor with the same
@@ -49,7 +49,7 @@ namespace Teronis.DependencyInjection.Extensions
         /// <param name="descriptor"></param>
         /// <remarks>Prevents the registration of implementation type duplicates.</remarks>
         public static void TryAddEnumerable(this ISingletonServiceCollection collection, SingletonServiceDescriptor descriptor) =>
-            extensionsTemplate.TryAddEnumerable(collection, descriptor);
+            Extension.TryAddEnumerable(collection, descriptor);
 
         /// <summary>
         /// Adds <paramref name="descriptors"/> if not a single descriptor with same
@@ -61,16 +61,16 @@ namespace Teronis.DependencyInjection.Extensions
         /// Prevents the registration of implementation type duplicates.
         /// </remarks>
         public static void TryAddEnumerable(this ISingletonServiceCollection collection, IEnumerable<SingletonServiceDescriptor> descriptors) =>
-            extensionsTemplate.TryAddEnumerable(collection, descriptors);
+            Extension.TryAddEnumerable(collection, descriptors);
 
         public static void TryAddSingleton(this ISingletonServiceCollection collection, Type service, Type implementationType) =>
-            extensionsTemplate.TryAddService(collection, service, implementationType);
+            Extension.TryAddService(collection, service, implementationType);
 
         public static void TryAddSingleton(this ISingletonServiceCollection collection, Type service) =>
-            extensionsTemplate.TryAddService(collection, service);
+            Extension.TryAddService(collection, service);
 
         public static void TryAddSingleton(this ISingletonServiceCollection collection, Type service, Func<IServiceProvider, object> implementationFactory) =>
-            extensionsTemplate.TryAddService(collection, service, implementationFactory);
+            Extension.TryAddService(collection, service, implementationFactory);
 
         public static void TryAddSingleton<TService>(this ISingletonServiceCollection collection)
             where TService : class =>
@@ -79,34 +79,55 @@ namespace Teronis.DependencyInjection.Extensions
         public static void TryAddSingleton<TService, TImplementation>(this ISingletonServiceCollection collection)
             where TService : class
             where TImplementation : class, TService =>
-            extensionsTemplate.TryAddService<TService, TImplementation>(collection);
+            Extension.TryAddService<TService, TImplementation>(collection);
 
         public static void TryAddSingleton<TService>(this ISingletonServiceCollection collection, TService instance)
             where TService : class =>
-            extensionsTemplate.TryAddService(collection, instance);
+            Extension.TryAddService(collection, instance);
 
         public static void TryAddSingleton<TService>(this ISingletonServiceCollection collection, Func<IServiceProvider, TService> implementationFactory)
             where TService : class =>
-            extensionsTemplate.TryAddService(collection, implementationFactory);
+            Extension.TryAddService(collection, implementationFactory);
+
+        /* BEGIN HELPERS */
+
+        public static ISingletonServiceCollection AddSingleton<TService>(this ISingletonServiceCollection collection)
+            where TService : class =>
+            Extension.AddService<TService>(collection);
+
+        public static ISingletonServiceCollection AddSingleton(this ISingletonServiceCollection collection, Type serviceType, Type implementationType) =>
+            Extension.AddService(collection, serviceType, implementationType);
+
+        public static ISingletonServiceCollection AddSingleton(this ISingletonServiceCollection collection, Type serviceType, Func<IServiceProvider, object> implementationFactory) =>
+            Extension.AddService(collection, serviceType, implementationFactory);
+
+        public static ISingletonServiceCollection AddSingleton<TService, TImplementation>(this ISingletonServiceCollection collection)
+            where TService : class
+            where TImplementation : class, TService =>
+            Extension.AddService<TService, TImplementation>(collection);
+
+        public static ISingletonServiceCollection AddSingleton(this ISingletonServiceCollection collection, Type serviceType) =>
+            Extension.AddService(collection, serviceType);
+
+        public static ISingletonServiceCollection AddSingleton<TService>(this ISingletonServiceCollection collection, Func<IServiceProvider, TService> implementationFactory)
+            where TService : class =>
+            Extension.AddService(collection, implementationFactory);
+
+        public static ISingletonServiceCollection AddSingleton<TService, TImplementation>(this ISingletonServiceCollection collection, Func<IServiceProvider, TImplementation> implementationFactory)
+            where TService : class
+            where TImplementation : class, TService =>
+            Extension.AddService<TService, TImplementation>(collection, implementationFactory);
+
+        public static ISingletonServiceCollection AddSingleton<TService>(this ISingletonServiceCollection collection, TService implementationInstance)
+            where TService : class =>
+            Extension.AddService(collection, implementationInstance);
+
+        public static ISingletonServiceCollection AddSingleton(this ISingletonServiceCollection collection, Type serviceType, object implementationInstance) =>
+            Extension.AddService(collection, serviceType, implementationInstance);
+
+        /* END HELPERS */
 
         public static IServiceCollectionAdapter<ISingletonServiceCollection> CreateServiceCollectionAdapter(ISingletonServiceCollection collection) =>
-            extensionsTemplate.CreateServiceCollectionAdapter(collection);
-
-        private class SingletonServiceDescriptorActivator : DescriptorActivator<SingletonServiceDescriptor>
-        {
-            public readonly static SingletonServiceDescriptorActivator Instance = new SingletonServiceDescriptorActivator();
-
-            internal protected override SingletonServiceDescriptor CreateDescriptor(ServiceDescriptor serviceDescriptor) =>
-                new SingletonServiceDescriptor(serviceDescriptor);
-
-            internal protected override SingletonServiceDescriptor CreateDescriptor(Type serviceType, Type implementationType) =>
-                new SingletonServiceDescriptor(serviceType, implementationType);
-
-            internal protected override SingletonServiceDescriptor CreateDescriptor(Type serviceType, object implementationInstance) =>
-                new SingletonServiceDescriptor(serviceType, implementationInstance);
-
-            internal protected override SingletonServiceDescriptor CreateDescriptor(Type serviceType, Func<IServiceProvider, object> implementationFactory) =>
-                new SingletonServiceDescriptor(serviceType, implementationFactory);
-        }
+            Extension.CreateServiceCollectionAdapter(collection);
     }
 }

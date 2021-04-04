@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Extensions.DependencyInjection;
+using Teronis.DependencyInjection;
 
 namespace Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder
 {
@@ -17,28 +17,15 @@ namespace Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder
         /// If null the interceptor descriptors without implementation are
         /// skipped.
         /// </param>
-        /// <param name="serviceProviderByRegistrationPhase">Provides service provider for each registration phase.</param>
         /// <returns></returns>
         internal static JSIterativeInterceptor Build(
             this JSInterceptorBuilder interceptorBuilder,
-            IServiceProvider? serviceProvider,
-            IReadOnlyDictionary<InterceptorDescriptorRegistrationPhase, IServiceProvider?>? serviceProviderByRegistrationPhase = null)
+            IServiceProvider serviceProvider)
         {
             var interceptors = new List<IJSInterceptor>();
 
-            foreach (var interceptorDescriptor in interceptorBuilder.InterceptorDescriptors) {
-                if (interceptorDescriptor.HasImplementation) {
-                    interceptors.Add(interceptorDescriptor.Implementation!);
-                    continue;
-                }
-
-                var currentServiceProvider = serviceProviderByRegistrationPhase?.GetValueOrDefault(interceptorDescriptor.RegistrationPhase) ?? serviceProvider;
-
-                if (currentServiceProvider is null) {
-                    continue;
-                }
-
-                var interceptor = (IJSInterceptor)ActivatorUtilities.CreateInstance(currentServiceProvider, interceptorDescriptor.ImplementationType);
+            foreach (var interceptorDescriptor in interceptorBuilder) {
+                var interceptor = (IJSInterceptor)LifetimeServiceActivator.GetInstanceOrCreateInstance(serviceProvider, interceptorDescriptor);
                 interceptors.Add(interceptor);
             }
 

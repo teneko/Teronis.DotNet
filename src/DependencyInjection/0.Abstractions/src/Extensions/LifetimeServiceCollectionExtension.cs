@@ -7,13 +7,14 @@ using System.Linq;
 
 namespace Teronis.DependencyInjection.Extensions
 {
-    internal class ILifetimeServiceCollectionExtensionsTemplate<TDescriptor, TCollection>
+    internal readonly struct LifetimeServiceCollectionExtension<TServiceBase, TDescriptor, TCollection>
+        where TServiceBase : class
         where TDescriptor : LifetimeServiceDescriptor
         where TCollection : ILifetimeServiceCollection<TDescriptor>
     {
-        private readonly DescriptorActivator<TDescriptor> descriptorActivator;
+        private readonly DescriptorActivatorBase<TDescriptor> descriptorActivator;
 
-        public ILifetimeServiceCollectionExtensionsTemplate(DescriptorActivator<TDescriptor> descriptorActivator) =>
+        public LifetimeServiceCollectionExtension(DescriptorActivatorBase<TDescriptor> descriptorActivator) =>
             this.descriptorActivator = descriptorActivator ?? throw new ArgumentNullException(nameof(descriptorActivator));
 
         public TCollection Add(TCollection collection, TDescriptor descriptor)
@@ -71,7 +72,7 @@ namespace Teronis.DependencyInjection.Extensions
         }
 
         public TCollection RemoveAll<TService>(TCollection collection)
-            where TService : class
+            where TService : class, TServiceBase
         {
             if (collection is null) {
                 throw new ArgumentNullException(nameof(collection));
@@ -122,7 +123,8 @@ namespace Teronis.DependencyInjection.Extensions
             return collection.Any(descriptor => descriptor.ServiceType == serviceType);
         }
 
-        public bool Contains<TService>(TCollection collection) =>
+        public bool Contains<TService>(TCollection collection)
+            where TService : class, TServiceBase =>
             Contains(collection, typeof(TService));
 
         public void TryAdd(TCollection collection, TDescriptor descriptor)
@@ -215,33 +217,98 @@ namespace Teronis.DependencyInjection.Extensions
         }
 
         public void TryAddService<TService>(TCollection collection)
-            where TService : class =>
+            where TService : class, TServiceBase =>
             TryAddService(collection, typeof(TService));
 
         public void TryAddService<TService, TImplementation>(TCollection collection)
-            where TService : class
+            where TService : class, TServiceBase
             where TImplementation : class, TService =>
             TryAddService(collection, typeof(TService), typeof(TImplementation));
 
         public void TryAddService<TService>(TCollection collection, TService instance)
-            where TService : class
+            where TService : class, TServiceBase
         {
             if (instance is null) {
                 throw new ArgumentNullException(nameof(instance));
             }
 
-            var instanceType = instance.GetType();
+            var serviceType = typeof(TService);
 
-            if (Contains(collection, instanceType)) {
+            if (Contains(collection, serviceType)) {
                 return;
             }
 
-            collection.Add(descriptorActivator.CreateDescriptor(instanceType, instance));
+            collection.Add(descriptorActivator.CreateDescriptor(serviceType, instance));
         }
 
         public void TryAddService<TService>(TCollection collection, Func<IServiceProvider, TService> implementationFactory)
-            where TService : class =>
+            where TService : class, TServiceBase =>
             TryAddService(collection, typeof(TService), implementationFactory);
+
+        /* BEGIN HELPERS */
+
+        public TCollection AddService<TService, TImplementation>(TCollection collection, Func<IServiceProvider, TImplementation> implementationFactory)
+            where TService : class, TServiceBase
+            where TImplementation : class, TService
+        {
+            collection.Add(descriptorActivator.CreateDescriptor(typeof(TService), implementationFactory));
+            return collection;
+        }
+
+        public TCollection AddService<TService>(TCollection collection, Func<IServiceProvider, TService> implementationFactory)
+            where TService : class, TServiceBase
+        {
+            collection.Add(descriptorActivator.CreateDescriptor(typeof(TService), implementationFactory));
+            return collection;
+        }
+
+        public TCollection AddService<TService>(TCollection collection)
+            where TService : class, TServiceBase
+        {
+            collection.Add(descriptorActivator.CreateDescriptor(typeof(TService), typeof(TService)));
+            return collection;
+        }
+
+        public TCollection AddService(TCollection collection, Type serviceType)
+        {
+            collection.Add(descriptorActivator.CreateDescriptor(serviceType, serviceType));
+            return collection;
+        }
+
+        public TCollection AddService<TService, TImplementation>(TCollection collection)
+            where TService : class, TServiceBase
+            where TImplementation : class, TService
+        {
+            collection.Add(descriptorActivator.CreateDescriptor(typeof(TService), typeof(TImplementation)));
+            return collection;
+        }
+
+        public TCollection AddService(TCollection collection, Type serviceType, Func<IServiceProvider, object> implementationFactory)
+        {
+            collection.Add(descriptorActivator.CreateDescriptor(serviceType, implementationFactory));
+            return collection;
+        }
+
+        public TCollection AddService(TCollection collection, Type serviceType, Type implementationType)
+        {
+            collection.Add(descriptorActivator.CreateDescriptor(serviceType, implementationType));
+            return collection;
+        }
+
+        public TCollection AddService<TService>(TCollection collection, TService implementationInstance)
+            where TService : class, TServiceBase
+        {
+            collection.Add(descriptorActivator.CreateDescriptor(typeof(TService), implementationInstance));
+            return collection;
+        }
+
+        public TCollection AddService(TCollection collection, Type serviceType, object implementationInstance)
+        {
+            collection.Add(descriptorActivator.CreateDescriptor(serviceType, implementationInstance));
+            return collection;
+        }
+
+        /* END HELPERS */
 
         public ServiceCollectionAdapter<TDescriptor, TCollection> CreateServiceCollectionAdapter(TCollection collection) =>
             new ServiceCollectionAdapter<TDescriptor, TCollection>(collection, descriptorActivator);

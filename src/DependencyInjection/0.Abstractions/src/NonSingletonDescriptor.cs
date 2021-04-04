@@ -8,7 +8,7 @@ namespace Teronis.DependencyInjection
 {
     public class NonSingletonServiceDescriptor : LifetimeServiceDescriptor
     {
-        internal NonSingletonServiceDescriptor(ServiceDescriptor descriptor)
+        internal protected NonSingletonServiceDescriptor(ServiceDescriptor descriptor)
             : base(descriptor)
         {
             if (!(descriptor.ImplementationInstance is null)) { 

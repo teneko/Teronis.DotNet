@@ -9,10 +9,10 @@ namespace Teronis.Microsoft.JSInterop.Component.ValueAssigner.Builder
         /// <summary>
         /// The property assigner factories.
         /// </summary>
-        public ValueAssignerFactories Factories {
+        public ValueAssignerServiceCollection Factories {
             get {
                 if (factories is null) {
-                    factories = new ValueAssignerFactories();
+                    factories = new ValueAssignerServiceCollection();
                     areValueAssignerFactoriesUserTouched = true;
                 }
 
@@ -20,7 +20,7 @@ namespace Teronis.Microsoft.JSInterop.Component.ValueAssigner.Builder
             }
         }
 
-        private ValueAssignerFactories? factories;
+        private ValueAssignerServiceCollection? factories;
         private bool areValueAssignerFactoriesUserTouched;
 
         public ValueAssignerOptions()
@@ -35,7 +35,7 @@ namespace Teronis.Microsoft.JSInterop.Component.ValueAssigner.Builder
             }
 
             if (factories is null) {
-                factories = new ValueAssignerFactories();
+                factories = new ValueAssignerServiceCollection();
             }
 
             return true;

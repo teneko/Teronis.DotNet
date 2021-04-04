@@ -22,7 +22,7 @@ namespace Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder
                 IPostConfigureOptions<TInterceptorBuilderOptions>,
                 JSInterceptorBuilderOptionsPostConfiguration<TInterceptorBuilderOptions, TValueAssignerOptions>>();
 
-            services.TryAddSingleton<JSMutableInterceptorBuilder<TInterceptorBuilderOptions>>();
+            services.TryAddSingleton<JSInterceptorBuilder<TInterceptorBuilderOptions>>();
             return services;
         }
 

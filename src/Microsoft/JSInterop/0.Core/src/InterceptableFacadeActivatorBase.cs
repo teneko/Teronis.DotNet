@@ -11,12 +11,12 @@ namespace Teronis.Microsoft.JSInterop
     {
         private readonly BuildInterceptorDelegate? buildInterceptor;
 
-        public InterceptableFacadeActivatorBase(IJSMutableInterceptorBuilder? interceptorBuilder) =>
+        public InterceptableFacadeActivatorBase(IJSInterceptorBuilder? interceptorBuilder) =>
             buildInterceptor = interceptorBuilder is null ? null : (BuildInterceptorDelegate?)interceptorBuilder.BuildInterceptor;
 
-        public IJSInterceptor BuildInterceptor(Action<IJSInterceptorBuilder>? configureBuilder) =>
+        public IJSInterceptor BuildInterceptor() =>
             buildInterceptor
-                ?.Invoke(configureBuilder: configureBuilder)
+                ?.Invoke()
                 ?? JSInterceptor.Default;
     }
 }

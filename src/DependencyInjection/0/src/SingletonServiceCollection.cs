@@ -7,7 +7,7 @@ namespace Teronis.DependencyInjection
 {
     public class SingletonServiceCollection : LifetimeServiceCollection<SingletonServiceDescriptor>, ISingletonServiceCollection
     {
-        public override ServiceLifetime Lifetime => 
+        public override ServiceLifetime Lifetime =>
             ServiceLifetime.Singleton;
     }
 }

@@ -4,108 +4,40 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
+using Teronis.DependencyInjection;
+using Teronis.DependencyInjection.Extensions;
 
 namespace Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder
 {
-    internal sealed class JSInterceptorBuilder : IJSInterceptorBuilder
+    internal sealed class JSInterceptorBuilder : LifetimeServiceCollection<JSInterceptorDescriptor>, IJSInterceptorServiceCollection
     {
-        public IReadOnlyList<JSInterceptorDescriptor> InterceptorDescriptors =>
-            interceptorDescriptors;
+        public override ServiceLifetime Lifetime =>
+            ServiceLifetime.Scoped;
 
-        private List<JSInterceptorDescriptor> interceptorDescriptors;
-        private InterceptorDescriptorRegistrationPhase currentRegistrationPhase;
+        protected override List<JSInterceptorDescriptor> Descriptors { get; }
 
-        public JSInterceptorBuilder() =>
-            interceptorDescriptors = new List<JSInterceptorDescriptor>();
-
-        public JSInterceptorBuilder(IEnumerable<JSInterceptorDescriptor> interceptorDescriptors) =>
-            this.interceptorDescriptors = new List<JSInterceptorDescriptor>(interceptorDescriptors);
-
-        /// <summary>
-        /// Sets the current registration phase.
-        /// </summary>
-        /// <param name="registrationPhase"></param>
-        public void SetRegistrationPhase(InterceptorDescriptorRegistrationPhase registrationPhase) =>
-            currentRegistrationPhase = registrationPhase;
-
-        private Type GetInterceptorType(IJSInterceptor interceptor) =>
-            interceptor?.GetType() ?? throw new ArgumentNullException(nameof(interceptor));
-
-        private void InsertInterceptor(int index, Type interceptorType, IJSInterceptor? interceptor)
+        public JSInterceptorBuilder(IEnumerable<JSInterceptorDescriptor>? descriptors)
         {
-            JSInterceptorDescriptor interceptorDescriptor;
-
-            if (interceptor is null) {
-                interceptorDescriptor = new JSInterceptorDescriptor(currentRegistrationPhase, interceptorType);
+            if (descriptors is null) {
+                Descriptors = new List<JSInterceptorDescriptor>();
             } else {
-                interceptorDescriptor = new JSInterceptorDescriptor(currentRegistrationPhase, interceptor, interceptorType);
+                Descriptors = new List<JSInterceptorDescriptor>(descriptors);
             }
-
-            interceptorDescriptors.Insert(index, interceptorDescriptor);
         }
 
-        public JSInterceptorBuilder Insert(int index, Type interceptorType)
+        public JSInterceptorBuilder()
+            : this(descriptors: null) { }
+
+        public JSInterceptorBuilder UseExtension(Action<ScopedServiceCollectionInstanceExtension<IJSInterceptor, JSInterceptorDescriptor, JSInterceptorBuilder>> callback)
         {
-            InsertInterceptor(index, interceptorType, interceptor: null);
+            callback?.Invoke(new ScopedServiceCollectionInstanceExtension<IJSInterceptor, JSInterceptorDescriptor, JSInterceptorBuilder>(this, JSInterceptorDescriptor.Activator));
             return this;
         }
 
-        public JSInterceptorBuilder Insert(int index, IJSInterceptor interceptor)
+        IJSInterceptorServiceCollection IJSInterceptorServiceCollection.UseExtension(Action<ScopedServiceCollectionInstanceExtension<IJSInterceptor, JSInterceptorDescriptor, IJSInterceptorServiceCollection>> callback)
         {
-            var interceptorType = GetInterceptorType(interceptor);
-            InsertInterceptor(index, interceptorType, interceptor);
+            callback?.Invoke(new ScopedServiceCollectionInstanceExtension<IJSInterceptor, JSInterceptorDescriptor, IJSInterceptorServiceCollection>(this, JSInterceptorDescriptor.Activator));
             return this;
         }
-
-        public JSInterceptorBuilder Add(Type interceptorType) =>
-            Insert(interceptorDescriptors.Count, interceptorType);
-
-        public JSInterceptorBuilder Add(IJSInterceptor interceptor) =>
-            Insert(interceptorDescriptors.Count, interceptor);
-
-        public JSInterceptorBuilder Remove(Type interceptorType)
-        {
-            var interceptorDescriptor = new JSInterceptorDescriptor(currentRegistrationPhase, interceptorType);
-            interceptorDescriptors.Remove(interceptorDescriptor);
-            return this;
-        }
-
-        public JSInterceptorBuilder Remove(IJSInterceptor interceptor)
-        {
-            var interceptorDescriptor = new JSInterceptorDescriptor(currentRegistrationPhase, interceptor, implementationType: null);
-            interceptorDescriptors.Remove(interceptorDescriptor);
-            return this;
-        }
-
-        public JSInterceptorBuilder RemoveAt(int index)
-        {
-            interceptorDescriptors.RemoveAt(index);
-            return this;
-        }
-
-        #region IJSInterceptorBuilder
-
-        IJSInterceptorBuilder IJSInterceptorBuilder.Insert(int index, Type interceptorType) =>
-            Insert(index, interceptorType);
-
-        IJSInterceptorBuilder IJSInterceptorBuilder.Insert(int index, IJSInterceptor interceptor) =>
-            Insert(index, interceptor);
-
-        IJSInterceptorBuilder IJSInterceptorBuilder.Add(Type interceptorType) =>
-            Add(interceptorType);
-
-        IJSInterceptorBuilder IJSInterceptorBuilder.Add(IJSInterceptor interceptor) =>
-            Add(interceptor);
-
-        IJSInterceptorBuilder IJSInterceptorBuilder.Remove(Type interceptorType) =>
-            Remove(interceptorType);
-
-        IJSInterceptorBuilder IJSInterceptorBuilder.Remove(IJSInterceptor interceptor) =>
-            Remove(interceptor);
-
-        IJSInterceptorBuilder IJSInterceptorBuilder.RemoveAt(int index) =>
-            RemoveAt(index);
-
-        #endregion
     }
 }

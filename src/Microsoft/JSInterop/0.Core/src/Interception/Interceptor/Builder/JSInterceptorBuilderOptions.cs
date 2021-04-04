@@ -69,10 +69,10 @@ namespace Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder
         }
 
         /// <summary>
-        /// Configures an implementation of <see cref="IJSInterceptorBuilder"/>.
+        /// Configures an implementation of <see cref="IJSInterceptorServiceCollection"/>.
         /// </summary>
         /// <param name="configure"></param>
-        public DerivedType ConfigureInterceptorBuilder(Action<IJSInterceptorBuilder> configure)
+        public DerivedType ConfigureInterceptorBuilder(Action<IJSInterceptorServiceCollection> configure)
         {
             configure?.Invoke(InterceptorBuilder);
             return (DerivedType)this;

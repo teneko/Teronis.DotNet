@@ -12,10 +12,13 @@ namespace Teronis.Microsoft.JSInterop.Interception
         /// </summary>
         /// <param name="interceptorBuilder"></param>
         /// <returns></returns>
-        public static IJSInterceptorBuilder AddDefaultDynamicInterceptors(this IJSInterceptorBuilder interceptorBuilder)
+        public static IJSInterceptorServiceCollection AddDefaultDynamicInterceptors(this IJSInterceptorServiceCollection interceptorBuilder)
         {
-            interceptorBuilder.Add(typeof(JSDynamicProxyActivatingInterceptor));
-            interceptorBuilder.Add(typeof(JSDynamicModuleActivatingInterceptor));
+            interceptorBuilder.UseExtension(e => {
+                e.AddScoped<JSDynamicProxyActivatingInterceptor>();
+                e.AddScoped<JSDynamicModuleActivatingInterceptor>();
+            });
+
             return interceptorBuilder;
         }
     }

@@ -22,9 +22,9 @@ namespace Teronis.DependencyInjection.Extensions
             descriptorCollection.IsReadOnly;
 
         private readonly TCollection descriptorCollection;
-        private readonly DescriptorActivator<TDescriptor> descriptorActivator;
+        private readonly DescriptorActivatorBase<TDescriptor> descriptorActivator;
 
-        public ServiceCollectionAdapter(TCollection descriptorCollection, DescriptorActivator<TDescriptor> descriptorActivator)
+        public ServiceCollectionAdapter(TCollection descriptorCollection, DescriptorActivatorBase<TDescriptor> descriptorActivator)
         {
             this.descriptorCollection = descriptorCollection;
             this.descriptorActivator = descriptorActivator;

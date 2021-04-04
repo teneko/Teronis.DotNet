@@ -23,10 +23,9 @@ namespace Teronis_._Microsoft.JSInterop
 
             services.AddScoped(serviceProvider => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-            services.AddJSDynamicProxyActivator(configureInterceptorBuilderOptions: options => {
+            services.AddJSDynamicProxyActivator(configureInterceptorBuilderOptions: options =>
                 options.ConfigureInterceptorBuilder(builder =>
-                    builder.Add(typeof(JSDynamicProxyActivatingInterceptor)));
-            });
+                    builder.UseExtension(e => e.AddScoped<JSDynamicProxyActivatingInterceptor>())));
 
             services.AddJSCustomFacadeActivator(options => {
                 options.JSFacadeDictionaryConfiguration

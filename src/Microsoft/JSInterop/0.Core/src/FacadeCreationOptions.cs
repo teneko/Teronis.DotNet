@@ -9,9 +9,9 @@ namespace Teronis.Microsoft.JSInterop
     public class FacadeCreationOptions
     {
         /// <summary>
-        /// Configures the <see cref="IJSInterceptorBuilder"/> for this proxy creation.
+        /// Configures the <see cref="IJSInterceptorServiceCollection"/> for this proxy creation.
         /// Contains global configured interceptors.
         /// </summary>
-        public Action<IJSInterceptorBuilder>? ConfigureInterceptorBuilder { get; }
+        public Action<IJSInterceptorServiceCollection>? ConfigureInterceptorBuilder { get; }
     }
 }

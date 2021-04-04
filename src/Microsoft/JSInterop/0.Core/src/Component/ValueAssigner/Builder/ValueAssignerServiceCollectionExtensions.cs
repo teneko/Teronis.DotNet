@@ -3,22 +3,16 @@
 
 namespace Teronis.Microsoft.JSInterop.Component.ValueAssigner.Builder
 {
-    public static class ValueAssignerFactoriesExtensions
+    public static class ValueAssignerServiceCollectionExtensions
     {
-        public static void Add<TValueAssigner>(this ValueAssignerFactories factories) =>
-            factories.Add(typeof(TValueAssigner));
-
-        public static void Remove<TValueAssigner>(this ValueAssignerFactories factories) =>
-            factories.Remove(typeof(TValueAssigner));
-
         /// <summary>
         /// Adds the default property assigners that resides in this namespace.
         /// </summary>
         /// <param name="propertyAssignerFactories"></param>
         /// <returns></returns>
-        public static ValueAssignerFactories AddNonDynamicDefaultValueAssigners(this ValueAssignerFactories propertyAssignerFactories)
+        public static ValueAssignerServiceCollection AddNonDynamicDefaultValueAssigners(this ValueAssignerServiceCollection propertyAssignerFactories)
         {
-            propertyAssignerFactories.Add<JSModuleMemberAssigner>();
+            propertyAssignerFactories.UseExtension(extension => extension.AddScoped<JSModuleMemberAssigner>());
             return propertyAssignerFactories;
         }
 
@@ -27,9 +21,9 @@ namespace Teronis.Microsoft.JSInterop.Component.ValueAssigner.Builder
         /// </summary>
         /// <param name="propertyAssignerFactories"></param>
         /// <returns></returns>
-        public static ValueAssignerFactories AddJSCustomFacadeAssigner(this ValueAssignerFactories propertyAssignerFactories)
+        public static ValueAssignerServiceCollection AddJSCustomFacadeAssigner(this ValueAssignerServiceCollection propertyAssignerFactories)
         {
-            propertyAssignerFactories.Add<JSCustomFacadeAssigner>();
+            propertyAssignerFactories.UseExtension(extension => extension.AddScoped<JSCustomFacadeAssigner>());
             return propertyAssignerFactories;
         }
 
@@ -38,9 +32,9 @@ namespace Teronis.Microsoft.JSInterop.Component.ValueAssigner.Builder
         /// </summary>
         /// <param name="propertyAssignerFactories"></param>
         /// <returns></returns>
-        public static ValueAssignerFactories RemoveJSCustomFacadeAssigner(this ValueAssignerFactories propertyAssignerFactories)
+        public static ValueAssignerServiceCollection RemoveJSCustomFacadeAssigner(this ValueAssignerServiceCollection propertyAssignerFactories)
         {
-            propertyAssignerFactories.Remove<JSCustomFacadeAssigner>();
+            propertyAssignerFactories.UseExtension(extension => extension.RemoveAll<JSCustomFacadeAssigner>());
             return propertyAssignerFactories;
         }
     }

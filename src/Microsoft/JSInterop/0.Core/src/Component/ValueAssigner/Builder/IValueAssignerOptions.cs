@@ -5,6 +5,6 @@ namespace Teronis.Microsoft.JSInterop.Component.ValueAssigner.Builder
 {
     public interface IValueAssignerOptions
     {
-        ValueAssignerFactories Factories { get; }
+        ValueAssignerServiceCollection Factories { get; }
     }
 }

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder
 {
-    public class JSMutableInterceptorBuilder<TInterceptorBuilderOptions> : IJSMutableInterceptorBuilder
+    public class JSInterceptorBuilder<TInterceptorBuilderOptions> : IJSInterceptorBuilder
         where TInterceptorBuilderOptions : JSInterceptorBuilderOptions<TInterceptorBuilderOptions>
     {
         public TInterceptorBuilderOptions Options { get; }
@@ -14,29 +14,20 @@ namespace Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder
         private readonly IServiceProvider serviceProvider;
         private IJSInterceptor? interceptor;
 
-        public JSMutableInterceptorBuilder(IOptions<TInterceptorBuilderOptions> options, IServiceProvider serviceProvider)
+        public JSInterceptorBuilder(IOptions<TInterceptorBuilderOptions> options, IServiceProvider serviceProvider)
         {
             Options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             this.serviceProvider = new BuildingInterceptorSeviceProvider(serviceProvider, Options.ValueAssigners);
         }
 
-        public IJSInterceptor BuildInterceptor(
-            Action<IJSInterceptorBuilder>? configureBuilder)
+        public IJSInterceptor BuildInterceptor()
         {
-            if (configureBuilder is null && !(interceptor is null)) {
+            if (!(interceptor is null)) {
                 return interceptor;
             }
 
             var interceptorBuilder = Options.InterceptorBuilder;
-
-            if (configureBuilder is null) {
-                return interceptor = interceptorBuilder.Build(serviceProvider);
-            }
-
-            var mutatingInterceptorBuilder = new JSInterceptorBuilder(interceptorBuilder.InterceptorDescriptors);
-            mutatingInterceptorBuilder.SetRegistrationPhase(InterceptorDescriptorRegistrationPhase.FacadeActivation);
-            configureBuilder(mutatingInterceptorBuilder);
-            return mutatingInterceptorBuilder.Build(serviceProvider);
+            return interceptor = interceptorBuilder.Build(serviceProvider);
         }
     }
 }

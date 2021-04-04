@@ -15,7 +15,7 @@ namespace Teronis.Microsoft.JSInterop
     {
         private readonly TFacadeActivator facadeActivator;
 
-        public DynamicFacadeActivator(TFacadeActivator facadeActivator, IJSDynamicProxyActivator dynamicProxyActivator, IJSMutableInterceptorBuilder? interceptorBuilder)
+        public DynamicFacadeActivator(TFacadeActivator facadeActivator, IJSDynamicProxyActivator dynamicProxyActivator, IJSInterceptorBuilder? interceptorBuilder)
             : base(dynamicProxyActivator, interceptorBuilder) =>
             this.facadeActivator = facadeActivator;
 

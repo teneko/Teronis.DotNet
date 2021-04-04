@@ -11,14 +11,14 @@ namespace Teronis.Microsoft.JSInterop.Module
     {
         private readonly IJSRuntime jsRuntime;
 
-        public JSModuleActivator(IJSRuntime jsRuntime, JSMutableInterceptorBuilder<JSModuleInterceptorBuilderOptions>? jsInterceptorBuilder)
+        public JSModuleActivator(IJSRuntime jsRuntime, JSInterceptorBuilder<JSModuleInterceptorBuilderOptions>? jsInterceptorBuilder)
             : base(jsInterceptorBuilder) =>
             this.jsRuntime = jsRuntime;
 
         public virtual async ValueTask<IJSModule> CreateInstanceAsync(string moduleNameOrPath, JSModuleCreationOptions? creationOptions = null)
         {
             var jsObjectReference = await jsRuntime.InvokeAsync<IJSObjectReference>("import", moduleNameOrPath);
-            var jsInterceptor = BuildInterceptor(creationOptions?.ConfigureInterceptorBuilder);
+            var jsInterceptor = BuildInterceptor();
             var jsModule = new JSModule(jsObjectReference, moduleNameOrPath, jsInterceptor);
             return jsModule;
         }

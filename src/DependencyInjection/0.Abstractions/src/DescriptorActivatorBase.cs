@@ -4,9 +4,9 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Teronis.DependencyInjection.Extensions
+namespace Teronis.DependencyInjection
 {
-    internal abstract class DescriptorActivator<TDescriptor>
+    public abstract class DescriptorActivatorBase<TDescriptor>
     {
         internal protected abstract TDescriptor CreateDescriptor(ServiceDescriptor serviceDescriptor);
         internal protected abstract TDescriptor CreateDescriptor(Type serviceType, Type implementationType);

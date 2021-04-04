@@ -8,16 +8,16 @@ namespace Teronis.DependencyInjection
 {
     public class ScopedServiceDescriptor : NonSingletonServiceDescriptor
     {
-        internal ScopedServiceDescriptor(ServiceDescriptor descriptor)
+        internal protected ScopedServiceDescriptor(ServiceDescriptor descriptor)
             : base(descriptor) { }
 
-        public ScopedServiceDescriptor(Type singletonType)
-            : base(singletonType) { }
+        public ScopedServiceDescriptor(Type serviceType)
+            : base(serviceType) { }
 
-        public ScopedServiceDescriptor(Type singletonType, Type implementationType)
-            : base(singletonType, implementationType) { }
+        public ScopedServiceDescriptor(Type serviceType, Type implementationType)
+            : base(serviceType, implementationType) { }
 
-        public ScopedServiceDescriptor(Type singletonType, Func<IServiceProvider, object> factory)
-            : base(singletonType, factory) { }
+        public ScopedServiceDescriptor(Type serviceType, Func<IServiceProvider, object> factory)
+            : base(serviceType, factory) { }
     }
 }

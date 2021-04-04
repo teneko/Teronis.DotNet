@@ -7,11 +7,5 @@ using Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder;
 namespace Teronis.Microsoft.JSInterop
 {
     public class FacadeCreationOptions
-    {
-        /// <summary>
-        /// Configures the <see cref="IJSInterceptorBuilder"/> for this proxy creation.
-        /// Contains global configured interceptors.
-        /// </summary>
-        public Action<IJSInterceptorBuilder>? ConfigureInterceptorBuilder { get; }
-    }
+    { }
 }

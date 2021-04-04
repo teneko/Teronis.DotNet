@@ -12,9 +12,9 @@ namespace Teronis.Microsoft.JSInterop.Component
         /// </summary>
         /// <param name="propertyAssignerFactories"></param>
         /// <returns></returns>
-        public static ValueAssignerFactories AddDefaultDynamicValueAssigners(this ValueAssignerFactories propertyAssignerFactories)
+        public static ValueAssignerServiceCollection AddDefaultDynamicValueAssigners(this ValueAssignerServiceCollection propertyAssignerFactories)
         {
-            propertyAssignerFactories.Add(typeof(JSDynamicModuleValueAssigner), value: null);
+            propertyAssignerFactories.UseExtension(extension => extension.AddScoped<JSDynamicModuleValueAssigner>());
             return propertyAssignerFactories;
         }
     }

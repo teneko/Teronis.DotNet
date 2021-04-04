@@ -11,13 +11,13 @@ namespace Teronis.DependencyInjection
         internal TransientServiceDescriptor(ServiceDescriptor descriptor)
             : base(descriptor) { }
 
-        public TransientServiceDescriptor(Type singletonType)
-            : base(singletonType) { }
+        public TransientServiceDescriptor(Type serviceType)
+            : base(serviceType) { }
 
-        public TransientServiceDescriptor(Type singletonType, Type implementationType)
-            : base(singletonType, implementationType) { }
+        public TransientServiceDescriptor(Type serviceType, Type implementationType)
+            : base(serviceType, implementationType) { }
 
-        public TransientServiceDescriptor(Type singletonType, Func<IServiceProvider, object> factory)
-            : base(singletonType, factory) { }
+        public TransientServiceDescriptor(Type serviceType, Func<IServiceProvider, object> factory)
+            : base(serviceType, factory) { }
     }
 }

@@ -2,47 +2,39 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using Microsoft.Extensions.DependencyInjection;
+using Teronis.DependencyInjection;
 
 namespace Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder
 {
-    public class JSInterceptorDescriptor : IEquatable<JSInterceptorDescriptor>
+    public class JSInterceptorDescriptor : ScopedServiceDescriptor
     {
-        public InterceptorDescriptorRegistrationPhase RegistrationPhase { get; }
-        public IJSInterceptor? Implementation { get; }
-        public bool HasImplementation => !(Implementation is null);
-        public Type ImplementationType { get; }
+        public readonly static DescriptorActivatorBase<JSInterceptorDescriptor> Activator = new JSInterceptorDescriptorActivator();
 
-        internal JSInterceptorDescriptor(
-            InterceptorDescriptorRegistrationPhase registrationPhase,
-            IJSInterceptor implementation,
-            Type? implementationType)
-        {
-            RegistrationPhase = registrationPhase;
-            Implementation = implementation ?? throw new ArgumentNullException(nameof(implementation));
-            ImplementationType = implementationType ?? implementation.GetType();
-        }
+        public JSInterceptorDescriptor(Type serviceType)
+            : base(serviceType) { }
 
-        internal JSInterceptorDescriptor(InterceptorDescriptorRegistrationPhase registrationPhase, Type implementationType)
-        {
-            RegistrationPhase = registrationPhase;
-            ImplementationType = implementationType ?? throw new ArgumentNullException(nameof(implementationType));
-        }
+        public JSInterceptorDescriptor(Type serviceType, Type implementationType)
+            : base(serviceType, implementationType) { }
 
-        public bool Equals(JSInterceptorDescriptor? other)
-        {
-            if (other is null) {
-                return false;
-            }
+        public JSInterceptorDescriptor(Type serviceType, Func<IServiceProvider, object> factory)
+            : base(serviceType, factory) { }
 
-            if (HasImplementation && other.HasImplementation) {
-                return Implementation == other.Implementation;
-            }
+        protected internal JSInterceptorDescriptor(ServiceDescriptor descriptor) 
+            : base(descriptor) { }
 
-            if (HasImplementation || other.HasImplementation) {
-                return false;
-            }
+        private class JSInterceptorDescriptorActivator : DescriptorActivatorBase<JSInterceptorDescriptor> {
+            protected override JSInterceptorDescriptor CreateDescriptor(ServiceDescriptor serviceDescriptor) =>
+                new JSInterceptorDescriptor(serviceDescriptor);
 
-            return ImplementationType == other.ImplementationType;
+            protected override JSInterceptorDescriptor CreateDescriptor(Type serviceType, Type implementationType) =>
+                new JSInterceptorDescriptor(serviceType, implementationType);
+
+            protected override JSInterceptorDescriptor CreateDescriptor(Type serviceType, object implementationInstance) =>
+                throw new NotSupportedException("The interceptor must be able to be created on the fly.");
+
+            protected override JSInterceptorDescriptor CreateDescriptor(Type serviceType, Func<IServiceProvider, object> implementationFactory) =>
+                new JSInterceptorDescriptor(serviceType, implementationFactory);
         }
     }
 }

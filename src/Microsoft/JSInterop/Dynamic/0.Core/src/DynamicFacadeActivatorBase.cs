@@ -14,7 +14,7 @@ namespace Teronis.Microsoft.JSInterop
     {
         private readonly IJSDynamicProxyActivator jSDynamicProxyActivator;
 
-        public DynamicFacadeActivatorBase(IJSDynamicProxyActivator jSDynamicProxyActivator, IJSMutableInterceptorBuilder? interceptorBuilder)
+        public DynamicFacadeActivatorBase(IJSDynamicProxyActivator jSDynamicProxyActivator, IJSInterceptorBuilder? interceptorBuilder)
             : base(interceptorBuilder) =>
             this.jSDynamicProxyActivator = jSDynamicProxyActivator;
 

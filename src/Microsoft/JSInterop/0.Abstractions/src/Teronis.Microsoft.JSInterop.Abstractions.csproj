@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\DependencyInjection\0.Abstractions\src\Teronis.DependencyInjection.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\..\NetStandard\Core\Core\src\Teronis.NetStandard.Core.csproj" />
   </ItemGroup>
   

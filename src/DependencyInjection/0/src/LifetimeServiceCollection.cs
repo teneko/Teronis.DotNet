@@ -9,52 +9,87 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Teronis.DependencyInjection
 {
     public abstract class LifetimeServiceCollection<TDescriptor> : ILifetimeServiceCollection<TDescriptor>
+        where TDescriptor : LifetimeServiceDescriptor
     {
         public abstract ServiceLifetime Lifetime { get; }
 
         public int Count =>
-            descriptors.Count;
+            Descriptors.Count;
 
         public bool IsReadOnly =>
             false;
 
-        private readonly List<TDescriptor> descriptors;
+        public virtual Type BaseType { get; }
 
-        public LifetimeServiceCollection() =>
-            descriptors = new List<TDescriptor>();
+        protected virtual List<TDescriptor> Descriptors { get; }
+
+        public LifetimeServiceCollection(Type? baseType)
+        {
+            Descriptors = new List<TDescriptor>();
+            BaseType = baseType ?? typeof(object);
+        }
+
+        public LifetimeServiceCollection()
+            : this(baseType: null) { }
+
+        protected void EnsureAssignableFromBaseType(Type serviceType)
+        {
+            if (!BaseType.IsAssignableFrom(serviceType)) {
+                throw new ArgumentException($"Service type {serviceType} is not assignable from base type {BaseType}.");
+            }
+        }
+
+        protected void EnsureAssignableFromBaseType(TDescriptor descriptor)
+        {
+            if (descriptor is null) {
+                throw new ArgumentNullException(nameof(descriptor));
+            }
+
+            EnsureAssignableFromBaseType(descriptor.ServiceType);
+        }
 
         public int IndexOf(TDescriptor descriptor) =>
-            descriptors.IndexOf(descriptor);
+            Descriptors.IndexOf(descriptor);
 
-        public void Insert(int index, TDescriptor descriptor) =>
-            descriptors.Insert(index, descriptor);
+        public void Insert(int index, TDescriptor descriptor)
+        {
+            EnsureAssignableFromBaseType(descriptor);
+            Descriptors.Insert(index, descriptor);
+        }
 
-        void ICollection<TDescriptor>.Add(TDescriptor descriptor) =>
-            descriptors.Add(descriptor);
+        void ICollection<TDescriptor>.Add(TDescriptor descriptor)
+        {
+            EnsureAssignableFromBaseType(descriptor);
+            Descriptors.Add(descriptor);
+        }
 
         public void RemoveAt(int index) =>
-            descriptors.RemoveAt(index);
+            Descriptors.RemoveAt(index);
 
         public TDescriptor this[int index] {
-            get => descriptors[index];
-            set => descriptors[index] = value;
+            get => Descriptors[index];
+
+            set {
+                EnsureAssignableFromBaseType(value);
+                Descriptors[index] = value;
+            }
         }
 
         public void Clear() =>
-            descriptors.Clear();
+            Descriptors.Clear();
 
         public bool Contains(TDescriptor descriptor) =>
-            descriptors.Contains(descriptor);
+            Descriptors.Contains(descriptor);
 
         public void CopyTo(TDescriptor[] array, int arrayIndex) =>
             throw new NotSupportedException();
 
         public bool Remove(TDescriptor descriptor) =>
-            descriptors.Remove(descriptor);
+            Descriptors.Remove(descriptor);
 
         public IEnumerator<TDescriptor> GetEnumerator()
         {
-            foreach (var serviceDescriptor in descriptors) {
+            foreach (var serviceDescriptor in Descriptors) {
                 yield return serviceDescriptor;
             }
         }

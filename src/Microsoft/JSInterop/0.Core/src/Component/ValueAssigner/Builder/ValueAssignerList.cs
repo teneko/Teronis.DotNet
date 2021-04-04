@@ -51,13 +51,15 @@ namespace Teronis.Microsoft.JSInterop.Component.ValueAssigner.Builder
             }
 
             foreach (var typeAndFactory in Options.Factories) {
-                var (componentMemberAssignmentType, componentMemberAssignmentFactory) = typeAndFactory;
+                var componentMemberAssignmentType = typeAndFactory.ImplementationType;
+                var componentMemberAssignmentFactory = typeAndFactory.ImplementationFactory;
+
                 IValueAssigner componentMemberAssignment;
 
                 if (componentMemberAssignmentFactory is null) {
-                    componentMemberAssignment = (IValueAssigner)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, componentMemberAssignmentType);
+                    componentMemberAssignment = (IValueAssigner)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, componentMemberAssignmentType!);
                 } else {
-                    componentMemberAssignment = componentMemberAssignmentFactory.Invoke(serviceProvider);
+                    componentMemberAssignment = (IValueAssigner)componentMemberAssignmentFactory.Invoke(serviceProvider);
                 }
 
                 propertyAssigners.Add(componentMemberAssignment);

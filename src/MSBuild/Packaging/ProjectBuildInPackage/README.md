@@ -22,7 +22,7 @@ dotnet add package Teronis.MSBuild.Packaging.ProjectBuildInPackage --version <ty
 
 ```
 <PropertyGroup>
-  <NoProjectBuildInPackageWelcome>true</NoProjectBuildInPackageWelcome>
+  <NoProjectBuildInPackageWelcome>false</NoProjectBuildInPackageWelcome>
 </PropertyGroup>
 ```
 
@@ -198,7 +198,7 @@ Now let's asumme this:
 
 By having installed my package I assist in the implicit behaviour of NuGet: By not picking up Project A as NuGet-dependency copy over the direct assemblies produced by Project A to the bin-folder of Project B. **This has the following drawback:**
 
-Because of the implicit behaviour and the usage of my package you have assemblies of Porject A in Project B that are in need of the assemblies provided by packages (in your example "Some Package") you referenced in Project A. So a workaround is to add the packages from Project A in Project B explicitly as shown here:
+Because of the implicit behaviour and the usage of my package you have assemblies of Project A in Project B that are in need of the assemblies provided by packages (in your example "Some Package") you referenced in Project A. So a workaround is to add the packages from Project A in Project B explicitly as shown here:
 
 ```
 <!-- Project A -->

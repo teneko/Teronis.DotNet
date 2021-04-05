@@ -11,7 +11,7 @@ namespace Teronis.Microsoft.JSInterop.Locality
     {
         private readonly IJSLocalObjectInterop jsLocalObjectInterop;
 
-        public JSLocalObjectActivator(IJSLocalObjectInterop jsLocalObjectInterop, JSInterceptorBuilder<JSLocalObjectInterceptorBuilderOptions>? interceptorBuilder)
+        public JSLocalObjectActivator(IJSLocalObjectInterop jsLocalObjectInterop, JSInterceptorBuilder<JSLocalObjectInterceptorServicesOptions>? interceptorBuilder)
             : base(interceptorBuilder) =>
             this.jsLocalObjectInterop = jsLocalObjectInterop ?? throw new System.ArgumentNullException(nameof(jsLocalObjectInterop));
 

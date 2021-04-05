@@ -11,16 +11,16 @@ namespace Teronis.Microsoft.JSInterop
     public static class DynamicModuleIServiceCollectionExtensions
     {
         /// <summary>
-        /// Calls <see cref="DynamicJSInterceptorBuilderOptionsIServiceCollectionExtensions.AddDynamicInterceptorBuilderOptions{TDerivedBuilderOptions, TDerivedAssignerOptions}(IServiceCollection)"/>,
-        /// <see cref="ModuleIServiceCollectionExtensions.AddJSModuleActivator(IServiceCollection, System.Action{JSModuleValueAssignerOptions}?, System.Action{JSModuleInterceptorBuilderOptions}?, Teronis.Microsoft.JSInterop.Interception.ServiceBuilder.PostConfigureInterceptorBuilderDelegate{JSModuleInterceptorBuilderOptions, JSModuleValueAssignerOptions}?)"/>,
-        /// <see cref="DynamicIServiceCollectionExtensions.AddJSDynamicProxyActivator(IServiceCollection, System.Action{Dynamic.JSDynamicProxyValueAssignerOptions}?, System.Action{Dynamic.JSDynamicProxyInterceptorBuilderOptions}?, Teronis.Microsoft.JSInterop.Interception.ServiceBuilder.PostConfigureInterceptorBuilderDelegate{Dynamic.JSDynamicProxyInterceptorBuilderOptions, Dynamic.JSDynamicProxyValueAssignerOptions}?)"/>,
+        /// Calls <see cref="DynamicJSInterceptorServicesOptionsIServiceCollectionExtensions.AddDynamicInterceptorServicesOptions{TInterceptorServicesOptions, TAssignerServicesOptions}(IServiceCollection)"/>,
+        /// <see cref="ModuleIServiceCollectionExtensions.AddJSModuleActivator(IServiceCollection, System.Action{JSModuleValueAssignerServicesOptions}?, System.Action{JSModuleInterceptorServicesOptions}?, Teronis.Microsoft.JSInterop.Interception.ServiceBuilder.PostConfigureInterceptorServicesOptionsDelegate{JSModuleInterceptorServicesOptions, JSModuleValueAssignerServicesOptions}?)"/>,
+        /// <see cref="DynamicIServiceCollectionExtensions.AddJSDynamicProxyActivator(IServiceCollection, System.Action{Dynamic.JSDynamicProxyValueAssignerServicesOptions}?, System.Action{Dynamic.JSDynamicProxyInterceptorServicesOptions}?, Teronis.Microsoft.JSInterop.Interception.ServiceBuilder.PostConfigureInterceptorServicesOptionsDelegate{Dynamic.JSDynamicProxyInterceptorServicesOptions, Dynamic.JSDynamicProxyValueAssignerServicesOptions}?)"/>,
         /// and tries to add <see cref="JSDynamicModuleActivator"/> as <see cref="IJSModuleActivator"/>.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
         public static IServiceCollection AddJSDynamicModuleActivator(this IServiceCollection services)
         {
-            services.AddDynamicInterceptorBuilderOptions<JSModuleInterceptorBuilderOptions, JSModuleValueAssignerOptions>();
+            services.AddDynamicInterceptorServicesOptions<JSModuleInterceptorServicesOptions, JSModuleValueAssignerServicesOptions>();
             services.AddJSModuleActivator();
             services.AddJSDynamicProxyActivator();
             services.TryAddSingleton<IJSDynamicModuleActivator, JSDynamicModuleActivator>();

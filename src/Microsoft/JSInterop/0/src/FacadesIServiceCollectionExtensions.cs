@@ -15,15 +15,15 @@ namespace Teronis.Microsoft.JSInterop
         public static IServiceCollection AddJSFacadeHubActivator(
             this IServiceCollection services,
             Action<JSFacadeHubActivatorOptions>? configureOptions = null,
-             Action<JSFacadeHubActivatorValueAssignerOptions>? configureValueAssigner = null)
+             Action<JSFacadeHubActivatorValueAssignerServicesOptions>? configureValueAssigner = null)
         {
             if (!(configureOptions is null)) {
                 services.Configure(configureOptions);
             }
 
             services.TryAddTypeUniqueSingleton<IConfigureOptions<JSFacadeHubActivatorOptions>, JSFacadeHubActivatorOptionsPostConfiguration>();
-            services.AddValueAssignerOptions<JSFacadeHubActivatorValueAssignerOptions>();
-            services.ConfigureValueAssignerOptions(configureValueAssigner);
+            services.AddValueAssignerServicesOptions<JSFacadeHubActivatorValueAssignerServicesOptions>();
+            services.ConfigureValueAssignerServicesOptions(configureValueAssigner);
             services.TryAddSingleton<IJSFacadeHubActivator, JSFacadeHubActivator>();
             services.TryAddTransient(typeof(IJSFacadeHub<>), typeof(JSFacadeHubService<>));
             return services;
@@ -33,7 +33,7 @@ namespace Teronis.Microsoft.JSInterop
         /// Calls <see cref="CustomFacadeIServiceCollectionExtensions.AddJSCustomFacade(IServiceCollection)"/>,
         /// <see cref="LocalityIServiceCollectionExtensions.AddJSLocalObject(IServiceCollection)"/>,
         /// <see cref="ModuleIServiceCollectionExtensions.AddJSModule(IServiceCollection)"/>,
-        /// and <see cref="AddJSFacadeHubActivator(IServiceCollection, Action{JSFacadeHubActivatorOptions}?, Action{JSFacadeHubActivatorValueAssignerOptions}?)"/>.
+        /// and <see cref="AddJSFacadeHubActivator(IServiceCollection, Action{JSFacadeHubActivatorOptions}?, Action{JSFacadeHubActivatorValueAssignerServicesOptions}?)"/>.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>

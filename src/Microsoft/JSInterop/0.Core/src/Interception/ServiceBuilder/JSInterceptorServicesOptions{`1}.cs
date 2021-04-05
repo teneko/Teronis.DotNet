@@ -11,16 +11,16 @@ namespace Teronis.Microsoft.JSInterop.Interception.ServiceBuilder
     /// 
     /// </summary>
     /// <typeparam name="TDerived">The derived type. When registered to service provider it provides uniqueness.</typeparam>
-    public class JSInterceptorBuilderOptions<TDerived>
-        where TDerived : JSInterceptorBuilderOptions<TDerived>
+    public class JSInterceptorServicesOptions<TDerived>
+        where TDerived : JSInterceptorServicesOptions<TDerived>
     {
-        public IValueAssignerOptions ValueAssignerOptions {
+        public IValueAssignerServicesOptions ValueAssignerServicesOptions {
             get {
-                if (propertyAssignerOptions is null) {
+                if (propertyAssignerServicesOptions is null) {
                     throw new InvalidOperationException("The property assigner options has not been set up.");
                 }
 
-                return propertyAssignerOptions;
+                return propertyAssignerServicesOptions;
             }
         }
 
@@ -51,11 +51,11 @@ namespace Teronis.Microsoft.JSInterop.Interception.ServiceBuilder
         }
 
         private JSInterceptorServiceCollection? interceptorServices;
-        private IValueAssignerOptions? propertyAssignerOptions;
+        private IValueAssignerServicesOptions? propertyAssignerServicesOptions;
         private IValueAssignerList? propertyAssigners;
 
-        internal void SetValueAssignerOptions(IValueAssignerOptions propertyAssignerOptions) =>
-            this.propertyAssignerOptions = propertyAssignerOptions ?? throw new ArgumentNullException(nameof(propertyAssignerOptions));
+        internal void SetValueAssignerServicesOptions(IValueAssignerServicesOptions propertyAssignerServicesOptions) =>
+            this.propertyAssignerServicesOptions = propertyAssignerServicesOptions ?? throw new ArgumentNullException(nameof(propertyAssignerServicesOptions));
 
         internal void SetValueAssignerList(IValueAssignerList propertyAssigners) =>
             this.propertyAssigners = propertyAssigners ?? throw new ArgumentNullException(nameof(propertyAssigners));

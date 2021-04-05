@@ -5,12 +5,12 @@ using Microsoft.Extensions.Options;
 
 namespace Teronis.Microsoft.JSInterop.Component.ServiceBuilder
 {
-    internal class ValueAssignerOptionsPostConfiguration<TDerived> : IPostConfigureOptions<TDerived>
-        where TDerived : ValueAssignerOptions<TDerived>
+    internal class DynamicValueAssignerServicesOptionsPostConfiguration<TDerived> : IPostConfigureOptions<TDerived>
+        where TDerived : ValueAssignerServicesOptions<TDerived>
     {
-        private readonly GlobalValueAssignerOptions globalOptions;
+        private readonly GlobalValueAssignerServicesOptions globalOptions;
 
-        public ValueAssignerOptionsPostConfiguration(IOptions<GlobalValueAssignerOptions> globalOptions) =>
+        public DynamicValueAssignerServicesOptionsPostConfiguration(IOptions<GlobalValueAssignerServicesOptions> globalOptions) =>
             this.globalOptions = globalOptions.Value ?? throw new System.ArgumentNullException(nameof(globalOptions));
 
         public void PostConfigure(string name, TDerived options)
@@ -20,13 +20,13 @@ namespace Teronis.Microsoft.JSInterop.Component.ServiceBuilder
             }
 
             if (globalOptions.AreValueAssignerServicesUserTouched) {
-                options.Services.UseExtension(extension =>
-                    extension.Add(globalOptions.Services));
-            } else {
-                options.Services
-                    .AddNonDynamicDefaultValueAssigners()
-                    .AddJSCustomFacadeAssigner();
+                return;
             }
+
+            options.Services
+                .RemoveJSCustomFacadeAssigner()
+                .AddDefaultDynamicValueAssigners()
+                .AddJSCustomFacadeAssigner();
         }
     }
 }

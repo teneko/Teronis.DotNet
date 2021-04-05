@@ -11,16 +11,16 @@ namespace Teronis.Microsoft.JSInterop
     public static class DynamicLocalityIServiceCollectionExtensions
     {
         /// <summary>
-        /// Calls <see cref="DynamicJSInterceptorBuilderOptionsIServiceCollectionExtensions.AddDynamicInterceptorBuilderOptions{TDerivedBuilderOptions, TDerivedAssignerOptions}(IServiceCollection)"/>,
-        /// <see cref="DynamicIServiceCollectionExtensions.AddJSDynamicProxyActivator(IServiceCollection, System.Action{Dynamic.JSDynamicProxyValueAssignerOptions}?, System.Action{Dynamic.JSDynamicProxyInterceptorBuilderOptions}?, Teronis.Microsoft.JSInterop.Interception.ServiceBuilder.PostConfigureInterceptorBuilderDelegate{Dynamic.JSDynamicProxyInterceptorBuilderOptions, Dynamic.JSDynamicProxyValueAssignerOptions}?)"/>,
-        /// <see cref="LocalityIServiceCollectionExtensions.AddJSLocalObjectActivator(IServiceCollection, System.Action{JSLocalObjectValueAssignerOptions}?, System.Action{JSLocalObjectInterceptorBuilderOptions}?, Teronis.Microsoft.JSInterop.Interception.ServiceBuilder.PostConfigureInterceptorBuilderDelegate{JSLocalObjectInterceptorBuilderOptions, JSLocalObjectValueAssignerOptions}?)"/>
+        /// Calls <see cref="DynamicJSInterceptorServicesOptionsIServiceCollectionExtensions.AddDynamicInterceptorServicesOptions{TInterceptorServicesOptions, TAssignerServicesOptions}(IServiceCollection)"/>,
+        /// <see cref="DynamicIServiceCollectionExtensions.AddJSDynamicProxyActivator(IServiceCollection, System.Action{Dynamic.JSDynamicProxyValueAssignerServicesOptions}?, System.Action{Dynamic.JSDynamicProxyInterceptorServicesOptions}?, Teronis.Microsoft.JSInterop.Interception.ServiceBuilder.PostConfigureInterceptorServicesOptionsDelegate{Dynamic.JSDynamicProxyInterceptorServicesOptions, Dynamic.JSDynamicProxyValueAssignerServicesOptions}?)"/>,
+        /// <see cref="LocalityIServiceCollectionExtensions.AddJSLocalObjectActivator(IServiceCollection, System.Action{JSLocalObjectValueAssignerServicesOptions}?, System.Action{JSLocalObjectInterceptorServicesOptions}?, Teronis.Microsoft.JSInterop.Interception.ServiceBuilder.PostConfigureInterceptorServicesOptionsDelegate{JSLocalObjectInterceptorServicesOptions, JSLocalObjectValueAssignerServicesOptions}?)"/>
         /// and tries to add <see cref="JSDynamicLocalObjectActivator"/> as <see cref="IJSDynamicLocalObjectActivator"/>.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
         public static IServiceCollection AddJSDynamicLocalObjectActivator(this IServiceCollection services)
         {
-            services.AddDynamicInterceptorBuilderOptions<JSLocalObjectInterceptorBuilderOptions, JSLocalObjectValueAssignerOptions>();
+            services.AddDynamicInterceptorServicesOptions<JSLocalObjectInterceptorServicesOptions, JSLocalObjectValueAssignerServicesOptions>();
             services.AddJSDynamicProxyActivator();
             services.AddJSLocalObjectActivator();
             services.TryAddSingleton<IJSDynamicLocalObjectActivator, JSDynamicLocalObjectActivator>();

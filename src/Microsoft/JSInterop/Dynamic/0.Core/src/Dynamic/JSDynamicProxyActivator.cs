@@ -14,7 +14,7 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
 {
     public class JSDynamicProxyActivator : InterceptableFacadeActivatorBase, IJSDynamicProxyActivator
     {
-        public JSDynamicProxyActivator(JSInterceptorBuilder<JSDynamicProxyInterceptorBuilderOptions>? interceptorBuilder)
+        public JSDynamicProxyActivator(JSInterceptorBuilder<JSDynamicProxyInterceptorServicesOptions>? interceptorBuilder)
             : base(interceptorBuilder) { }
 
         public JSDynamicProxyActivator()

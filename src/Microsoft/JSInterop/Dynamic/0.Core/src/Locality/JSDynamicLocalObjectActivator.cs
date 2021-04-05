@@ -14,7 +14,7 @@ namespace Teronis.Microsoft.JSInterop.Locality
         public JSDynamicLocalObjectActivator(
             IJSLocalObjectActivator localObjectActivator,
             IJSDynamicProxyActivator dynamicProxyActivator,
-            JSInterceptorBuilder<JSLocalObjectInterceptorBuilderOptions>? interceptorBuilder)
+            JSInterceptorBuilder<JSLocalObjectInterceptorServicesOptions>? interceptorBuilder)
             : base(localObjectActivator, dynamicProxyActivator, interceptorBuilder) { }
 
         public virtual ValueTask<IJSLocalObject> CreateInstanceAsync(Type interfaceToBeProxied, string objectName, JSDynamicLocalObjectCreationOptions? options =null) =>

@@ -14,11 +14,11 @@ namespace Teronis.Microsoft.JSInterop.Facade
     public class JSFacadeHubActivator : IJSFacadeHubActivator
     {
         private readonly JSFacadeHubActivatorOptions options;
-        private readonly ValueAssignerList<JSFacadeHubActivatorValueAssignerOptions> propertyAssignerList;
+        private readonly ValueAssignerList<JSFacadeHubActivatorValueAssignerServicesOptions> propertyAssignerList;
 
         public JSFacadeHubActivator(
             IOptions<JSFacadeHubActivatorOptions> options,
-            ValueAssignerList<JSFacadeHubActivatorValueAssignerOptions> propertyAssignerList)
+            ValueAssignerList<JSFacadeHubActivatorValueAssignerServicesOptions> propertyAssignerList)
         {
             this.options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             this.propertyAssignerList = propertyAssignerList;

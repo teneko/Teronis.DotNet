@@ -10,13 +10,13 @@ using Teronis.Microsoft.JSInterop.Component.Assigners;
 
 namespace Teronis.Microsoft.JSInterop.Component.ServiceBuilder
 {
-    public class ValueAssignerList<TDerivedValueAssignerOptions> : IValueAssignerList
-        where TDerivedValueAssignerOptions : ValueAssignerOptions<TDerivedValueAssignerOptions>
+    public class ValueAssignerList<TValueAssignerServicesOptions> : IValueAssignerList
+        where TValueAssignerServicesOptions : ValueAssignerServicesOptions<TValueAssignerServicesOptions>
     {
         public int Count =>
             ValueAssignerItems.Count;
 
-        internal TDerivedValueAssignerOptions Options { get; }
+        internal TValueAssignerServicesOptions Options { get; }
 
         protected virtual List<IValueAssigner> ValueAssignerItems {
             get {
@@ -29,7 +29,7 @@ namespace Teronis.Microsoft.JSInterop.Component.ServiceBuilder
         private IServiceProvider serviceProvider;
         private bool areValueAssignersCreated;
 
-        public ValueAssignerList(IOptions<TDerivedValueAssignerOptions> options, IServiceProvider serviceProvider)
+        public ValueAssignerList(IOptions<TValueAssignerServicesOptions> options, IServiceProvider serviceProvider)
         {
             valueAssigners = new List<IValueAssigner>();
             this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));

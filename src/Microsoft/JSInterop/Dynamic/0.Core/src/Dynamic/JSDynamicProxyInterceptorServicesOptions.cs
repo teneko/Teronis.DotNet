@@ -5,6 +5,6 @@ using Teronis.Microsoft.JSInterop.Interception.ServiceBuilder;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic
 {
-    public class JSDynamicProxyInterceptorBuilderOptions : JSInterceptorBuilderOptions<JSDynamicProxyInterceptorBuilderOptions>
+    public class JSDynamicProxyInterceptorServicesOptions : JSInterceptorServicesOptions<JSDynamicProxyInterceptorServicesOptions>
     { }
 }

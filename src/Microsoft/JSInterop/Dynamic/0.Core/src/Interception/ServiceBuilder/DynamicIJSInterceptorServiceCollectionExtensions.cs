@@ -5,7 +5,7 @@ using Teronis.Microsoft.JSInterop.Interception.Interceptors;
 
 namespace Teronis.Microsoft.JSInterop.Interception.ServiceBuilder
 {
-    public static class DynamicIInterceptorBuilderExtensions
+    public static class DynamicIJSInterceptorServiceCollectionExtensions
     {
         /// <summary>
         /// Adds the default dynamic-only interceptors.

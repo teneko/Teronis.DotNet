@@ -7,15 +7,15 @@ using Teronis.Microsoft.JSInterop.Interception.Interceptors;
 
 namespace Teronis.Microsoft.JSInterop.Interception.ServiceBuilder
 {
-    public class JSInterceptorBuilder<TInterceptorBuilderOptions> : IJSInterceptorBuilder
-        where TInterceptorBuilderOptions : JSInterceptorBuilderOptions<TInterceptorBuilderOptions>
+    public class JSInterceptorBuilder<TInterceptorServicesOptions> : IJSInterceptorBuilder
+        where TInterceptorServicesOptions : JSInterceptorServicesOptions<TInterceptorServicesOptions>
     {
-        public TInterceptorBuilderOptions Options { get; }
+        public TInterceptorServicesOptions Options { get; }
 
         private readonly IServiceProvider serviceProvider;
         private IJSInterceptor? interceptor;
 
-        public JSInterceptorBuilder(IOptions<TInterceptorBuilderOptions> options, IServiceProvider serviceProvider)
+        public JSInterceptorBuilder(IOptions<TInterceptorServicesOptions> options, IServiceProvider serviceProvider)
         {
             Options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             this.serviceProvider = new BuildingInterceptorSeviceProvider(serviceProvider, Options.ValueAssigners);

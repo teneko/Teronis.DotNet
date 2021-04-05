@@ -3,8 +3,8 @@
 
 namespace Teronis.Microsoft.JSInterop.Component.ServiceBuilder
 {
-    public class ValueAssignerOptions<TDerived> : IValueAssignerOptions
-        where TDerived : ValueAssignerOptions<TDerived>
+    public class ValueAssignerServicesOptions<TDerived> : IValueAssignerServicesOptions
+        where TDerived : ValueAssignerServicesOptions<TDerived>
     {
         /// <summary>
         /// The property assigner services.
@@ -24,7 +24,7 @@ namespace Teronis.Microsoft.JSInterop.Component.ServiceBuilder
 
         private ValueAssignerServiceCollection? services;
 
-        public ValueAssignerOptions()
+        public ValueAssignerServicesOptions()
         {
             AreValueAssignerServicesUserTouched = false;
         }

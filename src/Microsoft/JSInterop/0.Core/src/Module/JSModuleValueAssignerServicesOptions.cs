@@ -3,8 +3,8 @@
 
 using Teronis.Microsoft.JSInterop.Component.ServiceBuilder;
 
-namespace Teronis.Microsoft.JSInterop.Dynamic
+namespace Teronis.Microsoft.JSInterop.Module
 {
-    public class JSDynamicProxyValueAssignerOptions : ValueAssignerOptions<JSDynamicProxyValueAssignerOptions>
+    public class JSModuleValueAssignerServicesOptions : ValueAssignerServicesOptions<JSModuleValueAssignerServicesOptions>
     { }
 }

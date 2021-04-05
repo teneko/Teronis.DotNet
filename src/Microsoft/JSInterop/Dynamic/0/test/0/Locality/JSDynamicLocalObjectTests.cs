@@ -23,10 +23,10 @@ namespace Teronis.Microsoft.JSInterop.Locality
                 .AddSingleton<IJSRuntime, TestJavaScriptRuntime>()
                 .AddSingleton<IJSLocalObjectActivator, EmptyLocalObjectActivator>()
                 .AddJSDynamicProxy()
-                .Configure<GlobalValueAssignerOptions>(options =>
+                .Configure<GlobalValueAssignerServicesOptions>(options =>
                     _ = options.Services)
                 .AddJSDynamicProxyActivator(
-                    configureInterceptorBuilderOptions: options =>
+                    configureInterceptorServicesOptions: options =>
                         options.ConfigureInterceptorServices(services =>
                             services.UseExtension(extension =>
                                 extension.AddScoped<JSLocalObjectInterceptor>())))
@@ -52,15 +52,15 @@ namespace Teronis.Microsoft.JSInterop.Locality
                 .AddSingleton<IJSRuntime, TestJavaScriptRuntime>()
                 .AddSingleton<IJSLocalObjectInterop, EmptyLocalObjectInterop>()
                 .AddJSDynamicProxy()
-                .Configure<GlobalValueAssignerOptions>(options =>
+                .Configure<GlobalValueAssignerServicesOptions>(options =>
                     _ = options.Services)
                 .AddJSLocalObjectActivator(
-                    configureInterceptorBuilderOptions: options =>
+                    configureInterceptorServicesOptions: options =>
                         options.ConfigureInterceptorServices(services =>
                             services.UseExtension(extension =>
                                 extension.AddScoped<JSLocalObjectInterceptor>())))
                 .AddJSDynamicProxyActivator(
-                    configureInterceptorBuilderOptions: options =>
+                    configureInterceptorServicesOptions: options =>
                         options.ConfigureInterceptorServices(services =>
                             services.UseExtension(extension =>
                                 extension.AddScoped<JSDynamicLocalObjectInterceptor>())))

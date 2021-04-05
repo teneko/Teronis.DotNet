@@ -13,22 +13,22 @@ namespace Teronis.Microsoft.JSInterop
     public static class LocalityIServiceCollectionExtensions
     {
         /// <summary>
-        /// Tries to configure options for <see cref="JSLocalObjectInterceptorBuilderOptions"/>.
+        /// Tries to configure options for <see cref="JSLocalObjectInterceptorServicesOptions"/>.
         /// Tries to add <see cref="JSLocalObjectActivator"/> as <see cref="IJSLocalObjectActivator"/>.
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="configureInterceptorBuilderOptions"></param>
-        /// <param name="configureValueAssignerOptions"></param>
-        /// <param name="postConfigureInterceptorBuilderOptions"></param>
+        /// <param name="configureInterceptorServicesOptions"></param>
+        /// <param name="configureValueAssignerServicesOptions"></param>
+        /// <param name="postConfigureInterceptorServicesOptions"></param>
         /// <returns></returns>
         public static IServiceCollection AddJSLocalObjectActivator(
             this IServiceCollection services, 
-            Action<JSLocalObjectValueAssignerOptions>? configureValueAssignerOptions = null,
-            Action<JSLocalObjectInterceptorBuilderOptions>? configureInterceptorBuilderOptions = null,
-            PostConfigureInterceptorBuilderDelegate<JSLocalObjectInterceptorBuilderOptions, JSLocalObjectValueAssignerOptions>? postConfigureInterceptorBuilderOptions = null)
+            Action<JSLocalObjectValueAssignerServicesOptions>? configureValueAssignerServicesOptions = null,
+            Action<JSLocalObjectInterceptorServicesOptions>? configureInterceptorServicesOptions = null,
+            PostConfigureInterceptorServicesOptionsDelegate<JSLocalObjectInterceptorServicesOptions, JSLocalObjectValueAssignerServicesOptions>? postConfigureInterceptorServicesOptions = null)
         {
-            services.AddInterceptorBuilderOptions<JSLocalObjectInterceptorBuilderOptions, JSLocalObjectValueAssignerOptions>();
-            services.ConfigureInterceptorBuilderOptions(configureValueAssignerOptions, configureInterceptorBuilderOptions, postConfigureInterceptorBuilderOptions);
+            services.AddInterceptorServicesOptions<JSLocalObjectInterceptorServicesOptions, JSLocalObjectValueAssignerServicesOptions>();
+            services.ConfigureInterceptorServicesOptions(configureValueAssignerServicesOptions, configureInterceptorServicesOptions, postConfigureInterceptorServicesOptions);
             services.TryAddSingleton<IJSLocalObjectActivator, JSLocalObjectActivator>();
             return services;
         }
@@ -36,7 +36,7 @@ namespace Teronis.Microsoft.JSInterop
         /// <summary>
         /// Calls <see cref="ModuleIServiceCollectionExtensions.AddJSModule(IServiceCollection)"/>,
         /// <see cref="LocalityWebAssetsIServiceCollectionExtensions.AddJSLocalObjectInterop(IServiceCollection)"/>>
-        /// and <see cref="AddJSLocalObjectActivator(IServiceCollection, Action{JSLocalObjectValueAssignerOptions}?, Action{JSLocalObjectInterceptorBuilderOptions}?, PostConfigureInterceptorBuilderDelegate{JSLocalObjectInterceptorBuilderOptions, JSLocalObjectValueAssignerOptions}?)"/>.
+        /// and <see cref="AddJSLocalObjectActivator(IServiceCollection, Action{JSLocalObjectValueAssignerServicesOptions}?, Action{JSLocalObjectInterceptorServicesOptions}?, PostConfigureInterceptorServicesOptionsDelegate{JSLocalObjectInterceptorServicesOptions, JSLocalObjectValueAssignerServicesOptions}?)"/>.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>

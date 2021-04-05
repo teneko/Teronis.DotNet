@@ -3,8 +3,8 @@
 
 using Teronis.Microsoft.JSInterop.Interception.ServiceBuilder;
 
-namespace Teronis.Microsoft.JSInterop.Locality
+namespace Teronis.Microsoft.JSInterop.Facade
 {
-    public class JSLocalObjectInterceptorBuilderOptions : JSInterceptorBuilderOptions<JSLocalObjectInterceptorBuilderOptions>
+    public class JSFacadeHubActivatorInterceptorServicesOptions : JSInterceptorServicesOptions<JSFacadeHubActivatorInterceptorServicesOptions>
     { }
 }

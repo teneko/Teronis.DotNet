@@ -3,8 +3,8 @@
 
 using Teronis.Microsoft.JSInterop.Component.ServiceBuilder;
 
-namespace Teronis.Microsoft.JSInterop.Module
+namespace Teronis.Microsoft.JSInterop.CustomFacade
 {
-    public class JSModuleValueAssignerOptions : ValueAssignerOptions<JSModuleValueAssignerOptions>
+    public class JSCustomFacadeActivatorValueAssignerServicesOptions : ValueAssignerServicesOptions<JSCustomFacadeActivatorValueAssignerServicesOptions>
     { }
 }

@@ -3,8 +3,8 @@
 
 using Teronis.Microsoft.JSInterop.Interception.ServiceBuilder;
 
-namespace Teronis.Microsoft.JSInterop.Module
+namespace Teronis.Microsoft.JSInterop.Locality
 {
-    public class JSModuleInterceptorBuilderOptions : JSInterceptorBuilderOptions<JSModuleInterceptorBuilderOptions>
+    public class JSLocalObjectInterceptorServicesOptions : JSInterceptorServicesOptions<JSLocalObjectInterceptorServicesOptions>
     { }
 }

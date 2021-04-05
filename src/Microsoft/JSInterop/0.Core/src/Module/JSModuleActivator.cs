@@ -11,7 +11,7 @@ namespace Teronis.Microsoft.JSInterop.Module
     {
         private readonly IJSRuntime jsRuntime;
 
-        public JSModuleActivator(IJSRuntime jsRuntime, JSInterceptorBuilder<JSModuleInterceptorBuilderOptions>? jsInterceptorBuilder)
+        public JSModuleActivator(IJSRuntime jsRuntime, JSInterceptorBuilder<JSModuleInterceptorServicesOptions>? jsInterceptorBuilder)
             : base(jsInterceptorBuilder) =>
             this.jsRuntime = jsRuntime;
 

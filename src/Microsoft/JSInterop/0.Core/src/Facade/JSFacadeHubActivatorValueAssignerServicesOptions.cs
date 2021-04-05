@@ -3,8 +3,8 @@
 
 using Teronis.Microsoft.JSInterop.Component.ServiceBuilder;
 
-namespace Teronis.Microsoft.JSInterop.Locality
+namespace Teronis.Microsoft.JSInterop.Facade
 {
-    public class JSLocalObjectValueAssignerOptions : ValueAssignerOptions<JSLocalObjectValueAssignerOptions>
+    public class JSFacadeHubActivatorValueAssignerServicesOptions : ValueAssignerServicesOptions<JSFacadeHubActivatorValueAssignerServicesOptions>
     { }
 }

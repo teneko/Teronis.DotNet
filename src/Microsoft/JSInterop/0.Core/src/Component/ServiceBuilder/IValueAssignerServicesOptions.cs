@@ -3,6 +3,8 @@
 
 namespace Teronis.Microsoft.JSInterop.Component.ServiceBuilder
 {
-    public class GlobalValueAssignerOptions : ValueAssignerOptions<GlobalValueAssignerOptions>
-    { }
+    public interface IValueAssignerServicesOptions
+    {
+        ValueAssignerServiceCollection Services { get; }
+    }
 }

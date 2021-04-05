@@ -13,7 +13,7 @@ namespace Teronis.Microsoft.JSInterop.Module
         public JSDynamicModuleActivator(
             IJSModuleActivator jsModuleActivator,
             IJSDynamicProxyActivator jsDynamicProxyActivator,
-            JSInterceptorBuilder<JSModuleInterceptorBuilderOptions>? jsInterceptorBuilder)
+            JSInterceptorBuilder<JSModuleInterceptorServicesOptions>? jsInterceptorBuilder)
         : base(jsModuleActivator, jsDynamicProxyActivator, jsInterceptorBuilder) { }
 
         public virtual ValueTask<IJSModule> CreateInstanceAsync(Type interfaceToBeProxied, string moduleNameOrPath, DynamicModuleCreationOptions? creationOptions = null) =>

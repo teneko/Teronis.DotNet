@@ -3,7 +3,6 @@
 
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Teronis.Microsoft.JSInterop.Activators;
 using Teronis.Microsoft.JSInterop.Annotations;
 using Teronis.Microsoft.JSInterop.Locality;
 using Teronis.Microsoft.JSInterop.Module;

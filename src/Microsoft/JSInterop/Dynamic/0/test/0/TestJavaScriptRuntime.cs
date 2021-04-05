@@ -7,7 +7,7 @@ using Microsoft.JSInterop;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic
 {
-    public class TestRuntime : IJSRuntime
+    public class TestJavaScriptRuntime : IJSRuntime
     {
         public ValueTask<TValue> InvokeAsync<TValue>(string identifier, object?[]? args) =>
             new ValueTask<TValue>();

@@ -8,12 +8,6 @@ namespace Teronis.Microsoft.JSInterop.Annotations
     [AttributeUsage(AttributeTargets.Method)]
     public class ReturnLocalObjectAttribute : Attribute
     {
-        public string? NameOrPath { get; }
-
-        public ReturnLocalObjectAttribute()
-        { }
-
-        public ReturnLocalObjectAttribute(string localObjectNameOrPath) =>
-            NameOrPath = localObjectNameOrPath;
+        public string? NameOrPath { get; set; }
     }
 }

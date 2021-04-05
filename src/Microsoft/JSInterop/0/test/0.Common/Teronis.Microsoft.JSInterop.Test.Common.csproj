@@ -26,4 +26,8 @@
     <ProjectReference Include="..\..\..\0.Core\src\Teronis.Microsoft.JSInterop.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Activators\" />
+  </ItemGroup>
+
 </Project>

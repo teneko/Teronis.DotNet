@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Extensions.DependencyInjection;
-using Teronis.Microsoft.JSInterop.Activators;
 using Teronis.Microsoft.JSInterop.Modules;
 using Teronis.Microsoft.JSInterop.Module;
 using Teronis.Microsoft.JSInterop.ObjectReferences;

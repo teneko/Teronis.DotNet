@@ -10,7 +10,7 @@ namespace Teronis.Microsoft.JSInterop.Component.ServiceBuilder
     {
         public void PostConfigure(string name, TDerived options)
         {
-            if (!options.TryCreateValueAssignerFactoriesUserUntouched()) {
+            if (!options.TryCreateValueAssignerServicesWhenUserUntouched()) {
                 return;
             }
 

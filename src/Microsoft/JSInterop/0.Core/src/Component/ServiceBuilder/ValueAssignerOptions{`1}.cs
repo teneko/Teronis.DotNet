@@ -28,7 +28,7 @@ namespace Teronis.Microsoft.JSInterop.Component.ServiceBuilder
             areValueAssignerServicesUserTouched = false;
         }
 
-        internal bool TryCreateValueAssignerFactoriesUserUntouched()
+        internal bool TryCreateValueAssignerServicesWhenUserUntouched()
         {
             if (areValueAssignerServicesUserTouched) {
                 return false;

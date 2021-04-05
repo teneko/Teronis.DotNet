@@ -4,10 +4,9 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
-using Teronis.Microsoft.JSInterop.Locality;
 using Teronis.Microsoft.JSInterop.ObjectReferences;
 
-namespace Teronis.Microsoft.JSInterop.Activators
+namespace Teronis.Microsoft.JSInterop.Locality
 {
     public class EmptyLocalObjectActivator : IJSLocalObjectActivator
     {
@@ -18,6 +17,6 @@ namespace Teronis.Microsoft.JSInterop.Activators
             new ValueTask<IJSLocalObject>(new JSLocalObject(new EmptyObjectReference(nameof(EmptyLocalObjectActivator)), jsInterceptor: null));
 
         public ValueTask<IJSLocalObject> CreateInstanceAsync(IJSObjectReference jsObjectReference, string localObjectNameOrPath, JSLocalObjectCreationOptions? creationOptions = null) =>
-            throw new NotImplementedException();
+            new ValueTask<IJSLocalObject>(new JSLocalObject(new EmptyObjectReference(nameof(EmptyLocalObjectActivator)), jsInterceptor: null));
     }
 }

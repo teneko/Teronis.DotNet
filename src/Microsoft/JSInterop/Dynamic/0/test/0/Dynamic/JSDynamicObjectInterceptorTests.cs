@@ -20,9 +20,8 @@ namespace Teronis.Microsoft.JSInterop.Dynamic
         public JSDynamicObjectInterceptorTests()
         {
             var services = new ServiceCollection();
-            services.AddSingleton<IJSRuntime, TestRuntime>();
+            services.AddSingleton<IJSRuntime, TestJavaScriptRuntime>();
             services.AddJSDynamicFacadeHub();
-
             services.AddJSDynamicProxyActivator(configureInterceptorBuilderOptions: options =>
                 options.ConfigureInterceptorServices(builder =>
                     builder.UseExtension(e => e.AddScoped<JSDynamicProxyActivatingInterceptor>())));

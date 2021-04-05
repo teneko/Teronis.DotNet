@@ -7,11 +7,5 @@ namespace Teronis.Microsoft.JSInterop.Annotations
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class ReturnDynamicLocalObjectAttribute : ReturnLocalObjectAttribute
-    {
-        public ReturnDynamicLocalObjectAttribute()
-        { }
-
-        public ReturnDynamicLocalObjectAttribute(string localObjectNameOrPath)
-            : base(localObjectNameOrPath) { }
-    }
+    { }
 }

@@ -3,14 +3,13 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop.Annotations;
 using Teronis.Microsoft.JSInterop.Locality;
 
 namespace Teronis.Microsoft.JSInterop.Interception.Interceptors
 {
     /// <summary>
-    /// The interceptor mimics (obj_ref, name) => obj_ref[name] where name can be a path too.
+    /// The interceptor mimics (obj_ref, name) => obj_ref[name] where name can be a dotted path too.
     /// </summary>
     public class JSLocalObjectInterceptor : IJSInterceptor
     {
@@ -25,7 +24,11 @@ namespace Teronis.Microsoft.JSInterop.Interception.Interceptors
                 return;
             }
 
-            var jsObjectReference = await invocation.GetNonDeterminedResult<IJSObjectReference>();
+            if (invocation.Arguments.Length > 0) {
+                throw new ArgumentException("When you mimic a getter you cannot specify arguments.");
+            }
+
+            var jsObjectReference = invocation.ObjectReference;
             var globalObjectNameOrPath = attribute.NameOrPath ?? invocation.Identifier;
             var jsLocalObject = await jsLocalObjectActivator.CreateInstanceAsync(jsObjectReference, globalObjectNameOrPath);
             invocation.SetAlternativeResult((TValue)jsLocalObject);

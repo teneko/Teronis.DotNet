@@ -30,7 +30,7 @@ namespace Teronis.Microsoft.JSInterop.Component.ValueAssigners
             }
 
             var jsModule = await jsModuleActivator.CreateInstanceAsync(moduleNameOrPath);
-            context.ValueResult = new YetNullable<IAsyncDisposable>(jsModule);
+            context.SetValueResult(jsModule);
         }
     }
 }

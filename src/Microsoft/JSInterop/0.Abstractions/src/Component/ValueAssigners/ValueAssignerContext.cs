@@ -10,7 +10,7 @@ namespace Teronis.Microsoft.JSInterop.Component.ValueAssigners
 {
     public class ValueAssignerContext : TreeIterator<IValueAssigner, ValueAssignerEntry, ValueAssignerEntryEnumerator>
     {
-        public YetNullable<object> ValueResult { get; set; }
+        public YetNullable<object> ValueResult { get; private set; }
 
         public ValueAssignerContext(ValueAssignerContext context)
             : base(context) { }
@@ -41,5 +41,8 @@ namespace Teronis.Microsoft.JSInterop.Component.ValueAssigners
             internal ValueAssignerEntry(IValueAssigner propertyAssigner)
                 : base(propertyAssigner) { }
         }
+
+        public void SetValueResult(object value) =>
+            ValueResult = value;
     }
 }

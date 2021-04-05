@@ -41,7 +41,7 @@ namespace Teronis.Microsoft.JSInterop.Component.ValueAssigners
             }
 
             var customFacade = jsCustomFacadeActivator.CreateInstance(jsObjectReferenceFacade, componentMember.MemberType);
-            context.ValueResult = new YetNullable<IAsyncDisposable>(customFacade);
+            context.SetValueResult(customFacade);
 
             @return:
             return ValueTask.CompletedTask;

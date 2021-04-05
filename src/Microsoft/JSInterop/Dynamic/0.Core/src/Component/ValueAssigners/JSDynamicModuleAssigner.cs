@@ -28,8 +28,8 @@ namespace Teronis.Microsoft.JSInterop.Component.ValueAssigners
                 return;
             }
 
-            var jsFacade = (IAsyncDisposable)await jsDynamicModuleActivator.CreateInstanceAsync(definition.MemberType, moduleNameOrPath);
-            context.ValueResult = new YetNullable<IAsyncDisposable>(jsFacade);
+            var jsFacade = await jsDynamicModuleActivator.CreateInstanceAsync(definition.MemberType, moduleNameOrPath);
+            context.SetValueResult(jsFacade);
         }
     }
 }

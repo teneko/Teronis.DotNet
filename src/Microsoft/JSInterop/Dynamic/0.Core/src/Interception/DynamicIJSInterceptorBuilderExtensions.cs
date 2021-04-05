@@ -17,7 +17,6 @@ namespace Teronis.Microsoft.JSInterop.Interception
         {
             interceptorBuilder.UseExtension(e => {
                 e.AddScoped<JSDynamicProxyActivatingInterceptor>();
-                e.AddScoped<JSDynamicModuleActivatingInterceptor>();
             });
 
             return interceptorBuilder;

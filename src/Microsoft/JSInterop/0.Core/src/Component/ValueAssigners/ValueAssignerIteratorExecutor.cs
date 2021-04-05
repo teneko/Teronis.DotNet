@@ -17,13 +17,10 @@ namespace Teronis.Microsoft.JSInterop.Component.ValueAssigners
                 handler: entry => entry.Item.AssignValueAsync(definition, context))
                 .ConfigureAwait(false);
 
-            var nullableMemberResult = context.ValueResult;
-
-            if (nullableMemberResult.IsNull) {
+            if (context.ValueResult.IsNull) {
                 return false;
             }
 
-            var memberResult = nullableMemberResult.Value!;
             return true;
         }
     }

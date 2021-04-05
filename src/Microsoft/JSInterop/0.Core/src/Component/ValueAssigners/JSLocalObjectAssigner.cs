@@ -27,7 +27,7 @@ namespace Teronis.Microsoft.JSInterop.Component.ValueAssigners
 
             var globalObjectName = attribute.GlobalObjectName ?? definition.Name;
             var jsObject = await jsLocalObjectActivator.CreateInstanceAsync(globalObjectName);
-            context.ValueResult = new YetNullable<IAsyncDisposable>(jsObject);
+            context.SetValueResult(jsObject);
         }
     }
 }

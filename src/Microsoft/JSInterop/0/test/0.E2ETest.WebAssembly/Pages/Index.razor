@@ -5,6 +5,7 @@
 @code {
     private async Task BeforeRunningTasks(IServiceProvider serviceProvider)
     {
+        // When debugging this amount of time is needed to catch up the debugger.
 #if DEBUG
         await Task.Delay(3000);
 #endif

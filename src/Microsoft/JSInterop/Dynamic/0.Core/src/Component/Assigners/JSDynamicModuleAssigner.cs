@@ -22,7 +22,7 @@ namespace Teronis.Microsoft.JSInterop.Component.Assigners
         /// <returns>null/default or the JavaScript module facade.</returns>
         public virtual async ValueTask AssignValueAsync(IMemberDefinition definition, ValueAssignerContext context)
         {
-            if (!JSModuleAttributeUtils.TryGetModuleNameOrPath<AssignDynamicModuleAttribute, JSDynamicModuleClassAttribute>(
+            if (!JSModuleAttributeUtils.TryGetModuleNameOrPath<AssignDynamicModuleAttribute, JSModuleAttribute>(
                 definition,
                 out var propertyAttribute,
                 out var moduleNameOrPath)) {

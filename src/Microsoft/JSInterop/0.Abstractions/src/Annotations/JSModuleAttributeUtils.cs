@@ -10,7 +10,7 @@ namespace Teronis.Microsoft.JSInterop.Annotations
     internal static class JSModuleAttributeUtils
     {
         public static string GetModuleNameOrPath<TClassAttribute>(AssignModuleAttribute propertyAttribute, ICustomAttributes propertyTypeAttributes)
-            where TClassAttribute : JSModuleClassAttribute
+            where TClassAttribute : JSModuleAttribute
         {
             if (propertyAttribute.NameOrPath == null) {
                 if (!propertyTypeAttributes.TryGetAttribute<TClassAttribute>(out var classModuleAttribute)
@@ -43,7 +43,7 @@ namespace Teronis.Microsoft.JSInterop.Annotations
             [MaybeNullWhen(false)] out TPropertyAttribute propertyAttribute,
             [MaybeNullWhen(false)] out string moduleNameOrPath)
             where TPropertyAttribute : AssignModuleAttribute
-            where TClassAttribute : JSModuleClassAttribute
+            where TClassAttribute : JSModuleAttribute
         {
             if (!componentMember.TryGetAttribute(out propertyAttribute)) {
                 moduleNameOrPath = null;

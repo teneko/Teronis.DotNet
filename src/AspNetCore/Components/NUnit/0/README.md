@@ -6,7 +6,7 @@ _Create and execute NUnit test cases in Blazor programmatically and display NUni
 
 ## About
 
-This project is a wrapper around [Teronis.NUnit.Core](src\NUnit\Core). It allows you to execute test cases and display their results in form of a XML report with the help of a component.
+This project is a wrapper around [Teronis.NUnit.Core](src/NUnit/Core). It allows you to execute test cases and display their results in form of a XML report with the help of a component.
 
 ## Installation
 
@@ -82,6 +82,6 @@ public class MomentTests : TaskTestCaseBlock
 
 ## Example
 
-Please visit one of my E2E test projects in [src\Microsoft\JSInterop\0\test\0.E2ETest.WebAssembly](src\Microsoft\JSInterop\0\test\0.E2ETest.WebAssembly).
+Please visit one of my E2E test projects in [src/Microsoft/JSInterop/0/test/0.E2ETest.WebAssembly](src/Microsoft/JSInterop/0/test/0.E2ETest.WebAssembly).
 
 [NuGet Package]: https://www.nuget.org/packages/Teronis.AspNetCore.Components.NUnit

@@ -15,7 +15,7 @@ Teronis.DotNet consists of many projects. These are projects to solve common pro
   <br/>_Use .NET Core 3.0's new nullable attributes in older target frameworks._
 - [Teronis.MSBuild.Packaging.ProjectBuildInPackage](/src/MSBuild/Packaging/ProjectBuildInPackage) &nbsp; | &nbsp; :package: [NuGet Package](https://www.nuget.org/packages/Teronis.MSBuild.Packaging.ProjectBuildInPackage)
   <br/>_Allow project reference content to be added to the NuGet-package during pack process._
-- [Teronis.AspNetCore.Components.NUnit](src\AspNetCore\Components\NUnit\0) &nbsp; | &nbsp; :package: [NuGet Package](https://www.nuget.org/packages/Teronis.AspNetCore.Components.NUnit)
+- [Teronis.AspNetCore.Components.NUnit](src/AspNetCore/Components/NUnit/0) &nbsp; | &nbsp; :package: [NuGet Package](https://www.nuget.org/packages/Teronis.AspNetCore.Components.NUnit)
   <br/>_Create and execute NUnit test cases in Blazor programmatically and display NUnit XML report_
 - ... (TBD)
   

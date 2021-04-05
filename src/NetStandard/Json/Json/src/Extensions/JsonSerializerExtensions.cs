@@ -12,7 +12,7 @@ namespace Teronis.Json.Extensions
     {
         public static JsonSerializerSettings GetSettings(this JsonSerializer serializer)
         {
-            var jsonSerializerSettingsVariableInfoSettings = new VariableInfoDescriptor() {
+            var jsonSerializerSettingsVariableInfoSettings = new VariableMemberDescriptor() {
                 IncludeIfWritable = true,
             };
 
@@ -20,7 +20,7 @@ namespace Teronis.Json.Extensions
                 .GetVariableMembers(descriptor: jsonSerializerSettingsVariableInfoSettings)
                 .ToDictionary(x => x.Name);
 
-            var jsonSerializerVariableInfoSettings = new VariableInfoDescriptor() {
+            var jsonSerializerVariableInfoSettings = new VariableMemberDescriptor() {
                 IncludeIfReadable = true,
             };
 

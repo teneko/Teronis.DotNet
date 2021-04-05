@@ -14,7 +14,7 @@ namespace Teronis.Extensions
     {
         #region Imported from extensions
 
-        public static bool IsVariable(this MemberInfo memberInfo, VariableInfoDescriptor variableInfoDescriptor)
+        public static bool IsVariable(this MemberInfo memberInfo, VariableMemberDescriptor variableInfoDescriptor)
         {
             if (!MemberInfoUtils.IsVariable(memberInfo)) {
                 return false;
@@ -40,7 +40,7 @@ namespace Teronis.Extensions
         private static bool isVariable(this MemberInfo memberInfo, Type attributeType, bool getCustomAttributesInherit)
             => memberInfo.IsDefined(attributeType, getCustomAttributesInherit);
 
-        public static bool IsVariable(this MemberInfo memberInfo, VariableInfoDescriptor descriptor, Type attributeType, bool getCustomAttributesInherit)
+        public static bool IsVariable(this MemberInfo memberInfo, VariableMemberDescriptor descriptor, Type attributeType, bool getCustomAttributesInherit)
             => IsVariable(memberInfo, descriptor) && isVariable(memberInfo, attributeType, getCustomAttributesInherit);
 
         /// <param name="memberInfo">Pass <see cref="PropertyInfo"/> or <see cref="FieldInfo"/>.</param>

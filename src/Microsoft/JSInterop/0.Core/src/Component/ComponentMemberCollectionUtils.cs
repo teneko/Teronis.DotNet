@@ -4,6 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Teronis.Extensions;
+using Teronis.Reflection;
 
 namespace Teronis.Microsoft.JSInterop.Component
 {
@@ -11,19 +13,23 @@ namespace Teronis.Microsoft.JSInterop.Component
     {
         public static IEnumerable<MemberInfo> GetComponentMembers(Type componentType)
         {
-            var memberInfos = componentType.GetMembers(ComponentMemberCollectionDefaults.COMPONENT_PROPERTY_BINDING_FLAGS);
+            var variableDescriptor = new VariableMemberDescriptor() {
+                IncludeIfWritable = true,
+                Flags = ComponentMemberCollectionDefaults.COMPONENT_PROPERTY_BINDING_FLAGS,
+            };
+
+            var memberInfos = componentType.GetVariableMembers(typeof(object), VariableMemberTypes.FieldAndProperty, variableDescriptor);
 
             foreach (var memberInfo in memberInfos) {
-                if (memberInfo is PropertyInfo propertyInfo) {
-                    if (!propertyInfo.CanWrite) {
-
-                        continue;
-                    }
-
-                    yield return propertyInfo;
+                if (memberInfo is PropertyInfo) {
+                    yield return memberInfo;
                 }
 
                 if (memberInfo is FieldInfo) {
+                    if (memberInfo.Name.StartsWith("<")) {
+                        continue;
+                    }
+
                     yield return memberInfo;
                 }
             }

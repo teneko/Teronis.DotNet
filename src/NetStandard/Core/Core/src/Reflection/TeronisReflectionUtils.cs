@@ -17,9 +17,9 @@ namespace Teronis.Reflection
         /// Property <see cref="VariableInfoSettings.IncludeIfReadable"/> is true.
         /// Property <see cref="VariableInfoSettings.IncludeIfWritable"/> is true.
         /// </summary>
-        private static VariableInfoDescriptor createDefaultVariableInfoSettings()
+        private static VariableMemberDescriptor createDefaultVariableInfoSettings()
         {
-            return new VariableInfoDescriptor() {
+            return new VariableMemberDescriptor() {
                 IncludeIfReadable = true,
                 IncludeIfWritable = true,
             };
@@ -72,7 +72,7 @@ namespace Teronis.Reflection
 
         // NON-ATTRIBUTE
 
-        public static void UpdateEntityVariables<T>(T leftEntity, T rightEntity, VariableInfoDescriptor? leftVariablesDescriptor = null, VariableInfoDescriptor? rightVariablesDescriptor = null)
+        public static void UpdateEntityVariables<T>(T leftEntity, T rightEntity, VariableMemberDescriptor? leftVariablesDescriptor = null, VariableMemberDescriptor? rightVariablesDescriptor = null)
             where T : notnull
         {
             ensureNonNullEntityTypes(leftEntity, rightEntity, out var leftEntityType, out var rightEntityType);
@@ -84,7 +84,7 @@ namespace Teronis.Reflection
 
         // ATTRIBUTE
 
-        public static void UpdateEntityVariablesByAttribute<T>(T leftEntity, T rightEntity, Type attributeType, VariableInfoDescriptor? variableInfoSettings = null)
+        public static void UpdateEntityVariablesByAttribute<T>(T leftEntity, T rightEntity, Type attributeType, VariableMemberDescriptor? variableInfoSettings = null)
             where T : notnull
         {
             ensureNonNullEntityTypes(leftEntity, rightEntity, out var leftEntityType, out _);
@@ -104,9 +104,9 @@ namespace Teronis.Reflection
             where TargetType : notnull
             where SourceType : notnull
         {
-            var flags = VariableInfoDescriptor.DefaultFlags | BindingFlags.NonPublic;
+            var flags = VariableMemberDescriptor.DefaultFlags | BindingFlags.NonPublic;
 
-            var cloningObjectMembersSettings = new VariableInfoDescriptor() {
+            var cloningObjectMembersSettings = new VariableMemberDescriptor() {
                 Flags = flags,
                 IncludeIfWritable = true,
             };
@@ -117,7 +117,7 @@ namespace Teronis.Reflection
                 .GetVariableMembers(descriptor: cloningObjectMembersSettings)
                 .ToDictionary(x => x.Name);
 
-            var copyingObjectMembersSettings = new VariableInfoDescriptor() {
+            var copyingObjectMembersSettings = new VariableMemberDescriptor() {
                 Flags = flags,
                 IncludeIfReadable = true,
             };
@@ -155,7 +155,7 @@ namespace Teronis.Reflection
 
         #region Members
 
-        public static IEnumerable<MemberInfo> GetMembers(Func<Type, VariableInfoDescriptor, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type? interruptingBaseType = null, VariableInfoDescriptor? variableInfoDescriptor = null)
+        public static IEnumerable<MemberInfo> GetMembers(Func<Type, VariableMemberDescriptor, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type? interruptingBaseType = null, VariableMemberDescriptor? variableInfoDescriptor = null)
         {
             if (beginningType is null) {
                 yield break;
@@ -187,7 +187,7 @@ namespace Teronis.Reflection
 
         // TYPED
 
-        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeMembers<TAttribute>(Func<Type, VariableInfoDescriptor, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type? interruptingBaseType = null, VariableInfoDescriptor? variableInfoDescriptor = null, bool? getCustomAttributesInherit = null)
+        public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeMembers<TAttribute>(Func<Type, VariableMemberDescriptor, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type? interruptingBaseType = null, VariableMemberDescriptor? variableInfoDescriptor = null, bool? getCustomAttributesInherit = null)
             where TAttribute : Attribute
         {
             foreach (var type in TypeUtils.GetBaseTypes(beginningType, interruptingBaseType: interruptingBaseType)) {
@@ -201,7 +201,7 @@ namespace Teronis.Reflection
 
         // NON-TYPED
 
-        public static IEnumerable<AttributeMemberInfo> GetAttributeMembers(Type attributeType, Func<Type, VariableInfoDescriptor, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type? interruptingBaseType = null, VariableInfoDescriptor? variableInfoDescriptor = null, bool? getCustomAttributesInherit = null)
+        public static IEnumerable<AttributeMemberInfo> GetAttributeMembers(Type attributeType, Func<Type, VariableMemberDescriptor, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type? interruptingBaseType = null, VariableMemberDescriptor? variableInfoDescriptor = null, bool? getCustomAttributesInherit = null)
         {
             foreach (var type in TypeUtils.GetBaseTypes(beginningType, interruptingBaseType: interruptingBaseType)) {
                 foreach (var propertyInfo in GetMembers(getMembers, beginningType, interruptingBaseType, variableInfoDescriptor)) {

@@ -7,7 +7,8 @@ namespace Teronis.Reflection
 {
     public enum VariableMemberTypes
     {
+        Field = MemberTypes.Field,
         Property = MemberTypes.Property,
-        Field = MemberTypes.Field
+        FieldAndProperty = Property | Field
     }
 }

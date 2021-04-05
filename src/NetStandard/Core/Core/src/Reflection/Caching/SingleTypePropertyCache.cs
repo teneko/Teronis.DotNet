@@ -40,7 +40,7 @@ namespace Teronis.Reflection.Caching
         /// <summary>
         /// Used when it is tried to get a variable member of <see cref="SingleTypedPropertiesOwnerType"/> by its name.
         /// </summary>
-        public VariableInfoDescriptor VariableInfoDescriptor { get; }
+        public VariableMemberDescriptor VariableMemberDescriptor { get; }
         /// <summary>
         /// It does skip the invocation of the property removed event. It may help
         /// if you can handle the retrack in the property added event.
@@ -71,8 +71,8 @@ namespace Teronis.Reflection.Caching
 
             cachedPropertyValues = new Dictionary<string, PropertyType>();
             CachedPropertyValues = new ReadOnlyDictionary<string, PropertyType>(cachedPropertyValues);
-            VariableInfoDescriptor = new VariableInfoDescriptor();
-            VariableInfoDescriptor.Flags |= BindingFlags.NonPublic | BindingFlags.GetProperty | BindingFlags.GetField;
+            VariableMemberDescriptor = new VariableMemberDescriptor();
+            VariableMemberDescriptor.Flags |= BindingFlags.NonPublic | BindingFlags.GetProperty | BindingFlags.GetField;
             TrackingPropertyDefaultValue = default;
             CanHandleDefaultValue = true;
 
@@ -111,7 +111,7 @@ namespace Teronis.Reflection.Caching
                 return;
             }
 
-            var propertyMember = SingleTypedPropertiesOwnerType.GetVariableMember(propertyName, VariableInfoDescriptor);
+            var propertyMember = SingleTypedPropertiesOwnerType.GetVariableMember(propertyName, VariableMemberDescriptor);
 
             // There is no member that can be handled, so we return.
             if (propertyMember == null) {

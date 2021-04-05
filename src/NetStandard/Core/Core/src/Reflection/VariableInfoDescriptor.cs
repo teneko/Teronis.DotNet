@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace Teronis.Reflection
 {
-    public sealed class VariableInfoDescriptor
+    public sealed class VariableMemberDescriptor
     {
         /// <summary>
         /// A combination of <see cref="BindingFlags.Instance"/> and <see cref="BindingFlags.Public"/>.
@@ -109,7 +109,7 @@ namespace Teronis.Reflection
         private IEnumerable<Type>? includeByAttributeTypes;
         private bool includeByAttributeTypesInherit;
 
-        public VariableInfoDescriptor()
+        public VariableMemberDescriptor()
         {
             Flags = DefaultFlags;
             ExcludeByAttributeTypesInherit = true; // Library.DefaultCustomAttributesInherit
@@ -120,10 +120,10 @@ namespace Teronis.Reflection
         /// A shallow copy of 
         /// </summary>
         /// <returns></returns>
-        public VariableInfoDescriptor ShallowCopy()
+        public VariableMemberDescriptor ShallowCopy()
         {
             var properties = GetType().GetProperties(DefaultFlags);
-            var settings = new VariableInfoDescriptor();
+            var settings = new VariableMemberDescriptor();
 
             foreach (var property in properties) {
                 // We Want to exclude IsSealed consequently

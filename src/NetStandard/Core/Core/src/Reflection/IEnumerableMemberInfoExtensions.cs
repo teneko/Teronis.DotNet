@@ -10,7 +10,7 @@ namespace Teronis.Extensions
 {
     public static class IEnumerableMemberInfoExtensions
     {
-        public static IEnumerable<MemberInfo> Intersect(IEnumerable<MemberInfo> memberInfos, Type entityType, VariableInfoDescriptor? descriptor = null)
+        public static IEnumerable<MemberInfo> Intersect(IEnumerable<MemberInfo> memberInfos, Type entityType, VariableMemberDescriptor? descriptor = null)
         {
             memberInfos = memberInfos ?? throw new ArgumentNullException(nameof(memberInfos));
             entityType = entityType ?? throw new ArgumentNullException(nameof(entityType));

@@ -10,7 +10,7 @@ namespace Teronis.Extensions
 {
     public static class IEnumerableMemberInfoUtils
     {
-        public static IEnumerable<MemberInfo> Intersect(this IEnumerable<MemberInfo> memberInfos, Type entityType, VariableInfoDescriptor? descriptor = null) =>
+        public static IEnumerable<MemberInfo> Intersect(this IEnumerable<MemberInfo> memberInfos, Type entityType, VariableMemberDescriptor? descriptor = null) =>
             IEnumerableMemberInfoExtensions.Intersect(memberInfos, entityType, descriptor);
     }
 }

@@ -2,7 +2,7 @@
 
 _Use .NET Core 3.0's new nullable attributes in older target frameworks._
 
-[:running: Quick Start Guide](#quickstart) &nbsp; | &nbsp; [:books: Guides](https://github.com/manuelroemer/Nullable/wiki) &nbsp; | &nbsp; [:package: NuGet Package][NuGet Package]
+[:running: Quick Start Guide](#quick-start-guide) &nbsp; | &nbsp; [:books: Guides](https://github.com/manuelroemer/Nullable/wiki) &nbsp; | &nbsp; [:package: NuGet Package][NuGet Package]
 
 ## Prologue
 

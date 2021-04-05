@@ -24,7 +24,7 @@ dotnet add package Teronis.AspNetCore.Components.NUnit --version <type here vers
 
 ## Quick Start Guide
 
-1.\ Define a test case block:
+1\. Define a test case block:
 
 ```
 using NUnit.Framework;

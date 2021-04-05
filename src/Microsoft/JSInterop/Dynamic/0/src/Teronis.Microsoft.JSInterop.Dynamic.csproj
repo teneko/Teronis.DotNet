@@ -4,6 +4,18 @@
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
     <RootNamespace>Teronis.Microsoft.JSInterop</RootNamespace>
+    <Description>
+      <![CDATA[Extends the functionality of Microsoft.JSInterop and Teronis.Microsoft.JSInterop: Create specialized IJSObjectReference dynamic proxy facades.
+      
+Commonly Used Types:
+IJSFacadeHub<>
+IJSFacadeHubActivator
+IJSModuleActivator
+IJSDynamicModuleActivator
+IJSLocalObjectActivator
+IJSDynamicLocalObjectActivator
+IJSCustomFacadeActivator]]>
+    </Description>
   </PropertyGroup>
 
   <ItemGroup>

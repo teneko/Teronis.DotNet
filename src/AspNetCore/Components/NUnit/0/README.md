@@ -1,6 +1,6 @@
 # Teronis.AspNetCore.Components.NUnit [![Nuget](https://img.shields.io/nuget/v/Teronis.AspNetCore.Components.NUnit)][NuGet Package]
 
-_Create and execute NUnit test cases in Blazor programmatically and display NUnit XML report_
+_Create and execute NUnit test cases in Blazor programmatically and display NUnit XML report._
 
 :running: [Quick Start Guide](#quick-start-guide) &nbsp; | &nbsp; :package: [NuGet Package][NuGet Package]
 

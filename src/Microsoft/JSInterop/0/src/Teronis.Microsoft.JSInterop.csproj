@@ -2,6 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Description>
+      <![CDATA[Extends the functionality of Microsoft.JSInterop: Create specialized IJSObjectReference facades.
+      
+Commonly Used Types:
+IJSFacadeHub<>
+IJSFacadeHubActivator
+IJSModuleActivator
+IJSLocalObjectActivator
+IJSCustomFacadeActivator]]></Description>
   </PropertyGroup>
 
   <ItemGroup>

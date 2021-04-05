@@ -2,7 +2,15 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netcoreapp3.1;net5.0</TargetFrameworks>
-    <Description>Separates Microsoft.Extensions.DependencyInjection.ServiceCollection (class) into (I)Singleton-, (I)Scoped- and (I)TransientServiceCollection.</Description>
+    <Description>
+      <![CDATA[Teronis.Microsoft.DependencyInjection provides higly customizable service collections.
+      
+Commonly Used Types:
+LifetimeServiceCollection<TProvider, TDescriptor>
+SingletonServiceCollection
+ScopedServiceCollection
+TransientServiceCollection]]>
+  </Description>
   </PropertyGroup>
 
   <ItemGroup>

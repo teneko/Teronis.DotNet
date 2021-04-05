@@ -7,8 +7,8 @@ using System.Collections.Generic;
 namespace Teronis.Microsoft.DependencyInjection.Extensions
 {
     public readonly struct SingletonServicesExtension<TServiceBase, TProvider, TDescriptor, TCollection>
-        where TProvider : class, IServiceProvider
         where TServiceBase : class
+        where TProvider : class, IServiceProvider
         where TDescriptor : LifetimeServiceDescriptor<TProvider>
         where TCollection : ILifetimeServiceCollection<TDescriptor>
     {

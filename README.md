@@ -16,7 +16,11 @@ Teronis.DotNet consists of many projects. These are projects to solve common pro
 - [Teronis.MSBuild.Packaging.ProjectBuildInPackage](/src/MSBuild/Packaging/ProjectBuildInPackage) &nbsp; | &nbsp; :package: [NuGet Package](https://www.nuget.org/packages/Teronis.MSBuild.Packaging.ProjectBuildInPackage)
   <br/>_Allow project reference content to be added to the NuGet-package during pack process._
 - [Teronis.AspNetCore.Components.NUnit](src/AspNetCore/Components/NUnit/0) &nbsp; | &nbsp; :package: [NuGet Package](https://www.nuget.org/packages/Teronis.AspNetCore.Components.NUnit)
-  <br/>_Create and execute NUnit test cases in Blazor programmatically and display NUnit XML report_
+  <br/>_Create and execute NUnit test cases in Blazor programmatically and display NUnit XML report._
+- [Teronis.Microsoft.JSInterop](src/Microsoft/JSInterop/0) &nbsp; | &nbsp; :package: [NuGet Package](https://www.nuget.org/packages/Teronis.Microsoft.JSInterop)
+  <br/>_Create specialized IJSObjectReference facades_
+- [Teronis.Microsoft.JSInterop.Dynamic](src/Microsoft/JSInterop/Dynamic) &nbsp; | &nbsp; :package: [NuGet Package](https://www.nuget.org/packages/Teronis.Microsoft.JSInterop.Dynamic)
+  <br/>_Create specialized IJSObjectReference dynamic proxy facades_
 - ... (TBD)
   
 :book: [Source Documentation](https://teroneko.de/docs/Teronis.DotNet/Microsoft.Extensions.DependencyInjection.html)

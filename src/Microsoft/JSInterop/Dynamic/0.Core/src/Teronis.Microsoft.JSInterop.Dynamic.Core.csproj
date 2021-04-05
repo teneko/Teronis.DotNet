@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Teronis.Microsoft.JSInterop</RootNamespace>
+    <Description>Contains core functionalities for Teronis.Microsoft.JSInterop.Dynamic.</Description>
   </PropertyGroup>
 
   <ItemGroup>

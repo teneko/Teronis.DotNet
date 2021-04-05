@@ -9,6 +9,7 @@ Licensed under the MIT license. See LICENSE file in the project root for full li
 
     <TargetFrameworks>netstandard1.0;net20;netstandard2.0;net40;netstandard2.1;net5.0</TargetFrameworks>
     <RootNamespace>System.Diagnostics.CodeAnalysis</RootNamespace>
+    <Description>Use .NET Core 3.0's new nullable attributes in older target frameworks.</Description>
     <!-- Handled by root Directory.Build.props -->
     <!--<LangVersion>8.0</LangVersion>-->
     <!-- Handled by root Directory.Build.props -->

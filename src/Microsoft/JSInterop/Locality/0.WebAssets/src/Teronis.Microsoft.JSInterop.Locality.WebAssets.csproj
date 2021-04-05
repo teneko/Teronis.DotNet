@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <Description>Provides JSLocalObjectInterop (class) that enables you to get the (nested) object of an object.</Description>
   </PropertyGroup>
 
   

@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Teronis.Microsoft.JSInterop.Component;
-using Teronis.Microsoft.JSInterop.Component.ValueAssigners;
-using Teronis.Microsoft.JSInterop.Component.ValueAssigners.Builder;
+using Teronis.Microsoft.JSInterop.Component.Assigners;
+using Teronis.Microsoft.JSInterop.Component.ServiceBuilder;
 
 namespace Teronis.Microsoft.JSInterop.Facade
 {

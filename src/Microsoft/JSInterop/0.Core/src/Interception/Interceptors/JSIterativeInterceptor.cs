@@ -8,6 +8,10 @@ using static Teronis.Microsoft.JSInterop.Interception.Interceptors.InterceptionC
 
 namespace Teronis.Microsoft.JSInterop.Interception.Interceptors
 {
+    /// <summary>
+    /// Allows to iterate over a collection of <see cref="IJSInterceptor"/>
+    /// that makes use of <see cref="TreeIteratorExecutor{TEntry}"/> internally.
+    /// </summary>
     public sealed class JSIterativeInterceptor : IJSInterceptor
     {
         public IReadOnlyList<IJSInterceptor> Interceptors { get; }

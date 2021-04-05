@@ -40,7 +40,8 @@ namespace Teronis.Microsoft.JSInterop.Reflection
             where T : Attribute =>
             customAttributes.TryGetAttribute(out attribute);
 
-        private class CustomProvidingAttributes : ICustomAttributes {
+        private class CustomProvidingAttributes : ICustomAttributes
+        {
             public ILookup<Type, Attribute> Attributes {
                 get {
                     if (attributes is null) {
@@ -61,14 +62,14 @@ namespace Teronis.Microsoft.JSInterop.Reflection
 
             protected IEnumerable<Attribute> GetAttributes() =>
                 customAttributeProvider
-                    .GetCustomAttributes(inherit: true)
+                    .GetCustomAttributes(inherit: false)
                     .Cast<Attribute>();
 
-            protected bool IsDefined(Type attributeType) =>
-                customAttributeProvider.IsDefined(attributeType, inherit: true);
+            //protected bool IsDefined(Type attributeType) =>
+            //    customAttributeProvider.IsDefined(attributeType, inherit: false);
 
             public bool IsAttributeDefined(Type attributeType) =>
-                attributes?.Contains(attributeType) ?? IsDefined(attributeType);
+                Attributes.Contains(attributeType); // ?? IsDefined(attributeType);
 
             public bool IsAttributeDefined<T>() =>
                 IsAttributeDefined(typeof(T));
@@ -88,12 +89,14 @@ namespace Teronis.Microsoft.JSInterop.Reflection
             }
         }
 
-        private class EnumerableCustomAttributes : ICustomAttributes {
+        private class EnumerableCustomAttributes : ICustomAttributes
+        {
             public static EnumerableCustomAttributes Empty = new EnumerableCustomAttributes(Enumerable.Empty<Attribute>());
 
             public ILookup<Type, Attribute> Attributes { get; }
 
-            public EnumerableCustomAttributes(IEnumerable<Attribute> attributes) {
+            public EnumerableCustomAttributes(IEnumerable<Attribute> attributes)
+            {
                 if (attributes is null) {
                     throw new ArgumentNullException(nameof(attributes));
                 }

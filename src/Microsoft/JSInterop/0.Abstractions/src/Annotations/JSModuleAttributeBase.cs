@@ -12,7 +12,7 @@ namespace Teronis.Microsoft.JSInterop.Annotations
         /// <summary>
         /// The module name or path of a JavaScript ESM module relative to "wwwroot" (if not changed).
         /// </summary>
-        public string? ModuleNameOrPath { get; }
+        public string? NameOrPath { get; set; }
 
         /// <summary>
         /// The properties (owned by component - see 
@@ -20,14 +20,5 @@ namespace Teronis.Microsoft.JSInterop.Annotations
         /// gets initialized when decorated with this attribute.
         /// </summary>
         public JSModuleAttributeBase() { }
-
-        /// <summary>
-        /// The properties (owned by component - see 
-        /// <see cref="IJSFacadeHubActivator.CreateInstanceAsync(object)"/>) of type <see cref="IJSObjectReference"/>
-        /// gets initialized when decorated with this attribute.
-        /// </summary>
-        /// <param name="moduleNameOrPath">Relative path where the working directoy is typcially wwwroot.</param>
-        public JSModuleAttributeBase(string moduleNameOrPath) =>
-            ModuleNameOrPath = moduleNameOrPath;
     }
 }

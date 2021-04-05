@@ -7,7 +7,7 @@ using Castle.DynamicProxy;
 using Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop.Dynamic.Reflection;
 using Teronis.Microsoft.JSInterop.Interception.Interceptors;
-using Teronis.Microsoft.JSInterop.Interception.Interceptors.Builder;
+using Teronis.Microsoft.JSInterop.Interception.ServiceBuilder;
 using Teronis.Microsoft.JSInterop.Utils;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic

@@ -4,7 +4,7 @@
 using System;
 using System.Threading.Tasks;
 using Teronis.Microsoft.JSInterop.Dynamic;
-using Teronis.Microsoft.JSInterop.Interception.Interceptors.Builder;
+using Teronis.Microsoft.JSInterop.Interception.ServiceBuilder;
 using Teronis.Microsoft.JSInterop.Utils;
 
 namespace Teronis.Microsoft.JSInterop

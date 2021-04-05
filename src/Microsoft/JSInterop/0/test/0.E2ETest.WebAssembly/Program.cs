@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Teronis.Microsoft.JSInterop;
-using Teronis.Microsoft.JSInterop.Interceptors;
+using Teronis.Microsoft.JSInterop.Interception.Interceptors;
 using Teronis_._Microsoft.JSInterop.Modules;
 
 namespace Teronis_._Microsoft.JSInterop
@@ -28,8 +28,9 @@ namespace Teronis_._Microsoft.JSInterop
                     builder.UseExtension(e => e.AddScoped<JSDynamicProxyActivatingInterceptor>())));
 
             services.AddJSCustomFacadeActivator(options => {
-                options.JSFacadeDictionaryConfiguration
-                    .Add<TonyHawkModule>();
+                options.ConfigureCustomFacadeServices(services =>
+                    services.UseExtension(extension =>
+                        extension.AddScoped<TonyHawkModule>()));
             });
 
             services.AddJSDynamicFacadeHub();

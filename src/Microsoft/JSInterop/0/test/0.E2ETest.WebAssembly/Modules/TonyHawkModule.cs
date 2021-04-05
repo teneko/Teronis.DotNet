@@ -10,7 +10,7 @@ using Teronis.Microsoft.JSInterop.Module;
 
 namespace Teronis_._Microsoft.JSInterop.Modules
 {
-    [JSModuleClass("./js/es-modules/getTonyHawk.js")]
+    [JSModuleClass(NameOrPath = "./js/es-modules/getTonyHawk.js")]
     public class TonyHawkModule : IAsyncDisposable
     {
         private readonly IJSObjectReferenceFacade jsObjectReferenceFacade;

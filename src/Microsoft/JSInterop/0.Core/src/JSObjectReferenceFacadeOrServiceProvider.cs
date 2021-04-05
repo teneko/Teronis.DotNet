@@ -9,7 +9,8 @@ using Teronis.Microsoft.JSInterop.Utils;
 namespace Teronis.Microsoft.JSInterop
 {
     /// <summary>
-    /// This class tries to return the JavaScript reference when it implements the requested serivce type.
+    /// Provides JavaScript object reference facade instance over the request to the internal instance of
+    /// <see cref="IServiceProvider"/>.
     /// </summary>
     internal sealed class JSObjectReferenceFacadeOrServiceProvider : IJSCustomFacadeFactoryServiceProvider
     {

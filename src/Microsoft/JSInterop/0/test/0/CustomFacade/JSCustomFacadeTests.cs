@@ -32,17 +32,19 @@ namespace Teronis.Microsoft.JSInterop.CustomFacade
         {
             yield return CreateServiceCollection()
                 .AddJSCustomFacadeActivator(configureOptions: options =>
-                    options.JSFacadeDictionaryBuilder
-                        .Add(typeof(CustomModule), serviceProvider =>
-                            new CustomModule(serviceProvider.GetRequiredService<IJSModule>())))
+                    options.ConfigureCustomFacadeServices(services =>
+                        services.UseExtension(extension =>
+                            extension.AddScoped(serviceProvider =>
+                                new CustomModule(serviceProvider.GetRequiredService<IJSModule>())))))
                 .BuildServiceProvider()
                 .GetRequiredService<IJSCustomFacadeActivator>()
                 .AsArray();
 
             yield return CreateServiceCollection()
                 .AddJSCustomFacadeActivator(configureOptions: options =>
-                    options.JSFacadeDictionaryBuilder
-                        .Add<CustomModule>())
+                    options.ConfigureCustomFacadeServices(services =>
+                        services.UseExtension(extension =>
+                            extension.AddScoped<CustomModule>())))
                 .BuildServiceProvider()
                 .GetRequiredService<IJSCustomFacadeActivator>()
                 .AsArray();

@@ -4,13 +4,14 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using System.Linq;
 
 namespace Teronis.Microsoft.JSInterop.CustomFacade
 {
     public class JSCustomFacadeActivator : IJSCustomFacadeActivator
     {
         private readonly IServiceProvider serviceProvider;
-        private readonly IJSCustomFacadeDictionary jsFacadeDictionary;
+        private readonly ILookup<Type, JSCustomFacadeServiceDescriptor> jsCustomFacadeServiceLookup;
 
         public JSCustomFacadeActivator(
             IServiceProvider serviceProvider,
@@ -22,7 +23,7 @@ namespace Teronis.Microsoft.JSInterop.CustomFacade
                 throw new ArgumentNullException(nameof(options));
             }
 
-            jsFacadeDictionary = options.Value.JSFacadeDictionaryBuilder.Build();
+            jsCustomFacadeServiceLookup = options.Value.CustomFacadeServices.ToLookup(x => x.ServiceType);
         }
 
         public virtual IAsyncDisposable CreateInstance(IJSObjectReferenceFacade customFacadeConstructorParameter, Type jsCustomFacadeType)
@@ -31,17 +32,19 @@ namespace Teronis.Microsoft.JSInterop.CustomFacade
                 throw new ArgumentNullException(nameof(customFacadeConstructorParameter));
             }
 
-            if (!jsFacadeDictionary.TryGetValue(jsCustomFacadeType, out var jsFacadeCreatorHandler)) {
+            if (!jsCustomFacadeServiceLookup.Contains(jsCustomFacadeType)) {
                 throw new NotSupportedException($"Type {jsCustomFacadeType} is not supported.");
             }
 
+            var customFacadeServiceDescriptor = jsCustomFacadeServiceLookup[jsCustomFacadeType].Last();
+
             var jsCustomFacadeFactoryServiceProvider = new JSObjectReferenceFacadeOrServiceProvider(serviceProvider, customFacadeConstructorParameter);
 
-            if (!(jsFacadeCreatorHandler is null)) {
-                return jsFacadeCreatorHandler.Invoke(jsCustomFacadeFactoryServiceProvider);
+            if (!(customFacadeServiceDescriptor.ImplementationFactory is null)) {
+                return (IAsyncDisposable)customFacadeServiceDescriptor.ImplementationFactory.Invoke(jsCustomFacadeFactoryServiceProvider);
             }
 
-            return (IAsyncDisposable)ActivatorUtilities.CreateInstance(jsCustomFacadeFactoryServiceProvider, jsCustomFacadeType);
+            return (IAsyncDisposable)ActivatorUtilities.CreateInstance(jsCustomFacadeFactoryServiceProvider, customFacadeServiceDescriptor.ImplementationType!);
         }
     }
 }

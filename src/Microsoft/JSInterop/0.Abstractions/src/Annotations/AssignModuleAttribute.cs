@@ -5,15 +5,7 @@ using System;
 
 namespace Teronis.Microsoft.JSInterop.Annotations
 {
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
     public class AssignModuleAttribute : JSModuleAttributeBase
-    {
-        /// <inheritdoc/>
-        public AssignModuleAttribute()
-        { }
-
-        /// <inheritdoc/>
-        public AssignModuleAttribute(string moduleNameOrPath)
-            : base(moduleNameOrPath) { }
-    }
+    { }
 }

@@ -7,15 +7,12 @@ namespace Teronis.Microsoft.JSInterop.Annotations
 {
     /// <summary>
     /// Decoratable on interface. It provides
-    /// <see cref="JSModuleAttributeBase.ModuleNameOrPath"/>
+    /// <see cref="JSModuleAttributeBase.NameOrPath"/>
     /// to those properties with facade attribute that are using
     /// parameterless constructor but not
-    /// <see cref="ReturnDynamicModuleAttribute(string)"/>.
+    /// <see cref="AssignDynamicModuleAttribute(string)"/>.
     /// </summary>
     [AttributeUsage(AttributeTargets.Interface, Inherited = true)]
     public class JSDynamicModuleClassAttribute : JSModuleClassAttribute
-    {
-        public JSDynamicModuleClassAttribute(string ModuleNameOrPath)
-            : base(ModuleNameOrPath) { }
-    }
+    { }
 }

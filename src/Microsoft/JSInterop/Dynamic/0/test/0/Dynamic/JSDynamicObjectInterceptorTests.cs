@@ -8,7 +8,7 @@ using Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop.Dynamic.Interefaces.Interception;
 using Teronis.Microsoft.JSInterop.Dynamic.ObjectReferences;
 using Teronis.Microsoft.JSInterop.Facade;
-using Teronis.Microsoft.JSInterop.Interceptors;
+using Teronis.Microsoft.JSInterop.Interception.Interceptors;
 using Xunit;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic

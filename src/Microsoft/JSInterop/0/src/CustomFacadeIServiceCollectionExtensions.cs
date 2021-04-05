@@ -6,8 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Teronis.Microsoft.JSInterop.CustomFacade;
 using Teronis.Microsoft.JSInterop.Facade;
-using Teronis.Microsoft.JSInterop.Interception;
-using Teronis.Microsoft.JSInterop.Interception.Interceptors.Builder;
+using Teronis.Microsoft.JSInterop.Interception.ServiceBuilder;
 using Teronis.Microsoft.JSInterop.Locality.WebAssets;
 
 namespace Teronis.Microsoft.JSInterop

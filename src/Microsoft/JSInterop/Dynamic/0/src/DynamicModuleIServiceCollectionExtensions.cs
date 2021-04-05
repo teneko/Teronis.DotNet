@@ -3,7 +3,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Teronis.Microsoft.JSInterop.Interception;
+using Teronis.Microsoft.JSInterop.Interception.ServiceBuilder;
 using Teronis.Microsoft.JSInterop.Module;
 
 namespace Teronis.Microsoft.JSInterop
@@ -12,8 +12,8 @@ namespace Teronis.Microsoft.JSInterop
     {
         /// <summary>
         /// Calls <see cref="DynamicJSInterceptorBuilderOptionsIServiceCollectionExtensions.AddDynamicInterceptorBuilderOptions{TDerivedBuilderOptions, TDerivedAssignerOptions}(IServiceCollection)"/>,
-        /// <see cref="ModuleIServiceCollectionExtensions.AddJSModuleActivator(IServiceCollection, System.Action{JSModuleValueAssignerOptions}?, System.Action{JSModuleInterceptorBuilderOptions}?, Interception.PostConfigureInterceptorBuilderDelegate{JSModuleInterceptorBuilderOptions, JSModuleValueAssignerOptions}?)"/>,
-        /// <see cref="DynamicIServiceCollectionExtensions.AddJSDynamicProxyActivator(IServiceCollection, System.Action{Dynamic.JSDynamicProxyValueAssignerOptions}?, System.Action{Dynamic.JSDynamicProxyInterceptorBuilderOptions}?, Interception.PostConfigureInterceptorBuilderDelegate{Dynamic.JSDynamicProxyInterceptorBuilderOptions, Dynamic.JSDynamicProxyValueAssignerOptions}?)"/>,
+        /// <see cref="ModuleIServiceCollectionExtensions.AddJSModuleActivator(IServiceCollection, System.Action{JSModuleValueAssignerOptions}?, System.Action{JSModuleInterceptorBuilderOptions}?, Teronis.Microsoft.JSInterop.Interception.ServiceBuilder.PostConfigureInterceptorBuilderDelegate{JSModuleInterceptorBuilderOptions, JSModuleValueAssignerOptions}?)"/>,
+        /// <see cref="DynamicIServiceCollectionExtensions.AddJSDynamicProxyActivator(IServiceCollection, System.Action{Dynamic.JSDynamicProxyValueAssignerOptions}?, System.Action{Dynamic.JSDynamicProxyInterceptorBuilderOptions}?, Teronis.Microsoft.JSInterop.Interception.ServiceBuilder.PostConfigureInterceptorBuilderDelegate{Dynamic.JSDynamicProxyInterceptorBuilderOptions, Dynamic.JSDynamicProxyValueAssignerOptions}?)"/>,
         /// and tries to add <see cref="JSDynamicModuleActivator"/> as <see cref="IJSModuleActivator"/>.
         /// </summary>
         /// <param name="services"></param>

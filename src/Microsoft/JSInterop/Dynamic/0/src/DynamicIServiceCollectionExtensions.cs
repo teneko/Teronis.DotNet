@@ -5,8 +5,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Teronis.Microsoft.JSInterop.Dynamic;
-using Teronis.Microsoft.JSInterop.Interception;
-using Teronis.Microsoft.JSInterop.Interception.Interceptors.Builder;
+using Teronis.Microsoft.JSInterop.Interception.ServiceBuilder;
 
 namespace Teronis.Microsoft.JSInterop
 {

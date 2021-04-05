@@ -7,21 +7,21 @@ using Teronis.Microsoft.JSInterop.Reflection;
 
 namespace Teronis.Microsoft.JSInterop.Annotations
 {
-    public static class JSModuleAttributeUtils
+    internal static class JSModuleAttributeUtils
     {
         public static string GetModuleNameOrPath<TClassAttribute>(AssignModuleAttribute propertyAttribute, ICustomAttributes propertyTypeAttributes)
             where TClassAttribute : JSModuleClassAttribute
         {
-            if (propertyAttribute.ModuleNameOrPath == null) {
+            if (propertyAttribute.NameOrPath == null) {
                 if (!propertyTypeAttributes.TryGetAttribute<TClassAttribute>(out var classModuleAttribute)
-                    || classModuleAttribute.ModuleNameOrPath == null) {
+                    || classModuleAttribute.NameOrPath == null) {
                     throw new InvalidOperationException("Neither the module attribute from property nor a module attribute from class has module name or a path to script.");
                 }
 
-                return classModuleAttribute.ModuleNameOrPath;
+                return classModuleAttribute.NameOrPath;
             }
 
-            return propertyAttribute.ModuleNameOrPath;
+            return propertyAttribute.NameOrPath;
         }
 
         /// <summary>
@@ -32,21 +32,25 @@ namespace Teronis.Microsoft.JSInterop.Annotations
         /// </summary>
         /// <param name="componentMember"></param>
         /// <param name="moduleNameOrPath"></param>
+        /// <param name="propertyAttribute"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException">
         /// Thrown when JavaScrit module facade attribute is 
         /// given but module name or path could not been found.
         /// </exception>
-        public static bool TryGetModuleNameOrPath<TPropertyAttribute, TClassAttribute>(IMemberDefinition componentMember, [MaybeNullWhen(false)] out string moduleNameOrPath)
+        public static bool TryGetModuleNameOrPath<TPropertyAttribute, TClassAttribute>(
+            IMemberDefinition componentMember,
+            [MaybeNullWhen(false)] out TPropertyAttribute propertyAttribute,
+            [MaybeNullWhen(false)] out string moduleNameOrPath)
             where TPropertyAttribute : AssignModuleAttribute
             where TClassAttribute : JSModuleClassAttribute
         {
-            if (!componentMember.TryGetAttribute<TPropertyAttribute>(out var propertyModuleAttribute)) {
+            if (!componentMember.TryGetAttribute(out propertyAttribute)) {
                 moduleNameOrPath = null;
                 return false;
             }
 
-            moduleNameOrPath = GetModuleNameOrPath<TClassAttribute>(propertyModuleAttribute, componentMember.MemberTypeInfo);
+            moduleNameOrPath = GetModuleNameOrPath<TClassAttribute>(propertyAttribute, componentMember.MemberTypeInfo);
             return true;
         }
     }

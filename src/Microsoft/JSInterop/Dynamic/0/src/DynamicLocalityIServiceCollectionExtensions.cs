@@ -3,7 +3,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Teronis.Microsoft.JSInterop.Interception;
+using Teronis.Microsoft.JSInterop.Interception.ServiceBuilder;
 using Teronis.Microsoft.JSInterop.Locality;
 
 namespace Teronis.Microsoft.JSInterop
@@ -12,8 +12,8 @@ namespace Teronis.Microsoft.JSInterop
     {
         /// <summary>
         /// Calls <see cref="DynamicJSInterceptorBuilderOptionsIServiceCollectionExtensions.AddDynamicInterceptorBuilderOptions{TDerivedBuilderOptions, TDerivedAssignerOptions}(IServiceCollection)"/>,
-        /// <see cref="DynamicIServiceCollectionExtensions.AddJSDynamicProxyActivator(IServiceCollection, System.Action{Dynamic.JSDynamicProxyValueAssignerOptions}?, System.Action{Dynamic.JSDynamicProxyInterceptorBuilderOptions}?, Interception.PostConfigureInterceptorBuilderDelegate{Dynamic.JSDynamicProxyInterceptorBuilderOptions, Dynamic.JSDynamicProxyValueAssignerOptions}?)"/>,
-        /// <see cref="LocalityIServiceCollectionExtensions.AddJSLocalObjectActivator(IServiceCollection, System.Action{JSLocalObjectValueAssignerOptions}?, System.Action{JSLocalObjectInterceptorBuilderOptions}?, Interception.PostConfigureInterceptorBuilderDelegate{JSLocalObjectInterceptorBuilderOptions, JSLocalObjectValueAssignerOptions}?)"/>
+        /// <see cref="DynamicIServiceCollectionExtensions.AddJSDynamicProxyActivator(IServiceCollection, System.Action{Dynamic.JSDynamicProxyValueAssignerOptions}?, System.Action{Dynamic.JSDynamicProxyInterceptorBuilderOptions}?, Teronis.Microsoft.JSInterop.Interception.ServiceBuilder.PostConfigureInterceptorBuilderDelegate{Dynamic.JSDynamicProxyInterceptorBuilderOptions, Dynamic.JSDynamicProxyValueAssignerOptions}?)"/>,
+        /// <see cref="LocalityIServiceCollectionExtensions.AddJSLocalObjectActivator(IServiceCollection, System.Action{JSLocalObjectValueAssignerOptions}?, System.Action{JSLocalObjectInterceptorBuilderOptions}?, Teronis.Microsoft.JSInterop.Interception.ServiceBuilder.PostConfigureInterceptorBuilderDelegate{JSLocalObjectInterceptorBuilderOptions, JSLocalObjectValueAssignerOptions}?)"/>
         /// and tries to add <see cref="JSDynamicLocalObjectActivator"/> as <see cref="IJSDynamicLocalObjectActivator"/>.
         /// </summary>
         /// <param name="services"></param>

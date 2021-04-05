@@ -15,13 +15,13 @@ namespace Teronis.Microsoft.JSInterop.Facade
 {
     public class JSFacadeHubComponentTests
     {
-        [AssignModule("module")]
+        [AssignModule(NameOrPath = "module")]
         private IJSModule module { get; set; } = null!;
 
-        [AssignModule("module"), AssignCustomFacade]
+        [AssignModule(NameOrPath = "module"), AssignCustomFacade]
         CustomModule customModule = null!;
 
-        [AssignGlobalObject("window")]
+        [AssignGlobalObject(NameOrPath = "window")]
         IJSLocalObject window { get; set; } = null!;
 
         [Fact]
@@ -31,7 +31,9 @@ namespace Teronis.Microsoft.JSInterop.Facade
                 .AddSingleton<IJSModuleActivator, EmptyModuleActivator>()
                 .AddSingleton<IJSLocalObjectActivator, EmptyLocalObjectActivator>()
                 .AddJSCustomFacadeActivator(configureOptions: options =>
-                    options.JSFacadeDictionaryBuilder.Add<CustomModule>())
+                    options.ConfigureCustomFacadeServices(services =>
+                        services.UseExtension(extension =>
+                            extension.AddScoped<CustomModule>())))
                 .AddJSFacadeHub()
                 .BuildServiceProvider();
 

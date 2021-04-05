@@ -14,10 +14,10 @@ namespace Teronis.Microsoft.JSInterop.Activators
         public IJSLocalObject CreateInstance(IJSObjectReference jsObjectReference, JSLocalObjectCreationOptions? creationOptions = null) =>
             throw new NotImplementedException();
 
-        public ValueTask<IJSLocalObject> CreateInstanceAsync(string globalObjectName, JSLocalObjectCreationOptions? creationOptions = null) =>
+        public ValueTask<IJSLocalObject> CreateInstanceAsync(string globalObjectNameOrPath, JSLocalObjectCreationOptions? creationOptions = null) =>
             new ValueTask<IJSLocalObject>(new JSLocalObject(new EmptyObjectReference(nameof(EmptyLocalObjectActivator)), jsInterceptor: null));
 
-        public ValueTask<IJSLocalObject> CreateInstanceAsync(IJSObjectReference jsObjectReference, string localObjectName, JSLocalObjectCreationOptions? creationOptions = null) =>
+        public ValueTask<IJSLocalObject> CreateInstanceAsync(IJSObjectReference jsObjectReference, string localObjectNameOrPath, JSLocalObjectCreationOptions? creationOptions = null) =>
             throw new NotImplementedException();
     }
 }

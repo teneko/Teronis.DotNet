@@ -5,7 +5,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using Teronis.Microsoft.JSInterop.Component.ValueAssigners.Builder;
+using Teronis.Microsoft.JSInterop.Component.ServiceBuilder;
 using Teronis.Microsoft.JSInterop.Facade;
 
 namespace Teronis.Microsoft.JSInterop

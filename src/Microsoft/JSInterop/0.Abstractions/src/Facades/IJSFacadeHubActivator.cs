@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Teronis.Microsoft.JSInterop.Facade
 {
-    public interface IJSFacadeHubActivator 
+    public interface IJSFacadeHubActivator
     {
         /// <summary>
         /// Initializes the properties of the component that are decorated with a facade attribute.

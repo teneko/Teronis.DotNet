@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Teronis.Microsoft.JSInterop.Dynamic;
-using Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder;
+using Teronis.Microsoft.JSInterop.Interception.Interceptors.Builder;
 
 namespace Teronis.Microsoft.JSInterop
 {

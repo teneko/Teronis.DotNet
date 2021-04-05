@@ -6,12 +6,16 @@ using Teronis.Microsoft.JSInterop.Reflection;
 
 namespace Teronis.Microsoft.JSInterop.Interception
 {
-    internal sealed class InvocationDefinition : ManagedDefinitionBase
+    internal sealed class InvocationDefinition : MemberDefinitionBase
     {
+        public override string Name { get; }
         public override Type MemberType { get; }
 
-        public InvocationDefinition(Type taskArgumentType, ICustomAttributes definitionAttributes, ManagedMemberType managedMemberType)
-            : base(definitionAttributes, managedMemberType) =>
+        public InvocationDefinition(string name, Type taskArgumentType, ICustomAttributes invocationAttribtues, MemberTypeInfo taskArgumentTypeInfo)
+            : base(invocationAttribtues, taskArgumentTypeInfo)
+        {
+            Name = name ?? throw new ArgumentNullException(nameof(name));
             MemberType = taskArgumentType;
+        }
     }
 }

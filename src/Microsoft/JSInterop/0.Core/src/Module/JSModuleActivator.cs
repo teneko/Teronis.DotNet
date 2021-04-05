@@ -3,7 +3,7 @@
 
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
-using Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder;
+using Teronis.Microsoft.JSInterop.Interception.Interceptors.Builder;
 
 namespace Teronis.Microsoft.JSInterop.Module
 {

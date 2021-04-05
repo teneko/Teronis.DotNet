@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Teronis.Microsoft.DependencyInjection
 {
-    internal sealed class ScopedServiceDescriptorActivator : DescriptorActivatorBase<ScopedServiceDescriptor>
+    internal sealed class ScopedServiceDescriptorActivator : DescriptorActivatorBase<IServiceProvider, ScopedServiceDescriptor>
     {
         internal protected override ScopedServiceDescriptor CreateDescriptor(ServiceDescriptor serviceDescriptor) =>
             new ScopedServiceDescriptor(serviceDescriptor);
@@ -17,7 +17,7 @@ namespace Teronis.Microsoft.DependencyInjection
         internal protected override ScopedServiceDescriptor CreateDescriptor(Type serviceType, object implementationInstance) =>
             throw new NotSupportedException("Cannot describe scoped service by instance");
 
-        internal protected override ScopedServiceDescriptor CreateDescriptor(Type serviceType, Func<IServiceProvider, object> implementationFactory) =>
+        internal protected override ScopedServiceDescriptor CreateDescriptor(Type serviceType, ImplementationFactoryDelegate<IServiceProvider, object> implementationFactory) =>
             new ScopedServiceDescriptor(serviceType, implementationFactory);
     }
 }

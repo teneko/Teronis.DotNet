@@ -6,19 +6,23 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Teronis.Microsoft.DependencyInjection
 {
-    public abstract class LifetimeServiceDescriptor
+    public abstract class LifetimeServiceDescriptor<TProvider>
+        where TProvider : class, IServiceProvider
     {
         public Type ServiceType { get; }
         public Type? ImplementationType { get; }
         public object? ImplementationInstance { get; }
-        public Func<IServiceProvider, object>? ImplementationFactory { get; }
+        public ImplementationFactoryDelegate<TProvider, object>? ImplementationFactory { get; }
 
         internal protected LifetimeServiceDescriptor(ServiceDescriptor serviceDescriptor)
         {
             ServiceType = serviceDescriptor.ServiceType;
             ImplementationType = serviceDescriptor.ImplementationType;
             ImplementationInstance = serviceDescriptor.ImplementationInstance;
-            ImplementationFactory = serviceDescriptor.ImplementationFactory;
+
+            ImplementationFactory = serviceDescriptor.ImplementationFactory is null 
+                ? null 
+                : new ImplementationFactoryDelegate<TProvider, object>(serviceDescriptor.ImplementationFactory);
         }
 
         internal LifetimeServiceDescriptor(Type singletonType) =>
@@ -29,7 +33,8 @@ namespace Teronis.Microsoft.DependencyInjection
             ImplementationType = implementationType ?? throw new ArgumentNullException(nameof(implementationType));
 
         /// <summary>
-        /// Initializes a new instance of <see cref="LifetimeServiceDescriptor"/> with the specified <paramref name="instance"/>.
+        /// Initializes a new instance of <see cref="LifetimeServiceDescriptor{TProvider}"/> with
+        /// the specified <paramref name="instance"/>.
         /// </summary>
         /// <param name="singletonType">The type of the singleton.</param>
         /// <param name="instance">The instance implementing the singleton.</param>
@@ -38,11 +43,12 @@ namespace Teronis.Microsoft.DependencyInjection
             ImplementationInstance = instance ?? throw new ArgumentNullException(nameof(instance));
 
         /// <summary>
-        /// Initializes a new instance of <see cref="LifetimeServiceDescriptor"/> with the specified <paramref name="factory"/>.
+        /// Initializes a new instance of <see cref="LifetimeServiceDescriptor{TProvider}"/> with
+        /// the specified <paramref name="factory"/>.
         /// </summary>
         /// <param name="singletonType">The type of the singleton.</param>
         /// <param name="factory">A factory used for creating singleton instances.</param>
-        public LifetimeServiceDescriptor(Type singletonType, Func<IServiceProvider, object> factory)
+        public LifetimeServiceDescriptor(Type singletonType, ImplementationFactoryDelegate<TProvider, object> factory)
             : this(singletonType) =>
             ImplementationFactory = factory ?? throw new ArgumentNullException(nameof(factory));
 

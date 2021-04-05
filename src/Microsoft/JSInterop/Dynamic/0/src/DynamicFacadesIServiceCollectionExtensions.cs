@@ -3,7 +3,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Teronis.Microsoft.JSInterop.Facade;
-using Teronis.Microsoft.JSInterop.Component;
+using Teronis.Microsoft.JSInterop.Component.ValueAssigners.Builder;
 
 namespace Teronis.Microsoft.JSInterop
 {

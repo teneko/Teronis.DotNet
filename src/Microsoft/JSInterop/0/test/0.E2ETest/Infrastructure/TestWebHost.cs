@@ -16,7 +16,7 @@ namespace Teronis.Microsoft.JSInterop.Infrastructure
                     webHostBuilder
                         .UseKestrel()
                         .UseStaticWebAssets()
-                        .UseUrls($"http://127.0.0.1:0"); // :0 allows to choose a port automatically
+                        .UseUrls($"http://127.0.0.1:0"); // :0 allows to choose a port automatically.
 
                     ConfigureWebHostBuilder(webHostBuilder);
                 })

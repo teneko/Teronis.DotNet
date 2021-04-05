@@ -25,7 +25,8 @@ namespace Teronis.Microsoft.JSInterop.Interception
         /// <summary>
         /// Attributes that defines custom behaviour.
         /// </summary>
-        ICustomAttributes DefinitionAttributes { get; }
+        ICustomAttributes InvocationAttributes { get; }
+        IMemberDefinition InvocationDefinition { get; }
 
         /// <summary>
         /// Indicates whether the value task is set and can be awaited.

@@ -7,7 +7,7 @@ using System.Linq;
 using Castle.DynamicProxy;
 using Concurrent.FastReflection.NetStandard;
 using Teronis.Microsoft.JSInterop.Dynamic.Reflection;
-using Teronis.Microsoft.JSInterop.Interception.Interceptor;
+using Teronis.Microsoft.JSInterop.Interception.Interceptors;
 using Teronis.Microsoft.JSInterop.Reflection;
 
 namespace Teronis.Microsoft.JSInterop.Dynamic

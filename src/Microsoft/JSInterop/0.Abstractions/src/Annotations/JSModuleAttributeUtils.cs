@@ -37,7 +37,7 @@ namespace Teronis.Microsoft.JSInterop.Annotations
         /// Thrown when JavaScrit module facade attribute is 
         /// given but module name or path could not been found.
         /// </exception>
-        public static bool TryGetModuleNameOrPath<TPropertyAttribute, TClassAttribute>(IDefinition componentMember, [MaybeNullWhen(false)] out string moduleNameOrPath)
+        public static bool TryGetModuleNameOrPath<TPropertyAttribute, TClassAttribute>(IMemberDefinition componentMember, [MaybeNullWhen(false)] out string moduleNameOrPath)
             where TPropertyAttribute : AssignModuleAttribute
             where TClassAttribute : JSModuleClassAttribute
         {
@@ -46,7 +46,7 @@ namespace Teronis.Microsoft.JSInterop.Annotations
                 return false;
             }
 
-            moduleNameOrPath = GetModuleNameOrPath<TClassAttribute>(propertyModuleAttribute, componentMember.DefinitionMemberType);
+            moduleNameOrPath = GetModuleNameOrPath<TClassAttribute>(propertyModuleAttribute, componentMember.MemberTypeInfo);
             return true;
         }
     }

@@ -6,12 +6,15 @@ using Teronis.Microsoft.JSInterop.Reflection;
 
 namespace Teronis.Microsoft.JSInterop.Component
 {
-    public abstract class ComponentMemberBase : ManagedDefinitionBase, IComponentMember
+    public abstract class ComponentMemberBase : MemberDefinitionBase, IComponentMember
     {
+        public abstract MemberInfo MemberInfo { get; }
+
+        public override string Name => 
+            MemberInfo.Name;
+
         public ComponentMemberBase(ICustomAttributeProvider customAttributeProvider)
             : base(customAttributeProvider) { }
-
-        public abstract MemberInfo MemberInfo { get; }
 
         public abstract void SetValue(object? value);
     }

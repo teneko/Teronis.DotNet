@@ -13,8 +13,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
         /// <summary>
         /// The cacheable attributes of <see cref="TaskArgumentType"/>.
         /// </summary>
-        ICustomAttributes TaskArgumentTypeAttributes { get; }
-        IDefinition Definition { get; }
+        ICustomAttributes TaskArgumentAttributes { get; }
 
         /// <summary>
         /// Gets the value that that won't be considered as determined. In other words, the value won't be cached.

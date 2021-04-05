@@ -19,7 +19,8 @@ namespace Teronis.Microsoft.DependencyInjection
         /// </param>
         /// <param name="descriptor">Describes the instance.</param>
         /// <returns></returns>
-        public static object GetInstanceOrCreateInstance(IServiceProvider serviceProvider, LifetimeServiceDescriptor descriptor)
+        public static object GetInstanceOrCreateInstance<TProvider>(TProvider serviceProvider, LifetimeServiceDescriptor<TProvider> descriptor)
+            where TProvider : class, IServiceProvider
         {
             if (!(descriptor.ImplementationInstance is null)) {
                 return descriptor.ImplementationInstance;
@@ -32,7 +33,9 @@ namespace Teronis.Microsoft.DependencyInjection
             return ActivatorUtilities.CreateInstance(serviceProvider, descriptor.ImplementationType!);
         }
 
-        public static object GetServiceOrInstanceOrCreateInstance(IServiceProvider serviceProvider, LifetimeServiceDescriptor descriptor) {
+        public static object GetServiceOrInstanceOrCreateInstance<TProvider>(TProvider serviceProvider, LifetimeServiceDescriptor<TProvider> descriptor)
+            where TProvider : class, IServiceProvider
+        {
             var service = serviceProvider.GetService(descriptor.ServiceType);
 
             if (!(service is null)) {
@@ -50,7 +53,8 @@ namespace Teronis.Microsoft.DependencyInjection
             return ActivatorUtilities.CreateInstance(serviceProvider, descriptor.ImplementationType!);
         }
 
-        public static object GetInstanceOrServiceOrCreateInstance(IServiceProvider serviceProvider, LifetimeServiceDescriptor descriptor)
+        public static object GetInstanceOrServiceOrCreateInstance<TProvider>(TProvider serviceProvider, LifetimeServiceDescriptor<TProvider> descriptor)
+            where TProvider : class, IServiceProvider
         {
             if (!(descriptor.ImplementationInstance is null)) {
                 return descriptor.ImplementationInstance;

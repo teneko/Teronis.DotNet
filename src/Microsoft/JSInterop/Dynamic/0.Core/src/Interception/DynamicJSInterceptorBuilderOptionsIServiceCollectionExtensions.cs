@@ -3,9 +3,8 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Teronis.Microsoft.JSInterop.Component;
-using Teronis.Microsoft.JSInterop.Component.ValueAssigner.Builder;
-using Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder;
+using Teronis.Microsoft.JSInterop.Component.ValueAssigners.Builder;
+using Teronis.Microsoft.JSInterop.Interception.Interceptors.Builder;
 
 namespace Teronis.Microsoft.JSInterop.Interception
 {

@@ -27,7 +27,9 @@ namespace Teronis.Microsoft.JSInterop.Infrastructure
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="webHostBuilder"></param>
         /// <param name="projectName">The project name. Most of the times it is the assembly name.</param>
+        /// <param name="solutionPattern"></param>
         /// <returns></returns>
         public static IWebHostBuilder UseSolutionProjectContentRoot(this IWebHostBuilder webHostBuilder, string projectName, string solutionPattern = SolutionPattern)
         {

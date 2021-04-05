@@ -3,7 +3,7 @@
 
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
-using Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder;
+using Teronis.Microsoft.JSInterop.Interception.Interceptors.Builder;
 
 namespace Teronis.Microsoft.JSInterop.Locality
 {
@@ -24,15 +24,15 @@ namespace Teronis.Microsoft.JSInterop.Locality
             return new JSLocalObject(jsObjectReference, jsInterceptor);
         }
 
-        public virtual async ValueTask<IJSLocalObject> CreateInstanceAsync(string objectName, JSLocalObjectCreationOptions? creationOptions = null)
+        public virtual async ValueTask<IJSLocalObject> CreateInstanceAsync(string globalObjectName, JSLocalObjectCreationOptions? creationOptions = null)
         {
-            var jsLocalObject = CreateInstance(await jsLocalObjectInterop.GetGlobalObjectReference(objectName));
+            var jsLocalObject = CreateInstance(await jsLocalObjectInterop.GetGlobalObjectReference(globalObjectName));
             return jsLocalObject;
         }
 
-        public virtual async ValueTask<IJSLocalObject> CreateInstanceAsync(IJSObjectReference jsObjectReference, string objectName, JSLocalObjectCreationOptions? creationOptions = null)
+        public virtual async ValueTask<IJSLocalObject> CreateInstanceAsync(IJSObjectReference jsObjectReference, string localObjectName, JSLocalObjectCreationOptions? creationOptions = null)
         {
-            var nestedObjectReference = await jsLocalObjectInterop.GetLocalObjectReference(jsObjectReference, objectName);
+            var nestedObjectReference = await jsLocalObjectInterop.GetLocalObjectReference(jsObjectReference, localObjectName);
             var jsLocalObject = CreateInstance(nestedObjectReference, creationOptions);
             return jsLocalObject;
         }

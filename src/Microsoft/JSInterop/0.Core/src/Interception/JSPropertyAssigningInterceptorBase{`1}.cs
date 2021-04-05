@@ -2,9 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Threading.Tasks;
-using Teronis.Microsoft.JSInterop.Component;
-using Teronis.Microsoft.JSInterop.Component.ValueAssigner;
-using Teronis.Microsoft.JSInterop.Interception.Interceptor;
+using Teronis.Microsoft.JSInterop.Component.ValueAssigners;
+using Teronis.Microsoft.JSInterop.Interception.Interceptors;
 
 namespace Teronis.Microsoft.JSInterop.Interception
 {
@@ -19,7 +18,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
         public override async ValueTask InterceptInvokeAsync<TTaskArgument>(IJSObjectInvocation<TTaskArgument> invocation, InterceptionContext context)
         {
             var propertyAssignerContext = new ValueAssignerContext(propertyAssigner);
-            await propertyAssigner.AssignValueAsync(invocation.Definition, propertyAssignerContext);
+            await propertyAssigner.AssignValueAsync(invocation.InvocationDefinition, propertyAssignerContext);
 
             if (propertyAssignerContext.ValueResult.TryGetNull(out var instance)) {
                 return;

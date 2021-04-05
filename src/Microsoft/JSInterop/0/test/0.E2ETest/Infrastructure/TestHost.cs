@@ -20,8 +20,8 @@ namespace Teronis.Microsoft.JSInterop.Infrastructure
         /// The application url from <see cref="Host"/>.
         /// It is available after the server started.
         /// </summary>
-        public string ApplicationUrl => applicationUrl ??
-            throw new InvalidOperationException();
+        public string ApplicationUrl => applicationUrl 
+            ?? throw new InvalidOperationException();
 
         /// <summary>
         /// The http client with <see cref="ApplicationUrl"/> 

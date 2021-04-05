@@ -14,7 +14,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
         public override Type TaskArgumentType =>
             base.TaskArgumentType!;
 
-        public ICustomAttributes TaskArgumentTypeAttributes {
+        public ICustomAttributes TaskArgumentAttributes {
             get {
                 if (taskArgumentTypeAttributes is null) {
                     taskArgumentTypeAttributes = new CustomAttributes(TaskArgumentType);
@@ -24,21 +24,22 @@ namespace Teronis.Microsoft.JSInterop.Interception
             }
         }
 
-        public IDefinition Definition {
+        public override IMemberDefinition InvocationDefinition {
             get {
-                if (definition is null) {
-                    definition = new InvocationDefinition(
-                        TaskArgumentType, 
-                        DefinitionAttributes, 
-                        new ManagedMemberType(TaskArgumentType, TaskArgumentTypeAttributes));
+                if (invocationDefinition is null) {
+                    invocationDefinition = new InvocationDefinition(
+                        Identifier,
+                        TaskArgumentType,
+                        InvocationAttributes,
+                        new MemberTypeInfo(TaskArgumentType, TaskArgumentAttributes));
                 }
 
-                return definition;
+                return invocationDefinition;
             }
         }
 
         private ICustomAttributes? taskArgumentTypeAttributes;
-        private InvocationDefinition? definition;
+        private InvocationDefinition? invocationDefinition;
 
         internal JSObjectInvocation(JSObjectInvocationInception<ValueTask<TValue>> invocationInception)
             : base(invocationInception) { }

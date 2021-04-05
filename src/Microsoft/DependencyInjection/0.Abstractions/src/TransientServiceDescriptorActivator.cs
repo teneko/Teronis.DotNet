@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Teronis.Microsoft.DependencyInjection
 {
-    internal sealed class TransientServiceDescriptorActivator : DescriptorActivatorBase<TransientServiceDescriptor>
+    internal sealed class TransientServiceDescriptorActivator : DescriptorActivatorBase<IServiceProvider, TransientServiceDescriptor>
     {
         internal protected override TransientServiceDescriptor CreateDescriptor(ServiceDescriptor serviceDescriptor) =>
             new TransientServiceDescriptor(serviceDescriptor);
@@ -17,7 +17,7 @@ namespace Teronis.Microsoft.DependencyInjection
         internal protected override TransientServiceDescriptor CreateDescriptor(Type serviceType, object implementationInstance) =>
             throw new NotSupportedException("Cannot describe transient service by instance");
 
-        internal protected override TransientServiceDescriptor CreateDescriptor(Type serviceType, Func<IServiceProvider, object> implementationFactory) =>
+        internal protected override TransientServiceDescriptor CreateDescriptor(Type serviceType, ImplementationFactoryDelegate<IServiceProvider, object> implementationFactory) =>
             new TransientServiceDescriptor(serviceType, implementationFactory);
     }
 }

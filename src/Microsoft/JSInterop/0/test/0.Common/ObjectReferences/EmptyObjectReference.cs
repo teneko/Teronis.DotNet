@@ -10,6 +10,12 @@ namespace Teronis.Microsoft.JSInterop.ObjectReferences
     public class EmptyObjectReference : IJSObjectReference
     {
         public bool IsDisposed { get; private set; }
+        public object? Tag { get; }
+
+        public EmptyObjectReference() { }
+
+        public EmptyObjectReference(object? tag) =>
+            Tag = tag;
 
         public virtual ValueTask<TValue> InvokeAsync<TValue>(string identifier, object?[]? args) =>
             new ValueTask<TValue>();

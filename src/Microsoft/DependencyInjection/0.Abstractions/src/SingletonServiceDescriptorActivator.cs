@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Teronis.Microsoft.DependencyInjection
 {
-    internal sealed class SingletonServiceDescriptorActivator : DescriptorActivatorBase<SingletonServiceDescriptor>
+    internal sealed class SingletonServiceDescriptorActivator : DescriptorActivatorBase<IServiceProvider, SingletonServiceDescriptor>
     {
         internal protected override SingletonServiceDescriptor CreateDescriptor(ServiceDescriptor serviceDescriptor) =>
             new SingletonServiceDescriptor(serviceDescriptor);
@@ -17,7 +17,7 @@ namespace Teronis.Microsoft.DependencyInjection
         internal protected override SingletonServiceDescriptor CreateDescriptor(Type serviceType, object implementationInstance) =>
             new SingletonServiceDescriptor(serviceType, implementationInstance);
 
-        internal protected override SingletonServiceDescriptor CreateDescriptor(Type serviceType, Func<IServiceProvider, object> implementationFactory) =>
+        internal protected override SingletonServiceDescriptor CreateDescriptor(Type serviceType, ImplementationFactoryDelegate<IServiceProvider, object> implementationFactory) =>
             new SingletonServiceDescriptor(serviceType, implementationFactory);
     }
 }

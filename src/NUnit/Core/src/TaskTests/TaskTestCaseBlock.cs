@@ -69,10 +69,14 @@ namespace Teronis.NUnit.TaskTests
         }
 
         /// <summary>
+        /// <para>
         /// Adds <paramref name="assertableTaskFactory"/> to an internal static task factory list.
-        /// You must call <see cref="Initialize"/> when creating
-        /// <see cref="TaskTestCaseBlock"/>
+        /// </para>
+        /// <para>
+        /// You must call <see cref="Initialize"/> when creating <see cref="TaskTestCaseBlock"/>
         /// manually.
+        /// This moves the items from the internal static task factory list to the instance's one.
+        /// </para>
         /// </summary>
         /// <param name="assertableTaskFactory"></param>
         /// <param name="testName">Inferred by <see cref="CallerMemberNameAttribute"/>.</param>
@@ -93,7 +97,7 @@ namespace Teronis.NUnit.TaskTests
             InitializeInstance();
 
         /// <summary>
-        /// Awaits each task but ignores exceptions.
+        /// Awaits each assertable task but ignores exceptions.
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
@@ -101,9 +105,8 @@ namespace Teronis.NUnit.TaskTests
             TaskTestCaseList.AwaitEachTaskButIgnoreExceptionsAsync(cancellationToken);
 
         /// <summary>
-        /// Returns all tasks that you can await (e.g. rethrow (assertion) exceptions)
-        /// from <see cref="TaskTestCaseList"/>. Each assertable task represents
-        /// one test.
+        /// Returns all assertable tasks that you can await (e.g. rethrow (assertion) exceptions)
+        /// from <see cref="TaskTestCaseList"/>. Each assertable task represents one test.
         /// </summary>
         /// <returns>The test cases (yielded).</returns>
         public IEnumerable<TaskTestCase> GetTestCases()

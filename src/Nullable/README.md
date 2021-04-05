@@ -1,8 +1,8 @@
-# Teronis.Nullable [![Nuget](https://img.shields.io/nuget/v/Teronis.Nullable)](https://www.nuget.org/packages/Teronis.Nullable)
+# Teronis.Nullable [![Nuget](https://img.shields.io/nuget/v/Teronis.Nullable)][NuGet Package]
 
 _Use .NET Core 3.0's new nullable attributes in older target frameworks._
 
-[:running: Quickstart](#quickstart) &nbsp; | &nbsp; [:books: Guides](https://github.com/manuelroemer/Nullable/wiki) &nbsp; | &nbsp; [:package: NuGet Package][NuGet Package]
+[:running: Quick Start Guide](#quickstart) &nbsp; | &nbsp; [:books: Guides](https://github.com/manuelroemer/Nullable/wiki) &nbsp; | &nbsp; [:package: NuGet Package][NuGet Package]
 
 ## Prologue
 
@@ -57,7 +57,7 @@ Please have a look at the [guides](https://github.com/manuelroemer/Nullable/wiki
 install the package for your target framework.
 
 
-## Quickstart
+## Quick Start Guide
 
 > :warning: **Important:** <br/>
 > You **must** use a C# version >= 8.0 with the `Teronis.Nullable` package - otherwise, your project won't compile.

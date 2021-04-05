@@ -25,7 +25,7 @@ namespace Teronis.Microsoft.JSInterop.CustomFacade
 
         public static IServiceCollection CreateServiceCollection() =>
             new ServiceCollection()
-                .AddSingleton<IJSModuleActivator, EmptyJSModuleActivator>()
+                .AddSingleton<IJSModuleActivator, EmptyModuleActivator>()
                 .AddJSCustomFacade();
 
         public static IEnumerable<object[]> BuildCustomFacdeActivators()

@@ -6,7 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Teronis.Microsoft.DependencyInjection
 {
-    public class NonSingletonServiceDescriptor : LifetimeServiceDescriptor
+    public class NonSingletonServiceDescriptor<TProvider> : LifetimeServiceDescriptor<TProvider>
+        where TProvider : class, IServiceProvider
     {
         internal protected NonSingletonServiceDescriptor(ServiceDescriptor descriptor)
             : base(descriptor)
@@ -22,7 +23,7 @@ namespace Teronis.Microsoft.DependencyInjection
         public NonSingletonServiceDescriptor(Type singletonType, Type implementationType)
             : base(singletonType, implementationType) { }
 
-        public NonSingletonServiceDescriptor(Type singletonType, Func<IServiceProvider, object> factory)
+        public NonSingletonServiceDescriptor(Type singletonType, ImplementationFactoryDelegate<TProvider, object> factory)
             : base(singletonType, factory) { }
     }
 }

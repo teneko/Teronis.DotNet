@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Teronis.Microsoft.DependencyInjection
 {
-    public class SingletonServiceDescriptor : LifetimeServiceDescriptor
+    public class SingletonServiceDescriptor : SingletonServiceDescriptor<IServiceProvider>
     {
         internal SingletonServiceDescriptor(ServiceDescriptor serviceDescriptor)
             : base(serviceDescriptor) { }

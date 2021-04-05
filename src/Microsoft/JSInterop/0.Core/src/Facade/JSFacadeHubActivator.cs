@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Teronis.Microsoft.JSInterop.Component;
-using Teronis.Microsoft.JSInterop.Component.ValueAssigner;
-using Teronis.Microsoft.JSInterop.Component.ValueAssigner.Builder;
+using Teronis.Microsoft.JSInterop.Component.ValueAssigners;
+using Teronis.Microsoft.JSInterop.Component.ValueAssigners.Builder;
 
 namespace Teronis.Microsoft.JSInterop.Facade
 {
@@ -47,10 +47,10 @@ namespace Teronis.Microsoft.JSInterop.Facade
             foreach (var componentMember in ComponentMemberCollection.Create(component, component.GetType())) {
                 var context = new ValueAssignerContext(propertyAssignerList);
 
-                if (await ValueAssignerIteratorExecutor.TryAssignValueAsync(componentMember, context)) {
-                    var memberResult = context.ValueResult.Value!;
-                    componentMember.SetValue(memberResult);
-                    jsFacadesDisposables.Add(memberResult);
+                if (await ValueAssignerIteratorExecutor.TryAssignValueAsync(componentMember, context)
+                    && context.ValueResult.Value is IAsyncDisposable disposable) {
+                    componentMember.SetValue(disposable);
+                    jsFacadesDisposables.Add(disposable);
                 }
             }
 

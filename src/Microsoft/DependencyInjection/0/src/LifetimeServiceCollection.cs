@@ -8,8 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Teronis.Microsoft.DependencyInjection
 {
-    public abstract class LifetimeServiceCollection<TDescriptor> : ILifetimeServiceCollection<TDescriptor>
-        where TDescriptor : LifetimeServiceDescriptor
+    public abstract class LifetimeServiceCollection<TProvider, TDescriptor> : ILifetimeServiceCollection<TDescriptor>
+        where TProvider : class, IServiceProvider
+        where TDescriptor : LifetimeServiceDescriptor<TProvider>
     {
         public abstract ServiceLifetime Lifetime { get; }
 

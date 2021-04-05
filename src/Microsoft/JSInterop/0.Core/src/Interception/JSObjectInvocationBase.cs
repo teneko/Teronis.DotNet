@@ -40,8 +40,10 @@ namespace Teronis.Microsoft.JSInterop.Interception
         public virtual Type? TaskArgumentType =>
             InvocationInception.TaskArgumentType;
 
-        public ICustomAttributes DefinitionAttributes =>
+        public ICustomAttributes InvocationAttributes =>
             InvocationInception.DefinitionAttributes;
+
+        public abstract IMemberDefinition InvocationDefinition { get; }
 
         internal ReturnType? AlternativeResult;
 

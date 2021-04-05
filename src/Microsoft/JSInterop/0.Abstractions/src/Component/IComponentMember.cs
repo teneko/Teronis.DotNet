@@ -6,7 +6,7 @@ using Teronis.Microsoft.JSInterop.Reflection;
 
 namespace Teronis.Microsoft.JSInterop.Component
 {
-    public interface IComponentMember : IDefinition
+    public interface IComponentMember : IMemberDefinition
     {
         MemberInfo MemberInfo { get; }
 

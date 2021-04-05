@@ -6,11 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Teronis.Microsoft.DependencyInjection
 {
-    public abstract class DescriptorActivatorBase<TDescriptor>
+    public abstract class DescriptorActivatorBase<TProvider, TDescriptor>
+        where TProvider : class, IServiceProvider
     {
         internal protected abstract TDescriptor CreateDescriptor(ServiceDescriptor serviceDescriptor);
         internal protected abstract TDescriptor CreateDescriptor(Type serviceType, Type implementationType);
         internal protected abstract TDescriptor CreateDescriptor(Type serviceType, object implementationInstance);
-        internal protected abstract TDescriptor CreateDescriptor(Type serviceType, Func<IServiceProvider, object> implementationFactory);
+        internal protected abstract TDescriptor CreateDescriptor(Type serviceType, ImplementationFactoryDelegate<TProvider, object> implementationFactory);
     }
 }

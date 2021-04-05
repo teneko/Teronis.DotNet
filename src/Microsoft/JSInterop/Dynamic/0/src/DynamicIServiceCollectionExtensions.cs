@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Teronis.Microsoft.JSInterop.Dynamic;
 using Teronis.Microsoft.JSInterop.Interception;
-using Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder;
+using Teronis.Microsoft.JSInterop.Interception.Interceptors.Builder;
 
 namespace Teronis.Microsoft.JSInterop
 {
@@ -14,7 +14,7 @@ namespace Teronis.Microsoft.JSInterop
     {
         /// <summary>
         /// Calls <see cref="DynamicJSInterceptorBuilderOptionsIServiceCollectionExtensions.AddDynamicInterceptorBuilderOptions{TDerivedBuilderOptions, TDerivedAssignerOptions}(IServiceCollection)"/>,
-        /// <see cref="JSInterceptorBuilderOptionsIServiceCollectionExtensions.ConfigureInterceptorBuilderOptions{TDerivedBuilderOptions, TDerivedAssignerOptions}(IServiceCollection, Action{TDerivedAssignerOptions}?, Action{TDerivedBuilderOptions}?, ConfigureMutableInterceptorBuilderDelegate{TDerivedBuilderOptions, TDerivedAssignerOptions}?)"/>,
+        /// <see cref="JSInterceptorBuilderOptionsIServiceCollectionExtensions.ConfigureInterceptorBuilderOptions{TDerivedBuilderOptions, TDerivedAssignerOptions}(IServiceCollection, Action{TDerivedAssignerOptions}?, Action{TDerivedBuilderOptions}?, PostConfigureInterceptorBuilderDelegate{TDerivedBuilderOptions, TDerivedAssignerOptions}?)"/>,
         /// and tries to add <see cref="JSDynamicProxyActivator"/> as <see cref="IJSDynamicProxyActivator"/>.
         /// </summary>
         /// <param name="services"></param>
@@ -25,7 +25,7 @@ namespace Teronis.Microsoft.JSInterop
         public static IServiceCollection AddJSDynamicProxyActivator(this IServiceCollection services, 
             Action<JSDynamicProxyValueAssignerOptions>? configureValueAssignerOptions = null,
             Action<JSDynamicProxyInterceptorBuilderOptions>? configureInterceptorBuilderOptions = null,
-            ConfigureMutableInterceptorBuilderDelegate<JSDynamicProxyInterceptorBuilderOptions, JSDynamicProxyValueAssignerOptions>? lateConfigureInterceptorBuilderOptions = null)
+            PostConfigureInterceptorBuilderDelegate<JSDynamicProxyInterceptorBuilderOptions, JSDynamicProxyValueAssignerOptions>? lateConfigureInterceptorBuilderOptions = null)
         {
             services.AddDynamicInterceptorBuilderOptions<JSDynamicProxyInterceptorBuilderOptions, JSDynamicProxyValueAssignerOptions>();
             services.ConfigureInterceptorBuilderOptions(configureValueAssignerOptions, configureInterceptorBuilderOptions, lateConfigureInterceptorBuilderOptions);
@@ -34,7 +34,7 @@ namespace Teronis.Microsoft.JSInterop
         }
 
         /// <summary>
-        /// Calls <see cref="AddJSDynamicProxyActivator(IServiceCollection, Action{JSDynamicProxyValueAssignerOptions}?, Action{JSDynamicProxyInterceptorBuilderOptions}?, ConfigureMutableInterceptorBuilderDelegate{JSDynamicProxyInterceptorBuilderOptions, JSDynamicProxyValueAssignerOptions}?)"/>.
+        /// Calls <see cref="AddJSDynamicProxyActivator(IServiceCollection, Action{JSDynamicProxyValueAssignerOptions}?, Action{JSDynamicProxyInterceptorBuilderOptions}?, PostConfigureInterceptorBuilderDelegate{JSDynamicProxyInterceptorBuilderOptions, JSDynamicProxyValueAssignerOptions}?)"/>.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>

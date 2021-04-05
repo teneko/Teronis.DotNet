@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Teronis.Microsoft.DependencyInjection
 {
-    public class TransientServiceDescriptor : NonSingletonServiceDescriptor
+    public class TransientServiceDescriptor : TransientServiceDescriptor<IServiceProvider>
     {
         internal TransientServiceDescriptor(ServiceDescriptor descriptor)
             : base(descriptor) { }
@@ -17,7 +17,7 @@ namespace Teronis.Microsoft.DependencyInjection
         public TransientServiceDescriptor(Type serviceType, Type implementationType)
             : base(serviceType, implementationType) { }
 
-        public TransientServiceDescriptor(Type serviceType, Func<IServiceProvider, object> factory)
+        public TransientServiceDescriptor(Type serviceType, ImplementationFactoryDelegate<IServiceProvider, object> factory)
             : base(serviceType, factory) { }
     }
 }

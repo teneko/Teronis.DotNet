@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Teroneko.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Teronis.Microsoft.DependencyInjection.Extensions
 {
     internal class ServiceCollectionAdapter<TDescriptor, TCollection> : IServiceCollectionAdapter<TCollection>
-        where TDescriptor : LifetimeServiceDescriptor
+        where TDescriptor : LifetimeServiceDescriptor<IServiceProvider>
         where TCollection : ILifetimeServiceCollection<TDescriptor>
     {
         public TCollection LifetimeServiceCollection =>
@@ -22,9 +23,9 @@ namespace Teronis.Microsoft.DependencyInjection.Extensions
             descriptorCollection.IsReadOnly;
 
         private readonly TCollection descriptorCollection;
-        private readonly DescriptorActivatorBase<TDescriptor> descriptorActivator;
+        private readonly DescriptorActivatorBase<IServiceProvider, TDescriptor> descriptorActivator;
 
-        public ServiceCollectionAdapter(TCollection descriptorCollection, DescriptorActivatorBase<TDescriptor> descriptorActivator)
+        public ServiceCollectionAdapter(TCollection descriptorCollection, DescriptorActivatorBase<IServiceProvider, TDescriptor> descriptorActivator)
         {
             this.descriptorCollection = descriptorCollection;
             this.descriptorActivator = descriptorActivator;

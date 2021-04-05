@@ -12,6 +12,18 @@ namespace Teronis.Microsoft.JSInterop.Interception
 {
     public class JSObjectInvocation : JSObjectInvocationBase<ValueTask>, IJSObjectInvocation
     {
+        public override IMemberDefinition InvocationDefinition {
+            get {
+                if (invocationDefinition is null) {
+                    invocationDefinition = new ObjectDefinition(Identifier, InvocationAttributes);
+                }
+
+                return invocationDefinition;
+            }
+        }
+
+        private ObjectDefinition? invocationDefinition;
+
         internal JSObjectInvocation(JSObjectInvocationInception<ValueTask> invocationInception)
                : base(invocationInception) { }
 
@@ -56,5 +68,18 @@ namespace Teronis.Microsoft.JSInterop.Interception
 
         IJSObjectInvocation IJSObjectInvocation.Clone() =>
            Clone();
+
+        private class ObjectDefinition : MemberDefinitionBase
+        {
+            public override string Name { get; }
+            public override Type MemberType { get; }
+
+            public ObjectDefinition(string name, ICustomAttributes customAttributes)
+                : base(customAttributes)
+            {
+                Name = name;
+                MemberType = typeof(object);
+            }
+        }
     }
 }

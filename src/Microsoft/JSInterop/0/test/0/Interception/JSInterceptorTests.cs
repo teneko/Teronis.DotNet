@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Teronis.Microsoft.JSInterop.Interception.Interceptor;
-using Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder;
+using Teronis.Microsoft.JSInterop.Interception.Interceptors;
+using Teronis.Microsoft.JSInterop.Interception.Interceptors.Builder;
 using Xunit;
 
 namespace Teronis.Microsoft.JSInterop.Interception

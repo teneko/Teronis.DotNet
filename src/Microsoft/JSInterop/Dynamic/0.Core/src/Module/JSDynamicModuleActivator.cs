@@ -4,7 +4,7 @@
 using System;
 using System.Threading.Tasks;
 using Teronis.Microsoft.JSInterop.Dynamic;
-using Teronis.Microsoft.JSInterop.Interception.Interceptor.Builder;
+using Teronis.Microsoft.JSInterop.Interception.Interceptors.Builder;
 
 namespace Teronis.Microsoft.JSInterop.Module
 {
@@ -13,8 +13,8 @@ namespace Teronis.Microsoft.JSInterop.Module
         public JSDynamicModuleActivator(
             IJSModuleActivator jsModuleActivator,
             IJSDynamicProxyActivator jsDynamicProxyActivator,
-            JSInterceptorBuilder<JSModuleInterceptorBuilderOptions>? jsInterceptorBuilder) 
-        : base(jsModuleActivator, jsDynamicProxyActivator, jsInterceptorBuilder){ }
+            JSInterceptorBuilder<JSModuleInterceptorBuilderOptions>? jsInterceptorBuilder)
+        : base(jsModuleActivator, jsDynamicProxyActivator, jsInterceptorBuilder) { }
 
         public virtual ValueTask<IJSModule> CreateInstanceAsync(Type interfaceToBeProxied, string moduleNameOrPath, DynamicModuleCreationOptions? creationOptions = null) =>
             CreateInstanceAsync(

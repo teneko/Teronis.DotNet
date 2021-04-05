@@ -61,6 +61,7 @@ namespace Teronis.Microsoft.JSInterop.Interception
                   typeof(TValue))
         { }
 
+        /// <inheritdoc/>
         public ValueTask<TNonDeterminedValue> GetNonDeterminedResult<TNonDeterminedValue>()
         {
             if (CancellationToken.HasValue) {

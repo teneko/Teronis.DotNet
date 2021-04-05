@@ -58,7 +58,7 @@ namespace Teronis.Microsoft.DependencyInjection
             Descriptors.Insert(index, descriptor);
         }
 
-        void ICollection<TDescriptor>.Add(TDescriptor descriptor)
+        public void Add(TDescriptor descriptor)
         {
             EnsureAssignableFromBaseType(descriptor);
             Descriptors.Add(descriptor);

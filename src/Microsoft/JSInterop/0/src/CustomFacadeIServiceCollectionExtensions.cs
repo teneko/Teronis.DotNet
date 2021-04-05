@@ -34,7 +34,6 @@ namespace Teronis.Microsoft.JSInterop
                 services.Configure(configureOptions);
             }
 
-            services.AddInterceptorBuilderOptions<JSFacadeHubActivatorInterceptorBuilderOptions, JSFacadeHubActivatorValueAssignerOptions>();
             services.ConfigureInterceptorBuilderOptions(configureValueAssignerOptions, configureInterceptorBuilderOptions, postConfigureInterceptorBuilderOptions);
             services.TryAddSingleton<IJSCustomFacadeActivator, JSCustomFacadeActivator>();
             return services;

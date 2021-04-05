@@ -10,26 +10,26 @@ namespace Teronis.Microsoft.JSInterop.Component.ServiceBuilder
 {
     public static class ValueAssignerOptionsIServiceCollectionExtensions
     {
-        public static IServiceCollection AddValueAssignerOptions<TDerivedAssignerOptions>(
+        public static IServiceCollection AddValueAssignerOptions<TAssignerOptions>(
             this IServiceCollection services)
-            where TDerivedAssignerOptions : ValueAssignerOptions<TDerivedAssignerOptions>
+            where TAssignerOptions : ValueAssignerOptions<TAssignerOptions>
         {
             services.AddOptions();
 
             services.TryAddTypeUniqueSingleton<
-                IPostConfigureOptions<TDerivedAssignerOptions>,
-                ValueAssignerOptionsPostConfiguration<TDerivedAssignerOptions>>();
+                IPostConfigureOptions<TAssignerOptions>,
+                ValueAssignerOptionsPostConfiguration<TAssignerOptions>>();
 
-            services.TryAddSingleton<ValueAssignerList<TDerivedAssignerOptions>>();
+            services.TryAddSingleton<ValueAssignerList<TAssignerOptions>>();
             return services;
         }
 
-        public static IServiceCollection ConfigureValueAssignerOptions<TDerivedAssignerOptions>(
+        public static IServiceCollection ConfigureValueAssignerOptions<TAssignerOptions>(
             this IServiceCollection services,
-            Action<TDerivedAssignerOptions>? configureOptions = null)
-            where TDerivedAssignerOptions : ValueAssignerOptions<TDerivedAssignerOptions>
+            Action<TAssignerOptions>? configureOptions = null)
+            where TAssignerOptions : ValueAssignerOptions<TAssignerOptions>
         {
-            services.AddValueAssignerOptions<TDerivedAssignerOptions>();
+            AddValueAssignerOptions<TAssignerOptions>(services);
 
             if (!(configureOptions is null)) {
                 services.Configure(configureOptions);

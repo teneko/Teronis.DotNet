@@ -7,8 +7,12 @@ using Teronis.Microsoft.JSInterop.Component.ServiceBuilder;
 
 namespace Teronis.Microsoft.JSInterop.Interception.ServiceBuilder
 {
-    public class JSInterceptorBuilderOptions<DerivedType>
-        where DerivedType : JSInterceptorBuilderOptions<DerivedType>
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TDerived">The derived type. When registered to service provider it provides uniqueness.</typeparam>
+    public class JSInterceptorBuilderOptions<TDerived>
+        where TDerived : JSInterceptorBuilderOptions<TDerived>
     {
         public IValueAssignerOptions ValueAssignerOptions {
             get {
@@ -33,11 +37,13 @@ namespace Teronis.Microsoft.JSInterop.Interception.ServiceBuilder
             }
         }
 
+        internal bool AreInterceptorServicesUserTouched { get; private set; }
+
         internal virtual JSInterceptorServiceCollection InterceptorServices {
             get {
                 if (interceptorServices is null) {
                     interceptorServices = new JSInterceptorServiceCollection();
-                    areInterceptorServicesUserTouched = true;
+                    AreInterceptorServicesUserTouched = true;
                 }
 
                 return interceptorServices;
@@ -47,7 +53,6 @@ namespace Teronis.Microsoft.JSInterop.Interception.ServiceBuilder
         private JSInterceptorServiceCollection? interceptorServices;
         private IValueAssignerOptions? propertyAssignerOptions;
         private IValueAssignerList? propertyAssigners;
-        private bool areInterceptorServicesUserTouched;
 
         internal void SetValueAssignerOptions(IValueAssignerOptions propertyAssignerOptions) =>
             this.propertyAssignerOptions = propertyAssignerOptions ?? throw new ArgumentNullException(nameof(propertyAssignerOptions));
@@ -57,7 +62,7 @@ namespace Teronis.Microsoft.JSInterop.Interception.ServiceBuilder
 
         internal bool CreateInterceptorServicesWhenUserUntouched()
         {
-            if (areInterceptorServicesUserTouched) {
+            if (AreInterceptorServicesUserTouched) {
                 return false;
             }
 

@@ -13,24 +13,25 @@ namespace Teronis.Microsoft.JSInterop.Component.ServiceBuilder
             get {
                 if (services is null) {
                     services = new ValueAssignerServiceCollection();
-                    areValueAssignerServicesUserTouched = true;
+                    AreValueAssignerServicesUserTouched = true;
                 }
 
                 return services;
             }
         }
 
+        internal bool AreValueAssignerServicesUserTouched { get; private set; }
+
         private ValueAssignerServiceCollection? services;
-        private bool areValueAssignerServicesUserTouched;
 
         public ValueAssignerOptions()
         {
-            areValueAssignerServicesUserTouched = false;
+            AreValueAssignerServicesUserTouched = false;
         }
 
         internal bool TryCreateValueAssignerServicesWhenUserUntouched()
         {
-            if (areValueAssignerServicesUserTouched) {
+            if (AreValueAssignerServicesUserTouched) {
                 return false;
             }
 

@@ -34,6 +34,8 @@ namespace Teronis.Microsoft.JSInterop.Interception.ServiceBuilder
             where TInterceptorBuilderOptions : JSInterceptorBuilderOptions<TInterceptorBuilderOptions>
             where TValueAssignerOptions : ValueAssignerOptions<TValueAssignerOptions>
         {
+            AddInterceptorBuilderOptions<TInterceptorBuilderOptions, TValueAssignerOptions>(services);
+
             if (!(configureValueAssignerOptions is null)) {
                 services.ConfigureValueAssignerOptions(configureValueAssignerOptions);
             }

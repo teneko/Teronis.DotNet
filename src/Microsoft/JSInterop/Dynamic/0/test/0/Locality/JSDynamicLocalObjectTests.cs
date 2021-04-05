@@ -9,6 +9,7 @@ using Teronis.Microsoft.JSInterop.Locality.DynamicObjects;
 using Teronis.Microsoft.JSInterop.ObjectReferences;
 using Xunit;
 using Teronis.Microsoft.JSInterop.Interception.Interceptors;
+using Teronis.Microsoft.JSInterop.Component.ServiceBuilder;
 
 namespace Teronis.Microsoft.JSInterop.Locality
 {
@@ -22,12 +23,9 @@ namespace Teronis.Microsoft.JSInterop.Locality
                 .AddSingleton<IJSRuntime, TestJavaScriptRuntime>()
                 .AddSingleton<IJSLocalObjectActivator, EmptyLocalObjectActivator>()
                 .AddJSDynamicProxy()
-                .AddJSLocalObjectActivator(
-                    configureValueAssignerOptions: options =>
-                        options.Services.Clear())
+                .Configure<GlobalValueAssignerOptions>(options =>
+                    _ = options.Services)
                 .AddJSDynamicProxyActivator(
-                    configureValueAssignerOptions: options =>
-                        options.Services.Clear(),
                     configureInterceptorBuilderOptions: options =>
                         options.ConfigureInterceptorServices(services =>
                             services.UseExtension(extension =>
@@ -54,16 +52,14 @@ namespace Teronis.Microsoft.JSInterop.Locality
                 .AddSingleton<IJSRuntime, TestJavaScriptRuntime>()
                 .AddSingleton<IJSLocalObjectInterop, EmptyLocalObjectInterop>()
                 .AddJSDynamicProxy()
+                .Configure<GlobalValueAssignerOptions>(options =>
+                    _ = options.Services)
                 .AddJSLocalObjectActivator(
-                    configureValueAssignerOptions: options =>
-                        options.Services.Clear(),
                     configureInterceptorBuilderOptions: options =>
                         options.ConfigureInterceptorServices(services =>
                             services.UseExtension(extension =>
                                 extension.AddScoped<JSLocalObjectInterceptor>())))
                 .AddJSDynamicProxyActivator(
-                    configureValueAssignerOptions: options =>
-                        options.Services.Clear(),
                     configureInterceptorBuilderOptions: options =>
                         options.ConfigureInterceptorServices(services =>
                             services.UseExtension(extension =>

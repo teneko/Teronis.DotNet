@@ -12,13 +12,13 @@ namespace Teronis.Microsoft.JSInterop.Component.Assigners
     /// <summary>
     /// Creates a custom facade when a previous property assigner has set
     /// <see cref="ValueAssignerContext.ValueResult"/> and when the
-    /// definition is decorated with <see cref="AssignCustomFacadeAttribute"/>.
+    /// definition is decorated with <see cref="ActivateCustomFacadeAttribute"/>.
     /// </summary>
-    public class JSCustomFacadeAssigner : IValueAssigner
+    public class JSCustomFacadeWrappingAssigner : IValueAssigner
     {
         private readonly IJSCustomFacadeActivator jsCustomFacadeActivator;
 
-        public JSCustomFacadeAssigner(
+        public JSCustomFacadeWrappingAssigner(
             IJSCustomFacadeActivator jsCustomFacadeActivator) =>
             this.jsCustomFacadeActivator = jsCustomFacadeActivator ?? throw new ArgumentNullException(nameof(jsCustomFacadeActivator));
 
@@ -36,7 +36,7 @@ namespace Teronis.Microsoft.JSInterop.Component.Assigners
                 goto @return;
             }
 
-            if (!componentMember.IsAttributeDefined<AssignCustomFacadeAttribute>()) {
+            if (!componentMember.IsAttributeDefined<ActivateCustomFacadeAttribute>()) {
                 goto @return;
             }
 

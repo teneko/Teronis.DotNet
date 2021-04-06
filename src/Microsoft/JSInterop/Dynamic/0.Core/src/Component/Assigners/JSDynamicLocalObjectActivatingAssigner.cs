@@ -9,16 +9,16 @@ using Teronis.Microsoft.JSInterop.Reflection;
 
 namespace Teronis.Microsoft.JSInterop.Component.Assigners
 {
-    public class JSDynamicGlobalObjectAssigner : IValueAssigner
+    public class JSDynamicLocalObjectActivatingAssigner : IValueAssigner
     {
         private readonly IJSDynamicLocalObjectActivator jsDynamicLocalObjectActivator;
 
-        public JSDynamicGlobalObjectAssigner(IJSDynamicLocalObjectActivator jsDynamicLocalObjectActivator) =>
+        public JSDynamicLocalObjectActivatingAssigner(IJSDynamicLocalObjectActivator jsDynamicLocalObjectActivator) =>
             this.jsDynamicLocalObjectActivator = jsDynamicLocalObjectActivator ?? throw new ArgumentNullException(nameof(jsDynamicLocalObjectActivator));
 
         public virtual async ValueTask AssignValueAsync(IMemberDefinition definition, ValueAssignerContext context)
         {
-            if (!definition.TryGetAttribute<AssignDynamicGlobalObjectAttribute>(out var attribute)) {
+            if (!definition.TryGetAttribute<ActivateDynamicGlobalObjectAttribute>(out var attribute)) {
                 return;
             }
 

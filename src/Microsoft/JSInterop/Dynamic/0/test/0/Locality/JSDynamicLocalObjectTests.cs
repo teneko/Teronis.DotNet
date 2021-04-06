@@ -29,7 +29,7 @@ namespace Teronis.Microsoft.JSInterop.Locality
                     configureInterceptorServicesOptions: options =>
                         options.ConfigureInterceptorServices(services =>
                             services.UseExtension(extension =>
-                                extension.AddScoped<JSLocalObjectInterceptor>())))
+                                extension.AddScoped<JSLocalObjectActivatingInterceptor>())))
                 .AddJSDynamicLocalObject()
                 .BuildServiceProvider();
 
@@ -58,12 +58,12 @@ namespace Teronis.Microsoft.JSInterop.Locality
                     configureInterceptorServicesOptions: options =>
                         options.ConfigureInterceptorServices(services =>
                             services.UseExtension(extension =>
-                                extension.AddScoped<JSLocalObjectInterceptor>())))
+                                extension.AddScoped<JSLocalObjectActivatingInterceptor>())))
                 .AddJSDynamicProxyActivator(
                     configureInterceptorServicesOptions: options =>
                         options.ConfigureInterceptorServices(services =>
                             services.UseExtension(extension =>
-                                extension.AddScoped<JSDynamicLocalObjectInterceptor>())))
+                                extension.AddScoped<JSDynamicLocalObjectReturningInterceptor>())))
                 .AddJSDynamicLocalObject()
                 .BuildServiceProvider();
 

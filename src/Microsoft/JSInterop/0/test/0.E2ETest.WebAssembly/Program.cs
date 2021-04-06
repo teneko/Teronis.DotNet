@@ -25,7 +25,7 @@ namespace Teronis_._Microsoft.JSInterop
 
             services.AddJSDynamicProxyActivator(configureInterceptorServicesOptions: options =>
                 options.ConfigureInterceptorServices(builder =>
-                    builder.UseExtension(e => e.AddScoped<JSDynamicProxyActivatingInterceptor>())));
+                    builder.UseExtension(e => e.AddScoped<JSDynamicProxyReturningInterceptor>())));
 
             services.AddJSCustomFacadeActivator(options => {
                 options.ConfigureCustomFacadeServices(services =>

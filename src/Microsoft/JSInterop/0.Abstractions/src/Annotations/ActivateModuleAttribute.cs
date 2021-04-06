@@ -7,8 +7,11 @@ using Teronis.Microsoft.JSInterop.Facade;
 
 namespace Teronis.Microsoft.JSInterop.Annotations
 {
+    /// <summary>
+    /// Used in value assigner.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
-    public class AssignModuleAttribute : Attribute
+    public class ActivateModuleAttribute : Attribute
     {
         /// <summary>
         /// The module name or path of a JavaScript ESM module relative to "wwwroot" (if not changed).
@@ -20,6 +23,6 @@ namespace Teronis.Microsoft.JSInterop.Annotations
         /// <see cref="IJSFacadeHubActivator.CreateInstanceAsync(object)"/>) of type <see cref="IJSObjectReference"/>
         /// gets initialized when decorated with this attribute.
         /// </summary>
-        public AssignModuleAttribute() { }
+        public ActivateModuleAttribute() { }
     }
 }

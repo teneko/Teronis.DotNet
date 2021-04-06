@@ -6,9 +6,9 @@ using System;
 namespace Teronis.Microsoft.JSInterop.Annotations
 {
     /// <summary>
-    /// Used in interceptor.
+    /// Decoratable on methods that return ValueTask{IJSLocalObject} in proxy interfaces. Used in interceptor.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
-    public class ReturnLocalObjectAttribute : LocalObjectAttributeBase
-    {  }
+    public class ActivateLocalObjectAttribute : LocalObjectAttributeBase
+    { }
 }

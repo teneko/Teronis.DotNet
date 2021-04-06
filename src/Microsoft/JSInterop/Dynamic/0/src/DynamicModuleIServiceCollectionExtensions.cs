@@ -27,9 +27,16 @@ namespace Teronis.Microsoft.JSInterop
             return services;
         }
 
+        public static IServiceCollection AddJSDynamicModuleProvider(this IServiceCollection services)
+        {
+            services.TryAddSingleton(typeof(JSDynamicModuleProvider<>));
+            return services;
+        }
+
         /// <summary>
         /// Calls <see cref="ModuleIServiceCollectionExtensions.AddJSModule(IServiceCollection)"/>,
-        /// <see cref="DynamicIServiceCollectionExtensions.AddJSDynamicProxy(IServiceCollection)"/>
+        /// <see cref="DynamicIServiceCollectionExtensions.AddJSDynamicProxy(IServiceCollection)"/>,
+        /// <see cref="AddJSDynamicModuleProvider(IServiceCollection)"/>
         /// and <see cref="AddJSDynamicModuleActivator(IServiceCollection)"/>.
         /// </summary>
         /// <param name="services"></param>
@@ -38,6 +45,7 @@ namespace Teronis.Microsoft.JSInterop
         {
             services.AddJSModule();
             services.AddJSDynamicProxy();
+            services.AddJSDynamicModuleProvider();
             services.AddJSDynamicModuleActivator();
             return services;
         }

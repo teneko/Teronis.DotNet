@@ -6,10 +6,10 @@ using System;
 namespace Teronis.Microsoft.JSInterop.Annotations
 {
     /// <summary>
-    /// This ttribute provides the module name or path
+    /// This attribute provides the module name or path
     /// when it has not been specified in 
-    /// <see cref="AssignModuleAttribute"/> or
-    /// <see cref="AssignDynamicModuleAttribute"/>.
+    /// <see cref="ActivateModuleAttribute"/> or
+    /// <see cref="ActivateDynamicModuleAttribute"/>.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, Inherited = true)]
     public class JSModuleAttribute : Attribute

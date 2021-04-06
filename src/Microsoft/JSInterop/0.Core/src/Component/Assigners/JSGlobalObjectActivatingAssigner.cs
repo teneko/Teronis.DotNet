@@ -10,18 +10,18 @@ using Teronis.Microsoft.JSInterop.Reflection;
 namespace Teronis.Microsoft.JSInterop.Component.Assigners
 {
     /// <summary>
-    /// Assigns global object.
+    /// Creates a global object and sets it as result.
     /// </summary>
-    public class JSLocalObjectAssigner : IValueAssigner
+    public class JSGlobalObjectActivatingAssigner : IValueAssigner
     {
         private readonly IJSLocalObjectActivator jsLocalObjectActivator;
 
-        public JSLocalObjectAssigner(IJSLocalObjectActivator jsLocalObjectActivator) =>
+        public JSGlobalObjectActivatingAssigner(IJSLocalObjectActivator jsLocalObjectActivator) =>
             this.jsLocalObjectActivator = jsLocalObjectActivator ?? throw new ArgumentNullException(nameof(jsLocalObjectActivator));
 
         public async ValueTask AssignValueAsync(IMemberDefinition definition, ValueAssignerContext context)
         {
-            if (!definition.TryGetAttribute<AssignGlobalObjectAttribute>(out var attribute)) {
+            if (!definition.TryGetAttribute<ActivateGlobalObjectAttribute>(out var attribute)) {
                 return;
             }
 

@@ -5,12 +5,16 @@ using System;
 
 namespace Teronis.Microsoft.JSInterop.Annotations
 {
-    public class AssignDynamicModuleAttribute : AssignModuleAttribute
+    public class ActivateDynamicGlobalObjectAttribute : ActivateGlobalObjectAttribute
     {
         /// <summary>
         /// Only needed to be specified when you are using
-        /// <see cref="AssignCustomFacadeAttribute"/> too.
+        /// <see cref="ActivateCustomFacadeAttribute"/> too.
+        /// Used in value assigner.
         /// </summary>
         public Type? InterfaceToBeProxied { get; set; }
+
+        public ActivateDynamicGlobalObjectAttribute()
+        { }
     }
 }

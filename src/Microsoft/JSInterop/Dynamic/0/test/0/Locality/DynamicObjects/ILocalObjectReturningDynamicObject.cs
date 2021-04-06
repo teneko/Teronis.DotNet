@@ -9,7 +9,7 @@ namespace Teronis.Microsoft.JSInterop.Locality.DynamicObjects
 {
     public interface ILocalObjectReturningDynamicObject : IJSModule
     {
-        [ReturnLocalObject]
+        [ActivateLocalObject]
         public ValueTask<IJSLocalObject> GetLocalObject();
     }
 }

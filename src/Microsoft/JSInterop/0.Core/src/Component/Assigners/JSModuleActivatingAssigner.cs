@@ -12,11 +12,11 @@ namespace Teronis.Microsoft.JSInterop.Component.Assigners
     /// <summary>
     /// Assigns module.
     /// </summary>
-    public class JSModuleAssigner : IValueAssigner
+    public class JSModuleActivatingAssigner : IValueAssigner
     {
         private readonly IJSModuleActivator jsModuleActivator;
 
-        public JSModuleAssigner(IJSModuleActivator jsModuleActivator) =>
+        public JSModuleActivatingAssigner(IJSModuleActivator jsModuleActivator) =>
             this.jsModuleActivator = jsModuleActivator ?? throw new ArgumentNullException(nameof(jsModuleActivator));
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace Teronis.Microsoft.JSInterop.Component.Assigners
         /// <returns>null/default or the JavaScript module facade.</returns>
         public virtual async ValueTask AssignValueAsync(IMemberDefinition componentMember, ValueAssignerContext context)
         {
-            if (!JSModuleAttributeUtils.TryGetModuleNameOrPath<AssignModuleAttribute, JSModuleAttribute>(componentMember, out var _, out var moduleNameOrPath)) {
+            if (!JSModuleAttributeUtils.TryGetModuleNameOrPath<ActivateModuleAttribute, JSModuleAttribute>(componentMember, out var _, out var moduleNameOrPath)) {
                 return;
             }
 

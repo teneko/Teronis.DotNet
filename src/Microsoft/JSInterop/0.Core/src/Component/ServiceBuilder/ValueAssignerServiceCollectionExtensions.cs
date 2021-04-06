@@ -15,32 +15,32 @@ namespace Teronis.Microsoft.JSInterop.Component.ServiceBuilder
         public static ValueAssignerServiceCollection AddNonDynamicDefaultValueAssigners(this ValueAssignerServiceCollection propertyAssignerServices)
         {
             propertyAssignerServices.UseExtension(extension => {
-                extension.AddScoped<JSLocalObjectAssigner>();
-                extension.AddScoped<JSModuleAssigner>();
+                extension.AddScoped<JSGlobalObjectActivatingAssigner>();
+                extension.AddScoped<JSModuleActivatingAssigner>();
             });
 
             return propertyAssignerServices;
         }
 
         /// <summary>
-        /// Adds <see cref="JSCustomFacadeAssigner"/>.
+        /// Adds <see cref="JSCustomFacadeWrappingAssigner"/>.
         /// </summary>
         /// <param name="propertyAssignerServices"></param>
         /// <returns></returns>
         public static ValueAssignerServiceCollection AddJSCustomFacadeAssigner(this ValueAssignerServiceCollection propertyAssignerServices)
         {
-            propertyAssignerServices.UseExtension(extension => extension.AddScoped<JSCustomFacadeAssigner>());
+            propertyAssignerServices.UseExtension(extension => extension.AddScoped<JSCustomFacadeWrappingAssigner>());
             return propertyAssignerServices;
         }
 
         /// <summary>
-        /// Remves first occurrence of <see cref="JSCustomFacadeAssigner"/>.
+        /// Remves first occurrence of <see cref="JSCustomFacadeWrappingAssigner"/>.
         /// </summary>
         /// <param name="propertyAssignerServices"></param>
         /// <returns></returns>
         public static ValueAssignerServiceCollection RemoveJSCustomFacadeAssigner(this ValueAssignerServiceCollection propertyAssignerServices)
         {
-            propertyAssignerServices.UseExtension(extension => extension.RemoveAll<JSCustomFacadeAssigner>());
+            propertyAssignerServices.UseExtension(extension => extension.RemoveAll<JSCustomFacadeWrappingAssigner>());
             return propertyAssignerServices;
         }
     }

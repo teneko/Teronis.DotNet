@@ -11,8 +11,11 @@ namespace Teronis.Microsoft.JSInterop.Annotations
     /// is used as proxy. By using this attribute we are definitely expecting
     /// a JavaScript object reference when calling
     /// <see cref="IJSObjectInvocationBase{ReturnType}.GetDeterminedResult()"/>.
+    /// Used in interceptor.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
     public class ReturnDynamicProxyAttribute : Attribute
-    { }
+    { 
+        public Type? InterfaceToBeProxied { get; set; }
+    }
 }

@@ -11,23 +11,20 @@ namespace Teronis.Microsoft.JSInterop.Interception.Interceptors
     /// <summary>
     /// The interceptor mimics (obj_ref, name) => obj_ref[name] where name can be a dotted path too.
     /// </summary>
-    public class JSLocalObjectInterceptor : IJSInterceptor
+    public class JSLocalObjectActivatingInterceptor : IJSInterceptor
     {
         private readonly IJSLocalObjectActivator jsLocalObjectActivator;
 
-        public JSLocalObjectInterceptor(IJSLocalObjectActivator jsLocalObjectActivator) =>
+        public JSLocalObjectActivatingInterceptor(IJSLocalObjectActivator jsLocalObjectActivator) =>
             this.jsLocalObjectActivator = jsLocalObjectActivator ?? throw new ArgumentNullException(nameof(jsLocalObjectActivator));
 
         public virtual async ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation, InterceptionContext context)
         {
-            if (!invocation.InvocationAttributes.TryGetAttribute<ReturnLocalObjectAttribute>(out var attribute)) {
+            if (!invocation.InvocationAttributes.TryGetAttribute<ActivateLocalObjectAttribute>(out var attribute)) {
                 return;
             }
 
-            if (invocation.Arguments.Length > 0) {
-                throw new ArgumentException("When you mimic a getter you cannot specify arguments.");
-            }
-
+            invocation.EnsureMimickingGetter();
             var jsObjectReference = invocation.ObjectReference;
             var globalObjectNameOrPath = attribute.NameOrPath ?? invocation.Identifier;
             var jsLocalObject = await jsLocalObjectActivator.CreateInstanceAsync(jsObjectReference, globalObjectNameOrPath);

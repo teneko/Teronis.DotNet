@@ -15,8 +15,8 @@ namespace Teronis.Microsoft.JSInterop.Component.ServiceBuilder
         public static ValueAssignerServiceCollection AddDefaultDynamicValueAssigners(this ValueAssignerServiceCollection propertyAssignerFactories)
         {
             propertyAssignerFactories.UseExtension(extension => {
-                extension.AddScoped<JSDynamicModuleAssigner>();
-                extension.AddScoped<JSDynamicGlobalObjectAssigner>();
+                extension.AddScoped<JSDynamicModuleActivatingAssigner>();
+                extension.AddScoped<JSDynamicLocalObjectActivatingAssigner>();
             });
 
             return propertyAssignerFactories;

@@ -14,8 +14,10 @@ namespace Teronis.Microsoft.JSInterop.Interception.ServiceBuilder
         /// <returns></returns>
         public static IJSInterceptorServiceCollection AddDefaultDynamicInterceptors(this IJSInterceptorServiceCollection interceptorBuilder)
         {
-            interceptorBuilder.UseExtension(e => {
-                e.AddScoped<JSDynamicProxyActivatingInterceptor>();
+            interceptorBuilder.UseExtension(extension => {
+                extension.AddScoped<JSDynamicLocalObjectActivatingInterceptor>();
+                extension.AddScoped<JSDynamicLocalObjectReturningInterceptor>();
+                extension.AddScoped<JSDynamicProxyReturningInterceptor>();
             });
 
             return interceptorBuilder;

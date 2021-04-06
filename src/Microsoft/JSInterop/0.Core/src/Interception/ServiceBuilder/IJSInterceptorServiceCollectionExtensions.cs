@@ -5,7 +5,7 @@ using Teronis.Microsoft.JSInterop.Interception.Interceptors;
 
 namespace Teronis.Microsoft.JSInterop.Interception.ServiceBuilder
 {
-    public static class InterceptorBuilderExtensions
+    public static class IJSInterceptorServiceCollectionExtensions
     {
         /// <summary>
         /// Adds the default non-dynamic interceptors.
@@ -14,7 +14,11 @@ namespace Teronis.Microsoft.JSInterop.Interception.ServiceBuilder
         /// <returns></returns>
         public static IJSInterceptorServiceCollection AddDefaultNonDynamicInterceptors(this IJSInterceptorServiceCollection interceptorBuilder)
         {
-            interceptorBuilder.UseExtension(e => e.AddScoped<JSLocalObjectInterceptor>());
+            interceptorBuilder.UseExtension(extension => {
+                extension.AddScoped<JSLocalObjectReturningInterceptor>();
+                extension.AddScoped<JSLocalObjectActivatingInterceptor>();
+            });
+
             return interceptorBuilder;
         }
 
@@ -25,7 +29,7 @@ namespace Teronis.Microsoft.JSInterop.Interception.ServiceBuilder
         /// <returns></returns>
         public static IJSInterceptorServiceCollection AddIterativeValueAssignerInterceptor(this IJSInterceptorServiceCollection interceptorBuilder)
         {
-            interceptorBuilder.UseExtension(e => e.AddScoped<JSIterativeValueAssigningInterceptor>());
+            interceptorBuilder.UseExtension(extension => extension.AddScoped<JSIterativeValueAssigningInterceptor>());
             return interceptorBuilder;
         }
 
@@ -36,7 +40,7 @@ namespace Teronis.Microsoft.JSInterop.Interception.ServiceBuilder
         /// <returns></returns>
         public static IJSInterceptorServiceCollection RemoveIterativeValueAssignerInterceptor(this IJSInterceptorServiceCollection interceptorBuilder)
         {
-            interceptorBuilder.UseExtension(e => e.RemoveAll<JSIterativeValueAssigningInterceptor>());
+            interceptorBuilder.UseExtension(extension => extension.RemoveAll<JSIterativeValueAssigningInterceptor>());
             return interceptorBuilder;
         }
     }

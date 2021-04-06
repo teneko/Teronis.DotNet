@@ -3,32 +3,36 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.JSInterop;
 using Teronis.Microsoft.JSInterop.Annotations;
 using Teronis.Microsoft.JSInterop.Locality;
 
 namespace Teronis.Microsoft.JSInterop.Interception.Interceptors
 {
-    public class JSDynamicLocalObjectInterceptor : IJSInterceptor
+    /// <summary>
+    /// The interceptor mimics (obj_ref, name) => obj_ref[name] where name can be a dotted path too.
+    /// </summary>
+    public class JSDynamicLocalObjectActivatingInterceptor : IJSInterceptor
     {
         private readonly IJSDynamicLocalObjectActivator jsDynamicLocalObjectActivator;
 
-        public JSDynamicLocalObjectInterceptor(IJSDynamicLocalObjectActivator jsDynamicLocalObjectActivator) =>
+        public JSDynamicLocalObjectActivatingInterceptor(IJSDynamicLocalObjectActivator jsDynamicLocalObjectActivator) =>
             this.jsDynamicLocalObjectActivator = jsDynamicLocalObjectActivator ?? throw new ArgumentNullException(nameof(jsDynamicLocalObjectActivator));
 
         public virtual async ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation, InterceptionContext context)
         {
-            if (!invocation.InvocationAttributes.TryGetAttribute<ReturnDynamicLocalObjectAttribute>(out var attribute)) {
+            if (!invocation.InvocationAttributes.TryGetAttribute<ActivateDynamicLocalObjectAttribute>(out var attribute)) {
                 return;
             }
 
-            var jsObjectReference = await invocation.GetNonDeterminedResult<IJSObjectReference>();
+            invocation.EnsureMimickingGetter();
+            var jsObjectReference = invocation.ObjectReference;
             var globalObjectNameOrPath = attribute.NameOrPath ?? invocation.Identifier;
-            var jsLocalObject = await jsDynamicLocalObjectActivator.CreateInstanceAsync(invocation.TaskArgumentType, jsObjectReference, globalObjectNameOrPath);
+            var interfaceToBeProxied = attribute.InterfaceToBeProxied ?? invocation.TaskArgumentType;
+            var jsLocalObject = await jsDynamicLocalObjectActivator.CreateInstanceAsync(interfaceToBeProxied, jsObjectReference, globalObjectNameOrPath);
             invocation.SetAlternativeResult((TValue)jsLocalObject);
         }
 
-        public ValueTask InterceptInvokeVoidAsync(IJSObjectInvocation invocation, InterceptionContext context) =>
+        public virtual ValueTask InterceptInvokeVoidAsync(IJSObjectInvocation invocation, InterceptionContext context) =>
             ValueTask.CompletedTask;
     }
 }

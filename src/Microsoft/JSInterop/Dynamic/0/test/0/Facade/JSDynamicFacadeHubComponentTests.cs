@@ -14,13 +14,13 @@ namespace Teronis.Microsoft.JSInterop.Facade
 {
     public class JSDynamicFacadeHubComponentTests
     {
-        [AssignDynamicModule(NameOrPath = "module")]
+        [ActivateDynamicModule(NameOrPath = "module")]
         private IJSModule module { get; set; } = null!;
 
-        [AssignDynamicModule(NameOrPath = "module", InterfaceToBeProxied = typeof(IJSModule)), AssignCustomFacade]
+        [ActivateDynamicModule(NameOrPath = "module", InterfaceToBeProxied = typeof(IJSModule)), ActivateCustomFacade]
         CustomModule customModule = null!;
 
-        [AssignDynamicGlobalObject]
+        [ActivateDynamicGlobalObject]
         IJSLocalObject window { get; set; } = null!;
 
         [Fact]

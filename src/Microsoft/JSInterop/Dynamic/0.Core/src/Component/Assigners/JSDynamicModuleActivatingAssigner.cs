@@ -9,11 +9,11 @@ using Teronis.Microsoft.JSInterop.Reflection;
 
 namespace Teronis.Microsoft.JSInterop.Component.Assigners
 {
-    public class JSDynamicModuleAssigner : IValueAssigner
+    public class JSDynamicModuleActivatingAssigner : IValueAssigner
     {
         private readonly IJSDynamicModuleActivator jsDynamicModuleActivator;
 
-        public JSDynamicModuleAssigner(IJSDynamicModuleActivator jsDynamicModuleActivator) =>
+        public JSDynamicModuleActivatingAssigner(IJSDynamicModuleActivator jsDynamicModuleActivator) =>
             this.jsDynamicModuleActivator = jsDynamicModuleActivator ?? throw new ArgumentNullException(nameof(jsDynamicModuleActivator));
 
         /// <summary>
@@ -22,7 +22,7 @@ namespace Teronis.Microsoft.JSInterop.Component.Assigners
         /// <returns>null/default or the JavaScript module facade.</returns>
         public virtual async ValueTask AssignValueAsync(IMemberDefinition definition, ValueAssignerContext context)
         {
-            if (!JSModuleAttributeUtils.TryGetModuleNameOrPath<AssignDynamicModuleAttribute, JSModuleAttribute>(
+            if (!JSModuleAttributeUtils.TryGetModuleNameOrPath<ActivateDynamicModuleAttribute, JSModuleAttribute>(
                 definition,
                 out var propertyAttribute,
                 out var moduleNameOrPath)) {

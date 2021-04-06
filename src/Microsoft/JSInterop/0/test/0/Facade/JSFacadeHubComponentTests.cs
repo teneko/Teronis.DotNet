@@ -14,13 +14,13 @@ namespace Teronis.Microsoft.JSInterop.Facade
 {
     public class JSFacadeHubComponentTests
     {
-        [AssignModule(NameOrPath = "module")]
+        [ActivateModule(NameOrPath = "module")]
         private IJSModule module { get; set; } = null!;
 
-        [AssignModule(NameOrPath = "module"), AssignCustomFacade]
+        [ActivateModule(NameOrPath = "module"), ActivateCustomFacade]
         CustomModule customModule = null!;
 
-        [AssignGlobalObject(NameOrPath = "window")]
+        [ActivateGlobalObject(NameOrPath = "window")]
         IJSLocalObject window { get; set; } = null!;
 
         [Fact]

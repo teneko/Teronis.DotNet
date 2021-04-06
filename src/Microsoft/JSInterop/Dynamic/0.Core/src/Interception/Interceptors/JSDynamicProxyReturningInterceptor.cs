@@ -9,21 +9,22 @@ using Teronis.Microsoft.JSInterop.Dynamic;
 
 namespace Teronis.Microsoft.JSInterop.Interception.Interceptors
 {
-    public class JSDynamicProxyActivatingInterceptor : IJSInterceptor
+    public class JSDynamicProxyReturningInterceptor : IJSInterceptor
     {
         private readonly IJSDynamicProxyActivator jsDynamicProxyActivator;
 
-        public JSDynamicProxyActivatingInterceptor(IJSDynamicProxyActivator jsDynamicProxyActivator) =>
+        public JSDynamicProxyReturningInterceptor(IJSDynamicProxyActivator jsDynamicProxyActivator) =>
             this.jsDynamicProxyActivator = jsDynamicProxyActivator ?? throw new ArgumentNullException(nameof(jsDynamicProxyActivator));
 
         public virtual async ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation, InterceptionContext context)
         {
-            if (!invocation.InvocationAttributes.IsAttributeDefined(typeof(ReturnDynamicProxyAttribute))) {
+            if (!invocation.InvocationAttributes.TryGetAttribute<ReturnDynamicProxyAttribute>(out var attribute)) {
                 return;
             }
 
             var result = await invocation.GetNonDeterminedResult<IJSObjectReference>();
-            var determinedResult = (TValue)jsDynamicProxyActivator.CreateInstance(invocation.TaskArgumentType, result);
+            var interfaceToBeProxied = attribute.InterfaceToBeProxied ?? invocation.TaskArgumentType;
+            var determinedResult = (TValue)jsDynamicProxyActivator.CreateInstance(interfaceToBeProxied, result);
             invocation.SetAlternativeResult(new ValueTask<TValue>(determinedResult));
         }
 

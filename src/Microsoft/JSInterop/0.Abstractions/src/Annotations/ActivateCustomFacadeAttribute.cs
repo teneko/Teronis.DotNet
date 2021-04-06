@@ -5,7 +5,10 @@ using System;
 
 namespace Teronis.Microsoft.JSInterop.Annotations
 {
+    /// <summary>
+    /// Used in value assigner.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-    public class AssignCustomFacadeAttribute : Attribute
+    public class ActivateCustomFacadeAttribute : Attribute
     { }
 }

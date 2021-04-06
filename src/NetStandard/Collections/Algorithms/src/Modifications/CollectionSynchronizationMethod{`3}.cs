@@ -8,18 +8,18 @@ using System.Linq;
 
 namespace Teronis.Collections.Algorithms.Modifications
 {
-    public abstract class CollectionSynchronizationMethod<LeftItemType, RightItemType, ComparableItemType> : ICollectionSynchronizationMethod<LeftItemType, RightItemType>
-        where ComparableItemType : notnull
+    public abstract class CollectionSynchronizationMethod<TLeftItem, TRightItem, TComparableItem> : ICollectionSynchronizationMethod<TLeftItem, TRightItem>
+        where TComparableItem : notnull
     {
         public CollectionSequenceType SequenceType { get; }
 
-        protected Func<LeftItemType, ComparableItemType> GetComparablePartOfLeftItem { get; }
-        protected Func<RightItemType, ComparableItemType> GetComparablePartOfRightItem { get; }
+        protected Func<TLeftItem, TComparableItem> GetComparablePartOfLeftItem { get; }
+        protected Func<TRightItem, TComparableItem> GetComparablePartOfRightItem { get; }
 
         protected CollectionSynchronizationMethod(
             CollectionSequenceType sequenceType,
-            Func<LeftItemType, ComparableItemType> getComparablePartOfLeftItem,
-            Func<RightItemType, ComparableItemType> getComparablePartOfRightItem)
+            Func<TLeftItem, TComparableItem> getComparablePartOfLeftItem,
+            Func<TRightItem, TComparableItem> getComparablePartOfRightItem)
         {
             SequenceType = sequenceType;
             GetComparablePartOfLeftItem = getComparablePartOfLeftItem ?? throw new ArgumentNullException(nameof(getComparablePartOfLeftItem));
@@ -32,13 +32,13 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// <param name="leftItems">The collection you want to have transformed.</param>
         /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="leftItems"/> is null.</exception>
-        protected void CheckArgumentsWhenYieldingCollectionModifications(IEnumerable<LeftItemType> leftItems, [NotNull] ref IEnumerable<RightItemType>? rightItems)
+        protected void CheckArgumentsWhenYieldingCollectionModifications(IEnumerable<TLeftItem> leftItems, [NotNull] ref IEnumerable<TRightItem>? rightItems)
         {
             if (leftItems is null) {
                 throw new ArgumentNullException(nameof(leftItems));
             }
 
-            rightItems ??= Enumerable.Empty<RightItemType>();
+            rightItems ??= Enumerable.Empty<TRightItem>();
         }
 
         /// <summary>
@@ -49,25 +49,25 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// <param name="yieldCapabilities">The yield capabilities, e.g. only insert or only remove.</param>
         /// <returns>The collection modifications.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="leftItems"/> is null.</exception>
-        public abstract IEnumerable<CollectionModification<RightItemType, LeftItemType>> YieldCollectionModifications(
-            IEnumerable<LeftItemType> leftItems,
-            IEnumerable<RightItemType>? rightItems,
+        public abstract IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications(
+            IEnumerable<TLeftItem> leftItems,
+            IEnumerable<TRightItem>? rightItems,
             CollectionModificationsYieldCapabilities yieldCapabilities);
 
-        public class Sequential : CollectionSynchronizationMethod<LeftItemType, RightItemType, ComparableItemType>
+        public class Sequential : CollectionSynchronizationMethod<TLeftItem, TRightItem, TComparableItem>
         {
-            public IEqualityComparer<ComparableItemType> EqualityComparer { get; }
+            public IEqualityComparer<TComparableItem> EqualityComparer { get; }
 
             public Sequential(
-                Func<LeftItemType, ComparableItemType> getComparablePartOfLeftItem,
-                Func<RightItemType, ComparableItemType> getComparablePartOfRightItem,
-                IEqualityComparer<ComparableItemType> equalityComparer)
+                Func<TLeftItem, TComparableItem> getComparablePartOfLeftItem,
+                Func<TRightItem, TComparableItem> getComparablePartOfRightItem,
+                IEqualityComparer<TComparableItem> equalityComparer)
                 : base(CollectionSequenceType.Sequential, getComparablePartOfLeftItem, getComparablePartOfRightItem) =>
                 EqualityComparer = equalityComparer ?? throw new ArgumentNullException(nameof(equalityComparer));
 
-            public override IEnumerable<CollectionModification<RightItemType, LeftItemType>> YieldCollectionModifications(
-                IEnumerable<LeftItemType> leftItems,
-                IEnumerable<RightItemType>? rightItems,
+            public override IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications(
+                IEnumerable<TLeftItem> leftItems,
+                IEnumerable<TRightItem>? rightItems,
                 CollectionModificationsYieldCapabilities yieldCapabilities)
             {
                 CheckArgumentsWhenYieldingCollectionModifications(leftItems, ref rightItems);
@@ -82,25 +82,25 @@ namespace Teronis.Collections.Algorithms.Modifications
             }
         }
 
-        public class Sorted : CollectionSynchronizationMethod<LeftItemType, RightItemType, ComparableItemType>
+        public class Sorted : CollectionSynchronizationMethod<TLeftItem, TRightItem, TComparableItem>
         {
             public SortedCollectionOrder CollectionOrder { get; }
-            public IComparer<ComparableItemType> Comparer { get; }
+            public IComparer<TComparableItem> Comparer { get; }
 
             public Sorted(
-                Func<LeftItemType, ComparableItemType> getComparablePartOfLeftItem,
-                Func<RightItemType, ComparableItemType> getComparablePartOfRightItem,
+                Func<TLeftItem, TComparableItem> getComparablePartOfLeftItem,
+                Func<TRightItem, TComparableItem> getComparablePartOfRightItem,
                 SortedCollectionOrder collectionOrder,
-                IComparer<ComparableItemType> comparer)
+                IComparer<TComparableItem> comparer)
                 : base(CollectionSequenceType.Sequential, getComparablePartOfLeftItem, getComparablePartOfRightItem)
             {
                 CollectionOrder = collectionOrder;
                 Comparer = comparer ?? throw new ArgumentNullException(nameof(comparer));
             }
 
-            public override IEnumerable<CollectionModification<RightItemType, LeftItemType>> YieldCollectionModifications(
-                IEnumerable<LeftItemType> leftItems,
-                IEnumerable<RightItemType>? rightItems,
+            public override IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications(
+                IEnumerable<TLeftItem> leftItems,
+                IEnumerable<TRightItem>? rightItems,
                 CollectionModificationsYieldCapabilities yieldCapabilities)
             {
                 CheckArgumentsWhenYieldingCollectionModifications(leftItems, ref rightItems);

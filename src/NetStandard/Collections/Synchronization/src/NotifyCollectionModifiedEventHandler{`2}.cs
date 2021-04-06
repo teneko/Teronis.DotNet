@@ -3,8 +3,5 @@
 
 namespace Teronis.Collections.Synchronization
 {
-    public interface INotifyCollectionModification<ItemType>
-    {
-        event NotifyNotifyCollectionModifiedEventHandler<ItemType> CollectionModified;
-    }
+    public delegate void NotifyCollectionModifiedEventHandler<TSuperItem, TSubItem>(object sender, CollectionModifiedEventArgs<TSuperItem, TSubItem> args);
 }

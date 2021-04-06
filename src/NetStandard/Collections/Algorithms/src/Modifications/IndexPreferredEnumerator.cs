@@ -7,22 +7,22 @@ using System.Collections.Generic;
 
 namespace Teronis.Collections.Algorithms.Modifications
 {
-    internal class IndexPreferredEnumerator<ItemType> : IEnumerator<ItemType>
+    internal class IndexPreferredEnumerator<TItem> : IEnumerator<TItem>
     {
         public int CurrentLength { get; private set; }
 
-        private readonly IEnumerator<ItemType> enumerator;
+        private readonly IEnumerator<TItem> enumerator;
 
-        public IndexPreferredEnumerator(IEnumerable<ItemType> enumerable, Func<int> getLastIndex)
+        public IndexPreferredEnumerator(IEnumerable<TItem> enumerable, Func<int> getLastIndex)
         {
-            if (enumerable is YieldIteratorInfluencedReadOnlyList<ItemType> list) {
+            if (enumerable is YieldIteratorInfluencedReadOnlyList<TItem> list) {
                 enumerator = new IndexedEnumerator(list, getLastIndex);
             } else {
                 enumerator = enumerable.GetEnumerator();
             }
         }
 
-        public ItemType Current =>
+        public TItem Current =>
             enumerator.Current;
 
         public bool MoveNext()
@@ -44,14 +44,14 @@ namespace Teronis.Collections.Algorithms.Modifications
         public void Dispose() =>
             enumerator.Dispose();
 
-        public class IndexedEnumerator : IEnumerator<ItemType>
+        public class IndexedEnumerator : IEnumerator<TItem>
         {
-            private readonly IReadOnlyList<ItemType> list;
+            private readonly IReadOnlyList<TItem> list;
             private readonly Func<int> getLastIndex;
 
-            public ItemType Current { get; private set; }
+            public TItem Current { get; private set; }
 
-            public IndexedEnumerator(IReadOnlyList<ItemType> list, Func<int> getLastIndex)
+            public IndexedEnumerator(IReadOnlyList<TItem> list, Func<int> getLastIndex)
             {
                 Current = default!;
                 this.list = list;

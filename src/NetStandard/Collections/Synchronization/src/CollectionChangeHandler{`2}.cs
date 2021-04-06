@@ -7,17 +7,17 @@ using Teronis.Extensions;
 
 namespace Teronis.Collections.Synchronization
 {
-    public class CollectionChangeHandler<ItemType>
+    public class CollectionChangeHandler<TItem>
     {
         public interface IDecoupledHandler
         {
             bool CanReplaceItem { get; }
 
-            void InsertItem(IList<ItemType> list, int insertAt, ItemType item);
-            void MoveItems(IList<ItemType> list, int fromIndex, int toIndex, int count);
-            void RemoveItem(IList<ItemType> list, int removeAt);
-            void ReplaceItem(IList<ItemType> list, int replaceAt, Func<ItemType> getItem);
-            void Reset(IList<ItemType> list);
+            void InsertItem(IList<TItem> list, int insertAt, TItem item);
+            void MoveItems(IList<TItem> list, int fromIndex, int toIndex, int count);
+            void RemoveItem(IList<TItem> list, int removeAt);
+            void ReplaceItem(IList<TItem> list, int replaceAt, Func<TItem> getItem);
+            void Reset(IList<TItem> list);
         }
 
         public class DecoupledHandler : IDecoupledHandler
@@ -26,19 +26,19 @@ namespace Teronis.Collections.Synchronization
 
             public virtual bool CanReplaceItem { get; } = false;
 
-            public virtual void InsertItem(IList<ItemType> list, int insertAt, ItemType item) =>
+            public virtual void InsertItem(IList<TItem> list, int insertAt, TItem item) =>
                 list.Insert(insertAt, item);
 
-            public virtual void RemoveItem(IList<ItemType> list, int removeAt) =>
+            public virtual void RemoveItem(IList<TItem> list, int removeAt) =>
                 list.RemoveAt(removeAt);
 
-            public virtual void MoveItems(IList<ItemType> list, int fromIndex, int toIndex, int count) =>
+            public virtual void MoveItems(IList<TItem> list, int fromIndex, int toIndex, int count) =>
                 list.Move(fromIndex, toIndex, count);
 
-            public virtual void ReplaceItem(IList<ItemType> list, int replaceAt, Func<ItemType> superItem)
+            public virtual void ReplaceItem(IList<TItem> list, int replaceAt, Func<TItem> superItem)
             { }
 
-            public virtual void Reset(IList<ItemType> list) =>
+            public virtual void Reset(IList<TItem> list) =>
                 list.Clear();
         }
 
@@ -47,36 +47,36 @@ namespace Teronis.Collections.Synchronization
 
             public override bool CanReplaceItem => true;
 
-            public override void ReplaceItem(IList<ItemType> list, int replaceAt, Func<ItemType> getItem) =>
+            public override void ReplaceItem(IList<TItem> list, int replaceAt, Func<TItem> getItem) =>
                 list[replaceAt] = getItem();
         }
 
         public interface IDependencyInjectedHandler
         {
-            IList<ItemType> Items { get; }
+            IList<TItem> Items { get; }
             bool CanReplaceItem { get; }
 
-            void InsertItem(int insertAt, ItemType item);
+            void InsertItem(int insertAt, TItem item);
             void MoveItems(int fromIndex, int toIndex, int count);
             void RemoveItem(int removeAt);
-            void ReplaceItem(int replaceAt, Func<ItemType> superItem);
+            void ReplaceItem(int replaceAt, Func<TItem> superItem);
             void Reset();
         }
 
         public class DependencyInjectedHandler : IDependencyInjectedHandler
         {
-            public virtual IList<ItemType> Items { get; } = null!;
+            public virtual IList<TItem> Items { get; } = null!;
             public virtual IDecoupledHandler Handler { get; } = null!;
 
             protected DependencyInjectedHandler() { }
 
-            public DependencyInjectedHandler(IList<ItemType> items)
+            public DependencyInjectedHandler(IList<TItem> items)
             {
                 Items = items ?? throw new ArgumentNullException(nameof(items));
                 Handler = DecoupledHandler.Default;
             }
 
-            public DependencyInjectedHandler(IList<ItemType> items, IDecoupledHandler? handler)
+            public DependencyInjectedHandler(IList<TItem> items, IDecoupledHandler? handler)
             {
                 Items = items ?? throw new ArgumentNullException(nameof(items));
                 Handler = handler ?? DecoupledHandler.Default;
@@ -84,7 +84,7 @@ namespace Teronis.Collections.Synchronization
 
             public virtual bool CanReplaceItem => Handler.CanReplaceItem;
 
-            public virtual void InsertItem(int insertAt, ItemType item) =>
+            public virtual void InsertItem(int insertAt, TItem item) =>
                 Handler.InsertItem(Items, insertAt, item);
 
             public virtual void RemoveItem(int removeAt) =>
@@ -93,7 +93,7 @@ namespace Teronis.Collections.Synchronization
             public virtual void MoveItems(int fromIndex, int toIndex, int count) =>
                 Handler.MoveItems(Items, fromIndex, toIndex, count);
 
-            public virtual void ReplaceItem(int replaceAt, Func<ItemType> getItem) =>
+            public virtual void ReplaceItem(int replaceAt, Func<TItem> getItem) =>
                 Handler.ReplaceItem(Items, replaceAt, getItem);
 
             public virtual void Reset() =>

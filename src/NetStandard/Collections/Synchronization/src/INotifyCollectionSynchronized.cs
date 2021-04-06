@@ -5,7 +5,8 @@ using System;
 
 namespace Teronis.Collections.Synchronization
 {
-    public interface INotifyCollectionSynchronized<ItemType>
+    // TODO: Consider to remove <TItem>.
+    public interface INotifyCollectionSynchronized<TItem>
     {
         event EventHandler CollectionSynchronized;
     }

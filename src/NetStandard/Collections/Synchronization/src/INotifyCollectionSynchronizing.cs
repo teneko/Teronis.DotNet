@@ -5,7 +5,7 @@ using System;
 
 namespace Teronis.Collections.Synchronization
 {
-    public interface INotifyCollectionSynchronizing<ItemType>
+    public interface INotifyCollectionSynchronizing<TItem>
     {
         event EventHandler CollectionSynchronizing;
     }

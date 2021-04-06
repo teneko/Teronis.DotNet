@@ -13,14 +13,15 @@ namespace Teronis.Collections.Synchronization.Utils
         /// <summary>
         /// This method traces moving indexes and determines replace modifications and yield returns this modification with its respective intial old index.
         /// </summary>
-        /// <typeparam name="OldItemType"></typeparam>
-        /// <typeparam name="NewItemType"></typeparam>
+        /// <typeparam name="TOldItem"></typeparam>
+        /// <typeparam name="TNewItem"></typeparam>
         /// <param name="modifications"></param>
         /// <returns></returns>
-        internal static IEnumerable<(ICollectionModification<NewItemType, OldItemType> Modification, int InitialOldIndex)> YieldTuplesButOnlyReplaceModificationWithInitialOldIndex<NewItemType, OldItemType>(IEnumerable<ICollectionModification<NewItemType, OldItemType>> modifications) {
+        internal static IEnumerable<(ICollectionModification<TNewItem, TOldItem> Modification, int InitialOldIndex)> YieldTuplesButOnlyReplaceModificationWithInitialOldIndex<TNewItem, TOldItem>(
+            IEnumerable<ICollectionModification<TNewItem, TOldItem>> modifications) {
             yield return default;
 
-            var tempModification = new Dictionary<int, (ICollectionModification<NewItemType, OldItemType> Modification, int InitialOldIndex)>();
+            var tempModification = new Dictionary<int, (ICollectionModification<TNewItem, TOldItem> Modification, int InitialOldIndex)>();
 
             foreach (var modification in modifications) {
                 if (modification.Action == NotifyCollectionChangedAction.Move) {

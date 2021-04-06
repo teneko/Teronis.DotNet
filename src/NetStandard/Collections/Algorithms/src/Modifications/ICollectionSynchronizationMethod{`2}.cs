@@ -5,11 +5,11 @@ using System.Collections.Generic;
 
 namespace Teronis.Collections.Algorithms.Modifications
 {
-    public interface ICollectionSynchronizationMethod<LeftItemType, RightItemType>
+    public interface ICollectionSynchronizationMethod<TLeftItem, TRightItem>
     {
-        IEnumerable<CollectionModification<RightItemType, LeftItemType>> YieldCollectionModifications(
-            IEnumerable<LeftItemType> leftItems, 
-            IEnumerable<RightItemType>? rightItems, 
+        IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications(
+            IEnumerable<TLeftItem> leftItems, 
+            IEnumerable<TRightItem>? rightItems, 
             CollectionModificationsYieldCapabilities yieldCapabilities);
     }
 }

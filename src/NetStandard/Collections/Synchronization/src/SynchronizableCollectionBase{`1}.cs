@@ -12,7 +12,7 @@ using Teronis.ObjectModel;
 
 namespace Teronis.Collections.Synchronization
 {
-    public abstract class SynchronizableCollectionBase<ItemType, NewItemType> : Collection<ItemType>, ISynchronizedCollection<ItemType>, INotifyPropertyChanged, INotifyPropertyChanging
+    public abstract class SynchronizableCollectionBase<TItem, TNewItem> : Collection<TItem>, ISynchronizedCollection<TItem>, INotifyPropertyChanged, INotifyPropertyChanging
     {
         public event PropertyChangedEventHandler? PropertyChanged {
             add => ((INotifyPropertyChanged)PropertyNotificationComponent).PropertyChanged += value;
@@ -36,7 +36,7 @@ namespace Teronis.Collections.Synchronization
 
         public event EventHandler? CollectionSynchronizing;
 
-        public event NotifyNotifyCollectionModifiedEventHandler<ItemType>? CollectionModified;
+        public event NotifyNotifyCollectionModifiedEventHandler<TItem>? CollectionModified;
 
         event NotifyCollectionChangedEventHandler? INotifyCollectionChanged.CollectionChanged {
             add => collectionChanged += value;
@@ -48,19 +48,19 @@ namespace Teronis.Collections.Synchronization
         private event NotifyCollectionChangedEventHandler? collectionChanged;
 
         protected PropertyNotificationComponent PropertyNotificationComponent { get; private set; } = null!;
-        internal protected virtual CollectionChangeHandler<ItemType>.IDependencyInjectedHandler CollectionChangeHandler { get; private set; } = null!;
+        internal protected virtual CollectionChangeHandler<TItem>.IDependencyInjectedHandler CollectionChangeHandler { get; private set; } = null!;
 
         private bool itemTypeImplementsDisposable;
 
-        public SynchronizableCollectionBase(IList<ItemType> list, CollectionChangeHandler<ItemType>.IDecoupledHandler handler)
+        public SynchronizableCollectionBase(IList<TItem> list, CollectionChangeHandler<TItem>.IDecoupledHandler handler)
             : base(list) =>
             onConstruction(decoupledHandler: handler);
 
-        public SynchronizableCollectionBase(IList<ItemType> list)
+        public SynchronizableCollectionBase(IList<TItem> list)
             : base(list) =>
             onConstruction();
 
-        public SynchronizableCollectionBase(CollectionChangeHandler<ItemType>.IDependencyInjectedHandler handler)
+        public SynchronizableCollectionBase(CollectionChangeHandler<TItem>.IDependencyInjectedHandler handler)
             : base(handler.Items) =>
             onConstruction(dependencyInjectedHandler: handler);
 
@@ -68,14 +68,14 @@ namespace Teronis.Collections.Synchronization
             onConstruction();
 
         private void onConstruction(
-            CollectionChangeHandler<ItemType>.IDependencyInjectedHandler? dependencyInjectedHandler = null,
-            CollectionChangeHandler<ItemType>.IDecoupledHandler? decoupledHandler = null) {
+            CollectionChangeHandler<TItem>.IDependencyInjectedHandler? dependencyInjectedHandler = null,
+            CollectionChangeHandler<TItem>.IDecoupledHandler? decoupledHandler = null) {
             PropertyNotificationComponent = new PropertyNotificationComponent();
-            itemTypeImplementsDisposable = typeof(IDisposable).IsAssignableFrom(typeof(ItemType));
-            CollectionChangeHandler = dependencyInjectedHandler ?? new CollectionChangeHandler<ItemType>.DependencyInjectedHandler(Items, decoupledHandler);
+            itemTypeImplementsDisposable = typeof(IDisposable).IsAssignableFrom(typeof(TItem));
+            CollectionChangeHandler = dependencyInjectedHandler ?? new CollectionChangeHandler<TItem>.DependencyInjectedHandler(Items, decoupledHandler);
         }
 
-        protected override void InsertItem(int index, ItemType item)
+        protected override void InsertItem(int index, TItem item)
         {
             PropertyNotificationComponent.OnPropertyChanging(CountString);
             PropertyNotificationComponent.OnPropertyChanging(IndexerName);
@@ -86,7 +86,7 @@ namespace Teronis.Collections.Synchronization
             PropertyNotificationComponent.OnPropertyChanged(IndexerName);
         }
 
-        protected override void SetItem(int index, ItemType item)
+        protected override void SetItem(int index, TItem item)
         {
             PropertyNotificationComponent.OnPropertyChanging(IndexerName);
 
@@ -151,13 +151,13 @@ namespace Teronis.Collections.Synchronization
             PropertyNotificationComponent.OnPropertyChanged(IndexerName);
         }
 
-        protected virtual CollectionModifiedEventArgs<ItemType> CreateCollectionModifiedEventArgs(ICollectionModification<ItemType, ItemType> modification) =>
-            new CollectionModifiedEventArgs<ItemType>(modification);
+        protected virtual CollectionModifiedEventArgs<TItem> CreateCollectionModifiedEventArgs(ICollectionModification<TItem, TItem> modification) =>
+            new CollectionModifiedEventArgs<TItem>(modification);
 
         protected void InvokeCollectionSynchronizing() =>
             CollectionSynchronizing?.Invoke(this, new EventArgs());
 
-        protected void InvokeCollectionModified(ICollectionModification<ItemType, ItemType> collectionModifiaction)
+        protected void InvokeCollectionModified(ICollectionModification<TItem, TItem> collectionModifiaction)
         {
             if (collectionChanged is null && CollectionModified is null) {
                 return;
@@ -171,12 +171,12 @@ namespace Teronis.Collections.Synchronization
         protected void InvokeCollectionSynchronized() =>
             CollectionSynchronized?.Invoke(this, new EventArgs());
 
-        public SynchronizedDictionary<KeyType, ItemType> CreateSynchronizedDictionary<KeyType>(Func<ItemType, KeyType> getItemKey, IEqualityComparer<KeyType> keyEqualityComparer)
-            where KeyType : notnull =>
-            new SynchronizedDictionary<KeyType, ItemType>(this, getItemKey, keyEqualityComparer);
+        public SynchronizedDictionary<TKey, TItem> CreateSynchronizedDictionary<TKey>(Func<TItem, TKey> getItemKey, IEqualityComparer<TKey> keyEqualityComparer)
+            where TKey : notnull =>
+            new SynchronizedDictionary<TKey, TItem>(this, getItemKey, keyEqualityComparer);
 
-        public SynchronizedDictionary<KeyType, ItemType> CreateSynchronizedDictionary<KeyType>(Func<ItemType, KeyType> getItemKey)
+        public SynchronizedDictionary<KeyType, TItem> CreateSynchronizedDictionary<KeyType>(Func<TItem, KeyType> getItemKey)
             where KeyType : notnull =>
-            new SynchronizedDictionary<KeyType, ItemType>(this, getItemKey);
+            new SynchronizedDictionary<KeyType, TItem>(this, getItemKey);
     }
 }

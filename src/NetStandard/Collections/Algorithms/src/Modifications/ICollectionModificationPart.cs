@@ -5,11 +5,11 @@ using System.Collections.Generic;
 
 namespace Teronis.Collections.Algorithms.Modifications
 {
-    public interface ICollectionModificationPart<out OwnerNewItemType, out OwnerOldItemType, out ItemType, out OtherItemType>
+    public interface ICollectionModificationPart<out TOwnerNewItem, out TOwnerOldItem, out TItem, out TOtherItem>
     {
-        ICollectionModification<OwnerNewItemType, OwnerOldItemType> Owner { get; }
-        ICollectionModificationPart<OwnerNewItemType, OwnerOldItemType, OtherItemType, ItemType> OtherPart { get; }
-        IReadOnlyList<ItemType>? Items { get; }
+        ICollectionModification<TOwnerNewItem, TOwnerOldItem> Owner { get; }
+        ICollectionModificationPart<TOwnerNewItem, TOwnerOldItem, TOtherItem, TItem> OtherPart { get; }
+        IReadOnlyList<TItem>? Items { get; }
         int Index { get; }
     }
 }

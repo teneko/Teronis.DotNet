@@ -12,26 +12,26 @@ using Teronis.Collections.Specialized;
 
 namespace Teronis.Collections.Synchronization
 {
-    public class SynchronizedDictionary<KeyType, ItemType> : IReadOnlyDictionary<KeyType, ItemType>
-        where KeyType : notnull
+    public class SynchronizedDictionary<TKey, TItem> : IReadOnlyDictionary<TKey, TItem>
+        where TKey : notnull
     {
-        public IReadOnlyDictionary<KeyType, IndexDirectoryEntry> KeyedIndexes { get; }
+        public IReadOnlyDictionary<TKey, IndexDirectoryEntry> KeyedIndexes { get; }
 
         public int Count =>
             KeyedIndexes.Count;
 
-        internal readonly ISynchronizedCollection<ItemType> ItemCollection;
-        internal readonly Func<ItemType, KeyType> GetItemKeyDelegate;
+        internal readonly ISynchronizedCollection<TItem> ItemCollection;
+        internal readonly Func<TItem, TKey> GetItemKeyDelegate;
 
-        private readonly Dictionary<KeyType, IndexDirectoryEntry> keyedIndexes;
+        private readonly Dictionary<TKey, IndexDirectoryEntry> keyedIndexes;
         private readonly IndexDirectory indexDirectory;
 
-        public SynchronizedDictionary(ISynchronizedCollection<ItemType> itemCollection, Func<ItemType, KeyType> getItemKey,
-            IEqualityComparer<KeyType>? keyEqualityComparer)
+        public SynchronizedDictionary(ISynchronizedCollection<TItem> itemCollection, Func<TItem, TKey> getItemKey,
+            IEqualityComparer<TKey>? keyEqualityComparer)
         {
-            keyEqualityComparer = keyEqualityComparer ?? EqualityComparer<KeyType>.Default;
-            keyedIndexes = new Dictionary<KeyType, IndexDirectoryEntry>(keyEqualityComparer);
-            KeyedIndexes = new ReadOnlyDictionary<KeyType, IndexDirectoryEntry>(keyedIndexes);
+            keyEqualityComparer = keyEqualityComparer ?? EqualityComparer<TKey>.Default;
+            keyedIndexes = new Dictionary<TKey, IndexDirectoryEntry>(keyEqualityComparer);
+            KeyedIndexes = new ReadOnlyDictionary<TKey, IndexDirectoryEntry>(keyedIndexes);
             indexDirectory = new IndexDirectory();
             ItemCollection = itemCollection;
             GetItemKeyDelegate = getItemKey ?? throw new ArgumentNullException(nameof(getItemKey));
@@ -51,20 +51,20 @@ namespace Teronis.Collections.Synchronization
             }
         }
 
-        public SynchronizedDictionary(ISynchronizedCollection<ItemType> itemCollection, Func<ItemType, KeyType> getItemKey)
-            : this(itemCollection, getItemKey, default(IEqualityComparer<KeyType>)) { }
+        public SynchronizedDictionary(ISynchronizedCollection<TItem> itemCollection, Func<TItem, TKey> getItemKey)
+            : this(itemCollection, getItemKey, default(IEqualityComparer<TKey>)) { }
 
-        public ItemType GetItem(KeyType key)
+        public TItem GetItem(TKey key)
         {
             var itemIndex = keyedIndexes[key];
             var item = ItemCollection[itemIndex];
             return item;
         }
 
-        public ItemType this[KeyType key] =>
+        public TItem this[TKey key] =>
             GetItem(key);
 
-        private void ModificationNotifier_CollectionModifying(object sender, ICollectionModification<ItemType, ItemType> modification)
+        private void ModificationNotifier_CollectionModifying(object sender, ICollectionModification<TItem, TItem> modification)
         {
             switch (modification.Action) {
                 case NotifyCollectionChangedAction.Add:
@@ -102,7 +102,7 @@ namespace Teronis.Collections.Synchronization
             }
         }
 
-        public bool TryGetItem(KeyType key, out ItemType value)
+        public bool TryGetItem(TKey key, out TItem value)
         {
             if (keyedIndexes.TryGetValue(key, out var itemIndex)) {
                 value = ItemCollection[itemIndex];
@@ -113,44 +113,44 @@ namespace Teronis.Collections.Synchronization
             return false;
         }
 
-        public ItemType GetItemOrDefault(KeyType key)
+        public TItem GetItemOrDefault(TKey key)
         {
-            if (TryGetItem(key, out ItemType item)) {
+            if (TryGetItem(key, out TItem item)) {
                 return item;
             }
 
             return default!;
         }
 
-        public bool ContainsKey(KeyType key) =>
+        public bool ContainsKey(TKey key) =>
             KeyedIndexes.ContainsKey(key);
 
-        bool IReadOnlyDictionary<KeyType, ItemType>.TryGetValue(KeyType key, out ItemType value) =>
+        bool IReadOnlyDictionary<TKey, TItem>.TryGetValue(TKey key, out TItem value) =>
             TryGetItem(key, out value);
 
-        IEnumerable<KeyType> IReadOnlyDictionary<KeyType, ItemType>.Keys =>
+        IEnumerable<TKey> IReadOnlyDictionary<TKey, TItem>.Keys =>
             KeyedIndexes.Keys;
 
-        IEnumerable<ItemType> IReadOnlyDictionary<KeyType, ItemType>.Values =>
+        IEnumerable<TItem> IReadOnlyDictionary<TKey, TItem>.Values =>
             KeyedIndexes.Keys.Select(x => GetItem(x));
 
-        public IEnumerator<KeyValuePair<KeyType, ItemType>> GetEnumerator() =>
+        public IEnumerator<KeyValuePair<TKey, TItem>> GetEnumerator() =>
             new ItemEnumerator(this);
 
         IEnumerator IEnumerable.GetEnumerator() =>
             GetEnumerator();
 
-        public class ItemEnumerator : IEnumerator<KeyValuePair<KeyType, ItemType>>
+        public class ItemEnumerator : IEnumerator<KeyValuePair<TKey, TItem>>
         {
-            public KeyValuePair<KeyType, ItemType> Current => current;
+            public KeyValuePair<TKey, TItem> Current => current;
 
-            private readonly SynchronizedDictionary<KeyType, ItemType> synchronizedCollection;
-            private IEnumerator<KeyType>? keyEnumerator;
-            private KeyValuePair<KeyType, ItemType> current;
+            private readonly SynchronizedDictionary<TKey, TItem> synchronizedCollection;
+            private IEnumerator<TKey>? keyEnumerator;
+            private KeyValuePair<TKey, TItem> current;
 
-            internal ItemEnumerator(SynchronizedDictionary<KeyType, ItemType> synchronizedCollection)
+            internal ItemEnumerator(SynchronizedDictionary<TKey, TItem> synchronizedCollection)
             {
-                current = new KeyValuePair<KeyType, ItemType>();
+                current = new KeyValuePair<TKey, TItem>();
                 this.synchronizedCollection = synchronizedCollection;
             }
 
@@ -163,7 +163,7 @@ namespace Teronis.Collections.Synchronization
                 if (keyEnumerator.MoveNext()) {
                     var key = keyEnumerator.Current;
 
-                    current = new KeyValuePair<KeyType, ItemType>(
+                    current = new KeyValuePair<TKey, TItem>(
                         key,
                         synchronizedCollection.GetItem(keyEnumerator.Current));
 
@@ -179,7 +179,7 @@ namespace Teronis.Collections.Synchronization
                 if (keyEnumerator is null) {
                     keyEnumerator = synchronizedCollection.KeyedIndexes.Keys.GetEnumerator();
                 } else {
-                    current = new KeyValuePair<KeyType, ItemType>();
+                    current = new KeyValuePair<TKey, TItem>();
                     keyEnumerator.Reset();
                 }
             }

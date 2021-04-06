@@ -5,10 +5,10 @@ using Teronis.Collections.Algorithms.Modifications;
 
 namespace Teronis.Collections.Synchronization
 {
-    internal interface ICollectionSynchronizationContext<ItemType>
+    internal interface ICollectionSynchronizationContext<TItem>
     {
         void BeginCollectionSynchronization();
-        void GoThroughModification(ICollectionModification<ItemType, ItemType> superItemModification);
+        void GoThroughModification(ICollectionModification<TItem, TItem> superItemModification);
         void EndCollectionSynchronization();
     }
 }

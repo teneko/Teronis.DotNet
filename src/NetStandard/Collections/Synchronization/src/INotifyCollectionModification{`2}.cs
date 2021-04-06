@@ -5,8 +5,8 @@ using Teronis.Collections.Synchronization;
 
 namespace Teronis.Collections.Algorithms
 {
-    public interface INotifyCollectionModification<SuperItemType, SubItemType>
+    public interface INotifyCollectionModification<TSuperItem, TSubItem>
     {
-        event NotifyCollectionModifiedEventHandler<SuperItemType, SubItemType> CollectionModified;
+        event NotifyCollectionModifiedEventHandler<TSuperItem, TSubItem> CollectionModified;
     }
 }

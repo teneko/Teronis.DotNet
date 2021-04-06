@@ -11,7 +11,7 @@ namespace Teronis.Microsoft.JSInterop.Annotations
     /// <see cref="AssignModuleAttribute"/> or
     /// <see cref="AssignDynamicModuleAttribute"/>.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, Inherited = true)]
     public class JSModuleAttribute : Attribute
     {
         public string NameOrPath { get; }

@@ -9,25 +9,25 @@ using Teronis.Utils;
 
 namespace Teronis.Collections.Synchronization
 {
-    public class CollectionModifiedEventArgs<ItemType> : NotifyCollectionChangedEventArgs, ICollectionModification<ItemType, ItemType>
+    public class CollectionModifiedEventArgs<TItem> : NotifyCollectionChangedEventArgs, ICollectionModification<TItem, TItem>
     {
-        public ICollectionModificationPart<ItemType, ItemType, ItemType, ItemType> OldPart { get; }
-        public ICollectionModificationPart<ItemType, ItemType, ItemType, ItemType> NewPart { get; }
+        public ICollectionModificationPart<TItem, TItem, TItem, TItem> OldPart { get; }
+        public ICollectionModificationPart<TItem, TItem, TItem, TItem> NewPart { get; }
 
-        private readonly ICollectionModification<ItemType, ItemType> collectionModification;
+        private readonly ICollectionModification<TItem, TItem> collectionModification;
 
         #region ICollectionModification<ItemType, ItemType>
 
-        IReadOnlyList<ItemType>? ICollectionModification<ItemType, ItemType>.OldItems =>
+        IReadOnlyList<TItem>? ICollectionModification<TItem, TItem>.OldItems =>
             collectionModification.OldItems;
 
-        int ICollectionModification<ItemType, ItemType>.OldIndex =>
+        int ICollectionModification<TItem, TItem>.OldIndex =>
             collectionModification.OldIndex;
 
-        IReadOnlyList<ItemType>? ICollectionModification<ItemType, ItemType>.NewItems =>
+        IReadOnlyList<TItem>? ICollectionModification<TItem, TItem>.NewItems =>
             collectionModification.NewItems;
 
-        int ICollectionModification<ItemType, ItemType>.NewIndex =>
+        int ICollectionModification<TItem, TItem>.NewIndex =>
             collectionModification.NewIndex;
 
         #endregion
@@ -48,14 +48,14 @@ namespace Teronis.Collections.Synchronization
 
         #endregion
 
-        public CollectionModifiedEventArgs(ICollectionModification<ItemType, ItemType> collectionModification)
+        public CollectionModifiedEventArgs(ICollectionModification<TItem, TItem> collectionModification)
             : base(NotifyCollectionChangedAction.Reset)
         {
             OldPart = new CollectionModificationOldPart(this);
             NewPart = new CollectionModificationNewPart(this);
 
-            var oldItemReadOnlyCollection = collectionModification.OldItems is null ? null : new ReadOnlyList<ItemType>(collectionModification.OldItems);
-            var newItemReadOnlyCollection = collectionModification.NewItems is null ? null : new ReadOnlyList<ItemType>(collectionModification.NewItems);
+            var oldItemReadOnlyCollection = collectionModification.OldItems is null ? null : new ReadOnlyList<TItem>(collectionModification.OldItems);
+            var newItemReadOnlyCollection = collectionModification.NewItems is null ? null : new ReadOnlyList<TItem>(collectionModification.NewItems);
 
             NotifyCollectionChangedEventArgsUtils.SetNotifyCollectionChangedEventArgsProperties(this, collectionModification.Action,
                 oldItemReadOnlyCollection, OldStartingIndex, newItemReadOnlyCollection, NewStartingIndex);
@@ -63,30 +63,30 @@ namespace Teronis.Collections.Synchronization
             this.collectionModification = collectionModification;
         }
 
-        private abstract class CollectionModificationPartBase : CollectionModification<ItemType, ItemType>.CollectionModificationPartBase<ItemType, ItemType>
+        private abstract class CollectionModificationPartBase : CollectionModification<TItem, TItem>.CollectionModificationPartBase<TItem, TItem>
         {
-            protected readonly ICollectionModification<ItemType, ItemType> Modification;
+            protected readonly ICollectionModification<TItem, TItem> Modification;
 
-            public CollectionModificationPartBase(ICollectionModification<ItemType, ItemType> modification)
+            public CollectionModificationPartBase(ICollectionModification<TItem, TItem> modification)
                 : base(modification) =>
                 Modification = modification;
         }
 
         private class CollectionModificationOldPart : CollectionModificationPartBase
         {
-            public CollectionModificationOldPart(ICollectionModification<ItemType, ItemType> modification)
+            public CollectionModificationOldPart(ICollectionModification<TItem, TItem> modification)
                 : base(modification) { }
 
-            public override IReadOnlyList<ItemType>? Items => Modification.OldItems;
+            public override IReadOnlyList<TItem>? Items => Modification.OldItems;
             public override int Index => Modification.OldIndex;
         }
 
         private class CollectionModificationNewPart : CollectionModificationPartBase
         {
-            public CollectionModificationNewPart(ICollectionModification<ItemType, ItemType> modification)
+            public CollectionModificationNewPart(ICollectionModification<TItem, TItem> modification)
                 : base(modification) { }
 
-            public override IReadOnlyList<ItemType>? Items => Modification.NewItems;
+            public override IReadOnlyList<TItem>? Items => Modification.NewItems;
             public override int Index => Modification.NewIndex;
         }
     }

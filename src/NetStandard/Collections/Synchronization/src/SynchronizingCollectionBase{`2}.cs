@@ -16,15 +16,15 @@ namespace Teronis.Collections.Synchronization
     /// <br/>Bindable collections are <see cref="SubItems"/> and <see cref="SuperItems"/>.
     /// <br/>Remember: All childs are parents (because child extends parent), so all childs are a subset of parent / parent is a superset of child.
     /// </summary>
-    /// <typeparam name="SubItemType"></typeparam>
-    /// <typeparam name="SuperItemType"></typeparam>
-    public abstract partial class SynchronizingCollectionBase<SuperItemType, SubItemType> : INotifyCollectionModification<SuperItemType, SubItemType>, ICollectionSynchronizationContext<SuperItemType>
-        where SuperItemType : notnull
-        where SubItemType : notnull
+    /// <typeparam name="TSubItem"></typeparam>
+    /// <typeparam name="TSuperItem"></typeparam>
+    public abstract partial class SynchronizingCollectionBase<TSuperItem, TSubItem> : INotifyCollectionModification<TSuperItem, TSubItem>, ICollectionSynchronizationContext<TSuperItem>
+        where TSuperItem : notnull
+        where TSubItem : notnull
     {
-        private static CollectionModification<SuperItemType, SubItemType> replaceOldSuperItemsByOldSubItems(
-            ICollectionModification<SuperItemType, SuperItemType> superItemsSuperItemsModification,
-            IReadOnlyCollection<SubItemType> subItems)
+        private static CollectionModification<TSuperItem, TSubItem> replaceOldSuperItemsByOldSubItems(
+            ICollectionModification<TSuperItem, TSuperItem> superItemsSuperItemsModification,
+            IReadOnlyCollection<TSubItem> subItems)
         {
             var oldItems = superItemsSuperItemsModification.GetItemsBeginningFromOldIndex(subItems);
             var subItemsSuperItemsModification = superItemsSuperItemsModification.CopyWithOtherItems(oldItems, superItemsSuperItemsModification.NewItems);
@@ -33,17 +33,17 @@ namespace Teronis.Collections.Synchronization
 
         public event EventHandler? CollectionSynchronizing;
         public event EventHandler? CollectionSynchronized;
-        public event NotifyCollectionModifiedEventHandler<SuperItemType, SubItemType>? CollectionModified;
+        public event NotifyCollectionModifiedEventHandler<TSuperItem, TSubItem>? CollectionModified;
 
-        public ISynchronizedCollection<SubItemType> SubItems { get; }
-        public ISynchronizedCollection<SuperItemType> SuperItems { get; }
-        public ICollectionSynchronizationMethod<SuperItemType, SuperItemType> SynchronizationMethod { get; }
+        public ISynchronizedCollection<TSubItem> SubItems { get; }
+        public ISynchronizedCollection<TSuperItem> SuperItems { get; }
+        public ICollectionSynchronizationMethod<TSuperItem, TSuperItem> SynchronizationMethod { get; }
 
-        protected CollectionChangeHandler<SubItemType>.IDependencyInjectedHandler SubItemChangeHandler { get; }
-        protected CollectionChangeHandler<SuperItemType>.IDependencyInjectedHandler SuperItemChangeHandler { get; }
+        protected CollectionChangeHandler<TSubItem>.IDependencyInjectedHandler SubItemChangeHandler { get; }
+        protected CollectionChangeHandler<TSuperItem>.IDependencyInjectedHandler SuperItemChangeHandler { get; }
 
-        private CollectionUpdateItemDelegate<SuperItemType, SubItemType>? updateSuperItem;
-        private CollectionUpdateItemDelegate<SubItemType, SuperItemType>? updateSubItem;
+        private CollectionUpdateItemDelegate<TSuperItem, TSubItem>? updateSuperItem;
+        private CollectionUpdateItemDelegate<TSubItem, TSuperItem>? updateSubItem;
 
         public SynchronizingCollectionBase(Options? options)
         {
@@ -82,16 +82,16 @@ namespace Teronis.Collections.Synchronization
             SuperItemChangeHandler = options.SuperItemsOptions.CollectionChangeHandler!;
 
             SynchronizationMethod = options.SynchronizationMethod
-                ?? CollectionSynchronizationMethod.Sequential<SuperItemType>();
+                ?? CollectionSynchronizationMethod.Sequential<TSuperItem>();
         }
 
-        public SynchronizingCollectionBase(ICollectionSynchronizationMethod<SuperItemType, SuperItemType>? synchronizationMethod)
+        public SynchronizingCollectionBase(ICollectionSynchronizationMethod<TSuperItem, TSuperItem>? synchronizationMethod)
             : this(new Options() { SynchronizationMethod = synchronizationMethod }) { }
 
-        public SynchronizingCollectionBase(IEqualityComparer<SuperItemType> equalityComparer)
+        public SynchronizingCollectionBase(IEqualityComparer<TSuperItem> equalityComparer)
             : this(new Options().SetSequentialSynchronizationMethod(equalityComparer)) { }
 
-        public SynchronizingCollectionBase(IComparer<SuperItemType> equalityComparer, bool descended)
+        public SynchronizingCollectionBase(IComparer<TSuperItem> equalityComparer, bool descended)
             : this(new Options().SetSortedSynchronizationMethod(equalityComparer, descended)) { }
 
         public SynchronizingCollectionBase()
@@ -104,17 +104,17 @@ namespace Teronis.Collections.Synchronization
         protected virtual void ConfigureItems(Options options)
         { }
 
-        protected abstract SubItemType CreateSubItem(SuperItemType superItem);
+        protected abstract TSubItem CreateSubItem(TSuperItem superItem);
 
         /// <summary>
         /// Creates for this instance a collection synchronisation mirror. The collection modifications from <paramref name="toBeMirroredCollection"/> are 
-        /// forwarded to <see cref="ApplyCollectionModification(ICollectionModification{SuperItemType, SuperItemType}, NotifyCollectionChangedAction[])"/>
+        /// forwarded to <see cref="ApplyCollectionModification(ICollectionModification{TSuperItem, TSuperItem}, NotifyCollectionChangedAction[])"/>
         /// of this instance.
         /// </summary>
         /// <param name="toBeMirroredCollection">The foreign collection that is about to be mirrored related to its modifications.</param>
         /// <returns>A collection synchronization mirror.</returns>
-        public SynchronizationMirror<SuperItemType> CreateSynchronizationMirror(ISynchronizedCollection<SuperItemType> toBeMirroredCollection) =>
-            new SynchronizationMirror<SuperItemType>(this, toBeMirroredCollection);
+        public SynchronizationMirror<TSuperItem> CreateSynchronizationMirror(ISynchronizedCollection<TSuperItem> toBeMirroredCollection) =>
+            new SynchronizationMirror<TSuperItem>(this, toBeMirroredCollection);
 
         protected virtual void OnAddedItemByModification(int addedItemIndex) { }
 
@@ -123,7 +123,7 @@ namespace Teronis.Collections.Synchronization
             var subSuperItemModification = applyingModifications.SuperSubItemModification;
             var subSuperItemModifiactionNewItems = subSuperItemModification.NewItems!;
 
-            SuperItemType superItem = default!;
+            TSuperItem superItem = default!;
             int addedItemIndex = default;
 
             CollectionModificationIterationTools.BeginInsert(subSuperItemModification)
@@ -185,7 +185,7 @@ namespace Teronis.Collections.Synchronization
             if (canReplaceSuperItem || canReplaceSubItem) {
                 var superItemModification = applyingModifications.SuperItemModification;
                 var iteratorBuilder = CollectionModificationIterationTools.BeginReplace(superItemModification);
-                var subItemByIndex = new Dictionary<int, Lazy<SubItemType>>();
+                var subItemByIndex = new Dictionary<int, Lazy<TSubItem>>();
                 int replacedItemIndex = 0;
                 int modificationItemIndex = 0;
 
@@ -208,16 +208,16 @@ namespace Teronis.Collections.Synchronization
                     modificationItemIndex = innerModificationItemIndex;
                     replacedItemIndex = modificationItemIndex + globalIndexOffset;
 
-                    subItemByIndex[replacedItemIndex] = new Lazy<SubItemType>(() =>
+                    subItemByIndex[replacedItemIndex] = new Lazy<TSubItem>(() =>
                         CreateSubItem(superItemModification.NewItems![modificationItemIndex]));
                 });
 
                 if (canReplaceSuperItem) {
                     iteratorBuilder.Add(() => {
-                        var lazyNewItem = new Lazy<SuperItemType>(() =>
+                        var lazyNewItem = new Lazy<TSuperItem>(() =>
                             superItemModification.NewItems![modificationItemIndex]);
 
-                        SuperItemType getNewItem() =>
+                        TSuperItem getNewItem() =>
                             lazyNewItem.Value;
 
                         if (SuperItemChangeHandler.CanReplaceItem) {
@@ -228,10 +228,10 @@ namespace Teronis.Collections.Synchronization
 
                 if (canReplaceSubItem) {
                     iteratorBuilder.Add(() => {
-                        var lazyNewItem = new Lazy<SubItemType>(() =>
+                        var lazyNewItem = new Lazy<TSubItem>(() =>
                             CreateSubItem(superItemModification.NewItems![modificationItemIndex]));
 
-                        SubItemType getNewItem() =>
+                        TSubItem getNewItem() =>
                             lazyNewItem.Value;
 
                         if (SubItemChangeHandler.CanReplaceItem) {
@@ -273,10 +273,10 @@ namespace Teronis.Collections.Synchronization
             }
         }
 
-        protected void OnCollectionModified(CollectionModifiedEventArgs<SuperItemType, SubItemType> args)
+        protected void OnCollectionModified(CollectionModifiedEventArgs<TSuperItem, TSubItem> args)
             => CollectionModified?.Invoke(this, args);
 
-        protected void GoThroughModification(ICollectionModification<SuperItemType, SuperItemType> superItemModification)
+        protected void GoThroughModification(ICollectionModification<TSuperItem, TSuperItem> superItemModification)
         {
             var oldSubItemsNewSuperItemsModification = replaceOldSuperItemsByOldSubItems(superItemModification, SubItems);
             var applyingModificationBundle = new ApplyingCollectionModifications(oldSubItemsNewSuperItemsModification, superItemModification);
@@ -287,7 +287,7 @@ namespace Teronis.Collections.Synchronization
             var newSubItems = oldSubItemsNewSuperItemsModification.GetItemsBeginningFromNewIndex(SubItems);
             var oldSubItemsNewSubItemsModification = oldSubItemsNewSuperItemsModification.CopyWithOtherItems(oldSubItemsNewSuperItemsModification.OldItems, newSubItems);
 
-            var collectionModifiedArgs = new CollectionModifiedEventArgs<SuperItemType, SubItemType>(
+            var collectionModifiedArgs = new CollectionModifiedEventArgs<TSuperItem, TSubItem>(
                 oldSubItemsNewSubItemsModification,
                 applyingModificationBundle.SuperSubItemModification,
                 applyingModificationBundle.SuperItemModification);
@@ -305,7 +305,7 @@ namespace Teronis.Collections.Synchronization
         /// Synchronizes collection with <paramref name="items"/>.
         /// </summary>
         /// <param name="items"></param>
-        public virtual void SynchronizeCollection(IEnumerable<SuperItemType>? items, CollectionModificationsYieldCapabilities yieldCapabilities)
+        public virtual void SynchronizeCollection(IEnumerable<TSuperItem>? items, CollectionModificationsYieldCapabilities yieldCapabilities)
         {
             var enumerator = SynchronizationMethod
                 .YieldCollectionModifications(
@@ -327,30 +327,30 @@ namespace Teronis.Collections.Synchronization
             OnCollectionSynchronized();
         }
 
-        public void SynchronizeCollection(IEnumerable<SuperItemType>? enumerable) =>
+        public void SynchronizeCollection(IEnumerable<TSuperItem>? enumerable) =>
             SynchronizeCollection(enumerable, yieldCapabilities: CollectionModificationsYieldCapabilities.All);
 
         #region ICollectionSynchronizationContext<SuperItemType>
 
-        void ICollectionSynchronizationContext<SuperItemType>.BeginCollectionSynchronization() =>
+        void ICollectionSynchronizationContext<TSuperItem>.BeginCollectionSynchronization() =>
             OnCollectionSynchronizing();
 
-        void ICollectionSynchronizationContext<SuperItemType>.GoThroughModification(ICollectionModification<SuperItemType, SuperItemType> superItemModification) =>
+        void ICollectionSynchronizationContext<TSuperItem>.GoThroughModification(ICollectionModification<TSuperItem, TSuperItem> superItemModification) =>
             GoThroughModification(superItemModification);
 
-        void ICollectionSynchronizationContext<SuperItemType>.EndCollectionSynchronization() =>
+        void ICollectionSynchronizationContext<TSuperItem>.EndCollectionSynchronization() =>
             OnCollectionSynchronized();
 
         #endregion
 
         protected readonly struct ApplyingCollectionModifications
         {
-            public ICollectionModification<SuperItemType, SubItemType> SuperSubItemModification { get; }
-            public ICollectionModification<SuperItemType, SuperItemType> SuperItemModification { get; }
+            public ICollectionModification<TSuperItem, TSubItem> SuperSubItemModification { get; }
+            public ICollectionModification<TSuperItem, TSuperItem> SuperItemModification { get; }
 
             public ApplyingCollectionModifications(
-                ICollectionModification<SuperItemType, SubItemType> subSuperItemModification,
-                ICollectionModification<SuperItemType, SuperItemType> superItemModification)
+                ICollectionModification<TSuperItem, TSubItem> subSuperItemModification,
+                ICollectionModification<TSuperItem, TSuperItem> superItemModification)
             {
                 SuperSubItemModification = subSuperItemModification;
                 SuperItemModification = superItemModification;

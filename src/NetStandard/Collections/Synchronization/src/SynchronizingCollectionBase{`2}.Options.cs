@@ -7,13 +7,13 @@ using Teronis.Collections.Algorithms.Modifications;
 
 namespace Teronis.Collections.Synchronization
 {
-    public partial class SynchronizingCollectionBase<SuperItemType, SubItemType>
+    public partial class SynchronizingCollectionBase<TSuperItem, TSubItem>
     {
         public sealed class Options
         {
             public OptionsForSubItems SubItemsOptions { get; }
             public OptionsForSuperItems SuperItemsOptions { get; }
-            public ICollectionSynchronizationMethod<SuperItemType, SuperItemType>? SynchronizationMethod { get; set; }
+            public ICollectionSynchronizationMethod<TSuperItem, TSuperItem>? SynchronizationMethod { get; set; }
 
             public Options()
             {
@@ -21,25 +21,25 @@ namespace Teronis.Collections.Synchronization
                 SubItemsOptions = new OptionsForSubItems();
             }
 
-            public Options SetSequentialSynchronizationMethod(IEqualityComparer<SuperItemType> equalityComparer)
+            public Options SetSequentialSynchronizationMethod(IEqualityComparer<TSuperItem> equalityComparer)
             {
                 SynchronizationMethod = CollectionSynchronizationMethod.Sequential(equalityComparer);
                 return this;
             }
 
-            public Options SetAscendedSynchronizationMethod(IComparer<SuperItemType> equalityComparer)
+            public Options SetAscendedSynchronizationMethod(IComparer<TSuperItem> equalityComparer)
             {
                 SynchronizationMethod = CollectionSynchronizationMethod.Ascending(equalityComparer);
                 return this;
             }
 
-            public Options SetDescendedSynchronizationMethod(IComparer<SuperItemType> equalityComparer)
+            public Options SetDescendedSynchronizationMethod(IComparer<TSuperItem> equalityComparer)
             {
                 SynchronizationMethod = CollectionSynchronizationMethod.Descending(equalityComparer);
                 return this;
             }
 
-            public Options SetSortedSynchronizationMethod(IComparer<SuperItemType> equalityComparer, bool descended)
+            public Options SetSortedSynchronizationMethod(IComparer<TSuperItem> equalityComparer, bool descended)
             {
                 SynchronizationMethod = CollectionSynchronizationMethod.Sorted(equalityComparer, descended);
                 return this;
@@ -96,22 +96,22 @@ namespace Teronis.Collections.Synchronization
                     SetItems(new List<ItemType>(), modificationHandler);
             }
 
-            public sealed class OptionsForSuperItems : ItemsOptions<SuperItemType> {
+            public sealed class OptionsForSuperItems : ItemsOptions<TSuperItem> {
                 /// <summary>
                 /// If not null it is called in <see cref="SynchronizingCollectionBase{SuperItemType, SubItemType}.ReplaceItemByModification(ApplyingCollectionModifications)"/>
                 /// but after the items could have been replaced and before <see cref="SynchronizingCollectionBase{SuperItemType, SubItemType}.OnReplacedItemByModification(int)"/>.
                 /// </summary>
-                public CollectionUpdateItemDelegate<SuperItemType, SubItemType>? UpdateItem { get; set; }
+                public CollectionUpdateItemDelegate<TSuperItem, TSubItem>? UpdateItem { get; set; }
             }
 
-            public sealed class OptionsForSubItems : ItemsOptions<SubItemType> {
+            public sealed class OptionsForSubItems : ItemsOptions<TSubItem> {
                 /// <summary>
                 /// If not null it is called by <see cref="SynchronizingCollectionBase{SuperItemType, SubItemType}.ReplaceItemByModification(ApplyingCollectionModifications)"/>
                 /// but after the items could have been replaced and before <see cref="SynchronizingCollectionBase{SuperItemType, SubItemType}.OnReplacedItemByModification(int)"/>.
                 /// <br/>
                 /// <br/>(!) Take into regard, that <see cref="OptionsForSuperItems.UpdateItem"/> is called at first if not null.
                 /// </summary>
-                public CollectionUpdateItemDelegate<SubItemType, SuperItemType>? UpdateItem { get; set; }
+                public CollectionUpdateItemDelegate<TSubItem, TSuperItem>? UpdateItem { get; set; }
             }
         }
     }

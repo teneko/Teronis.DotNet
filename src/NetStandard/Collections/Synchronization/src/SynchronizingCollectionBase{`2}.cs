@@ -107,14 +107,14 @@ namespace Teronis.Collections.Synchronization
         protected abstract TSubItem CreateSubItem(TSuperItem superItem);
 
         /// <summary>
-        /// Creates for this instance a collection synchronisation mirror. The collection modifications from <paramref name="toBeMirroredCollection"/> are 
-        /// forwarded to <see cref="ApplyCollectionModification(ICollectionModification{TSuperItem, TSuperItem}, NotifyCollectionChangedAction[])"/>
+        /// Creates for this instance a collection synchronisation mirror. The collection modifications from <paramref name="collectionToBeMirrored"/> are 
+        /// forwarded to <see cref="GoThroughModification(ICollectionModification{TSuperItem, TSuperItem})"/>
         /// of this instance.
         /// </summary>
-        /// <param name="toBeMirroredCollection">The foreign collection that is about to be mirrored related to its modifications.</param>
+        /// <param name="collectionToBeMirrored">The foreign collection that is about to be mirrored related to its modifications.</param>
         /// <returns>A collection synchronization mirror.</returns>
-        public SynchronizationMirror<TSuperItem> CreateSynchronizationMirror(ISynchronizedCollection<TSuperItem> toBeMirroredCollection) =>
-            new SynchronizationMirror<TSuperItem>(this, toBeMirroredCollection);
+        public SynchronizationMirror<TSuperItem> CreateSynchronizationMirror(ISynchronizedCollection<TSuperItem> collectionToBeMirrored) =>
+            new SynchronizationMirror<TSuperItem>(this, collectionToBeMirrored);
 
         protected virtual void OnAddedItemByModification(int addedItemIndex) { }
 

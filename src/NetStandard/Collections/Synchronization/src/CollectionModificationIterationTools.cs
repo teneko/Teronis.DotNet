@@ -11,12 +11,12 @@ namespace Teronis.Collections.Synchronization
     /// Represents the delegate for the handler that is called from <see cref="CollectionModificationIterationTools.IteratorBuilder.Iterate"/>.
     /// </summary>
     /// <param name="frontIndex">The modification item index without index offset.</param>
-    /// <param name="backIndexOffset">The index offset that is when summed up with <param name="frontIndex"/> the index of the synchronized list.</param>
+    /// <param name="backIndexOffset">The index offset that is when summed up with front index the index of the synchronized list.</param>
     public delegate void CollectionModificationIterationWithIndexDelegate(int frontIndex, int backIndexOffset);
 
     public delegate void CollectionModificationIterationDelegate();
 
-    public class CollectionModificationIterationTools
+    public static class CollectionModificationIterationTools
     {
         /// <summary>
         /// Creates an iterator builder.

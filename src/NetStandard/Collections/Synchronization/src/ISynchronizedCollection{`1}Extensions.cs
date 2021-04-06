@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Teronis.Collections.Synchronization
 {
-    public static class ISynchronizedCollection_1Extensions
+    public static class ISynchronizedCollectionGenericExtensions
     {
         public static SynchronizedDictionary<TKey, TItem> CreateSynchronizedDictionary<TItem, TKey>(
             this ISynchronizedCollection<TItem> collection,

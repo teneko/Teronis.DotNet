@@ -45,15 +45,6 @@ Licensed under the MIT license. See LICENSE file in the project root for full li
     <TeronisMSBuildPackagingPackPropsFile>$(RootDirectory)src\MSBuild\Packaging\Pack\0\src\build\Teronis.MSBuild.Packaging.Pack.props</TeronisMSBuildPackagingPackPropsFile>
     <TeronisMSBuildPackagingPackTargetsFile>$(RootDirectory)src\MSBuild\Packaging\Pack\0\src\build\Teronis.MSBuild.Packaging.Pack.targets</TeronisMSBuildPackagingPackTargetsFile>
 
-    <!-- Teronis.ModuleInitializer.AssemblyLoader.Executable -->
-    <!-- When using this approach again create first a local binary and use that. -->
-    <!-- <TeronisModuleInitializerAssemblyLoaderExecutablePropsFile>$(PackagePublishmentsDirectory)Teronis.ModuleInitializer.AssemblyLoader.Executable~ExecutablePublish\build\Teronis.ModuleInitializer.AssemblyLoader.Executable.props</TeronisModuleInitializerAssemblyLoaderExecutablePropsFile>
-    <TeronisModuleInitializerAssemblyLoaderExecutableTargetsFile>$(PackagePublishmentsDirectory)Teronis.ModuleInitializer.AssemblyLoader.Executable~ExecutablePublish\build\Teronis.ModuleInitializer.AssemblyLoader.Executable.targets</TeronisModuleInitializerAssemblyLoaderExecutableTargetsFile> -->
-
-    <!-- Teronis.ModuleInitializer.AssemblyLoader.MSBuild -->
-    <TeronisModuleInitializerAssemblyLoaderMSBuildPropsFile>$(RootDirectory)src\ModuleInitializer\AssemblyLoader\0.MSBuild\src\build\Teronis.ModuleInitializer.AssemblyLoader.MSBuild.props</TeronisModuleInitializerAssemblyLoaderMSBuildPropsFile>
-    <TeronisModuleInitializerAssemblyLoaderMSBuildTargetsFile>$(RootDirectory)src\ModuleInitializer\AssemblyLoader\0.MSBuild\src\build\Teronis.ModuleInitializer.AssemblyLoader.MSBuild.targets</TeronisModuleInitializerAssemblyLoaderMSBuildTargetsFile>
-
   </PropertyGroup>
 
 </Project>

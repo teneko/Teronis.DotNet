@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Teroneko.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis
 {
-    public struct YetNullable<T> : IEquatable<YetNullable<T>>, IYetNullable<T>
+    public struct YetNullable<T> : IYetNullable<T>
     {
-        public static YetNullable<T> Null = new YetNullable<T>(default, true);
+        public readonly static YetNullable<T> Null = new YetNullable<T>(default, isNull: true);
 
         [MaybeNull]
         public readonly T Value =>
@@ -20,18 +19,19 @@ namespace Teronis
         public readonly bool IsNotNull =>
             isNotNull;
 
+        [MaybeNull, AllowNull]
         internal readonly T value;
 
         private readonly bool isNotNull;
 
         internal YetNullable([AllowNull] T value, bool isNull)
         {
-            this.value = value!;
+            this.value = value;
             isNotNull = !isNull;
         }
 
         public YetNullable([AllowNull] T key)
-            : this(key, key is null) { }
+            : this(key, isNull: key is null) { }
 
         public override bool Equals(object? other)
         {
@@ -43,28 +43,26 @@ namespace Teronis
                 return false;
             }
 
-            return Value!.Equals(other);
+            return value!.Equals(other);
         }
-
-        public bool Equals(YetNullable<T> other) =>
-            YetNullable.Equals(this, other);
 
         public override int GetHashCode()
         {
             if (IsNotNull) {
-                return Value!.GetHashCode();
+                return value!.GetHashCode();
             }
 
             return 0;
         }
 
         public override string? ToString() =>
-            Value?.ToString() ?? "";
+            value?.ToString() ?? "";
 
         public static implicit operator YetNullable<T>([AllowNull] T key) =>
             new YetNullable<T>(key);
 
-        public static implicit operator T(YetNullable<T> key) =>
-            key.Value!;
+        [return: MaybeNull]
+        public static explicit operator T(YetNullable<T> key) =>
+            key.value;
     }
 }

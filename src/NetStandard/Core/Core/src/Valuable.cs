@@ -6,48 +6,35 @@ using System.Collections.Generic;
 
 namespace Teronis
 {
-    public static class YetNullable
+    public static class Valuable
     {
-        public static bool IsNullable(Type type) =>
-            type.IsGenericType && type.GetGenericTypeDefinition() == typeof(YetNullable<>);
+        public static bool IsValuable(Type type) =>
+            type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Valuable<>);
 
-        public static YetNullable<T> Null<T>() =>
-            YetNullable<T>.Null;
-
-        public static YetNullable<T> Null<T>(T? nullableValue)
-            where T : struct
+        public static bool Equals<T>(Valuable<T> left, Valuable<T> right)
         {
-            if (nullableValue.HasValue) {
-                return new YetNullable<T>(nullableValue.Value);
-            }
-
-            return YetNullable<T>.Null;
-        }
-
-        public static bool Equals<T>(YetNullable<T> left, YetNullable<T> right)
-        {
-            if (left.IsNull && right.IsNull) {
+            if (left.HasNoValue && right.HasNoValue) {
                 return true;
             }
 
-            if (left.IsNull || right.IsNull) {
+            if (left.HasNoValue || right.HasNoValue) {
                 return false;
             }
 
             return EqualityComparer<T>.Default.Equals(left.value!, right.value!);
         }
 
-        public static int Compare<T>(YetNullable<T> left, YetNullable<T> right)
+        public static int Compare<T>(Valuable<T> left, Valuable<T> right)
         {
-            if (left.IsNull && right.IsNull) {
+            if (left.HasNoValue && right.HasNoValue) {
                 return 0;
             }
 
-            if (left.IsNull) {
+            if (left.HasNoValue) {
                 return -1;
             }
 
-            if (right.IsNull) {
+            if (right.HasNoValue) {
                 return 1;
             }
 
@@ -55,13 +42,13 @@ namespace Teronis
         }
 
         /// <summary>
-        /// Returns the underlying type of <see cref="YetNullable{T}"/>.
+        /// Returns the underlying type of <see cref="Valuable{T}"/>.
         /// If <paramref name="type"/> is not of type 
-        /// <see cref="YetNullable{T}"/> null will
+        /// <see cref="Valuable{T}"/> null will
         /// be returned. 
         /// </summary>
         /// <param name="type"></param>
-        /// <returns>The underlying type of <see cref="YetNullable{T}"/>.</returns>
+        /// <returns>The underlying type of <see cref="Valuable{T}"/>.</returns>
         public static Type? GetUnderlyingType(Type type)
         {
             if ((object)type == null) {
@@ -73,7 +60,7 @@ namespace Teronis
             if (type.IsGenericType && !type.IsGenericTypeDefinition) {
                 Type genericType = type.GetGenericTypeDefinition();
 
-                if (ReferenceEquals(genericType, typeof(YetNullable<>))) {
+                if (ReferenceEquals(genericType, typeof(Valuable<>))) {
                     result = type.GetGenericArguments()[0];
                 }
             }

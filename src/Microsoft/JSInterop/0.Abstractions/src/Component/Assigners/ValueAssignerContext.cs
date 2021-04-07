@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Teroneko.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
 using System.Collections.Generic;
 using Teronis.Microsoft.JSInterop.Collections;
 using static Teronis.Microsoft.JSInterop.Component.Assigners.ValueAssignerContext;
@@ -10,7 +9,8 @@ namespace Teronis.Microsoft.JSInterop.Component.Assigners
 {
     public class ValueAssignerContext : TreeIterator<IValueAssigner, ValueAssignerEntry, ValueAssignerEntryEnumerator>
     {
-        public YetNullable<object> ValueResult { get; private set; }
+        public virtual Valuable<object> ValueResult { get; protected set; }
+        public virtual bool ValueOriginatesFromInterceptor { get; protected set; }
 
         public ValueAssignerContext(ValueAssignerContext context)
             : base(context) { }
@@ -30,6 +30,19 @@ namespace Teronis.Microsoft.JSInterop.Component.Assigners
         protected override ValueAssignerEntryEnumerator CreateEnumerator(IReadOnlyList<ValueAssignerEntry> entries, int initialIndex = -1) =>
             new ValueAssignerEntryEnumerator(entries, initialIndex);
 
+        /// <summary>
+        /// Sets the new value result and sets <see cref="ValueOriginatesFromInterceptor"/> to false.
+        /// </summary>
+        /// <param name="value"></param>
+        public virtual void SetValueResult(object? value)
+        {
+            ValueOriginatesFromInterceptor = false;
+            ValueResult = value;
+        }
+
+        public virtual void ClearValueResult() =>
+            ValueResult = default;
+
         public class ValueAssignerEntryEnumerator : TreeIteratorEnumerator<ValueAssignerEntry>
         {
             internal ValueAssignerEntryEnumerator(IReadOnlyList<ValueAssignerEntry> entries, int initialIndex = -1)
@@ -41,8 +54,5 @@ namespace Teronis.Microsoft.JSInterop.Component.Assigners
             internal ValueAssignerEntry(IValueAssigner propertyAssigner)
                 : base(propertyAssigner) { }
         }
-
-        public void SetValueResult(object value) =>
-            ValueResult = value;
     }
 }

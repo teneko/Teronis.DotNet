@@ -17,7 +17,7 @@ namespace Teronis.Microsoft.JSInterop.Component.Assigners
                 handler: entry => entry.Item.AssignValueAsync(definition, context))
                 .ConfigureAwait(false);
 
-            if (context.ValueResult.IsNull) {
+            if (context.ValueOriginatesFromInterceptor || context.ValueResult.HasNoValue) {
                 return false;
             }
 

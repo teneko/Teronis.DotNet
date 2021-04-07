@@ -5,12 +5,12 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis
 {
-    public static class IYetNullableExtensions
+    public static class INullableExtensions
     {
-        public static bool TryGetNotNull<T>(this IYetNullable<T> nullable, [MaybeNullWhen(false)] out T value)
+        public static bool TryGetNotNull<T>(this INullable<T> nullable, [MaybeNullWhen(false)] out T value)
         {
-            if (nullable.IsNotNull) {
-                value = nullable.Value!;
+            if (!(nullable.Value is null)) {
+                value = nullable.Value;
                 return true;
             }
 
@@ -18,14 +18,14 @@ namespace Teronis
             return false;
         }
 
-        public static bool TryGetNull<T>(this IYetNullable<T> nullable, [MaybeNullWhen(true)] out T value)
+        public static bool TryGetNull<T>(this INullable<T> nullable, [MaybeNullWhen(true)] out T value)
         {
-            if (nullable.IsNull) {
+            if (nullable.Value is null) {
                 value = default;
                 return true;
             }
 
-            value = nullable.Value!;
+            value = nullable.Value;
             return false;
         }
     }

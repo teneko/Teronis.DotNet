@@ -17,7 +17,9 @@ namespace Teronis.Microsoft.JSInterop.Interception.Interceptors
 
         public async ValueTask InterceptInvokeAsync<TValue>(IJSObjectInvocation<TValue> invocation, InterceptionContext context)
         {
-            var propertyAssignerContext = new ValueAssignerContext(propertyAssignerList);
+            var propertyAssignerContext = new InterceptorValueAssignerContext(propertyAssignerList);
+            var result = await invocation.GetDeterminedResult();
+            propertyAssignerContext.SetInterceptorOriginatingValueResult(result);
 
             if (await ValueAssignerIteratorExecutor.TryAssignValueAsync(invocation.InvocationDefinition, propertyAssignerContext)) {
                 if (!(propertyAssignerContext.ValueResult.Value is TValue value)) {

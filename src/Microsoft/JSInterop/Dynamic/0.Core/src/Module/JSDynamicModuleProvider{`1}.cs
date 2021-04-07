@@ -2,36 +2,38 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
-using Teronis.Microsoft.JSInterop.Annotations;
 
 namespace Teronis.Microsoft.JSInterop.Module
 {
     /// <summary>
-    /// Provides a specific module. It can be registered as open generic type.
+    /// Provide the same dynamic module of type <typeparamref name="TModule"/> within this instance.
     /// </summary>
-    /// <typeparam name="TModule"></typeparam>
-    public class JSDynamicModuleProvider<TModule>
+    /// <remarks>
+    /// It is intended to be registered as open generic service.
+    /// </remarks>
+    /// <typeparam name="TModule">The type to be proxied.</typeparam>
+    public sealed class JSDynamicModuleProvider<TModule>
         where TModule : class, IJSModule
     {
-        public SlimLazy<ValueTask<TModule>> Module { get; }
+        public SlimLazy<ValueTask<TModule>> Module =>
+            module ??= new SlimLazy<ValueTask<TModule>>(CreateModuleAsync);
 
-        public JSDynamicModuleProvider(IJSDynamicModuleActivator jsDynamicModuleActivator)
-        {
-            if (jsDynamicModuleActivator is null) {
-                throw new ArgumentNullException(nameof(jsDynamicModuleActivator));
-            }
+        private SlimLazy<ValueTask<TModule>>? module;
+        private readonly IServiceProvider serviceProvider;
 
-            var moduleType = typeof(TModule);
-            var attributeType = typeof(JSModuleAttribute);
+        public JSDynamicModuleProvider(IServiceProvider serviceProvider) =>
+            this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 
-            if (!moduleType.IsDefined(attributeType, inherit: false)) {
-                throw new ArgumentException($"The type of {typeof(TModule)} has to be decorated with {typeof(JSModuleAttribute)}");
-            }
+        private ValueTask<TModule> CreateModuleAsync() =>
+            new ModuleProvider(serviceProvider).CreateModuleAsync();
 
-            var attribute = (JSModuleAttribute)moduleType.GetCustomAttributes(attributeType, inherit: false).Single();
-            Module = new SlimLazy<ValueTask<TModule>>(() => jsDynamicModuleActivator.CreateInstanceAsync<TModule>(attribute.NameOrPath));
+        private class ModuleProvider : JSDynamicModuleTypeActivatorBase<TModule, IJSDynamicModuleActivator> {
+            public ModuleProvider(IServiceProvider serviceProvider) 
+                : base(serviceProvider) { }
+
+            protected override ValueTask<TModule> ActivateModuleAsync(IJSDynamicModuleActivator moduleActivator, string moduleNameOrPath) =>
+                moduleActivator.CreateInstanceAsync<TModule>(moduleNameOrPath);
         }
     }
 }

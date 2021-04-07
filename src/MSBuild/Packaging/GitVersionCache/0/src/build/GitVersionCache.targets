@@ -19,7 +19,7 @@ Licensed under the MIT license. See LICENSE file in the project root for full li
   # - GitVersionCacheNoFetch: The parameter that gets passed to GitVersion.exe. It is by default false.
   # - GitVersionCacheNoNormalize: The parameter that gets passed to GitVersion.exe. It is by default false.
   -->
-  <Target Name="GetVersionCache">
+  <Target Name="GetVersionCacheFromTask">
 
     <PropertyGroup>
 
@@ -73,7 +73,7 @@ Licensed under the MIT license. See LICENSE file in the project root for full li
   # Optional parameters:
   # - GitVersionCacheIdentifier: The identifier of cache.
   -->
-  <Target Name="GetVersionCacheInline" DependsOnTargets="$(GetVersionCache)" Outputs="@(InlinedVersionCache)">
+  <Target Name="PrintVersionCacheToConsole" DependsOnTargets="$(GetVersionCacheInlineDependsOn)" Outputs="@(VersionCacheInlinedFromTask)">
 
     <ItemGroup>
       <VersionVariables Include="VersionVariables">
@@ -108,18 +108,18 @@ Licensed under the MIT license. See LICENSE file in the project root for full li
     </ItemGroup>
 
     <MetadataToString Item="@(VersionVariables)">
-      <Output TaskParameter="Metadata" PropertyName="InlinedVersionCache" />
+      <Output TaskParameter="Metadata" PropertyName="VersionCacheInlinedFromTask" />
     </MetadataToString>
 
     <!-- DO NOT DELETE! It is the output by MSBuild-task and can be used with target GetVersionCacheInlineProperty. -->
-    <Message Text="$(InlinedVersionCache)" Importance="high" />
+    <Message Text="$(VersionCacheInlinedFromTask)" Importance="high" />
 
   </Target>
 
   <!-- 
   # Target gets the value of a property.
   # It needs the following properties:
-  # - GetVersionCacheInline:
+  # - VersionCacheInlined:
   #   The string with key value pairs separated by semicolons. 
   #   The string has to end with semicolon.
   # - GetVersionPropertyName: The name of the property.
@@ -130,11 +130,11 @@ Licensed under the MIT license. See LICENSE file in the project root for full li
     <PropertyGroup>
       <ConsolePropertyName>Console$(GetVersionPropertyName)=</ConsolePropertyName>
       <ConsolePropertyLength>$(ConsolePropertyName.Length)</ConsolePropertyLength>
-      <ConsolePropertyIndex>$(GetVersionCacheInline.IndexOf('$(ConsolePropertyName)'))</ConsolePropertyIndex>
+      <ConsolePropertyIndex>$(VersionCacheInlined.IndexOf('$(ConsolePropertyName)'))</ConsolePropertyIndex>
       <ConsolePropertyValueIndex>$([MSBuild]::Add($(ConsolePropertyIndex),$(ConsolePropertyName.Length)))</ConsolePropertyValueIndex>
-      <ConsolePropertySemicolonIndex>$(GetVersionCacheInline.IndexOf(';',$(ConsolePropertyValueIndex)))</ConsolePropertySemicolonIndex>
+      <ConsolePropertySemicolonIndex>$(VersionCacheInlined.IndexOf(';',$(ConsolePropertyValueIndex)))</ConsolePropertySemicolonIndex>
       <ConsolePropertyValueLength>$([MSBuild]::Subtract($(ConsolePropertySemicolonIndex),$(ConsolePropertyValueIndex)))</ConsolePropertyValueLength>
-      <ConsolePropertyValue>$(GetVersionCacheInline.SubString($(ConsolePropertyValueIndex),$(ConsolePropertyValueLength)))</ConsolePropertyValue>
+      <ConsolePropertyValue>$(VersionCacheInlined.SubString($(ConsolePropertyValueIndex),$(ConsolePropertyValueLength)))</ConsolePropertyValue>
     </PropertyGroup>
 
     <Message Text="[$(MSBuildThisFile)] ConsolePropertyName: $(ConsolePropertyName)" Importance="high" Condition="'$(PrintDebug)' == 'true'" />

@@ -23,6 +23,9 @@ Licensed under the MIT license. See LICENSE file in the project root for full li
     <!-- Only for documentation. -->
     <!-- Use SemVer 2.0 notation. It is by default true. -->
     <GitVersionCacheUseSemVer2></GitVersionCacheUseSemVer2>
+
+    <!-- Only for documentation. -->
+    <GetVersionCacheDependsOn>$(GetVersionCacheDependsOn)</GetVersionCacheDependsOn>
     
   </PropertyGroup>
 

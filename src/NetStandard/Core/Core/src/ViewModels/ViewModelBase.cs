@@ -69,8 +69,14 @@ namespace Teronis.ViewModels
             }
         }
 
-        protected void ChangeProperty(Action action, Expression<Func<object?>> anonymousProperties) =>
-            ChangeProperty(action, ExpressionGenericTools.GetAnonymousTypeNames(anonymousProperties));
+        /// <summary>
+        /// Fires <see cref="PropertyChanging"/> before invoking <paramref name="propertyChangeHandler"/> and
+        /// fires <see cref="PropertyChanged"/> after invoking <paramref name="propertyChangeHandler"/>.
+        /// </summary>
+        /// <param name="propertyChangeHandler">The handler that perfomens the property change.</param>
+        /// <param name="anonymousProperties">The properties that are affected by change. (e.g. () => { prop1, prop2 })</param>
+        protected void ChangeProperty(Action propertyChangeHandler, Expression<Func<object?>> anonymousProperties) =>
+            ChangeProperty(propertyChangeHandler, ExpressionGenericTools.GetAnonymousTypeNames(anonymousProperties));
 
         private void Property_RequestParents(object sender, HavingParentsEventArgs havingParents)
             => havingParents.AddParentAndItsParents(this);

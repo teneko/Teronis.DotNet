@@ -13,13 +13,13 @@ This project is a wrapper around [Teronis.NUnit.Core](/src/NUnit/Core). It allow
 Package Managaer
 
 ```
-Install-Package Teronis.AspNetCore.Components.NUnit -Version <type here version>
+Install-Package Teronis.AspNetCore.Components.NUnit -Version <version>
 ```
 
 .NET CLI
 
 ```
-dotnet add package Teronis.AspNetCore.Components.NUnit --version <type here version>
+dotnet add package Teronis.AspNetCore.Components.NUnit --version <version>
 ```
 
 ## Quick Start Guide

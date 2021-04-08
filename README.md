@@ -19,7 +19,7 @@ Teronis.DotNet consists of many projects. These are projects to solve common pro
   <br/>_Create and execute NUnit test cases in Blazor programmatically and display NUnit XML report._
 - [Teronis.Microsoft.JSInterop](src/Microsoft/JSInterop/0) &nbsp; | &nbsp; :package: [NuGet Package](https://www.nuget.org/packages/Teronis.Microsoft.JSInterop)
   <br/>_Create specialized IJSObjectReference facades_
-- [Teronis.Microsoft.JSInterop.Dynamic](src/Microsoft/JSInterop/Dynamic) &nbsp; | &nbsp; :package: [NuGet Package](https://www.nuget.org/packages/Teronis.Microsoft.JSInterop.Dynamic)
+- [Teronis.Microsoft.JSInterop.Dynamic](src/Microsoft/JSInterop/Dynamic/0) &nbsp; | &nbsp; :package: [NuGet Package](https://www.nuget.org/packages/Teronis.Microsoft.JSInterop.Dynamic)
   <br/>_Create specialized IJSObjectReference dynamic proxy facades_
 - ... (TBD)
   

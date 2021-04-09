@@ -20,10 +20,11 @@ namespace Teronis.Windows.PresentationFoundation.Controls
             } else if (model.Buttons == DialogButtons.Ok) {
                 footerViewModel = new DialogFooterOkViewModel(model.Buttons);
             } else {
-                throw new NotImplementedException("This type of buttons is not implemented yet");
+                throw new NotImplementedException("This type of buttons is not implemented yet. :(");
             }
 
-            var dialogViewModel = new DialogViewModel(model.Caption,
+            var dialogViewModel = new DialogViewModel(
+                model.Caption,
                 headerViewModel,
                 footerViewModel);
 

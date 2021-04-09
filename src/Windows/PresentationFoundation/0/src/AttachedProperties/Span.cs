@@ -21,9 +21,19 @@ namespace Teronis.Windows.PresentationFoundation.AttachedProperties
         public static void SetTrimRuns(SpanControl span, bool value)
             => span.SetValue(TrimRunsProperty, value);
 
+        private static SpanControl GetSpanControl(object @object) {
+            var spanControl = @object as SpanControl;
+
+            if (spanControl is null) {
+                throw new InvalidOperationException($"Dependency object is not of type {typeof(SpanControl)}.");
+            }
+
+            return spanControl;
+        }
+
         private static void trimRunsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var textBlock = d as SpanControl;
+            var textBlock = GetSpanControl(d);
             textBlock.Loaded += OnTextBlockLoaded;
         }
 
@@ -46,7 +56,7 @@ namespace Teronis.Windows.PresentationFoundation.AttachedProperties
 
         static void OnTextBlockLoaded(object sender, EventArgs args)
         {
-            var span = sender as SpanControl;
+            var span = GetSpanControl(sender);
             span.Loaded -= OnTextBlockLoaded;
 
             var runs = span.Inlines

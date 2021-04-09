@@ -9,21 +9,21 @@ namespace Teronis.Windows.PresentationFoundation.Templating
 {
     public class DialogFooterTemplateSelector : DataTemplateSelector
     {
-        public DataTemplate OkTemplate { get; set; }
-        public DataTemplate YesNoTemplate { get; set; }
+        public DataTemplate? OkTemplate { get; set; }
+        public DataTemplate? YesNoTemplate { get; set; }
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
 
-            if (item is DialogFooterOkViewModel) {
+            if (item is DialogFooterOkViewModel && !(OkTemplate is null)) {
                 return OkTemplate;
             }
 
-            if (item is DialogFooterYesNoViewModel) {
+            if (item is DialogFooterYesNoViewModel && !(YesNoTemplate is null)) {
                 return YesNoTemplate;
-            } else {
-                return base.SelectTemplate(item, container);
             }
+
+            return base.SelectTemplate(item, container);
         }
     }
 }

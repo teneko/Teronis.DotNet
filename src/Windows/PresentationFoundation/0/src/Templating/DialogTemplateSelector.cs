@@ -9,15 +9,15 @@ namespace Teronis.Windows.PresentationFoundation.Templating
 {
     public class DialogTemplateSelector : DataTemplateSelector
     {
-        public DataTemplate HeaderFooterTemplate { get; set; }
+        public DataTemplate? HeaderFooterTemplate { get; set; }
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            if (item is DialogFooterYesNoViewModel) {
+            if (item is DialogFooterYesNoViewModel && !(HeaderFooterTemplate is null)) {
                 return HeaderFooterTemplate;
-            } else {
-                return base.SelectTemplate(item, container);
             }
+
+            return base.SelectTemplate(item, container);
         }
     }
 }

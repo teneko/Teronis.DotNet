@@ -10,22 +10,28 @@ namespace Teronis.Windows.PresentationFoundation.ViewModels
 {
     public class DialogFooterYesNoViewModel : ViewModelBase, IDialogFooterViewModel
     {
-        public bool? DialogResult { get; set; }
+        public bool? DialogResult {
+            get => dialogResult;
+            set => PropertyChangeComponent.ChangeProperty(ref dialogResult, value);
+        }
+
         public DialogButtons Buttons { get; private set; }
         public ICommand YesCommand { get; private set; }
         public ICommand NoCommand { get; private set; }
 
+        private bool? dialogResult;
+
         public DialogFooterYesNoViewModel(DialogButtons buttons)
         {
             Buttons = buttons;
-            YesCommand = new CommandManagerRelayCommand<object>(onYesClicked);
-            NoCommand = new CommandManagerRelayCommand<object>(onNoClicked);
+            YesCommand = new CommandManagerRelayCommand<object>(OnClickedYes);
+            NoCommand = new CommandManagerRelayCommand<object>(OnClickedNo);
         }
 
-        private void onYesClicked(object parameter)
-            => DialogResult = true;
+        private void OnClickedYes(object? _) =>
+            DialogResult = true;
 
-        private void onNoClicked(object parameter)
-            => DialogResult = false;
+        private void OnClickedNo(object? _) =>
+            DialogResult = false;
     }
 }

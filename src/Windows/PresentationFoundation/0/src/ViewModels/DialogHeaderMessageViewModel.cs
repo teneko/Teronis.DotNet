@@ -9,7 +9,7 @@ namespace Teronis.Windows.PresentationFoundation.ViewModels
     {
         public string Message { get; private set; }
 
-        public DialogHeaderMessageViewModel(string message)
-            => Message = message;
+        public DialogHeaderMessageViewModel(string message) => 
+            Message = message;
     }
 }

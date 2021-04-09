@@ -1,6 +1,5 @@
 ﻿using System;
 using Teronis.Collections.Synchronization.Example1.Models;
-using Teronis.ObjectModel.TreeColumn;
 using Teronis.ViewModels;
 
 namespace Teronis.Collections.Synchronization.Example1.ViewModels

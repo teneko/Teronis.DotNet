@@ -9,7 +9,7 @@ namespace Teronis.Windows.PresentationFoundation
 {
     public class StaticResource : StaticResourceExtension
     {
-        public PropertyPath Path { get; set; }
+        public PropertyPath? Path { get; set; }
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {

@@ -5,7 +5,6 @@
     <RootNamespace>Teronis</RootNamespace>
     <Description>A collection of utilities, extensions and classes for the .NET Standard implementation.</Description>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,6 +21,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core.Localization\src\Teronis.NetStandard.Core.Localization.csproj" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Update="C:\Users\christoph\source\repos\Teronis.DotNet\src\Nullable\src\Teronis.Nullable.csproj" />
   </ItemGroup>
 
 </Project>

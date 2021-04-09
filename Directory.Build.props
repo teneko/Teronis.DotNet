@@ -21,7 +21,7 @@ Licensed under the MIT license. See LICENSE file in the project root for full li
     <DebugType Condition="'$(DebugType)' == ''">portable</DebugType>
     <GeneratePackageOnBuild Condition="'$(GeneratePackageOnBuild)' == ''">false</GeneratePackageOnBuild>
     <LangVersion Condition="'$(LangVersion)' == ''">8.0</LangVersion>
-    <Nullable>enable</Nullable>
+    <Nullable Condition="'$(Nullable)' == ''">enable</Nullable>
   </PropertyGroup>
   
   <!-- NULLABLE STATIC ANALYSE ATTRIBUTES SUPPORT FOR OLDER FRAMEWORKS -->
@@ -30,10 +30,13 @@ Licensed under the MIT license. See LICENSE file in the project root for full li
     <!-- PrivateAssets="all" -->
     <ProjectReference Include="$(MSBuildThisFileDirectory)src\Nullable\src\Teronis.Nullable.csproj" 
       Condition="'$(MSBuildProjectName)' != 'Teronis.Nullable'
-        And '$(Nullable)' == 'enable'
+        And ('$(Nullable)' == 'enable'
+          Or '$(Nullable)' == 'annotations')
         And ('$(TargetFramework)' == 'netstandard2.0'
           Or '$(TargetFramework)' == 'netstandard2.1'
-          Or '$(TargetFramework)' == 'netstandard2.2')" />
+          Or '$(TargetFramework)' == 'netstandard2.2'
+          Or '$(TargetFramework)' == 'netcoreapp3.0'
+          Or '$(TargetFramework)' == 'netcoreapp3.1')" />
   </ItemGroup>
 
   <ItemGroup>

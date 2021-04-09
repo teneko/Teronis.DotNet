@@ -25,8 +25,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.MSBuild.Packaging.P
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Core.Test", "src\NetStandard\Core\Core\test\Core\Teronis.NetStandard.Core.Test.csproj", "{23D2F491-8FAA-4E15-9E3B-355CDAEE9693}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.ObjectModel.TreeColumn", "src\NetStandard\ObjectModel\TreeColumn\src\Teronis.NetStandard.ObjectModel.TreeColumn.csproj", "{BD1B9AA3-E929-4520-AE25-E5014C8E5D06}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections.Synchronization", "src\NetStandard\Collections\Synchronization\src\Teronis.NetStandard.Collections.Synchronization.csproj", "{E5704D8B-1C44-4C2E-BB5C-EB042D0763B9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections", "src\NetStandard\Collections\Collections\src\Teronis.NetStandard.Collections.csproj", "{8BED5E8B-B9C1-4B06-AC29-92E93953C320}"
@@ -267,18 +265,6 @@ Global
 		{23D2F491-8FAA-4E15-9E3B-355CDAEE9693}.Release|x64.Build.0 = Release|x64
 		{23D2F491-8FAA-4E15-9E3B-355CDAEE9693}.Release|x86.ActiveCfg = Release|x86
 		{23D2F491-8FAA-4E15-9E3B-355CDAEE9693}.Release|x86.Build.0 = Release|x86
-		{BD1B9AA3-E929-4520-AE25-E5014C8E5D06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BD1B9AA3-E929-4520-AE25-E5014C8E5D06}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BD1B9AA3-E929-4520-AE25-E5014C8E5D06}.Debug|x64.ActiveCfg = Debug|x64
-		{BD1B9AA3-E929-4520-AE25-E5014C8E5D06}.Debug|x64.Build.0 = Debug|x64
-		{BD1B9AA3-E929-4520-AE25-E5014C8E5D06}.Debug|x86.ActiveCfg = Debug|x86
-		{BD1B9AA3-E929-4520-AE25-E5014C8E5D06}.Debug|x86.Build.0 = Debug|x86
-		{BD1B9AA3-E929-4520-AE25-E5014C8E5D06}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BD1B9AA3-E929-4520-AE25-E5014C8E5D06}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BD1B9AA3-E929-4520-AE25-E5014C8E5D06}.Release|x64.ActiveCfg = Release|x64
-		{BD1B9AA3-E929-4520-AE25-E5014C8E5D06}.Release|x64.Build.0 = Release|x64
-		{BD1B9AA3-E929-4520-AE25-E5014C8E5D06}.Release|x86.ActiveCfg = Release|x86
-		{BD1B9AA3-E929-4520-AE25-E5014C8E5D06}.Release|x86.Build.0 = Release|x86
 		{E5704D8B-1C44-4C2E-BB5C-EB042D0763B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E5704D8B-1C44-4C2E-BB5C-EB042D0763B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5704D8B-1C44-4C2E-BB5C-EB042D0763B9}.Debug|x64.ActiveCfg = Debug|x64

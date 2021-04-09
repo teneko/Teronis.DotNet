@@ -3,8 +3,8 @@
 namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollections
 {
     /// <summary>
-    /// It holds an observable collection of <see cref="DeviceHeaderSyntheticEntity"/>. Its purpose
-    /// is to have a long running synced collection of <see cref="DeviceHeaderSyntheticEntity"/>.
+    /// It holds an observable collection of <see cref="DeviceHeaderEntity"/>. Its purpose
+    /// is to have a long running synced collection of <see cref="DeviceHeaderViewModel"/>.
     /// </summary>
     public class DeviceHeaderCollectionSynchronization : SynchronizingCollectionBase<DeviceHeaderEntity, DeviceHeaderViewModel>
     {

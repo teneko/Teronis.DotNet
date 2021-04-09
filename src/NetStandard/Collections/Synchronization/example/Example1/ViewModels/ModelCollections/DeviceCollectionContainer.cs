@@ -3,8 +3,8 @@
 namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollections
 {
     /// <summary>
-    /// It holds an observable collection of <see cref="DeviceHeaderSyntheticEntity"/>. Its purpose
-    /// is to have a long running synced collection of <see cref="DeviceHeaderSyntheticEntity"/>.
+    /// It holds an observable collection of <see cref="DeviceHeaderViewModel"/>. Its purpose
+    /// is to have a long running synced collection of <see cref="DeviceViewModel"/>.
     /// </summary>
     public class DeviceCollectionSynchronization : CustomSynchronizingCollection<DeviceHeaderViewModel, DeviceViewModel>
     {
@@ -15,8 +15,8 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollectio
 
         private readonly PropertyChangedForwarder propertyChangedRelay;
         private readonly DeviceHeaderCollectionSynchronization deviceHeaderCollectionContainer;
-        private readonly SynchronizationMirror<DeviceHeaderViewModel> synchronizationMirror;
 #pragma warning disable IDE0052 // Ungelesene private Member entfernen
+        private readonly SynchronizationMirror<DeviceHeaderViewModel> synchronizationMirror;
         private readonly AddRemoveResetBehaviourForCollectionItemByAddRemoveParents<DeviceHeaderViewModel, DeviceViewModel> itemParentsBehaviour;
 #pragma warning restore IDE0052 // Ungelesene private Member entfernen
 

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Teronis.Reflection;
 
 namespace Teronis.Utils
@@ -23,13 +24,19 @@ namespace Teronis.Utils
             return null;
         }
 
-        public static IEnumerable<Type> GetBaseTypes(Type type, Type? interruptingBaseType = null)
+        /// <summary>
+        /// Yields the base types of passed type.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="interruptingBaseType"></param>
+        /// <returns>The bases types. (yielded)</returns>
+        public static IEnumerable<Type> GetBaseTypes(Type? type, Type? interruptingBaseType = null)
         {
-            if (type == null) {
+            if (type?.BaseType == null) {
                 yield break;
             }
 
-            Type? nextType = type;
+            Type? nextType = type.BaseType;
             var objectType = typeof(object);
 
             for (; ; ) {
@@ -39,6 +46,25 @@ namespace Teronis.Utils
                 if (nextType == null || nextType == interruptingBaseType || nextType == objectType) {
                     break;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Yields the type that got passed as argument and then yields the base types of passed type.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="interruptingBaseType"></param>
+        /// <returns>The passed type and bases types. (yielded)</returns>
+        public static IEnumerable<Type> GetTypeThenBaseTypes(Type type, Type? interruptingBaseType = null)
+        {
+            if (type == null) {
+                yield break;
+            }
+
+            yield return type;
+
+            foreach (var baseType in GetBaseTypes(type)) {
+                yield return baseType;
             }
         }
 

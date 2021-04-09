@@ -5,9 +5,13 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels
 {
     public class DeviceHeaderStateViewModel : ViewModelBase
     {
-        public DeviceHeaderStateEntity State { get; set; }
+        public DeviceHeaderStateEntity State { 
+            get => state; 
+            set => PropertyChangeComponent.ChangeProperty(ref state, value); }
 
-        public DeviceHeaderStateViewModel(DeviceHeaderStateEntity headerState) =>
+        private DeviceHeaderStateEntity state = null!;
+
+        public DeviceHeaderStateViewModel(DeviceHeaderStateEntity? headerState) =>
             State = headerState ?? new DeviceHeaderStateEntity();
 
         public DeviceHeaderStateViewModel()

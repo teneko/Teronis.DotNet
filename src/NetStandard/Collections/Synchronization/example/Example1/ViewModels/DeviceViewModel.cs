@@ -7,9 +7,6 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels
     public class DeviceViewModel : ViewModelBase
     {
         public DeviceHeaderViewModel HeaderContainer { get; private set; }
-        /// <summary>
-        /// Belongs to <see cref="Header"/>
-        /// </summary>
         public DeviceBodyViewModel BodyContainer { get; private set; }
 
         public DeviceViewModel(DeviceHeaderViewModel headerContainer)

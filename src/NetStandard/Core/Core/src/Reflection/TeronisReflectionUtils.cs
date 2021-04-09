@@ -172,7 +172,7 @@ namespace Teronis.Reflection
                 interruptingBaseType ??= typeof(object);
             }
 
-            var basesTypes = TypeUtils.GetBaseTypes(beginningType, interruptingBaseType: interruptingBaseType);
+            var basesTypes = TypeUtils.GetTypeThenBaseTypes(beginningType, interruptingBaseType: interruptingBaseType);
 
             foreach (var type in basesTypes) {
                 foreach (var varInfo in getMembers(type, variableInfoDescriptor)) {
@@ -190,7 +190,7 @@ namespace Teronis.Reflection
         public static IEnumerable<AttributeMemberInfo<TAttribute>> GetAttributeMembers<TAttribute>(Func<Type, VariableMemberDescriptor, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type? interruptingBaseType = null, VariableMemberDescriptor? variableInfoDescriptor = null, bool? getCustomAttributesInherit = null)
             where TAttribute : Attribute
         {
-            foreach (var type in TypeUtils.GetBaseTypes(beginningType, interruptingBaseType: interruptingBaseType)) {
+            foreach (var type in TypeUtils.GetTypeThenBaseTypes(beginningType, interruptingBaseType: interruptingBaseType)) {
                 foreach (var propertyInfo in GetMembers(getMembers, beginningType, interruptingBaseType, variableInfoDescriptor)) {
                     if (propertyInfo.TryGetAttributeVariableMember(out AttributeMemberInfo<TAttribute>? varAttrInfo, getCustomAttributesInherit) && !(varAttrInfo is null)) {
                         yield return varAttrInfo;
@@ -203,7 +203,7 @@ namespace Teronis.Reflection
 
         public static IEnumerable<AttributeMemberInfo> GetAttributeMembers(Type attributeType, Func<Type, VariableMemberDescriptor, IEnumerable<MemberInfo>> getMembers, Type beginningType, Type? interruptingBaseType = null, VariableMemberDescriptor? variableInfoDescriptor = null, bool? getCustomAttributesInherit = null)
         {
-            foreach (var type in TypeUtils.GetBaseTypes(beginningType, interruptingBaseType: interruptingBaseType)) {
+            foreach (var type in TypeUtils.GetTypeThenBaseTypes(beginningType, interruptingBaseType: interruptingBaseType)) {
                 foreach (var propertyInfo in GetMembers(getMembers, beginningType, interruptingBaseType, variableInfoDescriptor)) {
                     if (propertyInfo.TryGetAttributeVariableMember(attributeType, out var varAttrInfo, getCustomAttributesInherit) && !(varAttrInfo is null)) {
                         yield return varAttrInfo;

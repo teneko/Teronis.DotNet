@@ -8,6 +8,16 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollectio
         where SubItemType : notnull
         where SuperItemType : notnull
     {
+        public event PropertyChangedEventHandler PropertyChanged {
+            add => PropertyChangeComponent.PropertyChanged += value;
+            remove => PropertyChangeComponent.PropertyChanged -= value;
+        }
+
+        public event PropertyChangingEventHandler PropertyChanging {
+            add => PropertyChangeComponent.PropertyChanging += value;
+            remove => PropertyChangeComponent.PropertyChanging -= value;
+        }
+
         protected PropertyChangeComponent PropertyChangeComponent { get; }
 
         public CustomSynchronizingCollection() =>
@@ -18,15 +28,5 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollectio
 
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>
             PropertyChangeComponent.OnPropertyChanged(propertyName);
-
-        public event PropertyChangedEventHandler PropertyChanged {
-            add => ((INotifyPropertyChanged)PropertyChangeComponent).PropertyChanged += value;
-            remove => ((INotifyPropertyChanged)PropertyChangeComponent).PropertyChanged -= value;
-        }
-
-        public event PropertyChangingEventHandler PropertyChanging {
-            add => ((INotifyPropertyChanging)PropertyChangeComponent).PropertyChanging += value;
-            remove => ((INotifyPropertyChanging)PropertyChangeComponent).PropertyChanging -= value;
-        }
     }
 }

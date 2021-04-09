@@ -26,7 +26,7 @@ namespace Teronis.Collections.Synchronization.Example1.Models
             }
 
             var hash = 17;
-            hash = hash * 17 + obj.Serial.GetHashCode();
+            hash = hash * 17 + obj.Serial?.GetHashCode() ?? 0;
             return hash;
         }
     }

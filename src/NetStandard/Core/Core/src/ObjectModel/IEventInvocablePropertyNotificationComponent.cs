@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace Teronis.ObjectModel
 {
-    public interface IEventInvocablePropertyNotificationComponent
+    public interface IEventInvocablePropertyChangeComponent
     {
         void OnPropertyChanged(object? sender, PropertyChangedEventArgs args);
         void OnPropertyChanging(object? sender, PropertyChangingEventArgs args);

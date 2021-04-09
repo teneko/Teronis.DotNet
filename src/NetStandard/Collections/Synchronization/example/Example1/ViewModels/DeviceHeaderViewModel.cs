@@ -12,10 +12,10 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels
             get => header;
 
             set {
-                OnPropertyChanging();
+                PropertyChangeComponent.OnPropertyChanging();
                 header = value;
                 StateContainer.State = value.State;
-                OnPropertyChanged();
+                PropertyChangeComponent.OnPropertyChanged();
             }
         }
 

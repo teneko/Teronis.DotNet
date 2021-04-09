@@ -3,9 +3,6 @@
 
 using System;
 using System.ComponentModel;
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
-using Teronis.Linq.Expressions;
 using Teronis.ObjectModel;
 using Teronis.ObjectModel.Parenthood;
 using Teronis.Reflection.Caching;
@@ -14,69 +11,29 @@ namespace Teronis.ViewModels
 {
     public abstract class ViewModelBase : INotifyPropertyChanging, INotifyPropertyChanged, IHaveParents, IHaveRegisteredParents
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public event PropertyChangingEventHandler? PropertyChanging;
+        public event PropertyChangedEventHandler? PropertyChanged {
+            add => PropertyChangeComponent.PropertyChanged += value;
+            remove => PropertyChangeComponent.PropertyChanged -= value;
+        }
+
+        public event PropertyChangingEventHandler? PropertyChanging {
+            add => PropertyChangeComponent.PropertyChanging += value;
+            remove => PropertyChangeComponent.PropertyChanging -= value;
+        }
+
+        protected PropertyChangeComponent PropertyChangeComponent { get; private set; } = null!;
 
         private readonly RegisteredRequestParentHandlerDictionary registeredRequestParentHandlerDictionary;
         private readonly SingleTypePropertyCache<IHaveParents> havingParentsPropertyChangedCache;
 
         public ViewModelBase()
         {
+            PropertyChangeComponent = new PropertyChangeComponent(this);
             registeredRequestParentHandlerDictionary = new RegisteredRequestParentHandlerDictionary(this);
             havingParentsPropertyChangedCache = new SingleTypePropertyCache<IHaveParents>(this);
             havingParentsPropertyChangedCache.PropertyAdded += HavingParentsPropertyChangedCache_PropertyCacheAdded;
             havingParentsPropertyChangedCache.PropertyRemoved -= HavingParentsPropertyChangedCache_PropertyCacheRemoved;
         }
-
-        /// <summary>
-        /// Initiates a property changing event invocation.
-        /// </summary>
-        /// <param name="sender">The sender to be sent.</param>
-        /// <param name="args">The argument to be sent.</param>
-        protected void InvokePropertyChanging(object? sender, PropertyChangingEventArgs args) =>
-            PropertyChanging?.Invoke(this, args);
-
-        /// <summary>
-        /// Initiates a property changed event invocation.
-        /// </summary>
-        /// <param name="sender">The sender to be sent.</param>
-        /// <param name="args">The argument to be sent.</param>
-        protected void InvokePropertyChanged(object? sender, PropertyChangedEventArgs args) =>
-            PropertyChanged?.Invoke(this, args);
-
-        internal protected virtual void OnPropertyChanging([CallerMemberName] string? propertyName = null)
-        {
-            var args = new PropertyChangingEventArgs(propertyName);
-            PropertyChanging?.Invoke(this, args);
-        }
-
-        internal protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            var args = new PropertyChangedEventArgs(propertyName);
-            PropertyChanged?.Invoke(this, args);
-        }
-
-        protected virtual void ChangeProperty(Action action, params string[] properties)
-        {
-            foreach (var propertyName in properties) {
-                OnPropertyChanging(propertyName);
-            }
-
-            action?.Invoke();
-
-            foreach (var propertyName in properties) {
-                OnPropertyChanged(propertyName);
-            }
-        }
-
-        /// <summary>
-        /// Fires <see cref="PropertyChanging"/> before invoking <paramref name="propertyChangeHandler"/> and
-        /// fires <see cref="PropertyChanged"/> after invoking <paramref name="propertyChangeHandler"/>.
-        /// </summary>
-        /// <param name="propertyChangeHandler">The handler that perfomens the property change.</param>
-        /// <param name="anonymousProperties">The properties that are affected by change. (e.g. () => { prop1, prop2 })</param>
-        protected void ChangeProperty(Action propertyChangeHandler, Expression<Func<object?>> anonymousProperties) =>
-            ChangeProperty(propertyChangeHandler, ExpressionGenericTools.GetAnonymousTypeNames(anonymousProperties));
 
         private void Property_RequestParents(object sender, HavingParentsEventArgs havingParents)
             => havingParents.AddParentAndItsParents(this);

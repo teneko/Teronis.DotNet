@@ -282,7 +282,7 @@ namespace Teronis.Collections.Synchronization
             var applyingModificationBundle = new ApplyingCollectionModifications(oldSubItemsNewSuperItemsModification, superItemModification);
             GoThroughModification(applyingModificationBundle);
 
-            /*  We want transform new-super-items to new-sub-items because 
+            /*  We want transform new-super-items to new-sub-items because
              *  they have been created previously if any is existing. */
             var newSubItems = oldSubItemsNewSuperItemsModification.GetItemsBeginningFromNewIndex(SubItems);
             var oldSubItemsNewSubItemsModification = oldSubItemsNewSuperItemsModification.CopyWithOtherItems(oldSubItemsNewSuperItemsModification.OldItems, newSubItems);
@@ -305,6 +305,7 @@ namespace Teronis.Collections.Synchronization
         /// Synchronizes collection with <paramref name="items"/>.
         /// </summary>
         /// <param name="items"></param>
+        /// <param name="yieldCapabilities"></param>
         public virtual void SynchronizeCollection(IEnumerable<TSuperItem>? items, CollectionModificationsYieldCapabilities yieldCapabilities)
         {
             var enumerator = SynchronizationMethod

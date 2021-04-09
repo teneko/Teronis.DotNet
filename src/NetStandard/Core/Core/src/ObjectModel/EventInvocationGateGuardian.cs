@@ -3,16 +3,17 @@
 
 namespace Teronis.ObjectModel
 {
-    public readonly struct EventInvocationGateGuardian
+    public readonly struct EventInvocationGateGuardian : IReleasableEventInvocationGate
     {
-        private readonly IPassableEventInvocationGate buffer;
+        private readonly IReleasableEventInvocationGate gate;
 
-        internal EventInvocationGateGuardian(IPassableEventInvocationGate buffer)
-        {
-            this.buffer = buffer;
-        }
+        internal EventInvocationGateGuardian(IReleasableEventInvocationGate gate) =>
+            this.gate = gate;
 
-        public void LetPassThrough() =>
-            buffer.LetPassThrough();
+        /// <summary>
+        /// Releases the gate and all withheld invocation are invoked at once.
+        /// </summary>
+        public void ReleaseGate() =>
+            gate.ReleaseGate();
     }
 }

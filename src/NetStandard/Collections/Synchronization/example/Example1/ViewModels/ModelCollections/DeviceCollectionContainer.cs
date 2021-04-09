@@ -22,7 +22,7 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollectio
 
         public DeviceCollectionSynchronization(DeviceHeaderCollectionSynchronization deviceHeaderCollectionContainer)
         {
-            propertyChangedRelay = new PropertyChangedForwarder(PropertyNotificationComponent.AsEventInvocable().OnPropertyChanged);
+            propertyChangedRelay = new PropertyChangedForwarder(PropertyChangeComponent.AsEventInvocable().OnPropertyChanged);
             propertyChangedRelay.AddPropertyChangeForwarding(nameof(DeviceHeaderCollectionSynchronization.SelectedItem));
             synchronizationMirror = CreateSynchronizationMirror(deviceHeaderCollectionContainer.SubItems);
             itemParentsBehaviour = new AddRemoveResetBehaviourForCollectionItemByAddRemoveParents<DeviceHeaderViewModel, DeviceViewModel>(this);

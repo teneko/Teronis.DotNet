@@ -15,13 +15,13 @@ namespace Teronis.Collections.Synchronization
     public abstract class SynchronizableCollectionBase<TItem, TNewItem> : Collection<TItem>, ISynchronizedCollection<TItem>, INotifyPropertyChanged, INotifyPropertyChanging
     {
         public event PropertyChangedEventHandler? PropertyChanged {
-            add => ((INotifyPropertyChanged)PropertyNotificationComponent).PropertyChanged += value;
-            remove => ((INotifyPropertyChanged)PropertyNotificationComponent).PropertyChanged -= value;
+            add => PropertyChangeComponent.PropertyChanged += value;
+            remove => PropertyChangeComponent.PropertyChanged -= value;
         }
 
         public event PropertyChangingEventHandler? PropertyChanging {
-            add => ((INotifyPropertyChanging)PropertyNotificationComponent).PropertyChanging += value;
-            remove => ((INotifyPropertyChanging)PropertyNotificationComponent).PropertyChanging -= value;
+            add => PropertyChangeComponent.PropertyChanging += value;
+            remove => PropertyChangeComponent.PropertyChanging -= value;
         }
 
         #region Related to observable collection.
@@ -45,9 +45,10 @@ namespace Teronis.Collections.Synchronization
 
         public event EventHandler? CollectionSynchronized;
 
+        protected PropertyChangeComponent PropertyChangeComponent { get; private set; } = null!;
+
         private event NotifyCollectionChangedEventHandler? collectionChanged;
 
-        protected PropertyNotificationComponent PropertyNotificationComponent { get; private set; } = null!;
         internal protected virtual CollectionChangeHandler<TItem>.IDependencyInjectedHandler CollectionChangeHandler { get; private set; } = null!;
 
         private bool itemTypeImplementsDisposable;
@@ -69,39 +70,40 @@ namespace Teronis.Collections.Synchronization
 
         private void onConstruction(
             CollectionChangeHandler<TItem>.IDependencyInjectedHandler? dependencyInjectedHandler = null,
-            CollectionChangeHandler<TItem>.IDecoupledHandler? decoupledHandler = null) {
-            PropertyNotificationComponent = new PropertyNotificationComponent();
+            CollectionChangeHandler<TItem>.IDecoupledHandler? decoupledHandler = null)
+        {
+            PropertyChangeComponent = new PropertyChangeComponent(this);
             itemTypeImplementsDisposable = typeof(IDisposable).IsAssignableFrom(typeof(TItem));
             CollectionChangeHandler = dependencyInjectedHandler ?? new CollectionChangeHandler<TItem>.DependencyInjectedHandler(Items, decoupledHandler);
         }
 
         protected override void InsertItem(int index, TItem item)
         {
-            PropertyNotificationComponent.OnPropertyChanging(CountString);
-            PropertyNotificationComponent.OnPropertyChanging(IndexerName);
+            PropertyChangeComponent.OnPropertyChanging(CountString);
+            PropertyChangeComponent.OnPropertyChanging(IndexerName);
 
             base.InsertItem(index, item);
 
-            PropertyNotificationComponent.OnPropertyChanged(CountString);
-            PropertyNotificationComponent.OnPropertyChanged(IndexerName);
+            PropertyChangeComponent.OnPropertyChanged(CountString);
+            PropertyChangeComponent.OnPropertyChanged(IndexerName);
         }
 
         protected override void SetItem(int index, TItem item)
         {
-            PropertyNotificationComponent.OnPropertyChanging(IndexerName);
+            PropertyChangeComponent.OnPropertyChanging(IndexerName);
 
             base.SetItem(index, item);
 
-            PropertyNotificationComponent.OnPropertyChanged(IndexerName);
+            PropertyChangeComponent.OnPropertyChanged(IndexerName);
         }
 
         protected virtual void MoveItems(int fromIndex, int toIndex, int count)
         {
-            PropertyNotificationComponent.OnPropertyChanging(IndexerName);
+            PropertyChangeComponent.OnPropertyChanging(IndexerName);
 
             Items.Move(fromIndex, toIndex, count);
 
-            PropertyNotificationComponent.OnPropertyChanged(IndexerName);
+            PropertyChangeComponent.OnPropertyChanged(IndexerName);
         }
 
         public void Move(int fromIndex, int toIndex, int count) =>
@@ -121,8 +123,8 @@ namespace Teronis.Collections.Synchronization
 
         protected override void RemoveItem(int index)
         {
-            PropertyNotificationComponent.OnPropertyChanging(CountString);
-            PropertyNotificationComponent.OnPropertyChanging(IndexerName);
+            PropertyChangeComponent.OnPropertyChanging(CountString);
+            PropertyChangeComponent.OnPropertyChanging(IndexerName);
 
             if (itemTypeImplementsDisposable) {
                 DisposeItem(index);
@@ -130,14 +132,14 @@ namespace Teronis.Collections.Synchronization
 
             base.RemoveItem(index);
 
-            PropertyNotificationComponent.OnPropertyChanged(CountString);
-            PropertyNotificationComponent.OnPropertyChanged(IndexerName);
+            PropertyChangeComponent.OnPropertyChanged(CountString);
+            PropertyChangeComponent.OnPropertyChanged(IndexerName);
         }
 
         protected override void ClearItems()
         {
-            PropertyNotificationComponent.OnPropertyChanging(CountString);
-            PropertyNotificationComponent.OnPropertyChanging(IndexerName);
+            PropertyChangeComponent.OnPropertyChanging(CountString);
+            PropertyChangeComponent.OnPropertyChanging(IndexerName);
 
             if (itemTypeImplementsDisposable) {
                 for (int index = Count - 1; index >= 0; index--) {
@@ -147,8 +149,8 @@ namespace Teronis.Collections.Synchronization
 
             base.ClearItems();
 
-            PropertyNotificationComponent.OnPropertyChanged(CountString);
-            PropertyNotificationComponent.OnPropertyChanged(IndexerName);
+            PropertyChangeComponent.OnPropertyChanged(CountString);
+            PropertyChangeComponent.OnPropertyChanged(IndexerName);
         }
 
         protected virtual CollectionModifiedEventArgs<TItem> CreateCollectionModifiedEventArgs(ICollectionModification<TItem, TItem> modification) =>

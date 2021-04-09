@@ -187,7 +187,7 @@ namespace Teronis.Collections.Synchronization
 
         /// <summary>
         /// Creates for this instance a collection synchronisation mirror. The collection modifications from <paramref name="toBeMirroredCollection"/> are 
-        /// forwarded to <see cref="ApplyCollectionModification(ICollectionModification{SuperItemType, SuperItemType}, NotifyCollectionChangedAction[])"/>
+        /// forwarded to <see cref="GoThroughModification(ICollectionModification{TItem, TItem})"/>
         /// of this instance.
         /// </summary>
         /// <param name="toBeMirroredCollection">The foreign collection that is about to be mirrored related to its modifications.</param>

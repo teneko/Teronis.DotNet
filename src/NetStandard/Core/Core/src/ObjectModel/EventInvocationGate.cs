@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Teronis.ObjectModel
 {
-    public class EventInvocationGate<SenderType, ArgumentType> : IPassableEventInvocationGate
+    public class EventInvocationGate<SenderType, ArgumentType> : IReleasableEventInvocationGate
     {
         private readonly Action<SenderType, ArgumentType> eventInvoker;
         private List<EventInvocation> eventInvocations;
@@ -18,7 +18,14 @@ namespace Teronis.ObjectModel
             this.eventInvoker = eventInvoker;
         }
 
-        public void PassThrough(SenderType sender, ArgumentType argument)
+        /// <summary>
+        /// Passes the gate. Depending whether it is guarded or not the
+        /// event gets fired immediatelly, otherwise the guardian has full
+        /// control when the invocations are going to pass the gate.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="argument"></param>
+        public void PassGate(SenderType sender, ArgumentType argument)
         {
             if (guarded) {
                 eventInvocations.Add(new EventInvocation(sender, argument));
@@ -27,7 +34,7 @@ namespace Teronis.ObjectModel
             }
         }
 
-        void IPassableEventInvocationGate.LetPassThrough()
+        void IReleasableEventInvocationGate.ReleaseGate()
         {
             foreach (var invocation in eventInvocations) {
                 eventInvoker?.Invoke(invocation.Sender, invocation.Argument);
@@ -39,9 +46,10 @@ namespace Teronis.ObjectModel
         public EventInvocationGateGuardian Guard()
         {
             if (guarded) {
-                throw new InvalidOperationException("The event invocation gate can only have one keeper.");
+                throw new InvalidOperationException("The event invocation gate can only have one guardian.");
             }
 
+            guarded = true;
             return new EventInvocationGateGuardian(this);
         }
 

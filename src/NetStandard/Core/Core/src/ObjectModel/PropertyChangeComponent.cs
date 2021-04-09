@@ -9,7 +9,7 @@ using Teronis.Linq.Expressions;
 
 namespace Teronis.ObjectModel
 {
-    public class PropertyNotificationComponent : INotifyPropertyChanging, INotifyPropertyChanged, IMemberCallablePropertyNotificationComponent, IEventInvocablePropertyNotificationComponent
+    public class PropertyChangeComponent : INotifyPropertyChanging, INotifyPropertyChanged, IMemberCallablePropertyChangeComponent, IEventInvocablePropertyChangeComponent
     {
         public event PropertyChangedEventHandler? PropertyChanged;
         public event PropertyChangingEventHandler? PropertyChanging;
@@ -17,13 +17,13 @@ namespace Teronis.ObjectModel
         public bool HasAlternativeEventSender { get; }
         public object? AlternativeEventSender { get; }
 
-        public PropertyNotificationComponent(object? alternativeSender)
+        public PropertyChangeComponent(object? alternativeSender)
         {
             HasAlternativeEventSender = true;
             AlternativeEventSender = alternativeSender ?? throw new ArgumentNullException(nameof(alternativeSender));
         }
 
-        public PropertyNotificationComponent()
+        public PropertyChangeComponent()
         {
             HasAlternativeEventSender = false;
             AlternativeEventSender = null;
@@ -66,26 +66,39 @@ namespace Teronis.ObjectModel
             OnPropertyChanged(this, args);
         }
 
-        public void ChangeProperty(Action prePropertyChangedDelegate, params string[] properties)
+        public void ChangeProperty<T>(ref T property, T value, [CallerMemberName] string? propertyName = null)
+        {
+            OnPropertyChanging(propertyName);
+            property = value;
+            OnPropertyChanged(propertyName);
+        }
+
+        public void ChangeProperty(Action propertyChangeHandler, params string[] properties)
         {
             foreach (var propertyName in properties) {
                 OnPropertyChanging(propertyName);
             }
 
-            prePropertyChangedDelegate?.Invoke();
+            propertyChangeHandler?.Invoke();
 
             foreach (var propertyName in properties) {
                 OnPropertyChanged(propertyName);
             }
         }
 
-        public void ChangeProperty(Action prePropertyChangedDelegate, Expression<Func<object?>> anonymousProperties) =>
-            ChangeProperty(prePropertyChangedDelegate, ExpressionGenericTools.GetAnonymousTypeNames(anonymousProperties));
+        /// <summary>
+        /// Fires <see cref="PropertyChanging"/> before invoking <paramref name="propertyChangeHandler"/> and
+        /// fires <see cref="PropertyChanged"/> after invoking <paramref name="propertyChangeHandler"/>.
+        /// </summary>
+        /// <param name="propertyChangeHandler">The handler that perfomens the property change.</param>
+        /// <param name="anonymousProperties">The properties that are affected by change. (e.g. () => { prop1, prop2 })</param>
+        public void ChangeProperty(Action propertyChangeHandler, Expression<Func<object?>> anonymousProperties) =>
+            ChangeProperty(propertyChangeHandler, ExpressionGenericTools.GetAnonymousTypeNames(anonymousProperties));
 
-        public IMemberCallablePropertyNotificationComponent AsMemberCallable() =>
+        public IMemberCallablePropertyChangeComponent AsMemberCallable() =>
             this;
 
-        public IEventInvocablePropertyNotificationComponent AsEventInvocable() =>
+        public IEventInvocablePropertyChangeComponent AsEventInvocable() =>
             this;
     }
 }

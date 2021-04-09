@@ -8,25 +8,25 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollectio
         where SubItemType : notnull
         where SuperItemType : notnull
     {
-        protected PropertyNotificationComponent PropertyNotificationComponent { get; }
+        protected PropertyChangeComponent PropertyChangeComponent { get; }
 
         public CustomSynchronizingCollection() =>
-            PropertyNotificationComponent = new PropertyNotificationComponent();
+            PropertyChangeComponent = new PropertyChangeComponent();
 
         protected void OnPropertyChanging([CallerMemberName] string? propertyName = null) =>
-            PropertyNotificationComponent.OnPropertyChanged(propertyName);
+            PropertyChangeComponent.OnPropertyChanged(propertyName);
 
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>
-            PropertyNotificationComponent.OnPropertyChanged(propertyName);
+            PropertyChangeComponent.OnPropertyChanged(propertyName);
 
         public event PropertyChangedEventHandler PropertyChanged {
-            add => ((INotifyPropertyChanged)PropertyNotificationComponent).PropertyChanged += value;
-            remove => ((INotifyPropertyChanged)PropertyNotificationComponent).PropertyChanged -= value;
+            add => ((INotifyPropertyChanged)PropertyChangeComponent).PropertyChanged += value;
+            remove => ((INotifyPropertyChanged)PropertyChangeComponent).PropertyChanged -= value;
         }
 
         public event PropertyChangingEventHandler PropertyChanging {
-            add => ((INotifyPropertyChanging)PropertyNotificationComponent).PropertyChanging += value;
-            remove => ((INotifyPropertyChanging)PropertyNotificationComponent).PropertyChanging -= value;
+            add => ((INotifyPropertyChanging)PropertyChangeComponent).PropertyChanging += value;
+            remove => ((INotifyPropertyChanging)PropertyChangeComponent).PropertyChanging -= value;
         }
     }
 }

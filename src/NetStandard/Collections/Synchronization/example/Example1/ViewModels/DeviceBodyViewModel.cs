@@ -12,9 +12,9 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels
             get => body;
 
             set {
-                OnPropertyChanging();
+                PropertyChangeComponent.OnPropertyChanging();
                 body = value ?? Instantiator.Instantiate<DeviceBodyEntity>();
-                OnPropertyChanged();
+                PropertyChangeComponent.OnPropertyChanged();
             }
         }
 

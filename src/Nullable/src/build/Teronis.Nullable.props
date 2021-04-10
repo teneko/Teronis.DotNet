@@ -4,7 +4,9 @@ Copyright (c) Teroneko.
 Licensed under the MIT license. See LICENSE file in the project root for full license information.
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Provides PackagePathStaticAnalyseAttributesFolder variable. -->
+  <Import Project="$(MSBuildThisFileDirectory)$(MSBuildThisFilename).Core.props"/>
   <ItemGroup>
-    <Compile Update="$(NuGetPackageRoot)$(MSBuildThisFilename)/**/StaticAnalyseAttributes/*.cs" Visible="false" />
+    <Compile Update="$(NuGetPackageRoot)$(MSBuildThisFilename)/**/$(PackagePathStaticAnalyseAttributesFolder)/*.cs" Visible="false" />
   </ItemGroup>
 </Project>

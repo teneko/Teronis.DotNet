@@ -49,8 +49,11 @@ Licensed under the MIT license. See LICENSE file in the project root for full li
 
   <!-- ESSENTIAL VARIABLES -->
 
+  <!-- Provides PackagePathStaticAnalyseAttributesFolder variable. -->
+  <Import Project="$(MSBuildThisFileDirectory)build/$(MSBuildThisFilename).Core.props" />
+
   <PropertyGroup>
-    <_PackagePathSubFolder>StaticAnalyseAttributes</_PackagePathSubFolder>
+    <_PackagePathSubFolder>$(PackagePathStaticAnalyseAttributesFolder)</_PackagePathSubFolder>
     <_PackagePath>contentFiles/cs/$(TargetFramework)/$(_PackagePathSubFolder);content/$(TargetFramework)/$(_PackagePathSubFolder)</_PackagePath>
   </PropertyGroup>
 
@@ -72,13 +75,13 @@ Licensed under the MIT license. See LICENSE file in the project root for full li
     <!--<StaticAnalyseAttributeCSFiles Remove="obj/**/*.cs" />-->
     <!--<StaticAnalyseAttributeCSFiles Remove="Properties/**/*.cs" />-->
 
-    <NetStandard1_0CompliantStaticAnalyseAttributeCSFiles Include="@(StaticAnalyseAttributeCSFiles->WithMetadataValue('AnnotatedWithExcludeFromCodeCoverage','false'))"/>
+    <NetStandard1_0CompliantStaticAnalyseAttributeCSFiles Include="@(StaticAnalyseAttributeCSFiles-&gt;WithMetadataValue('AnnotatedWithExcludeFromCodeCoverage','false'))" />
     <Net20CompliantStaticAnalyseAttributeCSFiles Include="@(NetStandard1_0CompliantStaticAnalyseAttributeCSFiles)" />
 
     <NetStandard2_0CompliantStaticAnalyseAttributeCSFiles Include="@(StaticAnalyseAttributeCSFiles)" />
     <Net40CompliantStaticAnalyseAttributeCSFiles Include="@(StaticAnalyseAttributeCSFiles)" />
 
-    <NetStandard2_1CompliantStaticAnalyseAttributeCSFiles Include="@(StaticAnalyseAttributeCSFiles->WithMetadataValue('IsMemberNotNullOrWhenAttribute','true'))" />
+    <NetStandard2_1CompliantStaticAnalyseAttributeCSFiles Include="@(StaticAnalyseAttributeCSFiles-&gt;WithMetadataValue('IsMemberNotNullOrWhenAttribute','true'))" />
     <NetCoreApp3_0CompliantStaticAnalyseAttributeCSFiles Include="@(NetStandard2_1CompliantStaticAnalyseAttributeCSFiles)" />
     <NetCoreApp3_1CompliantStaticAnalyseAttributeCSFiles Include="@(NetStandard2_1CompliantStaticAnalyseAttributeCSFiles)" />
 
@@ -205,8 +208,7 @@ Licensed under the MIT license. See LICENSE file in the project root for full li
   <Target Name="AddStaticAnalyseAttributesCSPPFilesToPackage">
 
     <ItemGroup>
-      <TfmSpecificPackageFile Include="@(NetStandard1_0CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSFilePath)')"
-                              Condition="'$(TargetFramework)' == 'netstandard1.0'">
+      <TfmSpecificPackageFile Include="@(NetStandard1_0CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSFilePath)')" Condition="'$(TargetFramework)' == 'netstandard1.0'">
         <!-- Only needed in <ItemGroup><Content></Content></ItemGroup> or aquivalent. -->
         <!--<Pack>true</Pack>-->
         <PackagePath>%(_PackagePath)</PackagePath>
@@ -215,56 +217,49 @@ Licensed under the MIT license. See LICENSE file in the project root for full li
     </ItemGroup>
 
     <ItemGroup>
-      <TfmSpecificPackageFile Include="@(Net20CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSFilePath)')"
-                              Condition="'$(TargetFramework)' == 'net20'">
+      <TfmSpecificPackageFile Include="@(Net20CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSFilePath)')" Condition="'$(TargetFramework)' == 'net20'">
         <PackagePath>%(_PackagePath)</PackagePath>
         <BuildAction>%(_PackageBuildAction)</BuildAction>
       </TfmSpecificPackageFile>
     </ItemGroup>
 
     <ItemGroup>
-      <TfmSpecificPackageFile Include="@(NetStandard2_0CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSFilePath)')"
-                              Condition="'$(TargetFramework)' == 'netstandard2.0'">
+      <TfmSpecificPackageFile Include="@(NetStandard2_0CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSFilePath)')" Condition="'$(TargetFramework)' == 'netstandard2.0'">
         <PackagePath>%(_PackagePath)</PackagePath>
         <BuildAction>%(_PackageBuildAction)</BuildAction>
       </TfmSpecificPackageFile>
     </ItemGroup>
 
     <ItemGroup>
-      <TfmSpecificPackageFile Include="@(Net40CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSFilePath)')"
-                              Condition="'$(TargetFramework)' == 'net40'">
+      <TfmSpecificPackageFile Include="@(Net40CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSFilePath)')" Condition="'$(TargetFramework)' == 'net40'">
         <PackagePath>%(_PackagePath)</PackagePath>
         <BuildAction>%(_PackageBuildAction)</BuildAction>
       </TfmSpecificPackageFile>
     </ItemGroup>
 
     <ItemGroup>
-      <TfmSpecificPackageFile Include="@(NetStandard2_1CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSFilePath)')"
-                              Condition="'$(TargetFramework)' == 'netstandard2.1'">
+      <TfmSpecificPackageFile Include="@(NetStandard2_1CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSFilePath)')" Condition="'$(TargetFramework)' == 'netstandard2.1'">
         <PackagePath>%(_PackagePath)</PackagePath>
         <BuildAction>%(_PackageBuildAction)</BuildAction>
       </TfmSpecificPackageFile>
     </ItemGroup>
 
     <ItemGroup>
-      <TfmSpecificPackageFile Include="@(NetCoreApp3_0CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSFilePath)')"
-                              Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
+      <TfmSpecificPackageFile Include="@(NetCoreApp3_0CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSFilePath)')" Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
         <PackagePath>%(_PackagePath)</PackagePath>
         <BuildAction>%(_PackageBuildAction)</BuildAction>
       </TfmSpecificPackageFile>
     </ItemGroup>
 
     <ItemGroup>
-      <TfmSpecificPackageFile Include="@(NetCoreApp3_1CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSFilePath)')"
-                              Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+      <TfmSpecificPackageFile Include="@(NetCoreApp3_1CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSFilePath)')" Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
         <PackagePath>%(_PackagePath)</PackagePath>
         <BuildAction>%(_PackageBuildAction)</BuildAction>
       </TfmSpecificPackageFile>
     </ItemGroup>
 
     <ItemGroup>
-      <TfmSpecificPackageFile Include="@(Net5_0CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSFilePath)')"
-                              Condition="'$(TargetFramework)' == 'net5.0'">
+      <TfmSpecificPackageFile Include="@(Net5_0CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSFilePath)')" Condition="'$(TargetFramework)' == 'net5.0'">
         <PackagePath>%(_PackagePath)</PackagePath>
         <BuildAction>%(_PackageBuildAction)</BuildAction>
       </TfmSpecificPackageFile>

@@ -29,7 +29,7 @@ namespace Teronis.Windows.Drawing
         //}
 
         public Point Point;
-        public EPointType PointType { get; private set; }
+        public PointType PointType { get; private set; }
         public int X { get { return Point.X; } set { Point.X = value; } }
         public int Y { get { return Point.Y; } set { Point.Y = value; } }
 
@@ -37,7 +37,7 @@ namespace Teronis.Windows.Drawing
 
         private readonly IntPtr hWnd;
 
-        public Position(IntPtr hWnd, EPointType pointType, Point? point = null)
+        public Position(IntPtr hWnd, PointType pointType, Point? point = null)
         {
             this.hWnd = hWnd;
             PointType = pointType;
@@ -47,7 +47,7 @@ namespace Teronis.Windows.Drawing
         public Position(Point point)
         {
             hWnd = IntPtr.Zero;
-            PointType = EPointType.Relative;
+            PointType = PointType.Relative;
             Point = point;
         }
 
@@ -55,7 +55,7 @@ namespace Teronis.Windows.Drawing
 
         public Point GetClientPoint()
         {
-            if (PointType == EPointType.Client) {
+            if (PointType == PointType.Client) {
                 return Point;
             } else {
                 return Win32.ScreenToClient(hWnd, Point);
@@ -64,12 +64,12 @@ namespace Teronis.Windows.Drawing
 
         public Position GetClientPosition()
         {
-            return new Position(hWnd, EPointType.Client, GetClientPoint());
+            return new Position(hWnd, PointType.Client, GetClientPoint());
         }
 
         public Point GetScreenPoint()
         {
-            if (PointType == EPointType.Screen) {
+            if (PointType == PointType.Screen) {
                 return Point;
             } else {
                 return Win32.ClientToScreen(hWnd, Point);
@@ -78,7 +78,7 @@ namespace Teronis.Windows.Drawing
 
         public Position GetScreenPosition()
         {
-            return new Position(hWnd, EPointType.Screen, GetScreenPoint());
+            return new Position(hWnd, PointType.Screen, GetScreenPoint());
         }
 
         /* TODO: reimplement */

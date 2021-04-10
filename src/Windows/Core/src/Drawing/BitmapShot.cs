@@ -13,7 +13,7 @@ using Teronis.Utils;
 
 namespace Teronis.Windows.Drawing
 {
-    public unsafe class BitmapShot : ISnapshot
+    public unsafe class BitmapShot : IBitmapSnapshot
     {
         public IBitmapData BitmapData { get; private set; }
 
@@ -161,7 +161,7 @@ namespace Teronis.Windows.Drawing
                         pixelCounter++;
                     }
 
-                    yield return new Pixel(new RGBColor(r, g, b), new Position(IntPtr.Zero, EPointType.Client, point));
+                    yield return new Pixel(new RGBColor(r, g, b), new Position(IntPtr.Zero, PointType.Client, point));
 
                     @continue:
                     ;

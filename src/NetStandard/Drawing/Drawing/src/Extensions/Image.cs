@@ -11,14 +11,13 @@ namespace Teronis.Extensions
     public static class ImageExtensions
     {
         /// <summary>
-        /// Creates a new Image containing the same image only rotated
+        /// Creates a rotated image from the image that got passed.
         /// </summary>
-        /// <param name=""image"">The <see cref=""System.Drawing.Image"/"> to rotate
-        /// <param name=""offset"">The position to rotate from.
-        /// <param name=""angle"">The amount to rotate the image, clockwise, in degrees
-        /// <returns>A new <see cref=""System.Drawing.Bitmap"/"> of the same size rotated.</see>
-        /// <exception cref=""System.ArgumentNullException"">Thrown if <see cref=""image"/"> 
-        /// is null.</see>
+        /// <param name="image">The image to be rotated.</param>
+        /// <param name="offset">The position to rotate from.</param>
+        /// <param name="angle">The amount to rotate the image, clockwise, in degrees.</param>
+        /// <returns>A new <see cref="Bitmap"/> of the same size rotated.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if image is null.</exception>
         public static Bitmap RotateImage(this Image image, PointF offset, float angle)
         {
             if (image == null) {

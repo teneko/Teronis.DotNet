@@ -17,7 +17,7 @@ namespace Teronis.Windows.Drawing
             return new Area() { nX = nX, nY = nY, nWidth = nWidth, nHeight = nHeight, nYHeight = nYHeight, nXWidth = nXWidth, nRect = nRect, nEllipse = nEllipse, nPolygon = nPolygon };
         }
 
-        public static void VerifyValues(ISnapshot snapshot, ref int? nX, ref int? nY, ref int? nWidth, ref int? nHeight, RectangleF? nRect, bool nEllipse, IList<Point>? nPolygon, ECancelScanIteration cancelScanIteration, ref bool precalculated, ref int? nYHeight, ref int? nXWidth)
+        public static void VerifyValues(IBitmapSnapshot snapshot, ref int? nX, ref int? nY, ref int? nWidth, ref int? nHeight, RectangleF? nRect, bool nEllipse, IList<Point>? nPolygon, ECancelScanIteration cancelScanIteration, ref bool precalculated, ref int? nYHeight, ref int? nXWidth)
         {
             if (!precalculated) {
                 precalculated = true;
@@ -97,7 +97,7 @@ namespace Teronis.Windows.Drawing
 
         private Area() { }
 
-        public void VerifyValues(ISnapshot snapshot)
+        public void VerifyValues(IBitmapSnapshot snapshot)
         {
             VerifyValues(snapshot, ref nX, ref nY, ref nWidth, ref nHeight, nRect, nEllipse, nPolygon, cancelScanIteration, ref precalculated, ref nYHeight, ref nXWidth);
         }

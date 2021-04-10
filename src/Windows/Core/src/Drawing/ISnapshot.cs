@@ -3,7 +3,7 @@
 
 namespace Teronis.Windows.Drawing
 {
-    public interface ISnapshot
+    public interface IBitmapSnapshot
     {
         IBitmapData BitmapData { get; }
     }

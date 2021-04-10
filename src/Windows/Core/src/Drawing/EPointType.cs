@@ -3,7 +3,7 @@
 
 namespace Teronis.Windows.Drawing
 {
-    public enum EPointType
+    public enum PointType
     {
         Client,
         Screen,

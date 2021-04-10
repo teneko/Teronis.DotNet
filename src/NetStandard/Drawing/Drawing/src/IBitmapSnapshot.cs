@@ -2,12 +2,11 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 
+
 namespace Teronis.Drawing
 {
-    public enum EPointType
+    public interface IBitmapSnapshot
     {
-        Client,
-        Screen,
-        Relative,
+        IBitmapData BitmapData { get; }
     }
 }

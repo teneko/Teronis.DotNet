@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Teronis.Data;
 
 namespace Teronis.Utils
 {
@@ -15,7 +14,6 @@ namespace Teronis.Utils
             EqualityComparer<T>.Default.Equals(one!, two!);
 
         public static bool ReturnNonDefault<T>(T inValue, [MaybeNull] out T outValue, Func<T>? getNonDefaultWhenDefault = null)
-        //=> !CompareEquality(outValue = inValue, default) || (FuncGenericUtils.ReturnIsInvocable(getNonDefaultIfDefault, out outValue) && !CompareEquality(outValue, default));
         {
             var isValueNotEqualsDefault = !CompareEquality(inValue, default);
             outValue = inValue;
@@ -99,5 +97,19 @@ namespace Teronis.Utils
         [return: MaybeNull]
         public static T ReturnDefaultValueReplacement<T>(Func<WrappedValue<T>, T> getDefaultValueReplacement) =>
             ReturnDefaultReplacement(getDefaultValueReplacement).Value;
+
+        public class WrappedValue<T>
+        {
+            [AllowNull, MaybeNull]
+            public virtual T Value { get; set; }
+
+            public WrappedValue([AllowNull] T value) => Value = value;
+
+            [return: MaybeNull]
+            public virtual T GetValue() => Value;
+
+            public static implicit operator WrappedValue<T>(T value) =>
+                new WrappedValue<T>(value);
+        }
     }
 }

@@ -6,6 +6,23 @@ Licensed under the MIT license. See LICENSE file in the project root for full li
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!-- Provides PackagePathStaticAnalyseAttributesFolder variable. -->
   <Import Project="$(MSBuildThisFileDirectory)$(MSBuildThisFilename).Core.props"/>
+  
+  <!--
+    We can put the invisible logic inside .props because on customer side it gets included AFTER the attribute files are added:
+    ...
+    <Compile Include="$(NuGetPackageRoot)teronis.nullable\0.1.8-alpha.247\contentFiles\cs\netstandard2.0\StaticAnalyseAttributes\NotNullWhenAttribute.cs" Condition="Exists('$(NuGetPackageRoot)teronis.nullable\0.1.8-alpha.247\contentFiles\cs\netstandard2.0\StaticAnalyseAttributes\NotNullWhenAttribute.cs')">
+        <NuGetPackageId>Teronis.Nullable</NuGetPackageId>
+        <NuGetPackageVersion>0.1.8-alpha.247</NuGetPackageVersion>
+        <NuGetItemType>Compile</NuGetItemType>
+        <Pack>false</Pack>
+        <Private>False</Private>
+        <Link>StaticAnalyseAttributes\NotNullWhenAttribute.cs</Link>
+      </Compile>
+    </ItemGroup>
+    <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+      <Import Project="$(NuGetPackageRoot)teronis.nullable\0.1.8-alpha.247\build\Teronis.Nullable.props" Condition="Exists('$(NuGetPackageRoot)teronis.nullable\0.1.8-alpha.247\build\Teronis.Nullable.props')" />
+    </ImportGroup>
+  -->
   <ItemGroup>
     <Compile Update="$(NuGetPackageRoot)$(MSBuildThisFilename)/**/$(PackagePathStaticAnalyseAttributesFolder)/*.cs" Visible="false" />
   </ItemGroup>

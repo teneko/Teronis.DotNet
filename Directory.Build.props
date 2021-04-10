@@ -20,7 +20,7 @@ Licensed under the MIT license. See LICENSE file in the project root for full li
     <DebugSymbols Condition="'$(DebugSymbols)' == ''">true</DebugSymbols>
     <DebugType Condition="'$(DebugType)' == ''">portable</DebugType>
     <GeneratePackageOnBuild Condition="'$(GeneratePackageOnBuild)' == ''">false</GeneratePackageOnBuild>
-    <LangVersion Condition="'$(LangVersion)' == ''">8.0</LangVersion>
+    <LangVersion Condition="'$(LangVersion)' == ''">9.0</LangVersion>
     <Nullable Condition="'$(Nullable)' == ''">enable</Nullable>
   </PropertyGroup>
   

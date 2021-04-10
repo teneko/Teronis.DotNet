@@ -3,7 +3,7 @@
 
 using System.Runtime.CompilerServices;
 
-namespace Teronis.ObjectModel
+namespace Teronis.ComponentModel
 {
     public interface IMemberCallablePropertyChangeComponent
     {

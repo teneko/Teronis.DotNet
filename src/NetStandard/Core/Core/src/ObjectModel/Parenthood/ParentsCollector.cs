@@ -4,7 +4,7 @@
 using System;
 using System.Linq;
 
-namespace Teronis.ObjectModel.Parenthood
+namespace Teronis.ComponentModel.Parenthood
 {
     public class ParentsCollector
     {

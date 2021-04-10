@@ -6,7 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Markup;
-using Teronis.ObjectModel.Parenthood;
+using Teronis.ComponentModel.Parenthood;
 
 namespace Teronis.Windows.PresentationFoundation.Data
 {

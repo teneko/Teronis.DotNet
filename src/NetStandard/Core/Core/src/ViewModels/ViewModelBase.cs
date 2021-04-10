@@ -3,8 +3,8 @@
 
 using System;
 using System.ComponentModel;
-using Teronis.ObjectModel;
-using Teronis.ObjectModel.Parenthood;
+using Teronis.ComponentModel;
+using Teronis.ComponentModel.Parenthood;
 using Teronis.Reflection.Caching;
 
 namespace Teronis.ViewModels

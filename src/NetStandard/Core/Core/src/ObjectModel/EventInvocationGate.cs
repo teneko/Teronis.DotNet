@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Teronis.ObjectModel
+namespace Teronis.ComponentModel
 {
     public class EventInvocationGate<SenderType, ArgumentType> : IReleasableEventInvocationGate
     {

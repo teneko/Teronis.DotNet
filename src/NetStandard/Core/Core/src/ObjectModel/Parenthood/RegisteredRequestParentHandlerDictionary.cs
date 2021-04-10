@@ -6,7 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Teronis.ObjectModel.Parenthood
+namespace Teronis.ComponentModel.Parenthood
 {
     public class RegisteredRequestParentHandlerDictionary : IReadOnlyDictionary<object, ParentsRequestedEventHandler>
     {

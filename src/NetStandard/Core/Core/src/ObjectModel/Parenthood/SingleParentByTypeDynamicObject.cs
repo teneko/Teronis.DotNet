@@ -4,7 +4,7 @@
 using System.Dynamic;
 using System.Linq;
 
-namespace Teronis.ObjectModel.Parenthood
+namespace Teronis.ComponentModel.Parenthood
 {
     /// <summary>
     /// Class that implements <see cref="DynamicObject.TryGetMember(GetMemberBinder, out object)"/>

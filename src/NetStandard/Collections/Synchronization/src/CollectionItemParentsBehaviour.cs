@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Teronis.Collections.Algorithms;
-using Teronis.ObjectModel.Parenthood;
+using Teronis.ComponentModel.Parenthood;
 
 namespace Teronis.Collections.Synchronization
 {

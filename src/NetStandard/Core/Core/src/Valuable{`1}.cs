@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis
 {
-    public struct Valuable<T> : IValuable<T>
+    public struct Valuable<T> : IValuable<T>, IYetNullable<T>
     {
         [MaybeNull]
         public readonly T Value =>
@@ -16,6 +16,20 @@ namespace Teronis
 
         public readonly bool HasNoValue =>
             !hasValue;
+
+        [MemberNotNullWhen(
+            returnValue: false,
+            nameof(value),
+            nameof(Value))]
+        public bool IsNull =>
+            value is null;
+
+        [MemberNotNullWhen(
+            returnValue: true,
+            nameof(value),
+            nameof(Value))]
+        public bool IsNotNull =>
+            !(value is null);
 
         [MaybeNull, AllowNull]
         internal readonly T value;

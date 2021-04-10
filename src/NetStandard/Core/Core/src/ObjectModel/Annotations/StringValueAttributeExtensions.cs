@@ -4,7 +4,7 @@
 using System;
 using System.Reflection;
 
-namespace Teronis.ObjectModel.Annotations
+namespace Teronis.ComponentModel.Annotations
 {
     public static class StringValueAttributeExtensions
     {

@@ -5,7 +5,7 @@ using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Teronis.ObjectModel
+namespace Teronis.ComponentModel
 {
     public class Work : INotifyPropertyChanged, IWorking
     {

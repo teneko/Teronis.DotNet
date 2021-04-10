@@ -13,9 +13,17 @@ namespace Teronis
         public readonly T Value =>
             value;
 
+        [MemberNotNullWhen(
+            returnValue: false,
+            nameof(value),
+            nameof(Value))]
         public readonly bool IsNull =>
             !isNotNull;
 
+        [MemberNotNullWhen(
+            returnValue: true,
+            nameof(value),
+            nameof(Value))]
         public readonly bool IsNotNull =>
             isNotNull;
 
@@ -43,7 +51,7 @@ namespace Teronis
                 return false;
             }
 
-            return value!.Equals(other);
+            return value.Equals(other);
         }
 
         public override int GetHashCode()

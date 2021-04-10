@@ -3,7 +3,7 @@
 
 using System.ComponentModel;
 
-namespace Teronis.ObjectModel
+namespace Teronis.ComponentModel
 {
     public interface IEventInvocablePropertyChangeComponent
     {

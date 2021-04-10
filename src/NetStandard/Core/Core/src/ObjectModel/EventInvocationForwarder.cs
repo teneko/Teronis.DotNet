@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Teronis.ObjectModel
+namespace Teronis.ComponentModel
 {
     public abstract class EventInvocationForwarder<SenderType, EventArgumentType>
     {

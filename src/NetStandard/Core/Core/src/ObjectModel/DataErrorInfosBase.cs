@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
-namespace Teronis.ObjectModel
+namespace Teronis.ComponentModel
 {
     public abstract class DataErrorInfosBase : INotifyDataErrorInfo
     {

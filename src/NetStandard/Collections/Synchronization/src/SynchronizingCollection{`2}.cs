@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis.Collections.Synchronization
 {
@@ -10,25 +11,26 @@ namespace Teronis.Collections.Synchronization
         where TSuperItem : notnull
         where TSubItem : notnull
     {
-        private Func<TSuperItem, TSubItem> createSubItemHandler = null!;
+        private Func<TSuperItem, TSubItem> createSubItemHandler;
 
         public SynchronizingCollection(Func<TSuperItem, TSubItem> createSubItemHandler, Options? options)
             : base(options) =>
-            onConstruction(createSubItemHandler);
+            OnInitialize(createSubItemHandler);
 
         public SynchronizingCollection(Func<TSuperItem, TSubItem> createSubItemHandler, IEqualityComparer<TSuperItem> equalityComparer)
             : base(equalityComparer) =>
-            onConstruction(createSubItemHandler);
+            OnInitialize(createSubItemHandler);
 
         public SynchronizingCollection(Func<TSuperItem, TSubItem> createSubItemHandler, IComparer<TSuperItem> equalityComparer, bool descended)
             : base(equalityComparer, descended) =>
-            onConstruction(createSubItemHandler);
+            OnInitialize(createSubItemHandler);
 
         public SynchronizingCollection(Func<TSuperItem, TSubItem> createSubItemHandler) :
             base() =>
-            onConstruction(createSubItemHandler);
+            OnInitialize(createSubItemHandler);
 
-        private void onConstruction(Func<TSuperItem, TSubItem> createSubItemHandler) =>
+        [MemberNotNull(nameof(createSubItemHandler))]
+        private void OnInitialize(Func<TSuperItem, TSubItem> createSubItemHandler) =>
             this.createSubItemHandler = createSubItemHandler ?? throw new ArgumentNullException(nameof(createSubItemHandler));
 
         protected override TSubItem CreateSubItem(TSuperItem superItem) =>

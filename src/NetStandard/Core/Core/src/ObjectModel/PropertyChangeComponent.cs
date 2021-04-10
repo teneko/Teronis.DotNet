@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using Teronis.Linq.Expressions;
 
-namespace Teronis.ObjectModel
+namespace Teronis.ComponentModel
 {
     public class PropertyChangeComponent : INotifyPropertyChanging, INotifyPropertyChanged, IMemberCallablePropertyChangeComponent, IEventInvocablePropertyChangeComponent
     {
@@ -60,10 +60,24 @@ namespace Teronis.ObjectModel
             OnPropertyChanging(this, args);
         }
 
+        public void OnPropertyChanging(params string?[] propertyNames)
+        {
+            foreach (var propertyName in propertyNames) {
+                OnPropertyChanging(propertyName);
+            }
+        }
+
         public void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             var args = new PropertyChangedEventArgs(propertyName);
             OnPropertyChanged(this, args);
+        }
+
+        public void OnPropertyChanged(params string?[] propertyNames)
+        {
+            foreach (var propertyName in propertyNames) {
+                OnPropertyChanged(propertyName);
+            }
         }
 
         public void ChangeProperty<T>(ref T property, T value, [CallerMemberName] string? propertyName = null)

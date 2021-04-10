@@ -34,7 +34,7 @@ namespace Teronis
                 return false;
             }
 
-            return EqualityComparer<T>.Default.Equals(left.value!, right.value!);
+            return EqualityComparer<T>.Default.Equals(left.value, right.value);
         }
 
         public static int Compare<T>(YetNullable<T> left, YetNullable<T> right)
@@ -51,7 +51,7 @@ namespace Teronis
                 return 1;
             }
 
-            return Comparer<T>.Default.Compare(left.value!, right.value!);
+            return Comparer<T>.Default.Compare(left.value, right.value);
         }
 
         /// <summary>

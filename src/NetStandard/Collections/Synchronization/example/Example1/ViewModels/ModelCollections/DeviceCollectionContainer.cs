@@ -1,4 +1,4 @@
-﻿using Teronis.ObjectModel;
+﻿using Teronis.ComponentModel;
 
 namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollections
 {

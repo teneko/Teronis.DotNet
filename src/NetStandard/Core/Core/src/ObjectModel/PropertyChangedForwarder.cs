@@ -4,7 +4,7 @@
 using System;
 using System.ComponentModel;
 
-namespace Teronis.ObjectModel
+namespace Teronis.ComponentModel
 {
     public class PropertyChangedForwarder : PropertyChangeForwarder<PropertyChangedEventArgs>, INotifyPropertyChanged
     {

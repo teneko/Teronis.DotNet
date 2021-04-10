@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Teronis.ObjectModel.Annotations
+namespace Teronis.ComponentModel.Annotations
 {
     /// <summary>
     /// This attribute is used to represent a string value

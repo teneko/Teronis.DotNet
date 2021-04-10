@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Teronis.ObjectModel.Parenthood
+namespace Teronis.ComponentModel.Parenthood
 {
     public class ParentsContainer
     {

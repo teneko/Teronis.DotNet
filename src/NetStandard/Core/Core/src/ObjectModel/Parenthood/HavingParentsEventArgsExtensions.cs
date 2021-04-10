@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 
-namespace Teronis.ObjectModel.Parenthood
+namespace Teronis.ComponentModel.Parenthood
 {
     public static class HavingParentsEventArgsExtensions
     {

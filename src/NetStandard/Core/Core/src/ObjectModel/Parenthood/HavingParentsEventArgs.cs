@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Teronis.ObjectModel.Parenthood
+namespace Teronis.ComponentModel.Parenthood
 {
     public class HavingParentsEventArgs : EventArgs
     {

@@ -5,10 +5,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Threading;
-
-[assembly: InternalsVisibleTo("Teronis.NetStandard.Core.Test")]
 
 namespace Teronis.IO.FileLocking
 {

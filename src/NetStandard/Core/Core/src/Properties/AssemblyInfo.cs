@@ -4,3 +4,4 @@
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Teronis.NetStandard.Collections")]
+[assembly: InternalsVisibleTo("Teronis.NetStandard.Core.Test")]

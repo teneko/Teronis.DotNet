@@ -5,12 +5,11 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Teronis.Diagnostics;
 
 namespace Teronis.Collections.Algorithms.Modifications
 {
-    [DebuggerDisplay(IDebuggerDisplayLibrary.FullGetDebuggerDisplayMethodPathWithParameterizedThis)]
-    public class CollectionModification<TNewItem, TOldItem> : ICollectionModification<TNewItem, TOldItem>, IDebuggerDisplay, ICollectionModificationParameters
+    [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
+    public class CollectionModification<TNewItem, TOldItem> : ICollectionModification<TNewItem, TOldItem>, ICollectionModificationParameters
     {
         public static CollectionModification<TNewItem, TOldItem> CreateOld(NotifyCollectionChangedAction changeAction, IReadOnlyList<TOldItem>? oldItems, int oldIndex)
             => new CollectionModification<TNewItem, TOldItem>(changeAction, oldItems, oldIndex, null, -1);
@@ -41,10 +40,11 @@ namespace Teronis.Collections.Algorithms.Modifications
         int? ICollectionModificationParameters.NewItemsCount => newPart.Items?.Count;
         public int NewIndex => newPart.Index;
 
-        string IDebuggerDisplay.DebuggerDisplay => $"{Action}, {nameof(OldIndex)} = {OldIndex}, {nameof(NewIndex)} = {NewIndex}";
-
         private readonly CollectionModificationPart<TOldItem, TNewItem> oldPart;
         private readonly CollectionModificationPart<TNewItem, TOldItem> newPart;
+
+        private string GetDebuggerDisplay() =>
+            $"{Action}, {nameof(OldIndex)} = {OldIndex}, {nameof(NewIndex)} = {NewIndex}";
 
         public CollectionModification(NotifyCollectionChangedAction changeAction, IReadOnlyList<TOldItem>? oldItems, int oldIndex, IReadOnlyList<TNewItem>? newItems, int newIndex)
         {

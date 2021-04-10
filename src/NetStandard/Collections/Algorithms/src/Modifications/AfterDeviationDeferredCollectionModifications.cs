@@ -325,8 +325,8 @@ namespace Teronis.Collections.Algorithms.Modifications
                 => RightItem = rightItem;
         }
 
-        [DebuggerDisplay(IDebuggerDisplayLibrary.FullGetDebuggerDisplayMethodPathWithParameterizedThis)]
-        private class CommonValueContainer<CommonValueType> : IDebuggerDisplay
+        [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
+        private class CommonValueContainer<CommonValueType>
         {
             public static CommonValueContainer<CommonValueType> CreateEqualComparableItem([AllowNull] CommonValueType value)
                 => new CommonValueContainer<CommonValueType>(value, -1);
@@ -338,13 +338,14 @@ namespace Teronis.Collections.Algorithms.Modifications
             public int Shifts { get; protected set; }
             public int ShiftedIndex => InitialIndex + Shifts;
 
-            string IDebuggerDisplay.DebuggerDisplay => $"[{CommonValue}, {ShiftedIndex}]";
-
             protected CommonValueContainer([AllowNull] CommonValueType commonValue, int index)
             {
                 CommonValue = commonValue;
                 InitialIndex = index;
             }
+
+            private string GetDebuggerDisplay() =>
+                $"[{CommonValue}, {ShiftedIndex}]";
         }
 
         private class CommonValueContainerEqualityComparer<CommonValueType> : IEqualityComparer<CommonValueContainer<CommonValueType>>

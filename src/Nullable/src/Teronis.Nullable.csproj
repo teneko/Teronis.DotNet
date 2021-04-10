@@ -162,7 +162,7 @@ Licensed under the MIT license. See LICENSE file in the project root for full li
   <!-- THIS AREA IS FOR PACKAGE CREATION -->
 
   <PropertyGroup>
-    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);AddStaticAnalyseAttributesCSPPFilesToPackage</TargetsForTfmSpecificContentInPackage>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);AddStaticAnalyseAttributesCSFilesToPackage</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
 
   <ItemGroup>
@@ -205,7 +205,7 @@ Licensed under the MIT license. See LICENSE file in the project root for full li
 
   <!-- Instead we do this: -->
 
-  <Target Name="AddStaticAnalyseAttributesCSPPFilesToPackage">
+  <Target Name="AddStaticAnalyseAttributesCSFilesToPackage">
 
     <ItemGroup>
       <TfmSpecificPackageFile Include="@(NetStandard1_0CompliantStaticAnalyseAttributeCSFiles->'%(StaticAnalyseAttributeCSFilePath)')" Condition="'$(TargetFramework)' == 'netstandard1.0'">

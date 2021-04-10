@@ -3,6 +3,6 @@
 Copyright (c) Teroneko.
 Licensed under the MIT license. See LICENSE file in the project root for full license information.
 -->
-<Project InitialTargets="ApplyNullableTargetsForTfmSpecificBuildOutput" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 </Project>

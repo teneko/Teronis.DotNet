@@ -81,7 +81,7 @@ Licensed under the MIT license. See LICENSE file in the project root for full li
     <NetStandard2_1CompliantStaticAnalyseAttributeCSFiles Include="@(StaticAnalyseAttributeCSFiles->WithMetadataValue('IsMemberNotNullOrWhenAttribute','true'))" />
     <NetCoreApp3_0CompliantStaticAnalyseAttributeCSFiles Include="@(NetStandard2_1CompliantStaticAnalyseAttributeCSFiles)" />
     <NetCoreApp3_1CompliantStaticAnalyseAttributeCSFiles Include="@(NetStandard2_1CompliantStaticAnalyseAttributeCSFiles)" />
-    
+
     <Net5_0CompliantStaticAnalyseAttributeCSFiles Include="$(MSBuildThisFileDirectory)content/_._">
       <StaticAnalyseAttributeCSFilePath>%(FullPath)</StaticAnalyseAttributeCSFilePath>
       <_PackagePath>$(_PackagePath)</_PackagePath>
@@ -161,6 +161,32 @@ Licensed under the MIT license. See LICENSE file in the project root for full li
   <PropertyGroup>
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);AddStaticAnalyseAttributesCSPPFilesToPackage</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="build\*" Pack="true" PackagePath="build" />
+    <None Include="buildMultiTargeting\*" Pack="true" PackagePath="buildMultiTargeting" />
+  </ItemGroup>
+
+  <!--
+    We can put the invisible logic inside .props because on customer side it gets included AFTER the attribute files are added:
+    ...
+    <Compile Include="$(NuGetPackageRoot)teronis.nullable\0.1.8-alpha.247\contentFiles\cs\netstandard2.0\StaticAnalyseAttributes\NotNullWhenAttribute.cs" Condition="Exists('$(NuGetPackageRoot)teronis.nullable\0.1.8-alpha.247\contentFiles\cs\netstandard2.0\StaticAnalyseAttributes\NotNullWhenAttribute.cs')">
+        <NuGetPackageId>Teronis.Nullable</NuGetPackageId>
+        <NuGetPackageVersion>0.1.8-alpha.247</NuGetPackageVersion>
+        <NuGetItemType>Compile</NuGetItemType>
+        <Pack>false</Pack>
+        <Private>False</Private>
+        <Link>StaticAnalyseAttributes\NotNullWhenAttribute.cs</Link>
+      </Compile>
+    </ItemGroup>
+    <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+      <Import Project="$(NuGetPackageRoot)teronis.nullable\0.1.8-alpha.247\build\Teronis.Nullable.props" Condition="Exists('$(NuGetPackageRoot)teronis.nullable\0.1.8-alpha.247\build\Teronis.Nullable.props')" />
+    </ImportGroup>
+  -->
+
+  <Target Name="AddBuildFilesToPackage">
+
+  </Target>
 
   <!-- We do not do this. -->
 

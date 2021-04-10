@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <IsPackable>false</IsPackable>
-    <Nullable>enable</Nullable>
     <RootNamespace>Teronis.Microsoft.JSInterop</RootNamespace>
   </PropertyGroup>
 

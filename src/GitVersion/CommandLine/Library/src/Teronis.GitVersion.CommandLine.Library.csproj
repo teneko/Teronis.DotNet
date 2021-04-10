@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Teronis.GitVersion.CommandLine</RootNamespace>
-    <Nullable>Enable</Nullable>
     <Description>A wrapper to use the executable of GitVersion (https://chocolatey.org/packages/GitVersion.Portable) in C# programmatically.</Description>
   </PropertyGroup>
 

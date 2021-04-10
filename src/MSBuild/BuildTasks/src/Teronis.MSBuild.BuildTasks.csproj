@@ -6,7 +6,6 @@
   
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
-    <Nullable>enable</Nullable>
     <Description>Some special targets and tasks. See comments in source code.</Description>
     
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>

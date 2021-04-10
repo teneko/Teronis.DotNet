@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <Nullable>enable</Nullable>
     <RootNamespace>Teronis.AspNetCore.Identity.Bearer</RootNamespace>
     <IsPackable>false</IsPackable>
   </PropertyGroup>

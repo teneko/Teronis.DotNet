@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Teronis.Microsoft.JSInterop</RootNamespace>
-    <Nullable>enable</Nullable>
     <Description>Contains abstractions for Teronis.Microsoft.JSInterop and Teronis.Microsoft.JSInterop.Dynamic.</Description>
   </PropertyGroup>
 

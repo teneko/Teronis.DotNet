@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netcoreapp3.1;net5.0</TargetFrameworks>
     <RootNamespace>Teronis.Collections.Synchronization</RootNamespace>
-    <Nullable>enable</Nullable>
     <Description>
       <![CDATA[Provides classes for collection synchronization.
 

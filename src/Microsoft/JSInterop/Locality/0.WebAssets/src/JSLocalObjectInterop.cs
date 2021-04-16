@@ -15,7 +15,7 @@ namespace Teronis.Microsoft.JSInterop.Locality.WebAssets
         public JSLocalObjectInterop(IJSModuleActivator jsModuleActivator)
         {
             lazyModuleTask = new Lazy<ValueTask<IJSModule>>(() => 
-                jsModuleActivator.CreateInstanceAsync("./_content/Teronis.Microsoft.JSInterop.Facades.WebAssets/objectInterop.js"));
+                jsModuleActivator.CreateInstanceAsync("./_content/Teronis.Microsoft.JSInterop.Locality.WebAssets/objectInterop.js"));
         }
 
         public async ValueTask<IJSObjectReference> GetGlobalObjectReference(string? objectName)

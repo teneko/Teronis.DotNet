@@ -36,7 +36,7 @@ namespace Teronis.Collections.Synchronization
             public Sequential() : base(
                 new SynchronizableCollection<Number>(
                     new SynchronizableCollection<Number>.Options()
-                    .SetItems(CollectionChangeHandler<Number>.DecoupledItemReplacingHandler.Default)
+                    .SetItems(CollectionChangeHandler<Number>.CollectionItemReplaceBehaviour.Default)
                     .SetSequentialSynchronizationMethod(Number.ReferenceOrValueEqualityComparer.Default))) { }
 
             [Theory]

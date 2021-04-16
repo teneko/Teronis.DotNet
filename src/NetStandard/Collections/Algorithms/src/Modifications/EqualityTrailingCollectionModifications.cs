@@ -215,7 +215,7 @@ namespace Teronis.Collections.Algorithms.Modifications
 
             if (canRemove && !(leftItemsNodes.Last is null)) {
                 foreach (var leftItemNode in LinkedBucketListUtils.YieldNodesReversed(leftItemsNodes.Last)) {
-                    var removeModification = CollectionModification<TRightItem, TLeftItem>.CreateOld(
+                    var removeModification = CollectionModification<TRightItem, TLeftItem>.OldParted(
                         NotifyCollectionChangedAction.Remove,
                         leftItemNode.Value.Item,
                         leftItemNode.Value.IndexEntry);
@@ -236,7 +236,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                         insertItemTo = rightItemNode.Parent.IndexEntry;
                     }
 
-                    var addModification = CollectionModification<TRightItem, TLeftItem>.CreateNew(
+                    var addModification = CollectionModification<TRightItem, TLeftItem>.NewParted(
                         NotifyCollectionChangedAction.Add,
                         rightItemNode.Item,
                         insertItemTo);
@@ -467,12 +467,6 @@ namespace Teronis.Collections.Algorithms.Modifications
             public RightItemContainer(TRightItem item, int index)
                 : base(item) =>
                 Index = index;
-        }
-
-        private enum NodeAppendBehaviour
-        {
-            Before,
-            After
         }
     }
 }

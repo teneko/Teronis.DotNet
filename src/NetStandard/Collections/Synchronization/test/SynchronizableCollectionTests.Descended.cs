@@ -18,7 +18,7 @@ namespace Teronis.Collections.Synchronization
             public Descended(): base(
                 new SynchronizableCollection<Number>(
                     new SynchronizableCollection<Number>.Options()
-                    .SetItems(CollectionChangeHandler<Number>.DecoupledItemReplacingHandler.Default)
+                    .SetItems(CollectionChangeHandler<Number>.CollectionItemReplaceBehaviour.Default)
                     .SetSortedSynchronizationMethod(Number.Comparer.Default, descended: true))) { }
 
             [Theory]

@@ -87,15 +87,15 @@ namespace Teronis.ComponentModel
             OnPropertyChanged(propertyName);
         }
 
-        public void ChangeProperty(Action propertyChangeHandler, params string[] properties)
+        public void ChangeProperty(Action propertyChangeHandler, params string[] propertNames)
         {
-            foreach (var propertyName in properties) {
+            foreach (var propertyName in propertNames) {
                 OnPropertyChanging(propertyName);
             }
 
             propertyChangeHandler?.Invoke();
 
-            foreach (var propertyName in properties) {
+            foreach (var propertyName in propertNames) {
                 OnPropertyChanged(propertyName);
             }
         }

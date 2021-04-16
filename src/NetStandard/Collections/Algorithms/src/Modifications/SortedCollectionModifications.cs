@@ -56,7 +56,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                     if (canRemove) {
                         var leftItem = leftItemsEnumerator.Current;
 
-                        yield return CollectionModification<TRightItem, TLeftItem>.CreateOld(
+                        yield return CollectionModification<TRightItem, TLeftItem>.OldParted(
                                 NotifyCollectionChangedAction.Remove,
                                 leftItem,
                                 leftIndexOfLatestSyncedRightItem + 1);
@@ -71,7 +71,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                         var rightItem = rightItemsEnumerator.Current;
                         leftIndexOfLatestSyncedRightItem++;
 
-                        yield return CollectionModification<TRightItem, TLeftItem>.CreateNew(
+                        yield return CollectionModification<TRightItem, TLeftItem>.NewParted(
                             NotifyCollectionChangedAction.Add,
                             rightItem,
                             leftIndexOfLatestSyncedRightItem);
@@ -93,7 +93,7 @@ namespace Teronis.Collections.Algorithms.Modifications
 
                     if (comparablePartComparison < 0) {
                         if (canRemove) {
-                            yield return CollectionModification<TRightItem, TLeftItem>.CreateOld(
+                            yield return CollectionModification<TRightItem, TLeftItem>.OldParted(
                                 NotifyCollectionChangedAction.Remove,
                                 leftItem,
                                 leftIndexOfLatestSyncedRightItem + 1);
@@ -107,7 +107,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                         if (canInsert) {
                             leftIndexOfLatestSyncedRightItem++;
 
-                            yield return CollectionModification<TRightItem, TLeftItem>.CreateNew(
+                            yield return CollectionModification<TRightItem, TLeftItem>.NewParted(
                             NotifyCollectionChangedAction.Add,
                             rightItem,
                             leftIndexOfLatestSyncedRightItem);
@@ -120,7 +120,6 @@ namespace Teronis.Collections.Algorithms.Modifications
                         leftIndexOfLatestSyncedRightItem++;
 
                         if (canReplace) {
-
                             yield return new CollectionModification<TRightItem, TLeftItem>(
                                 NotifyCollectionChangedAction.Replace,
                                 leftItem,

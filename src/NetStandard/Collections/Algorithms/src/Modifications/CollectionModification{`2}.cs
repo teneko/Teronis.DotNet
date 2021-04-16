@@ -8,37 +8,49 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis.Collections.Algorithms.Modifications
 {
+    /// <summary>
+    /// Represents a collection modification. It is the typed version of <see cref="NotifyCollectionChangedEventArgs"/>.
+    /// </summary>
+    /// <typeparam name="TNewItem"></typeparam>
+    /// <typeparam name="TOldItem"></typeparam>
     [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
-    public class CollectionModification<TNewItem, TOldItem> : ICollectionModification<TNewItem, TOldItem>, ICollectionModificationParameters
+    public class CollectionModification<TNewItem, TOldItem> : ICollectionModification<TNewItem, TOldItem>
     {
-        public static CollectionModification<TNewItem, TOldItem> CreateOld(NotifyCollectionChangedAction changeAction, IReadOnlyList<TOldItem>? oldItems, int oldIndex)
+        internal static CollectionModification<TNewItem, TOldItem> OldParted(NotifyCollectionChangedAction changeAction, IReadOnlyList<TOldItem>? oldItems, int oldIndex)
             => new CollectionModification<TNewItem, TOldItem>(changeAction, oldItems, oldIndex, null, -1);
 
-        public static CollectionModification<TNewItem, TOldItem> CreateOld(NotifyCollectionChangedAction changeAction, [AllowNull] TOldItem oldItem, int oldIndex)
+        internal static CollectionModification<TNewItem, TOldItem> OldParted(NotifyCollectionChangedAction changeAction, [AllowNull] TOldItem oldItem, int oldIndex)
         {
             var oldItems = new TOldItem[] { oldItem! };
-            return CreateOld(changeAction, oldItems, oldIndex);
+            return OldParted(changeAction, oldItems, oldIndex);
         }
 
-        public static CollectionModification<TNewItem, TOldItem> CreateNew(NotifyCollectionChangedAction changeAction, IReadOnlyList<TNewItem>? newValues, int newIndex)
+        internal static CollectionModification<TNewItem, TOldItem> NewParted(NotifyCollectionChangedAction changeAction, IReadOnlyList<TNewItem>? newValues, int newIndex)
             => new CollectionModification<TNewItem, TOldItem>(changeAction, null, -1, newValues, newIndex);
 
-        public static CollectionModification<TNewItem, TOldItem> CreateNew(NotifyCollectionChangedAction changeAction, [AllowNull] TNewItem newItem, int newIndex)
+        internal static CollectionModification<TNewItem, TOldItem> NewParted(NotifyCollectionChangedAction changeAction, [AllowNull] TNewItem newItem, int newIndex)
         {
             var newItems = new TNewItem[] { newItem! };
-            return CreateNew(changeAction, newItems, newIndex);
+            return NewParted(changeAction, newItems, newIndex);
         }
 
         public NotifyCollectionChangedAction Action { get; private set; }
-        public ICollectionModificationPart<TNewItem, TOldItem, TOldItem, TNewItem> OldPart => oldPart;
-        public IReadOnlyList<TOldItem>? OldItems => oldPart.Items;
-        int? ICollectionModificationParameters.OldItemsCount => oldPart.Items?.Count;
 
-        public int OldIndex => oldPart.Index;
-        public ICollectionModificationPart<TNewItem, TOldItem, TNewItem, TOldItem> NewPart => newPart;
-        public IReadOnlyList<TNewItem>? NewItems => newPart.Items;
-        int? ICollectionModificationParameters.NewItemsCount => newPart.Items?.Count;
-        public int NewIndex => newPart.Index;
+        public ICollectionModificationPart<TNewItem, TOldItem, TOldItem, TNewItem> OldPart =>
+            oldPart;
+        public IReadOnlyList<TOldItem>? OldItems =>
+            oldPart.Items;
+
+        public int OldIndex =>
+            oldPart.Index;
+
+        public ICollectionModificationPart<TNewItem, TOldItem, TNewItem, TOldItem> NewPart =>
+            newPart;
+        public IReadOnlyList<TNewItem>? NewItems =>
+            newPart.Items;
+
+        public int NewIndex =>
+            newPart.Index;
 
         private readonly CollectionModificationPart<TOldItem, TNewItem> oldPart;
         private readonly CollectionModificationPart<TNewItem, TOldItem> newPart;
@@ -62,13 +74,23 @@ namespace Teronis.Collections.Algorithms.Modifications
         public CollectionModification(NotifyCollectionChangedAction changeAction, [AllowNull] TOldItem oldItem, int oldIndex, IReadOnlyList<TNewItem> newItems, int newIndex)
             : this(changeAction, new TOldItem[] { oldItem! }, oldIndex, newItems, newIndex) { }
 
+        #region ICollectionModificationParameters
+
+        int? ICollectionModificationParameters.OldItemsCount =>
+            oldPart.Items?.Count;
+
+        int? ICollectionModificationParameters.NewItemsCount =>
+            newPart.Items?.Count;
+
+        #endregion
+
         private enum PartialCollectionChangeItemState
         {
             OldItem,
             NewItem
         }
 
-        public abstract class CollectionModificationPartBase<ItemType, TOtherItem> : ICollectionModificationPart<TNewItem, TOldItem, ItemType, TOtherItem>
+        internal abstract class CollectionModificationPartBase<ItemType, TOtherItem> : ICollectionModificationPart<TNewItem, TOldItem, ItemType, TOtherItem>
         {
             public ICollectionModification<TNewItem, TOldItem> Owner { get; }
 

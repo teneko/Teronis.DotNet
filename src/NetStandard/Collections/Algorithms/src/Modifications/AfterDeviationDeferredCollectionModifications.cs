@@ -118,7 +118,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                         // When early iterations are synchronized, then we always need 
                         // to delete the left value at index of the greatest right value index plus one
                         var newLeftValueIndex = earlyLeftValueIndex - (earlyLeftValueIndex - earlyRightValueIndex);
-                        syncedIterationModification = CollectionModification<TRightItem, TLeftItem>.CreateOld(NotifyCollectionChangedAction.Remove, leftItem, newLeftValueIndex);
+                        syncedIterationModification = CollectionModification<TRightItem, TLeftItem>.OldParted(NotifyCollectionChangedAction.Remove, leftItem, newLeftValueIndex);
                     } else {
                         lateLeftItemContainers.AddLast(createLeftItemContainer());
                     }
@@ -126,7 +126,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                     earlyLeftValueIndex++;
                 } else {
                     if (areEarlyIterationValuesEqual) {
-                        syncedIterationModification = CollectionModification<TRightItem, TLeftItem>.CreateNew(NotifyCollectionChangedAction.Add, rightItem, earlyRightValueIndex);
+                        syncedIterationModification = CollectionModification<TRightItem, TLeftItem>.NewParted(NotifyCollectionChangedAction.Add, rightItem, earlyRightValueIndex);
                     } else {
                         lateRightItemContainers.AddLast(createRightItemContainer());
                     }
@@ -170,7 +170,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                 var rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount = rightValueIndex;
 
                 if (foundLeftItemContainer == null) {
-                    var modification = CollectionModification<TRightItem, TLeftItem>.CreateNew(NotifyCollectionChangedAction.Add, rightItemContainer.RightItem, rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount);
+                    var modification = CollectionModification<TRightItem, TLeftItem>.NewParted(NotifyCollectionChangedAction.Add, rightItemContainer.RightItem, rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount);
                     yield return modification;
                     leftItemIndexShifter.DispatchObject(modification);
                 } else {
@@ -201,7 +201,7 @@ namespace Teronis.Collections.Algorithms.Modifications
             if (!(lateLeftItemContainers.Last is null)) {
                 // We remove all left left-value-index-pairs, because they did not match any condition above and have to be removed in REVERSED order
                 foreach (var leftValueIndexPair in lateLeftItemContainers.Last.ListPart.GetEnumerableButReversed()) {
-                    yield return CollectionModification<TRightItem, TLeftItem>.CreateOld(NotifyCollectionChangedAction.Remove, leftValueIndexPair.Value.LeftItem, leftValueIndexPair.Value.ShiftedIndex);
+                    yield return CollectionModification<TRightItem, TLeftItem>.OldParted(NotifyCollectionChangedAction.Remove, leftValueIndexPair.Value.LeftItem, leftValueIndexPair.Value.ShiftedIndex);
                 }
             }
         }

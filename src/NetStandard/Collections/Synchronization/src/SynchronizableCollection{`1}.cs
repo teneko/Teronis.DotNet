@@ -15,7 +15,7 @@ namespace Teronis.Collections.Synchronization
         private static Options prepareOptions(ref Options? options)
         {
             options ??= new Options();
-            options.CollectionChangeHandler ??= new CollectionChangeHandler<TItem>.DependencyInjectedHandler(new List<TItem>());
+            options.CollectionChangeHandler ??= new CollectionChangeHandler<TItem>(new List<TItem>());
             return options;
         }
 
@@ -70,7 +70,7 @@ namespace Teronis.Collections.Synchronization
                   .SetSortedSynchronizationMethod(comparer, descended))
         { }
 
-        protected virtual void AddItemByModification(ICollectionModification<TItem, TItem> modification)
+        protected virtual void AddItems(ICollectionModification<TItem, TItem> modification)
         {
             CollectionModificationIterationTools.BeginInsert(modification)
                 /// The modification is now null checked.
@@ -82,7 +82,7 @@ namespace Teronis.Collections.Synchronization
                 .Iterate();
         }
 
-        protected virtual void RemoveItemByModification(ICollectionModification<TItem, TItem> modification)
+        protected virtual void RemoveItems(ICollectionModification<TItem, TItem> modification)
         {
             CollectionModificationIterationTools.BeginRemove(modification)
                 .Add((modificationItemIndex, globalIndexOffset) => {
@@ -92,7 +92,11 @@ namespace Teronis.Collections.Synchronization
                 .Iterate();
         }
 
-        protected virtual void ReplaceItemByModification(ICollectionModification<TItem, TItem> modification)
+        protected virtual void OnBeforeReplaceItem(int replacedItemIndex) { }
+
+        protected virtual void OnAfterReplaceItem(int replacedItemIndex) { }
+
+        protected virtual void ReplaceItems(ICollectionModification<TItem, TItem> modification)
         {
             CollectionModificationIterationTools.BeginReplace(modification)
                 .Add((modificationItemIndex, globalIndexOffset) => {
@@ -111,32 +115,32 @@ namespace Teronis.Collections.Synchronization
                 .Iterate();
         }
 
-        protected virtual void MoveItemByModification(ICollectionModification<TItem, TItem> modification)
+        protected virtual void MoveItems(ICollectionModification<TItem, TItem> modification)
         {
             CollectionModificationIterationTools.CheckMove(modification);
             CollectionChangeHandler.MoveItems(modification.OldIndex, modification.NewIndex, modification.OldItems!.Count);
         }
 
-        protected virtual void ResetItemByModification(ICollectionModification<TItem, TItem> modification) =>
+        protected virtual void ResetItems(ICollectionModification<TItem, TItem> modification) =>
             CollectionChangeHandler.Reset();
 
-        protected virtual void GoThroughModification(ICollectionModification<TItem, TItem> modification)
+        protected virtual void ProcessModification(ICollectionModification<TItem, TItem> modification)
         {
             switch (modification.Action) {
                 case NotifyCollectionChangedAction.Add:
-                    AddItemByModification(modification);
+                    AddItems(modification);
                     break;
                 case NotifyCollectionChangedAction.Remove:
-                    RemoveItemByModification(modification);
+                    RemoveItems(modification);
                     break;
                 case NotifyCollectionChangedAction.Replace:
-                    ReplaceItemByModification(modification);
+                    ReplaceItems(modification);
                     break;
                 case NotifyCollectionChangedAction.Move:
-                    MoveItemByModification(modification);
+                    MoveItems(modification);
                     break;
                 case NotifyCollectionChangedAction.Reset:
-                    ResetItemByModification(modification);
+                    ResetItems(modification);
                     break;
             }
         }
@@ -160,7 +164,7 @@ namespace Teronis.Collections.Synchronization
 
             do {
                 var modification = modificationEnumerator.Current;
-                GoThroughModification(modification);
+                ProcessModification(modification);
                 InvokeCollectionModified(modification);
             } while (modificationEnumerator.MoveNext());
 
@@ -187,7 +191,7 @@ namespace Teronis.Collections.Synchronization
 
         /// <summary>
         /// Creates for this instance a collection synchronisation mirror. The collection modifications from <paramref name="toBeMirroredCollection"/> are 
-        /// forwarded to <see cref="GoThroughModification(ICollectionModification{TItem, TItem})"/>
+        /// forwarded to <see cref="ProcessModification(ICollectionModification{TItem, TItem})"/>
         /// of this instance.
         /// </summary>
         /// <param name="toBeMirroredCollection">The foreign collection that is about to be mirrored related to its modifications.</param>
@@ -201,7 +205,7 @@ namespace Teronis.Collections.Synchronization
             InvokeCollectionSynchronizing();
 
         void ICollectionSynchronizationContext<TItem>.GoThroughModification(ICollectionModification<TItem, TItem> superItemModification) =>
-            GoThroughModification(superItemModification);
+            ProcessModification(superItemModification);
 
         void ICollectionSynchronizationContext<TItem>.EndCollectionSynchronization() =>
             InvokeCollectionSynchronized();

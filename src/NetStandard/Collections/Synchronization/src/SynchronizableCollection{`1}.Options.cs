@@ -13,11 +13,11 @@ namespace Teronis.Collections.Synchronization
             public ICollectionSynchronizationMethod<TItem, TItem>? SynchronizationMethod { get; set; }
 
             /// <summary>
-            /// If not null it is called in <see cref="SynchronizingCollectionBase{SuperItemType, SubItemType}.ReplaceItemsByModification(SynchronizingCollectionBase{SuperItemType, SubItemType}.ApplyingCollectionModifications)"/>
+            /// If not null it is called in <see cref="SynchronizingCollectionBase{SuperItemType, SubItemType}.ReplaceItems(SynchronizingCollectionBase{SuperItemType, SubItemType}.ApplyingCollectionModifications)"/>
             /// but after the items could have been replaced.
             /// </summary>
             public CollectionUpdateItemDelegate<TItem, TItem>? UpdateItem { get; set; }
-            public CollectionChangeHandler<TItem>.IDependencyInjectedHandler? CollectionChangeHandler { get; set; }
+            public ICollectionChangeHandler<TItem>? CollectionChangeHandler { get; set; }
 
             public Options SetSequentialSynchronizationMethod(IEqualityComparer<TItem> equalityComparer)
             {
@@ -45,20 +45,20 @@ namespace Teronis.Collections.Synchronization
 
             public Options SetItems(IList<TItem> items)
             {
-                CollectionChangeHandler = new CollectionChangeHandler<TItem>.DependencyInjectedHandler(items);
+                CollectionChangeHandler = new CollectionChangeHandler<TItem>(items);
                 return this;
             }
 
-            public Options SetItems(IList<TItem> items, CollectionChangeHandler<TItem>.IDecoupledHandler decoupledHandler)
+            public Options SetItems(IList<TItem> items, CollectionChangeHandler<TItem>.IBehaviour decoupledHandler)
             {
-                CollectionChangeHandler = new CollectionChangeHandler<TItem>.DependencyInjectedHandler(items, decoupledHandler);
+                CollectionChangeHandler = new CollectionChangeHandler<TItem>(items, decoupledHandler);
                 return this;
             }
 
-            public Options SetItems(CollectionChangeHandler<TItem>.IDecoupledHandler decoupledHandler)
+            public Options SetItems(CollectionChangeHandler<TItem>.IBehaviour collectionChangeBehavior)
             {
                 var itemList = new List<TItem>();
-                CollectionChangeHandler = new CollectionChangeHandler<TItem>.DependencyInjectedHandler(itemList, decoupledHandler);
+                CollectionChangeHandler = new CollectionChangeHandler<TItem>(itemList, collectionChangeBehavior);
                 return this;
             }
         }

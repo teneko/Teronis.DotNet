@@ -20,7 +20,7 @@ namespace Teronis.Collections.Synchronization.Example1.ViewModels.ModelCollectio
         protected override void ConfigureItems(Options options)
         {
             options.SetSequentialSynchronizationMethod(DeviceHeaderEntityEqualityComparer.Default);
-            options.SuperItemsOptions.SetItems(CollectionChangeHandler<DeviceHeaderEntity>.DecoupledItemReplacingHandler.Default);
+            options.SuperItemsOptions.SetItems(CollectionChangeHandler<DeviceHeaderEntity>.CollectionItemReplaceBehaviour.Default);
             options.SubItemsOptions.UpdateItem = (subItem, getSuperItem) => subItem.Header = getSuperItem();
         }
 

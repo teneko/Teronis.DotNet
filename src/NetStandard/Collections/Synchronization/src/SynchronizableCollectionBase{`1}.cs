@@ -15,6 +15,13 @@ namespace Teronis.Collections.Synchronization
 {
     public abstract class SynchronizableCollectionBase<TItem, TNewItem> : Collection<TItem>, ISynchronizedCollection<TItem>, INotifyPropertyChanged, INotifyPropertyChanging
     {
+        /* Related to observable collection. */
+        private const string CountString = "Count";
+        /// <summary>
+        /// See https://docs.microsoft.com/en-us/archive/blogs/xtof/binding-to-indexers.
+        /// </summary>
+        private const string IndexerName = "Item[]";
+
         public event PropertyChangedEventHandler? PropertyChanged {
             add => PropertyChangeComponent.PropertyChanged += value;
             remove => PropertyChangeComponent.PropertyChanged -= value;
@@ -24,16 +31,6 @@ namespace Teronis.Collections.Synchronization
             add => PropertyChangeComponent.PropertyChanging += value;
             remove => PropertyChangeComponent.PropertyChanging -= value;
         }
-
-        #region Related to observable collection.
-
-        private const string CountString = "Count";
-        /// <summary>
-        /// See https://docs.microsoft.com/en-us/archive/blogs/xtof/binding-to-indexers.
-        /// </summary>
-        private const string IndexerName = "Item[]";
-
-        #endregion
 
         public event EventHandler? CollectionSynchronizing;
 
@@ -50,11 +47,11 @@ namespace Teronis.Collections.Synchronization
 
         private event NotifyCollectionChangedEventHandler? collectionChanged;
 
-        internal protected virtual CollectionChangeHandler<TItem>.IDependencyInjectedHandler CollectionChangeHandler { get; private set; }
+        internal protected virtual ICollectionChangeHandler<TItem> CollectionChangeHandler { get; private set; }
 
         private bool itemTypeImplementsDisposable;
 
-        public SynchronizableCollectionBase(IList<TItem> list, CollectionChangeHandler<TItem>.IDecoupledHandler handler)
+        public SynchronizableCollectionBase(IList<TItem> list, CollectionChangeHandler<TItem>.IBehaviour handler)
             : base(list) =>
             OnInitialize(decoupledHandler: handler);
 
@@ -62,7 +59,7 @@ namespace Teronis.Collections.Synchronization
             : base(list) =>
             OnInitialize();
 
-        public SynchronizableCollectionBase(CollectionChangeHandler<TItem>.IDependencyInjectedHandler handler)
+        public SynchronizableCollectionBase(ICollectionChangeHandler<TItem> handler)
             : base(handler.Items) =>
             OnInitialize(dependencyInjectedHandler: handler);
 
@@ -74,13 +71,19 @@ namespace Teronis.Collections.Synchronization
             nameof(itemTypeImplementsDisposable),
             nameof(CollectionChangeHandler))]
         private void OnInitialize(
-            CollectionChangeHandler<TItem>.IDependencyInjectedHandler? dependencyInjectedHandler = null,
-            CollectionChangeHandler<TItem>.IDecoupledHandler? decoupledHandler = null)
+            ICollectionChangeHandler<TItem>? dependencyInjectedHandler = null,
+            CollectionChangeHandler<TItem>.IBehaviour? decoupledHandler = null)
         {
             PropertyChangeComponent = new PropertyChangeComponent(this);
             itemTypeImplementsDisposable = typeof(IDisposable).IsAssignableFrom(typeof(TItem));
-            CollectionChangeHandler = dependencyInjectedHandler ?? new CollectionChangeHandler<TItem>.DependencyInjectedHandler(Items, decoupledHandler);
+            CollectionChangeHandler = dependencyInjectedHandler ?? new CollectionChangeHandler<TItem>(Items, decoupledHandler);
         }
+
+        internal void InvokeCollectionSynchronizing() =>
+            CollectionSynchronizing?.Invoke(this, new EventArgs());
+
+        internal void InvokeCollectionSynchronized() =>
+            CollectionSynchronized?.Invoke(this, new EventArgs());
 
         protected override void InsertItem(int index, TItem item)
         {
@@ -98,18 +101,14 @@ namespace Teronis.Collections.Synchronization
         protected override void SetItem(int index, TItem item)
         {
             PropertyChangeComponent.OnPropertyChanging(IndexerName);
-
             base.SetItem(index, item);
-
             PropertyChangeComponent.OnPropertyChanged(IndexerName);
         }
 
         protected virtual void MoveItems(int fromIndex, int toIndex, int count)
         {
             PropertyChangeComponent.OnPropertyChanging(IndexerName);
-
             Items.Move(fromIndex, toIndex, count);
-
             PropertyChangeComponent.OnPropertyChanged(IndexerName);
         }
 
@@ -167,22 +166,16 @@ namespace Teronis.Collections.Synchronization
         protected virtual CollectionModifiedEventArgs<TItem> CreateCollectionModifiedEventArgs(ICollectionModification<TItem, TItem> modification) =>
             new CollectionModifiedEventArgs<TItem>(modification);
 
-        protected void InvokeCollectionSynchronizing() =>
-            CollectionSynchronizing?.Invoke(this, new EventArgs());
-
-        protected void InvokeCollectionModified(ICollectionModification<TItem, TItem> collectionModifiaction)
+        protected void InvokeCollectionModified(ICollectionModification<TItem, TItem> collectionModification)
         {
             if (collectionChanged is null && CollectionModified is null) {
                 return;
             }
 
-            var collectionChangedEventArgs = CreateCollectionModifiedEventArgs(collectionModifiaction);
+            var collectionChangedEventArgs = CreateCollectionModifiedEventArgs(collectionModification);
             CollectionModified?.Invoke(this, collectionChangedEventArgs);
             collectionChanged?.Invoke(this, collectionChangedEventArgs);
         }
-
-        protected void InvokeCollectionSynchronized() =>
-            CollectionSynchronized?.Invoke(this, new EventArgs());
 
         public SynchronizedDictionary<TKey, TItem> CreateSynchronizedDictionary<TKey>(Func<TItem, TKey> getItemKey, IEqualityComparer<TKey> keyEqualityComparer)
             where TKey : notnull =>

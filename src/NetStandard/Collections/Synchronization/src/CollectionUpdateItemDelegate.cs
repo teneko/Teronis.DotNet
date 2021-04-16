@@ -18,7 +18,7 @@ namespace Teronis.Collections.Synchronization
     /// created at first at insertion. It is in such a way designed
     /// to return the same reference as previously once called. It
     /// will be the same reference that may be created through 
-    /// <see cref="CollectionChangeHandler{NewItemType}.IDependencyInjectedHandler.ReplaceItem(int, Func{NewItemType})"/>.
+    /// <see cref="ICollectionChangeHandler{NewItemType}.ReplaceItem(int, Func{NewItemType})"/>.
     /// <br/>It won't return the existing item that resides in
     /// the global list.
     /// </param>

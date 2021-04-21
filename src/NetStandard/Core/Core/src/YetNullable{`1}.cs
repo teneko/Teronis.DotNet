@@ -38,8 +38,8 @@ namespace Teronis
             isNotNull = !isNull;
         }
 
-        public YetNullable([AllowNull] T key)
-            : this(key, isNull: key is null) { }
+        public YetNullable([AllowNull] T value)
+            : this(value, isNull: value is null) { }
 
         public override bool Equals(object? other)
         {

@@ -12,5 +12,8 @@ namespace Teronis.Collections.Generic
             key = pair.Key;
             value = pair.Value;
         }
+
+        public static ICovariantKeyValuePair<KeyType, ValueType> AsCovariant<KeyType, ValueType>(this ICovariantKeyValuePair<KeyType, ValueType> pair) =>
+            pair;
     }
 }

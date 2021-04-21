@@ -5,14 +5,17 @@ namespace Teronis
 {
     public static class YetNullableExtensions
     {
-        public static KeyType? ToNullable<KeyType>(this YetNullable<KeyType> nullableKey)
+        public static KeyType? ToNullable<KeyType>(this YetNullable<KeyType> nullableValue)
             where KeyType : struct
         {
-            if (nullableKey.IsNull) {
+            if (nullableValue.IsNull) {
                 return null;
             }
 
-            return nullableKey.Value;
+            return nullableValue.Value;
         }
+
+        public static IYetNullable<TKey> AsCovariant<TKey>(this YetNullable<TKey> nullableValue) =>
+            nullableValue;
     }
 }

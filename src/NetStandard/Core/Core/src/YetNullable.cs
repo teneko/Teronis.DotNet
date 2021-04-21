@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis
 {
@@ -14,7 +15,7 @@ namespace Teronis
         public static YetNullable<T> Null<T>() =>
             YetNullable<T>.Null;
 
-        public static YetNullable<T> Null<T>(T? nullableValue)
+        public static YetNullable<T> MaybeNull<T>(T? nullableValue)
             where T : struct
         {
             if (nullableValue.HasValue) {
@@ -23,6 +24,9 @@ namespace Teronis
 
             return YetNullable<T>.Null;
         }
+
+        public static YetNullable<T> MaybeNull<T>([AllowNull] T nullableValue) =>
+            new YetNullable<T>(nullableValue);
 
         public static bool Equals<T>(YetNullable<T> left, YetNullable<T> right)
         {

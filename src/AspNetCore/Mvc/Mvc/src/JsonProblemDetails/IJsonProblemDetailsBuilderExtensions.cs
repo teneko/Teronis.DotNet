@@ -36,7 +36,7 @@ namespace Teronis.Mvc.JsonProblemDetails
                 options.Filters.Add<ProblemDetailsExceptionFilter>();
             });
 
-            services.AddSingleton<ProblemDetailsMiddlewareContextProxy>();
+            services.AddSingleton<ProblemDetailsMiddlewareContextProvider>();
             services.AddScoped<ProblemDetailsMiddlewareContext>();
             services.AddSingleton<ProblemDetailsMapperProvider>();
             services.AddSingleton<ProblemDetailsResultProvider>();
@@ -55,15 +55,17 @@ namespace Teronis.Mvc.JsonProblemDetails
         {
             var services = builder.Services ?? throw new ArgumentException();
             
-            services.AddOptions<ApiBehaviorOptions>().Configure<ProblemDetailsMiddlewareContextProxy>((options, problemDetailsMiddlewareContextProxy) => {
+            services.AddOptions<ApiBehaviorOptions>().Configure<ProblemDetailsMiddlewareContextProvider>((options, problemDetailsMiddlewareContextProvider) => {
                 options.SuppressMapClientErrors = true;
                 options.SuppressModelStateInvalidFilter = false;
 
                 options.InvalidModelStateResponseFactory = (actionContext) => {
-                    var middleware = problemDetailsMiddlewareContextProxy.MiddlewareContext;
+                    var middleware = problemDetailsMiddlewareContextProvider.MiddlewareContext;
                     middleware.MappableObject = actionContext.ModelState;
+
                     var problemDetails = ProblemDetailsUtils.CreateMissingMapper(typeof(ApiVersionProblemDetailsMapper));
                     middleware.FaultyConditionalResult = new ProblemDetailsResult(problemDetails);
+
                     return new EmptyResult();
                 };
             });
@@ -81,8 +83,8 @@ namespace Teronis.Mvc.JsonProblemDetails
         {
             var services = builder.Services ?? throw new ArgumentException();
 
-            services.AddOptions<ApiVersioningOptions>().Configure<ProblemDetailsMiddlewareContextProxy>((options, problemDetailsMiddlewareContextProxy) => {
-                options.ErrorResponses = new ApiVersionProblemDetailsResponseProvider(problemDetailsMiddlewareContextProxy);
+            services.AddOptions<ApiVersioningOptions>().Configure<ProblemDetailsMiddlewareContextProvider>((options, problemDetailsMiddlewareContextProvider) => {
+                options.ErrorResponses = new ApiVersionProblemDetailsResponseProvider(problemDetailsMiddlewareContextProvider);
             });
 
             return builder;

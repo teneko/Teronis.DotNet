@@ -59,9 +59,9 @@ namespace Teronis.Mvc.JsonProblemDetails.Middleware
         /// <param name="resultExecutor"></param>
         /// <param name="logger"></param>
         /// <returns>
-        /// Value <see cref="true"/> if map result could be created. 
-        /// Value <see cref="false"/> if mapper couldn't be found. 
-        /// Value <see cref="null"/> if response has been started.
+        /// Value <see langword="true"/> if map result could be created. 
+        /// Value <see langword="false"/> if mapper couldn't be found. 
+        /// Value <see langword="null"/> if response has been started.
         /// </returns>
         static async Task<bool?> tryStartResponse(HttpContext httpContext, object? mappableObject, ProblemDetailsMiddlewareContext middlewareContext,
                ProblemDetailsResultProvider problemDetailsResponseProvider, IActionResultExecutor<ProblemDetailsResult> resultExecutor, ILogger? logger)
@@ -93,17 +93,17 @@ namespace Teronis.Mvc.JsonProblemDetails.Middleware
         }
 
         private readonly RequestDelegate nextRequestDelegate;
-        private readonly ProblemDetailsMiddlewareContextProxy problemDetailsMiddlewareContextProxy;
+        private readonly ProblemDetailsMiddlewareContextProvider problemDetailsMiddlewareContextProvider;
         private readonly ILogger? logger;
         private readonly ProblemDetailsResultProvider problemDetailsResponseProvider;
 
-        public ProblemDetailsMiddleware(RequestDelegate nextRequestDelegate, ProblemDetailsMiddlewareContextProxy problemDetailsMiddlewareContextProxy,
+        public ProblemDetailsMiddleware(RequestDelegate nextRequestDelegate, ProblemDetailsMiddlewareContextProvider problemDetailsMiddlewareContextProvider,
             ProblemDetailsResultProvider problemDetailsResponseProvider, ILogger<ProblemDetailsMiddleware>? logger)
         {
             this.nextRequestDelegate = nextRequestDelegate ?? throw new ArgumentNullException(nameof(nextRequestDelegate));
 
-            this.problemDetailsMiddlewareContextProxy = problemDetailsMiddlewareContextProxy
-                ?? throw new ArgumentNullException(nameof(problemDetailsMiddlewareContextProxy));
+            this.problemDetailsMiddlewareContextProvider = problemDetailsMiddlewareContextProvider
+                ?? throw new ArgumentNullException(nameof(problemDetailsMiddlewareContextProvider));
 
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
@@ -119,7 +119,7 @@ namespace Teronis.Mvc.JsonProblemDetails.Middleware
         {
             var response = httpContext.Response;
             middlewareContext = middlewareContext ?? throw new ArgumentNullException(nameof(middlewareContext));
-            problemDetailsMiddlewareContextProxy.MiddlewareContext = middlewareContext;
+            problemDetailsMiddlewareContextProvider.MiddlewareContext = middlewareContext;
 
             try {
                 await nextRequestDelegate(httpContext);
@@ -135,7 +135,7 @@ namespace Teronis.Mvc.JsonProblemDetails.Middleware
                 var isMappableObjectNull = mappableObject is null;
 
                 // The result does not matter us.
-                await tryStartResponse(httpContext, mappableObject, middlewareContext, problemDetailsResponseProvider, resultExecutor, logger);
+                _ = await tryStartResponse(httpContext, mappableObject, middlewareContext, problemDetailsResponseProvider, resultExecutor, logger);
             } catch (Exception error) {
                 var result = await tryStartResponse(httpContext, error, middlewareContext, problemDetailsResponseProvider, resultExecutor, logger);
 

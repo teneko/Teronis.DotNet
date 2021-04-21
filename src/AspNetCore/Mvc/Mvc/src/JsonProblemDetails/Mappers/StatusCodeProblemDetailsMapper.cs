@@ -13,7 +13,7 @@ namespace Teronis.Mvc.JsonProblemDetails.Mappers
     /// It's going to be visited from all problem details filters as long
     /// as not handled.
     /// Method <see cref="ProblemDetailsMapper.CanMap"/> is defaultly 
-    /// implemented to return <see cref="true"/>.
+    /// implemented to return <see langword="true"/>.
     /// You may describe <see cref="ProblemDetailsMapperDescriptorOptions.StatusCodes"/>
     /// instead inheriting from this class and overriding <see cref="ProblemDetailsMapper.CanMap"/>.
     /// </summary>

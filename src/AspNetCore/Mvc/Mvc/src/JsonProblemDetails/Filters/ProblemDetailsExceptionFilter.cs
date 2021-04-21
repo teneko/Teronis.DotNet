@@ -14,8 +14,10 @@ namespace Teronis.Mvc.JsonProblemDetails.Filters
         private readonly ProblemDetailsResultProvider problemDetailsResponseProvider;
         private readonly ProblemDetailsMiddlewareContext problemDetailsMiddlewareContext;
 
-        public ProblemDetailsExceptionFilter(ProblemDetailsMiddlewareContext problemDetailsMiddlewareContext,
-            ProblemDetailsResultProvider problemDetailsResponseProvider, IOptions<ProblemDetailsOptions> options)
+        public ProblemDetailsExceptionFilter(
+            ProblemDetailsMiddlewareContext problemDetailsMiddlewareContext,
+            ProblemDetailsResultProvider problemDetailsResponseProvider,
+            IOptions<ProblemDetailsOptions> options)
         {
             this.options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             this.problemDetailsResponseProvider = problemDetailsResponseProvider ?? throw new ArgumentNullException(nameof(problemDetailsResponseProvider));
@@ -26,6 +28,8 @@ namespace Teronis.Mvc.JsonProblemDetails.Filters
 
         public void OnException(ExceptionContext exceptionContext)
         {
+            options.LogExceptionFromExceptionFilter?.Invoke(exceptionContext.Exception);
+
             if (problemDetailsMiddlewareContext.IsFilterSkippable()) {
                 return;
             }

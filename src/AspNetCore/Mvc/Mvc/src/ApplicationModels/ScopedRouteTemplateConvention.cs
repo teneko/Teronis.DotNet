@@ -19,6 +19,8 @@ namespace Teronis.Mvc.ApplicationModels
         /// Creates a route template convention for controller that formats route template of <see cref="ActionModel"/>s.
         /// </summary>
         /// <param name="routeTemplateFormatter">Formats route template.</param>
+        /// <param name="applicationFilter"></param>
+        /// <param name="actionFilter"></param>
         /// <param name="controllerFilter">Filters on controller type.</param>
         public ScopedRouteTemplateConvention(IStringFormatter routeTemplateFormatter,
             IApplicationModelFilter? applicationFilter = null, IControllerModelFilter? controllerFilter = null,

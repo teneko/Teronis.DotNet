@@ -12,13 +12,14 @@ namespace Teronis.Mvc.JsonProblemDetails.Middleware
         /// </summary>
         public ProblemDetailsResult? HandledResult { get; private set; }
         /// <summary>
-        /// <see cref="true"/> if <see cref="HandledResult"/> is not null.
+        /// <see langword="true"/> if <see cref="HandledResult"/> is not null.
         /// </summary>
-        public bool Handled => !(HandledResult is null);
+        public bool Handled =>
+            !(HandledResult is null);
 
         /// <summary>
-        /// If not null the object is going to to be
-        /// expected  definitely being mapped. Otherwise
+        /// If not null, the object is going to to be
+        /// expected definitely being mapped. Otherwise
         /// <see cref="FaultyConditionalResult"/> or
         /// erroneous default result will be taken as
         /// response.
@@ -33,7 +34,7 @@ namespace Teronis.Mvc.JsonProblemDetails.Middleware
         /// You may call this from a <see cref="IActionFilter"/> 
         /// or <see cref="IExceptionFilter"/>.
         /// </summary>
-        /// <returns><see cref="true"/> if filter is skippable.</returns>
+        /// <returns><see langword="true"/> if filter is skippable.</returns>
         public bool IsFilterSkippable() =>
             Handled || !(MappableObject is null);
 

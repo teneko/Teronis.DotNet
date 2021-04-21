@@ -10,7 +10,6 @@ namespace Teronis.Mvc.JsonProblemDetails.Mappers
     /// Method <see cref="IProblemDetailsMapper.CanMap"/> is defaultly 
     /// implemented to return true.
     /// </summary>
-    /// <typeparam name="MappableObjectType"></typeparam>
     public class AggregateExceptionProblemDetailsMapper : ExceptionProblemDetailsMapper<KeyedAggregateException>
     {
         public AggregateExceptionProblemDetailsMapper(IMapperContext<KeyedAggregateException> mapperContext, ExceptionContext exceptionContext)

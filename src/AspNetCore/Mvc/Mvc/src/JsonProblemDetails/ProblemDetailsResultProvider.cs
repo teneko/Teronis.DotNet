@@ -26,7 +26,7 @@ namespace Teronis.Mvc.JsonProblemDetails
         public ProblemDetailsResultProvider(ProblemDetailsMapperProvider mapperProvider,
             ProblemDetailsFactory problemDetailsFactory, IOptions<ProblemDetailsOptions> options)
         {
-            this.options = options.Value ?? throw new ArgumentNullException(nameof(options));
+            this.options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             this.mapperProvider = mapperProvider ?? throw new ArgumentNullException(nameof(mapperProvider));
             this.problemDetailsFactory = problemDetailsFactory ?? throw new ArgumentNullException(nameof(problemDetailsFactory));
         }

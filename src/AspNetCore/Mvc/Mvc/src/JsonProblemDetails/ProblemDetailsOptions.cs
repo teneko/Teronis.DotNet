@@ -10,19 +10,21 @@ using Teronis.Mvc.JsonProblemDetails.Mappers.Description;
 using Teronis.Mvc.JsonProblemDetails.Filters;
 using Teronis.Mvc.JsonProblemDetails.Mappers;
 using Teronis.Mvc.JsonProblemDetails.MappableObjectResolvers;
+using Teronis.Mvc.JsonProblemDetails.Middleware;
+using Microsoft.Extensions.Logging;
 
 namespace Teronis.Mvc.JsonProblemDetails
 {
     public class ProblemDetailsOptions
     {
         /// <summary>
-        /// Collection of <see cref="ProblemDetailsMapperDescriptor"/> which are used to describe
+        /// Collection of <see cref="ProblemDetailsMapperDescriptor"/> that is used to describe
         /// suitable mappers.
         /// </summary>
         public ProblemDetailsMapperDescriptorCollection MapperDescriptors { get; }
         /// <summary>
         /// Order of execution of <see cref="ProblemDetailsActionFilter"/>. 
-        /// Default is the <see cref="int.MaxValue"/> - 10 (magic number).
+        /// Default is <see cref="int.MaxValue"/> - 10 (magic number).
         /// </summary>
         public int ActionResultFilterOrder { get; set; }
         public int ExceptionFilterOrder { get; set; }
@@ -31,6 +33,11 @@ namespace Teronis.Mvc.JsonProblemDetails
         /// mappable objects.
         /// </summary>
         public List<IMappableObjectResolver> MappableObjectResolvers { get; }
+        /// <summary>
+        /// If specified and an exception is thrown in the problem details middlware, then the
+        /// exception will be passed to the below action handler.
+        /// </summary>
+        public Action<Exception>? LogExceptionFromExceptionFilter { get; set; }
 
         public ProblemDetailsOptions()
         {
@@ -43,7 +50,8 @@ namespace Teronis.Mvc.JsonProblemDetails
 
         public class ProblemDetailsMapperDescriptorCollection : IReadOnlyCollection<ProblemDetailsMapperDescriptor>
         {
-            public int Count => mapperDescriptors.Count;
+            public int Count =>
+                mapperDescriptors.Count;
 
             private readonly List<ProblemDetailsMapperDescriptor> mapperDescriptors;
 
@@ -59,7 +67,7 @@ namespace Teronis.Mvc.JsonProblemDetails
             IEnumerator IEnumerable.GetEnumerator() =>
                 (mapperDescriptors as IEnumerable).GetEnumerator();
 
-            private void describeExceptionProblemDetailsMapper(Type mapperType, ProblemDetailsMapperDescriptorOptions? options, 
+            private void describeExceptionProblemDetailsMapper(Type mapperType, ProblemDetailsMapperDescriptorOptions? options,
                 Action<ProblemDetailsMapperDescriptor> processDescriptor)
             {
                 var allowDerivedMapperSourceObjectTypes = options?.AllowDerivedMappableObjectTypes ?? false;
@@ -93,7 +101,7 @@ namespace Teronis.Mvc.JsonProblemDetails
                     if (mapperDescriptor.IsStatusCodeSuitable(statusCode)) {
                         find = (mapperDescriptor, index + 1);
                         return true;
-                    } 
+                    }
                 }
 
                 find = null;

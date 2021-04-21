@@ -4,7 +4,6 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Teronis.Extensions;
 
 namespace Teronis.Mvc.JsonProblemDetails.Mappers
 {
@@ -12,7 +11,7 @@ namespace Teronis.Mvc.JsonProblemDetails.Mappers
     /// Method <see cref="IProblemDetailsMapper.CanMap"/> is defaultly 
     /// implemented to return true.
     /// </summary>
-    /// <typeparam name="MappableObjectType"></typeparam>
+    /// <typeparam name="TException"></typeparam>
     public class ExceptionProblemDetailsMapper<TException> : ProblemDetailsMapper<TException>
         where TException : Exception
     {

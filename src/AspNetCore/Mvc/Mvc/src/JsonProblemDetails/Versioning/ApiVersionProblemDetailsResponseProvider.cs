@@ -10,20 +10,22 @@ namespace Teronis.Mvc.JsonProblemDetails.Versioning
 {
     public class ApiVersionProblemDetailsResponseProvider : DefaultErrorResponseProvider
     {
-        private readonly ProblemDetailsMiddlewareContextProxy problemDetailsMiddlewareContextProxy;
+        private readonly ProblemDetailsMiddlewareContextProvider problemDetailsMiddlewareContextProvider;
 
-        public ApiVersionProblemDetailsResponseProvider(ProblemDetailsMiddlewareContextProxy problemDetailsMiddlewareContextProxy)
+        public ApiVersionProblemDetailsResponseProvider(ProblemDetailsMiddlewareContextProvider problemDetailsMiddlewareContextProvider)
         {
-            this.problemDetailsMiddlewareContextProxy = problemDetailsMiddlewareContextProxy
-                ?? throw new System.ArgumentNullException(nameof(problemDetailsMiddlewareContextProxy));
+            this.problemDetailsMiddlewareContextProvider = problemDetailsMiddlewareContextProvider
+                ?? throw new System.ArgumentNullException(nameof(problemDetailsMiddlewareContextProvider));
         }
 
         public override IActionResult CreateResponse(ErrorResponseContext context)
         {
-            var middleware = problemDetailsMiddlewareContextProxy.MiddlewareContext;
+            var middleware = problemDetailsMiddlewareContextProvider.MiddlewareContext;
             middleware.MappableObject = context;
+
             var problemDetails = ProblemDetailsUtils.CreateMissingMapper(typeof(ApiVersionProblemDetailsMapper));
             middleware.FaultyConditionalResult = new ProblemDetailsResult(problemDetails);
+
             return new EmptyResult();
         }
     }

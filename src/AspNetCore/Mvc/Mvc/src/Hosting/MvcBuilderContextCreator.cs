@@ -12,7 +12,7 @@ namespace Teronis.Mvc
     public class MvcBuilderContextCreator : IPostConfigureOptions<MvcOptions>
     {
         private readonly IServiceCollection services;
-        private readonly Action<MvcBuilderContext> configureOptions;
+        private readonly Action<MvcBuilderContext> configureContext;
 
         /// <summary>
         /// 
@@ -22,14 +22,14 @@ namespace Teronis.Mvc
         public MvcBuilderContextCreator(IServiceCollection services, Action<MvcBuilderContext> configureContext)
         {
             this.services = services;
-            this.configureOptions = configureContext;
+            this.configureContext = configureContext;
         }
 
         public void PostConfigure(string name, MvcOptions option)
         {
             var partManager = services.BuildServiceProvider().GetRequiredService<ApplicationPartManager>();
             var contextOptions = new MvcBuilderContext(partManager);
-            configureOptions(contextOptions);
+            configureContext(contextOptions);
         }
     }
 }

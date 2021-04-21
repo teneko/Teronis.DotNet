@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Teroneko.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 
 namespace Teronis.Drawing
@@ -26,16 +27,7 @@ namespace Teronis.Drawing
             return false;
         }
 
-        public override int GetHashCode(IXY obj)
-        {
-            unchecked {
-                var hash = 17;
-                hash = hash * 23 + obj.X.GetHashCode();
-                hash = hash * 23 + obj.Y.GetHashCode();
-                return hash;
-            }
-        }
-
-        public string ToString(IXY xy) => $"{xy.X}:{xy.Y}";
+        public override int GetHashCode(IXY obj) =>
+            HashCode.Combine(obj.X, obj.Y);
     }
 }

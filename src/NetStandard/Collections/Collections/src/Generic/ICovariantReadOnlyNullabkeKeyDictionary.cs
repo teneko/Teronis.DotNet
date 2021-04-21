@@ -6,15 +6,18 @@ using System.Collections.Generic;
 
 namespace Teronis.Collections.Generic
 {
-    public interface ICovariantReadOnlyNullableKeyDictionary<KeyType, out ValueType> :
-        ICovariantReadOnlyDictionary<KeyType, ValueType>, ICovariantReadOnlyDictionary<YetNullable<KeyType>, ValueType>,
+    public interface ICovariantReadOnlyNullableKeyDictionary<TKey, out TValue> :
+        ICovariantReadOnlyDictionary<TKey, TValue>, ICovariantReadOnlyDictionary<YetNullable<TKey>, TValue>,
         IEnumerable
-        where KeyType : notnull
+        where TKey : notnull
     {
-        new IEnumerable<KeyType> Keys { get; }
-        new IEnumerable<ValueType> Values { get; }
+        new TValue this[YetNullable<TKey> key] { get; }
+
+        new IEnumerable<TKey> Keys { get; }
+        new IEnumerable<TValue> Values { get; }
         new int Count { get; }
 
-        new ICovariantTuple<bool, ValueType> TryGetValue(YetNullable<KeyType> key);
+        new bool ContainsKey(YetNullable<TKey> key);
+        new ICovariantTuple<bool, TValue> TryGetValue(YetNullable<TKey> key);
     }
 }

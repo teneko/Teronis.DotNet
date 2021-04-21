@@ -1,15 +1,14 @@
 ﻿// Copyright (c) Teroneko.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis.Collections.Generic
 {
     public class ListQueue<T> : List<T>
     {
-        [return: MaybeNull]
-        public T Push([AllowNull] T input)
+        public T Push(T input)
         {
             Add(input!);
             return input;
@@ -18,16 +17,14 @@ namespace Teronis.Collections.Generic
         public T Peek() =>
             this[0];
 
-        [return: MaybeNull]
         public T Pop()
         {
-            T output = default;
-
-            if (Count != 0) {
-                output = this[0];
-                RemoveAt(0);
+            if (Count == 0) {
+                throw new InvalidOperationException("There are no items left to be popped.");
             }
 
+            var output = this[0];
+            RemoveAt(0);
             return output;
         }
 

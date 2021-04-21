@@ -9,7 +9,8 @@ namespace Teronis.Collections.Generic
 {
     public class CovariantKeyValuePairCollection<KeyType, ValueType> : IReadOnlyCollection<KeyValuePair<KeyType, ValueType>>, ICovariantKeyValuePairCollection<KeyType, ValueType>
     {
-        public int Count => collection.Count;
+        public int Count =>
+            collection.Count;
 
         private readonly IReadOnlyCollection<KeyValuePair<KeyType, ValueType>> collection;
 

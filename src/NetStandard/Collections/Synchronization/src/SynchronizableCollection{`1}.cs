@@ -74,9 +74,9 @@ namespace Teronis.Collections.Synchronization
         {
             CollectionModificationIterationTools.BeginInsert(modification)
                 /// The modification is now null checked.
-                .Add((modificationItemIndex, globalIndexOffset) => {
+                .Add((modificationItemIndex, collectionStartIndex) => {
                     var superItem = modification.NewItems![modificationItemIndex];
-                    var globalIndex = globalIndexOffset + modificationItemIndex;
+                    var globalIndex = collectionStartIndex + modificationItemIndex;
                     CollectionChangeHandler.InsertItem(globalIndex, superItem);
                 })
                 .Iterate();
@@ -85,8 +85,8 @@ namespace Teronis.Collections.Synchronization
         protected virtual void RemoveItems(ICollectionModification<TItem, TItem> modification)
         {
             CollectionModificationIterationTools.BeginRemove(modification)
-                .Add((modificationItemIndex, globalIndexOffset) => {
-                    var globalIndex = globalIndexOffset + modificationItemIndex;
+                .Add((modificationItemIndex, collectionStartIndex) => {
+                    var globalIndex = collectionStartIndex + modificationItemIndex;
                     CollectionChangeHandler.RemoveItem(globalIndex);
                 })
                 .Iterate();
@@ -99,8 +99,8 @@ namespace Teronis.Collections.Synchronization
         protected virtual void ReplaceItems(ICollectionModification<TItem, TItem> modification)
         {
             CollectionModificationIterationTools.BeginReplace(modification)
-                .Add((modificationItemIndex, globalIndexOffset) => {
-                    var globalIndex = globalIndexOffset + modificationItemIndex;
+                .Add((modificationItemIndex, collectionStartIndex) => {
+                    var globalIndex = collectionStartIndex + modificationItemIndex;
                     var item = modification.NewItems![modificationItemIndex];
 
                     TItem getItem() =>

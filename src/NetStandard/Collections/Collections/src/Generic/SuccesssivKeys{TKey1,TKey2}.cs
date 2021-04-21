@@ -8,7 +8,7 @@ using Teronis.Text;
 
 namespace Teronis.Collections.Generic
 {
-    public readonly struct SuccessivKeys<TKey1, TKey2> : IOrderedKeysProvider
+    public readonly struct SuccessiveKeys<TKey1, TKey2> : IOrderedKeysProvider
     {
         [MaybeNull, AllowNull]
         public readonly TKey1 Key1 { get; }
@@ -16,7 +16,7 @@ namespace Teronis.Collections.Generic
         public readonly TKey2 Key2 { get; }
         public readonly int KeysLength { get; }
 
-        public SuccessivKeys([AllowNull] TKey1 key1, [AllowNull] TKey2 key2)
+        public SuccessiveKeys([AllowNull] TKey1 key1, [AllowNull] TKey2 key2)
         {
             Key1 = key1;
             Key2 = key2;

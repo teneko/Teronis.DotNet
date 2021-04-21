@@ -1,13 +1,14 @@
 ﻿// Copyright (c) Teroneko.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis.Collections.Generic
 {
     public interface IReadOnlyNullableKeyDictionary<KeyType, ValueType> : IReadOnlyDictionary<KeyType, ValueType>, IReadOnlyDictionary<YetNullable<KeyType>, ValueType>,
-        IReadOnlyCollection<KeyValuePair<IYetNullable<KeyType>, ValueType>>, ICovariantReadOnlyNullableKeyDictionary<KeyType, ValueType>
+        IReadOnlyCollection<KeyValuePair<IYetNullable<KeyType>, ValueType>>, ICovariantReadOnlyNullableKeyDictionary<KeyType, ValueType>, IEnumerable
         where KeyType : notnull
     {
         new ValueType this[YetNullable<KeyType> key] { get; }

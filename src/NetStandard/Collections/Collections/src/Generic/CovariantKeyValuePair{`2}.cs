@@ -1,22 +1,20 @@
 ﻿// Copyright (c) Teroneko.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Diagnostics.CodeAnalysis;
-
 namespace Teronis.Collections.Generic
 {
-    public struct CovariantKeyValuePair<KeyType, ValueType> : ICovariantKeyValuePair<KeyType, ValueType>
+    public readonly struct CovariantKeyValuePair<TKey, TValue> : ICovariantKeyValuePair<TKey, TValue>
     {
-        public KeyType Key { get; }
-        public ValueType Value { get; }
+        public readonly TKey Key { get; }
+        public readonly TValue Value { get; }
 
-        public CovariantKeyValuePair(KeyType key, ValueType value)
+        public CovariantKeyValuePair(TKey key, TValue value)
         {
             Key = key;
             Value = value;
         }
 
-        public void Deconstruct(out KeyType key, [MaybeNull] out ValueType value)
+        public void Deconstruct(out TKey key, out TValue value)
         {
             key = Key;
             value = Value;

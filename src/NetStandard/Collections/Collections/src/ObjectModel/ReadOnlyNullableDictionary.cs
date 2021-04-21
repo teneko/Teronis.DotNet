@@ -11,7 +11,6 @@ namespace Teronis.Collections.ObjectModel
     public class ReadOnlyNullableDictionary<KeyType, ValueType> : IReadOnlyNullableKeyDictionary<KeyType, ValueType>
         where KeyType : notnull
     {
-
         public ValueType this[YetNullable<KeyType> key] =>
             ((IReadOnlyNullableKeyDictionary<KeyType, ValueType>)dictionary)[key];
 

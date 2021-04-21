@@ -3,62 +3,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Teronis.Collections.Generic;
-using Teronis.Extensions;
 
 namespace Teronis.Extensions
 {
     public static partial class IEnumerableGenericExtensions
     {
-        public static IEnumerable<T> ExcludeNulls<T>(this IEnumerable<T> collection) where T : class => collection.Where(x => x != null);
-
-        [return: MaybeNull]
-        public static R FirstNonDefaultOrDefault<T, R>(this IEnumerable<T> collection, Func<T, R> getObj)
-        {
-            var defaultObj = default(R);
-
-            foreach (var item in collection) {
-                var obj = getObj(item);
-
-                if (!Equals(obj, defaultObj)) {
-                    return obj;
-                }
-            }
-
-            return defaultObj;
-        }
-
-        public static R FirstNonDefault<T, R>(this IEnumerable<T> collection, Func<T, R> getObj) where R : class
-        {
-            var obj = FirstNonDefaultOrDefault(collection, getObj);
-
-            if (obj != default) {
-                return obj;
-            } else {
-                throw new InvalidOperationException("The source sequence is empty.");
-            }
-        }
-
-        public static bool Any<T>(this IEnumerable<T> collection, Func<T, bool> predicate, out T last)
-        {
-            T _last = default;
-            var retVal = collection.Any(x => predicate(_last = x));
-            last = _last!;
-            return retVal;
-        }
-
-        public static IEnumerable<ValueIndexPair<T>> WithIndex<T>(this IEnumerable<T> sequence)
-        {
-            int i = 0;
-
-            foreach (var value in sequence) {
-                yield return new ValueIndexPair<T>(value, i);
-                i++;
-            }
-        }
-
         /// <summary>
         /// Adds the item at the end of a new <see cref="IEnumerable{T}"/> sequence without loosing the target items.
         /// </summary>
@@ -91,6 +41,103 @@ namespace Teronis.Extensions
             foreach (var t in items) {
                 yield return t;
             }
+        }
+
+        /// <summary>
+        /// Compares two unordered enumerables whether they are similar. Supports duplicates.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sourceEnumerable"></param>
+        /// <param name="otherEnumerable"></param>
+        /// <param name="comparer"></param>
+        /// <returns>True if all items in source exists in other enumerable.</returns>
+        public static bool SequenceSimilar<T>(
+            this IEnumerable<T>? sourceEnumerable,
+            IEnumerable<T>? otherEnumerable,
+            IEqualityComparer<T>? comparer = null)
+            where T : notnull
+        {
+            if (ReferenceEquals(sourceEnumerable, otherEnumerable)) {
+                return true;
+            } else if (sourceEnumerable is null || otherEnumerable is null) {
+                return false;
+            }
+
+            var balanceValueByKeyDictionary = new Dictionary<T, int>(comparer);
+
+            foreach (var item in sourceEnumerable) {
+                if (balanceValueByKeyDictionary.ContainsKey(item)) {
+                    balanceValueByKeyDictionary[item]++;
+                } else {
+                    balanceValueByKeyDictionary.Add(item, 1);
+                }
+            }
+
+            foreach (var item in otherEnumerable) {
+                if (balanceValueByKeyDictionary.ContainsKey(item)) {
+                    balanceValueByKeyDictionary[item]--;
+                } else {
+                    return false;
+                }
+            }
+
+            return balanceValueByKeyDictionary.Values.All(c => c == 0);
+        }
+
+        /// <summary>
+        /// Compares two unordered enumerables whether they are similar. Supports duplicates.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sourceEnumerable"></param>
+        /// <param name="otherEnumerable"></param>
+        /// <param name="comparer"></param>
+        /// <returns>
+        /// A dictionary where each key refers to a boolean that is
+        /// true if the key was existing in source and other enumerable.
+        /// </returns>
+        public static Dictionary<T, bool> SequenceSimilarity<T>(
+            this IEnumerable<T>? sourceEnumerable,
+            IEnumerable<T>? otherEnumerable,
+            IEqualityComparer<T>? comparer = null)
+            where T : notnull
+        {
+            static Dictionary<T, bool> CreateDictionaryOrMapValues(IEnumerable<T>? enumerable, bool defaultValue) =>
+                enumerable is null
+                ? new Dictionary<T, bool>()
+                : enumerable.ToDictionary(x => x, x => defaultValue);
+
+            if (ReferenceEquals(sourceEnumerable, otherEnumerable)) {
+                return CreateDictionaryOrMapValues(sourceEnumerable, defaultValue: true);
+            } else if (sourceEnumerable is null || otherEnumerable is null) {
+                return sourceEnumerable is null
+                    ? CreateDictionaryOrMapValues(otherEnumerable, defaultValue: false)
+                    : CreateDictionaryOrMapValues(sourceEnumerable, defaultValue: false);
+            }
+
+            var balanceValueByKeyDictionary = new Dictionary<T, int>(comparer);
+
+            foreach (var item in sourceEnumerable) {
+                if (balanceValueByKeyDictionary.ContainsKey(item)) {
+                    balanceValueByKeyDictionary[item]++;
+                } else {
+                    balanceValueByKeyDictionary.Add(item, 1);
+                }
+            }
+
+            foreach (var item in otherEnumerable) {
+                if (balanceValueByKeyDictionary.ContainsKey(item)) {
+                    balanceValueByKeyDictionary[item]--;
+                } else {
+                    // Add the key with negative number to guarantee falsy 
+                    // equality. Having the key to ensures collection union.
+                    balanceValueByKeyDictionary.Add(item, -1);
+                }
+            }
+
+            return balanceValueByKeyDictionary.ToDictionary(x => x.Key, x => {
+                // True means similar.
+                return x.Value == 0;
+            });
         }
     }
 }

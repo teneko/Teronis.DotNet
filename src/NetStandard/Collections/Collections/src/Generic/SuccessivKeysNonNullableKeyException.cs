@@ -5,26 +5,26 @@ using System;
 
 namespace Teronis.Collections.Generic
 {
-    public class SuccessivKeysNonNullableKeyException : ArgumentException
+    public class SuccessiveKeysNonNullableKeyException : ArgumentException
     {
         public int KeyIndex { get; }
 
-        public SuccessivKeysNonNullableKeyException(int keyIndex) =>
+        public SuccessiveKeysNonNullableKeyException(int keyIndex) =>
             KeyIndex = keyIndex;
 
-        public SuccessivKeysNonNullableKeyException(int keyIndex, string? message)
+        public SuccessiveKeysNonNullableKeyException(int keyIndex, string? message)
             : base(message) =>
             KeyIndex = keyIndex;
 
-        public SuccessivKeysNonNullableKeyException(int keyIndex, string? message, Exception? innerException)
+        public SuccessiveKeysNonNullableKeyException(int keyIndex, string? message, Exception? innerException)
             : base(message, innerException) =>
             KeyIndex = keyIndex;
 
-        public SuccessivKeysNonNullableKeyException(int keyIndex, string? message, string? paramName)
+        public SuccessiveKeysNonNullableKeyException(int keyIndex, string? message, string? paramName)
             : base(message, paramName) =>
             KeyIndex = keyIndex;
 
-        public SuccessivKeysNonNullableKeyException(int keyIndex, string? message, string? paramName, Exception? innerException)
+        public SuccessiveKeysNonNullableKeyException(int keyIndex, string? message, string? paramName, Exception? innerException)
             : base(message, paramName, innerException) =>
             KeyIndex = keyIndex;
     }

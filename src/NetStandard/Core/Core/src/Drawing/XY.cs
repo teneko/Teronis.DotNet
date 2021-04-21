@@ -1,16 +1,14 @@
 ﻿// Copyright (c) Teroneko.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-
-
 namespace Teronis.Drawing
 {
-    public struct XY : IXY
+    public readonly struct XY : IXY
     {
         public static readonly XY Empty = new XY();
 
-        public int X { get; set; }
-        public int Y { get; set; }
+        public readonly int X { get; }
+        public readonly int Y { get; }
 
         public XY(int x, int y)
         {
@@ -26,7 +24,10 @@ namespace Teronis.Drawing
         public override bool Equals(object? obj) =>
             Equals(obj as IXY);
 
-        public override int GetHashCode() => XYEqualityComparer.Default.GetHashCode(this);
-        public override string ToString() => XYEqualityComparer.Default.ToString(this);
+        public override int GetHashCode() =>
+            XYEqualityComparer.Default.GetHashCode(this);
+
+        public override string ToString() =>
+            $"{X}:{Y}";
     }
 }

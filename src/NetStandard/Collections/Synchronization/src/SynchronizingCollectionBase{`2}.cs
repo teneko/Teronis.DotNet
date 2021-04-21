@@ -197,33 +197,31 @@ namespace Teronis.Collections.Synchronization
                 var iteratorBuilder = CollectionModificationIterationTools.BeginReplace(superItemModification);
                 var subItemByIndex = new Dictionary<int, Lazy<TSubItem>>();
                 int replaceItemIndex = 0;
-                int modificationItemIndex = 0;
 
-                void updateItem(int modificationItemIndex, int globalItemIndex)
+                void updateItem(int modificationItemIndex, int collectionItemIndex)
                 {
                     if (!(updateSuperItem is null)) {
                         updateSuperItem(
-                            SuperItemChangeHandler.Items[globalItemIndex],
-                            () => subItemByIndex[globalItemIndex].Value);
+                            SuperItemChangeHandler.Items[collectionItemIndex],
+                            () => subItemByIndex[collectionItemIndex].Value);
                     }
 
                     if (!(updateSubItem is null)) {
                         updateSubItem(
-                            SubItemChangeHandler.Items[globalItemIndex],
+                            SubItemChangeHandler.Items[collectionItemIndex],
                             () => superItemModification.NewItems![modificationItemIndex]);
                     }
                 }
 
-                iteratorBuilder.Add((innerModificationItemIndex, globalIndexOffset) => {
-                    modificationItemIndex = innerModificationItemIndex;
-                    replaceItemIndex = modificationItemIndex + globalIndexOffset;
+                iteratorBuilder.Add((modificationItemIndex, collectionStartIndex) => {
+                    replaceItemIndex = modificationItemIndex + collectionStartIndex;
 
                     subItemByIndex[replaceItemIndex] = new Lazy<TSubItem>(() =>
                         CreateSubItem(superItemModification.NewItems![modificationItemIndex]));
                 });
 
                 if (canReplaceSuperItem) {
-                    iteratorBuilder.Add(() => {
+                    iteratorBuilder.Add((modificationItemIndex, _) => {
                         var lazyNewItem = new Lazy<TSuperItem>(() =>
                             superItemModification.NewItems![modificationItemIndex]);
 
@@ -239,7 +237,7 @@ namespace Teronis.Collections.Synchronization
                 iteratorBuilder.Add(() => OnBeforeReplaceItem(replaceItemIndex));
 
                 if (canReplaceSubItem) {
-                    iteratorBuilder.Add(() => {
+                    iteratorBuilder.Add((modificationItemIndex, _) => {
                         var lazyNewItem = new Lazy<TSubItem>(() =>
                             CreateSubItem(superItemModification.NewItems![modificationItemIndex]));
 

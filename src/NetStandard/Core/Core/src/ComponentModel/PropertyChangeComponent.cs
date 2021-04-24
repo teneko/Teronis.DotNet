@@ -29,7 +29,16 @@ namespace Teronis.ComponentModel
             AlternativeEventSender = null;
         }
 
-        protected virtual object? GetAlternativeEventSender(object? originalSender)
+        /// <summary>
+        /// Returns <see cref="AlternativeEventSender"/> if 
+        /// <see cref="HasAlternativeEventSender"/> is
+        /// <see langword="true"/>, otherwise
+        /// <paramref name="originalSender"/> gets returned.
+        /// </summary>
+        /// <param name="originalSender">The sender that initially got received.</param>
+        /// <param name="methodOrigin">The caller method origin.</param>
+        /// <returns></returns>
+        protected virtual object? InterceptSender(object? originalSender, PropertyChangeMethodOrigin methodOrigin)
         {
             if (HasAlternativeEventSender) {
                 originalSender = AlternativeEventSender;
@@ -44,7 +53,7 @@ namespace Teronis.ComponentModel
         /// <param name="sender">The sender to be sent.</param>
         /// <param name="args">The argument to be sent.</param>
         public virtual void OnPropertyChanging(object? sender, PropertyChangingEventArgs args) =>
-            PropertyChanging?.Invoke(GetAlternativeEventSender(sender), args);
+            PropertyChanging?.Invoke(InterceptSender(sender, PropertyChangeMethodOrigin.PropertyChanging), args);
 
         /// <summary>
         /// Initiates a property changed event invocation.
@@ -52,7 +61,7 @@ namespace Teronis.ComponentModel
         /// <param name="sender">The sender to be sent.</param>
         /// <param name="args">The argument to be sent.</param>
         public virtual void OnPropertyChanged(object? sender, PropertyChangedEventArgs args) =>
-            PropertyChanged?.Invoke(GetAlternativeEventSender(sender), args);
+            PropertyChanged?.Invoke(InterceptSender(sender, PropertyChangeMethodOrigin.PropertyChanged), args);
 
         public void OnPropertyChanging([CallerMemberName] string? propertyName = null)
         {
@@ -87,7 +96,7 @@ namespace Teronis.ComponentModel
             OnPropertyChanged(propertyName);
         }
 
-        public void ChangeProperty(Action propertyChangeHandler, params string[] propertNames)
+        public void ChangeProperties(Action propertyChangeHandler, params string[] propertNames)
         {
             foreach (var propertyName in propertNames) {
                 OnPropertyChanging(propertyName);
@@ -106,8 +115,8 @@ namespace Teronis.ComponentModel
         /// </summary>
         /// <param name="propertyChangeHandler">The handler that perfomens the property change.</param>
         /// <param name="anonymousProperties">The properties that are affected by change. (e.g. () => { prop1, prop2 })</param>
-        public void ChangeProperty(Action propertyChangeHandler, Expression<Func<object?>> anonymousProperties) =>
-            ChangeProperty(propertyChangeHandler, ExpressionGenericTools.GetAnonymousTypeNames(anonymousProperties));
+        public void ChangeProperties(Action propertyChangeHandler, Expression<Func<object?>> anonymousProperties) =>
+            ChangeProperties(propertyChangeHandler, ExpressionGenericTools.GetAnonymousTypeNames(anonymousProperties));
 
         public IMemberCallablePropertyChangeComponent AsMemberCallable() =>
             this;

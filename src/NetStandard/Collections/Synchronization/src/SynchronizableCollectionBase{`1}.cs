@@ -23,13 +23,13 @@ namespace Teronis.Collections.Synchronization
         private const string IndexerName = "Item[]";
 
         public event PropertyChangedEventHandler? PropertyChanged {
-            add => PropertyChangeComponent.PropertyChanged += value;
-            remove => PropertyChangeComponent.PropertyChanged -= value;
+            add => ChangeComponent.PropertyChanged += value;
+            remove => ChangeComponent.PropertyChanged -= value;
         }
 
         public event PropertyChangingEventHandler? PropertyChanging {
-            add => PropertyChangeComponent.PropertyChanging += value;
-            remove => PropertyChangeComponent.PropertyChanging -= value;
+            add => ChangeComponent.PropertyChanging += value;
+            remove => ChangeComponent.PropertyChanging -= value;
         }
 
         public event EventHandler? CollectionSynchronizing;
@@ -43,7 +43,7 @@ namespace Teronis.Collections.Synchronization
 
         public event EventHandler? CollectionSynchronized;
 
-        protected PropertyChangeComponent PropertyChangeComponent { get; private set; }
+        protected PropertyChangeComponent ChangeComponent { get; private set; }
 
         private event NotifyCollectionChangedEventHandler? collectionChanged;
 
@@ -67,14 +67,14 @@ namespace Teronis.Collections.Synchronization
             OnInitialize();
 
         [MemberNotNull(
-            nameof(PropertyChangeComponent),
+            nameof(ChangeComponent),
             nameof(itemTypeImplementsDisposable),
             nameof(CollectionChangeHandler))]
         private void OnInitialize(
             ICollectionChangeHandler<TItem>? dependencyInjectedHandler = null,
             CollectionChangeHandler<TItem>.IBehaviour? decoupledHandler = null)
         {
-            PropertyChangeComponent = new PropertyChangeComponent(this);
+            ChangeComponent = new PropertyChangeComponent(this);
             itemTypeImplementsDisposable = typeof(IDisposable).IsAssignableFrom(typeof(TItem));
             CollectionChangeHandler = dependencyInjectedHandler ?? new CollectionChangeHandler<TItem>(Items, decoupledHandler);
         }
@@ -87,29 +87,29 @@ namespace Teronis.Collections.Synchronization
 
         protected override void InsertItem(int index, TItem item)
         {
-            PropertyChangeComponent.OnPropertyChanging(
+            ChangeComponent.OnPropertyChanging(
                 CountString,
                 IndexerName);
 
             base.InsertItem(index, item);
 
-            PropertyChangeComponent.OnPropertyChanged(
+            ChangeComponent.OnPropertyChanged(
                 CountString,
                 IndexerName);
         }
 
         protected override void SetItem(int index, TItem item)
         {
-            PropertyChangeComponent.OnPropertyChanging(IndexerName);
+            ChangeComponent.OnPropertyChanging(IndexerName);
             base.SetItem(index, item);
-            PropertyChangeComponent.OnPropertyChanged(IndexerName);
+            ChangeComponent.OnPropertyChanged(IndexerName);
         }
 
         protected virtual void MoveItems(int fromIndex, int toIndex, int count)
         {
-            PropertyChangeComponent.OnPropertyChanging(IndexerName);
+            ChangeComponent.OnPropertyChanging(IndexerName);
             Items.Move(fromIndex, toIndex, count);
-            PropertyChangeComponent.OnPropertyChanged(IndexerName);
+            ChangeComponent.OnPropertyChanged(IndexerName);
         }
 
         public void Move(int fromIndex, int toIndex, int count) =>
@@ -129,7 +129,7 @@ namespace Teronis.Collections.Synchronization
 
         protected override void RemoveItem(int index)
         {
-            PropertyChangeComponent.OnPropertyChanging(
+            ChangeComponent.OnPropertyChanging(
                 CountString,
                 IndexerName);
 
@@ -139,14 +139,14 @@ namespace Teronis.Collections.Synchronization
 
             base.RemoveItem(index);
 
-            PropertyChangeComponent.OnPropertyChanged(
+            ChangeComponent.OnPropertyChanged(
                 CountString,
                 IndexerName);
         }
 
         protected override void ClearItems()
         {
-            PropertyChangeComponent.OnPropertyChanging(
+            ChangeComponent.OnPropertyChanging(
                 CountString,
                 IndexerName);
 
@@ -158,7 +158,7 @@ namespace Teronis.Collections.Synchronization
 
             base.ClearItems();
 
-            PropertyChangeComponent.OnPropertyChanged(
+            ChangeComponent.OnPropertyChanged(
                 CountString,
                 IndexerName);
         }

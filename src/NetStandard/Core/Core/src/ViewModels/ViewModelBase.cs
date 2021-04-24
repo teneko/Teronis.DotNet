@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.ComponentModel;
+using System.Threading;
 using Teronis.ComponentModel;
 
 namespace Teronis.ViewModels
@@ -9,20 +10,25 @@ namespace Teronis.ViewModels
     public abstract class ViewModelBase : INotifyPropertyChanging, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged {
-            add => PropertyChangeComponent.PropertyChanged += value;
-            remove => PropertyChangeComponent.PropertyChanged -= value;
+            add => ChangeComponent.PropertyChanged += value;
+            remove => ChangeComponent.PropertyChanged -= value;
         }
 
         public event PropertyChangingEventHandler? PropertyChanging {
-            add => PropertyChangeComponent.PropertyChanging += value;
-            remove => PropertyChangeComponent.PropertyChanging -= value;
+            add => ChangeComponent.PropertyChanging += value;
+            remove => ChangeComponent.PropertyChanging -= value;
         }
 
-        protected PropertyChangeComponent PropertyChangeComponent { get; private set; } = null!;
+        protected virtual PropertyChangeComponent ChangeComponent {
+            get {
+                if (changeComponent is null) {
+                    return Interlocked.CompareExchange(ref changeComponent!, new PropertyChangeComponent(this), null!);
+                }
 
-        public ViewModelBase()
-        {
-            PropertyChangeComponent = new PropertyChangeComponent(this);
+                return changeComponent;
+            }
         }
+
+        private PropertyChangeComponent? changeComponent;
     }
 }

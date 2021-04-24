@@ -6,7 +6,7 @@ namespace Teronis.ComponentModel
     internal interface IReleasableEventInvocationGate
     {
         /// <summary>
-        /// Releases the gate and all withheld invocation are invoked at once.
+        /// Releases the gate.
         /// </summary>
         void ReleaseGate();
     }

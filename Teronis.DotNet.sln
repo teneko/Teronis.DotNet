@@ -31,8 +31,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collect
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections.Algorithms", "src\NetStandard\Collections\Algorithms\src\Teronis.NetStandard.Collections.Algorithms.csproj", "{8A5DF294-C612-48AB-936B-618B1A6419ED}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Collections.Synchronization.Example", "src\NetStandard\Collections\Synchronization\example\Teronis.NetStandard.Collections.Synchronization.Example.csproj", "{DBFEAB25-EA40-449B-9B02-934CB29EB25E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Linq.Expressions.Test", "src\NetStandard\Linq\Expressions\Expressions\test\Expressions\Teronis.NetStandard.Linq.Expressions.Test.csproj", "{32053618-5722-48D8-901F-01B2B8375A10}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Teronis.NetStandard.Linq.Expressions", "src\NetStandard\Linq\Expressions\Expressions\src\Teronis.NetStandard.Linq.Expressions.csproj", "{975FE130-F657-40A4-AC4F-713E512A75AC}"
@@ -301,18 +299,6 @@ Global
 		{8A5DF294-C612-48AB-936B-618B1A6419ED}.Release|x64.Build.0 = Release|x64
 		{8A5DF294-C612-48AB-936B-618B1A6419ED}.Release|x86.ActiveCfg = Release|x86
 		{8A5DF294-C612-48AB-936B-618B1A6419ED}.Release|x86.Build.0 = Release|x86
-		{DBFEAB25-EA40-449B-9B02-934CB29EB25E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DBFEAB25-EA40-449B-9B02-934CB29EB25E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DBFEAB25-EA40-449B-9B02-934CB29EB25E}.Debug|x64.ActiveCfg = Debug|x64
-		{DBFEAB25-EA40-449B-9B02-934CB29EB25E}.Debug|x64.Build.0 = Debug|x64
-		{DBFEAB25-EA40-449B-9B02-934CB29EB25E}.Debug|x86.ActiveCfg = Debug|x86
-		{DBFEAB25-EA40-449B-9B02-934CB29EB25E}.Debug|x86.Build.0 = Debug|x86
-		{DBFEAB25-EA40-449B-9B02-934CB29EB25E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DBFEAB25-EA40-449B-9B02-934CB29EB25E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DBFEAB25-EA40-449B-9B02-934CB29EB25E}.Release|x64.ActiveCfg = Release|x64
-		{DBFEAB25-EA40-449B-9B02-934CB29EB25E}.Release|x64.Build.0 = Release|x64
-		{DBFEAB25-EA40-449B-9B02-934CB29EB25E}.Release|x86.ActiveCfg = Release|x86
-		{DBFEAB25-EA40-449B-9B02-934CB29EB25E}.Release|x86.Build.0 = Release|x86
 		{32053618-5722-48D8-901F-01B2B8375A10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{32053618-5722-48D8-901F-01B2B8375A10}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32053618-5722-48D8-901F-01B2B8375A10}.Debug|x64.ActiveCfg = Debug|x64
@@ -785,7 +771,6 @@ Global
 		{09796FBB-1475-40A0-ABD0-92CD3849C156} = {C6017EE4-F4D2-499C-9352-ECBF8B644D76}
 		{95D75683-6C08-4ED2-852B-36A97239E8DE} = {C6017EE4-F4D2-499C-9352-ECBF8B644D76}
 		{23D2F491-8FAA-4E15-9E3B-355CDAEE9693} = {C6017EE4-F4D2-499C-9352-ECBF8B644D76}
-		{DBFEAB25-EA40-449B-9B02-934CB29EB25E} = {0AC8FDC4-2855-49A6-96EC-9893CDC35E84}
 		{32053618-5722-48D8-901F-01B2B8375A10} = {C6017EE4-F4D2-499C-9352-ECBF8B644D76}
 		{8CA6AF2C-A6FA-42ED-BA79-11E620179B63} = {C6017EE4-F4D2-499C-9352-ECBF8B644D76}
 		{14AA09E4-71E4-4AF7-A14D-5B2443CD04F5} = {C6017EE4-F4D2-499C-9352-ECBF8B644D76}

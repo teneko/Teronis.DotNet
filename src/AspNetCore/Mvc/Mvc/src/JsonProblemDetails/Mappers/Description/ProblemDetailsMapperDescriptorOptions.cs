@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 
-namespace Teronis.Mvc.JsonProblemDetails.Mappers.Description
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails.Mappers.Description
 {
     public class ProblemDetailsMapperDescriptorOptions
     {

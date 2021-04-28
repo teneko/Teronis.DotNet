@@ -4,9 +4,9 @@
 using System;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Options;
-using Teronis.Mvc.JsonProblemDetails.Middleware;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails.Middleware;
 
-namespace Teronis.Mvc.JsonProblemDetails.Filters
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails.Filters
 {
     public class ProblemDetailsActionFilter : IActionFilter, IOrderedFilter
     {

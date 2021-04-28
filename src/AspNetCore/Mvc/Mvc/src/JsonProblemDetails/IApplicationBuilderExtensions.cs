@@ -2,9 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.AspNetCore.Builder;
-using Teronis.Mvc.JsonProblemDetails.Middleware;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails.Middleware;
 
-namespace Teronis.Mvc.JsonProblemDetails
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails
 {
     public static class IApplicationBuilderExtensions
     {

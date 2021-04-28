@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Teronis.Mvc.Case
+namespace Teronis.AspNetCore.Mvc.Case
 {
     public class CaseFormatter : IStringFormatter
     {

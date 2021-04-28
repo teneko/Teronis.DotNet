@@ -13,7 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Teronis.AspNetCore.Identity.Bearer.Authentication;
 using Teronis.AspNetCore.Identity.Entities;
-using Teronis.Mvc.JsonProblemDetails;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails;
 using Microsoft.AspNetCore.Mvc;
 using NSwag.Generation.Processors.Security;
 using NSwag;

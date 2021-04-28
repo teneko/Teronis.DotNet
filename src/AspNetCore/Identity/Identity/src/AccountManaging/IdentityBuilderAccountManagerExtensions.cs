@@ -9,7 +9,7 @@ using Teronis.AspNetCore.Identity.Entities;
 
 namespace Teronis.AspNetCore.Identity.AccountManaging
 {
-    public static partial class IdentityBuilderExtensions
+    public static partial class IdentityBuilderAccountManagerExtensions
     {
         private static IdentityBuilder addAccountManager<DbContextType, UserType, RoleType>(this IdentityBuilder identityBuilder,
             Func<IServiceProvider, AccountManager<DbContextType, UserType, RoleType>>? getRequiredService)

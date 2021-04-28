@@ -2,9 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Text.RegularExpressions;
-using Teronis.Mvc.Case;
+using Teronis.AspNetCore.Mvc.Case;
 
-namespace Teronis.Mvc.ApplicationModels
+namespace Teronis.AspNetCore.Mvc.ApplicationModels
 {
     /// <summary>
     /// A route template case formatter.

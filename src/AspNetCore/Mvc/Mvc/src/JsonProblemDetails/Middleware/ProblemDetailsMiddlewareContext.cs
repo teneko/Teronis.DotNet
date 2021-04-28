@@ -3,7 +3,7 @@
 
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Teronis.Mvc.JsonProblemDetails.Middleware
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails.Middleware
 {
     public class ProblemDetailsMiddlewareContext
     {

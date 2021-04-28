@@ -6,11 +6,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Teronis.Mvc.JsonProblemDetails.Mappers.Description;
-using Teronis.Mvc.JsonProblemDetails.Mappers;
-using Teronis.Mvc.JsonProblemDetails.Reflection;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails.Mappers.Description;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails.Mappers;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails.Reflection;
 
-namespace Teronis.Mvc.JsonProblemDetails
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails
 {
     public class ProblemDetailsMapperProvider
     {

@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Teroneko.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace Teronis.Mvc.JsonProblemDetails
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails
 {
     /// <summary>
     /// If implemented in mappable objects, then the <see cref="StatusCode"/> 

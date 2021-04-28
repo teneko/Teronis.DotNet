@@ -3,7 +3,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Teronis.Mvc.JsonProblemDetails
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails
 {
     public interface IJsonProblemDetailsBuilder
     {

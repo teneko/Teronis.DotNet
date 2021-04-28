@@ -11,11 +11,11 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using Teronis.Mvc.JsonProblemDetails.Mappers;
-using Teronis.Mvc.JsonProblemDetails.MappableObjectResolvers;
-using Teronis.Mvc.JsonProblemDetails.Reflection;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails.Mappers;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails.MappableObjectResolvers;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails.Reflection;
 
-namespace Teronis.Mvc.JsonProblemDetails
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails
 {
     public class ProblemDetailsResultProvider
     {

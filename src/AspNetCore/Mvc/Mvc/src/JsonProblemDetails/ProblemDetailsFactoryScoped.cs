@@ -10,9 +10,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Teronis.Extensions;
-using Teronis.Mvc.JsonProblemDetails.Mappers;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails.Mappers;
 
-namespace Teronis.Mvc.JsonProblemDetails
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails
 {
     /// <summary>
     /// Wraps the original <see cref="ProblemDetailsFactory"/> and

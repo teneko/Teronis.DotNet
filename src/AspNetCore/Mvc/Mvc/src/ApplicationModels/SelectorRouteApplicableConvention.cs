@@ -5,11 +5,11 @@ using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Teronis.Mvc.ApplicationModels.Filters;
+using Teronis.AspNetCore.Mvc.ApplicationModels.Filters;
 
-namespace Teronis.Mvc.ApplicationModels
+namespace Teronis.AspNetCore.Mvc.ApplicationModels
 {
-    public class ScopedRouteConvention : IControllerModelConvention, IActionModelConvention
+    public class SelectorRouteApplicableConvention : IControllerModelConvention, IActionModelConvention
     {
         public string? DefaultRouteTemplate { get; }
         public bool ForceDefaultRoute { get; }
@@ -21,10 +21,13 @@ namespace Teronis.Mvc.ApplicationModels
         /// <summary>
         /// Defines a route convention for controllers or actions.
         /// </summary>
-        /// <param name="controllerType">The type of the controller.</param>
         /// <param name="defaultRouteTemplate">Used for empty routes.</param>
+        /// <param name="forceDefaultRoute"></param>
         /// <param name="prefixRouteTemplate">The prefix is prepend to each route.</param>
-        public ScopedRouteConvention(string? defaultRouteTemplate, bool forceDefaultRoute, string? prefixRouteTemplate,
+        /// <param name="applicationFilter"></param>
+        /// <param name="controllerFilter"></param>
+        /// <param name="actionFilter"></param>
+        public SelectorRouteApplicableConvention(string? defaultRouteTemplate, bool forceDefaultRoute, string? prefixRouteTemplate,
              IApplicationModelFilter? applicationFilter = null, IControllerModelFilter? controllerFilter = null,
              IActionModelFilter? actionFilter = null)
         {
@@ -36,19 +39,19 @@ namespace Teronis.Mvc.ApplicationModels
             this.actionFilter = actionFilter;
         }
 
-        public ScopedRouteConvention(string? defaultRouteTemplate, bool forceDefaultRoute,
+        public SelectorRouteApplicableConvention(string? defaultRouteTemplate, bool forceDefaultRoute,
             IApplicationModelFilter? applicationFilter = null, IControllerModelFilter? controllerFilter = null,
             IActionModelFilter? actionFilter = null)
-            : this(defaultRouteTemplate, forceDefaultRoute, null, applicationFilter, controllerFilter, actionFilter) { }
+            : this(defaultRouteTemplate, forceDefaultRoute, prefixRouteTemplate: null, applicationFilter, controllerFilter, actionFilter) { }
 
-        public ScopedRouteConvention(string? defaultRouteTemplate, IApplicationModelFilter? applicationFilter = null,
+        public SelectorRouteApplicableConvention(string? defaultRouteTemplate, IApplicationModelFilter? applicationFilter = null,
             IControllerModelFilter? controllerFilter = null, IActionModelFilter? actionFilter = null)
-            : this(defaultRouteTemplate, false, null, applicationFilter, controllerFilter, actionFilter) { }
+            : this(defaultRouteTemplate, forceDefaultRoute: false, prefixRouteTemplate: null, applicationFilter, controllerFilter, actionFilter) { }
 
-        public ScopedRouteConvention(string? defaultRouteTemplate, string? prefixRouteTemplate,
+        public SelectorRouteApplicableConvention(string? defaultRouteTemplate, string? prefixRouteTemplate,
             IApplicationModelFilter? applicationFilter = null, IControllerModelFilter? controllerFilter = null,
             IActionModelFilter? actionFilter = null)
-            : this(defaultRouteTemplate, false, prefixRouteTemplate, applicationFilter, controllerFilter, actionFilter) { }
+            : this(defaultRouteTemplate, forceDefaultRoute: false, prefixRouteTemplate, applicationFilter, controllerFilter, actionFilter) { }
 
         internal bool IsApplicationAllowed(ApplicationModel application) =>
             applicationFilter?.IsAllowed(application) ?? true;
@@ -89,7 +92,8 @@ namespace Teronis.Mvc.ApplicationModels
 
         public void Apply(ActionModel action)
         {
-            if (!IsControllerAllowed(action.Controller) && !IsActionAllowed(action)) {
+            // If any is not allowed, we return.
+            if (!IsApplicationAllowed(action.Controller.Application) || !IsControllerAllowed(action.Controller) || !IsActionAllowed(action)) {
                 return;
             }
 
@@ -98,7 +102,8 @@ namespace Teronis.Mvc.ApplicationModels
 
         public void Apply(ControllerModel controller)
         {
-            if (!IsControllerAllowed(controller)) {
+            // If any is not allowed, we return.
+            if (!IsApplicationAllowed(controller.Application) || !IsControllerAllowed(controller)) {
                 return;
             }
 

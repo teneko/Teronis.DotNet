@@ -5,7 +5,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Teronis.Reflection;
 
-namespace Teronis.Mvc.ApplicationModels.Filters
+namespace Teronis.AspNetCore.Mvc.ApplicationModels.Filters
 {
     public class ControllerTypeFilter : IControllerModelFilter, ITypeInfoFilter
     {

@@ -6,13 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.DependencyInjection;
-using Teronis.Mvc.JsonProblemDetails.Filters;
-using Teronis.Mvc.JsonProblemDetails.Mappers;
-using Teronis.Mvc.JsonProblemDetails.Middleware;
-using Teronis.Mvc.JsonProblemDetails.Versioning;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails.Filters;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails.Mappers;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails.Middleware;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails.Versioning;
 using ApiVersioningServiceCollectionExtensions = Microsoft.Extensions.DependencyInjection.IServiceCollectionExtensions;
 
-namespace Teronis.Mvc.JsonProblemDetails
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails
 {
     public static class IJsonProblemDetailsBuilderExtensions
     {

@@ -4,7 +4,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Teronis.Mvc.JsonProblemDetails.Mappers.Description
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails.Mappers.Description
 {
     public sealed class StatusCodeRange : IEnumerable<int>
     {

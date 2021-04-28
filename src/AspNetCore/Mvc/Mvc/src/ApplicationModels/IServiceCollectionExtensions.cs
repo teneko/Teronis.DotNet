@@ -5,7 +5,7 @@ using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Teronis.Mvc.ApplicationModels
+namespace Teronis.AspNetCore.Mvc.ApplicationModels
 {
     public static class IServiceCollectionExtensions
     {

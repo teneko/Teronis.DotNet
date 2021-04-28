@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 
-namespace Teronis.Mvc.JsonProblemDetails.Middleware
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails.Middleware
 {
     public class ProblemDetailsMiddleware
     {

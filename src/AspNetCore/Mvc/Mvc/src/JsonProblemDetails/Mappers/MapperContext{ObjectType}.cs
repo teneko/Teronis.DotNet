@@ -4,7 +4,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Teronis.Mvc.JsonProblemDetails.Mappers
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails.Mappers
 {
     public class MapperContext<ObjectType> : IMapperContext<ObjectType>
     {

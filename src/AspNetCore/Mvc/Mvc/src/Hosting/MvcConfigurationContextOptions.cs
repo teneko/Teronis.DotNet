@@ -3,7 +3,7 @@
 
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 
-namespace Teronis.Mvc
+namespace Teronis.AspNetCore.Mvc
 {
     public class MvcBuilderContext
     {

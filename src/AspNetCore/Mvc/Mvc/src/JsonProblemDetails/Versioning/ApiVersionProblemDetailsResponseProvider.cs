@@ -3,10 +3,10 @@
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
-using Teronis.Mvc.JsonProblemDetails.Mappers;
-using Teronis.Mvc.JsonProblemDetails.Middleware;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails.Mappers;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails.Middleware;
 
-namespace Teronis.Mvc.JsonProblemDetails.Versioning
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails.Versioning
 {
     public class ApiVersionProblemDetailsResponseProvider : DefaultErrorResponseProvider
     {

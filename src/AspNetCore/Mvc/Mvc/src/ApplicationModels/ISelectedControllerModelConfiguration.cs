@@ -5,7 +5,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
-namespace Teronis.Mvc.ApplicationModels
+namespace Teronis.AspNetCore.Mvc.ApplicationModels
 {
     /// <summary>
     /// Provides configuration for <see cref="ControllerModel"/> by adding conventions.

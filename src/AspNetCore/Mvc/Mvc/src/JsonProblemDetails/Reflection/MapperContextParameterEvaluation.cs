@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-namespace Teronis.Mvc.JsonProblemDetails.Reflection
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails.Reflection
 {
     public class MapperContextParameterEvaluation : ParameterEvaluation
     {

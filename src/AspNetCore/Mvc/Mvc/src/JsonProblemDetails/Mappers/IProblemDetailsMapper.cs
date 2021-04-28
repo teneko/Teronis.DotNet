@@ -3,7 +3,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 
-namespace Teronis.Mvc.JsonProblemDetails.Mappers
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails.Mappers
 {
     public interface IProblemDetailsMapper
     {

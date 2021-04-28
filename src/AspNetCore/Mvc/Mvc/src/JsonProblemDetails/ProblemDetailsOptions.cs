@@ -6,14 +6,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
-using Teronis.Mvc.JsonProblemDetails.Mappers.Description;
-using Teronis.Mvc.JsonProblemDetails.Filters;
-using Teronis.Mvc.JsonProblemDetails.Mappers;
-using Teronis.Mvc.JsonProblemDetails.MappableObjectResolvers;
-using Teronis.Mvc.JsonProblemDetails.Middleware;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails.Mappers.Description;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails.Filters;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails.Mappers;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails.MappableObjectResolvers;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails.Middleware;
 using Microsoft.Extensions.Logging;
 
-namespace Teronis.Mvc.JsonProblemDetails
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails
 {
     public class ProblemDetailsOptions
     {

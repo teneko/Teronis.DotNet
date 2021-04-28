@@ -4,7 +4,7 @@
 using System;
 using CaseExtensions;
 
-namespace Teronis.Mvc.Case
+namespace Teronis.AspNetCore.Mvc.Case
 {
     public static class CaseExtensions
     {

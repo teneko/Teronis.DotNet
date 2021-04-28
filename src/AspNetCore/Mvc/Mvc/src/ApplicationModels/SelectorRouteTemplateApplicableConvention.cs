@@ -4,9 +4,9 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Teronis.Mvc.ApplicationModels.Filters;
+using Teronis.AspNetCore.Mvc.ApplicationModels.Filters;
 
-namespace Teronis.Mvc.ApplicationModels
+namespace Teronis.AspNetCore.Mvc.ApplicationModels
 {
     public class ScopedRouteTemplateConvention : IControllerModelConvention, IActionModelConvention
     {
@@ -60,8 +60,8 @@ namespace Teronis.Mvc.ApplicationModels
 
         public void Apply(ActionModel action)
         {
-            if (!IsActionAllowed(action) || IsApplicationAllowed(action.Controller.Application)
-                || IsApplicationAllowed(action.Controller.Application)) {
+            // If any is not allowed, we return.
+            if (!IsApplicationAllowed(action.Controller.Application) || !IsControllerAllowed(action.Controller) || !IsActionAllowed(action)) {
                 return;
             }
 
@@ -70,7 +70,8 @@ namespace Teronis.Mvc.ApplicationModels
 
         public void Apply(ControllerModel controller)
         {
-            if (!IsControllerAllowed(controller) || IsApplicationAllowed(controller.Application)) {
+            // If any is not allowed, we return.
+            if (!IsControllerAllowed(controller) || !IsApplicationAllowed(controller.Application)) {
                 return;
             }
 

@@ -3,7 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Teronis.Mvc.JsonProblemDetails.Reflection
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails.Reflection
 {
     public static class ParameterEvaluationExtensions
     {

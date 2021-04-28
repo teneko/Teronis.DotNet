@@ -3,9 +3,9 @@
 
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Teronis.Mvc.ApplicationModels.Filters;
+using Teronis.AspNetCore.Mvc.ApplicationModels.Filters;
 
-namespace Teronis.Mvc.ApplicationModels
+namespace Teronis.AspNetCore.Mvc.ApplicationModels
 {
     public class RouteTemplateConvention : IApplicationModelConvention, IControllerModelConvention
     {
@@ -15,6 +15,7 @@ namespace Teronis.Mvc.ApplicationModels
         /// Creates a route template convention for appliaction or controller that formats route template of <see cref="ActionModel"/>s.
         /// </summary>
         /// <param name="urlComponentTemplateFormatter">A route template formatter.</param>
+        /// <param name="applicationFilter"></param>
         /// <param name="controllerFilter">Applies formatter on specific controller models.</param>
         /// <param name="actionFilter">Applies formatter on specific action models.</param>
         public RouteTemplateConvention(IStringFormatter urlComponentTemplateFormatter, IApplicationModelFilter? applicationFilter = null,

@@ -4,7 +4,7 @@
 using System;
 using System.Reflection;
 
-namespace Teronis.Mvc.JsonProblemDetails.Reflection
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails.Reflection
 {
     public class ParameterEvaluation
     {

@@ -8,12 +8,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Teronis.AspNetCore.Identity.AccountManaging.Controllers.Datransjects;
 using Teronis.AspNetCore.Identity.AccountManaging.Controllers.Datransjects.Converters;
 using Teronis.AspNetCore.Identity.Entities;
-using Teronis.Mvc;
-using Teronis.Mvc.ApplicationModels;
+using Teronis.AspNetCore.Mvc.ApplicationModels;
+using Teronis.AspNetCore.Mvc.ApplicationParts;
 
 namespace Teronis.AspNetCore.Identity.AccountManaging.Controllers
 {
-    public static partial class IMvcBuilderExtensions
+    public static partial class IMvcBuilderAccountControllerExtensions
     {
         /// <summary>
         /// <para>
@@ -21,8 +21,8 @@ namespace Teronis.AspNetCore.Identity.AccountManaging.Controllers
         /// to <see cref="IMvcBuilder"/>.
         /// </para>
         /// <para>
-        /// Adds default route "api/account" by adding a <see cref="ScopedRouteConvention"/> to <see cref="MvcOptions.Conventions"/>.
-        /// <br/>You can override it by providing a <see cref="ScopedRouteConvention"/> yourself and enable forced default route.
+        /// Adds default route "api/account" by adding a <see cref="SelectorRouteApplicableConvention"/> to <see cref="MvcOptions.Conventions"/>.
+        /// <br/>You can override it by providing a <see cref="SelectorRouteApplicableConvention"/> yourself and enable forced default route.
         /// </para>
         /// </summary>
         /// <typeparam name="UserDescriptorType">Type of user descriptor.</typeparam>
@@ -32,7 +32,7 @@ namespace Teronis.AspNetCore.Identity.AccountManaging.Controllers
         /// <typeparam name="RoleType">Type of role entity.</typeparam>
         /// <typeparam name="RoleCreationType">Type of role view.</typeparam>
         /// <param name="mvcBuilder">The MVC builder.</param>
-        /// <param name="configureControllerModel">Configures controller.</param>
+        /// <param name="configureControllerModel">Configures the controller.</param>
         /// <returns></returns>
         public static AccountConfigurator<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType> AddAccountControllers<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>(
             this IMvcBuilder mvcBuilder, Action<ISelectedControllerModelConfiguration>? configureControllerModel = null)
@@ -53,7 +53,7 @@ namespace Teronis.AspNetCore.Identity.AccountManaging.Controllers
 
             var controllerModelConfiguration = new ControllerModelConfiguration(accountControllerTypeInfo);
 
-            controllerModelConfiguration.AddScopedRouteConvention("api/account",
+            controllerModelConfiguration.AddSelectorRouteConventionToSelectedController("api/account",
                 (configuration, convention) => configuration.AddControllerConvention(convention));
 
             configureControllerModel?.Invoke(controllerModelConfiguration);
@@ -70,8 +70,8 @@ namespace Teronis.AspNetCore.Identity.AccountManaging.Controllers
         /// to <see cref="IMvcBuilder"/>.
         /// </para>
         /// <para>
-        /// Adds default route "api/account" by adding a <see cref="ScopedRouteConvention"/> to <see cref="MvcOptions.Conventions"/>.
-        /// <br/>You can override it by providing a <see cref="ScopedRouteConvention"/> yourself and enable forced default route.
+        /// Adds default route "api/account" by adding a <see cref="SelectorRouteApplicableConvention"/> to <see cref="MvcOptions.Conventions"/>.
+        /// <br/>You can override it by providing a <see cref="SelectorRouteApplicableConvention"/> yourself and enable forced default route.
         /// </para>
         /// </summary>
         /// <typeparam name="UserDescriptorType">Type of user descriptor.</typeparam>
@@ -85,6 +85,7 @@ namespace Teronis.AspNetCore.Identity.AccountManaging.Controllers
         /// <param name="userUserCreationConverter"></param>
         /// <param name="roleDescriptorRoleConverter"></param>
         /// <param name="roleRoleCreationConverter"></param>
+        /// <param name="configureControllerModel"></param>
         /// <returns></returns>
         public static AccountConfigurator<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType> AddAccountControllersWithConverters<UserDescriptorType, UserType, UserCreationType, RoleDescriptorType, RoleType, RoleCreationType>(
             this IMvcBuilder mvcBuilder,
@@ -116,8 +117,8 @@ namespace Teronis.AspNetCore.Identity.AccountManaging.Controllers
         /// to <see cref="IMvcBuilder"/>.
         /// </para>
         /// <para>
-        /// Adds default route "api/account" by adding a <see cref="ScopedRouteConvention"/> to <see cref="MvcOptions.Conventions"/>.
-        /// <br/>You can override it by providing a <see cref="ScopedRouteConvention"/> yourself and enable forced default route.
+        /// Adds default route "api/account" by adding a <see cref="SelectorRouteApplicableConvention"/> to <see cref="MvcOptions.Conventions"/>.
+        /// <br/>You can override it by providing a <see cref="SelectorRouteApplicableConvention"/> yourself and enable forced default route.
         /// </para>
         /// </summary>
         /// <param name="mvcBuilder"></param>

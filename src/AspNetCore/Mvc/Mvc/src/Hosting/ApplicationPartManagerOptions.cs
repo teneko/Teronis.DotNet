@@ -4,7 +4,7 @@
 using System;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 
-namespace Teronis.Mvc.Hosting
+namespace Teronis.AspNetCore.Mvc.Hosting
 {
     public class ApplicationPartManagerOptions
     {

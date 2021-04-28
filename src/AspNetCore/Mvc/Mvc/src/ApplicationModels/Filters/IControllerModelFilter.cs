@@ -3,7 +3,7 @@
 
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
-namespace Teronis.Mvc.ApplicationModels.Filters
+namespace Teronis.AspNetCore.Mvc.ApplicationModels.Filters
 {
     public interface IControllerModelFilter
     {

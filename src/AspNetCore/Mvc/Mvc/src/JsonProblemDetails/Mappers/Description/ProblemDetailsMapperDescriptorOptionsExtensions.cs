@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using System.Net;
 
-namespace Teronis.Mvc.JsonProblemDetails.Mappers.Description
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails.Mappers.Description
 {
     public static class ProblemDetailsMapperDescriptorOptionsExtensions
     {

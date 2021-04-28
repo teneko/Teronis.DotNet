@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Teronis.Mvc.JsonProblemDetails.Middleware
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails.Middleware
 {
     public class ProblemDetailsMiddlewareContextProvider
     {

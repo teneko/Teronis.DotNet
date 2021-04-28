@@ -4,7 +4,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Teronis.Mvc.JsonProblemDetails
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails
 {
     public class StatusCodeException: Exception, IHasProblemDetailsStatusCode
     {

@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using Teronis.Text;
 
-namespace Teronis.Mvc.Hosting
+namespace Teronis.AspNetCore.Mvc.Hosting
 {
     public static class HostingStartupAssemblies
     {

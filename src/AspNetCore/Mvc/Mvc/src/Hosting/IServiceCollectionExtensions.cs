@@ -4,7 +4,7 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Teronis.Mvc.Hosting
+namespace Teronis.AspNetCore.Mvc.Hosting
 {
     public static class IServiceCollectionExtensions
     {

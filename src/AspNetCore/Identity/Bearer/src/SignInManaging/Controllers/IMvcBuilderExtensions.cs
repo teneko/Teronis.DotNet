@@ -4,9 +4,8 @@
 using System;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using Teronis.Mvc;
-using Teronis.Mvc.ApplicationModels;
+using Teronis.AspNetCore.Mvc.ApplicationModels;
+using Teronis.AspNetCore.Mvc.ApplicationParts;
 
 namespace Teronis.AspNetCore.Identity.Bearer.SignInManaging.Controllers
 {
@@ -29,7 +28,7 @@ namespace Teronis.AspNetCore.Identity.Bearer.SignInManaging.Controllers
 
                 var controllerModelConfiguration = new ControllerModelConfiguration(controllerType);
 
-                controllerModelConfiguration.AddScopedRouteConvention("api/sign-in",
+                controllerModelConfiguration.AddSelectorRouteConventionToSelectedController("api/sign-in",
                     (configuration, convention) => configuration.AddControllerConvention(convention));
 
                 configureControllerModel?.Invoke(controllerModelConfiguration);

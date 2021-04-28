@@ -9,9 +9,9 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Teronis.Mvc.JsonProblemDetails.Reflection;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails.Reflection;
 
-namespace Teronis.Mvc.JsonProblemDetails.Mappers.Description
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails.Mappers.Description
 {
     public static class ProblemDetailsMapperDescriptorUtils
     {

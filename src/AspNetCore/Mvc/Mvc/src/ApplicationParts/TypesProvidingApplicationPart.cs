@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 
-namespace Teronis.Mvc
+namespace Teronis.AspNetCore.Mvc.ApplicationParts
 {
     /// <summary>
     /// Enables you to inject custom controllers to application that are not auto-discovered.

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace Teronis.Mvc
+namespace Teronis.AspNetCore.Mvc
 {
     public class MvcBuilderContextCreator : IPostConfigureOptions<MvcOptions>
     {

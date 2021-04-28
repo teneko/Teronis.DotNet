@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using Teronis.Mvc.JsonProblemDetails.Reflection;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails.Reflection;
 
-namespace Teronis.Mvc.JsonProblemDetails.Mappers.Description
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails.Mappers.Description
 {
     public class ProblemDetailsMapperDescriptor
     {

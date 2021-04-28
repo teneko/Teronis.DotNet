@@ -4,9 +4,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Teronis.Mvc.JsonProblemDetails.Mappers.Description;
+using Teronis.AspNetCore.Mvc.JsonProblemDetails.Mappers.Description;
 
-namespace Teronis.Mvc.JsonProblemDetails.Mappers
+namespace Teronis.AspNetCore.Mvc.JsonProblemDetails.Mappers
 {
     /// <summary>
     /// A <see cref="ProblemDetails"/> mapper for <see cref="StatusCode"/>.

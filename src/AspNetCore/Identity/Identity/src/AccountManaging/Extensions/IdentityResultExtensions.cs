@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
-using Teronis.Mvc.ServiceResulting;
 
 namespace Teronis.AspNetCore.Identity.AccountManaging.Extensions
 {
@@ -39,14 +38,6 @@ namespace Teronis.AspNetCore.Identity.AccountManaging.Extensions
                 x => new Exception(x.Description));
 
             return new KeyedAggregateException(errorMessage, keyedExceptions);
-        }
-
-        public static JsonErrors ToJsonErrors(this IdentityResult identityResult)
-        {
-            var identityErrors = getIdentityResultErrorsOrThrow(identityResult);
-
-            return new JsonErrors(from error in identityResult.Errors
-                                  select new KeyValuePair<string, string>(error.Description, error.Code));
         }
     }
 }

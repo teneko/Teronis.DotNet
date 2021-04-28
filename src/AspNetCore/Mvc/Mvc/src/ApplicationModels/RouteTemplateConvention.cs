@@ -9,7 +9,7 @@ namespace Teronis.AspNetCore.Mvc.ApplicationModels
 {
     public class RouteTemplateConvention : IApplicationModelConvention, IControllerModelConvention
     {
-        private readonly ScopedRouteTemplateConvention scopedConvention;
+        private readonly SelectorRouteTemplateApplicableConvention scopedConvention;
 
         /// <summary>
         /// Creates a route template convention for appliaction or controller that formats route template of <see cref="ActionModel"/>s.
@@ -20,7 +20,7 @@ namespace Teronis.AspNetCore.Mvc.ApplicationModels
         /// <param name="actionFilter">Applies formatter on specific action models.</param>
         public RouteTemplateConvention(IStringFormatter urlComponentTemplateFormatter, IApplicationModelFilter? applicationFilter = null,
             IControllerModelFilter? controllerFilter = null, IActionModelFilter? actionFilter = null) =>
-            scopedConvention = new ScopedRouteTemplateConvention(urlComponentTemplateFormatter, applicationFilter, controllerFilter, actionFilter);
+            scopedConvention = new SelectorRouteTemplateApplicableConvention(urlComponentTemplateFormatter, applicationFilter, controllerFilter, actionFilter);
 
         private void formatControllerActionsRouteTemplate(IEnumerable<ActionModel> actions)
         {

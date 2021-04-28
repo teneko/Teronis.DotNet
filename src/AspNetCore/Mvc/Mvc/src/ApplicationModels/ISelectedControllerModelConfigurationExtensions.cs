@@ -64,35 +64,35 @@ namespace Teronis.AspNetCore.Mvc.ApplicationModels
         }
 
         /// <summary>
-        /// Adds an <see cref="ScopedRouteTemplateConvention"/> instance to <see cref="MvcOptions"/> that only operates on controller model with controller
+        /// Adds an <see cref="SelectorRouteTemplateApplicableConvention"/> instance to <see cref="MvcOptions"/> that only operates on controller model with controller
         /// on <see cref="ISelectedControllerModelConfiguration.SelectedControllerType"/> of <paramref name="configuration"/>.
         /// </summary>
         /// <param name="configuration"></param>
         /// <param name="routeTemplateFormatter"></param>
         /// <param name="addConvention"></param>
         /// <returns></returns>
-        public static ISelectedControllerModelConfiguration AddSelectorRouteConventionToSelectedController(this ISelectedControllerModelConfiguration configuration,
-            IStringFormatter routeTemplateFormatter, Action<ISelectedControllerModelConfiguration, ScopedRouteTemplateConvention> addConvention)
+        public static ISelectedControllerModelConfiguration AddSelectorRouteTemplateConventionToSelectedController(this ISelectedControllerModelConfiguration configuration,
+            IStringFormatter routeTemplateFormatter, Action<ISelectedControllerModelConfiguration, SelectorRouteTemplateApplicableConvention> addConvention)
         {
             var controllerFilter = new ControllerTypeFilter(configuration.SelectedControllerType);
-            var convention = new ScopedRouteTemplateConvention(routeTemplateFormatter, controllerFilter: controllerFilter);
+            var convention = new SelectorRouteTemplateApplicableConvention(routeTemplateFormatter, controllerFilter: controllerFilter);
             addConvention(configuration, convention);
             return configuration;
         }
 
         /// <summary>
-        /// Adds an <see cref="ScopedRouteTemplateConvention"/> instance to <see cref="MvcOptions"/> that only operates on controller model with controller
+        /// Adds an <see cref="SelectorRouteTemplateApplicableConvention"/> instance to <see cref="MvcOptions"/> that only operates on controller model with controller
         /// on <see cref="ISelectedControllerModelConfiguration.SelectedControllerType"/> of <paramref name="configuration"/>.
         /// </summary>
         /// <param name="configuration"></param>
         /// <param name="caseType"></param>
         /// <param name="addConvention"></param>
         /// <returns></returns>
-        public static ISelectedControllerModelConfiguration AddSelectorRouteConventionToSelectedController(this ISelectedControllerModelConfiguration configuration, CaseType caseType,
-            Action<ISelectedControllerModelConfiguration, ScopedRouteTemplateConvention> addConvention)
+        public static ISelectedControllerModelConfiguration AddSelectorRouteTemplateConventionToSelectedController(this ISelectedControllerModelConfiguration configuration, CaseType caseType,
+            Action<ISelectedControllerModelConfiguration, SelectorRouteTemplateApplicableConvention> addConvention)
         {
             var formatter = new RouteTemplateCaseFormatter(caseType);
-            return AddSelectorRouteConventionToSelectedController(configuration, formatter, addConvention);
+            return AddSelectorRouteTemplateConventionToSelectedController(configuration, formatter, addConvention);
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace Teronis.AspNetCore.Mvc.ApplicationModels
         /// <param name="routeTemplateFormatter"></param>
         /// <param name="actionFilter"></param>
         /// <returns></returns>
-        public static ISelectedControllerModelConfiguration AddSelectorRouteConventionToSelectedController(this ISelectedControllerModelConfiguration configuration,
+        public static ISelectedControllerModelConfiguration AddSelectorRouteTemplateConventionToSelectedController(this ISelectedControllerModelConfiguration configuration,
             IStringFormatter routeTemplateFormatter, IActionModelFilter? actionFilter = null)
         {
             var controllerFilter = new ControllerTypeFilter(configuration.SelectedControllerType);
@@ -120,11 +120,11 @@ namespace Teronis.AspNetCore.Mvc.ApplicationModels
         /// <param name="caseType"></param>
         /// <param name="actionFilter"></param>
         /// <returns></returns>
-        public static ISelectedControllerModelConfiguration AddSelectorRouteConventionToSelectedController(this ISelectedControllerModelConfiguration configuration,
+        public static ISelectedControllerModelConfiguration AddSelectorRouteTemplateConventionToSelectedController(this ISelectedControllerModelConfiguration configuration,
             CaseType caseType, IActionModelFilter? actionFilter = null)
         {
             var formatter = new RouteTemplateCaseFormatter(caseType);
-            return AddSelectorRouteConventionToSelectedController(configuration, formatter, actionFilter: actionFilter);
+            return AddSelectorRouteTemplateConventionToSelectedController(configuration, formatter, actionFilter: actionFilter);
         }
     }
 }

@@ -8,7 +8,14 @@ namespace Teronis.Microsoft.AspNetCore.Authorization.Extensions
 {
     public static class AuthorizationOptionsExtensions
     {
-        public static AuthorizationOptions AddPolicy(this AuthorizationOptions options, AuthorizationPolicy policy, params string[] names)
+        /// <summary>
+        /// Adds the same policy for each specified name.
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="policy"></param>
+        /// <param name="names"></param>
+        /// <returns></returns>
+        public static AuthorizationOptions AddPolicyForEach(this AuthorizationOptions options, AuthorizationPolicy policy, params string[] names)
         {
             foreach (var name in names) {
                 options.AddPolicy(name, policy);
@@ -17,7 +24,14 @@ namespace Teronis.Microsoft.AspNetCore.Authorization.Extensions
             return options;
         }
 
-        public static AuthorizationOptions AddPolicy(this AuthorizationOptions options, Action<AuthorizationPolicyBuilder> policyBuilder, params string[] names)
+        /// <summary>
+        /// Adds the same policy for each specified name.
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="policyBuilder"></param>
+        /// <param name="names"></param>
+        /// <returns></returns>
+        public static AuthorizationOptions AddPolicyEach(this AuthorizationOptions options, Action<AuthorizationPolicyBuilder> policyBuilder, params string[] names)
         {
             foreach (var name in names) {
                 options.AddPolicy(name, policyBuilder);

@@ -14,8 +14,8 @@ namespace Teronis.AspNetCore.Mvc.ApplicationModels.Filters
         public ControllerTypeFilter(TypeInfoFilter controllerTypeFilter) =>
             TypeInfoFilter = controllerTypeFilter;
 
-        public ControllerTypeFilter(TypeInfo[]? typeInfoAllowList, params TypeInfo[]? typeInfoBlockList) =>
-            TypeInfoFilter = new TypeInfoFilter(typeInfoAllowList, typeInfoBlockList);
+        public ControllerTypeFilter(TypeInfo[]? typeInfoAllowlist, params TypeInfo[]? typeInfoBlocklist) =>
+            TypeInfoFilter = new TypeInfoFilter(typeInfoAllowlist, typeInfoBlocklist);
 
         public ControllerTypeFilter(params TypeInfo[] typeInfoAllowList)
             : this(typeInfoAllowList, default) { }

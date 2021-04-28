@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Teroneko.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
@@ -64,18 +63,14 @@ namespace Teronis.AspNetCore.Mvc.ApplicationModels
 
         internal void ChangeSelectorRoutes(IEnumerable<SelectorModel> selectors)
         {
-            var lazyDefaultRouteModel = new Lazy<AttributeRouteModel>(() => new AttributeRouteModel(new RouteAttribute(DefaultRouteTemplate)));
-            var lazyPrefixRouteModel = new Lazy<AttributeRouteModel>(() => new AttributeRouteModel(new RouteAttribute(PrefixRouteTemplate)));
+            var lazyDefaultRouteModel = new SlimLazy<AttributeRouteModel>(() => new AttributeRouteModel(new RouteAttribute(DefaultRouteTemplate)));
+            var lazyPrefixRouteModel = new SlimLazy<AttributeRouteModel>(() => new AttributeRouteModel(new RouteAttribute(PrefixRouteTemplate)));
 
             AttributeRouteModel createRouteModelWithPrefix(AttributeRouteModel attributeRouteModel) =>
-                PrefixRouteTemplate == null
-                ? attributeRouteModel
-                : AttributeRouteModel.CombineAttributeRouteModel(lazyPrefixRouteModel.Value, attributeRouteModel);
+                PrefixRouteTemplate == null ? attributeRouteModel : AttributeRouteModel.CombineAttributeRouteModel(lazyPrefixRouteModel.Value, attributeRouteModel);
 
             AttributeRouteModel createDefaultRouteModel(AttributeRouteModel emptyRouteModel) =>
-                DefaultRouteTemplate == null
-                ? emptyRouteModel
-                : AttributeRouteModel.CombineAttributeRouteModel(lazyDefaultRouteModel.Value, emptyRouteModel);
+                DefaultRouteTemplate == null ? emptyRouteModel : AttributeRouteModel.CombineAttributeRouteModel(lazyDefaultRouteModel.Value, emptyRouteModel);
 
             foreach (var selector in selectors) {
                 if (selector.AttributeRouteModel is null || ForceDefaultRoute) {

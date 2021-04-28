@@ -8,7 +8,7 @@ using Teronis.AspNetCore.Mvc.ApplicationModels.Filters;
 
 namespace Teronis.AspNetCore.Mvc.ApplicationModels
 {
-    public class ScopedRouteTemplateConvention : IControllerModelConvention, IActionModelConvention
+    public class SelectorRouteTemplateApplicableConvention : IControllerModelConvention, IActionModelConvention
     {
         public IStringFormatter RouteTemplateFormatter { get; }
         public IControllerModelFilter? ControllerFilter { get; }
@@ -22,7 +22,7 @@ namespace Teronis.AspNetCore.Mvc.ApplicationModels
         /// <param name="applicationFilter"></param>
         /// <param name="actionFilter"></param>
         /// <param name="controllerFilter">Filters on controller type.</param>
-        public ScopedRouteTemplateConvention(IStringFormatter routeTemplateFormatter,
+        public SelectorRouteTemplateApplicableConvention(IStringFormatter routeTemplateFormatter,
             IApplicationModelFilter? applicationFilter = null, IControllerModelFilter? controllerFilter = null,
             IActionModelFilter? actionFilter = null)
         {

@@ -83,7 +83,7 @@ namespace Teronis.AspNetCore.Identity.Bearer
                 });
 
             services.AddAuthorization(options => {
-                options.AddPolicyEach(
+                options.AddPolicyForEach(
                     new AuthorizationPolicyBuilder(AuthenticationDefaults.AccessTokenBearerScheme)
                         .RequireAuthenticatedUser()
                         .RequireRole(TeronisIdentityBearerExampleDefaults.AdministratorRoleName)

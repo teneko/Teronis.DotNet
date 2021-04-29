@@ -22,7 +22,7 @@ namespace Teronis.ViewModels
         protected virtual PropertyChangeComponent ChangeComponent {
             get {
                 if (changeComponent is null) {
-                    return Interlocked.CompareExchange(ref changeComponent!, new PropertyChangeComponent(this), null!);
+                    Interlocked.CompareExchange(ref changeComponent!, new PropertyChangeComponent(this), null!);
                 }
 
                 return changeComponent;

@@ -43,9 +43,9 @@ namespace Teronis.AspNetCore.Mvc.JsonProblemDetails.Middleware
             var errorMessage = "The response has been already started.";
 
             if (error is null) {
-                logger.LogError(errorMessage, errorMessage);
-            } else {
                 logger.LogError(errorMessage);
+            } else {
+                logger.LogError(error, errorMessage);
             }
         }
 

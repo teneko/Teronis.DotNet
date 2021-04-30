@@ -10,8 +10,6 @@ using Teronis.AspNetCore.Mvc.JsonProblemDetails.Mappers.Description;
 using Teronis.AspNetCore.Mvc.JsonProblemDetails.Filters;
 using Teronis.AspNetCore.Mvc.JsonProblemDetails.Mappers;
 using Teronis.AspNetCore.Mvc.JsonProblemDetails.MappableObjectResolvers;
-using Teronis.AspNetCore.Mvc.JsonProblemDetails.Middleware;
-using Microsoft.Extensions.Logging;
 
 namespace Teronis.AspNetCore.Mvc.JsonProblemDetails
 {

@@ -7,7 +7,14 @@ using System.Windows.Data;
 
 namespace Teronis.Windows.PresentationFoundation.Data
 {
-    public class CultureConverter : IValueConverter
+    /// <summary>
+    /// A converter that converts either a predefined System.Globalization.CultureInfo identifier, System.Globalization.CultureInfo.LCID
+    /// property of an existing System.Globalization.CultureInfo object, or Windows-only
+    /// culture identifier, or a predefined System.Globalization.CultureInfo name, System.Globalization.CultureInfo.Name
+    /// of an existing System.Globalization.CultureInfo, or Windows-only culture name to an instance of
+    /// <see cref="CultureInfo"/>.
+    /// </summary>
+    public class CultureIdentifierConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

@@ -11,13 +11,13 @@ namespace Teronis.Windows.PresentationFoundation.Controls
 {
     public static class ListBoxUtils
     {
-        private static ListViewItem getListViewItem(ListBox listBox, int index)
+        private static ListViewItem? GetListViewItem(ListBox listBox, int containerIndex)
         {
             if (listBox.ItemContainerGenerator.Status != GeneratorStatus.ContainersGenerated) {
                 return null;
             }
 
-            return listBox.ItemContainerGenerator.ContainerFromIndex(index) as ListViewItem;
+            return listBox.ItemContainerGenerator.ContainerFromIndex(containerIndex) as ListViewItem;
         }
 
         public static int GetSelectedItemIndexAtPosition(ListBox listBox, GetPositionFromInputElementDelegate getPosition)
@@ -30,7 +30,7 @@ namespace Teronis.Windows.PresentationFoundation.Controls
                         continue;
                     }
 
-                    var listViewItem = getListViewItem(listBox, i);
+                    var listViewItem = GetListViewItem(listBox, i);
 
                     if (VisualTreeUtils.IsMouseOverTarget(listViewItem, getPosition)) {
                         index = i;

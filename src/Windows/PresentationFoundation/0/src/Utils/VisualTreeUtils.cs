@@ -9,7 +9,7 @@ namespace Teronis.Windows.PresentationFoundation.Utils
 {
     public class VisualTreeUtils
     {
-        public static bool IsMouseOverTarget(Visual target, GetPositionFromInputElementDelegate getPosition)
+        public static bool IsMouseOverTarget(Visual? target, GetPositionFromInputElementDelegate getPosition)
         {
             // It can happen that target is null
             if (target is null) {

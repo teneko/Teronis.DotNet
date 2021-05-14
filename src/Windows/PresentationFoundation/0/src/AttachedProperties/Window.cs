@@ -9,23 +9,20 @@ namespace Teronis.Windows.PresentationFoundation.AttachedProperties
 {
     public static class Window
     {
-        private static void DialogResultChanged(
-            DependencyObject d,
-            DependencyPropertyChangedEventArgs e)
+        private static void DialogResultChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
         {
-            if (d is WindowControl window && window.IsModal()) {
-                window.DialogResult = e.NewValue as bool?;
+            if (dependencyObject is WindowControl window && window.IsModal()) {
+                window.DialogResult = args.NewValue as bool?;
             }
         }
 
-        public static readonly DependencyProperty DialogResultProperty
-            = DependencyProperty.RegisterAttached(
-                "DialogResult",
-                typeof(bool?),
-                typeof(Window),
-                new PropertyMetadata(DialogResultChanged));
+        public static readonly DependencyProperty DialogResultProperty = DependencyProperty.RegisterAttached(
+            "DialogResult",
+            typeof(bool?),
+            typeof(Window),
+            new PropertyMetadata(DialogResultChanged));
 
-        public static void SetDialogResult(WindowControl target, bool? value)
-            => target.SetValue(DialogResultProperty, value);
+        public static void SetDialogResult(WindowControl target, bool? value) =>
+            target.SetValue(DialogResultProperty, value);
     }
 }

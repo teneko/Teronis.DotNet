@@ -25,9 +25,7 @@ namespace Teronis.Windows.Forms.Hooks
             bool handled = false;
 
             if (nCode > -1 && (KeyDown != null || KeyUp != null || KeyPress != null)) {
-
-                KeyboardHookStruct keyboardHookStruct =
-                    (KeyboardHookStruct)Marshal.PtrToStructure(lParam, typeof(KeyboardHookStruct));
+                var keyboardHookStruct = (KeyboardHookStruct)Marshal.PtrToStructure(lParam, typeof(KeyboardHookStruct));
 
                 // Is Control being held down?
                 bool control = (GetKeyState(VK_LCONTROL) & 0x80) != 0 ||
@@ -45,7 +43,7 @@ namespace Teronis.Windows.Forms.Hooks
                 bool capslock = GetKeyState(VK_CAPITAL) != 0;
 
                 // Create event using keycode and control/shift/alt values found above
-                KeyEventArgs e = new KeyEventArgs(
+                System.Windows.Forms.KeyEventArgs e = new System.Windows.Forms.KeyEventArgs(
                     (Keys)(
                         keyboardHookStruct.vkCode |
                         (control ? (int)Keys.Control : 0) |

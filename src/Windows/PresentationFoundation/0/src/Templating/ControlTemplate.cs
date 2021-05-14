@@ -13,7 +13,7 @@ namespace Teronis.Windows.PresentationFoundation.Templating
             set => VisualTree.SetBinding(FrameworkElement.DataContextProperty, value);
         }
 
-        public ControlTemplate()
-            => VisualTree = new FrameworkElementFactory(typeof(FrameworkElementType));
+        public ControlTemplate() =>
+            VisualTree = new FrameworkElementFactory(typeof(FrameworkElementType));
     }
 }

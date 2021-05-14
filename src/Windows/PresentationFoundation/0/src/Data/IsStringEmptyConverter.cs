@@ -7,6 +7,9 @@ using System.Windows.Data;
 
 namespace Teronis.Windows.PresentationFoundation.Data
 {
+    /// <summary>
+    /// A boolean provider whether the string is empty or not.
+    /// </summary>
     public class IsStringEmptyConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

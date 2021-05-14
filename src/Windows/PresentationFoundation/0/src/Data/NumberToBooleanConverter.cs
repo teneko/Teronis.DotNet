@@ -8,6 +8,9 @@ using System.Windows.Data;
 
 namespace Teronis.Windows.PresentationFoundation.Data
 {
+    /// <summary>
+    /// Converts a number of an <see cref="int"/> or <see cref="GridLength"/> to <see cref="Visibility"/>.
+    /// </summary>
     public class NumberToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

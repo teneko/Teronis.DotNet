@@ -5,32 +5,31 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using Teronis.Extensions;
 
 namespace Teronis.Windows.Forms.Hooks
 {
     public class KeyboardHookManager
     {
-        readonly KeyboardHook keyboardHook;
-        readonly IDictionary<int, TParentHotkeyInvoker> registeredHotkeys;
-        TParentHotkeyInvoker pressedHotkey = null;
+        private readonly KeyboardHook keyboardHook;
+        private readonly IDictionary<int, ParentHotkeyInvoker> registeredHotkeys;
+        private ParentHotkeyInvoker? pressedHotkey;
 
         public KeyboardHookManager(System.Reflection.Assembly executingAssembly)
         {
             keyboardHook = new KeyboardHook(executingAssembly);
             keyboardHook.KeyDown += KeyboardHook_KeyDown;
-            registeredHotkeys = new Dictionary<int, TParentHotkeyInvoker>();
+            registeredHotkeys = new Dictionary<int, ParentHotkeyInvoker>();
             pressedHotkey = null;
         }
 
         /// <summary>
-        /// Registers a hotkey. To register only a modifier: set it as <see cref="TKeyEventArgs.KeyCode"/>.
+        /// Registers a hotkey. To register only a modifier: set it as <see cref="KeyEventArgs.KeyCode"/>.
         /// </summary>
         /// <param name="args"></param>
         /// <returns>Hotkey id. You have to unregister it.</returns>
-        public TChildHotkey RegisterHotkey(TKeyEventArgs args)
+        public ChildHotkey RegisterHotkey(KeyEventArgs args)
         {
-            TParentHotkeyInvoker hotkeyInvoker = null;
+            ParentHotkeyInvoker? hotkeyInvoker = null;
 
             if (!registeredHotkeys.Any((x) => {
                 if (x.Value.KeyEventArgs.Modifiers == args.Modifiers && x.Value.KeyEventArgs.KeyCode == args.KeyCode) {
@@ -50,7 +49,7 @@ namespace Teronis.Windows.Forms.Hooks
                     id++;
                 } while (registeredHotkeys.Any(x => x.Value.Id == id));
 
-                hotkeyInvoker = TParentHotkeyInvoker.Create(id, args, (childHotkey) => UnregisterHotkey(id));
+                hotkeyInvoker = ParentHotkeyInvoker.Create(id, args, (childHotkey) => UnregisterHotkey(id));
                 registeredHotkeys.Add(id, hotkeyInvoker);
                 return hotkeyInvoker.RegisterChildren();
             } else {
@@ -61,7 +60,7 @@ namespace Teronis.Windows.Forms.Hooks
 
         public void UnregisterHotkey(int registeredHotkeyId)
         {
-            if (registeredHotkeys.TryGetValue(registeredHotkeyId, out TParentHotkeyInvoker hotkeyInvoker) && hotkeyInvoker.Counter == 1) {
+            if (registeredHotkeys.TryGetValue(registeredHotkeyId, out ParentHotkeyInvoker hotkeyInvoker) && hotkeyInvoker.Counter == 1) {
                 registeredHotkeys.Remove(registeredHotkeyId);
 
                 if (registeredHotkeys.Count == 0) {
@@ -74,7 +73,7 @@ namespace Teronis.Windows.Forms.Hooks
             }
         }
 
-        private void KeyboardHook_KeyDown(object sender, KeyEventArgs args)
+        private void KeyboardHook_KeyDown(object sender, System.Windows.Forms.KeyEventArgs args)
         {
             //Console.WriteLine($"DOWN control: {args.Control} alt: {args.Alt} shift: {args.Shift} keycode: {args.KeyCode} keydata: {args.KeyData} modifiers: {args.Modifiers} suppressKeyPress: {args.SuppressKeyPress}");
 
@@ -99,13 +98,13 @@ namespace Teronis.Windows.Forms.Hooks
             }
 
             if (doesRegisteredHotkeysHaveAny()) {
-                pressedHotkey.Invoke(EHotkeyState.Down);
+                pressedHotkey.Invoke(HotkeyState.Down);
                 keyboardHook.KeyDown -= KeyboardHook_KeyDown;
                 keyboardHook.KeyUp += KeyboardHook_KeyUp;
             }
         }
 
-        private void KeyboardHook_KeyUp(object sender, KeyEventArgs e)
+        private void KeyboardHook_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             //Console.WriteLine($"UP control: {e.Control} alt: {e.Alt} shift: {e.Shift} keycode: {e.KeyCode} keydata: {e.KeyData} modifiers: {e.Modifiers} suppressKeyPress: {e.SuppressKeyPress}");
 
@@ -115,10 +114,10 @@ namespace Teronis.Windows.Forms.Hooks
 
             bool isOnlyModifier()
             {
-                return pressedHotkey.KeyEventArgs.Modifiers == EKeyboardModifier.Control && (e.KeyCode == Keys.LControlKey || e.KeyCode == Keys.RControlKey)
-                    || pressedHotkey.KeyEventArgs.Modifiers == EKeyboardModifier.Shift && (e.KeyCode == Keys.LShiftKey || e.KeyCode == Keys.RShiftKey)
-                    || (pressedHotkey.KeyEventArgs.Modifiers & EKeyboardModifier.Alt) == EKeyboardModifier.Alt && (e.KeyCode == Keys.LMenu || e.KeyCode == Keys.RMenu)
-                    || pressedHotkey.KeyEventArgs.Modifiers == EKeyboardModifier.None;
+                return pressedHotkey.KeyEventArgs.Modifiers == KeyboardModifier.Control && (e.KeyCode == Keys.LControlKey || e.KeyCode == Keys.RControlKey)
+                    || pressedHotkey.KeyEventArgs.Modifiers == KeyboardModifier.Shift && (e.KeyCode == Keys.LShiftKey || e.KeyCode == Keys.RShiftKey)
+                    || (pressedHotkey.KeyEventArgs.Modifiers & KeyboardModifier.Alt) == KeyboardModifier.Alt && (e.KeyCode == Keys.LMenu || e.KeyCode == Keys.RMenu)
+                    || pressedHotkey.KeyEventArgs.Modifiers == KeyboardModifier.None;
             }
 
             if (isOnlyModifier()) {
@@ -130,7 +129,7 @@ namespace Teronis.Windows.Forms.Hooks
         {
             var _pressedHotkey = pressedHotkey;
             pressedHotkey = null;
-            _pressedHotkey.Invoke(EHotkeyState.Up);
+            _pressedHotkey.Invoke(HotkeyState.Up);
             keyboardHook.KeyUp -= KeyboardHook_KeyUp;
             keyboardHook.KeyDown += KeyboardHook_KeyDown;
         }
@@ -149,60 +148,59 @@ namespace Teronis.Windows.Forms.Hooks
             }
         }
 
-        private class TParentHotkeyInvoker : TParentHotkey
+        private class ParentHotkeyInvoker : ParentHotkey
         {
-            public static TParentHotkeyInvoker Create(int id, TKeyEventArgs keyEventArgs, Action<TChildHotkey> unregister)
+            public static ParentHotkeyInvoker Create(int id, KeyEventArgs keyEventArgs, Action<ChildHotkey> unregister)
             {
-                var hotkeyInvoker = new TParentHotkeyInvoker(id, keyEventArgs, out Action<EHotkeyState> invokeHotkey, unregister) {
+                var hotkeyInvoker = new ParentHotkeyInvoker(id, keyEventArgs, out Action<HotkeyState> invokeHotkey, unregister) {
                     Invoke = invokeHotkey
                 };
 
                 return hotkeyInvoker;
             }
 
-            public Action<EHotkeyState> Invoke { get; private set; }
+            public Action<HotkeyState> Invoke { get; private set; }
             public int Counter = 1;
 
-            private TParentHotkeyInvoker(int id, TKeyEventArgs keyEventArgs, out Action<EHotkeyState> invokeHotkeyFired, Action<TChildHotkey> unregister) : base(id, keyEventArgs, out invokeHotkeyFired, unregister) { }
+            private ParentHotkeyInvoker(int id, KeyEventArgs keyEventArgs, out Action<HotkeyState> invokeHotkeyFired, Action<ChildHotkey> unregister) 
+                : base(id, keyEventArgs, out invokeHotkeyFired, unregister) { }
 
-            public TChildHotkey RegisterChildren()
-            {
-                return registerChildren(this);
-            }
+            public ChildHotkey RegisterChildren() =>
+                registerChildren(this);
         }
     }
 
-    public class TKeyEventArgs
+    public class KeyEventArgs
     {
-        public EKeyboardModifier Modifiers;
+        public KeyboardModifier Modifiers;
         public Keys KeyCode;
     }
 
-    public class TParentHotkey
+    public class ParentHotkey
     {
         public int Id { get; private set; }
-        public TKeyEventArgs KeyEventArgs { get; private set; }
+        public KeyEventArgs KeyEventArgs { get; private set; }
 
-        readonly Action<TChildHotkey> unregister;
-        readonly List<TChildHotkeyInvoker> hotkeys;
+        readonly Action<ChildHotkey> unregister;
+        readonly List<ChildHotkeyInvoker> hotkeys;
 
-        public TParentHotkey(int id, TKeyEventArgs keyEventArgs, out Action<EHotkeyState> invokeHotkeyFired, Action<TChildHotkey> unregister)
+        public ParentHotkey(int id, KeyEventArgs keyEventArgs, out Action<HotkeyState> invokeHotkeyFired, Action<ChildHotkey> unregister)
         {
             Id = id;
             KeyEventArgs = keyEventArgs;
             invokeHotkeyFired = this.invokeHotkeyFired;
             this.unregister = unregister;
-            hotkeys = new List<TChildHotkeyInvoker>();
+            hotkeys = new List<ChildHotkeyInvoker>();
         }
 
         /// <summary>
         /// It invokes one of the two events above.
         /// </summary>
         /// <param name="hotkeyState">false=down; true=up;</param>
-        private void invokeHotkeyFired(EHotkeyState hotkeyState)
+        private void invokeHotkeyFired(HotkeyState hotkeyState)
         {
             foreach (var hotkey in hotkeys) {
-                if (hotkeyState == EHotkeyState.Down) {
+                if (hotkeyState == HotkeyState.Down) {
                     hotkey.InvokeHotkeyDownFired();
                 } else {
                     hotkey.InvokeHotkeyUpFired();
@@ -210,25 +208,25 @@ namespace Teronis.Windows.Forms.Hooks
             }
         }
 
-        protected TChildHotkey registerChildren(TParentHotkey parentHotkey)
+        protected ChildHotkey registerChildren(ParentHotkey parentHotkey)
         {
-            var childHotkey = new TChildHotkeyInvoker(parentHotkey, _unregister) { };
+            var childHotkey = new ChildHotkeyInvoker(parentHotkey, _unregister) { };
             hotkeys.Add(childHotkey);
             return childHotkey;
         }
 
-        private void _unregister(TChildHotkey childHotkey)
+        private void _unregister(ChildHotkey childHotkey)
         {
-            hotkeys.Remove((TChildHotkeyInvoker)childHotkey);
+            hotkeys.Remove((ChildHotkeyInvoker)childHotkey);
 #if DEBUG
             Console.WriteLine($"Hotkey [{childHotkey.ParentHotkey.KeyEventArgs.Modifiers}] + [{childHotkey.ParentHotkey.KeyEventArgs.KeyCode}] with id {childHotkey.ParentHotkey.Id} deleted.");
 #endif
             unregister(childHotkey);
         }
 
-        private class TChildHotkeyInvoker : TChildHotkey
+        private class ChildHotkeyInvoker : ChildHotkey
         {
-            public TChildHotkeyInvoker(TParentHotkey parentHotkey, Action<TChildHotkey> unregister) : base(unregister)
+            public ChildHotkeyInvoker(ParentHotkey parentHotkey, Action<ChildHotkey> unregister) : base(unregister)
             {
                 ParentHotkey = parentHotkey;
             }
@@ -239,18 +237,16 @@ namespace Teronis.Windows.Forms.Hooks
         }
     }
 
-    public class TChildHotkey
+    public class ChildHotkey
     {
-        public event Action HotkeyDownFired;
-        public event Action HotkeyUpFired;
+        public event Action? HotkeyDownFired;
+        public event Action? HotkeyUpFired;
 
-        public TParentHotkey ParentHotkey;
-        readonly Action<TChildHotkey> unregister;
+        public ParentHotkey? ParentHotkey;
+        readonly Action<ChildHotkey> unregister;
 
-        public TChildHotkey(Action<TChildHotkey> unregister)
-        {
+        public ChildHotkey(Action<ChildHotkey> unregister) =>
             this.unregister = unregister;
-        }
 
         public void Unregister() => unregister(this);
 
@@ -265,14 +261,14 @@ namespace Teronis.Windows.Forms.Hooks
         }
     }
 
-    public enum EHotkeyState
+    public enum HotkeyState
     {
         Down,
         Up
     }
 
     [Flags]
-    public enum EKeyboardModifier
+    public enum KeyboardModifier
     {
         None = Keys.None,
         //

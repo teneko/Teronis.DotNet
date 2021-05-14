@@ -12,9 +12,10 @@ namespace Teronis.Windows.Forms.Extensions
             return new Padding(padding.Left - paddingSubtraction.Left, padding.Top - paddingSubtraction.Top, padding.Right - paddingSubtraction.Right, padding.Bottom - paddingSubtraction.Bottom);
         }
 
-        public static Padding Add(this Padding padding, Padding paddingSubtraction)
-        {
-            return new Padding(padding.Left + paddingSubtraction.Left, padding.Top + paddingSubtraction.Top, padding.Right + paddingSubtraction.Right, padding.Bottom + paddingSubtraction.Bottom);
-        }
+        public static Padding Add(this Padding padding, Padding paddingSubtraction) => new Padding(
+            padding.Left + paddingSubtraction.Left,
+            padding.Top + paddingSubtraction.Top,
+            padding.Right + paddingSubtraction.Right,
+            padding.Bottom + paddingSubtraction.Bottom);
     }
 }

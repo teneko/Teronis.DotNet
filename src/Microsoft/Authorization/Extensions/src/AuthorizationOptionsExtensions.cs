@@ -31,7 +31,7 @@ namespace Teronis.Microsoft.AspNetCore.Authorization.Extensions
         /// <param name="policyBuilder"></param>
         /// <param name="names"></param>
         /// <returns></returns>
-        public static AuthorizationOptions AddPolicyEach(this AuthorizationOptions options, Action<AuthorizationPolicyBuilder> policyBuilder, params string[] names)
+        public static AuthorizationOptions AddPolicyForEach(this AuthorizationOptions options, Action<AuthorizationPolicyBuilder> policyBuilder, params string[] names)
         {
             foreach (var name in names) {
                 options.AddPolicy(name, policyBuilder);

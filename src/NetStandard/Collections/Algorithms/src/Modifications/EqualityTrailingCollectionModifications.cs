@@ -176,7 +176,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                 var leftItemNodeLastBucketFirstNode = leftItemNodeLast?.Bucket?.First;
 
                 /* Is the first node of bucket of left node anywhere on right side? */
-                if (!(leftItemNodeLastBucketFirstNode is null) && rightItemsNodes.TryGetBucket(leftItemNodeLastBucketFirstNode!.Key, out var rightItembucket)) {
+                if (!(leftItemNodeLastBucketFirstNode is null) && rightItemsNodes.TryGetBucket(leftItemNodeLastBucketFirstNode.Key, out var rightItembucket)) {
                     var rightItemNode = rightItembucket.First!;
 
                     if (canReplace) {

@@ -43,10 +43,10 @@ namespace Teronis.Collections.Synchronization
                 expected = expected ?? rightItems;
                 yieldCapabilities = yieldCapabilities ?? CollectionModificationsYieldCapabilities.All;
 
-                Collection.SynchronizeCollection(leftItems, consumeModifications: true);
+                Collection.SynchronizeCollection(leftItems, batchModifications: true);
                 Assert.Equal(leftItems, Collection, EqualityComparer);
 
-                Collection.SynchronizeCollection(rightItems, yieldCapabilities.Value, consumeModifications: true);
+                Collection.SynchronizeCollection(rightItems, yieldCapabilities.Value, batchModifications: true);
                 Assert.Equal(expected, Collection, EqualityComparer);
             }
 
@@ -66,11 +66,11 @@ namespace Teronis.Collections.Synchronization
                 expected = expected ?? rightItems;
                 yieldCapabilities = yieldCapabilities ?? CollectionModificationsYieldCapabilities.All;
 
-                Collection.SynchronizeCollection(leftItems, consumeModifications: true);
+                Collection.SynchronizeCollection(leftItems, batchModifications: true);
                 Assert.Equal(leftItems, Collection, EqualityComparer);
 
                 var collection = ToEnumerable(Collection);
-                Collection.SynchronizeCollection(collection, rightItems, yieldCapabilities.Value, consumeModifications: true);
+                Collection.SynchronizeCollection(collection, rightItems, yieldCapabilities.Value, batchModifications: true);
                 Assert.Equal(expected, Collection, EqualityComparer);
             }
 
@@ -83,11 +83,11 @@ namespace Teronis.Collections.Synchronization
                 expected = expected ?? rightItems;
                 yieldCapabilities = yieldCapabilities ?? CollectionModificationsYieldCapabilities.All;
 
-                Collection.SynchronizeCollection(leftItems, consumeModifications: true);
+                Collection.SynchronizeCollection(leftItems, batchModifications: true);
                 Assert.Equal(leftItems, Collection, EqualityComparer);
 
                 var collection = ToEnumerable(Collection);
-                Collection.SynchronizeCollection(collection, rightItems, yieldCapabilities.Value, consumeModifications: true);
+                Collection.SynchronizeCollection(collection, rightItems, yieldCapabilities.Value, batchModifications: true);
                 Assert.Equal(expected, Collection, EqualityComparer);
             }
         }

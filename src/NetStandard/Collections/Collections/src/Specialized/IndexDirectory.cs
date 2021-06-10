@@ -100,7 +100,7 @@ namespace Teronis.Collections.Specialized
         /// <summary>
         /// Inserts <paramref name="index"/> between <paramref name="index"/> - 1
         /// and <paramref name="index"/> and will cause to move existing indexes at
-        /// <paramref name="index"/> by one except floating indexes.
+        /// <paramref name="index"/> by one.
         /// </summary>
         /// <param name="index">The to be inserted index.</param>
         /// <param name="mode">The mode for the index.</param>
@@ -142,7 +142,7 @@ namespace Teronis.Collections.Specialized
         /// <summary>
         /// Inserts <paramref name="index"/> between <paramref name="index"/> - 1
         /// and <paramref name="index"/> and will cause to move existing indexes at
-        /// <paramref name="index"/> by one except floating indexes.
+        /// <paramref name="index"/> by one.
         /// </summary>
         /// <param name="index">The to be inserted index.</param>
         /// <returns>The index entry.</returns>
@@ -152,7 +152,11 @@ namespace Teronis.Collections.Specialized
         /// <summary>
         /// Removes index entries that are in range of <paramref name="index"/> and <paramref name="index"/> + <paramref name="count"/> - 1.
         /// </summary>
-        /// <param name="index"></param>
+        /// <param name="index">The beginning index.</param>
+        /// <param name="count">
+        /// The number of entries from beginning of <paramref name="index"/> that are intended to be removed. Smaller than zero leads to an
+        /// <see cref="ArgumentOutOfRangeException"/>.
+        /// </param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is smaller than zero greater than <see cref="Count"/>.</exception>
         public void Remove(int index, int count)
         {
@@ -171,7 +175,7 @@ namespace Teronis.Collections.Specialized
             }
 
             var borderedIndexCount = indexCount > entriesListCount
-                ? entriesListCount 
+                ? entriesListCount
                 : indexCount;
 
             var removeRange = borderedIndexCount - index;
@@ -247,14 +251,26 @@ namespace Teronis.Collections.Specialized
                 new ArgumentOutOfRangeException(nameof(toIndex));
             }
 
+            // The two enumerators are intended to be iterated parallelly.
             IEnumerator<(int Index, Entries? Entries)> enumerator;
+            // The future enumerator represents the "future". That means
+            // that we pretend it to be the result of the move operation.
+            // This we do, because first we manipulate the index values
+            // of the entries before we remove and insert the actual
+            // items to its destination index.
             IEnumerator<(int Index, Entries? Entries)> futureEnumerator;
+
             int nonEqualNormalEntryIndexAddend;
             int equalNormalEntryIndexAddend;
 
             var (lowerIndex, distance) = CollectionTools.GetMoveRange(fromIndex, toIndex, count);
+            // Used for creating future enumerator.
             var conserveDistance = distance - count;
-            var overlapDistance = conserveDistance > count ? count : conserveDistance;
+
+            // Used for creating future enumerator.
+            var overlapDistance = conserveDistance > count
+                ? count
+                : conserveDistance;
 
             if (fromIndex < toIndex) {
                 enumerator = Enumerable.Concat(

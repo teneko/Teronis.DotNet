@@ -7,9 +7,10 @@ namespace Teronis.Collections.Specialized
     {
         Normal,
         /// <summary>
-        /// Adding and removing other indexes affects own index as expected 
-        /// but other moving indexes increases own index always by one only
-        /// if they cross own index.
+        /// Adding and removing normal index entries affects floating index the same
+        /// as normal index entries.
+        /// Only moving normal index entries increases only the floating index by one 
+        /// if they cross the normal and therefore the floating index entry index.
         /// </summary>
         Floating
     }

@@ -33,8 +33,8 @@ namespace Teronis.Collections.Synchronization
 
         public SynchronizableCollection(
             IList<TItem> items,
-            ICollectionSynchronizationMethod<TItem, TItem>? synchronizationMethod) : this(
-                new Options() { SynchronizationMethod = synchronizationMethod }
+            ICollectionSynchronizationMethod<TItem, TItem>? synchronizationMethod) 
+            : this(new Options() { SynchronizationMethod = synchronizationMethod }
                 .SetItems(items))
         { }
 
@@ -47,26 +47,25 @@ namespace Teronis.Collections.Synchronization
         public SynchronizableCollection()
             : this(options: null) { }
 
-        public SynchronizableCollection(IList<TItem> items, IEqualityComparer<TItem> equalityComparer) : this(
-            new Options()
-            .SetItems(items)
-            .SetSequentialSynchronizationMethod(equalityComparer))
+        public SynchronizableCollection(IList<TItem> items, IEqualityComparer<TItem> equalityComparer) 
+            : this(new Options()
+                  .SetItems(items)
+                  .SetSequentialSynchronizationMethod(equalityComparer))
         { }
 
-        public SynchronizableCollection(IEqualityComparer<TItem> equalityComparer) : this(
-            new Options()
-            .SetSequentialSynchronizationMethod(equalityComparer))
+        public SynchronizableCollection(IEqualityComparer<TItem> equalityComparer) 
+            : this(new Options()
+                  .SetSequentialSynchronizationMethod(equalityComparer))
         { }
 
-        public SynchronizableCollection(IList<TItem> items, IComparer<TItem> comparer, bool descended) : this(
-            new Options()
-            .SetItems(items)
-            .SetSortedSynchronizationMethod(comparer, descended))
+        public SynchronizableCollection(IList<TItem> items, IComparer<TItem> comparer, bool descended) 
+            : this(new Options()
+                  .SetItems(items)
+                  .SetSortedSynchronizationMethod(comparer, descended))
         { }
 
         public SynchronizableCollection(IComparer<TItem> comparer, bool descended)
-            : this(
-                  new Options()
+            : this(new Options()
                   .SetSortedSynchronizationMethod(comparer, descended))
         { }
 
@@ -145,12 +144,19 @@ namespace Teronis.Collections.Synchronization
             }
         }
 
-        internal void SynchronizeCollection(IEnumerable<TItem> leftItems, IEnumerable<TItem>? rightItems, CollectionModificationsYieldCapabilities yieldCapabilities, bool consumeModifications)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="leftItems"></param>
+        /// <param name="rightItems"></param>
+        /// <param name="yieldCapabilities"></param>
+        /// <param name="batchModifications">Indicates that first all modifications are calculated before they get processed.</param>
+        internal void SynchronizeCollection(IEnumerable<TItem> leftItems, IEnumerable<TItem>? rightItems, CollectionModificationsYieldCapabilities yieldCapabilities, bool batchModifications)
         {
             leftItems = leftItems ?? throw new ArgumentNullException(nameof(leftItems));
             var modifications = SynchronizationMethod.YieldCollectionModifications(leftItems, rightItems, yieldCapabilities);
 
-            if (consumeModifications) {
+            if (batchModifications) {
                 modifications = modifications.ToList();
             }
 
@@ -171,20 +177,31 @@ namespace Teronis.Collections.Synchronization
             InvokeCollectionSynchronized();
         }
 
-        internal void SynchronizeCollection(IEnumerable<TItem>? enumerable, CollectionModificationsYieldCapabilities yieldCapabilities, bool consumeModifications) =>
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="enumerable"></param>
+        /// <param name="yieldCapabilities"></param>
+        /// <param name="batchModifications">Indicates that first all modifications are calculated before they get processed.</param>
+        internal void SynchronizeCollection(IEnumerable<TItem>? enumerable, CollectionModificationsYieldCapabilities yieldCapabilities, bool batchModifications) =>
             SynchronizeCollection(
-                consumeModifications
-                    ? (IEnumerable<TItem>)Items
-                    : Items.AsIList().ToYieldIteratorInfluencedReadOnlyList(),
+                batchModifications
+                    ? Items // When we batch modifications, then we do not need to mark it.
+                    : Items.AsIList().ToProducedListModificationsNotBatchedMarker(),
                 enumerable,
                 yieldCapabilities,
-                consumeModifications);
+                batchModifications);
 
-        internal void SynchronizeCollection(IEnumerable<TItem>? enumerable, bool consumeModifications) =>
-            SynchronizeCollection(enumerable, CollectionModificationsYieldCapabilities.All, consumeModifications);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="enumerable"></param>
+        /// <param name="batchModifications">Indicates that first all modifications are calculated before they get processed.</param>
+        internal void SynchronizeCollection(IEnumerable<TItem>? enumerable, bool batchModifications) =>
+            SynchronizeCollection(enumerable, CollectionModificationsYieldCapabilities.All, batchModifications);
 
         public void SynchronizeCollection(IEnumerable<TItem>? enumerable, CollectionModificationsYieldCapabilities yieldCapabilities) =>
-            SynchronizeCollection(enumerable, yieldCapabilities, consumeModifications: false);
+            SynchronizeCollection(enumerable, yieldCapabilities, batchModifications: false);
 
         public void SynchronizeCollection(IEnumerable<TItem>? enumerable) =>
             SynchronizeCollection(enumerable, yieldCapabilities: CollectionModificationsYieldCapabilities.All);

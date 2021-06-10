@@ -15,7 +15,7 @@ namespace Teronis.Collections.Algorithms.Modifications
 
         public IndexPreferredEnumerator(IEnumerable<TItem> enumerable, Func<int> getLastIndex)
         {
-            if (enumerable is YieldIteratorInfluencedReadOnlyList<TItem> list) {
+            if (enumerable is ProducedListModificationsNotBatchedMarker<TItem> list) {
                 enumerator = new IndexedEnumerator(list, getLastIndex);
             } else {
                 enumerator = enumerable.GetEnumerator();

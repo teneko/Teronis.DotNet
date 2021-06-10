@@ -7,7 +7,6 @@ using System.Collections.Specialized;
 using System.Linq;
 using Teronis.Collections.ObjectModel;
 using Teronis.Extensions;
-using Teronis.Utils;
 
 namespace Teronis.Collections.Algorithms.Modifications
 {

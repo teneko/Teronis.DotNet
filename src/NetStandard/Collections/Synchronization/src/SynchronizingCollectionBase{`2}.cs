@@ -51,7 +51,7 @@ namespace Teronis.Collections.Synchronization
             options = options ?? new Options();
             ConfigureItems(options);
 
-            static void prepareItemsOptions<ItemType>(
+            static void prepareOptionsOfItems<ItemType>(
                 Options.ItemsOptions<ItemType> itemsOptions,
                 Func<IList<ItemType>, ISynchronizedCollection<ItemType>> itemCollectionFactory)
             {
@@ -72,8 +72,8 @@ namespace Teronis.Collections.Synchronization
                 }
             }
 
-            prepareItemsOptions(options.SuperItemsOptions, itemList => new SuperItemCollection(itemList, this));
-            prepareItemsOptions(options.SubItemsOptions, itemList => new SubItemCollection(itemList, this));
+            prepareOptionsOfItems(options.SuperItemsOptions, itemList => new SuperItemCollection(itemList, this));
+            prepareOptionsOfItems(options.SubItemsOptions, itemList => new SubItemCollection(itemList, this));
 
             SubItems = options.SubItemsOptions.Items!;
             SubItemChangeHandler = options.SubItemsOptions.CollectionChangeHandler!;
@@ -127,13 +127,14 @@ namespace Teronis.Collections.Synchronization
         protected virtual void AddItems(ApplyingCollectionModifications applyingModifications)
         {
             var subSuperItemModification = applyingModifications.SuperSubItemModification;
+            // ! because we use it at null checked location because it gets null checked before.
             var subSuperItemModifiactionNewItems = subSuperItemModification.NewItems!;
 
             TSuperItem superItem = default!;
             int addedItemIndex = default;
 
             CollectionModificationIterationTools.BeginInsert(subSuperItemModification)
-                /// <see cref="subSuperItemModifiactionNewItems"/> is now null checked.
+                // subSuperItemModifiactionNewItems is now null checked.
                 .Add((itemIndex, offset) => {
                     addedItemIndex = offset + itemIndex;
                     superItem = subSuperItemModifiactionNewItems[itemIndex];
@@ -314,7 +315,7 @@ namespace Teronis.Collections.Synchronization
         {
             var enumerator = SynchronizationMethod
                 .YieldCollectionModifications(
-                     SuperItemChangeHandler.Items.AsIList().ToYieldIteratorInfluencedReadOnlyList(),
+                     SuperItemChangeHandler.Items.AsIList().ToProducedListModificationsNotBatchedMarker(),
                     items,
                     yieldCapabilities)
                 .GetEnumerator();

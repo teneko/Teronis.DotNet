@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using Teronis.Collections.Algorithms.Modifications;
 using Teronis.Collections.ObjectModel;
-using Teronis.Utils;
 
 namespace Teronis.Collections.Synchronization
 {

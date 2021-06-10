@@ -96,17 +96,36 @@ namespace Teronis.ComponentModel
             OnPropertyChanged(propertyName);
         }
 
-        public void ChangeProperties(Action propertyChangeHandler, params string[] propertNames)
+        public void ChangeProperty<T>(ref T property, T value, bool noChangeIfEqual, [CallerMemberName] string? propertyName = null)
         {
-            foreach (var propertyName in propertNames) {
-                OnPropertyChanging(propertyName);
+            if (noChangeIfEqual && Equals(property, value)) {
+                return;
             }
 
+            ChangeProperty(ref property, value, propertyName: propertyName);
+        }
+
+        public void ChangeProperty<T>(ref T property, T value, params string[] propertyNames)
+        {
+            OnPropertyChanging(propertyNames);
+            property = value;
+            OnPropertyChanged(propertyNames);
+        }
+
+        public void ChangeProperty<T>(ref T property, T value, bool noChangeIfEqual, params string[] propertyNames)
+        {
+            if (noChangeIfEqual && Equals(property, value)) {
+                return;
+            }
+
+            ChangeProperty(ref property, value, propertyNames: propertyNames);
+        }
+
+        public void ChangeProperty(Action propertyChangeHandler, params string[] propertyNames)
+        {
+            OnPropertyChanging(propertyNames);
             propertyChangeHandler?.Invoke();
-
-            foreach (var propertyName in propertNames) {
-                OnPropertyChanged(propertyName);
-            }
+            OnPropertyChanged(propertyNames);
         }
 
         /// <summary>
@@ -115,8 +134,8 @@ namespace Teronis.ComponentModel
         /// </summary>
         /// <param name="propertyChangeHandler">The handler that perfomens the property change.</param>
         /// <param name="anonymousProperties">The properties that are affected by change. (e.g. () => { prop1, prop2 })</param>
-        public void ChangeProperties(Action propertyChangeHandler, Expression<Func<object?>> anonymousProperties) =>
-            ChangeProperties(propertyChangeHandler, ExpressionGenericTools.GetAnonymousTypeNames(anonymousProperties));
+        public void ChangeProperty(Action propertyChangeHandler, Expression<Func<object?>> anonymousProperties) =>
+            ChangeProperty(propertyChangeHandler, ExpressionGenericTools.GetAnonymousTypeNames(anonymousProperties));
 
         public IMemberCallablePropertyChangeComponent AsMemberCallable() =>
             this;

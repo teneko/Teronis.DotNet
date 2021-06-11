@@ -12,10 +12,14 @@ namespace Teronis.Collections.Synchronization
     public partial class SynchronizableCollection<TItem> : SynchronizableCollectionBase<TItem, TItem>, ICollectionSynchronizationContext<TItem>
         where TItem : notnull
     {
-        private static Options prepareOptions(ref Options? options)
+        private static SynchronizableCollectionOptions<TItem> prepareOptions(ref SynchronizableCollectionOptions<TItem>? options)
         {
-            options ??= new Options();
-            options.CollectionChangeHandler ??= new CollectionChangeHandler<TItem>(new List<TItem>());
+            options ??= new SynchronizableCollectionOptions<TItem>();
+
+            if (options.ItemsOptions.CollectionChangeHandler is null) {
+                options.ItemsOptions.SetItems(new List<TItem>());
+            }
+
             return options;
         }
 
@@ -23,49 +27,55 @@ namespace Teronis.Collections.Synchronization
 
         private CollectionUpdateItemDelegate<TItem, TItem>? updateItem;
 
-        public SynchronizableCollection(Options? options)
-            : base(prepareOptions(ref options).CollectionChangeHandler!)
+        public SynchronizableCollection(SynchronizableCollectionOptions<TItem>? options)
+            : base(prepareOptions(ref options).ItemsOptions.CollectionChangeHandler!)
         {
             options!.SynchronizationMethod ??= CollectionSynchronizationMethod.Sequential<TItem>();
             SynchronizationMethod = options.SynchronizationMethod;
-            updateItem = options.UpdateItem;
+            updateItem = options.ItemsOptions.UpdateItem;
         }
 
         public SynchronizableCollection(
             IList<TItem> items,
-            ICollectionSynchronizationMethod<TItem, TItem>? synchronizationMethod) 
-            : this(new Options() { SynchronizationMethod = synchronizationMethod }
-                .SetItems(items))
+            ICollectionSynchronizationMethod<TItem, TItem>? synchronizationMethod) : this(
+                new SynchronizableCollectionOptions<TItem>() { SynchronizationMethod = synchronizationMethod }
+                    .ConfigureItems(options => options
+                        .SetItems(items)))
         { }
 
-        public SynchronizableCollection(IList<TItem> items)
-            : this(new Options().SetItems(items)) { }
+        public SynchronizableCollection(IList<TItem> items) : this(
+            new SynchronizableCollectionOptions<TItem>()
+                .ConfigureItems(options => options
+                    .SetItems(items)))
+        { }
 
         public SynchronizableCollection(ICollectionSynchronizationMethod<TItem, TItem> synchronizationMethod)
-            : this(new Options() { SynchronizationMethod = synchronizationMethod }) { }
+            : this(new SynchronizableCollectionOptions<TItem>() { SynchronizationMethod = synchronizationMethod }) { }
 
         public SynchronizableCollection()
             : this(options: null) { }
 
-        public SynchronizableCollection(IList<TItem> items, IEqualityComparer<TItem> equalityComparer) 
-            : this(new Options()
-                  .SetItems(items)
+        public SynchronizableCollection(IList<TItem> items, IEqualityComparer<TItem> equalityComparer) : this(
+            new SynchronizableCollectionOptions<TItem>()
+                .ConfigureItems(options => options
+                    .SetItems(items))
+                .SetSequentialSynchronizationMethod(equalityComparer))
+        { }
+
+        public SynchronizableCollection(IEqualityComparer<TItem> equalityComparer)
+            : this(new SynchronizableCollectionOptions<TItem>()
                   .SetSequentialSynchronizationMethod(equalityComparer))
         { }
 
-        public SynchronizableCollection(IEqualityComparer<TItem> equalityComparer) 
-            : this(new Options()
-                  .SetSequentialSynchronizationMethod(equalityComparer))
-        { }
-
-        public SynchronizableCollection(IList<TItem> items, IComparer<TItem> comparer, bool descended) 
-            : this(new Options()
-                  .SetItems(items)
-                  .SetSortedSynchronizationMethod(comparer, descended))
+        public SynchronizableCollection(IList<TItem> items, IComparer<TItem> comparer, bool descended) : this(
+            new SynchronizableCollectionOptions<TItem>()
+                .ConfigureItems(options => options
+                    .SetItems(items))
+                .SetSortedSynchronizationMethod(comparer, descended))
         { }
 
         public SynchronizableCollection(IComparer<TItem> comparer, bool descended)
-            : this(new Options()
+            : this(new SynchronizableCollectionOptions<TItem>()
                   .SetSortedSynchronizationMethod(comparer, descended))
         { }
 
@@ -213,8 +223,8 @@ namespace Teronis.Collections.Synchronization
         /// </summary>
         /// <param name="toBeMirroredCollection">The foreign collection that is about to be mirrored related to its modifications.</param>
         /// <returns>A collection synchronization mirror.</returns>
-        public SynchronizationMirror<TItem> CreateSynchronizationMirror(ISynchronizedCollection<TItem> toBeMirroredCollection) =>
-            new SynchronizationMirror<TItem>(this, toBeMirroredCollection);
+        public SynchronizedCollectionMirror<TItem> MirrorSynchronizedCollection(ISynchronizedCollection<TItem> toBeMirroredCollection) =>
+            new SynchronizedCollectionMirror<TItem>(this, toBeMirroredCollection);
 
         #region ICollectionSynchronizationContext<SuperItemType>
 

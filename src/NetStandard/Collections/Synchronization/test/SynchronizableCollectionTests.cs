@@ -34,7 +34,7 @@ namespace Teronis.Collections.Synchronization
                 Assert.Equal(expected, Collection, EqualityComparer);
             }
 
-            public virtual void Direct_synchronization_by_consumed_modifications(
+            public virtual void Direct_synchronization_by_batched_modifications(
                 T[] leftItems,
                 T[] rightItems,
                 T[]? expected = null,
@@ -74,7 +74,7 @@ namespace Teronis.Collections.Synchronization
                 Assert.Equal(expected, Collection, EqualityComparer);
             }
 
-            public virtual void Relocated_synchronization_by_consumed_modifications(
+            public virtual void Relocated_synchronization_by_batched_modifications(
                 T[] leftItems,
                 T[] rightItems,
                 T[]? expected = null,

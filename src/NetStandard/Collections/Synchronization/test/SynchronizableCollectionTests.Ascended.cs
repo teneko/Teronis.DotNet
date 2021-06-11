@@ -27,8 +27,9 @@ namespace Teronis.Collections.Synchronization
 
             public Ascended() : base(
                 new SynchronizableCollection<Number>(
-                    new SynchronizableCollection<Number>.Options()
-                    .SetItems(CollectionChangeHandler<Number>.CollectionItemReplaceBehaviour.Default)
+                    new SynchronizableCollectionOptions<Number>()
+                    .ConfigureItems(options => options
+                        .SetItems(CollectionChangeHandler<Number>.CollectionItemReplaceBehaviour.Default))
                     .SetSortedSynchronizationMethod(Number.Comparer.Default, descended: false)))
             { }
 
@@ -40,9 +41,9 @@ namespace Teronis.Collections.Synchronization
 
             [Theory]
             [ClassData(typeof(Generator))]
-            public override void Direct_synchronization_by_consumed_modifications(Number[] leftItems, Number[] rightItems, Number[]? expected = null,
+            public override void Direct_synchronization_by_batched_modifications(Number[] leftItems, Number[] rightItems, Number[]? expected = null,
                 CollectionModificationsYieldCapabilities? yieldCapabilities = null) =>
-                base.Direct_synchronization_by_consumed_modifications(leftItems, rightItems, expected, yieldCapabilities);
+                base.Direct_synchronization_by_batched_modifications(leftItems, rightItems, expected, yieldCapabilities);
 
             [Theory]
             [ClassData(typeof(Generator))]
@@ -52,9 +53,9 @@ namespace Teronis.Collections.Synchronization
 
             [Theory]
             [ClassData(typeof(Generator))]
-            public override void Relocated_synchronization_by_consumed_modifications(Number[] leftItems, Number[] rightItems, Number[]? expected = null,
+            public override void Relocated_synchronization_by_batched_modifications(Number[] leftItems, Number[] rightItems, Number[]? expected = null,
                 CollectionModificationsYieldCapabilities? yieldCapabilities = null) =>
-                base.Relocated_synchronization_by_consumed_modifications(leftItems, rightItems, expected, yieldCapabilities);
+                base.Relocated_synchronization_by_batched_modifications(leftItems, rightItems, expected, yieldCapabilities);
 
             public class Generator : GeneratorBase<Number>
             {

@@ -117,7 +117,7 @@ namespace Teronis.Collections.Synchronization
         }
 
         /// <summary>
-        /// Implements the behaviour to replace an item at a given index on request. The default behaviour is to not replace existing items.
+        /// Implements the behaviour to replace an item at a given index on request. The default behaviour is not to replace existing items.
         /// </summary>
         public class CollectionItemReplaceBehaviour : Behaviour
         {

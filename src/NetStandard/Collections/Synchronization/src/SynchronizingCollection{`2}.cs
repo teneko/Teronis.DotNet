@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Teronis.Collections.Synchronization
@@ -13,16 +12,8 @@ namespace Teronis.Collections.Synchronization
     {
         private Func<TSuperItem, TSubItem> createSubItemHandler;
 
-        public SynchronizingCollection(Func<TSuperItem, TSubItem> createSubItemHandler, Options? options)
+        public SynchronizingCollection(Func<TSuperItem, TSubItem> createSubItemHandler, SynchronizingCollectionOptions<TSuperItem, TSubItem>? options)
             : base(options) =>
-            OnInitialize(createSubItemHandler);
-
-        public SynchronizingCollection(Func<TSuperItem, TSubItem> createSubItemHandler, IEqualityComparer<TSuperItem> equalityComparer)
-            : base(equalityComparer) =>
-            OnInitialize(createSubItemHandler);
-
-        public SynchronizingCollection(Func<TSuperItem, TSubItem> createSubItemHandler, IComparer<TSuperItem> equalityComparer, bool descended)
-            : base(equalityComparer, descended) =>
             OnInitialize(createSubItemHandler);
 
         public SynchronizingCollection(Func<TSuperItem, TSubItem> createSubItemHandler) :

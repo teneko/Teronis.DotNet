@@ -45,35 +45,13 @@ namespace Teronis.Collections.Synchronization
         private CollectionUpdateItemDelegate<TSuperItem, TSubItem>? updateSuperItem;
         private CollectionUpdateItemDelegate<TSubItem, TSuperItem>? updateSubItem;
 
-        public SynchronizingCollectionBase(Options? options)
+        public SynchronizingCollectionBase(SynchronizingCollectionOptions<TSuperItem, TSubItem>? options)
         {
             /* Initialize collections. */
-            options = options ?? new Options();
+            options = options ?? new SynchronizingCollectionOptions<TSuperItem, TSubItem>();
             ConfigureItems(options);
-
-            static void prepareOptionsOfItems<ItemType>(
-                Options.ItemsOptions<ItemType> itemsOptions,
-                Func<IList<ItemType>, ISynchronizedCollection<ItemType>> itemCollectionFactory)
-            {
-                if (itemsOptions.Items is null) {
-                    IList<ItemType> itemList;
-                    ICollectionChangeHandler<ItemType> itemModificationHandler;
-
-                    if (itemsOptions.CollectionChangeHandler is null) {
-                        itemList = new List<ItemType>();
-                        itemModificationHandler = new CollectionChangeHandler<ItemType>(itemList);
-                    } else {
-                        itemList = itemsOptions.CollectionChangeHandler.Items;
-                        itemModificationHandler = itemsOptions.CollectionChangeHandler;
-                    }
-
-                    var items = itemCollectionFactory(itemList);
-                    itemsOptions.SetItems(items, itemModificationHandler);
-                }
-            }
-
-            prepareOptionsOfItems(options.SuperItemsOptions, itemList => new SuperItemCollection(itemList, this));
-            prepareOptionsOfItems(options.SubItemsOptions, itemList => new SubItemCollection(itemList, this));
+            SynchronizableCollectionOptionsPostConfigurator.Default.PostConfigure(options.SuperItemsOptions, itemList => new SuperItemCollection(itemList, this));
+            SynchronizableCollectionOptionsPostConfigurator.Default.PostConfigure(options.SubItemsOptions, itemList => new SubItemCollection(itemList, this));
 
             SubItems = options.SubItemsOptions.Items!;
             SubItemChangeHandler = options.SubItemsOptions.CollectionChangeHandler!;
@@ -84,15 +62,6 @@ namespace Teronis.Collections.Synchronization
             SynchronizationMethod = options.SynchronizationMethod
                 ?? CollectionSynchronizationMethod.Sequential<TSuperItem>();
         }
-
-        public SynchronizingCollectionBase(ICollectionSynchronizationMethod<TSuperItem, TSuperItem>? synchronizationMethod)
-            : this(new Options() { SynchronizationMethod = synchronizationMethod }) { }
-
-        public SynchronizingCollectionBase(IEqualityComparer<TSuperItem> equalityComparer)
-            : this(new Options().SetSequentialSynchronizationMethod(equalityComparer)) { }
-
-        public SynchronizingCollectionBase(IComparer<TSuperItem> equalityComparer, bool descended)
-            : this(new Options().SetSortedSynchronizationMethod(equalityComparer, descended)) { }
 
         public SynchronizingCollectionBase()
             : this(options: null) { }
@@ -107,7 +76,7 @@ namespace Teronis.Collections.Synchronization
         /// Configures items options.
         /// </summary>
         /// <param name="options">The options that got passed to constructor or a new instance.</param>
-        protected virtual void ConfigureItems(Options options)
+        protected virtual void ConfigureItems(SynchronizingCollectionOptions<TSuperItem, TSubItem> options)
         { }
 
         protected abstract TSubItem CreateSubItem(TSuperItem superItem);
@@ -119,8 +88,8 @@ namespace Teronis.Collections.Synchronization
         /// </summary>
         /// <param name="collectionToBeMirrored">The foreign collection that is about to be mirrored related to its modifications.</param>
         /// <returns>A collection synchronization mirror.</returns>
-        public SynchronizationMirror<TSuperItem> CreateSynchronizationMirror(ISynchronizedCollection<TSuperItem> collectionToBeMirrored) =>
-            new SynchronizationMirror<TSuperItem>(this, collectionToBeMirrored);
+        public SynchronizedCollectionMirror<TSuperItem> MirrorSynchronizedCollection(ISynchronizedCollection<TSuperItem> collectionToBeMirrored) =>
+            new SynchronizedCollectionMirror<TSuperItem>(this, collectionToBeMirrored);
 
         protected virtual void OnAfterAddItem(int addedItemIndex) { }
 

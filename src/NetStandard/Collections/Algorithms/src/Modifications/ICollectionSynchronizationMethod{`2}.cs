@@ -8,8 +8,8 @@ namespace Teronis.Collections.Algorithms.Modifications
     public interface ICollectionSynchronizationMethod<TLeftItem, TRightItem>
     {
         IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications(
-            IEnumerable<TLeftItem> leftItems, 
-            IEnumerable<TRightItem>? rightItems, 
+            IEnumerable<TLeftItem> leftItems,
+            IEnumerable<TRightItem>? rightItems,
             CollectionModificationsYieldCapabilities yieldCapabilities);
     }
 }

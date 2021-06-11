@@ -5,12 +5,12 @@ using System;
 
 namespace Teronis.Collections.Synchronization
 {
-    public class SynchronizationMirror<TSuperItem>
+    public class SynchronizedCollectionMirror<TSuperItem>
         where TSuperItem : notnull
     {
         private readonly ICollectionSynchronizationContext<TSuperItem> collection;
 
-        internal SynchronizationMirror(ICollectionSynchronizationContext<TSuperItem> collection, ISynchronizedCollection<TSuperItem> toBeMirroredCollection)
+        internal SynchronizedCollectionMirror(ICollectionSynchronizationContext<TSuperItem> collection, ISynchronizedCollection<TSuperItem> toBeMirroredCollection)
         {
             toBeMirroredCollection.CollectionSynchronizing += ToBeMirroredCollection_CollectionSynchronizing;
             toBeMirroredCollection.CollectionModified += ToBeMirroredCollection_CollectionModified;

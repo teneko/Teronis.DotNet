@@ -21,7 +21,6 @@ namespace Teronis.Collections.Synchronization
         /// See https://docs.microsoft.com/en-us/archive/blogs/xtof/binding-to-indexers.
         /// </summary>
         internal protected const string IndexerName = "Item[]";
-        private readonly ICollectionChangeHandler<TItem> changeHandler;
 
         public event PropertyChangedEventHandler? PropertyChanged {
             add => ChangeComponent.PropertyChanged += value;
@@ -47,8 +46,10 @@ namespace Teronis.Collections.Synchronization
 
         protected PropertyChangeComponent ChangeComponent { get; private set; }
 
+        private OccupationMonitor occupationMonitor;
         // We take the Subject<> implementation because it provides full thread-safety.
         private Subject<ICollectionModification<TItem, TItem>> collectionModificationSubject;
+        private readonly ICollectionChangeHandler<TItem> changeHandler;
 
         public SynchronizableCollectionBase(ICollectionChangeHandler<TItem> changeHandler, IReadOnlyCollectionItemsOptions options)
             : base(changeHandler.Items)
@@ -68,9 +69,10 @@ namespace Teronis.Collections.Synchronization
             Initialize();
         }
 
-        [MemberNotNull(nameof(ChangeComponent), nameof(collectionModificationSubject))]
+        [MemberNotNull(nameof(occupationMonitor), nameof(ChangeComponent), nameof(collectionModificationSubject))]
         private void Initialize()
         {
+            occupationMonitor = new OccupationMonitor();
             ChangeComponent = new PropertyChangeComponent(this);
             collectionModificationSubject = new Subject<ICollectionModification<TItem, TItem>>();
         }
@@ -93,11 +95,49 @@ namespace Teronis.Collections.Synchronization
             }
 
             var collectionChangedEventArgs = CreateCollectionModifiedEventArgs(collectionModification);
-            collectionChanged?.Invoke(this, collectionChangedEventArgs);
-            CollectionModified?.Invoke(this, collectionChangedEventArgs);
+
+            if (collectionChanged != null) {
+                using var _ = BlockReentrancy();
+                collectionChanged?.Invoke(this, collectionChangedEventArgs);
+            }
+
+            if (CollectionModified != null) {
+                using var _ = BlockReentrancy();
+                CollectionModified?.Invoke(this, collectionChangedEventArgs);
+            }
 
             if (collectionModificationSubject.HasObservers) {
+                using var _ = BlockReentrancy();
                 collectionModificationSubject.OnNext(collectionModification);
+            }
+        }
+
+        protected IDisposable BlockReentrancy()
+        {
+            occupationMonitor.Occupy();
+            return occupationMonitor;
+        }
+
+        /// <summary>
+        /// Check and assert for reentrant attempts to change this collection.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">
+        /// Raised when changing the collection while another collection change is still being 
+        /// notified to other listeners.
+        /// </exception>
+        protected void CheckReentrancy()
+        {
+            if (occupationMonitor.IsOccupied) {
+                int invocationCount = collectionChanged?.GetInvocationList().Length ?? 0
+                    + CollectionModified?.GetInvocationList().Length ?? 0;
+
+                // We can allow changes if there's only one listener - the problem
+                // only arises if reentrant changes make the original event args
+                // invalid for later listeners.  This keeps existing code working
+                // (e.g. Selector.SelectedItems).
+                if (1 < invocationCount) {
+                    throw new InvalidOperationException("Observable collection reentrancy is not allowed.");
+                }
             }
         }
 
@@ -109,6 +149,7 @@ namespace Teronis.Collections.Synchronization
 
         protected override void InsertItem(int itemIndex, TItem item)
         {
+            CheckReentrancy();
             OnBeforeAddItem(itemIndex, item);
             changeHandler.InsertItem(itemIndex, item, preventInsertRedirect: true);
             var modification = CollectionModification.ForAdd<TItem, TItem>(itemIndex, item);
@@ -127,6 +168,7 @@ namespace Teronis.Collections.Synchronization
 
         protected override void RemoveItem(int itemIndex)
         {
+            CheckReentrancy();
             OnBeforeRemoveItem(itemIndex);
             var oldItem = Items[itemIndex];
             changeHandler.RemoveItem(itemIndex, preventRemoveRedirect: true);
@@ -146,6 +188,7 @@ namespace Teronis.Collections.Synchronization
 
         protected override void SetItem(int itemIndex, TItem item)
         {
+            CheckReentrancy();
             OnBeforeReplaceItem(itemIndex);
             var oldItem = Items[itemIndex];
             changeHandler.ReplaceItem(itemIndex, () => item, preventReplaceRedirect: true);
@@ -165,6 +208,7 @@ namespace Teronis.Collections.Synchronization
 
         protected virtual void MoveItems(int fromIndex, int toIndex, int count)
         {
+            CheckReentrancy();
             OnBeforeMoveItems();
             changeHandler.MoveItems(fromIndex, toIndex, count, preventMoveRedirect: true);
             var modification = CollectionModification.ForMove<TItem, TItem>(fromIndex, Items, toIndex, count);
@@ -189,6 +233,7 @@ namespace Teronis.Collections.Synchronization
 
         protected override void ClearItems()
         {
+            CheckReentrancy();
             OnBeforeResetItems();
             changeHandler.ResetItems(preventResetRedirect: true);
             OnCollectionModified(CollectionModification.ForReset<TItem, TItem>());
@@ -211,5 +256,19 @@ namespace Teronis.Collections.Synchronization
         public SynchronizedDictionary<KeyType, TItem> CreateSynchronizedDictionary<KeyType>(Func<TItem, KeyType> getItemKey)
             where KeyType : notnull =>
             new SynchronizedDictionary<KeyType, TItem>(this, getItemKey);
+
+        private class OccupationMonitor : IDisposable
+        {
+            int occupationCount;
+
+            public void Occupy() =>
+                ++occupationCount;
+
+            public void Dispose() =>
+                --occupationCount;
+
+            public bool IsOccupied =>
+                occupationCount > 0;
+        }
     }
 }

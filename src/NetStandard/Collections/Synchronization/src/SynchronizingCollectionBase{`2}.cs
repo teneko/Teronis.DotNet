@@ -90,7 +90,7 @@ namespace Teronis.Collections.Synchronization
         protected virtual void OnCollectionSynchronizing() =>
             CollectionSynchronizing?.Invoke(this, new EventArgs());
 
-        protected virtual void OnCollectionModified(CollectionModifiedEventArgs<TSuperItem, TSubItem> args) => 
+        protected virtual void OnCollectionModified(CollectionModifiedEventArgs<TSuperItem, TSubItem> args) =>
             CollectionModified?.Invoke(this, args);
 
         protected virtual void OnCollectionModified(ApplyingCollectionModifications applyingModifications)

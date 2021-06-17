@@ -193,7 +193,7 @@ namespace Teronis.Collections.Algorithms.Modifications
 
                     if (!hasCachedLeftItem) {
                         // Then we replace the left item by moved item at the destination index of the moved item
-                        yield return CollectionModification.ForReplace(rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount, foundLeftItemContainer.LeftItem!, /*rightValueIndex,*/ rightItemContainer.RightItem!);
+                        yield return CollectionModification.ForReplace(rightValueIndexWithNotProcessedItemsBeforeRightValueIndexCount, foundLeftItemContainer.LeftItem!, rightItemContainer.RightItem!);
                     }
                 }
             }

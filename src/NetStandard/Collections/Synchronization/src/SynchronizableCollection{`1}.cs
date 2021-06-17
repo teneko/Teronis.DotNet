@@ -72,6 +72,12 @@ namespace Teronis.Collections.Synchronization
                   .SetSequentialSynchronizationMethod(equalityComparer))
         { }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="items"></param>
+        /// <param name="comparer"></param>
+        /// <param name="descended"></param>
         public SynchronizableCollection(IList<TItem> items, IComparer<TItem> comparer, bool descended) : this(
             new SynchronizableCollectionOptions<TItem>()
                 .ConfigureItems(options => options

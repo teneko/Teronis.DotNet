@@ -106,7 +106,6 @@ namespace Teronis.Collections.Algorithms.Modifications
                             yield return CollectionModification.ForReplace(
                                 leftIndexOfLatestSyncedRightItem,
                                 leftItem,
-                                //leftIndexOfLatestSyncedRightItem,
                                 rightItem);
                         }
 

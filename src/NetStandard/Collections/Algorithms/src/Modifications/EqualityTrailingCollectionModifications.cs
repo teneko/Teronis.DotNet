@@ -48,7 +48,6 @@ namespace Teronis.Collections.Algorithms.Modifications
                 CollectionModification.ForReplace(
                     leftItemNode.Value.IndexEntry,
                     leftItemNode.Value.Item,
-                    //leftItemNode.Value.IndexEntry,
                     rightItemNode.Value.Item);
 
             static CollectionModification<TRightItem, TLeftItem> createMoveModification(
@@ -438,7 +437,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                 Item = item;
         }
 
-        private class LeftItemContainer<TLeftItem> : ItemContainer<TLeftItem>//, IDisposable
+        private class LeftItemContainer<TLeftItem> : ItemContainer<TLeftItem>
         {
             public IndexDirectoryEntry IndexEntry { get; set; }
 

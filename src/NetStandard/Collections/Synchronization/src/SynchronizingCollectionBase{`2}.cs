@@ -287,7 +287,7 @@ namespace Teronis.Collections.Synchronization
         {
             var enumerator = SynchronizationMethod
                 .YieldCollectionModifications(
-                     SuperItemChangeHandler.Items.AsIList().ToProducedListModificationsNotBatchedMarker(),
+                    SuperItemChangeHandler.Items.AsIList().ToProducedListModificationsNotBatchedMarker(),
                     items,
                     yieldCapabilities)
                 .GetEnumerator();

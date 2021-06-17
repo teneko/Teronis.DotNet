@@ -98,6 +98,7 @@ namespace Teronis.Collections.Synchronization
                     var newItem = modification.NewItems![iterationContext.ModificationItemIndex];
                     OnBeforeAddItem(iterationContext.CollectionItemIndex, newItem);
                     collectionChangeHandler.InsertItem(iterationContext.CollectionItemIndex, newItem);
+                    OnCollectionModified(modification);
                     OnAfterAddItem(iterationContext.CollectionItemIndex, newItem);
                 })
                 .Iterate();
@@ -109,6 +110,7 @@ namespace Teronis.Collections.Synchronization
                 .OnIteration(iterationContext => {
                     OnBeforeRemoveItem(iterationContext.CollectionItemIndex);
                     collectionChangeHandler.RemoveItem(iterationContext.CollectionItemIndex);
+                    OnCollectionModified(modification);
                     OnAfterRemoveItem(iterationContext.CollectionItemIndex);
                 })
                 .Iterate();
@@ -123,6 +125,7 @@ namespace Teronis.Collections.Synchronization
                     if (collectionChangeHandler.CanReplaceItem) {
                         OnBeforeReplaceItem(iterationContext.CollectionItemIndex);
                         collectionChangeHandler.ReplaceItem(iterationContext.CollectionItemIndex, lazyItem.GetValue);
+                        OnCollectionModified(modification);
                         OnBeforeReplaceItem(iterationContext.CollectionItemIndex);
                     }
 
@@ -136,6 +139,7 @@ namespace Teronis.Collections.Synchronization
             CollectionModificationIterationTools.CheckMove(modification);
             OnBeforeMoveItems();
             collectionChangeHandler.MoveItems(modification.OldIndex, modification.NewIndex, modification.OldItems!.Count);
+            OnCollectionModified(modification);
             OnAfterMoveItems();
         }
 
@@ -143,6 +147,7 @@ namespace Teronis.Collections.Synchronization
         {
             OnBeforeResetItems();
             collectionChangeHandler.Reset();
+            OnCollectionModified(modification);
             OnAfterResetItems();
         }
 
@@ -194,7 +199,6 @@ namespace Teronis.Collections.Synchronization
             do {
                 var modification = modificationEnumerator.Current;
                 ProcessModification(modification);
-                OnCollectionModified(modification);
             } while (modificationEnumerator.MoveNext());
 
             OnCollectionSynchronized();

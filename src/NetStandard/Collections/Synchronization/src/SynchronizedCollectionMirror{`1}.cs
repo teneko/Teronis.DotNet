@@ -22,7 +22,7 @@ namespace Teronis.Collections.Synchronization
             collection.BeginCollectionSynchronization();
 
         private void ToBeMirroredCollection_CollectionModified(object? sender, CollectionModifiedEventArgs<TSuperItem> e) =>
-            collection.GoThroughModification(e);
+            collection.ProcessModification(e);
 
         private void ToBeMirroredCollection_CollectionSynchronized(object? sender, EventArgs e) =>
             collection.EndCollectionSynchronization();

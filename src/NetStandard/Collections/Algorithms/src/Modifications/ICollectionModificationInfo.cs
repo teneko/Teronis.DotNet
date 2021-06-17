@@ -5,7 +5,7 @@ using System.Collections.Specialized;
 
 namespace Teronis.Collections.Algorithms.Modifications
 {
-    public interface ICollectionModificationParameters
+    public interface ICollectionModificationInfo
     {
         NotifyCollectionChangedAction Action { get; }
         int? OldItemsCount { get; }
@@ -14,3 +14,4 @@ namespace Teronis.Collections.Algorithms.Modifications
         int NewIndex { get; }
     }
 }
+

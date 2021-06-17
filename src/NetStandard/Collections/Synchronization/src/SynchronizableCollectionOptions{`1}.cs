@@ -8,24 +8,24 @@ namespace Teronis.Collections.Synchronization
     public sealed class SynchronizableCollectionOptions<TItem> : SynchronizingCollectionOptionsBase<SynchronizableCollectionOptions<TItem>, TItem>
         where TItem : notnull
     {
-        public OptionsForItems ItemsOptions { get; }
+        public CollectionItemsOptions ItemsOptions { get; }
 
         public SynchronizableCollectionOptions() =>
-            ItemsOptions = new OptionsForItems();
+            ItemsOptions = new CollectionItemsOptions();
 
-        public SynchronizableCollectionOptions<TItem> ConfigureItems(Action<OptionsForItems> configureOptions)
+        public SynchronizableCollectionOptions<TItem> ConfigureItems(Action<CollectionItemsOptions> configureOptions)
         {
             configureOptions?.Invoke(ItemsOptions);
             return this;
         }
 
-        public class OptionsForItems : SynchronizableCollectionOptionsBase<OptionsForItems, TItem>
+        public class CollectionItemsOptions : SynchronizableCollectionItemsOptionsBase<CollectionItemsOptions, TItem>
         {
             /// <summary>
             /// If not null it is called in <see cref="SynchronizingCollectionBase{SuperItemType, SubItemType}.ReplaceItems(SynchronizingCollectionBase{SuperItemType, SubItemType}.ApplyingCollectionModifications)"/>
             /// but after the items could have been replaced.
             /// </summary>
-            public CollectionUpdateItemDelegate<TItem, TItem>? UpdateItem { get; set; }
+            public CollectionUpdateItemDelegate<TItem, TItem>? ItemUpdateHandler { get; set; }
         }
     }
 }

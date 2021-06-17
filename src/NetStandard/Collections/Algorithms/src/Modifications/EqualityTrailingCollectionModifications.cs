@@ -45,23 +45,20 @@ namespace Teronis.Collections.Algorithms.Modifications
             static CollectionModification<TRightItem, TLeftItem> createReplaceModification(
                 LinkedBucketListNode<TComparablePart, LeftItemContainer<TLeftItem>> leftItemNode,
                 LinkedBucketListNode<TComparablePart, RightItemContainer<TLeftItem, TRightItem>> rightItemNode) =>
-                new CollectionModification<TRightItem, TLeftItem>(
-                    NotifyCollectionChangedAction.Replace,
-                    leftItemNode.Value.Item,
+                CollectionModification.ForReplace(
                     leftItemNode.Value.IndexEntry,
-                    rightItemNode.Value.Item,
-                    leftItemNode.Value.IndexEntry);
+                    leftItemNode.Value.Item,
+                    //leftItemNode.Value.IndexEntry,
+                    rightItemNode.Value.Item);
 
             static CollectionModification<TRightItem, TLeftItem> createMoveModification(
                 LinkedBucketListNode<TComparablePart, LeftItemContainer<TLeftItem>> leftItemNode,
                 int leftItemMoveToIndex,
                 LinkedBucketListNode<TComparablePart, RightItemContainer<TLeftItem, TRightItem>> rightItemNode) =>
-                new CollectionModification<TRightItem, TLeftItem>(
-                    NotifyCollectionChangedAction.Move,
-                    leftItemNode.Value.Item,
+                CollectionModification.ForMove<TRightItem, TLeftItem>(
                     leftItemNode.Value.IndexEntry,
-                    rightItemNode.Value.Item,
-                    leftItemMoveToIndex);
+                    leftItemNode.Value.Item,
+                    leftItemMoveToIndex/*,rightItemNode.Value.Item*/);
 
             equalityComparer = equalityComparer ?? EqualityComparer<TComparablePart>.Default;
 
@@ -215,12 +212,9 @@ namespace Teronis.Collections.Algorithms.Modifications
 
             if (canRemove && !(leftItemsNodes.Last is null)) {
                 foreach (var leftItemNode in LinkedBucketListUtils.YieldNodesReversed(leftItemsNodes.Last)) {
-                    var removeModification = CollectionModification<TRightItem, TLeftItem>.OldParted(
-                        NotifyCollectionChangedAction.Remove,
-                        leftItemNode.Value.Item,
-                        leftItemNode.Value.IndexEntry);
-
+                    var removeModification = CollectionModification.ForRemove<TRightItem, TLeftItem>(leftItemNode.Value.IndexEntry, leftItemNode.Value.Item);
                     yield return removeModification;
+
                     leftIndexDirectory.Remove(removeModification.OldIndex);
                     leftItemsLength--;
                 }
@@ -236,12 +230,9 @@ namespace Teronis.Collections.Algorithms.Modifications
                         insertItemTo = rightItemNode.Parent.IndexEntry;
                     }
 
-                    var addModification = CollectionModification<TRightItem, TLeftItem>.NewParted(
-                        NotifyCollectionChangedAction.Add,
-                        rightItemNode.Item,
-                        insertItemTo);
-
+                    var addModification = CollectionModification.ForAdd<TRightItem, TLeftItem>(insertItemTo, rightItemNode.Item);
                     yield return addModification;
+
                     leftIndexDirectory.Insert(insertItemTo);
                     leftItemsLength++;
                 }

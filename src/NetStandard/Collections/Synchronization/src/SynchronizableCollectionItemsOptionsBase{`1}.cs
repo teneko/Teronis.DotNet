@@ -6,20 +6,20 @@ using System.Collections.Generic;
 
 namespace Teronis.Collections.Synchronization
 {
-    public abstract class SynchronizableCollectionOptionsBase<TDerived, TItem>
-        where TDerived : SynchronizableCollectionOptionsBase<TDerived, TItem>
+    public abstract class SynchronizableCollectionItemsOptionsBase<TDerived, TItem> : ISynchronizableCollectionItemsOptions<TItem>
+        where TDerived : SynchronizableCollectionItemsOptionsBase<TDerived, TItem>
     {
         public ICollectionChangeHandler<TItem>? CollectionChangeHandler { get; protected set; }
-
-        public TDerived SetItems(IList<TItem> items)
-        {
-            CollectionChangeHandler = new CollectionChangeHandler<TItem>(items);
-            return (TDerived)this;
-        }
 
         public TDerived SetItems(ICollectionChangeHandler<TItem>? changeHandler)
         {
             CollectionChangeHandler = changeHandler;
+            return (TDerived)this;
+        }
+
+        public TDerived SetItems(IList<TItem> items)
+        {
+            CollectionChangeHandler = new CollectionChangeHandler<TItem>(items);
             return (TDerived)this;
         }
 
@@ -54,5 +54,12 @@ namespace Teronis.Collections.Synchronization
         /// <param name="changeHandlerBehaviour"></param>
         public TDerived SetItems(CollectionChangeHandler<TItem>.IBehaviour changeHandlerBehaviour) =>
             SetItems(new List<TItem>(), changeHandlerBehaviour);
+
+        #region ISynchronizableCollectionItemsOptions<TItem>
+
+        void ISynchronizableCollectionItemsOptions<TItem>.SetItems(ICollectionChangeHandler<TItem>? changeHandler) =>
+            SetItems(changeHandler);
+
+        #endregion
     }
 }

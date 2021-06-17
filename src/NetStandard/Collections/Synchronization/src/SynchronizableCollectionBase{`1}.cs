@@ -13,14 +13,14 @@ using Teronis.ComponentModel;
 
 namespace Teronis.Collections.Synchronization
 {
-    public abstract class SynchronizableCollectionBase<TItem, TNewItem> : Collection<TItem>, ISynchronizedCollection<TItem>, INotifyPropertyChanged, INotifyPropertyChanging
+    public abstract class SynchronizableCollectionBase<TItem, TNewItem> : Collection<TItem>, ISynchronizedCollection<TItem>
     {
         /* Related to observable collection. */
-        private const string CountString = "Count";
+        internal protected const string CountString = "Count";
         /// <summary>
         /// See https://docs.microsoft.com/en-us/archive/blogs/xtof/binding-to-indexers.
         /// </summary>
-        private const string IndexerName = "Item[]";
+        internal protected const string IndexerName = "Item[]";
 
         public event PropertyChangedEventHandler? PropertyChanged {
             add => ChangeComponent.PropertyChanged += value;
@@ -33,8 +33,9 @@ namespace Teronis.Collections.Synchronization
         }
 
         public event EventHandler? CollectionSynchronizing;
-
         public event NotifyNotifyCollectionModifiedEventHandler<TItem>? CollectionModified;
+
+        private event NotifyCollectionChangedEventHandler? collectionChanged;
 
         event NotifyCollectionChangedEventHandler? INotifyCollectionChanged.CollectionChanged {
             add => collectionChanged += value;
@@ -45,128 +46,24 @@ namespace Teronis.Collections.Synchronization
 
         protected PropertyChangeComponent ChangeComponent { get; private set; }
 
-        private event NotifyCollectionChangedEventHandler? collectionChanged;
-
-        internal protected virtual ICollectionChangeHandler<TItem> CollectionChangeHandler { get; private set; }
-
-        private bool itemTypeImplementsDisposable;
-
-        public SynchronizableCollectionBase(IList<TItem> list, CollectionChangeHandler<TItem>.IBehaviour handler)
-            : base(list) =>
-            OnInitialize(decoupledHandler: handler);
-
-        public SynchronizableCollectionBase(IList<TItem> list)
-            : base(list) =>
+        public SynchronizableCollectionBase(IList<TItem> items, IReadOnlyCollectionItemsOptions options)
+            : base(items) =>
             OnInitialize();
-
-        public SynchronizableCollectionBase(ICollectionChangeHandler<TItem> handler)
-            : base(handler.Items) =>
-            OnInitialize(dependencyInjectedHandler: handler);
 
         public SynchronizableCollectionBase() =>
             OnInitialize();
 
-        [MemberNotNull(
-            nameof(ChangeComponent),
-            nameof(itemTypeImplementsDisposable),
-            nameof(CollectionChangeHandler))]
-        private void OnInitialize(
-            ICollectionChangeHandler<TItem>? dependencyInjectedHandler = null,
-            CollectionChangeHandler<TItem>.IBehaviour? decoupledHandler = null)
-        {
+        [MemberNotNull(nameof(ChangeComponent))]
+        private void OnInitialize() =>
             ChangeComponent = new PropertyChangeComponent(this);
-            itemTypeImplementsDisposable = typeof(IDisposable).IsAssignableFrom(typeof(TItem));
-            CollectionChangeHandler = dependencyInjectedHandler ?? new CollectionChangeHandler<TItem>(Items, decoupledHandler);
-        }
 
-        internal void InvokeCollectionSynchronizing() =>
+        protected virtual void OnCollectionSynchronizing() =>
             CollectionSynchronizing?.Invoke(this, new EventArgs());
 
-        internal void InvokeCollectionSynchronized() =>
+        protected virtual void OnCollectionSynchronized() =>
             CollectionSynchronized?.Invoke(this, new EventArgs());
 
-        protected override void InsertItem(int index, TItem item)
-        {
-            ChangeComponent.OnPropertyChanging(
-                CountString,
-                IndexerName);
-
-            base.InsertItem(index, item);
-
-            ChangeComponent.OnPropertyChanged(
-                CountString,
-                IndexerName);
-        }
-
-        protected override void SetItem(int index, TItem item)
-        {
-            ChangeComponent.OnPropertyChanging(IndexerName);
-            base.SetItem(index, item);
-            ChangeComponent.OnPropertyChanged(IndexerName);
-        }
-
-        protected virtual void MoveItems(int fromIndex, int toIndex, int count)
-        {
-            ChangeComponent.OnPropertyChanging(IndexerName);
-            Items.Move(fromIndex, toIndex, count);
-            ChangeComponent.OnPropertyChanged(IndexerName);
-        }
-
-        public void Move(int fromIndex, int toIndex, int count) =>
-            MoveItems(fromIndex, toIndex, count);
-
-        public void Move(int fromIndex, int toIndex) =>
-            MoveItems(fromIndex, toIndex, 1);
-
-        protected virtual void DisposeItem(int index)
-        {
-            var item = Items[index];
-
-            if (item is IDisposable disposableItem) {
-                disposableItem.Dispose();
-            }
-        }
-
-        protected override void RemoveItem(int index)
-        {
-            ChangeComponent.OnPropertyChanging(
-                CountString,
-                IndexerName);
-
-            if (itemTypeImplementsDisposable) {
-                DisposeItem(index);
-            }
-
-            base.RemoveItem(index);
-
-            ChangeComponent.OnPropertyChanged(
-                CountString,
-                IndexerName);
-        }
-
-        protected override void ClearItems()
-        {
-            ChangeComponent.OnPropertyChanging(
-                CountString,
-                IndexerName);
-
-            if (itemTypeImplementsDisposable) {
-                for (int index = Count - 1; index >= 0; index--) {
-                    DisposeItem(index);
-                }
-            }
-
-            base.ClearItems();
-
-            ChangeComponent.OnPropertyChanged(
-                CountString,
-                IndexerName);
-        }
-
-        protected virtual CollectionModifiedEventArgs<TItem> CreateCollectionModifiedEventArgs(ICollectionModification<TItem, TItem> modification) =>
-            new CollectionModifiedEventArgs<TItem>(modification);
-
-        protected void InvokeCollectionModified(ICollectionModification<TItem, TItem> collectionModification)
+        protected virtual void OnCollectionModified(ICollectionModification<TItem, TItem> collectionModification)
         {
             if (collectionChanged is null && CollectionModified is null) {
                 return;
@@ -176,6 +73,91 @@ namespace Teronis.Collections.Synchronization
             CollectionModified?.Invoke(this, collectionChangedEventArgs);
             collectionChanged?.Invoke(this, collectionChangedEventArgs);
         }
+
+        protected virtual void OnBeforeAddItem(int removingItemIndex) =>
+            ChangeComponent.OnPropertyChanging(CountString, IndexerName);
+
+        protected virtual void OnAfterAddItem(int removedItemIndex) =>
+            ChangeComponent.OnPropertyChanged(CountString, IndexerName);
+
+        protected override void InsertItem(int itemIndex, TItem item)
+        {
+            OnBeforeAddItem(itemIndex);
+            base.InsertItem(itemIndex, item);
+            var modification = CollectionModification.ForAdd<TItem, TItem>(itemIndex, item);
+            OnCollectionModified(modification);
+            OnAfterAddItem(itemIndex);
+        }
+
+        protected virtual void OnBeforeRemoveItem(int itemIndex) =>
+            ChangeComponent.OnPropertyChanging(CountString, IndexerName);
+
+        protected virtual void OnAfterRemoveItem(int itemIndex) =>
+            ChangeComponent.OnPropertyChanged(CountString, IndexerName);
+
+        protected override void RemoveItem(int itemIndex)
+        {
+            OnBeforeRemoveItem(itemIndex);
+            var oldItem = Items[itemIndex];
+            base.RemoveItem(itemIndex);
+            var modification = CollectionModification.ForRemove<TItem, TItem>(itemIndex, oldItem);
+            OnCollectionModified(modification);
+            OnAfterRemoveItem(itemIndex);
+        }
+
+        protected virtual void OnBeforeReplaceItem(int itemIndex) =>
+            ChangeComponent.OnPropertyChanging(IndexerName);
+
+        protected virtual void OnAfterReplaceItem(int itemIndex) =>
+            ChangeComponent.OnPropertyChanged(IndexerName);
+
+        protected override void SetItem(int itemIndex, TItem item)
+        {
+            OnBeforeReplaceItem(itemIndex);
+            var oldItem = Items[itemIndex];
+            base.SetItem(itemIndex, item);
+            var modification = CollectionModification.ForReplace(itemIndex, oldItem, item);
+            OnCollectionModified(modification);
+            OnAfterReplaceItem(itemIndex);
+        }
+
+        protected virtual void OnBeforeMoveItems() =>
+            ChangeComponent.OnPropertyChanging(IndexerName);
+
+        protected virtual void OnAfterMoveItems() =>
+            ChangeComponent.OnPropertyChanged(IndexerName);
+
+        protected virtual void MoveItems(int fromIndex, int toIndex, int count)
+        {
+            OnBeforeMoveItems();
+            Items.Move(fromIndex, toIndex, count);
+            var modification = CollectionModification.ForMove<TItem, TItem>(fromIndex, Items, toIndex, count);
+            OnCollectionModified(modification);
+            OnAfterMoveItems();
+        }
+
+        public void Move(int fromIndex, int toIndex, int count) =>
+            MoveItems(fromIndex, toIndex, count);
+
+        public void Move(int fromIndex, int toIndex) =>
+            MoveItems(fromIndex, toIndex, 1);
+
+        protected virtual void OnBeforeResetItems() =>
+            ChangeComponent.OnPropertyChanging(CountString, IndexerName);
+
+        protected virtual void OnAfterResetItems() =>
+            ChangeComponent.OnPropertyChanged(CountString, IndexerName);
+
+        protected override void ClearItems()
+        {
+            OnBeforeResetItems();
+            base.ClearItems();
+            OnCollectionModified(CollectionModification.ForReset<TItem, TItem>());
+            OnAfterResetItems();
+        }
+
+        protected virtual CollectionModifiedEventArgs<TItem> CreateCollectionModifiedEventArgs(ICollectionModification<TItem, TItem> modification) =>
+            new CollectionModifiedEventArgs<TItem>(modification);
 
         public SynchronizedDictionary<TKey, TItem> CreateSynchronizedDictionary<TKey>(Func<TItem, TKey> getItemKey, IEqualityComparer<TKey> keyEqualityComparer)
             where TKey : notnull =>

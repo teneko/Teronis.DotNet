@@ -31,18 +31,18 @@ namespace Teronis.Collections.Synchronization
 
         #endregion
 
-        #region ICollectionModificationParameters
+        #region ICollectionModificationInfo
 
-        int? ICollectionModificationParameters.OldItemsCount =>
+        int? ICollectionModificationInfo.OldItemsCount =>
             OldPart.Items?.Count;
 
-        int ICollectionModificationParameters.OldIndex =>
+        int ICollectionModificationInfo.OldIndex =>
             OldPart.Index;
 
-        int? ICollectionModificationParameters.NewItemsCount =>
+        int? ICollectionModificationInfo.NewItemsCount =>
             NewPart.Items?.Count;
 
-        int ICollectionModificationParameters.NewIndex =>
+        int ICollectionModificationInfo.NewIndex =>
             NewPart.Index;
 
         #endregion

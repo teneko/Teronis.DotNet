@@ -9,10 +9,10 @@ namespace Teronis.Collections.Synchronization
 {
     public abstract partial class SynchronizingCollectionBase<TSuperItem, TSubItem>
     {
-        public abstract partial class ItemCollection<ItemType, NewItemType> : SynchronizableCollectionBase<ItemType, NewItemType>
+        public abstract partial class ItemCollection<TItem, TNewItem> : SynchronizableCollectionBase<TItem, TNewItem>
         {
-            public ItemCollection(IList<ItemType> list, SynchronizingCollectionBase<TSuperItem, TSubItem> synchronizingCollection)
-                : base(list)
+            public ItemCollection(IList<TItem> items, ISynchronizableCollectionItemsOptions<TItem> options, SynchronizingCollectionBase<TSuperItem, TSubItem> synchronizingCollection)
+                : base(items, options)
             {
                 synchronizingCollection.CollectionSynchronizing += SynchronizingCollection_CollectionSynchronizing;
                 synchronizingCollection.CollectionModified += CollectionModificationNotifier_CollectionModified;
@@ -20,24 +20,24 @@ namespace Teronis.Collections.Synchronization
             }
 
             private void SynchronizingCollection_CollectionSynchronizing(object? sender, EventArgs e) =>
-                InvokeCollectionSynchronizing();
+                OnCollectionSynchronizing();
 
-            protected abstract ICollectionModification<ItemType, ItemType> GetCollectionModification(CollectionModifiedEventArgs<TSuperItem, TSubItem> args);
+            protected abstract ICollectionModification<TItem, TItem> GetCollectionModification(CollectionModifiedEventArgs<TSuperItem, TSubItem> args);
 
             private void CollectionModificationNotifier_CollectionModified(object? sender, CollectionModifiedEventArgs<TSuperItem, TSubItem> args)
             {
                 var collectionModification = GetCollectionModification(args);
-                InvokeCollectionModified(collectionModification);
+                OnCollectionModified(collectionModification);
             }
 
             private void SynchronizingCollection_CollectionSynchronized(object? sender, EventArgs e) =>
-                InvokeCollectionSynchronized();
+                OnCollectionSynchronized();
         }
 
         public class SubItemCollection : ItemCollection<TSubItem, TSuperItem>
         {
-            public SubItemCollection(IList<TSubItem> list, SynchronizingCollectionBase<TSuperItem, TSubItem> synchronizingCollection)
-                : base(list, synchronizingCollection) { }
+            public SubItemCollection(IList<TSubItem> items, ISynchronizableCollectionItemsOptions<TSubItem> options, SynchronizingCollectionBase<TSuperItem, TSubItem> synchronizingCollection)
+                : base(items, options, synchronizingCollection) { }
 
             protected override ICollectionModification<TSubItem, TSubItem> GetCollectionModification(CollectionModifiedEventArgs<TSuperItem, TSubItem> args) =>
                 args.SubItemModification;
@@ -45,8 +45,8 @@ namespace Teronis.Collections.Synchronization
 
         public class SuperItemCollection : ItemCollection<TSuperItem, TSubItem>
         {
-            public SuperItemCollection(IList<TSuperItem> list, SynchronizingCollectionBase<TSuperItem, TSubItem> synchronizingCollection)
-                : base(list, synchronizingCollection) { }
+            public SuperItemCollection(IList<TSuperItem> items, ISynchronizableCollectionItemsOptions<TSuperItem> options, SynchronizingCollectionBase<TSuperItem, TSubItem> synchronizingCollection)
+                : base(items, options, synchronizingCollection) { }
 
             protected override ICollectionModification<TSuperItem, TSuperItem> GetCollectionModification(CollectionModifiedEventArgs<TSuperItem, TSubItem> args) =>
                 args.SuperItemModification;

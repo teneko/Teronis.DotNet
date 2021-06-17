@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Teronis.Collections.Algorithms;
 using Teronis.Collections.Algorithms.Modifications;
+using Teronis.Collections.Synchronization.PostConfigurators;
 using Teronis.Extensions;
 
 namespace Teronis.Collections.Synchronization
@@ -35,29 +36,49 @@ namespace Teronis.Collections.Synchronization
         public event EventHandler? CollectionSynchronized;
         public event NotifyCollectionModifiedEventHandler<TSuperItem, TSubItem>? CollectionModified;
 
-        public ISynchronizedCollection<TSubItem> SubItems { get; }
-        public ISynchronizedCollection<TSuperItem> SuperItems { get; }
         public ICollectionSynchronizationMethod<TSuperItem, TSuperItem> SynchronizationMethod { get; }
 
-        protected ICollectionChangeHandler<TSubItem> SubItemChangeHandler { get; }
-        protected ICollectionChangeHandler<TSuperItem> SuperItemChangeHandler { get; }
+        public ISynchronizedCollection<TSuperItem> SuperItems =>
+            superItems;
 
-        private CollectionUpdateItemDelegate<TSuperItem, TSubItem>? updateSuperItem;
-        private CollectionUpdateItemDelegate<TSubItem, TSuperItem>? updateSubItem;
+        public ISynchronizedCollection<TSubItem> SubItems =>
+            subItems;
+
+        protected ICollectionChangeHandler<TSuperItem> SuperItemChangeHandler =>
+            superItemChangeHandler;
+
+        protected ICollectionChangeHandler<TSubItem> SubItemChangeHandler =>
+            subItemChangeHandler;
+
+        private CollectionUpdateItemDelegate<TSuperItem, TSubItem>? superItemUpdateHandler;
+        private CollectionUpdateItemDelegate<TSubItem, TSuperItem>? subItemUpdateHandler;
+
+        private ICollectionChangeHandler<TSuperItem> superItemChangeHandler;
+        private ICollectionChangeHandler<TSubItem> subItemChangeHandler;
+
+        private ISynchronizedCollection<TSuperItem> superItems;
+        private ISynchronizedCollection<TSubItem> subItems;
 
         public SynchronizingCollectionBase(SynchronizingCollectionOptions<TSuperItem, TSubItem>? options)
         {
             /* Initialize collections. */
             options = options ?? new SynchronizingCollectionOptions<TSuperItem, TSubItem>();
             ConfigureItems(options);
-            SynchronizableCollectionOptionsPostConfigurator.Default.PostConfigure(options.SuperItemsOptions, itemList => new SuperItemCollection(itemList, this));
-            SynchronizableCollectionOptionsPostConfigurator.Default.PostConfigure(options.SubItemsOptions, itemList => new SubItemCollection(itemList, this));
 
-            SubItems = options.SubItemsOptions.Items!;
-            SubItemChangeHandler = options.SubItemsOptions.CollectionChangeHandler!;
+            SynchronizingCollectionOptionsPostConfigurator.Default.PostConfigure(
+                options.SuperItemsOptions,
+                out superItemChangeHandler,
+                items => new SuperItemCollection(items, options.SuperItemsOptions, this),
+                out superItems);
 
-            SuperItems = options.SuperItemsOptions.Items!;
-            SuperItemChangeHandler = options.SuperItemsOptions.CollectionChangeHandler!;
+            SynchronizingCollectionOptionsPostConfigurator.Default.PostConfigure(
+                options.SubItemsOptions,
+                out subItemChangeHandler,
+                items => new SubItemCollection(items, options.SubItemsOptions, this),
+                out subItems);
+
+            superItemUpdateHandler = options.SuperItemsOptions.ItemUpdateHandler;
+            subItemUpdateHandler = options.SubItemsOptions.ItemUpdateHandler;
 
             SynchronizationMethod = options.SynchronizationMethod
                 ?? CollectionSynchronizationMethod.Sequential<TSuperItem>();
@@ -100,20 +121,18 @@ namespace Teronis.Collections.Synchronization
             var subSuperItemModifiactionNewItems = subSuperItemModification.NewItems!;
 
             TSuperItem superItem = default!;
-            int addedItemIndex = default;
 
             CollectionModificationIterationTools.BeginInsert(subSuperItemModification)
                 // subSuperItemModifiactionNewItems is now null checked.
-                .Add((itemIndex, offset) => {
-                    addedItemIndex = offset + itemIndex;
-                    superItem = subSuperItemModifiactionNewItems[itemIndex];
-                    SuperItemChangeHandler.InsertItem(addedItemIndex, superItem);
+                .OnIteration(iterationContext => {
+                    superItem = subSuperItemModifiactionNewItems[iterationContext.ModificationItemIndex];
+                    SuperItemChangeHandler.InsertItem(iterationContext.CollectionItemIndex, superItem);
                 })
-                .Add(() => {
+                .OnIteration(iterationContext => {
                     var subItem = CreateSubItem(superItem);
-                    SubItemChangeHandler.InsertItem(addedItemIndex, subItem);
+                    SubItemChangeHandler.InsertItem(iterationContext.CollectionItemIndex, subItem);
                 })
-                .Add(() => OnAfterAddItem(addedItemIndex))
+                .OnIteration(iterationContext => OnAfterAddItem(iterationContext.CollectionItemIndex))
                 .Iterate();
         }
 
@@ -122,14 +141,10 @@ namespace Teronis.Collections.Synchronization
         protected virtual void RemoveItems(ApplyingCollectionModifications applyingModifications)
         {
             var superItemModification = applyingModifications.SuperItemModification;
-            int removedItemIndex = default;
 
             CollectionModificationIterationTools.BeginRemove(superItemModification)
-                .Add((itemIndex, indexOffset) => {
-                    removedItemIndex = itemIndex + indexOffset;
-                    SuperItemChangeHandler.RemoveItem(removedItemIndex);
-                })
-                .Add(() => SubItemChangeHandler.RemoveItem(removedItemIndex))
+                .OnIteration(iterationContext => SuperItemChangeHandler.RemoveItem(iterationContext.CollectionItemIndex))
+                .OnIteration(iterationContext => SubItemChangeHandler.RemoveItem(iterationContext.CollectionItemIndex))
                 .Iterate();
         }
 
@@ -159,69 +174,57 @@ namespace Teronis.Collections.Synchronization
         /// <param name="applyingModifications"></param>
         protected virtual void ReplaceItems(ApplyingCollectionModifications applyingModifications)
         {
-            var canReplaceSuperItem = SuperItemChangeHandler.CanReplaceItem || !(updateSuperItem is null);
-            var canReplaceSubItem = SubItemChangeHandler.CanReplaceItem || !(updateSubItem is null);
+            var canReplaceOrUpdateSuperItem = SuperItemChangeHandler.CanReplaceItem || !(superItemUpdateHandler is null);
+            var canReplaceOrUpdateSubItem = SubItemChangeHandler.CanReplaceItem || !(subItemUpdateHandler is null);
 
-            if (canReplaceSuperItem || canReplaceSubItem) {
+            if (canReplaceOrUpdateSuperItem || canReplaceOrUpdateSubItem) {
                 var superItemModification = applyingModifications.SuperItemModification;
                 var iteratorBuilder = CollectionModificationIterationTools.BeginReplace(superItemModification);
-                var subItemByIndex = new Dictionary<int, Lazy<TSubItem>>();
-                int replaceItemIndex = 0;
+                var lazyCreatedSubItemByIndex = new Dictionary<int, SlimLazy<TSubItem>>();
+                //int replaceItemIndex = 0;
 
-                void updateItem(int modificationItemIndex, int collectionItemIndex)
+                iteratorBuilder.OnIteration(iterationContext => {
+                    lazyCreatedSubItemByIndex[iterationContext.ModificationItemIndex] = new SlimLazy<TSubItem>(() =>
+                        CreateSubItem(superItemModification.NewItems![iterationContext.ModificationItemIndex]));
+                });
+
+                if (SuperItemChangeHandler.CanReplaceItem) {
+                    iteratorBuilder.OnIteration(iterationContext => {
+                        // We do not know, whether the old item gets
+                        // consumed, so we provide it but lazy.
+                        var lazyNewItem = new SlimLazy<TSuperItem>(() =>
+                            superItemModification.NewItems![iterationContext.ModificationItemIndex]);
+
+                        SuperItemChangeHandler.ReplaceItem(iterationContext.CollectionItemIndex, lazyNewItem.GetValue);
+                    });
+                }
+
+                iteratorBuilder.OnIteration(iterationContext => OnBeforeReplaceItem(iterationContext.CollectionItemIndex));
+
+                if (SubItemChangeHandler.CanReplaceItem) {
+                    iteratorBuilder.OnIteration(iterationContext =>
+                        SubItemChangeHandler.ReplaceItem(iterationContext.CollectionItemIndex, lazyCreatedSubItemByIndex[iterationContext.ModificationItemIndex].GetValue));
+                }
+
+                void UpdateItem(int modificationItemIndex, int collectionItemIndex)
                 {
-                    if (!(updateSuperItem is null)) {
-                        updateSuperItem(
+                    if (!(superItemUpdateHandler is null)) {
+                        superItemUpdateHandler(
                             SuperItemChangeHandler.Items[collectionItemIndex],
-                            () => subItemByIndex[collectionItemIndex].Value);
+                            // We want update with the latest super item (when used
+                            // and accessible from user code) and latest sub item.
+                            () => lazyCreatedSubItemByIndex[modificationItemIndex].Value);
                     }
 
-                    if (!(updateSubItem is null)) {
-                        updateSubItem(
+                    if (!(subItemUpdateHandler is null)) {
+                        subItemUpdateHandler(
                             SubItemChangeHandler.Items[collectionItemIndex],
                             () => superItemModification.NewItems![modificationItemIndex]);
                     }
                 }
 
-                iteratorBuilder.Add((modificationItemIndex, collectionStartIndex) => {
-                    replaceItemIndex = modificationItemIndex + collectionStartIndex;
-
-                    subItemByIndex[replaceItemIndex] = new Lazy<TSubItem>(() =>
-                        CreateSubItem(superItemModification.NewItems![modificationItemIndex]));
-                });
-
-                if (canReplaceSuperItem) {
-                    iteratorBuilder.Add((modificationItemIndex, _) => {
-                        var lazyNewItem = new Lazy<TSuperItem>(() =>
-                            superItemModification.NewItems![modificationItemIndex]);
-
-                        TSuperItem getNewItem() =>
-                            lazyNewItem.Value;
-
-                        if (SuperItemChangeHandler.CanReplaceItem) {
-                            SuperItemChangeHandler.ReplaceItem(replaceItemIndex, getNewItem);
-                        }
-                    });
-                }
-
-                iteratorBuilder.Add(() => OnBeforeReplaceItem(replaceItemIndex));
-
-                if (canReplaceSubItem) {
-                    iteratorBuilder.Add((modificationItemIndex, _) => {
-                        var lazyNewItem = new Lazy<TSubItem>(() =>
-                            CreateSubItem(superItemModification.NewItems![modificationItemIndex]));
-
-                        TSubItem getNewItem() =>
-                            lazyNewItem.Value;
-
-                        if (SubItemChangeHandler.CanReplaceItem) {
-                            SubItemChangeHandler.ReplaceItem(replaceItemIndex, getNewItem);
-                        }
-                    });
-                }
-
-                iteratorBuilder.Add((modificationItemIndex, _) => updateItem(modificationItemIndex, replaceItemIndex));
-                iteratorBuilder.Add(() => OnAfterReplaceItem(replaceItemIndex));
+                iteratorBuilder.OnIteration(iterationContext => UpdateItem(iterationContext.ModificationItemIndex, iterationContext.CollectionItemIndex));
+                iteratorBuilder.OnIteration(iterationContext => OnAfterReplaceItem(iterationContext.CollectionItemIndex));
                 iteratorBuilder.Iterate();
             }
         }
@@ -310,7 +313,7 @@ namespace Teronis.Collections.Synchronization
         void ICollectionSynchronizationContext<TSuperItem>.BeginCollectionSynchronization() =>
             InvokeCollectionSynchronizing();
 
-        void ICollectionSynchronizationContext<TSuperItem>.GoThroughModification(ICollectionModification<TSuperItem, TSuperItem> superItemModification) =>
+        void ICollectionSynchronizationContext<TSuperItem>.ProcessModification(ICollectionModification<TSuperItem, TSuperItem> superItemModification) =>
             ProcessModification(superItemModification);
 
         void ICollectionSynchronizationContext<TSuperItem>.EndCollectionSynchronization() =>

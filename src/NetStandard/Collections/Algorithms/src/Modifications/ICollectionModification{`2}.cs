@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Teronis.Collections.Algorithms.Modifications
 {
-    public interface ICollectionModification<out TNewItem, out TOldItem> : ICollectionModificationParameters
+    public interface ICollectionModification<out TNewItem, out TOldItem> : ICollectionModificationInfo
     {
         new int OldIndex { get; }
         ICollectionModificationPart<TNewItem, TOldItem, TOldItem, TNewItem> OldPart { get; }

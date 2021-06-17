@@ -20,10 +20,10 @@ namespace Teronis.Collections.Synchronization
             Handler = Behaviour.Default;
         }
 
-        public CollectionChangeHandler(IList<TItem> items, IBehaviour? handler)
+        public CollectionChangeHandler(IList<TItem> items, IBehaviour? behvaiour)
         {
             Items = items ?? throw new ArgumentNullException(nameof(items));
-            Handler = handler ?? Behaviour.Default;
+            Handler = behvaiour ?? Behaviour.Default;
         }
 
         public virtual bool CanReplaceItem =>

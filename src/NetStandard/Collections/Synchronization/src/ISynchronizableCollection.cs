@@ -8,7 +8,7 @@ namespace Teronis.Collections.Synchronization
     internal interface ICollectionSynchronizationContext<TItem>
     {
         void BeginCollectionSynchronization();
-        void GoThroughModification(ICollectionModification<TItem, TItem> superItemModification);
+        void ProcessModification(ICollectionModification<TItem, TItem> superItemModification);
         void EndCollectionSynchronization();
     }
 }

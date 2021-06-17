@@ -30,10 +30,8 @@ namespace Teronis.ComponentModel
         }
 
         /// <summary>
-        /// Returns <see cref="AlternativeEventSender"/> if 
-        /// <see cref="HasAlternativeEventSender"/> is
-        /// <see langword="true"/>, otherwise
-        /// <paramref name="originalSender"/> gets returned.
+        /// Returns <see cref="AlternativeEventSender"/> if <see cref="HasAlternativeEventSender"/> is
+        /// <see langword="true"/>, otherwise <paramref name="originalSender"/> gets returned.
         /// </summary>
         /// <param name="originalSender">The sender that initially got received.</param>
         /// <param name="methodOrigin">The caller method origin.</param>

@@ -45,6 +45,14 @@ namespace Teronis
         }
 
         /// <summary>
+        /// Gets the value in the same way as <see cref="Value"/> do. 
+        /// Typically it serves as a pointer for passing the method around.
+        /// </summary>
+        /// <returns></returns>
+        public T GetValue() =>
+            Value;
+
+        /// <summary>
         /// Sets the value if it has been not created so far.
         /// </summary>
         /// <param name="value"></param>

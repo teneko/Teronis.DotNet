@@ -16,28 +16,11 @@ namespace Teronis.Collections.Algorithms.Modifications
     [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
     public class CollectionModification<TNewItem, TOldItem> : ICollectionModification<TNewItem, TOldItem>
     {
-        internal static CollectionModification<TNewItem, TOldItem> OldParted(NotifyCollectionChangedAction changeAction, IReadOnlyList<TOldItem>? oldItems, int oldIndex)
-            => new CollectionModification<TNewItem, TOldItem>(changeAction, oldItems, oldIndex, null, -1);
-
-        internal static CollectionModification<TNewItem, TOldItem> OldParted(NotifyCollectionChangedAction changeAction, [AllowNull] TOldItem oldItem, int oldIndex)
-        {
-            var oldItems = new TOldItem[] { oldItem! };
-            return OldParted(changeAction, oldItems, oldIndex);
-        }
-
-        internal static CollectionModification<TNewItem, TOldItem> NewParted(NotifyCollectionChangedAction changeAction, IReadOnlyList<TNewItem>? newValues, int newIndex)
-            => new CollectionModification<TNewItem, TOldItem>(changeAction, null, -1, newValues, newIndex);
-
-        internal static CollectionModification<TNewItem, TOldItem> NewParted(NotifyCollectionChangedAction changeAction, [AllowNull] TNewItem newItem, int newIndex)
-        {
-            var newItems = new TNewItem[] { newItem! };
-            return NewParted(changeAction, newItems, newIndex);
-        }
-
         public NotifyCollectionChangedAction Action { get; private set; }
 
         public ICollectionModificationPart<TNewItem, TOldItem, TOldItem, TNewItem> OldPart =>
             oldPart;
+
         public IReadOnlyList<TOldItem>? OldItems =>
             oldPart.Items;
 
@@ -46,6 +29,7 @@ namespace Teronis.Collections.Algorithms.Modifications
 
         public ICollectionModificationPart<TNewItem, TOldItem, TNewItem, TOldItem> NewPart =>
             newPart;
+
         public IReadOnlyList<TNewItem>? NewItems =>
             newPart.Items;
 
@@ -58,28 +42,28 @@ namespace Teronis.Collections.Algorithms.Modifications
         private string GetDebuggerDisplay() =>
             $"{Action}, {nameof(OldIndex)} = {OldIndex}, {nameof(NewIndex)} = {NewIndex}";
 
-        public CollectionModification(NotifyCollectionChangedAction changeAction, IReadOnlyList<TOldItem>? oldItems, int oldIndex, IReadOnlyList<TNewItem>? newItems, int newIndex)
+        internal protected CollectionModification(NotifyCollectionChangedAction changeAction, IReadOnlyList<TOldItem>? oldItems, int oldIndex, IReadOnlyList<TNewItem>? newItems, int newIndex)
         {
             Action = changeAction;
             oldPart = new CollectionModificationPart<TOldItem, TNewItem>(this, PartialCollectionChangeItemState.OldItem, oldItems, oldIndex);
             newPart = new CollectionModificationPart<TNewItem, TOldItem>(this, PartialCollectionChangeItemState.NewItem, newItems, newIndex);
         }
 
-        public CollectionModification(NotifyCollectionChangedAction changeAction, IReadOnlyList<TOldItem> oldValues, int oldIndex, TNewItem newItem, int newIndex)
-            : this(changeAction, oldValues, oldIndex, new TNewItem[] { newItem }, newIndex) { }
+        internal protected CollectionModification(NotifyCollectionChangedAction changeAction, IReadOnlyList<TOldItem>? oldValues, int oldIndex, [AllowNull] TNewItem newItem, int newIndex)
+            : this(changeAction, oldValues, oldIndex, new TNewItem[] { newItem! }, newIndex) { }
 
-        public CollectionModification(NotifyCollectionChangedAction changeAction, [AllowNull] TOldItem oldItem, int oldIndex, [AllowNull] TNewItem newItem, int newIndex)
-            : this(changeAction, new TOldItem[] { oldItem! }, oldIndex, new TNewItem[] { newItem! }, newIndex) { }
-
-        public CollectionModification(NotifyCollectionChangedAction changeAction, [AllowNull] TOldItem oldItem, int oldIndex, IReadOnlyList<TNewItem> newItems, int newIndex)
+        internal protected CollectionModification(NotifyCollectionChangedAction changeAction, [AllowNull] TOldItem oldItem, int oldIndex, IReadOnlyList<TNewItem>? newItems, int newIndex)
             : this(changeAction, new TOldItem[] { oldItem! }, oldIndex, newItems, newIndex) { }
 
-        #region ICollectionModificationParameters
+        internal protected CollectionModification(NotifyCollectionChangedAction changeAction, [AllowNull] TOldItem oldItem, int oldIndex, [AllowNull] TNewItem newItem, int newIndex)
+            : this(changeAction, new TOldItem[] { oldItem! }, oldIndex, new TNewItem[] { newItem! }, newIndex) { }
 
-        int? ICollectionModificationParameters.OldItemsCount =>
+        #region ICollectionModificationInfo
+
+        int? ICollectionModificationInfo.OldItemsCount =>
             oldPart.Items?.Count;
 
-        int? ICollectionModificationParameters.NewItemsCount =>
+        int? ICollectionModificationInfo.NewItemsCount =>
             newPart.Items?.Count;
 
         #endregion
@@ -101,10 +85,8 @@ namespace Teronis.Collections.Algorithms.Modifications
             public abstract IReadOnlyList<ItemType>? Items { get; }
             public abstract int Index { get; }
 
-            public CollectionModificationPartBase(ICollectionModification<TNewItem, TOldItem> modification)
-            {
+            public CollectionModificationPartBase(ICollectionModification<TNewItem, TOldItem> modification) =>
                 Owner = modification;
-            }
         }
 
         private class CollectionModificationPart<TItem, TOtherItem> : CollectionModificationPartBase<TItem, TOtherItem>

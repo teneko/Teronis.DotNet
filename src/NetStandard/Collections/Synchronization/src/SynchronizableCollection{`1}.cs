@@ -4,36 +4,41 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Teronis.Collections.Algorithms.Modifications;
+using Teronis.Collections.Synchronization.PostConfigurators;
 
 namespace Teronis.Collections.Synchronization
 {
     public partial class SynchronizableCollection<TItem> : SynchronizableCollectionBase<TItem, TItem>, ICollectionSynchronizationContext<TItem>
         where TItem : notnull
     {
-        private static SynchronizableCollectionOptions<TItem> prepareOptions(ref SynchronizableCollectionOptions<TItem>? options)
+        private static SynchronizableCollectionOptions<TItem> ConfigureOptions(
+            [NotNull] ref SynchronizableCollectionOptions<TItem>? options,
+            out ICollectionChangeHandler<TItem> collectionChangeHandler)
         {
             options ??= new SynchronizableCollectionOptions<TItem>();
-
-            if (options.ItemsOptions.CollectionChangeHandler is null) {
-                options.ItemsOptions.SetItems(new List<TItem>());
-            }
-
+            SynchronizableCollectionItemsOptionsPostConfigurator.Default.PostConfigure(options.ItemsOptions, out collectionChangeHandler);
             return options;
         }
 
         public ICollectionSynchronizationMethod<TItem, TItem> SynchronizationMethod { get; private set; } = null!;
 
-        private CollectionUpdateItemDelegate<TItem, TItem>? updateItem;
+        private ICollectionChangeHandler<TItem> collectionChangeHandler;
+        private CollectionUpdateItemDelegate<TItem, TItem>? itemUpdateHandler;
+
+        private SynchronizableCollection(SynchronizableCollectionOptions<TItem> options, ICollectionChangeHandler<TItem> collectionChangeHandler, IList<TItem> items)
+            : base(items, options.ItemsOptions)
+        {
+            options.SynchronizationMethod ??= CollectionSynchronizationMethod.Sequential<TItem>();
+            SynchronizationMethod = options.SynchronizationMethod;
+            this.collectionChangeHandler = collectionChangeHandler;
+            itemUpdateHandler = options.ItemsOptions.ItemUpdateHandler;
+        }
 
         public SynchronizableCollection(SynchronizableCollectionOptions<TItem>? options)
-            : base(prepareOptions(ref options).ItemsOptions.CollectionChangeHandler!)
-        {
-            options!.SynchronizationMethod ??= CollectionSynchronizationMethod.Sequential<TItem>();
-            SynchronizationMethod = options.SynchronizationMethod;
-            updateItem = options.ItemsOptions.UpdateItem;
-        }
+            : this(ConfigureOptions(ref options, out var collectionChangeHandler), collectionChangeHandler, collectionChangeHandler.Items) { }
 
         public SynchronizableCollection(
             IList<TItem> items,
@@ -83,10 +88,9 @@ namespace Teronis.Collections.Synchronization
         {
             CollectionModificationIterationTools.BeginInsert(modification)
                 /// The modification is now null checked.
-                .Add((modificationItemIndex, collectionStartIndex) => {
-                    var superItem = modification.NewItems![modificationItemIndex];
-                    var globalIndex = collectionStartIndex + modificationItemIndex;
-                    CollectionChangeHandler.InsertItem(globalIndex, superItem);
+                .OnIteration(iterationContext => {
+                    var superItem = modification.NewItems![iterationContext.ModificationItemIndex];
+                    collectionChangeHandler.InsertItem(iterationContext.CollectionItemIndex, superItem);
                 })
                 .Iterate();
         }
@@ -94,32 +98,27 @@ namespace Teronis.Collections.Synchronization
         protected virtual void RemoveItems(ICollectionModification<TItem, TItem> modification)
         {
             CollectionModificationIterationTools.BeginRemove(modification)
-                .Add((modificationItemIndex, collectionStartIndex) => {
-                    var globalIndex = collectionStartIndex + modificationItemIndex;
-                    CollectionChangeHandler.RemoveItem(globalIndex);
+                .OnIteration(iterationContext => {
+                    OnBeforeRemoveItem(iterationContext.CollectionItemIndex);
+                    collectionChangeHandler.RemoveItem(iterationContext.CollectionItemIndex);
+                    OnAfterRemoveItem(iterationContext.CollectionItemIndex);
                 })
                 .Iterate();
         }
 
-        protected virtual void OnBeforeReplaceItem(int replacedItemIndex) { }
-
-        protected virtual void OnAfterReplaceItem(int replacedItemIndex) { }
-
         protected virtual void ReplaceItems(ICollectionModification<TItem, TItem> modification)
         {
             CollectionModificationIterationTools.BeginReplace(modification)
-                .Add((modificationItemIndex, collectionStartIndex) => {
-                    var globalIndex = collectionStartIndex + modificationItemIndex;
-                    var item = modification.NewItems![modificationItemIndex];
+                .OnIteration(iterationContext => {
+                    var lazyItem = new SlimLazy<TItem>(() => modification.NewItems![iterationContext.ModificationItemIndex]);
 
-                    TItem getItem() =>
-                        item;
-
-                    if (CollectionChangeHandler.CanReplaceItem) {
-                        CollectionChangeHandler.ReplaceItem(globalIndex, getItem);
+                    if (collectionChangeHandler.CanReplaceItem) {
+                        OnBeforeReplaceItem(iterationContext.CollectionItemIndex);
+                        collectionChangeHandler.ReplaceItem(iterationContext.CollectionItemIndex, lazyItem.GetValue);
+                        OnBeforeReplaceItem(iterationContext.CollectionItemIndex);
                     }
 
-                    updateItem?.Invoke(CollectionChangeHandler.Items[globalIndex], getItem);
+                    itemUpdateHandler?.Invoke(collectionChangeHandler.Items[iterationContext.CollectionItemIndex], lazyItem.GetValue);
                 })
                 .Iterate();
         }
@@ -127,11 +126,17 @@ namespace Teronis.Collections.Synchronization
         protected virtual void MoveItems(ICollectionModification<TItem, TItem> modification)
         {
             CollectionModificationIterationTools.CheckMove(modification);
-            CollectionChangeHandler.MoveItems(modification.OldIndex, modification.NewIndex, modification.OldItems!.Count);
+            OnBeforeMoveItems();
+            collectionChangeHandler.MoveItems(modification.OldIndex, modification.NewIndex, modification.OldItems!.Count);
+            OnAfterMoveItems();
         }
 
-        protected virtual void ResetItems(ICollectionModification<TItem, TItem> modification) =>
-            CollectionChangeHandler.Reset();
+        protected virtual void ResetItems(ICollectionModification<TItem, TItem> modification)
+        {
+            OnBeforeResetItems();
+            collectionChangeHandler.Reset();
+            OnAfterResetItems();
+        }
 
         protected virtual void ProcessModification(ICollectionModification<TItem, TItem> modification)
         {
@@ -176,15 +181,15 @@ namespace Teronis.Collections.Synchronization
                 return;
             }
 
-            InvokeCollectionSynchronizing();
+            OnCollectionSynchronizing();
 
             do {
                 var modification = modificationEnumerator.Current;
                 ProcessModification(modification);
-                InvokeCollectionModified(modification);
+                OnCollectionModified(modification);
             } while (modificationEnumerator.MoveNext());
 
-            InvokeCollectionSynchronized();
+            OnCollectionSynchronized();
         }
 
         /// <summary>
@@ -229,13 +234,13 @@ namespace Teronis.Collections.Synchronization
         #region ICollectionSynchronizationContext<SuperItemType>
 
         void ICollectionSynchronizationContext<TItem>.BeginCollectionSynchronization() =>
-            InvokeCollectionSynchronizing();
+            OnCollectionSynchronizing();
 
-        void ICollectionSynchronizationContext<TItem>.GoThroughModification(ICollectionModification<TItem, TItem> superItemModification) =>
+        void ICollectionSynchronizationContext<TItem>.ProcessModification(ICollectionModification<TItem, TItem> superItemModification) =>
             ProcessModification(superItemModification);
 
         void ICollectionSynchronizationContext<TItem>.EndCollectionSynchronization() =>
-            InvokeCollectionSynchronized();
+            OnCollectionSynchronized();
 
         #endregion
     }

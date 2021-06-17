@@ -69,9 +69,9 @@ namespace Teronis.Collections.Synchronization
             switch (modification.Action) {
                 case NotifyCollectionChangedAction.Add:
                     CollectionModificationIterationTools.BeginInsert(modification)
-                        .Add((frontIndex, backIndexOffset) => {
-                            var itemKey = GetItemKeyDelegate(modification.NewItems![frontIndex]);
-                            var indexEntry = indexDirectory.Insert(frontIndex + backIndexOffset);
+                        .OnIteration(addedItemIndex => {
+                            var itemKey = GetItemKeyDelegate(modification.NewItems![addedItemIndex.ModificationItemIndex]);
+                            var indexEntry = indexDirectory.Insert(addedItemIndex.CollectionItemIndex);
                             keyedIndexes.Add(itemKey, indexEntry);
                         })
                         .Iterate();
@@ -79,8 +79,8 @@ namespace Teronis.Collections.Synchronization
                     break;
                 case NotifyCollectionChangedAction.Remove: {
                         CollectionModificationIterationTools.BeginRemove(modification)
-                            .Add((frontIndex, backIndexOffset) => {
-                                var itemKey = GetItemKeyDelegate(modification.OldItems![frontIndex]);
+                            .OnIteration(iterationContext => {
+                                var itemKey = GetItemKeyDelegate(modification.OldItems![iterationContext.ModificationItemIndex]);
                                 var indexEntry = keyedIndexes[itemKey];
                                 indexDirectory.RemoveEntry(indexEntry);
                                 keyedIndexes.Remove(itemKey);

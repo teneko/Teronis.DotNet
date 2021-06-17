@@ -10,21 +10,21 @@ namespace Teronis.Collections.Synchronization
         where TSuperItem : notnull
         where TSubItem : notnull
     {
-        private Func<TSuperItem, TSubItem> createSubItemHandler;
+        private Func<TSuperItem, TSubItem> subItemFactory;
 
-        public SynchronizingCollection(Func<TSuperItem, TSubItem> createSubItemHandler, SynchronizingCollectionOptions<TSuperItem, TSubItem>? options)
+        public SynchronizingCollection(Func<TSuperItem, TSubItem> subItemFactory, SynchronizingCollectionOptions<TSuperItem, TSubItem>? options)
             : base(options) =>
-            OnInitialize(createSubItemHandler);
+            OnInitialize(subItemFactory);
 
-        public SynchronizingCollection(Func<TSuperItem, TSubItem> createSubItemHandler) :
+        public SynchronizingCollection(Func<TSuperItem, TSubItem> subItemFactory) :
             base() =>
-            OnInitialize(createSubItemHandler);
+            OnInitialize(subItemFactory);
 
-        [MemberNotNull(nameof(createSubItemHandler))]
-        private void OnInitialize(Func<TSuperItem, TSubItem> createSubItemHandler) =>
-            this.createSubItemHandler = createSubItemHandler ?? throw new ArgumentNullException(nameof(createSubItemHandler));
+        [MemberNotNull(nameof(subItemFactory))]
+        private void OnInitialize(Func<TSuperItem, TSubItem> subItemFactory) =>
+            this.subItemFactory = subItemFactory ?? throw new ArgumentNullException(nameof(subItemFactory));
 
         protected override TSubItem CreateSubItem(TSuperItem superItem) =>
-            createSubItemHandler(superItem);
+            subItemFactory(superItem);
     }
 }

@@ -55,11 +55,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                 if (!rightItemsEnumeratorIsFunctional) {
                     if (canRemove) {
                         var leftItem = leftItemsEnumerator.Current;
-
-                        yield return CollectionModification<TRightItem, TLeftItem>.OldParted(
-                                NotifyCollectionChangedAction.Remove,
-                                leftItem,
-                                leftIndexOfLatestSyncedRightItem + 1);
+                        yield return CollectionModification.ForRemove<TRightItem, TLeftItem>(leftIndexOfLatestSyncedRightItem + 1, leftItem);
                     } else {
                         leftIndexDirectory.Expand(leftIndexDirectory.Count);
                         leftIndexOfLatestSyncedRightItem++;
@@ -70,12 +66,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                     if (canInsert) {
                         var rightItem = rightItemsEnumerator.Current;
                         leftIndexOfLatestSyncedRightItem++;
-
-                        yield return CollectionModification<TRightItem, TLeftItem>.NewParted(
-                            NotifyCollectionChangedAction.Add,
-                            rightItem,
-                            leftIndexOfLatestSyncedRightItem);
-
+                        yield return CollectionModification.ForAdd<TRightItem, TLeftItem>(leftIndexOfLatestSyncedRightItem, rightItem);
                         leftIndexDirectory.Expand(leftIndexDirectory.Count);
                     }
 
@@ -93,10 +84,7 @@ namespace Teronis.Collections.Algorithms.Modifications
 
                     if (comparablePartComparison < 0) {
                         if (canRemove) {
-                            yield return CollectionModification<TRightItem, TLeftItem>.OldParted(
-                                NotifyCollectionChangedAction.Remove,
-                                leftItem,
-                                leftIndexOfLatestSyncedRightItem + 1);
+                            yield return CollectionModification.ForRemove<TRightItem, TLeftItem>(leftIndexOfLatestSyncedRightItem + 1, leftItem);
                         } else {
                             leftIndexDirectory.Expand(leftIndexDirectory.Count);
                             leftIndexOfLatestSyncedRightItem++;
@@ -106,12 +94,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                     } else if (comparablePartComparison > 0) {
                         if (canInsert) {
                             leftIndexOfLatestSyncedRightItem++;
-
-                            yield return CollectionModification<TRightItem, TLeftItem>.NewParted(
-                            NotifyCollectionChangedAction.Add,
-                            rightItem,
-                            leftIndexOfLatestSyncedRightItem);
-
+                            yield return CollectionModification.ForAdd<TRightItem, TLeftItem>(leftIndexOfLatestSyncedRightItem, rightItem);
                             leftIndexDirectory.Expand(leftIndexDirectory.Count);
                         }
 
@@ -120,12 +103,11 @@ namespace Teronis.Collections.Algorithms.Modifications
                         leftIndexOfLatestSyncedRightItem++;
 
                         if (canReplace) {
-                            yield return new CollectionModification<TRightItem, TLeftItem>(
-                                NotifyCollectionChangedAction.Replace,
-                                leftItem,
+                            yield return CollectionModification.ForReplace(
                                 leftIndexOfLatestSyncedRightItem,
-                                rightItem,
-                                leftIndexOfLatestSyncedRightItem);
+                                leftItem,
+                                //leftIndexOfLatestSyncedRightItem,
+                                rightItem);
                         }
 
                         leftIndexDirectory.Expand(leftIndexDirectory.Count);

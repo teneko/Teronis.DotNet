@@ -62,21 +62,6 @@ namespace Teronis.Collections.Synchronization
             changeHandler.RedirectReset += ChangeHandler_RedirectReset;
         }
 
-        private void ChangeHandler_RedirectInsert(int insertAt, TItem item) =>
-            InsertItem(insertAt, item);
-
-        private void ChangeHandler_RedirectRemove(int removeAt) =>
-            RemoveItem(removeAt);
-
-        private void ChangeHandler_RedirectReplace(int replaceAt, Func<TItem> getNewItem) =>
-            SetItem(replaceAt, getNewItem());
-
-        private void ChangeHandler_RedirectMove(int fromIndex, int toIndex, int count) =>
-            MoveItems(fromIndex, toIndex, count);
-
-        private void ChangeHandler_RedirectReset() =>
-            ClearItems();
-
         public SynchronizableCollectionBase()
         {
             changeHandler = new CollectionChangeHandler<TItem>(Items);
@@ -131,6 +116,9 @@ namespace Teronis.Collections.Synchronization
             OnAfterAddItem(itemIndex, item);
         }
 
+        private void ChangeHandler_RedirectInsert(int insertAt, TItem item) =>
+            InsertItem(insertAt, item);
+
         protected virtual void OnBeforeRemoveItem(int itemIndex) =>
             ChangeComponent.OnPropertyChanging(CountString, IndexerName);
 
@@ -146,6 +134,9 @@ namespace Teronis.Collections.Synchronization
             OnCollectionModified(modification);
             OnAfterRemoveItem(itemIndex);
         }
+
+        private void ChangeHandler_RedirectRemove(int removeAt) =>
+            RemoveItem(removeAt);
 
         protected virtual void OnBeforeReplaceItem(int itemIndex) =>
             ChangeComponent.OnPropertyChanging(IndexerName);
@@ -163,6 +154,9 @@ namespace Teronis.Collections.Synchronization
             OnAfterReplaceItem(itemIndex);
         }
 
+        private void ChangeHandler_RedirectReplace(int replaceAt, Func<TItem> getNewItem) =>
+            SetItem(replaceAt, getNewItem());
+
         protected virtual void OnBeforeMoveItems() =>
             ChangeComponent.OnPropertyChanging(IndexerName);
 
@@ -177,6 +171,9 @@ namespace Teronis.Collections.Synchronization
             OnCollectionModified(modification);
             OnAfterMoveItems();
         }
+
+        private void ChangeHandler_RedirectMove(int fromIndex, int toIndex, int count) =>
+            MoveItems(fromIndex, toIndex, count);
 
         public void Move(int fromIndex, int toIndex, int count) =>
             MoveItems(fromIndex, toIndex, count);
@@ -197,6 +194,9 @@ namespace Teronis.Collections.Synchronization
             OnCollectionModified(CollectionModification.ForReset<TItem, TItem>());
             OnAfterResetItems();
         }
+
+        private void ChangeHandler_RedirectReset() =>
+            ClearItems();
 
         public IDisposable Subscribe(IObserver<ICollectionModification<TItem, TItem>> observer) =>
             collectionModificationSubject.Subscribe(observer);

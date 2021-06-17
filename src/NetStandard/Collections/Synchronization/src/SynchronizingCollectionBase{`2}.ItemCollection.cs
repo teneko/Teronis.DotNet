@@ -11,8 +11,8 @@ namespace Teronis.Collections.Synchronization
     {
         public abstract partial class ItemCollection<TItem, TNewItem> : SynchronizableCollectionBase<TItem, TNewItem>
         {
-            public ItemCollection(IList<TItem> items, ISynchronizableCollectionItemsOptions<TItem> options, SynchronizingCollectionBase<TSuperItem, TSubItem> synchronizingCollection)
-                : base(items, options)
+            public ItemCollection(ICollectionChangeHandler<TItem> changeHandler, ISynchronizableCollectionItemsOptions<TItem> options, SynchronizingCollectionBase<TSuperItem, TSubItem> synchronizingCollection)
+                : base(changeHandler, options)
             {
                 synchronizingCollection.CollectionSynchronizing += SynchronizingCollection_CollectionSynchronizing;
                 synchronizingCollection.CollectionModified += CollectionModificationNotifier_CollectionModified;
@@ -36,7 +36,7 @@ namespace Teronis.Collections.Synchronization
 
         public class SubItemCollection : ItemCollection<TSubItem, TSuperItem>
         {
-            public SubItemCollection(IList<TSubItem> items, ISynchronizableCollectionItemsOptions<TSubItem> options, SynchronizingCollectionBase<TSuperItem, TSubItem> synchronizingCollection)
+            public SubItemCollection(ICollectionChangeHandler<TSubItem> items, ISynchronizableCollectionItemsOptions<TSubItem> options, SynchronizingCollectionBase<TSuperItem, TSubItem> synchronizingCollection)
                 : base(items, options, synchronizingCollection) { }
 
             protected override ICollectionModification<TSubItem, TSubItem> GetCollectionModification(CollectionModifiedEventArgs<TSuperItem, TSubItem> args) =>
@@ -45,7 +45,7 @@ namespace Teronis.Collections.Synchronization
 
         public class SuperItemCollection : ItemCollection<TSuperItem, TSubItem>
         {
-            public SuperItemCollection(IList<TSuperItem> items, ISynchronizableCollectionItemsOptions<TSuperItem> options, SynchronizingCollectionBase<TSuperItem, TSubItem> synchronizingCollection)
+            public SuperItemCollection(ICollectionChangeHandler<TSuperItem> items, ISynchronizableCollectionItemsOptions<TSuperItem> options, SynchronizingCollectionBase<TSuperItem, TSubItem> synchronizingCollection)
                 : base(items, options, synchronizingCollection) { }
 
             protected override ICollectionModification<TSuperItem, TSuperItem> GetCollectionModification(CollectionModifiedEventArgs<TSuperItem, TSubItem> args) =>

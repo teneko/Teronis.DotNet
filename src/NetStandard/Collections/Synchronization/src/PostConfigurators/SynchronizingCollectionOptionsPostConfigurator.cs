@@ -13,7 +13,7 @@ namespace Teronis.Collections.Synchronization.PostConfigurators
         public void PostConfigure<TItem>(
             ISynchronizingCollectionItemsOptions<TItem> itemsOptions,
             out ICollectionChangeHandler<TItem> collectionChangeHandler,
-            Func<IList<TItem>, ISynchronizedCollection<TItem>> synchronizedItemsFactory,
+            Func<ICollectionChangeHandler<TItem>, ISynchronizedCollection<TItem>> synchronizedItemsFactory,
             out ISynchronizedCollection<TItem> synchronizedItems)
             where TItem : notnull
         {
@@ -26,7 +26,7 @@ namespace Teronis.Collections.Synchronization.PostConfigurators
                 return;
             }
 
-            synchronizedItems = synchronizedItemsFactory(collectionChangeHandler.Items);
+            synchronizedItems = synchronizedItemsFactory(collectionChangeHandler);
             itemsOptions.SetItems(synchronizedItems, collectionChangeHandler);
         }
     }

@@ -8,7 +8,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using Teronis.Collections.Algorithms.Modifications;
-using Teronis.Extensions;
 using Teronis.ComponentModel;
 using System.Reactive.Subjects;
 
@@ -22,6 +21,7 @@ namespace Teronis.Collections.Synchronization
         /// See https://docs.microsoft.com/en-us/archive/blogs/xtof/binding-to-indexers.
         /// </summary>
         internal protected const string IndexerName = "Item[]";
+        private readonly ICollectionChangeHandler<TItem> changeHandler;
 
         public event PropertyChangedEventHandler? PropertyChanged {
             add => ChangeComponent.PropertyChanged += value;
@@ -50,15 +50,41 @@ namespace Teronis.Collections.Synchronization
         // We take the Subject<> implementation because it provides full thread-safety.
         private Subject<ICollectionModification<TItem, TItem>> collectionModificationSubject;
 
-        public SynchronizableCollectionBase(IList<TItem> items, IReadOnlyCollectionItemsOptions options)
-            : base(items) =>
-            OnInitialize();
+        public SynchronizableCollectionBase(ICollectionChangeHandler<TItem> changeHandler, IReadOnlyCollectionItemsOptions options)
+            : base(changeHandler.Items)
+        {
+            Initialize();
+            this.changeHandler = changeHandler;
+            changeHandler.RedirectInsert += ChangeHandler_RedirectInsert;
+            changeHandler.RedirectRemove += ChangeHandler_RedirectRemove;
+            changeHandler.RedirectReplace += ChangeHandler_RedirectReplace;
+            changeHandler.RedirectMove += ChangeHandler_RedirectMove;
+            changeHandler.RedirectReset += ChangeHandler_RedirectReset;
+        }
 
-        public SynchronizableCollectionBase() =>
-            OnInitialize();
+        private void ChangeHandler_RedirectInsert(int insertAt, TItem item) =>
+            InsertItem(insertAt, item);
+
+        private void ChangeHandler_RedirectRemove(int removeAt) =>
+            RemoveItem(removeAt);
+
+        private void ChangeHandler_RedirectReplace(int replaceAt, Func<TItem> getNewItem) =>
+            SetItem(replaceAt, getNewItem());
+
+        private void ChangeHandler_RedirectMove(int fromIndex, int toIndex, int count) =>
+            MoveItems(fromIndex, toIndex, count);
+
+        private void ChangeHandler_RedirectReset() =>
+            ClearItems();
+
+        public SynchronizableCollectionBase()
+        {
+            changeHandler = new CollectionChangeHandler<TItem>(Items);
+            Initialize();
+        }
 
         [MemberNotNull(nameof(ChangeComponent), nameof(collectionModificationSubject))]
-        private void OnInitialize()
+        private void Initialize()
         {
             ChangeComponent = new PropertyChangeComponent(this);
             collectionModificationSubject = new Subject<ICollectionModification<TItem, TItem>>();
@@ -99,7 +125,7 @@ namespace Teronis.Collections.Synchronization
         protected override void InsertItem(int itemIndex, TItem item)
         {
             OnBeforeAddItem(itemIndex, item);
-            base.InsertItem(itemIndex, item);
+            changeHandler.InsertItem(itemIndex, item, preventInsertRedirect: true);
             var modification = CollectionModification.ForAdd<TItem, TItem>(itemIndex, item);
             OnCollectionModified(modification);
             OnAfterAddItem(itemIndex, item);
@@ -115,7 +141,7 @@ namespace Teronis.Collections.Synchronization
         {
             OnBeforeRemoveItem(itemIndex);
             var oldItem = Items[itemIndex];
-            base.RemoveItem(itemIndex);
+            changeHandler.RemoveItem(itemIndex, preventRemoveRedirect: true);
             var modification = CollectionModification.ForRemove<TItem, TItem>(itemIndex, oldItem);
             OnCollectionModified(modification);
             OnAfterRemoveItem(itemIndex);
@@ -131,7 +157,7 @@ namespace Teronis.Collections.Synchronization
         {
             OnBeforeReplaceItem(itemIndex);
             var oldItem = Items[itemIndex];
-            base.SetItem(itemIndex, item);
+            changeHandler.ReplaceItem(itemIndex, () => item, preventReplaceRedirect: true);
             var modification = CollectionModification.ForReplace(itemIndex, oldItem, item);
             OnCollectionModified(modification);
             OnAfterReplaceItem(itemIndex);
@@ -146,7 +172,7 @@ namespace Teronis.Collections.Synchronization
         protected virtual void MoveItems(int fromIndex, int toIndex, int count)
         {
             OnBeforeMoveItems();
-            Items.Move(fromIndex, toIndex, count);
+            changeHandler.MoveItems(fromIndex, toIndex, count, preventMoveRedirect: true);
             var modification = CollectionModification.ForMove<TItem, TItem>(fromIndex, Items, toIndex, count);
             OnCollectionModified(modification);
             OnAfterMoveItems();
@@ -167,7 +193,7 @@ namespace Teronis.Collections.Synchronization
         protected override void ClearItems()
         {
             OnBeforeResetItems();
-            base.ClearItems();
+            changeHandler.ResetItems(preventResetRedirect: true);
             OnCollectionModified(CollectionModification.ForReset<TItem, TItem>());
             OnAfterResetItems();
         }

@@ -28,8 +28,8 @@ namespace Teronis.Collections.Synchronization
         private ICollectionChangeHandler<TItem> collectionChangeHandler;
         private CollectionUpdateItemDelegate<TItem, TItem>? itemUpdateHandler;
 
-        private SynchronizableCollection(SynchronizableCollectionOptions<TItem> options, ICollectionChangeHandler<TItem> collectionChangeHandler, IList<TItem> items)
-            : base(items, options.ItemsOptions)
+        private SynchronizableCollection(SynchronizableCollectionOptions<TItem> options, ICollectionChangeHandler<TItem> collectionChangeHandler)
+            : base(collectionChangeHandler, options.ItemsOptions)
         {
             options.SynchronizationMethod ??= CollectionSynchronizationMethod.Sequential<TItem>();
             SynchronizationMethod = options.SynchronizationMethod;
@@ -38,7 +38,7 @@ namespace Teronis.Collections.Synchronization
         }
 
         public SynchronizableCollection(SynchronizableCollectionOptions<TItem>? options)
-            : this(ConfigureOptions(ref options, out var collectionChangeHandler), collectionChangeHandler, collectionChangeHandler.Items) { }
+            : this(ConfigureOptions(ref options, out var collectionChangeHandler), collectionChangeHandler) { }
 
         public SynchronizableCollection(
             IList<TItem> items,
@@ -104,6 +104,8 @@ namespace Teronis.Collections.Synchronization
                 .Iterate();
         }
 
+
+
         protected virtual void RemoveItems(ICollectionModification<TItem, TItem> modification)
         {
             CollectionModificationIterationTools.BeginRemove(modification)
@@ -146,7 +148,7 @@ namespace Teronis.Collections.Synchronization
         protected virtual void ResetItems(ICollectionModification<TItem, TItem> modification)
         {
             OnBeforeResetItems();
-            collectionChangeHandler.Reset();
+            collectionChangeHandler.ResetItems();
             OnCollectionModified(modification);
             OnAfterResetItems();
         }

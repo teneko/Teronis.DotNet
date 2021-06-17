@@ -9,6 +9,12 @@ namespace Teronis.Collections.Synchronization
 {
     public class CollectionChangeHandler<TItem> : ICollectionChangeHandler<TItem>
     {
+        public event CollectionChangeRedirectInsert<TItem>? RedirectInsert;
+        public event CollectionChangeRedirectMove? RedirectMove;
+        public event CollectionChangeRedirectRemove? RedirectRemove;
+        public event CollectionChangeRedirectReplace<TItem>? RedirectReplace;
+        public event CollectionChangeRedirectReset? RedirectReset;
+
         public virtual IList<TItem> Items { get; } = null!;
         public virtual IBehaviour Handler { get; } = null!;
 
@@ -29,20 +35,50 @@ namespace Teronis.Collections.Synchronization
         public virtual bool CanReplaceItem =>
             Handler.CanReplaceItem;
 
-        public virtual void InsertItem(int insertAt, TItem item) =>
-            Handler.InsertItem(Items, insertAt, item);
+        public virtual void InsertItem(int insertAt, TItem item, bool preventInsertRedirect = false)
+        {
+            if (preventInsertRedirect) {
+                Handler.InsertItem(Items, insertAt, item);
+            } else {
+                RedirectInsert?.Invoke(insertAt, item);
+            }
+        }
 
-        public virtual void RemoveItem(int removeAt) =>
-            Handler.RemoveItem(Items, removeAt);
+        public virtual void RemoveItem(int removeAt, bool preventRemoveRedirect = false)
+        {
+            if (preventRemoveRedirect) {
+                Handler.RemoveItem(Items, removeAt);
+            } else {
+                RedirectRemove?.Invoke(removeAt);
+            }
+        }
 
-        public virtual void MoveItems(int fromIndex, int toIndex, int count) =>
-            Handler.MoveItems(Items, fromIndex, toIndex, count);
+        public virtual void MoveItems(int fromIndex, int toIndex, int count, bool preventMoveRedirect = false)
+        {
+            if (preventMoveRedirect) {
+                Handler.MoveItems(Items, fromIndex, toIndex, count);
+            } else {
+                RedirectMove?.Invoke(fromIndex, toIndex, count);
+            }
+        }
 
-        public virtual void ReplaceItem(int replaceAt, Func<TItem> getItem) =>
-            Handler.ReplaceItem(Items, replaceAt, getItem);
+        public virtual void ReplaceItem(int replaceAt, Func<TItem> getItem, bool preventReplaceRedirect = false)
+        {
+            if (preventReplaceRedirect) {
+                Handler.ReplaceItem(Items, replaceAt, getItem);
+            } else {
+                RedirectReplace?.Invoke(replaceAt, getItem);
+            }
+        }
 
-        public virtual void Reset() =>
-            Items.Clear();
+        public virtual void ResetItems(bool preventResetRedirect = false)
+        {
+            if (preventResetRedirect) {
+                Items.Clear();
+            } else {
+                RedirectReset?.Invoke();
+            }
+        }
 
         public interface IBehaviour
         {

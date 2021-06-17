@@ -95,19 +95,11 @@ namespace Teronis.Collections.Synchronization
             }
 
             var collectionChangedEventArgs = CreateCollectionModifiedEventArgs(collectionModification);
-
-            if (collectionChanged != null) {
-                using var _ = BlockReentrancy();
-                collectionChanged?.Invoke(this, collectionChangedEventArgs);
-            }
-
-            if (CollectionModified != null) {
-                using var _ = BlockReentrancy();
-                CollectionModified?.Invoke(this, collectionChangedEventArgs);
-            }
+            using var _ = BlockReentrancy();
+            collectionChanged?.Invoke(this, collectionChangedEventArgs);
+            CollectionModified?.Invoke(this, collectionChangedEventArgs);
 
             if (collectionModificationSubject.HasObservers) {
-                using var _ = BlockReentrancy();
                 collectionModificationSubject.OnNext(collectionModification);
             }
         }
@@ -131,6 +123,7 @@ namespace Teronis.Collections.Synchronization
                 int invocationCount = collectionChanged?.GetInvocationList().Length ?? 0
                     + CollectionModified?.GetInvocationList().Length ?? 0;
 
+                // Excerpt from https://github.com/microsoft/referencesource/blob/5697c29004a34d80acdaf5742d7e699022c64ecd/System/compmod/system/collections/objectmodel/observablecollection.cs:
                 // We can allow changes if there's only one listener - the problem
                 // only arises if reentrant changes make the original event args
                 // invalid for later listeners.  This keeps existing code working
@@ -257,6 +250,9 @@ namespace Teronis.Collections.Synchronization
             where KeyType : notnull =>
             new SynchronizedDictionary<KeyType, TItem>(this, getItemKey);
 
+        /// <summary>
+        /// Helps to detect reentrances.
+        /// </summary>
         private class OccupationMonitor : IDisposable
         {
             int occupationCount;

@@ -36,25 +36,25 @@ namespace Teronis.Collections.Synchronization
             [Theory]
             [ClassData(typeof(Generator))]
             public override void Direct_synchronization_by_modifications(Number[] leftItems, Number[] rightItems, Number[]? expected = null,
-                 CollectionModificationsYieldCapabilities? yieldCapabilities = null) =>
+                 CollectionModificationYieldCapabilities? yieldCapabilities = null) =>
                  base.Direct_synchronization_by_modifications(leftItems, rightItems, expected, yieldCapabilities);
 
             [Theory]
             [ClassData(typeof(Generator))]
             public override void Direct_synchronization_by_batched_modifications(Number[] leftItems, Number[] rightItems, Number[]? expected = null,
-                CollectionModificationsYieldCapabilities? yieldCapabilities = null) =>
+                CollectionModificationYieldCapabilities? yieldCapabilities = null) =>
                 base.Direct_synchronization_by_batched_modifications(leftItems, rightItems, expected, yieldCapabilities);
 
             [Theory]
             [ClassData(typeof(Generator))]
             public override void Relocated_synchronization_by_modifications(Number[] leftItems, Number[] rightItems, Number[]? expected = null,
-                CollectionModificationsYieldCapabilities? yieldCapabilities = null) =>
+                CollectionModificationYieldCapabilities? yieldCapabilities = null) =>
                 base.Relocated_synchronization_by_modifications(leftItems, rightItems, expected, yieldCapabilities);
 
             [Theory]
             [ClassData(typeof(Generator))]
             public override void Relocated_synchronization_by_batched_modifications(Number[] leftItems, Number[] rightItems, Number[]? expected = null,
-                CollectionModificationsYieldCapabilities? yieldCapabilities = null) =>
+                CollectionModificationYieldCapabilities? yieldCapabilities = null) =>
                 base.Relocated_synchronization_by_batched_modifications(leftItems, rightItems, expected, yieldCapabilities);
 
             public class Generator : GeneratorBase<Number>
@@ -69,16 +69,16 @@ namespace Teronis.Collections.Synchronization
 
                     yield return List(Values(@null), Values(@null, null2));
                     yield return List(Values(@null), Values(null2, @null));
-                    yield return List(Values(@null), Values(null2, @null), Values(null2, @null), CollectionModificationsYieldCapabilities.InsertRemove);
-                    yield return List(Values(@null), Values(null2, @null), Values(@null, null2), CollectionModificationsYieldCapabilities.InsertRemove);
+                    yield return List(Values(@null), Values(null2, @null), Values(null2, @null), CollectionModificationYieldCapabilities.InsertRemove);
+                    yield return List(Values(@null), Values(null2, @null), Values(@null, null2), CollectionModificationYieldCapabilities.InsertRemove);
 
                     yield return List(Values(@null, three2, nine), Values(three), Values(three));
-                    yield return List(Values(@null, three2, nine), Values(three), Values(three2), CollectionModificationsYieldCapabilities.InsertRemove);
+                    yield return List(Values(@null, three2, nine), Values(three), Values(three2), CollectionModificationYieldCapabilities.InsertRemove);
 
-                    yield return List(Values(one, three), Values(two), Values(one, two, three), CollectionModificationsYieldCapabilities.Insert);
+                    yield return List(Values(one, three), Values(two), Values(one, two, three), CollectionModificationYieldCapabilities.Insert);
 
-                    yield return List(Values(two, three, four), Values(two, four), Values(two, four), CollectionModificationsYieldCapabilities.Remove);
-                    yield return List(Values(one, two, three, three2, four), Values(two, four, nine), Values(two, four), CollectionModificationsYieldCapabilities.Remove);
+                    yield return List(Values(two, three, four), Values(two, four), Values(two, four), CollectionModificationYieldCapabilities.Remove);
+                    yield return List(Values(one, two, three, three2, four), Values(two, four, nine), Values(two, four), CollectionModificationYieldCapabilities.Remove);
                 }
             }
         }

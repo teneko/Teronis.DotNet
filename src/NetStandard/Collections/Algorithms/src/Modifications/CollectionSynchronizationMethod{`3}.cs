@@ -52,7 +52,7 @@ namespace Teronis.Collections.Algorithms.Modifications
         public abstract IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications(
             IEnumerable<TLeftItem> leftItems,
             IEnumerable<TRightItem>? rightItems,
-            CollectionModificationsYieldCapabilities yieldCapabilities);
+            CollectionModificationYieldCapabilities yieldCapabilities);
 
         public class Sequential : CollectionSynchronizationMethod<TLeftItem, TRightItem, TComparableItem>
         {
@@ -68,7 +68,7 @@ namespace Teronis.Collections.Algorithms.Modifications
             public override IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications(
                 IEnumerable<TLeftItem> leftItems,
                 IEnumerable<TRightItem>? rightItems,
-                CollectionModificationsYieldCapabilities yieldCapabilities)
+                CollectionModificationYieldCapabilities yieldCapabilities)
             {
                 CheckArgumentsWhenYieldingCollectionModifications(leftItems, ref rightItems);
 
@@ -101,7 +101,7 @@ namespace Teronis.Collections.Algorithms.Modifications
             public override IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications(
                 IEnumerable<TLeftItem> leftItems,
                 IEnumerable<TRightItem>? rightItems,
-                CollectionModificationsYieldCapabilities yieldCapabilities)
+                CollectionModificationYieldCapabilities yieldCapabilities)
             {
                 CheckArgumentsWhenYieldingCollectionModifications(leftItems, ref rightItems);
 

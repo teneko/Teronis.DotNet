@@ -87,10 +87,12 @@ namespace Teronis.Collections.Synchronization
         protected virtual void AddItems(ICollectionModification<TItem, TItem> modification)
         {
             CollectionModificationIterationTools.BeginInsert(modification)
-                /// The modification is now null checked.
+                // The modification is now null checked.
                 .OnIteration(iterationContext => {
-                    var superItem = modification.NewItems![iterationContext.ModificationItemIndex];
-                    collectionChangeHandler.InsertItem(iterationContext.CollectionItemIndex, superItem);
+                    var newItem = modification.NewItems![iterationContext.ModificationItemIndex];
+                    OnBeforeAddItem(iterationContext.CollectionItemIndex, newItem);
+                    collectionChangeHandler.InsertItem(iterationContext.CollectionItemIndex, newItem);
+                    OnAfterAddItem(iterationContext.CollectionItemIndex, newItem);
                 })
                 .Iterate();
         }
@@ -166,7 +168,7 @@ namespace Teronis.Collections.Synchronization
         /// <param name="rightItems"></param>
         /// <param name="yieldCapabilities"></param>
         /// <param name="batchModifications">Indicates that first all modifications are calculated before they get processed.</param>
-        internal void SynchronizeCollection(IEnumerable<TItem> leftItems, IEnumerable<TItem>? rightItems, CollectionModificationsYieldCapabilities yieldCapabilities, bool batchModifications)
+        internal void SynchronizeCollection(IEnumerable<TItem> leftItems, IEnumerable<TItem>? rightItems, CollectionModificationYieldCapabilities yieldCapabilities, bool batchModifications)
         {
             leftItems = leftItems ?? throw new ArgumentNullException(nameof(leftItems));
             var modifications = SynchronizationMethod.YieldCollectionModifications(leftItems, rightItems, yieldCapabilities);
@@ -198,7 +200,7 @@ namespace Teronis.Collections.Synchronization
         /// <param name="enumerable"></param>
         /// <param name="yieldCapabilities"></param>
         /// <param name="batchModifications">Indicates that first all modifications are calculated before they get processed.</param>
-        internal void SynchronizeCollection(IEnumerable<TItem>? enumerable, CollectionModificationsYieldCapabilities yieldCapabilities, bool batchModifications) =>
+        internal void SynchronizeCollection(IEnumerable<TItem>? enumerable, CollectionModificationYieldCapabilities yieldCapabilities, bool batchModifications) =>
             SynchronizeCollection(
                 batchModifications
                     ? Items // When we batch modifications, then we do not need to mark it.
@@ -213,13 +215,13 @@ namespace Teronis.Collections.Synchronization
         /// <param name="enumerable"></param>
         /// <param name="batchModifications">Indicates that first all modifications are calculated before they get processed.</param>
         internal void SynchronizeCollection(IEnumerable<TItem>? enumerable, bool batchModifications) =>
-            SynchronizeCollection(enumerable, CollectionModificationsYieldCapabilities.All, batchModifications);
+            SynchronizeCollection(enumerable, CollectionModificationYieldCapabilities.All, batchModifications);
 
-        public void SynchronizeCollection(IEnumerable<TItem>? enumerable, CollectionModificationsYieldCapabilities yieldCapabilities) =>
+        public void SynchronizeCollection(IEnumerable<TItem>? enumerable, CollectionModificationYieldCapabilities yieldCapabilities) =>
             SynchronizeCollection(enumerable, yieldCapabilities, batchModifications: false);
 
         public void SynchronizeCollection(IEnumerable<TItem>? enumerable) =>
-            SynchronizeCollection(enumerable, yieldCapabilities: CollectionModificationsYieldCapabilities.All);
+            SynchronizeCollection(enumerable, yieldCapabilities: CollectionModificationYieldCapabilities.All);
 
         /// <summary>
         /// Creates for this instance a collection synchronisation mirror. The collection modifications from <paramref name="toBeMirroredCollection"/> are 

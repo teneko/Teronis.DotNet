@@ -10,6 +10,6 @@ namespace Teronis.Collections.Algorithms.Modifications
         IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications(
             IEnumerable<TLeftItem> leftItems,
             IEnumerable<TRightItem>? rightItems,
-            CollectionModificationsYieldCapabilities yieldCapabilities);
+            CollectionModificationYieldCapabilities yieldCapabilities);
     }
 }

@@ -10,6 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 using Teronis.Collections.Algorithms.Modifications;
 using Teronis.Extensions;
 using Teronis.ComponentModel;
+using System.Reactive.Subjects;
 
 namespace Teronis.Collections.Synchronization
 {
@@ -46,6 +47,9 @@ namespace Teronis.Collections.Synchronization
 
         protected PropertyChangeComponent ChangeComponent { get; private set; }
 
+        // We take the Subject<> implementation because it provides full thread-safety.
+        private Subject<ICollectionModification<TItem, TItem>> collectionModificationSubject;
+
         public SynchronizableCollectionBase(IList<TItem> items, IReadOnlyCollectionItemsOptions options)
             : base(items) =>
             OnInitialize();
@@ -53,9 +57,12 @@ namespace Teronis.Collections.Synchronization
         public SynchronizableCollectionBase() =>
             OnInitialize();
 
-        [MemberNotNull(nameof(ChangeComponent))]
-        private void OnInitialize() =>
+        [MemberNotNull(nameof(ChangeComponent), nameof(collectionModificationSubject))]
+        private void OnInitialize()
+        {
             ChangeComponent = new PropertyChangeComponent(this);
+            collectionModificationSubject = new Subject<ICollectionModification<TItem, TItem>>();
+        }
 
         protected virtual void OnCollectionSynchronizing() =>
             CollectionSynchronizing?.Invoke(this, new EventArgs());
@@ -63,30 +70,39 @@ namespace Teronis.Collections.Synchronization
         protected virtual void OnCollectionSynchronized() =>
             CollectionSynchronized?.Invoke(this, new EventArgs());
 
+        /// <summary>
+        /// Notifies all handlers of CollectionChanged and CollectionModified and all subscribed observers.
+        /// Early returns if no handlers for CollectionChanged, CollectionModified attached and no observers have been subscribed.
+        /// </summary>
+        /// <param name="collectionModification"></param>
         protected virtual void OnCollectionModified(ICollectionModification<TItem, TItem> collectionModification)
         {
-            if (collectionChanged is null && CollectionModified is null) {
+            if (collectionChanged is null && CollectionModified is null && !collectionModificationSubject.HasObservers) {
                 return;
             }
 
             var collectionChangedEventArgs = CreateCollectionModifiedEventArgs(collectionModification);
-            CollectionModified?.Invoke(this, collectionChangedEventArgs);
             collectionChanged?.Invoke(this, collectionChangedEventArgs);
+            CollectionModified?.Invoke(this, collectionChangedEventArgs);
+
+            if (collectionModificationSubject.HasObservers) {
+                collectionModificationSubject.OnNext(collectionModification);
+            }
         }
 
-        protected virtual void OnBeforeAddItem(int removingItemIndex) =>
+        protected virtual void OnBeforeAddItem(int itemIndex, TItem item) =>
             ChangeComponent.OnPropertyChanging(CountString, IndexerName);
 
-        protected virtual void OnAfterAddItem(int removedItemIndex) =>
+        protected virtual void OnAfterAddItem(int itemIndex, TItem item) =>
             ChangeComponent.OnPropertyChanged(CountString, IndexerName);
 
         protected override void InsertItem(int itemIndex, TItem item)
         {
-            OnBeforeAddItem(itemIndex);
+            OnBeforeAddItem(itemIndex, item);
             base.InsertItem(itemIndex, item);
             var modification = CollectionModification.ForAdd<TItem, TItem>(itemIndex, item);
             OnCollectionModified(modification);
-            OnAfterAddItem(itemIndex);
+            OnAfterAddItem(itemIndex, item);
         }
 
         protected virtual void OnBeforeRemoveItem(int itemIndex) =>
@@ -155,6 +171,9 @@ namespace Teronis.Collections.Synchronization
             OnCollectionModified(CollectionModification.ForReset<TItem, TItem>());
             OnAfterResetItems();
         }
+
+        public IDisposable Subscribe(IObserver<ICollectionModification<TItem, TItem>> observer) =>
+            collectionModificationSubject.Subscribe(observer);
 
         protected virtual CollectionModifiedEventArgs<TItem> CreateCollectionModifiedEventArgs(ICollectionModification<TItem, TItem> modification) =>
             new CollectionModifiedEventArgs<TItem>(modification);

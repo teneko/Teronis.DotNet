@@ -47,7 +47,7 @@ namespace Teronis.Collections.Synchronization
                 Number[] leftItems,
                 Number[] rightItems,
                 Number[]? expected = null,
-                CollectionModificationsYieldCapabilities? yieldCapabilities = null) =>
+                CollectionModificationYieldCapabilities? yieldCapabilities = null) =>
                 base.Direct_synchronization_by_modifications(leftItems, rightItems, expected, yieldCapabilities);
 
             [Theory]
@@ -56,7 +56,7 @@ namespace Teronis.Collections.Synchronization
                 Number[] leftItems,
                 Number[] rightItems,
                 Number[]? expected = null,
-                CollectionModificationsYieldCapabilities? yieldCapabilities = null) =>
+                CollectionModificationYieldCapabilities? yieldCapabilities = null) =>
                 base.Direct_synchronization_by_batched_modifications(leftItems, rightItems, expected, yieldCapabilities);
 
             [Theory]
@@ -65,7 +65,7 @@ namespace Teronis.Collections.Synchronization
                 Number[] leftItems,
                 Number[] rightItems,
                 Number[]? expected = null,
-                CollectionModificationsYieldCapabilities? yieldCapabilities = null) =>
+                CollectionModificationYieldCapabilities? yieldCapabilities = null) =>
                 base.Relocated_synchronization_by_modifications(leftItems, rightItems, expected, yieldCapabilities);
 
             [Theory]
@@ -74,7 +74,7 @@ namespace Teronis.Collections.Synchronization
                 Number[] leftItems,
                 Number[] rightItems,
                 Number[]? expected = null,
-                CollectionModificationsYieldCapabilities? yieldCapabilities = null) =>
+                CollectionModificationYieldCapabilities? yieldCapabilities = null) =>
                 base.Relocated_synchronization_by_batched_modifications(leftItems, rightItems, expected, yieldCapabilities);
 
             public class Generator : GeneratorBase<Number>
@@ -99,13 +99,13 @@ namespace Teronis.Collections.Synchronization
                     yield return List(Values(zero, zero2, zero3, zero4, one), Values(one, zero, zero2, zero3, one2));
                     yield return List(Values(zero, zero2, one), Values(one, zero, one2));
 
-                    yield return List(Values(zero, zero2, one, zero3, one2), Values(one), Values(one), CollectionModificationsYieldCapabilities.Remove);
-                    yield return List(Values(zero, zero2, one, zero3, one2), Values(one2), Values(one2), CollectionModificationsYieldCapabilities.Remove);
+                    yield return List(Values(zero, zero2, one, zero3, one2), Values(one), Values(one), CollectionModificationYieldCapabilities.Remove);
+                    yield return List(Values(zero, zero2, one, zero3, one2), Values(one2), Values(one2), CollectionModificationYieldCapabilities.Remove);
 
-                    yield return List(Values(zero, t_one, t_one2, zero2), Values(zero, t_one2, t_one, zero2), Values(zero, t_one, t_one2, zero2), CollectionModificationsYieldCapabilities.InsertRemove);
-                    yield return List(Values(zero, t_one, t_one2, zero2), Values(zero, t_one2, t_one, zero2), Values(zero, t_one2, t_one, zero2), CollectionModificationsYieldCapabilities.All);
+                    yield return List(Values(zero, t_one, t_one2, zero2), Values(zero, t_one2, t_one, zero2), Values(zero, t_one, t_one2, zero2), CollectionModificationYieldCapabilities.InsertRemove);
+                    yield return List(Values(zero, t_one, t_one2, zero2), Values(zero, t_one2, t_one, zero2), Values(zero, t_one2, t_one, zero2), CollectionModificationYieldCapabilities.All);
 
-                    yield return List(Values(five, three), Values(five, zero), Values(five, three, zero), CollectionModificationsYieldCapabilities.Insert);
+                    yield return List(Values(five, three), Values(five, zero), Values(five, three, zero), CollectionModificationYieldCapabilities.Insert);
                 }
             }
         }

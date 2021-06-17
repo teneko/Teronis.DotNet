@@ -12,6 +12,6 @@ namespace Teronis.Collections.Algorithms.Modifications
             IEnumerable<TItem> leftItems,
             IEnumerable<TItem>? rightItems)
             where TItem : notnull =>
-            synchronizationMethod.YieldCollectionModifications(leftItems, rightItems, CollectionModificationsYieldCapabilities.All);
+            synchronizationMethod.YieldCollectionModifications(leftItems, rightItems, CollectionModificationYieldCapabilities.All);
     }
 }

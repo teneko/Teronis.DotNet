@@ -3,7 +3,7 @@
 
 namespace Teronis.Collections.Algorithms.Modifications
 {
-    public enum CollectionModificationsYieldCapabilities
+    public enum CollectionModificationYieldCapabilities
     {
         /// <summary>
         /// Modifications for inserting items are considered to be yielded.
@@ -31,3 +31,4 @@ namespace Teronis.Collections.Algorithms.Modifications
         All = Insert | Remove | Replace,
     }
 }
+

@@ -22,10 +22,10 @@ namespace Teronis.Collections.Synchronization
                 T[] leftItems,
                 T[] rightItems,
                 T[]? expected = null,
-                CollectionModificationsYieldCapabilities? yieldCapabilities = null)
+                CollectionModificationYieldCapabilities? yieldCapabilities = null)
             {
                 expected = expected ?? rightItems;
-                yieldCapabilities = yieldCapabilities ?? CollectionModificationsYieldCapabilities.All;
+                yieldCapabilities = yieldCapabilities ?? CollectionModificationYieldCapabilities.All;
 
                 Collection.SynchronizeCollection(leftItems);
                 Assert.Equal(leftItems, Collection, EqualityComparer);
@@ -38,10 +38,10 @@ namespace Teronis.Collections.Synchronization
                 T[] leftItems,
                 T[] rightItems,
                 T[]? expected = null,
-                CollectionModificationsYieldCapabilities? yieldCapabilities = null)
+                CollectionModificationYieldCapabilities? yieldCapabilities = null)
             {
                 expected = expected ?? rightItems;
-                yieldCapabilities = yieldCapabilities ?? CollectionModificationsYieldCapabilities.All;
+                yieldCapabilities = yieldCapabilities ?? CollectionModificationYieldCapabilities.All;
 
                 Collection.SynchronizeCollection(leftItems, batchModifications: true);
                 Assert.Equal(leftItems, Collection, EqualityComparer);
@@ -61,10 +61,10 @@ namespace Teronis.Collections.Synchronization
                 T[] leftItems,
                 T[] rightItems,
                 T[]? expected = null,
-                CollectionModificationsYieldCapabilities? yieldCapabilities = null)
+                CollectionModificationYieldCapabilities? yieldCapabilities = null)
             {
                 expected = expected ?? rightItems;
-                yieldCapabilities = yieldCapabilities ?? CollectionModificationsYieldCapabilities.All;
+                yieldCapabilities = yieldCapabilities ?? CollectionModificationYieldCapabilities.All;
 
                 Collection.SynchronizeCollection(leftItems, batchModifications: true);
                 Assert.Equal(leftItems, Collection, EqualityComparer);
@@ -78,10 +78,10 @@ namespace Teronis.Collections.Synchronization
                 T[] leftItems,
                 T[] rightItems,
                 T[]? expected = null,
-                CollectionModificationsYieldCapabilities? yieldCapabilities = null)
+                CollectionModificationYieldCapabilities? yieldCapabilities = null)
             {
                 expected = expected ?? rightItems;
-                yieldCapabilities = yieldCapabilities ?? CollectionModificationsYieldCapabilities.All;
+                yieldCapabilities = yieldCapabilities ?? CollectionModificationYieldCapabilities.All;
 
                 Collection.SynchronizeCollection(leftItems, batchModifications: true);
                 Assert.Equal(leftItems, Collection, EqualityComparer);

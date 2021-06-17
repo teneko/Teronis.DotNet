@@ -39,7 +39,7 @@ namespace Teronis.Collections.Algorithms.Modifications
             IEnumerable<TRightItem> rightItems,
             Func<TRightItem, TComparablePart> getComparablePartOfRightItem,
             IEqualityComparer<TComparablePart>? equalityComparer,
-            CollectionModificationsYieldCapabilities yieldCapabilities)
+            CollectionModificationYieldCapabilities yieldCapabilities)
             where TComparablePart : notnull
         {
             static CollectionModification<TRightItem, TLeftItem> createReplaceModification(
@@ -62,9 +62,9 @@ namespace Teronis.Collections.Algorithms.Modifications
 
             equalityComparer = equalityComparer ?? EqualityComparer<TComparablePart>.Default;
 
-            var canInsert = yieldCapabilities.HasFlag(CollectionModificationsYieldCapabilities.Insert);
-            var canRemove = yieldCapabilities.HasFlag(CollectionModificationsYieldCapabilities.Remove);
-            var canReplace = yieldCapabilities.HasFlag(CollectionModificationsYieldCapabilities.Replace);
+            var canInsert = yieldCapabilities.HasFlag(CollectionModificationYieldCapabilities.Insert);
+            var canRemove = yieldCapabilities.HasFlag(CollectionModificationYieldCapabilities.Remove);
+            var canReplace = yieldCapabilities.HasFlag(CollectionModificationYieldCapabilities.Replace);
             var canMove = canInsert && canRemove;
 
             var leftIndexDirectory = new IndexDirectory();
@@ -268,7 +268,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                 rightItems,
                 getComparablePartOfRightItem,
                 equalityComparer,
-                CollectionModificationsYieldCapabilities.All);
+                CollectionModificationYieldCapabilities.All);
 
         /// <summary>
         /// The algorithm creates modifications that can transform one collection into another collection.
@@ -291,7 +291,7 @@ namespace Teronis.Collections.Algorithms.Modifications
             Func<TLeftItem, TComparablePart> getComparablePartOfLeftItem,
             IEnumerable<TRightItem> rightItems,
             Func<TRightItem, TComparablePart> getComparablePartOfRightItem,
-            CollectionModificationsYieldCapabilities yieldCapabilities)
+            CollectionModificationYieldCapabilities yieldCapabilities)
             where TComparablePart : notnull =>
             YieldCollectionModifications(
                 leftItems,
@@ -328,7 +328,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                 rightItems,
                 getComparablePartOfRightItem,
                 EqualityComparer<TComparablePart>.Default,
-                CollectionModificationsYieldCapabilities.All);
+                CollectionModificationYieldCapabilities.All);
 
         /// <summary>
         /// The algorithm creates modifications that can transform one collection into another collection.
@@ -347,7 +347,7 @@ namespace Teronis.Collections.Algorithms.Modifications
             IEnumerable<TItem> leftItems,
             IEnumerable<TItem> rightItems,
             IEqualityComparer<TItem>? equalityComparer,
-            CollectionModificationsYieldCapabilities yieldCapabilities)
+            CollectionModificationYieldCapabilities yieldCapabilities)
             where TItem : notnull =>
             YieldCollectionModifications(
                 leftItems,
@@ -380,7 +380,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                 rightItems,
                 rightItem => rightItem,
                 equalityComparer,
-                CollectionModificationsYieldCapabilities.All);
+                CollectionModificationYieldCapabilities.All);
 
         /// <summary>
         /// The algorithm creates modifications that can transform one collection into another collection.
@@ -397,7 +397,7 @@ namespace Teronis.Collections.Algorithms.Modifications
         public static IEnumerable<CollectionModification<TItem, TItem>> YieldCollectionModifications<TItem>(
             IEnumerable<TItem> leftItems,
             IEnumerable<TItem> rightItems,
-            CollectionModificationsYieldCapabilities yieldCapabilities)
+            CollectionModificationYieldCapabilities yieldCapabilities)
             where TItem : notnull =>
             YieldCollectionModifications(
                 leftItems,
@@ -428,7 +428,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                 rightItems,
                 rightItem => rightItem,
                 EqualityComparer<TItem>.Default,
-                CollectionModificationsYieldCapabilities.All);
+                CollectionModificationYieldCapabilities.All);
 
         private class ItemContainer<TItem>
         {

@@ -283,7 +283,7 @@ namespace Teronis.Collections.Synchronization
         /// </summary>
         /// <param name="items"></param>
         /// <param name="yieldCapabilities"></param>
-        public virtual void SynchronizeCollection(IEnumerable<TSuperItem>? items, CollectionModificationsYieldCapabilities yieldCapabilities)
+        public virtual void SynchronizeCollection(IEnumerable<TSuperItem>? items, CollectionModificationYieldCapabilities yieldCapabilities)
         {
             var enumerator = SynchronizationMethod
                 .YieldCollectionModifications(
@@ -306,7 +306,7 @@ namespace Teronis.Collections.Synchronization
         }
 
         public void SynchronizeCollection(IEnumerable<TSuperItem>? enumerable) =>
-            SynchronizeCollection(enumerable, yieldCapabilities: CollectionModificationsYieldCapabilities.All);
+            SynchronizeCollection(enumerable, yieldCapabilities: CollectionModificationYieldCapabilities.All);
 
         #region ICollectionSynchronizationContext<SuperItemType>
 

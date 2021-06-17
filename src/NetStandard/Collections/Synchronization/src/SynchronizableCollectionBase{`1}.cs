@@ -83,6 +83,9 @@ namespace Teronis.Collections.Synchronization
         protected virtual void OnCollectionSynchronized() =>
             CollectionSynchronized?.Invoke(this, new EventArgs());
 
+        protected virtual CollectionModifiedEventArgs<TItem> CreateCollectionModifiedEventArgs(ICollectionModification<TItem, TItem> modification) =>
+            new CollectionModifiedEventArgs<TItem>(modification);
+
         /// <summary>
         /// Notifies all handlers of CollectionChanged and CollectionModified and all subscribed observers.
         /// Early returns if no handlers for CollectionChanged, CollectionModified attached and no observers have been subscribed.
@@ -239,14 +242,11 @@ namespace Teronis.Collections.Synchronization
         public IDisposable Subscribe(IObserver<ICollectionModification<TItem, TItem>> observer) =>
             collectionModificationSubject.Subscribe(observer);
 
-        protected virtual CollectionModifiedEventArgs<TItem> CreateCollectionModifiedEventArgs(ICollectionModification<TItem, TItem> modification) =>
-            new CollectionModifiedEventArgs<TItem>(modification);
-
-        public SynchronizedDictionary<TKey, TItem> CreateSynchronizedDictionary<TKey>(Func<TItem, TKey> getItemKey, IEqualityComparer<TKey> keyEqualityComparer)
+        public SynchronizedDictionary<TKey, TItem> ToSynchronizedDictionary<TKey>(Func<TItem, TKey> getItemKey, IEqualityComparer<TKey> keyEqualityComparer)
             where TKey : notnull =>
             new SynchronizedDictionary<TKey, TItem>(this, getItemKey, keyEqualityComparer);
 
-        public SynchronizedDictionary<KeyType, TItem> CreateSynchronizedDictionary<KeyType>(Func<TItem, KeyType> getItemKey)
+        public SynchronizedDictionary<KeyType, TItem> ToSynchronizedDictionary<KeyType>(Func<TItem, KeyType> getItemKey)
             where KeyType : notnull =>
             new SynchronizedDictionary<KeyType, TItem>(this, getItemKey);
 

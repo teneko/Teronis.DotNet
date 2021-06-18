@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using Teronis.Collections.Specialized;
 
 namespace Teronis.Collections.Algorithms.Modifications
@@ -33,11 +32,11 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// <param name="yieldCapabilities">The yield capabilities, e.g. only insert or only remove.</param>
         /// <returns>The collection modifications.</returns>
         /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
-        public static IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications<TLeftItem, TRightItem, TComparablePart>(
+        private static IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModificationsCore<TLeftItem, TRightItem, TComparablePart>(
             IEnumerable<TLeftItem> leftItems,
-            Func<TLeftItem, TComparablePart> getComparablePartOfLeftItem,
+            Func<TLeftItem, TComparablePart>? getComparablePartOfLeftItem,
             IEnumerable<TRightItem> rightItems,
-            Func<TRightItem, TComparablePart> getComparablePartOfRightItem,
+            Func<TRightItem, TComparablePart>? getComparablePartOfRightItem,
             IEqualityComparer<TComparablePart>? equalityComparer,
             CollectionModificationYieldCapabilities yieldCapabilities)
             where TComparablePart : notnull
@@ -57,7 +56,31 @@ namespace Teronis.Collections.Algorithms.Modifications
                 CollectionModification.ForMove<TRightItem, TLeftItem>(
                     leftItemNode.Value.IndexEntry,
                     leftItemNode.Value.Item,
-                    leftItemMoveToIndex/*,rightItemNode.Value.Item*/);
+                    leftItemMoveToIndex);
+
+            var getComparablePartOfLeftItemIsNull = getComparablePartOfLeftItem is null;
+            var getComparablePartOfRightItemIsNull = getComparablePartOfRightItem is null;
+
+            if (getComparablePartOfLeftItemIsNull || getComparablePartOfRightItemIsNull) {
+                var leftItemType = typeof(TLeftItem);
+                var rightItemType = typeof(TLeftItem);
+                var comparablePartType = typeof(TComparablePart);
+
+                void EnsureBeingTypeOfComparablePart(Type comparablePartType, Type itemType)
+                {
+                    if (comparablePartType != itemType) {
+                        throw new ArgumentException($"Comparable part provider is null and item of type {itemType} could never be casted to comparable part of type {comparablePartType}.");
+                    }
+                }
+
+                if (getComparablePartOfLeftItemIsNull) {
+                    EnsureBeingTypeOfComparablePart(comparablePartType, leftItemType);
+                }
+
+                if (getComparablePartOfRightItemIsNull) {
+                    EnsureBeingTypeOfComparablePart(comparablePartType, rightItemType);
+                }
+            }
 
             equalityComparer = equalityComparer ?? EqualityComparer<TComparablePart>.Default;
 
@@ -92,7 +115,10 @@ namespace Teronis.Collections.Algorithms.Modifications
 
                 if (rightItemsEnumeratorIsFunctional) {
                     var rightItem = rightItemsEnumerator.Current;
-                    var comparablePartOfRightItem = getComparablePartOfRightItem(rightItem);
+
+                    var comparablePartOfRightItem = getComparablePartOfRightItemIsNull
+                        ? (TComparablePart?)(object?)rightItem
+                        : getComparablePartOfRightItem!.Invoke(rightItem);
 
                     rightItemNodeLast = rightItemsNodes.AddLast(comparablePartOfRightItem, new RightItemContainer<TLeftItem, TRightItem>(rightItem, rightItemIndexNext));
                     rightItemIndexNext++;
@@ -161,7 +187,11 @@ namespace Teronis.Collections.Algorithms.Modifications
 
                 if (leftItemsEnumeratorIsFunctional) {
                     var leftItem = leftItemsEnumerator.Current;
-                    var comparablePartOfLeftItem = getComparablePartOfLeftItem(leftItem);
+
+                    var comparablePartOfLeftItem = getComparablePartOfLeftItemIsNull
+                        ? (TComparablePart?)(object?)leftItem
+                        : getComparablePartOfLeftItem!(leftItem);
+
                     var nextLeftIndex = leftIndexDirectory.Count;
 
                     leftItemNodeLast = leftItemsNodes.AddLast(comparablePartOfLeftItem, new LeftItemContainer<TLeftItem>(leftItem, leftIndexDirectory.Add(nextLeftIndex)));
@@ -252,6 +282,7 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
         /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
         /// <param name="equalityComparer">The equality comparer to be used to compare comparable parts.</param>
+        /// <param name="yieldCapabilities">The yield capabilities, e.g. only insert or only remove.</param>
         /// <returns>The collection modifications.</returns>
         /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
         public static IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications<TLeftItem, TRightItem, TComparablePart>(
@@ -259,15 +290,48 @@ namespace Teronis.Collections.Algorithms.Modifications
             Func<TLeftItem, TComparablePart> getComparablePartOfLeftItem,
             IEnumerable<TRightItem> rightItems,
             Func<TRightItem, TComparablePart> getComparablePartOfRightItem,
-            IEqualityComparer<TComparablePart>? equalityComparer)
+            IEqualityComparer<TComparablePart>? equalityComparer,
+            CollectionModificationYieldCapabilities yieldCapabilities)
             where TComparablePart : notnull =>
-            YieldCollectionModifications(
+            YieldCollectionModificationsCore(
                 leftItems,
                 getComparablePartOfLeftItem,
                 rightItems,
                 getComparablePartOfRightItem,
                 equalityComparer,
-                CollectionModificationYieldCapabilities.All);
+                yieldCapabilities);
+
+
+        /// <summary>
+        /// The algorithm creates modifications that can transform one collection into another collection.
+        /// The collection modifications may be used to transform <paramref name="leftItems"/>.
+        /// The more the collection is synchronized in an orderly way, the more efficient the algorithm is.
+        /// Duplications are allowed but take into account that duplications are yielded as they are appearing.
+        /// </summary>
+        /// <typeparam name="TLeftItem">The type of left items.</typeparam>
+        /// <typeparam name="TRightItem">The type of right items.</typeparam>
+        /// <typeparam name="TComparablePart">The type of the comparable part of left item and right item.</typeparam>
+        /// <param name="leftItems">The collection you want to have transformed.</param>
+        /// <param name="getComparablePartOfLeftItem">The part of left item that is comparable with part of right item.</param>
+        /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
+        /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
+        /// <param name="equalityComparer">The equality comparer to be used to compare comparable parts.</param>
+        /// <returns>The collection modifications.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
+        public static IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications<TLeftItem, TRightItem, TComparablePart>(
+        IEnumerable<TLeftItem> leftItems,
+        Func<TLeftItem, TComparablePart> getComparablePartOfLeftItem,
+        IEnumerable<TRightItem> rightItems,
+        Func<TRightItem, TComparablePart> getComparablePartOfRightItem,
+        IEqualityComparer<TComparablePart>? equalityComparer)
+        where TComparablePart : notnull =>
+        YieldCollectionModifications(
+            leftItems,
+            getComparablePartOfLeftItem,
+            rightItems,
+            getComparablePartOfRightItem,
+            equalityComparer,
+            CollectionModificationYieldCapabilities.All);
 
         /// <summary>
         /// The algorithm creates modifications that can transform one collection into another collection.
@@ -348,11 +412,11 @@ namespace Teronis.Collections.Algorithms.Modifications
             IEqualityComparer<TItem>? equalityComparer,
             CollectionModificationYieldCapabilities yieldCapabilities)
             where TItem : notnull =>
-            YieldCollectionModifications(
+            YieldCollectionModificationsCore(
                 leftItems,
-                leftItem => leftItem,
+                getComparablePartOfLeftItem: null,
                 rightItems,
-                rightItem => rightItem,
+                getComparablePartOfRightItem: null,
                 equalityComparer,
                 yieldCapabilities);
 
@@ -373,11 +437,11 @@ namespace Teronis.Collections.Algorithms.Modifications
             IEnumerable<TItem> rightItems,
             IEqualityComparer<TItem>? equalityComparer)
             where TItem : notnull =>
-            YieldCollectionModifications(
+            YieldCollectionModificationsCore(
                 leftItems,
-                leftItem => leftItem,
+                getComparablePartOfLeftItem: null,
                 rightItems,
-                rightItem => rightItem,
+                getComparablePartOfRightItem: null,
                 equalityComparer,
                 CollectionModificationYieldCapabilities.All);
 
@@ -398,11 +462,11 @@ namespace Teronis.Collections.Algorithms.Modifications
             IEnumerable<TItem> rightItems,
             CollectionModificationYieldCapabilities yieldCapabilities)
             where TItem : notnull =>
-            YieldCollectionModifications(
+            YieldCollectionModificationsCore(
                 leftItems,
-                leftItem => leftItem,
+                getComparablePartOfLeftItem: null,
                 rightItems,
-                rightItem => rightItem,
+                getComparablePartOfRightItem: null,
                 EqualityComparer<TItem>.Default,
                 yieldCapabilities);
 
@@ -421,11 +485,11 @@ namespace Teronis.Collections.Algorithms.Modifications
             IEnumerable<TItem> leftItems,
             IEnumerable<TItem> rightItems)
             where TItem : notnull =>
-            YieldCollectionModifications(
+            YieldCollectionModificationsCore(
                 leftItems,
-                leftItem => leftItem,
+                getComparablePartOfLeftItem: null,
                 rightItems,
-                rightItem => rightItem,
+                getComparablePartOfRightItem: null,
                 EqualityComparer<TItem>.Default,
                 CollectionModificationYieldCapabilities.All);
 

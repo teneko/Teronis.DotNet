@@ -17,7 +17,7 @@ namespace Teronis.AspNetCore.Mvc.JsonProblemDetails
     /// <summary>
     /// Wraps the original <see cref="ProblemDetailsFactory"/> and
     /// extends it.
-    /// It is now <see cref="HttpContext"/> dependent on creation.
+    /// It is now <see cref="HttpContext"/>-dependent on creation.
     /// Accessible through <see cref="IMapperContext.ProblemDetailsFactory"/>.
     /// </summary>
     public class ProblemDetailsFactoryScoped

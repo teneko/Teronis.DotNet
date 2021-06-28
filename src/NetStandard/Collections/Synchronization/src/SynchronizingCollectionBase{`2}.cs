@@ -23,7 +23,7 @@ namespace Teronis.Collections.Synchronization
         where TSuperItem : notnull
         where TSubItem : notnull
     {
-        private static CollectionModification<TSuperItem, TSubItem> replaceOldSuperItemsByOldSubItems(
+        private static CollectionModification<TSuperItem, TSubItem> ReplaceOldSuperItemsByOldSubItems(
             ICollectionModification<TSuperItem, TSuperItem> superItemsSuperItemsModification,
             IReadOnlyCollection<TSubItem> subItems)
         {
@@ -278,7 +278,7 @@ namespace Teronis.Collections.Synchronization
 
         protected void ProcessModification(ICollectionModification<TSuperItem, TSuperItem> superItemModification)
         {
-            var oldSubItemsNewSuperItemsModification = replaceOldSuperItemsByOldSubItems(superItemModification, SubItems);
+            var oldSubItemsNewSuperItemsModification = ReplaceOldSuperItemsByOldSubItems(superItemModification, SubItems);
             var applyingModifications = new ApplyingCollectionModifications(oldSubItemsNewSuperItemsModification, superItemModification);
             ProcessModification(applyingModifications);
         }

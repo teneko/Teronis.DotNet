@@ -23,9 +23,8 @@ namespace Teronis.Collections.Algorithms.Modifications
             public Sorted(
                 Func<TItem, TItem> getComparablePartOfLeftItem,
                 Func<TItem, TItem> getComparablePartOfRightItem,
-                SortedCollectionOrder collectionOrder,
                 IComparer<TItem> comparer)
-                : base(getComparablePartOfLeftItem, getComparablePartOfRightItem, collectionOrder, comparer) { }
+                : base(getComparablePartOfLeftItem, getComparablePartOfRightItem, comparer) { }
         }
     }
 }

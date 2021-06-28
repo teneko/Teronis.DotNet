@@ -37,7 +37,7 @@ namespace Teronis.Collections.Synchronization
                 new SynchronizableCollection<Number>(
                     new SynchronizableCollectionOptions<Number>()
                         .ConfigureItems(options => options
-                            .SetItems(CollectionChangeHandler<Number>.CollectionItemReplaceBehaviour.Default))
+                            .SetItems(CollectionChangeHandler<Number>.ItemReplacableCollectionChangeBehaviour.Default))
                         .SetSequentialSynchronizationMethod(Number.ReferenceOrValueEqualityComparer.Default)))
             { }
 

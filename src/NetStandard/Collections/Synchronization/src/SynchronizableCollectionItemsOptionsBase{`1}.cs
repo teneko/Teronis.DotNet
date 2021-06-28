@@ -31,7 +31,7 @@ namespace Teronis.Collections.Synchronization
         /// </summary>
         /// <param name="changeHandlerItems"></param>
         /// <param name="changeHandlerBehaviour"></param>
-        public TDerived SetItems(IList<TItem> changeHandlerItems, CollectionChangeHandler<TItem>.IBehaviour changeHandlerBehaviour)
+        public TDerived SetItems(IList<TItem> changeHandlerItems, CollectionChangeHandler<TItem>.ICollectionChangeBehaviour changeHandlerBehaviour)
         {
             if (changeHandlerItems is null) {
                 throw new ArgumentNullException(nameof(changeHandlerItems));
@@ -52,7 +52,7 @@ namespace Teronis.Collections.Synchronization
         /// <see cref="SynchronizableCollectionBase{ItemType, NewItemType}"/>.
         /// </summary>
         /// <param name="changeHandlerBehaviour"></param>
-        public TDerived SetItems(CollectionChangeHandler<TItem>.IBehaviour changeHandlerBehaviour) =>
+        public TDerived SetItems(CollectionChangeHandler<TItem>.ICollectionChangeBehaviour changeHandlerBehaviour) =>
             SetItems(new List<TItem>(), changeHandlerBehaviour);
 
         #region ISynchronizableCollectionItemsOptions<TItem>

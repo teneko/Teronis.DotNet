@@ -84,19 +84,14 @@ namespace Teronis.Collections.Algorithms.Modifications
 
         public class Sorted : CollectionSynchronizationMethod<TLeftItem, TRightItem, TComparableItem>
         {
-            public SortedCollectionOrder CollectionOrder { get; }
             public IComparer<TComparableItem> Comparer { get; }
 
             public Sorted(
                 Func<TLeftItem, TComparableItem> getComparablePartOfLeftItem,
                 Func<TRightItem, TComparableItem> getComparablePartOfRightItem,
-                SortedCollectionOrder collectionOrder,
                 IComparer<TComparableItem> comparer)
-                : base(CollectionSequenceType.Sequential, getComparablePartOfLeftItem, getComparablePartOfRightItem)
-            {
-                CollectionOrder = collectionOrder;
+                : base(CollectionSequenceType.Sequential, getComparablePartOfLeftItem, getComparablePartOfRightItem) =>
                 Comparer = comparer ?? throw new ArgumentNullException(nameof(comparer));
-            }
 
             public override IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications(
                 IEnumerable<TLeftItem> leftItems,
@@ -110,7 +105,6 @@ namespace Teronis.Collections.Algorithms.Modifications
                     GetComparablePartOfLeftItem,
                     rightItems,
                     GetComparablePartOfRightItem,
-                    CollectionOrder,
                     Comparer,
                     yieldCapabilities);
             }

@@ -24,21 +24,9 @@ namespace Teronis.Collections.Synchronization
             return (TDerived)this;
         }
 
-        public TDerived SetAscendedSynchronizationMethod(IComparer<TItem> equalityComparer)
+        public TDerived SetSortedSynchronizationMethod(IComparer<TItem> equalityComparer)
         {
-            SynchronizationMethod = CollectionSynchronizationMethod.Ascending(equalityComparer);
-            return (TDerived)this;
-        }
-
-        public TDerived SetDescendedSynchronizationMethod(IComparer<TItem> equalityComparer)
-        {
-            SynchronizationMethod = CollectionSynchronizationMethod.Descending(equalityComparer);
-            return (TDerived)this;
-        }
-
-        public TDerived SetSortedSynchronizationMethod(IComparer<TItem> equalityComparer, bool descended)
-        {
-            SynchronizationMethod = CollectionSynchronizationMethod.Sorted(equalityComparer, descended);
+            SynchronizationMethod = CollectionSynchronizationMethod.Sorted(equalityComparer);
             return (TDerived)this;
         }
     }

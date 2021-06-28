@@ -16,20 +16,20 @@ namespace Teronis.Collections.Synchronization
         public event CollectionChangeRedirectReset? RedirectReset;
 
         public virtual IList<TItem> Items { get; } = null!;
-        public virtual IBehaviour Handler { get; } = null!;
+        public virtual ICollectionChangeBehaviour Handler { get; } = null!;
 
         protected CollectionChangeHandler() { }
 
         public CollectionChangeHandler(IList<TItem> items)
         {
             Items = items ?? throw new ArgumentNullException(nameof(items));
-            Handler = Behaviour.Default;
+            Handler = DefaultCollectionChangeBehaviour.Default;
         }
 
-        public CollectionChangeHandler(IList<TItem> items, IBehaviour? behvaiour)
+        public CollectionChangeHandler(IList<TItem> items, ICollectionChangeBehaviour? behvaiour)
         {
             Items = items ?? throw new ArgumentNullException(nameof(items));
-            Handler = behvaiour ?? Behaviour.Default;
+            Handler = behvaiour ?? DefaultCollectionChangeBehaviour.Default;
         }
 
         public virtual bool CanReplaceItem =>
@@ -80,7 +80,7 @@ namespace Teronis.Collections.Synchronization
             }
         }
 
-        public interface IBehaviour
+        public interface ICollectionChangeBehaviour
         {
             /// <summary>
             /// Indicates whether <see cref="ReplaceItem(IList{TItem}, int, Func{TItem})"/> is functional and ready to be called.
@@ -124,9 +124,14 @@ namespace Teronis.Collections.Synchronization
             void Reset(IList<TItem> list);
         }
 
-        public class Behaviour : IBehaviour
+        /// <summary>
+        /// The default behaviour for changing the collection on collection-change-notifications.
+        /// Insert, remove, move and reset do as they are named. Only the replace-functionality is
+        /// disabled.
+        /// </summary>
+        public class DefaultCollectionChangeBehaviour : ICollectionChangeBehaviour
         {
-            public static Behaviour Default = new Behaviour();
+            public static DefaultCollectionChangeBehaviour Default = new DefaultCollectionChangeBehaviour();
 
             public virtual bool CanReplaceItem { get; } = false;
 
@@ -153,11 +158,13 @@ namespace Teronis.Collections.Synchronization
         }
 
         /// <summary>
-        /// Implements the behaviour to replace an item at a given index on request. The default behaviour is not to replace existing items.
+        /// Implements the behaviour to replace an item at a given index on request. It is the contrary
+        /// implementation of <see cref="DefaultCollectionChangeBehaviour"/> as it would not replace
+        /// existing items.
         /// </summary>
-        public class CollectionItemReplaceBehaviour : Behaviour
+        public class ItemReplacableCollectionChangeBehaviour : DefaultCollectionChangeBehaviour
         {
-            public new static CollectionItemReplaceBehaviour Default = new CollectionItemReplaceBehaviour();
+            public new static ItemReplacableCollectionChangeBehaviour Default = new ItemReplacableCollectionChangeBehaviour();
 
             public override bool CanReplaceItem =>
                 true;

@@ -15,7 +15,8 @@ namespace Teronis.Collections.Synchronization
         public Number(int value) =>
             Value = value;
 
-        public override bool Equals(object? obj) {
+        public override bool Equals(object? obj)
+        {
             if (obj is Number number) {
                 return Value.Equals(number.Value);
             }
@@ -37,7 +38,13 @@ namespace Teronis.Collections.Synchronization
 
         public class Comparer : Comparer<Number>
         {
-            public new static Comparer Default => new Comparer();
+            public new static Comparer Ascended => new Comparer();
+            public new static Comparer Descended => new Comparer(descended: true);
+
+            private readonly bool descended;
+
+            public Comparer(bool descended = false) =>
+                this.descended = descended;
 
             public override int Compare([AllowNull] Number x, [AllowNull] Number y)
             {
@@ -53,7 +60,9 @@ namespace Teronis.Collections.Synchronization
                     return 1;
                 }
 
-                return x!.Value.CompareTo(y!.Value);
+                return !descended
+                    ? (x!.Value.CompareTo(y!.Value))
+                    : (y!.Value.CompareTo(x!.Value));
             }
         }
 

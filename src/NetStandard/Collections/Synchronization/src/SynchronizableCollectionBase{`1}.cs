@@ -86,6 +86,12 @@ namespace Teronis.Collections.Synchronization
         protected virtual CollectionModifiedEventArgs<TItem> CreateCollectionModifiedEventArgs(ICollectionModification<TItem, TItem> modification) =>
             new CollectionModifiedEventArgs<TItem>(modification);
 
+        protected IDisposable BlockReentrancy()
+        {
+            occupationMonitor.Occupy();
+            return occupationMonitor;
+        }
+
         /// <summary>
         /// Notifies all handlers of CollectionChanged and CollectionModified and all subscribed observers.
         /// Early returns if no handlers for CollectionChanged, CollectionModified attached and no observers have been subscribed.
@@ -105,12 +111,6 @@ namespace Teronis.Collections.Synchronization
             if (collectionModificationSubject.HasObservers) {
                 collectionModificationSubject.OnNext(collectionModification);
             }
-        }
-
-        protected IDisposable BlockReentrancy()
-        {
-            occupationMonitor.Occupy();
-            return occupationMonitor;
         }
 
         /// <summary>

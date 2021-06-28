@@ -77,17 +77,16 @@ namespace Teronis.Collections.Synchronization
         /// </summary>
         /// <param name="items"></param>
         /// <param name="comparer"></param>
-        /// <param name="descended"></param>
-        public SynchronizableCollection(IList<TItem> items, IComparer<TItem> comparer, bool descended) : this(
+        public SynchronizableCollection(IList<TItem> items, IComparer<TItem> comparer) : this(
             new SynchronizableCollectionOptions<TItem>()
                 .ConfigureItems(options => options
                     .SetItems(items))
-                .SetSortedSynchronizationMethod(comparer, descended))
+                .SetSortedSynchronizationMethod(comparer))
         { }
 
-        public SynchronizableCollection(IComparer<TItem> comparer, bool descended)
+        public SynchronizableCollection(IComparer<TItem> comparer)
             : this(new SynchronizableCollectionOptions<TItem>()
-                  .SetSortedSynchronizationMethod(comparer, descended))
+                  .SetSortedSynchronizationMethod(comparer))
         { }
 
         protected virtual void AddItems(ICollectionModification<TItem, TItem> modification)
@@ -95,6 +94,7 @@ namespace Teronis.Collections.Synchronization
             CollectionModificationIterationTools.BeginInsert(modification)
                 // The modification is now null checked.
                 .OnIteration(iterationContext => {
+                    CheckReentrancy();
                     var newItem = modification.NewItems![iterationContext.ModificationItemIndex];
                     OnBeforeAddItem(iterationContext.CollectionItemIndex, newItem);
                     collectionChangeHandler.InsertItem(iterationContext.CollectionItemIndex, newItem);
@@ -104,12 +104,11 @@ namespace Teronis.Collections.Synchronization
                 .Iterate();
         }
 
-
-
         protected virtual void RemoveItems(ICollectionModification<TItem, TItem> modification)
         {
             CollectionModificationIterationTools.BeginRemove(modification)
                 .OnIteration(iterationContext => {
+                    CheckReentrancy();
                     OnBeforeRemoveItem(iterationContext.CollectionItemIndex);
                     collectionChangeHandler.RemoveItem(iterationContext.CollectionItemIndex);
                     OnCollectionModified(modification);
@@ -125,6 +124,7 @@ namespace Teronis.Collections.Synchronization
                     var lazyItem = new SlimLazy<TItem>(() => modification.NewItems![iterationContext.ModificationItemIndex]);
 
                     if (collectionChangeHandler.CanReplaceItem) {
+                        CheckReentrancy();
                         OnBeforeReplaceItem(iterationContext.CollectionItemIndex);
                         collectionChangeHandler.ReplaceItem(iterationContext.CollectionItemIndex, lazyItem.GetValue);
                         OnCollectionModified(modification);
@@ -139,6 +139,7 @@ namespace Teronis.Collections.Synchronization
         protected virtual void MoveItems(ICollectionModification<TItem, TItem> modification)
         {
             CollectionModificationIterationTools.CheckMove(modification);
+            CheckReentrancy();
             OnBeforeMoveItems();
             collectionChangeHandler.MoveItems(modification.OldIndex, modification.NewIndex, modification.OldItems!.Count);
             OnCollectionModified(modification);
@@ -147,6 +148,7 @@ namespace Teronis.Collections.Synchronization
 
         protected virtual void ResetItems(ICollectionModification<TItem, TItem> modification)
         {
+            CheckReentrancy();
             OnBeforeResetItems();
             collectionChangeHandler.ResetItems();
             OnCollectionModified(modification);

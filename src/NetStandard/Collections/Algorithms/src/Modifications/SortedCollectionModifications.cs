@@ -33,7 +33,6 @@ namespace Teronis.Collections.Algorithms.Modifications
             Func<TLeftItem, TComparablePart> getComparablePartOfLeftItem,
             IEnumerable<TRightItem> rightItems,
             Func<TRightItem, TComparablePart> getComparablePartOfRightItem,
-            SortedCollectionOrder collectionOrder,
             IComparer<TComparablePart> comparer,
             CollectionModificationYieldCapabilities yieldCapabilities)
         {
@@ -77,10 +76,7 @@ namespace Teronis.Collections.Algorithms.Modifications
 
                     var comparablePartOfLeftItem = getComparablePartOfLeftItem(leftItem);
                     var comparablePartOfRightItem = getComparablePartOfRightItem(rightItem);
-
-                    var comparablePartComparison = collectionOrder == SortedCollectionOrder.Ascending
-                        ? comparer.Compare(comparablePartOfLeftItem, comparablePartOfRightItem)
-                        : comparer.Compare(comparablePartOfRightItem, comparablePartOfLeftItem);
+                    var comparablePartComparison = comparer.Compare(comparablePartOfLeftItem, comparablePartOfRightItem);
 
                     if (comparablePartComparison < 0) {
                         if (canRemove) {
@@ -139,14 +135,12 @@ namespace Teronis.Collections.Algorithms.Modifications
             Func<TLeftItem, TComparablePart> getComparablePartOfLeftItem,
             IEnumerable<TRightItem> rightItems,
             Func<TRightItem, TComparablePart> getComparablePartOfRightItem,
-            SortedCollectionOrder collectionOrder,
             IComparer<TComparablePart> comparer) =>
             YieldCollectionModifications(
                 leftItems,
                 getComparablePartOfLeftItem,
                 rightItems,
                 getComparablePartOfRightItem,
-                collectionOrder,
                 comparer,
                 CollectionModificationYieldCapabilities.All);
 
@@ -172,14 +166,12 @@ namespace Teronis.Collections.Algorithms.Modifications
             Func<TLeftItem, TComparablePart> getComparablePartOfLeftItem,
             IEnumerable<TRightItem> rightItems,
             Func<TRightItem, TComparablePart> getComparablePartOfRightItem,
-            SortedCollectionOrder collectionOrder,
             CollectionModificationYieldCapabilities yieldCapabilities) =>
             YieldCollectionModifications(
                 leftItems,
                 getComparablePartOfLeftItem,
                 rightItems,
                 getComparablePartOfRightItem,
-                collectionOrder,
                 Comparer<TComparablePart>.Default,
                 yieldCapabilities);
 
@@ -200,7 +192,6 @@ namespace Teronis.Collections.Algorithms.Modifications
         public static IEnumerable<CollectionModification<TItem, TItem>> YieldCollectionModifications<TItem>(
             IEnumerable<TItem> leftItems,
             IEnumerable<TItem> rightItems,
-            SortedCollectionOrder collectionOrder,
             IComparer<TItem> comparer,
             CollectionModificationYieldCapabilities yieldCapabilities) =>
             YieldCollectionModifications(
@@ -208,7 +199,6 @@ namespace Teronis.Collections.Algorithms.Modifications
                 leftItem => leftItem,
                 rightItems,
                 rightItem => rightItem,
-                collectionOrder,
                 comparer: comparer,
                 yieldCapabilities: yieldCapabilities);
 
@@ -228,14 +218,12 @@ namespace Teronis.Collections.Algorithms.Modifications
         public static IEnumerable<CollectionModification<TItem, TItem>> YieldCollectionModifications<TItem>(
             IEnumerable<TItem> leftItems,
             IEnumerable<TItem> rightItems,
-            SortedCollectionOrder collectionOrder,
             IComparer<TItem> comparer) =>
             YieldCollectionModifications(
                 leftItems,
                 leftItem => leftItem,
                 rightItems,
                 rightItem => rightItem,
-                collectionOrder,
                 comparer,
                 CollectionModificationYieldCapabilities.All);
 
@@ -255,14 +243,12 @@ namespace Teronis.Collections.Algorithms.Modifications
         public static IEnumerable<CollectionModification<TItem, TItem>> YieldCollectionModifications<TItem>(
             IEnumerable<TItem> leftItems,
             IEnumerable<TItem> rightItems,
-            SortedCollectionOrder collectionOrder,
             CollectionModificationYieldCapabilities yieldCapabilities) =>
             YieldCollectionModifications(
                 leftItems,
                 leftItem => leftItem,
                 rightItems,
                 rightItem => rightItem,
-                collectionOrder,
                 Comparer<TItem>.Default,
                 yieldCapabilities);
     }

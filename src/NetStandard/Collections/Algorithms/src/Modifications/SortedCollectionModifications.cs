@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using Teronis.Collections.Specialized;
 
 namespace Teronis.Collections.Algorithms.Modifications
@@ -23,7 +22,6 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// <param name="getComparablePartOfLeftItem">The part of left item that is comparable with part of right item.</param>
         /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
         /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
-        /// <param name="collectionOrder">the presumed order of items to be used to determine <see cref="IComparer{T}.Compare(T, T)"/> argument assignment.</param>
         /// <param name="comparer">The comparer to be used to compare comparable parts of left and right item.</param>
         /// <param name="yieldCapabilities">The yieldCapabilities that regulates how <paramref name="leftItems"/> and <paramref name="rightItems"/> are synchronized.</param>
         /// <returns>The collection modifications.</returns>
@@ -126,7 +124,6 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// <param name="getComparablePartOfLeftItem">The part of left item that is comparable with part of right item.</param>
         /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
         /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
-        /// <param name="collectionOrder">the presumed order of items to be used to determine <see cref="IComparer{T}.Compare(T, T)"/> argument assignment.</param>
         /// <param name="comparer">The comparer to be used to compare comparable parts of left and right item.</param>
         /// <returns>The collection modifications.</returns>
         /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
@@ -157,7 +154,6 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// <param name="getComparablePartOfLeftItem">The part of left item that is comparable with part of right item.</param>
         /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
         /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
-        /// <param name="collectionOrder">the presumed order of items to be used to determine <see cref="IComparer{T}.Compare(T, T)"/> argument assignment.</param>
         /// <param name="yieldCapabilities">The yieldCapabilities that regulates how <paramref name="leftItems"/> and <paramref name="rightItems"/> are synchronized.</param>
         /// <returns>The collection modifications.</returns>
         /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
@@ -184,7 +180,6 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// <typeparam name="TItem">The item type.</typeparam>
         /// <param name="leftItems">The collection you want to have transformed.</param>
         /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
-        /// <param name="collectionOrder">the presumed order of items to be used to determine <see cref="IComparer{T}.Compare(T, T)"/> argument assignment.</param>
         /// <param name="comparer">The comparer to be used to compare comparable parts of left and right item.</param>
         /// <param name="yieldCapabilities">The yieldCapabilities that regulates how <paramref name="leftItems"/> and <paramref name="rightItems"/> are synchronized.</param>
         /// <returns>The collection modifications.</returns>
@@ -211,7 +206,6 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// <typeparam name="TItem">The item type.</typeparam>
         /// <param name="leftItems">The collection you want to have transformed.</param>
         /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
-        /// <param name="collectionOrder">the presumed order of items to be used to determine <see cref="IComparer{T}.Compare(T, T)"/> argument assignment.</param>
         /// <param name="comparer">The comparer to be used to compare comparable parts of left and right item.</param>
         /// <returns>The collection modifications.</returns>
         /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
@@ -236,7 +230,6 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// <typeparam name="TItem">The item type.</typeparam>
         /// <param name="leftItems">The collection you want to have transformed.</param>
         /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
-        /// <param name="collectionOrder">the presumed order of items to be used to determine <see cref="IComparer{T}.Compare(T, T)"/> argument assignment.</param>
         /// <param name="yieldCapabilities">The yieldCapabilities that regulates how <paramref name="leftItems"/> and <paramref name="rightItems"/> are synchronized.</param>
         /// <returns>The collection modifications.</returns>
         /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>

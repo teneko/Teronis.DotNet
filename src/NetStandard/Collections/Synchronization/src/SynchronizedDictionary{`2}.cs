@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Teronis.Collections.Algorithms.Modifications;
 using Teronis.Collections.Specialized;
@@ -113,13 +114,14 @@ namespace Teronis.Collections.Synchronization
             return false;
         }
 
+        [return: MaybeNull]
         public TItem GetItemOrDefault(TKey key)
         {
             if (TryGetItem(key, out TItem item)) {
                 return item;
             }
 
-            return default!;
+            return default;
         }
 
         public bool ContainsKey(TKey key) =>

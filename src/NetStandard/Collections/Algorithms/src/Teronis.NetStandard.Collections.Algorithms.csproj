@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netcoreapp3.1;net5.0</TargetFrameworks>
-    <RootNamespace>Teronis.Collections.Algorithms</RootNamespace>
+    <RootNamespace>Teronis.Collections</RootNamespace>
     <Description>
       <![CDATA[Provides algorithms for collections.
 

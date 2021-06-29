@@ -14,9 +14,9 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// <typeparam name="TItem">The item type.</typeparam>
         /// <param name="equalityComparer"></param>
         /// <returns>A collection synchronization method.</returns>
-        public static ICollectionSynchronizationMethod<TItem> Sequential<TItem>(IEqualityComparer<TItem> equalityComparer)
+        public static ICollectionSynchronizationMethod<TItem,TItem> Sequential<TItem>(IEqualityComparer<TItem> equalityComparer)
             where TItem : notnull =>
-            new CollectionSynchronizationMethod<TItem>.Sequential(
+            new CollectionSynchronizationMethod<TItem,TItem, TItem>.Sequential(
                 leftItem => leftItem,
                 rightItem => rightItem,
                 equalityComparer);
@@ -27,7 +27,7 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// </summary>
         /// <typeparam name="TItem">The item type.</typeparam>
         /// <returns>A collection synchronization method.</returns>
-        public static ICollectionSynchronizationMethod<TItem> Sequential<TItem>()
+        public static ICollectionSynchronizationMethod<TItem,TItem> Sequential<TItem>()
             where TItem : notnull =>
             Sequential(EqualityComparer<TItem>.Default);
 
@@ -38,9 +38,9 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// <typeparam name="TItem">The item type.</typeparam>
         /// <param name="comparer"></param>
         /// <returns>A collection synchronization method.</returns>
-        public static ICollectionSynchronizationMethod<TItem> Sorted<TItem>(IComparer<TItem> comparer)
+        public static ICollectionSynchronizationMethod<TItem,TItem> Sorted<TItem>(IComparer<TItem> comparer)
             where TItem : notnull =>
-            new CollectionSynchronizationMethod<TItem>.Sorted(
+            new CollectionSynchronizationMethod<TItem, TItem, TItem>.Sorted(
                 leftItem => leftItem,
                 rightItem => rightItem,
                 comparer);
@@ -51,7 +51,7 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// </summary>
         /// <typeparam name="TItem">The item type.</typeparam>
         /// <returns>A collection synchronization method.</returns>
-        public static ICollectionSynchronizationMethod<TItem> Sorted<TItem>()
+        public static ICollectionSynchronizationMethod<TItem,TItem> Sorted<TItem>()
             where TItem : notnull =>
             Sorted(Comparer<TItem>.Default);
     }

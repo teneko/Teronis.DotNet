@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Redzen.Sorting;
 
 namespace Teronis.Collections.Algorithms.Modifications
 {
@@ -41,18 +42,12 @@ namespace Teronis.Collections.Algorithms.Modifications
             rightItems ??= Enumerable.Empty<TRightItem>();
         }
 
-        /// <summary>
-        /// Yields modifications that can transform one collection into another collection.
-        /// </summary>
-        /// <param name="leftItems">The collection you want to have transformed.</param>
-        /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
-        /// <param name="yieldCapabilities">The yield capabilities, e.g. only insert or only remove.</param>
-        /// <returns>The collection modifications.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="leftItems"/> is null.</exception>
+        /// <inheritdoc/>
         public abstract IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications(
             IEnumerable<TLeftItem> leftItems,
             IEnumerable<TRightItem>? rightItems,
-            CollectionModificationYieldCapabilities yieldCapabilities);
+            CollectionModificationYieldCapabilities yieldCapabilities,
+            bool preventSort = false);
 
         public class Sequential : CollectionSynchronizationMethod<TLeftItem, TRightItem, TComparableItem>
         {
@@ -68,7 +63,8 @@ namespace Teronis.Collections.Algorithms.Modifications
             public override IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications(
                 IEnumerable<TLeftItem> leftItems,
                 IEnumerable<TRightItem>? rightItems,
-                CollectionModificationYieldCapabilities yieldCapabilities)
+                CollectionModificationYieldCapabilities yieldCapabilities,
+                bool preventSort = false)
             {
                 CheckArgumentsWhenYieldingCollectionModifications(leftItems, ref rightItems);
 
@@ -96,9 +92,17 @@ namespace Teronis.Collections.Algorithms.Modifications
             public override IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications(
                 IEnumerable<TLeftItem> leftItems,
                 IEnumerable<TRightItem>? rightItems,
-                CollectionModificationYieldCapabilities yieldCapabilities)
+                CollectionModificationYieldCapabilities yieldCapabilities,
+                bool preventSort = false)
             {
                 CheckArgumentsWhenYieldingCollectionModifications(leftItems, ref rightItems);
+
+                if (!(rightItems is null) && !preventSort) {
+                    var rightItemArray = rightItems.ToArray();
+                    var comparableItemArray = new TComparableItem[rightItemArray.Length];
+                    Buffer.BlockCopy(rightItemArray, 0, comparableItemArray, 0, rightItemArray.Length);
+                    TimSort<TComparableItem>.Sort(comparableItemArray, Comparer);
+                }
 
                 return SortedCollectionModifications.YieldCollectionModifications(
                     leftItems,

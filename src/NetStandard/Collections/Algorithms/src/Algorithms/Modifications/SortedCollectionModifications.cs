@@ -12,7 +12,6 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// <summary>
         /// The algorithm creates modifications that can transform one collection into another collection.
         /// The collection modifications may be used to transform <paramref name="leftItems"/>.
-        /// Assumes <paramref name="leftItems"/> and <paramref name="rightItems"/> to be sorted by that order you specify by <paramref name="collectionOrder"/>.
         /// Duplications are allowed but take into account that duplications are yielded as they are appearing.
         /// </summary>
         /// <typeparam name="TLeftItem">The type of left items.</typeparam>
@@ -49,6 +48,7 @@ namespace Teronis.Collections.Algorithms.Modifications
             int leftIndexOfLatestSyncedRightItem = -1;
 
             while (leftItemsEnumeratorIsFunctional || rightItemsEnumeratorIsFunctional) {
+                // left is functional -> remove
                 if (!rightItemsEnumeratorIsFunctional) {
                     if (canRemove) {
                         var leftItem = leftItemsEnumerator.Current;
@@ -59,7 +59,9 @@ namespace Teronis.Collections.Algorithms.Modifications
                     }
 
                     leftItemsEnumeratorIsFunctional = leftItemsEnumerator.MoveNext();
-                } else if (!leftItemsEnumeratorIsFunctional) {
+                } 
+                // right is functional -> add
+                else if (!leftItemsEnumeratorIsFunctional) {
                     if (canInsert) {
                         var rightItem = rightItemsEnumerator.Current;
                         leftIndexOfLatestSyncedRightItem++;
@@ -68,7 +70,9 @@ namespace Teronis.Collections.Algorithms.Modifications
                     }
 
                     rightItemsEnumeratorIsFunctional = rightItemsEnumerator.MoveNext();
-                } else {
+                } 
+                // compare and decide -> remove, add, replace
+                else {
                     var leftItem = leftItemsEnumerator.Current;
                     var rightItem = rightItemsEnumerator.Current;
 

@@ -97,7 +97,7 @@ namespace Teronis.Collections.Synchronization
                     CheckReentrancy();
                     var newItem = modification.NewItems![iterationContext.ModificationItemIndex];
                     OnBeforeAddItem(iterationContext.CollectionItemIndex, newItem);
-                    collectionChangeHandler.InsertItem(iterationContext.CollectionItemIndex, newItem);
+                    collectionChangeHandler.InsertItem(iterationContext.CollectionItemIndex, newItem, preventInsertRedirect: true);
                     OnCollectionModified(modification);
                     OnAfterAddItem(iterationContext.CollectionItemIndex, newItem);
                 })
@@ -110,7 +110,7 @@ namespace Teronis.Collections.Synchronization
                 .OnIteration(iterationContext => {
                     CheckReentrancy();
                     OnBeforeRemoveItem(iterationContext.CollectionItemIndex);
-                    collectionChangeHandler.RemoveItem(iterationContext.CollectionItemIndex);
+                    collectionChangeHandler.RemoveItem(iterationContext.CollectionItemIndex, preventRemoveRedirect: true);
                     OnCollectionModified(modification);
                     OnAfterRemoveItem(iterationContext.CollectionItemIndex);
                 })
@@ -126,7 +126,7 @@ namespace Teronis.Collections.Synchronization
                     if (collectionChangeHandler.CanReplaceItem) {
                         CheckReentrancy();
                         OnBeforeReplaceItem(iterationContext.CollectionItemIndex);
-                        collectionChangeHandler.ReplaceItem(iterationContext.CollectionItemIndex, lazyItem.GetValue);
+                        collectionChangeHandler.ReplaceItem(iterationContext.CollectionItemIndex, lazyItem.GetValue, preventReplaceRedirect: true);
                         OnCollectionModified(modification);
                         OnBeforeReplaceItem(iterationContext.CollectionItemIndex);
                     }
@@ -141,7 +141,7 @@ namespace Teronis.Collections.Synchronization
             CollectionModificationIterationTools.CheckMove(modification);
             CheckReentrancy();
             OnBeforeMoveItems();
-            collectionChangeHandler.MoveItems(modification.OldIndex, modification.NewIndex, modification.OldItems!.Count);
+            collectionChangeHandler.MoveItems(modification.OldIndex, modification.NewIndex, modification.OldItems!.Count, preventMoveRedirect: true);
             OnCollectionModified(modification);
             OnAfterMoveItems();
         }
@@ -150,7 +150,7 @@ namespace Teronis.Collections.Synchronization
         {
             CheckReentrancy();
             OnBeforeResetItems();
-            collectionChangeHandler.ResetItems();
+            collectionChangeHandler.ResetItems(preventResetRedirect: true);
             OnCollectionModified(modification);
             OnAfterResetItems();
         }

@@ -17,70 +17,46 @@ namespace Teronis.Collections.Algorithms.Modifications
     {
         /// <summary>
         /// The algorithm creates modifications that can transform one collection into another collection.
-        /// The collection modifications may be used to transform <paramref name="leftItems"/>.
+        /// The collection modifications may be used to transform <paramref name="leftComparands"/>.
         /// The more the collection is synchronized in an orderly way, the more efficient the algorithm is.
         /// Duplications are allowed but take into account that duplications are yielded as they are appearing.
         /// </summary>
-        /// <typeparam name="TLeftItem">The type of left items.</typeparam>
-        /// <typeparam name="TRightItem">The type of right items.</typeparam>
+        /// <typeparam name="TLeftComparand">The type of left items.</typeparam>
+        /// <typeparam name="TRightComparand">The type of right items.</typeparam>
         /// <typeparam name="TComparablePart">The type of the comparable part of left item and right item.</typeparam>
         /// <param name="leftItems">The collection you want to have transformed.</param>
-        /// <param name="getComparablePartOfLeftItem">The part of left item that is comparable with part of right item.</param>
         /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
-        /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
         /// <param name="equalityComparer">The equality comparer to be used to compare comparable parts.</param>
         /// <param name="yieldCapabilities">The yield capabilities, e.g. only insert or only remove.</param>
         /// <returns>The collection modifications.</returns>
         /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
-        private static IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModificationsCore<TLeftItem, TRightItem, TComparablePart>(
+        private static IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModificationsCore<TLeftItem, TRightItem, TLeftComparand, TRightComparand, TComparablePart>(
             IEnumerable<TLeftItem> leftItems,
-            Func<TLeftItem, TComparablePart>? getComparablePartOfLeftItem,
             IEnumerable<TRightItem> rightItems,
-            Func<TRightItem, TComparablePart>? getComparablePartOfRightItem,
+            IEnumerable<TLeftComparand> leftComparands,
+            IEnumerable<TRightComparand> rightComparands,
             IEqualityComparer<TComparablePart>? equalityComparer,
             CollectionModificationYieldCapabilities yieldCapabilities)
+            where TLeftComparand : TComparablePart
+            where TRightComparand : TComparablePart
             where TComparablePart : notnull
         {
-            static CollectionModification<TRightItem, TLeftItem> createReplaceModification(
-                LinkedBucketListNode<TComparablePart, LeftItemContainer<TLeftItem>> leftItemNode,
-                LinkedBucketListNode<TComparablePart, RightItemContainer<TLeftItem, TRightItem>> rightItemNode) =>
+            static CollectionModification<TRightItem, TLeftItem> CreateReplaceModification(
+                LinkedBucketListNode<TComparablePart, LeftItemContainer<TLeftItem>> leftComparandNode,
+                LinkedBucketListNode<TComparablePart, RightItemContainer<TLeftItem, TRightItem>> rightComparandNode) =>
                 CollectionModification.ForReplace(
-                    leftItemNode.Value.IndexEntry,
-                    leftItemNode.Value.Item,
-                    rightItemNode.Value.Item);
+                    leftComparandNode.Value.IndexEntry,
+                    leftComparandNode.Value.Item,
+                    rightComparandNode.Value.Item);
 
-            static CollectionModification<TRightItem, TLeftItem> createMoveModification(
-                LinkedBucketListNode<TComparablePart, LeftItemContainer<TLeftItem>> leftItemNode,
-                int leftItemMoveToIndex,
-                LinkedBucketListNode<TComparablePart, RightItemContainer<TLeftItem, TRightItem>> rightItemNode) =>
+            static CollectionModification<TRightItem, TLeftItem> CreateMoveModification(
+                LinkedBucketListNode<TComparablePart, LeftItemContainer<TLeftItem>> leftComparandNode,
+                int leftComparandMoveToIndex,
+                LinkedBucketListNode<TComparablePart, RightItemContainer<TLeftItem, TRightItem>> rightComparandNode) =>
                 CollectionModification.ForMove<TRightItem, TLeftItem>(
-                    leftItemNode.Value.IndexEntry,
-                    leftItemNode.Value.Item,
-                    leftItemMoveToIndex);
-
-            var getComparablePartOfLeftItemIsNull = getComparablePartOfLeftItem is null;
-            var getComparablePartOfRightItemIsNull = getComparablePartOfRightItem is null;
-
-            if (getComparablePartOfLeftItemIsNull || getComparablePartOfRightItemIsNull) {
-                var leftItemType = typeof(TLeftItem);
-                var rightItemType = typeof(TLeftItem);
-                var comparablePartType = typeof(TComparablePart);
-
-                void EnsureBeingTypeOfComparablePart(Type comparablePartType, Type itemType)
-                {
-                    if (comparablePartType != itemType) {
-                        throw new ArgumentException($"Comparable part provider is null and item of type {itemType} could never be casted to comparable part of type {comparablePartType}.");
-                    }
-                }
-
-                if (getComparablePartOfLeftItemIsNull) {
-                    EnsureBeingTypeOfComparablePart(comparablePartType, leftItemType);
-                }
-
-                if (getComparablePartOfRightItemIsNull) {
-                    EnsureBeingTypeOfComparablePart(comparablePartType, rightItemType);
-                }
-            }
+                    leftComparandNode.Value.IndexEntry,
+                    leftComparandNode.Value.Item,
+                    leftComparandMoveToIndex);
 
             equalityComparer = equalityComparer ?? EqualityComparer<TComparablePart>.Default;
 
@@ -91,14 +67,16 @@ namespace Teronis.Collections.Algorithms.Modifications
 
             var leftIndexDirectory = new IndexDirectory();
 
+            var leftComparandsEnumerator = new IndexPreferredEnumerator<TLeftComparand>(leftComparands, () => leftIndexDirectory.Count - 1);
+            var leftComparandsNodes = new LinkedBucketList<TComparablePart, LeftItemContainer<TLeftItem>>(equalityComparer);
             var leftItemsEnumerator = new IndexPreferredEnumerator<TLeftItem>(leftItems, () => leftIndexDirectory.Count - 1);
-            var leftItemsEnumeratorIsFunctional = leftItemsEnumerator.MoveNext();
-            var leftItemsNodes = new LinkedBucketList<TComparablePart, LeftItemContainer<TLeftItem>>(equalityComparer);
+            var leftEnumeratorsAreFunctional = leftComparandsEnumerator.MoveNext() && leftItemsEnumerator.MoveNext();
 
+            var rightComparandsEnumerator = rightComparands.GetEnumerator();
+            var rightComparandIndexNext = 0;
+            var rightComparandsNodes = new LinkedBucketList<TComparablePart, RightItemContainer<TLeftItem, TRightItem>>(equalityComparer);
             var rightItemsEnumerator = rightItems.GetEnumerator();
-            var rightItemsEnumeratorIsFunctional = rightItemsEnumerator.MoveNext();
-            var rightItemIndexNext = 0;
-            var rightItemsNodes = new LinkedBucketList<TComparablePart, RightItemContainer<TLeftItem, TRightItem>>(equalityComparer);
+            var rightEnumeratorsAreFunctional = rightComparandsEnumerator.MoveNext() && rightItemsEnumerator.MoveNext();
 
             var leftIndexOfLatestSyncedRightItem = new IndexDirectoryEntry(-1, IndexDirectoryEntryMode.Floating);
 
@@ -109,161 +87,153 @@ namespace Teronis.Collections.Algorithms.Modifications
                 }
             }
 
-            while (leftItemsEnumeratorIsFunctional || rightItemsEnumeratorIsFunctional) {
-                LinkedBucketListNode<TComparablePart, LeftItemContainer<TLeftItem>>? leftItemNodeLast;
-                LinkedBucketListNode<TComparablePart, RightItemContainer<TLeftItem, TRightItem>>? rightItemNodeLast;
+            while (leftEnumeratorsAreFunctional || rightEnumeratorsAreFunctional) {
+                LinkedBucketListNode<TComparablePart, LeftItemContainer<TLeftItem>>? leftComparandNodeLast;
+                LinkedBucketListNode<TComparablePart, RightItemContainer<TLeftItem, TRightItem>>? rightComparandNodeLast;
 
-                if (rightItemsEnumeratorIsFunctional) {
-                    var rightItem = rightItemsEnumerator.Current;
+                if (rightEnumeratorsAreFunctional) {
+                    var rightComparand = rightComparandsEnumerator.Current;
 
-                    var comparablePartOfRightItem = getComparablePartOfRightItemIsNull
-                        ? (TComparablePart?)(object?)rightItem
-                        : getComparablePartOfRightItem!.Invoke(rightItem);
-
-                    rightItemNodeLast = rightItemsNodes.AddLast(comparablePartOfRightItem, new RightItemContainer<TLeftItem, TRightItem>(rightItem, rightItemIndexNext));
-                    rightItemIndexNext++;
+                    rightComparandNodeLast = rightComparandsNodes.AddLast(rightComparand, new RightItemContainer<TLeftItem, TRightItem>(rightItemsEnumerator.Current, rightComparandIndexNext));
+                    rightComparandIndexNext++;
                 } else {
-                    rightItemNodeLast = null;
+                    rightComparandNodeLast = null;
                 }
 
-                var rightItemNodeLastBucketFirstNode = rightItemNodeLast?.Bucket!.First;
+                var rightComparandNodeLastBucketFirstNode = rightComparandNodeLast?.Bucket!.First;
 
                 /* Is the first node of bucket of right node anywhere on left side? */
-                if (!(rightItemNodeLastBucketFirstNode is null) && leftItemsNodes.TryGetBucket(rightItemNodeLastBucketFirstNode!.Key, out var leftItemBucket)) {
-                    var leftItemNode = leftItemBucket.First!;
+                if (!(rightComparandNodeLastBucketFirstNode is null) && leftComparandsNodes.TryGetBucket(rightComparandNodeLastBucketFirstNode!.Key, out var leftComparandBucket)) {
+                    var leftComparandNode = leftComparandBucket.First!;
 
                     if (canReplace) {
-                        yield return createReplaceModification(leftItemNode, rightItemNodeLastBucketFirstNode);
+                        yield return CreateReplaceModification(leftComparandNode, rightComparandNodeLastBucketFirstNode);
                     }
 
-                    int leftItemMoveToIndex;
+                    int leftComparandMoveToIndex;
 
-                    if (leftItemNode.Value.IndexEntry > leftIndexOfLatestSyncedRightItem.Index) {
+                    if (leftComparandNode.Value.IndexEntry > leftIndexOfLatestSyncedRightItem.Index) {
                         // We do not need to move, because the item has not 
                         // exceeded the index of latest synced right item.
-                        leftItemMoveToIndex = leftItemNode.Value.IndexEntry;
+                        leftComparandMoveToIndex = leftComparandNode.Value.IndexEntry;
                     } else {
                         // The index where it would be inserted when it is removed.
-                        leftItemMoveToIndex = leftIndexOfLatestSyncedRightItem.Index;
+                        leftComparandMoveToIndex = leftIndexOfLatestSyncedRightItem.Index;
                     }
 
-                    LinkedBucketListNode<TComparablePart, RightItemContainer<TLeftItem, TRightItem>>? rightItemNodeLastBucketFirstNodeListPreviousNode;
+                    LinkedBucketListNode<TComparablePart, RightItemContainer<TLeftItem, TRightItem>>? rightComparandNodeLastBucketFirstNodeListPreviousNode;
 
                     {
-                        if (canMove && leftItemNode.Value.IndexEntry != leftItemMoveToIndex) {
-                            var moveModification = createMoveModification(leftItemNode, leftItemMoveToIndex, rightItemNodeLastBucketFirstNode);
+                        if (canMove && leftComparandNode.Value.IndexEntry != leftComparandMoveToIndex) {
+                            var moveModification = CreateMoveModification(leftComparandNode, leftComparandMoveToIndex, rightComparandNodeLastBucketFirstNode);
                             yield return moveModification;
                             leftIndexDirectory.Move(moveModification.OldIndex, moveModification.NewIndex);
                         }
 
-                        rightItemNodeLastBucketFirstNodeListPreviousNode = rightItemNodeLastBucketFirstNode.ListPart.Previous;
-                        rightItemNodeLastBucketFirstNode.Bucket?.Remove(rightItemNodeLastBucketFirstNode);
+                        rightComparandNodeLastBucketFirstNodeListPreviousNode = rightComparandNodeLastBucketFirstNode.ListPart.Previous;
+                        rightComparandNodeLastBucketFirstNode.Bucket?.Remove(rightComparandNodeLastBucketFirstNode);
 
-                        leftItemNode.Bucket!.Remove(leftItemNode);
+                        leftComparandNode.Bucket!.Remove(leftComparandNode);
                     }
 
-                    var currentLeftItemNodeAsParentForPreviousRightItemNodes = leftItemNode;
+                    var currentLeftItemNodeAsParentForPreviousRightItemNodes = leftComparandNode;
 
-                    while (!(rightItemNodeLastBucketFirstNodeListPreviousNode is null)) {
+                    while (!(rightComparandNodeLastBucketFirstNodeListPreviousNode is null)) {
                         // Do not set parent after it has been already set.
-                        if (rightItemNodeLastBucketFirstNodeListPreviousNode.Value.Parent is null) {
+                        if (rightComparandNodeLastBucketFirstNodeListPreviousNode.Value.Parent is null) {
                             // We cannot add right item blindly to left side, because we do not know if exact this node will
                             // appear on left side. So we tell current previous node about a left node that is definitely below him.
-                            rightItemNodeLastBucketFirstNodeListPreviousNode.Value.Parent = currentLeftItemNodeAsParentForPreviousRightItemNodes.Value;
+                            rightComparandNodeLastBucketFirstNodeListPreviousNode.Value.Parent = currentLeftItemNodeAsParentForPreviousRightItemNodes.Value;
                         }
 
-                        var tempPrevious = rightItemNodeLastBucketFirstNodeListPreviousNode.ListPart.Previous;
+                        var tempPrevious = rightComparandNodeLastBucketFirstNodeListPreviousNode.ListPart.Previous;
 
                         if (tempPrevious is null || !(tempPrevious.Value.Parent is null)) {
-                            rightItemNodeLastBucketFirstNodeListPreviousNode = null;
+                            rightComparandNodeLastBucketFirstNodeListPreviousNode = null;
                         } else {
-                            rightItemNodeLastBucketFirstNodeListPreviousNode = tempPrevious;
+                            rightComparandNodeLastBucketFirstNodeListPreviousNode = tempPrevious;
                         }
                     }
 
                     // Let's refresh index after left item may have been moved.
-                    SetLeftIndexOfLatestSyncedRightItem(leftItemNode.Value.IndexEntry);
+                    SetLeftIndexOfLatestSyncedRightItem(leftComparandNode.Value.IndexEntry);
                 }
 
-                if (leftItemsEnumeratorIsFunctional) {
-                    var leftItem = leftItemsEnumerator.Current;
-
-                    var comparablePartOfLeftItem = getComparablePartOfLeftItemIsNull
-                        ? (TComparablePart?)(object?)leftItem
-                        : getComparablePartOfLeftItem!(leftItem);
+                if (leftEnumeratorsAreFunctional) {
+                    var leftComparand = leftComparandsEnumerator.Current;
 
                     var nextLeftIndex = leftIndexDirectory.Count;
 
-                    leftItemNodeLast = leftItemsNodes.AddLast(comparablePartOfLeftItem, new LeftItemContainer<TLeftItem>(leftItem, leftIndexDirectory.Add(nextLeftIndex)));
+                    leftComparandNodeLast = leftComparandsNodes.AddLast(leftComparand, new LeftItemContainer<TLeftItem>(leftItemsEnumerator.Current, leftIndexDirectory.Add(nextLeftIndex)));
                 } else {
-                    leftItemNodeLast = null;
+                    leftComparandNodeLast = null;
                 }
 
-                var leftItemNodeLastBucketFirstNode = leftItemNodeLast?.Bucket?.First;
+                var leftComparandNodeLastBucketFirstNode = leftComparandNodeLast?.Bucket?.First;
 
                 /* Is the first node of bucket of left node anywhere on right side? */
-                if (!(leftItemNodeLastBucketFirstNode is null) && rightItemsNodes.TryGetBucket(leftItemNodeLastBucketFirstNode.Key, out var rightItembucket)) {
-                    var rightItemNode = rightItembucket.First!;
+                if (!(leftComparandNodeLastBucketFirstNode is null) && rightComparandsNodes.TryGetBucket(leftComparandNodeLastBucketFirstNode.Key, out var rightComparandbucket)) {
+                    var rightComparandNode = rightComparandbucket.First!;
 
                     if (canReplace) {
-                        yield return createReplaceModification(leftItemNodeLastBucketFirstNode, rightItemNode);
+                        yield return CreateReplaceModification(leftComparandNodeLastBucketFirstNode, rightComparandNode);
                     }
 
-                    if (canMove && !(rightItemNode.Value.Parent is null)) {
-                        var moveModification = createMoveModification(
-                            leftItemNodeLastBucketFirstNode,
-                            rightItemNode.Value.Parent.IndexEntry,
-                            rightItemNode);
+                    if (canMove && !(rightComparandNode.Value.Parent is null)) {
+                        var moveModification = CreateMoveModification(
+                            leftComparandNodeLastBucketFirstNode,
+                            rightComparandNode.Value.Parent.IndexEntry,
+                            rightComparandNode);
 
                         yield return moveModification;
                         leftIndexDirectory.Move(moveModification.OldIndex, moveModification.NewIndex);
                     }
 
-                    var rightItemNodePrevious = rightItemNode.ListPart.Previous;
+                    var rightComparandNodePrevious = rightComparandNode.ListPart.Previous;
 
-                    while (!(rightItemNodePrevious is null)
-                        && (rightItemNode.Value.Parent is null && rightItemNodePrevious.Value.Parent is null
-                            || !(rightItemNode.Value.Parent is null) && ReferenceEquals(rightItemNodePrevious.Value.Parent, rightItemNode.Value.Parent))) {
-                        rightItemNodePrevious.Value.Parent = leftItemNodeLastBucketFirstNode.Value;
-                        rightItemNodePrevious = rightItemNodePrevious.ListPart.Previous;
+                    while (!(rightComparandNodePrevious is null)
+                        && (rightComparandNode.Value.Parent is null && rightComparandNodePrevious.Value.Parent is null
+                            || !(rightComparandNode.Value.Parent is null) && ReferenceEquals(rightComparandNodePrevious.Value.Parent, rightComparandNode.Value.Parent))) {
+                        rightComparandNodePrevious.Value.Parent = leftComparandNodeLastBucketFirstNode.Value;
+                        rightComparandNodePrevious = rightComparandNodePrevious.ListPart.Previous;
                     }
 
-                    leftItemNodeLastBucketFirstNode.Bucket?.Remove(leftItemNodeLastBucketFirstNode);
-                    rightItemNode.Bucket?.Remove(rightItemNode);
-                    SetLeftIndexOfLatestSyncedRightItem(leftItemNodeLastBucketFirstNode.Value.IndexEntry);
+                    leftComparandNodeLastBucketFirstNode.Bucket?.Remove(leftComparandNodeLastBucketFirstNode);
+                    rightComparandNode.Bucket?.Remove(rightComparandNode);
+                    SetLeftIndexOfLatestSyncedRightItem(leftComparandNodeLastBucketFirstNode.Value.IndexEntry);
                 }
 
-                leftItemsEnumeratorIsFunctional = leftItemsEnumerator.MoveNext();
-                rightItemsEnumeratorIsFunctional = rightItemsEnumerator.MoveNext();
+                leftEnumeratorsAreFunctional = leftComparandsEnumerator.MoveNext() && leftItemsEnumerator.MoveNext();
+                rightEnumeratorsAreFunctional = rightComparandsEnumerator.MoveNext() && rightItemsEnumerator.MoveNext();
             }
 
-            var leftItemsLength = leftItemsEnumerator.CurrentLength;
+            var leftComparandsLength = leftComparandsEnumerator.CurrentLength;
 
-            if (canRemove && !(leftItemsNodes.Last is null)) {
-                foreach (var leftItemNode in LinkedBucketListUtils.YieldNodesReversed(leftItemsNodes.Last)) {
-                    var removeModification = CollectionModification.ForRemove<TRightItem, TLeftItem>(leftItemNode.Value.IndexEntry, leftItemNode.Value.Item);
+            if (canRemove && !(leftComparandsNodes.Last is null)) {
+                foreach (var leftComparandNode in LinkedBucketListUtils.YieldNodesReversed(leftComparandsNodes.Last)) {
+                    var removeModification = CollectionModification.ForRemove<TRightItem, TLeftItem>(leftComparandNode.Value.IndexEntry, leftComparandNode.Value.Item);
                     yield return removeModification;
 
                     leftIndexDirectory.Remove(removeModification.OldIndex);
-                    leftItemsLength--;
+                    leftComparandsLength--;
                 }
             }
 
-            if (canInsert && !(rightItemsNodes.First is null)) {
-                foreach (var rightItemNode in rightItemsNodes) {
+            if (canInsert && !(rightComparandsNodes.First is null)) {
+                foreach (var rightComparandNode in rightComparandsNodes) {
                     int insertItemTo;
 
-                    if (rightItemNode.Parent is null) {
-                        insertItemTo = leftItemsLength;
+                    if (rightComparandNode.Parent is null) {
+                        insertItemTo = leftComparandsLength;
                     } else {
-                        insertItemTo = rightItemNode.Parent.IndexEntry;
+                        insertItemTo = rightComparandNode.Parent.IndexEntry;
                     }
 
-                    var addModification = CollectionModification.ForAdd<TRightItem, TLeftItem>(insertItemTo, rightItemNode.Item);
+                    var addModification = CollectionModification.ForAdd<TRightItem, TLeftItem>(insertItemTo, rightComparandNode.Item);
                     yield return addModification;
 
                     leftIndexDirectory.Insert(insertItemTo);
-                    leftItemsLength++;
+                    leftComparandsLength++;
                 }
             }
         }
@@ -278,26 +248,26 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// <typeparam name="TRightItem">The type of right items.</typeparam>
         /// <typeparam name="TComparablePart">The type of the comparable part of left item and right item.</typeparam>
         /// <param name="leftItems">The collection you want to have transformed.</param>
-        /// <param name="getComparablePartOfLeftItem">The part of left item that is comparable with part of right item.</param>
         /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
-        /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
         /// <param name="equalityComparer">The equality comparer to be used to compare comparable parts.</param>
         /// <param name="yieldCapabilities">The yield capabilities, e.g. only insert or only remove.</param>
         /// <returns>The collection modifications.</returns>
         /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
-        public static IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications<TLeftItem, TRightItem, TComparablePart>(
+        public static IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications<TLeftItem, TRightItem, TLeftComparand, TRightComparand, TComparablePart>(
             IEnumerable<TLeftItem> leftItems,
-            Func<TLeftItem, TComparablePart> getComparablePartOfLeftItem,
             IEnumerable<TRightItem> rightItems,
-            Func<TRightItem, TComparablePart> getComparablePartOfRightItem,
+            IEnumerable<TLeftComparand> leftComparands,
+            IEnumerable<TRightComparand> rightComparands,
             IEqualityComparer<TComparablePart>? equalityComparer,
             CollectionModificationYieldCapabilities yieldCapabilities)
+            where TLeftComparand : TComparablePart
+            where TRightComparand : TComparablePart
             where TComparablePart : notnull =>
             YieldCollectionModificationsCore(
                 leftItems,
-                getComparablePartOfLeftItem,
                 rightItems,
-                getComparablePartOfRightItem,
+                leftComparands,
+                rightComparands,
                 equalityComparer,
                 yieldCapabilities);
 
@@ -312,24 +282,24 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// <typeparam name="TRightItem">The type of right items.</typeparam>
         /// <typeparam name="TComparablePart">The type of the comparable part of left item and right item.</typeparam>
         /// <param name="leftItems">The collection you want to have transformed.</param>
-        /// <param name="getComparablePartOfLeftItem">The part of left item that is comparable with part of right item.</param>
         /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
-        /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
         /// <param name="equalityComparer">The equality comparer to be used to compare comparable parts.</param>
         /// <returns>The collection modifications.</returns>
         /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
-        public static IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications<TLeftItem, TRightItem, TComparablePart>(
+        public static IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications<TLeftItem, TRightItem, TLeftComparand, TRightComparand, TComparablePart>(
         IEnumerable<TLeftItem> leftItems,
-        Func<TLeftItem, TComparablePart> getComparablePartOfLeftItem,
         IEnumerable<TRightItem> rightItems,
-        Func<TRightItem, TComparablePart> getComparablePartOfRightItem,
+        IEnumerable<TLeftComparand> leftComparands,
+        IEnumerable<TRightComparand> rightComparands,
         IEqualityComparer<TComparablePart>? equalityComparer)
+        where TLeftComparand : TComparablePart
+        where TRightComparand : TComparablePart
         where TComparablePart : notnull =>
         YieldCollectionModifications(
             leftItems,
-            getComparablePartOfLeftItem,
             rightItems,
-            getComparablePartOfRightItem,
+            leftComparands,
+            rightComparands,
             equalityComparer,
             CollectionModificationYieldCapabilities.All);
 
@@ -343,24 +313,24 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// <typeparam name="TRightItem">The type of right items.</typeparam>
         /// <typeparam name="TComparablePart">The type of the comparable part of left item and right item.</typeparam>
         /// <param name="leftItems">The collection you want to have transformed.</param>
-        /// <param name="getComparablePartOfLeftItem">The part of left item that is comparable with part of right item.</param>
         /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
-        /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
         /// <param name="yieldCapabilities">The yield capabilities, e.g. only insert or only remove.</param>
         /// <returns>The collection modifications.</returns>
         /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
-        public static IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications<TLeftItem, TRightItem, TComparablePart>(
+        public static IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications<TLeftItem, TRightItem, TLeftComparand, TRightComparand, TComparablePart>(
             IEnumerable<TLeftItem> leftItems,
-            Func<TLeftItem, TComparablePart> getComparablePartOfLeftItem,
             IEnumerable<TRightItem> rightItems,
-            Func<TRightItem, TComparablePart> getComparablePartOfRightItem,
+            IEnumerable<TLeftComparand> leftComparands,
+            IEnumerable<TRightComparand> rightComparands,
             CollectionModificationYieldCapabilities yieldCapabilities)
+            where TLeftComparand : TComparablePart
+            where TRightComparand : TComparablePart
             where TComparablePart : notnull =>
             YieldCollectionModifications(
                 leftItems,
-                getComparablePartOfLeftItem,
                 rightItems,
-                getComparablePartOfRightItem,
+                leftComparands,
+                rightComparands,
                 EqualityComparer<TComparablePart>.Default,
                 yieldCapabilities);
 
@@ -374,144 +344,40 @@ namespace Teronis.Collections.Algorithms.Modifications
         /// <typeparam name="TRightItem">The type of right items.</typeparam>
         /// <typeparam name="TComparablePart">The type of the comparable part of left item and right item.</typeparam>
         /// <param name="leftItems">The collection you want to have transformed.</param>
-        /// <param name="getComparablePartOfLeftItem">The part of left item that is comparable with part of right item.</param>
         /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
-        /// <param name="getComparablePartOfRightItem">The part of right item that is comparable with part of left item.</param>
         /// <returns>The collection modifications.</returns>
         /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
-        public static IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications<TLeftItem, TRightItem, TComparablePart>(
+        public static IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications<TLeftItem, TRightItem, TLeftComparand, TRightComparand, TComparablePart>(
             IEnumerable<TLeftItem> leftItems,
-            Func<TLeftItem, TComparablePart> getComparablePartOfLeftItem,
             IEnumerable<TRightItem> rightItems,
-            Func<TRightItem, TComparablePart> getComparablePartOfRightItem)
+            IEnumerable<TLeftComparand> leftComparands,
+            IEnumerable<TRightComparand> rightComparands)
+            where TLeftComparand : TComparablePart
+            where TRightComparand : TComparablePart
             where TComparablePart : notnull =>
             YieldCollectionModifications(
                 leftItems,
-                getComparablePartOfLeftItem,
                 rightItems,
-                getComparablePartOfRightItem,
+                leftComparands,
+                rightComparands,
                 EqualityComparer<TComparablePart>.Default,
                 CollectionModificationYieldCapabilities.All);
 
-        /// <summary>
-        /// The algorithm creates modifications that can transform one collection into another collection.
-        /// The collection modifications may be used to transform <paramref name="leftItems"/>.
-        /// The more the collection is synchronized in an orderly way, the more efficient the algorithm is.
-        /// Duplications are allowed but take into account that duplications are yielded as they are appearing.
-        /// </summary>
-        /// <typeparam name="TItem">The item type.</typeparam>
-        /// <param name="leftItems">The collection you want to have transformed.</param>
-        /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
-        /// <param name="equalityComparer">The equality comparer to be used to compare comparable parts.</param>
-        /// <param name="yieldCapabilities">The yield capabilities, e.g. only insert or only remove.</param>
-        /// <returns>The collection modifications.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
-        public static IEnumerable<CollectionModification<TItem, TItem>> YieldCollectionModifications<TItem>(
-            IEnumerable<TItem> leftItems,
-            IEnumerable<TItem> rightItems,
-            IEqualityComparer<TItem>? equalityComparer,
-            CollectionModificationYieldCapabilities yieldCapabilities)
-            where TItem : notnull =>
-            YieldCollectionModificationsCore(
-                leftItems,
-                getComparablePartOfLeftItem: null,
-                rightItems,
-                getComparablePartOfRightItem: null,
-                equalityComparer,
-                yieldCapabilities);
-
-        /// <summary>
-        /// The algorithm creates modifications that can transform one collection into another collection.
-        /// The collection modifications may be used to transform <paramref name="leftItems"/>.
-        /// The more the collection is synchronized in an orderly way, the more efficient the algorithm is.
-        /// Duplications are allowed but take into account that duplications are yielded as they are appearing.
-        /// </summary>
-        /// <typeparam name="TItem">The item type.</typeparam>
-        /// <param name="leftItems">The collection you want to have transformed.</param>
-        /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
-        /// <param name="equalityComparer">The equality comparer to be used to compare comparable parts.</param>
-        /// <returns>The collection modifications.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
-        public static IEnumerable<CollectionModification<TItem, TItem>> YieldCollectionModifications<TItem>(
-            IEnumerable<TItem> leftItems,
-            IEnumerable<TItem> rightItems,
-            IEqualityComparer<TItem>? equalityComparer)
-            where TItem : notnull =>
-            YieldCollectionModificationsCore(
-                leftItems,
-                getComparablePartOfLeftItem: null,
-                rightItems,
-                getComparablePartOfRightItem: null,
-                equalityComparer,
-                CollectionModificationYieldCapabilities.All);
-
-        /// <summary>
-        /// The algorithm creates modifications that can transform one collection into another collection.
-        /// The collection modifications may be used to transform <paramref name="leftItems"/>.
-        /// The more the collection is synchronized in an orderly way, the more efficient the algorithm is.
-        /// Duplications are allowed but take into account that duplications are yielded as they are appearing.
-        /// </summary>
-        /// <typeparam name="TItem">The item type.</typeparam>
-        /// <param name="leftItems">The collection you want to have transformed.</param>
-        /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
-        /// <param name="yieldCapabilities">The yield capabilities, e.g. only insert or only remove.</param>
-        /// <returns>The collection modifications.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
-        public static IEnumerable<CollectionModification<TItem, TItem>> YieldCollectionModifications<TItem>(
-            IEnumerable<TItem> leftItems,
-            IEnumerable<TItem> rightItems,
-            CollectionModificationYieldCapabilities yieldCapabilities)
-            where TItem : notnull =>
-            YieldCollectionModificationsCore(
-                leftItems,
-                getComparablePartOfLeftItem: null,
-                rightItems,
-                getComparablePartOfRightItem: null,
-                EqualityComparer<TItem>.Default,
-                yieldCapabilities);
-
-        /// <summary>
-        /// The algorithm creates modifications that can transform one collection into another collection.
-        /// The collection modifications may be used to transform <paramref name="leftItems"/>.
-        /// The more the collection is synchronized in an orderly way, the more efficient the algorithm is.
-        /// Duplications are allowed but take into account that duplications are yielded as they are appearing.
-        /// </summary>
-        /// <typeparam name="TItem">The item type.</typeparam>
-        /// <param name="leftItems">The collection you want to have transformed.</param>
-        /// <param name="rightItems">The collection in which <paramref name="leftItems"/> could be transformed.</param>
-        /// <returns>The collection modifications.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when non-nullable arguments are null.</exception>
-        public static IEnumerable<CollectionModification<TItem, TItem>> YieldCollectionModifications<TItem>(
-            IEnumerable<TItem> leftItems,
-            IEnumerable<TItem> rightItems)
-            where TItem : notnull =>
-            YieldCollectionModificationsCore(
-                leftItems,
-                getComparablePartOfLeftItem: null,
-                rightItems,
-                getComparablePartOfRightItem: null,
-                EqualityComparer<TItem>.Default,
-                CollectionModificationYieldCapabilities.All);
-
-        private class ItemContainer<TItem>
+        private class LeftItemContainer<TLeftItem>
         {
-            public TItem Item { get; }
-
-            public ItemContainer(TItem item) =>
-                Item = item;
-        }
-
-        private class LeftItemContainer<TLeftItem> : ItemContainer<TLeftItem>
-        {
-            public IndexDirectoryEntry IndexEntry { get; set; }
+            public TLeftItem Item { get; }
+            public IndexDirectoryEntry IndexEntry { get; }
 
             public LeftItemContainer(TLeftItem item, IndexDirectoryEntry indexEntry)
-                : base(item) =>
-                IndexEntry = indexEntry;
+            {
+                Item = item;
+                IndexEntry = indexEntry ?? throw new ArgumentNullException(nameof(indexEntry));
+            }
         }
 
-        private class RightItemContainer<TLeftItem, TRightItem> : ItemContainer<TRightItem>
+        private class RightItemContainer<TLeftItem, TRightItem>
         {
+            public TRightItem Item { get; }
             /// <summary>
             /// Not null means that this right item should be BEFORE parent.
             /// </summary>
@@ -519,8 +385,10 @@ namespace Teronis.Collections.Algorithms.Modifications
             public int Index { get; }
 
             public RightItemContainer(TRightItem item, int index)
-                : base(item) =>
+            {
+                Item = item;
                 Index = index;
+            }
         }
     }
 }

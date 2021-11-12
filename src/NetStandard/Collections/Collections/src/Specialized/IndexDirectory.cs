@@ -50,20 +50,26 @@ namespace Teronis.Collections.Specialized
         }
 
         /// <summary>
-        /// Expands the index directory.
+        /// Expands the index directory size to <paramref name="toIndex"/> + 1.
         /// </summary>
-        /// <param name="toIndex">The index to be used to expand index directory.</param>
-        public void Expand(int toIndex)
+        /// <param name="toIndex">The index to be used to expand the index directory.</param>
+        /// <param name="treatIndexAsCount">The new size is <paramref name="toIndex"/> instead of <paramref name="toIndex"/> + 1.</param>
+        public void Expand(int toIndex, bool treatIndexAsCount = false)
         {
+            if (treatIndexAsCount) {
+                toIndex++;
+            }
+
             if (toIndex >= virtualizableLength) {
                 virtualizableLength = toIndex + 1;
             }
         }
 
         /// <summary>
-        /// Adds <paramref name="index"/> next to same indexes of <paramref name="index"/> and won't cause any index changes.
+        /// Adds <paramref name="indexEntry"/> next to same entries of index of
+        /// <paramref name="indexEntry"/> and won't cause any index changes.
         /// </summary>
-        /// <param name="index">The to be added index.</param>
+        /// <param name="indexEntry">The to be added index entry.</param>
         /// <returns>The index entry.</returns>
         public IndexDirectoryEntry AddEntry(IndexDirectoryEntry indexEntry)
         {
@@ -76,6 +82,7 @@ namespace Teronis.Collections.Specialized
         /// Adds <paramref name="index"/> next to same indexes of <paramref name="index"/> and won't cause any index changes.
         /// </summary>
         /// <param name="index">The to be added index.</param>
+        /// <param name="mode"></param>
         /// <returns>The index entry.</returns>
         public IndexDirectoryEntry Add(int index, IndexDirectoryEntryMode mode)
         {
@@ -182,23 +189,23 @@ namespace Teronis.Collections.Specialized
             int nextIndex = index;
 
             while (nextIndex < entriesListCount) {
-                var entryList = entriesList[nextIndex];
+                var entryList = entriesList[nextIndex++];
 
-                if (!(entryList is null)) {
-                    static void decreaseEntryIndexesBy(List<IndexDirectoryEntry> entries, int amount)
-                    {
-                        var entriesCount = entries.Count;
-
-                        for (var entryIndex = 0; entryIndex < entriesCount; entryIndex++) {
-                            entries[entryIndex].Index -= amount;
-                        }
-                    }
-
-                    decreaseEntryIndexesBy(entryList.NormalEntries, removeRange);
-                    decreaseEntryIndexesBy(entryList.FloatingEntries, removeRange);
+                if (entryList is null) {
+                    continue;
                 }
 
-                nextIndex++;
+                static void decreaseEntryIndexesBy(List<IndexDirectoryEntry> entries, int amount)
+                {
+                    var entriesCount = entries.Count;
+
+                    for (var entryIndex = 0; entryIndex < entriesCount; entryIndex++) {
+                        entries[entryIndex].Index -= amount;
+                    }
+                }
+
+                decreaseEntryIndexesBy(entryList.NormalEntries, removeRange);
+                decreaseEntryIndexesBy(entryList.FloatingEntries, removeRange);
             }
 
             entriesList.RemoveRange(index, removeRange);
@@ -209,17 +216,23 @@ namespace Teronis.Collections.Specialized
         /// </summary>
         /// <param name="index"></param>
         public void Remove(int index) =>
-            Remove(index, 1);
+            Remove(index, count: 1);
 
         /// <summary>
-        /// 
+        /// Removes an existing index entry.
         /// </summary>
         /// <param name="indexEntry"></param>
-        /// <returns></returns>
+        /// <returns><see langword="true"/> if the remove was successful.</returns>
         public bool RemoveEntry(IndexDirectoryEntry indexEntry)
         {
             if (indexEntry.Index >= virtualizableLength) {
                 throw new ArgumentOutOfRangeException(nameof(indexEntry));
+            }
+
+            // Here we early return, if the entry is was not yet inserted and would raise
+            // an index boundary exception.
+            if (indexEntry.Index < 0 || !(indexEntry.Index < entriesList.Count)) {
+                return false;
             }
 
             var entryList = entriesList[indexEntry.Index];
@@ -228,8 +241,10 @@ namespace Teronis.Collections.Specialized
                 return false;
             }
 
-            var success = entryList.NormalEntries.Remove(indexEntry);
+            var success = entryList.Remove(indexEntry);
 
+            // If non-floating entries length is equals zero,
+            // then we remove the entries.
             if (entryList.NormalEntries.Count == 0) {
                 Remove(indexEntry.Index);
             }
@@ -237,6 +252,14 @@ namespace Teronis.Collections.Specialized
             return success;
         }
 
+        /// <summary>
+        /// Moves all entries between <paramref name="fromIndex"/> and
+        /// <paramref name="fromIndex"/> + <paramref name="count"/> to
+        /// <paramref name="toIndex"/>.
+        /// </summary>
+        /// <param name="fromIndex"></param>
+        /// <param name="toIndex"></param>
+        /// <param name="count"></param>
         public void Move(int fromIndex, int toIndex, int count)
         {
             if (fromIndex == toIndex) {
@@ -353,19 +376,24 @@ namespace Teronis.Collections.Specialized
         public void Move(int fromIndex, int toIndex) =>
             Move(fromIndex, toIndex, 1);
 
+        /// <summary>
+        /// Removes the index entry and inserts it back at new index.
+        /// </summary>
+        /// <param name="indexEntry"></param>
+        /// <param name="newIndex"></param>
         public void ReplaceEntry(IndexDirectoryEntry indexEntry, int newIndex)
         {
-            if (indexEntry.Index >= 0) {
-                entriesList[indexEntry.Index]!.NormalEntries.Remove(indexEntry);
+            if (indexEntry.Index == newIndex) {
+                return;
             }
 
+            RemoveEntry(indexEntry);
             indexEntry.Index = newIndex;
             AddEntry(indexEntry);
         }
 
         /// <summary>
-        /// Removes all null and empty lists at the end of
-        /// this index directory.
+        /// Removes all null and empty lists at the end of this index directory.
         /// </summary>
         public void TrimEnd()
         {
@@ -442,6 +470,17 @@ namespace Teronis.Collections.Specialized
                     NormalEntries.Add(entry);
                 } else if (entry.Mode == IndexDirectoryEntryMode.Floating) {
                     FloatingEntries.Add(entry);
+                } else {
+                    throw new ArgumentException("Index entry has bad mode.");
+                }
+            }
+
+            public bool Remove(IndexDirectoryEntry entry)
+            {
+                if (entry.Mode == IndexDirectoryEntryMode.Normal) {
+                    return NormalEntries.Remove(entry);
+                } else if (entry.Mode == IndexDirectoryEntryMode.Floating) {
+                    return FloatingEntries.Remove(entry);
                 } else {
                     throw new ArgumentException("Index entry has bad mode.");
                 }

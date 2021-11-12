@@ -10,8 +10,11 @@ namespace Teronis.Collections.Synchronization
 {
     public class CollectionModifiedEventArgs<TItem> : NotifyCollectionChangedEventArgs, ICollectionModification<TItem, TItem>
     {
-        public ICollectionModificationPart<TItem, TItem, TItem, TItem> OldPart { get; }
-        public ICollectionModificationPart<TItem, TItem, TItem, TItem> NewPart { get; }
+        public ICollectionModificationPart<TItem, TItem, TItem, TItem> OldPart =>
+            collectionModification.OldPart;
+
+        public ICollectionModificationPart<TItem, TItem, TItem, TItem> NewPart =>
+            collectionModification.NewPart;
 
         private readonly ICollectionModification<TItem, TItem> collectionModification;
 
@@ -50,16 +53,18 @@ namespace Teronis.Collections.Synchronization
         public CollectionModifiedEventArgs(ICollectionModification<TItem, TItem> collectionModification)
             : base(NotifyCollectionChangedAction.Reset)
         {
-            OldPart = new CollectionModificationOldPart(this);
-            NewPart = new CollectionModificationNewPart(this);
+            this.collectionModification = collectionModification ?? throw new System.ArgumentNullException(nameof(collectionModification));
 
             var oldItemReadOnlyCollection = collectionModification.OldItems is null ? null : new ReadOnlyList<TItem>(collectionModification.OldItems);
             var newItemReadOnlyCollection = collectionModification.NewItems is null ? null : new ReadOnlyList<TItem>(collectionModification.NewItems);
 
-            NotifyCollectionChangedEventArgsUtils.SetNotifyCollectionChangedEventArgsProperties(this, collectionModification.Action,
-                oldItemReadOnlyCollection, OldStartingIndex, newItemReadOnlyCollection, NewStartingIndex);
-
-            this.collectionModification = collectionModification;
+            NotifyCollectionChangedEventArgsUtils.SetNotifyCollectionChangedEventArgsProperties(
+                eventArgs: this, 
+                collectionModification.Action,
+                oldItemReadOnlyCollection,
+                collectionModification.OldIndex, 
+                newItemReadOnlyCollection,
+                collectionModification.NewIndex);
         }
 
         private abstract class CollectionModificationPartBase : CollectionModification<TItem, TItem>.CollectionModificationPartBase<TItem, TItem>

@@ -13,9 +13,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Concurrent.FastReflection.NetStandard" Version="1.2.1.1" />
-    <PackageReference Include="System.Interactive.Async" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+    <PackageReference Include="System.Interactive.Async" Version="5.0.0" />
+    <PackageReference Include="Concurrent.FastReflection.NetStandard" Version="1.2.1.1" />
+    <PackageReference Include="IndexRange" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Shim.System.Numerics" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>

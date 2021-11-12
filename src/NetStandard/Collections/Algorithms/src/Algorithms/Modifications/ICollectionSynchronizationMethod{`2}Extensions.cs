@@ -7,7 +7,7 @@ namespace Teronis.Collections.Algorithms.Modifications
 {
     public static class ICollectionSynchronizationMethodExtensions
     {
-        public static IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications<TLeftItem,TRightItem>(
+        public static IEnumerable<CollectionModification<TRightItem, TLeftItem>> YieldCollectionModifications<TLeftItem, TRightItem>(
             this ICollectionSynchronizationMethod<TLeftItem, TRightItem> synchronizationMethod,
             IEnumerable<TLeftItem> leftItems,
             IEnumerable<TRightItem>? rightItems) =>

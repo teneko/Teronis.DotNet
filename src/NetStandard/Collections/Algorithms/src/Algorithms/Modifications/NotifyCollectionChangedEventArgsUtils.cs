@@ -26,7 +26,7 @@ namespace Teronis.Collections.Algorithms.Modifications
                 notifyCollectionChangedEventArgsType.GetField("_action", bindingFlags)!.DelegateForSet<NotifyCollectionChangedEventArgs, NotifyCollectionChangedAction>());
 
             LazyNotifyCollectionChangedEventArgsOldItemsSetMethod = new Lazy<MemberSetter<NotifyCollectionChangedEventArgs, IList?>>(() =>
-                notifyCollectionChangedEventArgsType.GetField("_oldItems", bindingFlags)!.DelegateForSet<NotifyCollectionChangedEventArgs,IList?>());
+                notifyCollectionChangedEventArgsType.GetField("_oldItems", bindingFlags)!.DelegateForSet<NotifyCollectionChangedEventArgs, IList?>());
 
             LazyNotifyCollectionChangedEventArgsOldStartingIndexSetMethod = new Lazy<MemberSetter<NotifyCollectionChangedEventArgs, int>>(() =>
                 notifyCollectionChangedEventArgsType.GetField("_oldStartingIndex", bindingFlags)!.DelegateForSet<NotifyCollectionChangedEventArgs, int>());

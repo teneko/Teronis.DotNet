@@ -23,7 +23,7 @@ Teronis.DotNet consists of many projects. These are projects to solve common pro
   <br/>_Create specialized IJSObjectReference dynamic proxy facades_
 - ... (TBD)
   
-:book: [Source Documentation](https://teroneko.de/docs/Teronis.DotNet/Microsoft.Extensions.DependencyInjection.html)
+:book: [Source Documentation](https://teneko.de/docs/Teronis.DotNet/Microsoft.Extensions.DependencyInjection.html)
 <br/>:1234: [Repository Structure](/docs/ProjectStructure.md)
 
 ## Building

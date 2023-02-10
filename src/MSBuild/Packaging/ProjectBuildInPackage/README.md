@@ -2,6 +2,8 @@
 
 _Allow project reference content to be added to the NuGet-package during pack process._
 
+> :warning: The source code has been outsourced. Please report any issues or question regarding this sub-project to [teneko-net-tools/[..].ProjectBuildInPackage](https://github.com/teneko-net-tools/Teronis.MSBuild.Packaging.ProjectBuildInPackage).
+
 ## Installation
 
 Package Managaer
